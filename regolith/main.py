@@ -36,6 +36,7 @@ def create_parser():
     rcp = subp.add_parser('rc', help='prints run control')
     return p
 
+
 def main(args=None):
     rc = DEFAULT_RC
     rc._update(load_rcfile('regolithrc.json'))
