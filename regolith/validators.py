@@ -1,6 +1,8 @@
 """Validators and convertors for regolith input."""
 import re
 
+from regolith import string_types
+
 def noop(x):
     """Does nothing, just returns the input."""
     return x
@@ -47,5 +49,33 @@ def ensure_string(x):
         return str(x)
 
 
+def ensure_database(db):
+    db['name'] = ensure_string(db['name'])
+    db['url'] = ensure_string(db['url'])
+    db['path'] = ensure_string(db['path'])
+    db['public'] = to_bool(db.get('public', True))
+    return db
+    
+
+def ensure_databases(dbs):
+    """Ensures each dataset in a list of databases"""
+    return list(map(ensure_databases, dbs))
+
+
+def ensure_store(store):
+    store['name'] = ensure_string(store['name'])
+    store['url'] = ensure_string(store['url'])
+    store['path'] = ensure_string(store.get('path', None) or '')
+    store['public'] = to_bool(store.get('public', True))
+    return store
+    
+
+def ensure_stores(stores):
+    """Ensures each store in a list of stores"""
+    return list(map(ensure_store, stores))
+
+
 DEFAULT_VALIDATORS = {
+    'databases': (always_false, ensure_databases),
+    'stores': (always_false, ensure_stores),
     }
