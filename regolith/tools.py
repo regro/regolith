@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+import platform
 
 if sys.version_info[0] >= 3:
     string_types = (str, bytes)

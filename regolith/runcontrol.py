@@ -16,7 +16,7 @@ from collections import Mapping, Iterable, Hashable, Sequence, namedtuple, \
 from hashlib import md5
 from warnings import warn
 
-from regolith import always_true, noop
+from regolith.validators import always_true, noop
 
 FORBIDDEN_NAMES = frozenset(['del', 'global'])
 
@@ -78,10 +78,10 @@ class RunControl(object):
 
         """
         self._dict = {}
-        for k, v in kwargs.items():
-            setattr(self, k, v)
         self._updaters = _updaters or {}
         self._validators = _validators or {}
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
     def __getattr__(self, key):
         if key in self._dict:
@@ -166,7 +166,9 @@ class RunControl(object):
             setattr(self, k, v)
 
     def _validate(self, key, value):
-        """Validates - and possibly converts - a value based on its key and the current validators."""
+        """Validates - and possibly converts - a value based on its key and the current
+        validators.
+        """
         validators = self._validators
         if key in validators:
             validator, convertor = validators[key]

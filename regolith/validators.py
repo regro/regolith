@@ -1,7 +1,7 @@
 """Validators and convertors for regolith input."""
 import re
 
-from regolith import string_types
+from regolith.tools import string_types
 
 def noop(x):
     """Does nothing, just returns the input."""
@@ -27,6 +27,10 @@ def is_bool(x):
     """Tests if something is a boolean"""
     return isinstance(x, bool)
 
+def is_string(x):
+    """Tests if something is a string"""
+    return isinstance(x, string_types)
+
 
 _FALSES = frozenset(['', '0', 'n', 'f', 'no', 'none', 'false'])
 
@@ -47,7 +51,6 @@ def ensure_string(x):
         return x
     else:
         return str(x)
-
 
 def ensure_database(db):
     db['name'] = ensure_string(db['name'])
@@ -76,6 +79,7 @@ def ensure_stores(stores):
 
 
 DEFAULT_VALIDATORS = {
+    'builddir': (is_string, ensure_string), 
     'databases': (always_false, ensure_databases),
     'stores': (always_false, ensure_stores),
     }
