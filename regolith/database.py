@@ -43,6 +43,7 @@ def dump_git_database(db, client, rc):
     dbdir = os.path.join(dbsdir, db['name'])
     # dump all of the data
     dbpath = os.path.join(dbdir, db['path'])
+    os.makedirs(dbpath, exist_ok=True)
     to_add = []
     for collection in client[db['name']].keys():
         f = os.path.join(dbpath, collection + '.json')
