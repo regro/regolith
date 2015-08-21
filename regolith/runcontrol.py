@@ -85,14 +85,17 @@ class RunControl(object):
 
     def __getattr__(self, key):
         if key in self._dict:
-            return self._dict[key]
+            value = self._dict[key]
         elif key in self.__dict__:
-            return self.__dict__[key]
+            value = self.__dict__[key]
         elif key in self.__class__.__dict__:
-            return self.__class__.__dict__[key]
+            value = self.__class__.__dict__[key]
         else:
             msg = "RunControl object has no attribute {0!r}.".format(key)
             raise AttributeError(msg)
+        if isinstance(value, property):
+            value = value.fget(self)
+        return value
 
     def __setattr__(self, key, value):
         if key.startswith('_'):
@@ -124,7 +127,7 @@ class RunControl(object):
 
     def _get(self, key, default=None):
         try:
-            val = self[key]
+            val = getattr(self, key)
         except (KeyError, AttributeError):
             val = default
         return val

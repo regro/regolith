@@ -77,7 +77,11 @@ def main(args=None):
         DISCONNECTED_COMMANDS[rc.cmd](rc)
     else:
         with connect(rc) as rc.client:
-            CONNECTED_COMMANDS[rc.cmd](rc)
+            try:
+                CONNECTED_COMMANDS[rc.cmd](rc)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
 
 if __name__ == '__main__':
     main()

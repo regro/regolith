@@ -1,11 +1,13 @@
 """Helps manage mongodb setup and connections."""
 import os
+import time
 import shutil
 import subprocess
 from glob import iglob
 from contextlib import contextmanager
 
 from pymongo import MongoClient
+from pymongo.errors import AutoReconnect, ConnectionFailure
 
 
 def load_git_database(db, rc):
@@ -45,10 +47,11 @@ def dump_git_database(db, client, rc):
     dbpath = os.path.join(dbdir, db['path'])
     os.makedirs(dbpath, exist_ok=True)
     to_add = []
-    for collection in client[db['name']].keys():
+    colls = client[db['name']].collection_names(include_system_collections=False)
+    for collection in colls:
         f = os.path.join(dbpath, collection + '.json')
-        cmd = ['mongoexport', '--db',  db['name'], '--collection', collection, 
-                              '--file', f]
+        cmd = ['mongoexport', '--db',  db['name'], '--collection', collection,
+                              '--out', f]
         subprocess.check_call(cmd)
         to_add.append(os.path.join(db['path'], collection + '.json'))
     # update the repo
@@ -68,21 +71,37 @@ def dump_database(db, client, rc):
     else:
         raise ValueError('Do not know how to dump this kind of database')
 
+
+def create_client():
+    """This creates ensures that a client is connected and alive."""
+    client = None
+    while client is None:
+        try: 
+            client = MongoClient()
+        except (AutoReconnect, ConnectionFailure):
+            time.sleep(0.1)
+    while not client.alive():
+        time.sleep(0.1)  # we need tp wait for the server to startup
+    return client
+
 @contextmanager
 def connect(rc):
+    """Context manager for ensuring that database is properly setup and torn down"""
     mongodbpath = rc.mongodbpath
-    if os.path.isdir(mongodbpath)
+    if os.path.isdir(mongodbpath):
         dbpath_existed = True
     else:
         dbpath_existed = False
         os.makedirs(mongodbpath)
     proc = subprocess.Popen(['mongod', '--dbpath', mongodbpath], universal_newlines=True)
+    print('mongod pid: {0}'.format(proc.pid))
+    client = create_client()
     for db in rc.databases:
         load_database(db, rc)
-    client = MongoClient()
     yield client
     for db in rc.databases:
         dump_database(db, client, rc)
+    client.disconnect()
     proc.terminate()
     if not dbpath_existed:
         shutil.rmtree(mongodbpath)

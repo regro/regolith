@@ -62,7 +62,7 @@ def ensure_database(db):
 
 def ensure_databases(dbs):
     """Ensures each dataset in a list of databases"""
-    return list(map(ensure_databases, dbs))
+    return list(map(ensure_database, dbs))
 
 
 def ensure_store(store):
