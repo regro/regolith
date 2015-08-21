@@ -45,3 +45,35 @@ This is used to represent connection information to document stores, think PDFs,
      ...
      ]
 
+
+---------------------------------
+Keys Usually Set by CLI
+---------------------------------
+The following keys are normally set by the command line interface. However, you 
+can set them in the run control file should you choose to.
+
+``cmd``
+=========
+The command to run.  
+
+.. code-block:: python
+
+    'rc' | 'add' | ...  # str
+
+
+``db``
+=========
+The database to use.  This should coorespond to the name field of one of the ``databases`` entries.
+
+``coll``
+=========
+The collection name inside of a database to use.  
+
+``document``
+================
+The document to add, update, etc. Should be in JSON / mongodb format.
+
+``public_only``
+==================
+Boolean for whether to select only public databases.
+

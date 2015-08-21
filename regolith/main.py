@@ -39,7 +39,7 @@ def create_parser():
     addp = subp.add_parser('add', help='adds a record to a database and collection')
     addp.add_argument('db', help='database name')
     addp.add_argument('coll', help='collection name')
-    addp.add_argument('doc', help='document, in JSON / mongodb format')
+    addp.add_argument('document', help='document, in JSON / mongodb format')
     return p
 
 
@@ -65,7 +65,7 @@ def main(args=None):
     if rc.cmd == 'rc':
         print(rc._pformat())
     else:
-        with connect(rc) as client:
+        with connect(rc) as rc.client:
             pass
 
 if __name__ == '__main__':
