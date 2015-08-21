@@ -1,5 +1,6 @@
 """Helps manage mongodb setup and connections."""
 import os
+import shutil
 import subprocess
 from glob import iglob
 from contextlib import contextmanager
@@ -68,7 +69,13 @@ def dump_database(db, client, rc):
 
 @contextmanager
 def connect(rc):
-    proc = subprocess.Popen(['mongod', '--dbpath', rc.mongodbpath], universal_newlines=True)
+    mongodbpath = rc.mongodbpath
+    if os.path.isdir(mongodbpath)
+        dbpath_existed = True
+    else:
+        dbpath_existed = False
+        os.makedirs(mongodbpath)
+    proc = subprocess.Popen(['mongod', '--dbpath', mongodbpath], universal_newlines=True)
     for db in rc.databases:
         load_database(db, rc)
     client = MongoClient()
@@ -76,3 +83,5 @@ def connect(rc):
     for db in rc.databases:
         dump_database(db, client, rc)
     proc.terminate()
+    if not dbpath_existed:
+        shutil.rmtree(mongodbpath)

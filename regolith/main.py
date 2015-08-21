@@ -1,4 +1,5 @@
 """The main CLI for regolith"""
+from __future__ import print_function
 import os
 import json
 from argparse import ArgumentParser
@@ -6,12 +7,21 @@ from argparse import ArgumentParser
 from regolith.runcontrol import RunControl, NotSpecified
 from regolith.validators import DEFAULT_VALIDATORS
 from regolith.database import connect
+from regolith import commands
 
 DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
     builddir='_build',
     mongodbpath=property(lambda self: os.path.join(self.builddir, '_dbpath'))
     )
+
+DISCONNECTED_COMMANDS = {
+    'rc': lambda rc: print(rc._pformat()),
+    }
+
+CONNECTED_COMMANDS = {
+    'add': commands.add_cmd,
+    }
 
 
 def load_json_rcfile(fname):
@@ -40,7 +50,7 @@ def create_parser():
     addp = subp.add_parser('add', help='adds a record to a database and collection')
     addp.add_argument('db', help='database name')
     addp.add_argument('coll', help='collection name')
-    addp.add_argument('document', help='document, in JSON / mongodb format')
+    addp.add_argument('documents', nargs='+', help='documents, in JSON / mongodb format')
     return p
 
 
@@ -63,11 +73,11 @@ def main(args=None):
     ns = parser.parse_args(args)
     rc._update(ns.__dict__)
     filter_databases(rc)
-    if rc.cmd == 'rc':
-        print(rc._pformat())
+    if rc.cmd in DISCONNECTED_COMMANDS:
+        DISCONNECTED_COMMANDS[rc.cmd](rc)
     else:
         with connect(rc) as rc.client:
-            pass
+            CONNECTED_COMMANDS[rc.cmd](rc)
 
 if __name__ == '__main__':
     main()

@@ -79,9 +79,9 @@ The database to use.  This should coorespond to the name field of one of the ``d
 =========
 The collection name inside of a database to use.  
 
-``document``
+``documents``
 ================
-The document to add, update, etc. Should be in JSON / mongodb format.
+List of documents to add, update, etc. Should be in JSON / mongodb format.
 
 ``public_only``
 ==================
