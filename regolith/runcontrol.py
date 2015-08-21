@@ -122,6 +122,13 @@ class RunControl(object):
         s = ", ".join(["{0!s}={1!r}".format(k, self._dict[k]) for k in keys])
         return "{0}({1})".format(self.__class__.__name__, s)
 
+    def _get(self, key, default=None):
+        try:
+            val = self[key]
+        except (KeyError, AttributeError):
+            val = default
+        return val
+
     def _pformat(self):
         keys = sorted(self._dict.keys())
         f = lambda k: "{0!s}={1}".format(k, pformat(self._dict[k], indent=2))

@@ -2,6 +2,15 @@ Top-level Configuration Keys
 ================================
 Herein are described the top-level keys in the run control file.
 
+``builddir``
+=============
+The temporary location to build whatever it is needs building.
+
+.. code-block:: python
+
+    'path/to/dir' or None  # string, optional
+
+
 ``databases``
 ===============
 This represents the public or private databases that are used to store unstructured data about the group 
