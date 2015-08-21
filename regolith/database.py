@@ -68,7 +68,7 @@ def dump_database(db, client, rc):
 
 @contextmanager
 def connect(rc):
-    proc = subprocess.Popen(['mongod'], universal_newlines=True)
+    proc = subprocess.Popen(['mongod', '--dbpath', rc.mongodbpath], universal_newlines=True)
     for db in rc.databases:
         load_database(db, rc)
     client = MongoClient()

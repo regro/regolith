@@ -11,6 +11,12 @@ The temporary location to build whatever it is needs building.
     'path/to/dir' or None  # string, optional
 
 
+``mongodbpath``
+=============
+The value to pass into the ``--dbpath`` option to ``mongod``.  Defaults to ``'${builddir}/_dbpath'``
+if unspecified. 
+
+
 ``databases``
 ===============
 This represents the public or private databases that are used to store unstructured data about the group 
@@ -61,6 +67,10 @@ The command to run.
     'rc' | 'add' | ...  # str
 
 
+``client``
+=================
+The MongoDB client to use.  This is almost always set by regolith internally.
+
 ``db``
 =========
 The database to use.  This should coorespond to the name field of one of the ``databases`` entries.
@@ -76,4 +86,3 @@ The document to add, update, etc. Should be in JSON / mongodb format.
 ``public_only``
 ==================
 Boolean for whether to select only public databases.
-

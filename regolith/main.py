@@ -10,6 +10,7 @@ from regolith.database import connect
 DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
     builddir='_build',
+    mongodbpath=property(lambda self: os.path.join(self.builddir, '_dbpath'))
     )
 
 
