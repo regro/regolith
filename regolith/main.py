@@ -21,6 +21,7 @@ DISCONNECTED_COMMANDS = {
 
 CONNECTED_COMMANDS = {
     'add': commands.add_cmd,
+    'ingest': commands.ingest,
     }
 
 
@@ -51,6 +52,14 @@ def create_parser():
     addp.add_argument('db', help='database name')
     addp.add_argument('coll', help='collection name')
     addp.add_argument('documents', nargs='+', help='documents, in JSON / mongodb format')
+    # ingest subparser
+    ingp = subp.add_parser('ingest', help='ingest many records from a foreign '
+                                          'resource into a database')
+    ingp.add_argument('db', help='database name')
+    ingp.add_argument('filename', help='file to ingest')
+    ingp.add_argument('--coll', dest='coll',  default=None, 
+                      help='collection name, if this is not given it is infered from the '
+                           'file type or file name.')
     return p
 
 

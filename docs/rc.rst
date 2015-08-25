@@ -86,3 +86,8 @@ List of documents to add, update, etc. Should be in JSON / mongodb format.
 ``public_only``
 ==================
 Boolean for whether to select only public databases.
+
+
+``filename``
+==============
+Sting that is a path to a file to operate on.
