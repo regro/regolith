@@ -24,16 +24,16 @@ def _ingest_citations(rc):
     import bibtexparser
     with open(rc.filename, 'r') as f:
         bibs = bibtexparser.load(f)
-    for bib in bibs:
+    for bib in bibs.entries:
         bib['_id'] = bib.pop('ID')
         bib['entrytype'] = bib.pop('ENTRYTYPE')
         if 'author' in bib:
             bib['author'] = [a.strip() for a in bib['author'].split(' and ')]
-    _insert_many(rc.client[rc.db][rc.coll], bibs)
+    _insert_many(rc.client[rc.db][rc.coll], bibs.entries)
 
 
 def _determine_ingest_coll(rc):
-    f = rf.filename
+    f = rc.filename
     base, ext = os.path.splitext(f)
     if ext == '.bib':
         return 'citations'
