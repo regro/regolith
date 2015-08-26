@@ -22,6 +22,7 @@ DISCONNECTED_COMMANDS = {
 CONNECTED_COMMANDS = {
     'add': commands.add_cmd,
     'ingest': commands.ingest,
+    'app': commands.app,
     }
 
 
@@ -60,6 +61,9 @@ def create_parser():
     ingp.add_argument('--coll', dest='coll',  default=None, 
                       help='collection name, if this is not given it is infered from the '
                            'file type or file name.')
+    # app subparser
+    appp = subp.add_parser('app', help='starts up a flask app for inspecting and '
+                                       'modifying regolith data.')
     return p
 
 

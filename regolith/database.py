@@ -4,6 +4,7 @@ import time
 import shutil
 import subprocess
 from glob import iglob
+from warnings import warn
 from contextlib import contextmanager
 
 from pymongo import MongoClient
@@ -58,9 +59,17 @@ def dump_git_database(db, client, rc):
     cmd = ['git', 'add'] + to_add
     subprocess.check_call(cmd, cwd=dbdir)
     cmd = ['git', 'commit', '-m', 'regolith auto-commit']
-    subprocess.check_call(cmd, cwd=dbdir)
+    try:
+        subprocess.check_call(cmd, cwd=dbdir)
+    except subprocess.CalledProcessError: 
+        warn('Could not git commit to ' + dbdir, RuntimeWarning)
+        return
     cmd = ['git', 'push']
-    subprocess.check_call(cmd, cwd=dbdir)
+    try:
+        subprocess.check_call(cmd, cwd=dbdir)
+    except subprocess.CalledProcessError: 
+        warn('Could not git push from ' + dbdir, RuntimeWarning)
+        return
 
 
 def dump_database(db, client, rc):

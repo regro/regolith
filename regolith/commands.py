@@ -48,3 +48,13 @@ def ingest(rc):
         _ingest_citations(rc)
     else:
         raise ValueError("don't know how to ingest collection {0!r}".format(rc.coll))
+
+def app(rc):
+    """Runs flask app"""
+    import signal
+    from flask import request
+    from regolith.app import app
+    if hasattr(app, 'rc'):
+        raise RuntimeError('cannot assign rc to app')
+    app.rc = rc
+    app.run(host='localhost')
