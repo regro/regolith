@@ -56,7 +56,7 @@ def app(rc):
     if hasattr(app, 'rc'):
         raise RuntimeError('cannot assign rc to app')
     app.rc = rc
-    print('DO NOT type Ctrl-C to close the server!!!')
+    print('\nDO NOT type Ctrl-C to close the server!!!')
     print('Instead, run the following:')
     print("\n$ curl -d '' http://localhost:5000/shutdown\n")
     app.run(host='localhost')
