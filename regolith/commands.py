@@ -52,9 +52,11 @@ def ingest(rc):
 def app(rc):
     """Runs flask app"""
     import signal
-    from flask import request
     from regolith.app import app
     if hasattr(app, 'rc'):
         raise RuntimeError('cannot assign rc to app')
     app.rc = rc
+    print('DO NOT type Ctrl-C to close the server!!!')
+    print('Instead, run the following:')
+    print("\n$ curl -d '' http://localhost:5000/shutdown\n")
     app.run(host='localhost')

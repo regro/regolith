@@ -18,4 +18,4 @@ def shutdown_server():
 @app.route('/shutdown', methods=['GET', 'POST'])
 def shutdown():
     shutdown_server()
-    return 'Regolith server shutting down...'
+    return 'Regolith server shutting down...\n'
