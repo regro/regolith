@@ -36,7 +36,10 @@ def main():
         platforms='Cross Platform',
         classifiers=['Programming Language :: Python :: 3'],
         packages=['regolith'],
+        package_dir={'regolith': 'regolith'},
+        package_data={'regolith': ['templates/*']},
         scripts=['scripts/regolith'],
+        zip_safe=False,
         )
     if HAVE_SETUPTOOLS:
         skw['setup_requires'] = []

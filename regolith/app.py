@@ -1,12 +1,13 @@
 """Flask app for looking at information in regolith."""
-from flask import Flask, request
+from flask import Flask, request, render_template
 
 app = Flask('regolith')
 
 
 @app.route('/')
 def root():
-    return 'Welcome to Regolith'
+    rc = app.rc
+    return render_template('index.html', rc=rc)
 
 
 def shutdown_server():
