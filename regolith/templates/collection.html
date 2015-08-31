@@ -1,9 +1,14 @@
 <head>
 </head>
 <body>
-<h1>Collection {{ dbname }}/{{ collname }}</h1>
-
-
+<h1>Collection {{dbname}}/{{collname}}</h1>
+{% for doc in coll.find() %}
+  <form id="{{doc._id}}" method="POST">
+    <textarea row="4" cols="120" name="body" action="#{{doc._id}}">{{doc}}</textarea>
+    <input type="submit" value="Save" name="save" />
+    <input type="submit" value="Cancel" name="cancel"/>
+  </form>
+{% endfor %}
 <form action="shutdown" method="post">
   <button name="shutdown" value="shutdown">Shutdown Server</button>
 </form>

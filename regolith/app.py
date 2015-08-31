@@ -1,6 +1,7 @@
 """Flask app for looking at information in regolith."""
 from flask import Flask, request, render_template
 from werkzeug.exceptions import abort
+from bson.json_util import loads
 
 app = Flask('regolith')
 
@@ -23,12 +24,20 @@ def shutdown():
     return 'Regolith server shutting down...\n'
 
 
-@app.route('/db/<dbname>/coll/<collname>')
+@app.route('/db/<dbname>/coll/<collname>', methods=['GET', 'POST'])
 def collection_page(dbname, collname):
     rc = app.rc
     try:
         coll = rc.client[dbname][collname]
     except (KeyError, AttributeError):
         abort(404)
+    if request.method == 'POST':
+        form = request.form
+        if 'shutdown' in form:
+            return shutdown()
+        elif 'cancel' in form:
+            pass
+        elif 'save' in form:
+            coll.save(loads(form['body'])) 
     return render_template('collection.html', rc=rc, dbname=dbname, 
                            collname=collname, coll=coll)
