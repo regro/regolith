@@ -6,7 +6,7 @@
   <h3>{{ dbname }}</h3>
   <ul>
   {% for collname in rc.client[dbname].collection_names(include_system_collections=False) %}
-    <li>{{ collname }}</li>
+    <li><a href="db/{{ dbname }}/coll/{{ collname }}">{{ collname }}</a></li>
   {% endfor %}
   </ul>
 {% endfor %}
