@@ -6,9 +6,18 @@
   <h3>{{ dbname }}</h3>
   <ul>
   {% for collname in rc.client[dbname].collection_names(include_system_collections=False) %}
-    <li><a href="db/{{ dbname }}/coll/{{ collname }}">{{ collname }}</a></li>
+    <li><a href="/db/{{dbname}}/coll/{{collname}}">{{collname}}</a></li>
   {% endfor %}
   </ul>
+
+  <div style="margin-left:1.5em;">
+  <b>Add new collection:</b>
+  <form action="" method="post">
+    <textarea rows="1" cols="16" name="dbname" style="display:none;">{{dbname}}</textarea>
+    <textarea rows="1" cols="16" name="collname" ></textarea>
+    <button name="Create" value="create">Create</button>
+  </form>
+  </div>
 {% endfor %}
 
 <form action="shutdown" method="post">

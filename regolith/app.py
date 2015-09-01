@@ -1,6 +1,5 @@
 """Flask app for looking at information in regolith."""
-from flask import Flask, request, render_template
-from werkzeug.exceptions import abort
+from flask import Flask, abort, request, render_template, redirect, url_for
 from bson import json_util, objectid
 
 from regolith.tools import insert_one, delete_one
@@ -8,9 +7,12 @@ from regolith.tools import insert_one, delete_one
 app = Flask('regolith')
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def root():
     rc = app.rc
+    if request.method == 'POST':
+        form = request.form
+        return redirect('/db/{dbname}/coll/{collname}'.format(**form))
     return render_template('index.html', rc=rc)
 
 
