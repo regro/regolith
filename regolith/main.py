@@ -64,6 +64,8 @@ def create_parser():
     # app subparser
     appp = subp.add_parser('app', help='starts up a flask app for inspecting and '
                                        'modifying regolith data.')
+    appp.add_argument('--debug', dest='debug', action='store_true', default=False, 
+                      help='starts server in debug mode')
     return p
 
 
@@ -90,11 +92,7 @@ def main(args=None):
         DISCONNECTED_COMMANDS[rc.cmd](rc)
     else:
         with connect(rc) as rc.client:
-            try:
-                CONNECTED_COMMANDS[rc.cmd](rc)
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
+            CONNECTED_COMMANDS[rc.cmd](rc)
 
 if __name__ == '__main__':
     main()

@@ -98,10 +98,8 @@ def connect(rc):
     """Context manager for ensuring that database is properly setup and torn down"""
     mongodbpath = rc.mongodbpath
     if os.path.isdir(mongodbpath):
-        dbpath_existed = True
-    else:
-        dbpath_existed = False
-        os.makedirs(mongodbpath)
+        shutil.rmtree(mongodbpath)
+    os.makedirs(mongodbpath)
     proc = subprocess.Popen(['mongod', '--dbpath', mongodbpath], universal_newlines=True)
     print('mongod pid: {0}'.format(proc.pid))
     client = create_client()
@@ -112,5 +110,5 @@ def connect(rc):
         dump_database(db, client, rc)
     client.disconnect()
     proc.terminate()
-    if not dbpath_existed:
+    if os.path.isdir(mongodbpath):
         shutil.rmtree(mongodbpath)

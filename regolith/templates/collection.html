@@ -3,13 +3,21 @@
 <body>
 <h1>Collection {{dbname}}/{{collname}}</h1>
 {% for doc in coll.find() %}
+  {% set docdump = json_util.dumps(doc, sort_keys=True) %}
+  {% set nrows = (len(docdump) // 120) + 1%}
+  <div style="text-align:center;vertical-align:middle;">
+  <h3>{{doc._id}} 
+  {% if status and status_id == str(doc._id) %}
+    [{{status}}]
+  {% endif %}
+  </h3>
   <form id="{{doc._id}}" method="POST">
-    <textarea row="4" cols="120" name="body" action="#{{doc._id}}">{{doc}}</textarea>
-    <input type="submit" value="Save" name="save" />
+    <textarea rows="{{nrows}}" cols="120" name="body" action="#{{doc._id}}">{{docdump}}</textarea>
+    <input type="submit" value="Save" name="save" style="vertical-align:middle;"/>
     <input type="submit" value="Cancel" name="cancel"/>
-  </form>
+  </form></div>
 {% endfor %}
-<form action="shutdown" method="post">
+<form action="/shutdown" method="post">
   <button name="shutdown" value="shutdown">Shutdown Server</button>
 </form>
 </body>

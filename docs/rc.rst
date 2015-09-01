@@ -91,3 +91,8 @@ Boolean for whether to select only public databases.
 ``filename``
 ==============
 Sting that is a path to a file to operate on.
+
+``debug``
+================
+Boolean for whether to run in debug mode or not.
+
