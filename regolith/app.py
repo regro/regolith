@@ -1,7 +1,9 @@
 """Flask app for looking at information in regolith."""
 from flask import Flask, request, render_template
 from werkzeug.exceptions import abort
-from bson import json_util
+from bson import json_util, objectid
+
+from regolith.tools import insert_one, delete_one
 
 app = Flask('regolith')
 
@@ -45,6 +47,14 @@ def collection_page(dbname, collname):
             coll.save(body) 
             status = 'saved ✓'
             status_id = str(body['_id'])
-    return render_template('collection.html', rc=rc, dbname=dbname, len=len,
-                           status=status, status_id=status_id, str=str,
+        elif 'add' in form:
+            body = json_util.loads(form['body'])
+            added = insert_one(coll, body)
+            status = 'added ✓'
+            status_id = str(added.inserted_id)
+        elif 'delete' in form:
+            body = json_util.loads(form['body'])
+            deled = delete_one(coll, body)
+    return render_template('collection.html', rc=rc, dbname=dbname, len=len, str=str,
+                           status=status, status_id=status_id, objectid=objectid,
                            collname=collname, coll=coll, json_util=json_util)

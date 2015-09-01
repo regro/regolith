@@ -28,3 +28,37 @@ else:
     ON_PYMONGO_V2 = False
     ON_PYMONGO_V3 = True
 
+def fallback(cond, backup):
+    """Decorator for returning the object if cond is true and a backup if cond is false.
+    """
+    def dec(obj):
+        return obj if cond else backup
+    return dec
+
+@fallback(ON_PYMONGO_V2, None)
+class InsertOneProxy(object):
+
+    def __init__(self, inserted_id, acknowledged):
+        self.inserted_id = inserted_id
+        self.acknowledged = acknowledged
+
+
+def insert_one(coll, doc):
+    if ON_PYMONGO_V2:
+        i = coll.insert(doc)
+        return InsertOneProxy(i, True)
+    else:
+        return coll.insert_one(doc)
+
+def insert_many(coll, docs):
+    if ON_PYMONGO_V2:
+        return coll.insert(docs)
+    else:
+        return coll.insert_many(docs)
+
+def delete_one(coll, doc):
+    if ON_PYMONGO_V2:
+        return coll.remove(doc, multi=False)
+    else:
+        return coll.delete_one(doc)
+    

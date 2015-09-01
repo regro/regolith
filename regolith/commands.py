@@ -2,13 +2,7 @@
 import os
 import json
 
-from regolith.tools import string_types, ON_PYMONGO_V2
-
-def _insert_many(coll, docs):
-    if ON_PYMONGO_V2:
-        coll.insert(docs)
-    else:
-        coll.insert_many(docs)
+from regolith.tools import string_types, ON_PYMONGO_V2, insert_many
 
 
 def add_cmd(rc):
@@ -17,7 +11,7 @@ def add_cmd(rc):
     coll = db[rc.coll]
     docs = [json.loads(doc) if isinstance(doc, string_types) else doc
             for doc in rc.documents]
-    _insert_many(coll, docs)
+    insert_many(coll, docs)
 
 
 def _ingest_citations(rc):
@@ -29,7 +23,7 @@ def _ingest_citations(rc):
         bib['entrytype'] = bib.pop('ENTRYTYPE')
         if 'author' in bib:
             bib['author'] = [a.strip() for a in bib['author'].split(' and ')]
-    _insert_many(rc.client[rc.db][rc.coll], bibs.entries)
+    insert_many(rc.client[rc.db][rc.coll], bibs.entries)
 
 
 def _determine_ingest_coll(rc):

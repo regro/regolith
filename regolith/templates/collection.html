@@ -2,6 +2,11 @@
 </head>
 <body>
 <h1>Collection {{dbname}}/{{collname}}</h1>
+
+<form action="/shutdown" method="post">
+  <button name="shutdown" value="shutdown">Shutdown Server</button>
+</form>
+
 {% for doc in coll.find() %}
   {% set docdump = json_util.dumps(doc, sort_keys=True) %}
   {% set nrows = (len(docdump) // 120) + 1%}
@@ -13,10 +18,19 @@
   </h3>
   <form id="{{doc._id}}" method="POST">
     <textarea rows="{{nrows}}" cols="120" name="body" action="#{{doc._id}}">{{docdump}}</textarea>
-    <input type="submit" value="Save" name="save" style="vertical-align:middle;"/>
+    <input type="submit" value="Save" name="save"/>
+    <input type="submit" value="Delete" name="delete"/>
     <input type="submit" value="Cancel" name="cancel"/>
   </form></div>
 {% endfor %}
+
+<div style="text-align:center;vertical-align:middle;">
+<h3>Add New Entry</h3>
+<form id="addnewdoc" method="POST">
+  <textarea rows="4" cols="120" name="body" action="#addnewdoc">{"_id": {"$oid": "{{str(objectid.ObjectId())}}"}}</textarea>
+  <input type="submit" value="Add" name="add"/>
+</form></div>
+
 <form action="/shutdown" method="post">
   <button name="shutdown" value="shutdown">Shutdown Server</button>
 </form>
