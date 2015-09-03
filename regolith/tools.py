@@ -62,3 +62,13 @@ def delete_one(coll, doc):
     else:
         return coll.delete_one(doc)
     
+def all_docs_from_collection(client, collname):
+    """Yield all entries in for all collections of a given name in a given database."""
+    for dbname in client.database_names():
+        if dbname == 'local':
+            continue
+        db = client[dbname]
+        if collname not in db.collection_names():
+            continue
+        yield from db[collname].find()
+

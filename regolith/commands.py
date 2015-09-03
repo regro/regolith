@@ -3,6 +3,7 @@ import os
 import json
 
 from regolith.tools import string_types, ON_PYMONGO_V2, insert_many
+from regolith.builder import builder
 
 
 def add_cmd(rc):
@@ -55,3 +56,12 @@ def app(rc):
     print("\n$ curl -d '' http://localhost:5000/shutdown\n")
     app.run(host='localhost')
     del app.rc
+
+
+def build(rc):
+    """Builds all of the build targets"""
+    for t in rc.build_targets:
+        bldr = builder(t, rc)
+        bldr.build()
+
+

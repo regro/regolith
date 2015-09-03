@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block header %}
+{% endblock header %}
+{% block content %}
+{% for p in people %}
+  <h1>{{p['title']}} {{p['name']}}</h1>
+  <ul>
+    <li><b>Position:</b> {{p['position']}}</li>
+  </ul>
+{% endfor %}
+{% endblock content %}
+{% block footer %}
+{% endblock footer %}
