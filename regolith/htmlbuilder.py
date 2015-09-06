@@ -24,6 +24,7 @@ class HtmlBuilder(object):
         ctx['rc'] = ctx.get('rc', self.rc)
         ctx['static'] = ctx.get('static', 
                                os.path.relpath('static', os.path.dirname(fname)))
+        ctx['root'] = ctx.get('root', os.path.relpath('/', os.path.dirname(fname)))
         result = template.render(ctx)
         with open(os.path.join(self.bldir, fname), 'wt') as f:
             f.write(result)
