@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% block header %}
+<h1>People</h1>
 {% endblock header %}
 {% block content %}
 {% for p in people %}
-  <h1>{{p['title']}} {{p['name']}}</h1>
+  <a href="{{root}}/people/{{p['_id']}}.html">
+    <img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
+  </a>
+  <h1><a href="{{root}}/people/{{p['_id']}}.html">{{p['title']}} {{p['name']}}</a></h1>
   <ul>
-    <li><b>Position:</b> {{p['position']}}</li>
+    <li><b>Position:</b> {{p['position'].capitalize()}}</li>
   </ul>
 {% endfor %}
 {% endblock content %}
