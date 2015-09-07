@@ -74,11 +74,11 @@ This collection describes the members of the research group.  This is normally p
         "month": str, # optional
         "end_year": int, # optional
         "end_month": str,  # optional
-        "description": str, 
+        "description": str, # optional
         "website": str,  # optional URL
+        "syllabus": str,  # optional URL
         "video": str,  # optional URL
         "materials": str,  # optional URL
-        "syllabus": str,  # optional URL
         },
         ...
         ],

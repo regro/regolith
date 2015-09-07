@@ -97,6 +97,27 @@ Duration: {{s['duration']}}{%endif%}
   </li>
 {% endfor %}
 </ul>
+
+{%if 'teaching' in p and len(p['teaching']) > 0%}
+<hr/><a name="teaching" />
+<h1><a href="#teaching">Teaching Experience</a></h1>
+{%for t in sorted(p['teaching'], key=date_key, reverse=True)%}
+  <h2>{{t['course']}}</h2>
+  <h3>{{t['organization']}}</h3>
+  {{t['position']}},
+  <i>
+    {{t.get('month', '')}} {{t['year']}}
+    {%if 'end_year' in t%}- {{t.get('end_month', '')}} {{t['end_year']}}{%endif%}
+  </i>
+  {%if 'description' in t%}<br/>{{t['description']}}{%endif%}
+  {%if 'website' in t%}<a href="{{t['website']}}">[Website]</a>{%endif%}
+  {%if 'syllabus' in t%}<a href="{{t['syllabus']}}">[Syllabus]</a>{%endif%}
+  {%if 'video' in t%}<a href="{{t['video']}}">[Video]</a>{%endif%}
+  {%if 'materials' in t%}<a href="{{t['materials']}}">[Course Materials]</a>{%endif%}
+  <br/><br/>
+{%endfor%}
+{%endif%}
+
 {% endblock content %}
 {% block footer %}
 {% endblock footer %}

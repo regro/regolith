@@ -20,6 +20,17 @@ doc_date_key = lambda x: year_month_to_float(x.get('year', 1970),
 ene_date_key = lambda x: year_month_to_float(x.get('end_year', 1970), 
                                              x.get('end_month', 'jan'))
 
+def date_key(x):
+    if 'end_year' in x:
+        v = year_month_to_float(x['end_year'], x.get('end_month', 'jan'))
+    elif 'year' in x:
+        v = year_month_to_float(x['year'], x.get('month', 'jan'))
+    elif 'begin_year' in x:
+        v = year_month_to_float(x['begin_year'], x.get('begin_month', 'jan'))
+    else:
+        raise KeyError('could not find year in ' + str(x))
+    return v
+
 
 class HtmlBuilder(object):
 
@@ -45,6 +56,7 @@ class HtmlBuilder(object):
         gtx['False'] = False
         gtx['None'] = None
         gtx['sorted'] = sorted
+        gtx['date_key'] = date_key
         gtx['doc_date_key'] = doc_date_key
         gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
 
