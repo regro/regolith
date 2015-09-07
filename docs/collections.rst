@@ -39,6 +39,33 @@ This collection describes the members of the research group.  This is normally p
         },
         ...
         ],
+     "funding": [{ # list of dictionaries
+        "name": str,
+        "value": float,
+        "currency": str, # optional, defaults to "$"
+        "year": int, 
+        "month": str, # optional
+        "duration": str or int, # optional length of award
+        },
+        ...
+        ],
+     "service": [{ # list of dictionaries
+        "name": str,
+        "description": str, 
+        "year": int, 
+        "month": str, # optional
+        "duration": str or int, # optional length of award
+        },
+        ...
+        ],
+     "honors": [{ # list of dictionaries
+        "name": str,
+        "description": str, 
+        "year": int, 
+        "month": str, # optional
+        },
+        ...
+        ],
      }
 
 citations

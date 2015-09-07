@@ -8,6 +8,7 @@
 <p>{{p.get('bio', '').replace('\n\n', '</p><p>')}}</p>
 
 {%if len(education_and_employment) > 0%}
+<hr/>
 <h1>Education & Employment</h1>
 {%for e in education_and_employment%}
   {%if 'institution' in e%}{# In eduction #}
@@ -24,8 +25,23 @@
 {%endfor%}
 {%endif%}
 
+
+{%if 'funding' in p and len(p['funding']) > 0%}
+<hr/>
+<h1>Awards, Grants, & Contracts</h1>
+{%for f in sorted(p['funding'], key=doc_date_key, reverse=True)%}
+<h3>{{f['name']}}</h3>
+{{f.get('currency', '$')}}{{'{:,.2f}'.format(f['value'])}} in 
+{{f.get('month', '')}} {{f['year']}}{%if 'duration' in f%}, 
+Duration: {{f['duration']}}{%endif%}
+<br/><br/>
+{%endfor%}
+{%endif%}
+
+
+<hr/>
 <h1>Publications</h1>
-{%if bibfile%}<h2><a href="{{p['_id']}}.bib">[Download bibtex]</a></h2>{%endif%}
+{%if bibfile%}<h3><a href="{{p['_id']}}.bib">[Download bibtex]</a></h3>{%endif%}
 <ul>
 {% for pub in pubs %}
   <li>

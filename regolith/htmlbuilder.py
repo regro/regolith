@@ -13,8 +13,8 @@ except ImportError:
 from regolith.tools import all_docs_from_collection, year_month_to_float
 
 
-pub_date_key = lambda pub: year_month_to_float(pub.get('year', 1970), 
-                                               pub.get('month', 'jan'))
+doc_date_key = lambda x: year_month_to_float(x.get('year', 1970), 
+                                             x.get('month', 'jan'))
 
 
 ene_date_key = lambda x: year_month_to_float(x.get('end_year', 1970), 
@@ -40,8 +40,13 @@ class HtmlBuilder(object):
     def construct_global_ctx(self):
         self.gtx = gtx = {}
         rc = self.rc
-        gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
         gtx['len'] = len
+        gtx['True'] = True
+        gtx['False'] = False
+        gtx['None'] = None
+        gtx['sorted'] = sorted
+        gtx['doc_date_key'] = doc_date_key
+        gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
 
     def render(self, tname, fname, **kwargs):
         template = self.env.get_template(tname)
@@ -76,7 +81,7 @@ class HtmlBuilder(object):
             pubs = self.filter_publications(names, reverse=True)
             bibfile = self.make_bibtex_file(pubs, pid=p['_id'], person_dir=peeps_dir)
             ene = p.get('employment', []) + p.get('education', [])
-            ene.sort(key=pub_date_key, reverse=True)
+            ene.sort(key=ene_date_key, reverse=True)
             self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
                         title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile, 
                         education_and_employment=ene)
@@ -89,7 +94,7 @@ class HtmlBuilder(object):
             if len(set(pub['author']) & authors) == 0:
                 continue
             pubs.append(pub)
-        pubs.sort(key=pub_date_key, reverse=reverse)
+        pubs.sort(key=doc_date_key, reverse=reverse)
         return pubs
 
     def make_bibtex_file(self, pubs, pid, person_dir='.'):
