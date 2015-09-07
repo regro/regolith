@@ -3,6 +3,12 @@ import os
 import shutil
 
 from jinja2 import Environment, FileSystemLoader
+try:
+    from bibtexparser.bwriter import BibTexWriter
+    from bibtexparser.bibdatabase import BibDatabase
+    HAVE_BIBTEX_PARSER = True
+except ImportError:
+    HAVE_BIBTEX_PARSER = False
 
 from regolith.tools import all_docs_from_collection, year_month_to_float
 
@@ -23,6 +29,9 @@ class HtmlBuilder(object):
                     os.path.join(os.path.dirname(__file__), 'templates'),
                     ]))
         self.construct_global_ctx()
+        if HAVE_BIBTEX_PARSER:
+            self.bibdb = BibDatabase()
+            self.bibwriter = BibTexWriter()
 
     def construct_global_ctx(self):
         self.gtx = gtx = {}
@@ -61,8 +70,9 @@ class HtmlBuilder(object):
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
+            bibfile = self.make_bibtex_file(pubs, pid=p['_id'], person_dir=peeps_dir)
             self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
-                        title=p.get('name', ''), pubs=pubs, names=names)
+                        title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile)
         self.render('people.html', os.path.join('people', 'index.html'), title='People')
 
     def filter_publications(self, authors, reverse=False):
@@ -74,4 +84,19 @@ class HtmlBuilder(object):
             pubs.append(pub)
         pubs.sort(key=pub_date_key, reverse=reverse)
         return pubs
-        
+
+    def make_bibtex_file(self, pubs, pid, person_dir='.'):
+        if not HAVE_BIBTEX_PARSER:
+            return None
+        self.bibdb.entries = ents = []
+        for pub in pubs:
+            ent = dict(pub)
+            ent['ID'] = ent.pop('_id')
+            ent['ENTRYTYPE'] = ent.pop('entrytype')
+            ent['author'] = ' and '.join(ent['author'])
+            ents.append(ent)
+        fname = os.path.join(person_dir, pid) + '.bib'
+        with open(fname, 'w') as f:
+            f.write(self.bibwriter.write(self.bibdb))
+        return fname
+

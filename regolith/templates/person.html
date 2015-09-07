@@ -3,12 +3,12 @@
 <h1>{{p['name']}}</h1>
 {% endblock header %}
 {% block content %}
-{% for p in people %}
 <h1>{{p['position'].capitalize()}}</h1>
 <img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
 <p>{{p.get('bio', '').replace('\n\n', '</p><p>')}}</p>
 
 <h1>Publications</h1>
+{%if bibfile%}<h2><a href="{{p['_id']}}.bib">[Download bibtex]</a></h2>{%endif%}
 <ul>
 {% for pub in pubs %}
   <li>
@@ -37,7 +37,6 @@
   </li>
 {% endfor %}
 </ul>
-{% endfor %}
 {% endblock content %}
 {% block footer %}
 {% endblock footer %}
