@@ -51,7 +51,7 @@ This collection describes the members of the research group.  This is normally p
         ],
      "service": [{ # list of dictionaries
         "name": str,
-        "description": str, 
+        "description": str, # optional
         "year": int, 
         "month": str, # optional
         "duration": str or int, # optional length of award
@@ -60,7 +60,7 @@ This collection describes the members of the research group.  This is normally p
         ],
      "honors": [{ # list of dictionaries
         "name": str,
-        "description": str, 
+        "description": str, # optional
         "year": int, 
         "month": str, # optional
         },

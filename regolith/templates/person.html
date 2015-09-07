@@ -7,9 +7,23 @@
 <img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
 <p>{{p.get('bio', '').replace('\n\n', '</p><p>')}}</p>
 
+
+{%if 'honors' in p and len(p['honors']) > 0%}
+<hr/><a name="honors" />
+<h1><a href="#honors">Honors</a></h1>
+{%for h in sorted(p['honors'], key=doc_date_key, reverse=True)%}
+<h3>{{h['name']}}</h3>
+{{h.get('month', '')}} {{h['year']}}{%if 'duration' in h%}, 
+Duration: {{h['duration']}}{%endif%}
+{%if 'description' in h%}<br/>{{h['description']}}{%endif%}
+<br/><br/>
+{%endfor%}
+{%endif%}
+
+
 {%if len(education_and_employment) > 0%}
-<hr/>
-<h1>Education & Employment</h1>
+<hr/><a name="education-and-employment" />
+<h1><a href="#education-and-employment">Education & Employment</a></h1>
 {%for e in education_and_employment%}
   {%if 'institution' in e%}{# In eduction #}
     <h2>{{e['institution']}}</h2><h3>{{e['degree']}}</h3>
@@ -27,8 +41,8 @@
 
 
 {%if 'funding' in p and len(p['funding']) > 0%}
-<hr/>
-<h1>Awards, Grants, & Contracts</h1>
+<hr/><a name="funding" />
+<h1><a href="#funding">Awards, Grants, & Contracts</a></h1>
 {%for f in sorted(p['funding'], key=doc_date_key, reverse=True)%}
 <h3>{{f['name']}}</h3>
 {{f.get('currency', '$')}}{{'{:,.2f}'.format(f['value'])}} in 
@@ -39,8 +53,21 @@ Duration: {{f['duration']}}{%endif%}
 {%endif%}
 
 
-<hr/>
-<h1>Publications</h1>
+{%if 'service' in p and len(p['service']) > 0%}
+<hr/><a name="service" />
+<h1><a href="#service">Service</a></h1>
+{%for s in sorted(p['service'], key=doc_date_key, reverse=True)%}
+<h3>{{s['name']}}</h3>
+{{s.get('month', '')}} {{s['year']}}{%if 'duration' in s%}, 
+Duration: {{s['duration']}}{%endif%}
+{%if 'description' in s%}<br/>{{s['description']}}{%endif%}
+<br/><br/>
+{%endfor%}
+{%endif%}
+
+
+<hr/><a name="pubs" />
+<h1><a href="#pubs">Publications</a></h1>
 {%if bibfile%}<h3><a href="{{p['_id']}}.bib">[Download bibtex]</a></h3>{%endif%}
 <ul>
 {% for pub in pubs %}
