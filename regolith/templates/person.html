@@ -138,13 +138,12 @@ Duration: {{s['duration']}}{%endif%}
 
 {%if 'skills' in p and len(p['skills']) > 0%}
 <hr/><a name="skills" />
-<h1><a href="#skills">Skills</a></h1>
+<h1><a href="#skills">Skills</a></h1><br/>
 {%for cat, cgrp in groupby(p['skills'], key=category_val)%}
   <h3>{{cat}}</h3>
   <ul>{%for lvl, lgrp in groupby(cgrp, key=level_val)%}
-    <li><b>{{lvl}}:</b> {{', '.join(lgrp)}}</li>
+    <li><b>{{lvl.capitalize()}}:</b> {{gets(lgrp, 'name', '<nemo>') | join(', ')}}</li>
   {%endfor%}</ul>
-  <br/><br/>
 {%endfor%}
 {%endif%}
 

@@ -33,6 +33,12 @@ def date_key(x):
     return v
 
 
+def gets(seq, key, default=None):
+    """Gets a key from every element of a sequence if possible."""
+    for x in seq:
+        yield x.get(key, default)
+
+
 class HtmlBuilder(object):
 
     btype = 'html'
@@ -58,6 +64,7 @@ class HtmlBuilder(object):
         gtx['None'] = None
         gtx['sorted'] = sorted
         gtx['groupby'] = groupby
+        gtx['gets'] = gets
         gtx['date_key'] = date_key
         gtx['doc_date_key'] = doc_date_key
         gtx['level_val'] = level_val
