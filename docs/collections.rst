@@ -66,6 +66,22 @@ This collection describes the members of the research group.  This is normally p
         },
         ...
         ],
+     "teaching": [{ # list of dicts
+        "course": str,  # name of the course
+        "organization": str,
+        "position": str,
+        "year": int, 
+        "month": str, # optional
+        "end_year": int, # optional
+        "end_month": str,  # optional
+        "description": str, 
+        "website": str,  # optional URL
+        "video": str,  # optional URL
+        "materials": str,  # optional URL
+        "syllabus": str,  # optional URL
+        },
+        ...
+        ],
      }
 
 citations

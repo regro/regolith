@@ -8,8 +8,8 @@
 </form>
 
 {% for doc in coll.find() %}
-  {% set docdump = json_util.dumps(doc, sort_keys=True) %}
-  {% set nrows = (len(docdump) // 120) + 1%}
+  {% set docdump = json_util.dumps(doc, sort_keys=True, indent=1) %}
+  {% set nrows = docdump.count('\n') + 1%}
   <div style="text-align:center;vertical-align:middle;">
   <h3>{{doc._id}} 
   {% if status and status_id == str(doc._id) %}
