@@ -7,6 +7,24 @@
 <img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
 <p>{{p.get('bio', '').replace('\n\n', '</p><p>')}}</p>
 
+{%if len(education_and_employment) > 0%}
+<h1>Education & Employment</h1>
+{%for e in education_and_employment%}
+  {%if 'institution' in e%}{# In eduction #}
+    <h2>{{e['institution']}}</h2>{{e['degree']}}, 
+  {%elif 'organization' in e%}{# In emplyment #}
+    <h2>{{e['organization']}}</h2>{{e['position']}}, 
+  {%endif%}
+  <i>{{e['begin_year']}} - {{e.get('end_year', 'present')}}</i><br/>
+  {{e['location']}}<br/>
+  {%if 'other' in e and len(e['other']) > 0%}
+    <ul>{%for o in e['other']%}
+      <li>{{o}}</li>
+    {%endfor%}</ul>
+  {%endif%}
+{%endfor%}
+{%endif%}
+
 <h1>Publications</h1>
 {%if bibfile%}<h2><a href="{{p['_id']}}.bib">[Download bibtex]</a></h2>{%endif%}
 <ul>

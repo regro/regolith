@@ -17,6 +17,10 @@ pub_date_key = lambda pub: year_month_to_float(pub.get('year', 1970),
                                                pub.get('month', 'jan'))
 
 
+ene_date_key = lambda x: year_month_to_float(x.get('end_year', 1970), 
+                                             x.get('end_month', 'jan'))
+
+
 class HtmlBuilder(object):
 
     btype = 'html'
@@ -71,8 +75,11 @@ class HtmlBuilder(object):
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
             bibfile = self.make_bibtex_file(pubs, pid=p['_id'], person_dir=peeps_dir)
+            ene = p.get('employment', []) + p.get('education', [])
+            ene.sort(key=pub_date_key, reverse=True)
             self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
-                        title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile)
+                        title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile, 
+                        education_and_employment=ene)
         self.render('people.html', os.path.join('people', 'index.html'), title='People')
 
     def filter_publications(self, authors, reverse=False):

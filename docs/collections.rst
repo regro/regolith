@@ -14,6 +14,31 @@ This collection describes the members of the research group.  This is normally p
      "aka": [str],  # list of aliases
      "avatar": str,  # URL to avatar
      "bio": str,  # short biographical text
+     "education": [{  # list of dictionaries
+        "institution": str,
+        "location": str,
+        "degree": str,
+        "begin_year": int,
+        "begin_month": str, # optional
+        "end_year": int,
+        "end_month": str,  # optional
+        "gpa": float or str, # optional
+        "other": [str], # list of strings of other pieces of information
+        },
+        ...
+        ],
+     "employment": [{  # list of dicts
+        "organization": str,
+        "location": str,
+        "position": str,
+        "begin_year": int,
+        "begin_month": str, # optional
+        "end_year": int,
+        "end_month": str,  # optional
+        "other": [str], # list of strings of other pieces of information
+        },
+        ...
+        ],
      }
 
 citations

@@ -41,21 +41,21 @@ def collection_page(dbname, collname):
         if 'shutdown' in form:
             return shutdown()
         elif 'cancel' in form:
-            body = json_util.loads(form['body'])
+            body = json_util.loads(form['body'].strip())
             status = 'canceled'
             status_id = str(body['_id'])
         elif 'save' in form:
-            body = json_util.loads(form['body'])
+            body = json_util.loads(form['body'].strip())
             coll.save(body) 
             status = 'saved ✓'
             status_id = str(body['_id'])
         elif 'add' in form:
-            body = json_util.loads(form['body'])
+            body = json_util.loads(form['body'].strip())
             added = insert_one(coll, body)
             status = 'added ✓'
             status_id = str(added.inserted_id)
         elif 'delete' in form:
-            body = json_util.loads(form['body'])
+            body = json_util.loads(form['body'].strip())
             deled = delete_one(coll, body)
     return render_template('collection.html', rc=rc, dbname=dbname, len=len, str=str,
                            status=status, status_id=status_id, objectid=objectid,
