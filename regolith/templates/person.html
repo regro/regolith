@@ -11,12 +11,11 @@
 <h1>Education & Employment</h1>
 {%for e in education_and_employment%}
   {%if 'institution' in e%}{# In eduction #}
-    <h2>{{e['institution']}}</h2>{{e['degree']}}, 
+    <h2>{{e['institution']}}</h2><h3>{{e['degree']}}</h3>
   {%elif 'organization' in e%}{# In emplyment #}
-    <h2>{{e['organization']}}</h2>{{e['position']}}, 
+    <h2>{{e['organization']}}</h2><h3>{{e['position']}}</h3>
   {%endif%}
-  <i>{{e['begin_year']}} - {{e.get('end_year', 'present')}}</i><br/>
-  {{e['location']}}<br/>
+  {{e['location']}}, <i>{{e['begin_year']}} - {{e.get('end_year', 'present')}}</i><br/>
   {%if 'other' in e and len(e['other']) > 0%}
     <ul>{%for o in e['other']%}
       <li>{{o}}</li>
