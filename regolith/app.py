@@ -59,4 +59,4 @@ def collection_page(dbname, collname):
             deled = delete_one(coll, body)
     return render_template('collection.html', rc=rc, dbname=dbname, len=len, str=str,
                            status=status, status_id=status_id, objectid=objectid,
-                           collname=collname, coll=coll, json_util=json_util)
+                           collname=collname, coll=coll, json_util=json_util, min=min)

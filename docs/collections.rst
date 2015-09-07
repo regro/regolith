@@ -54,7 +54,7 @@ This collection describes the members of the research group.  This is normally p
         "description": str, # optional
         "year": int, 
         "month": str, # optional
-        "duration": str or int, # optional length of award
+        "duration": str or int, # optional length of service
         },
         ...
         ],
@@ -79,6 +79,18 @@ This collection describes the members of the research group.  This is normally p
         "syllabus": str,  # optional URL
         "video": str,  # optional URL
         "materials": str,  # optional URL
+        },
+        ...
+        ],
+     "membership": [{ # list of str
+        "organization": str,
+        "position": str,
+        "description": str, # optional
+        "begin_year": int,
+        "begin_month": str, # optional
+        "end_year": int, # optional
+        "end_month": str,  # optional
+        "website": str,  # optional URL
         },
         ...
         ],

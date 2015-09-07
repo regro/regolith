@@ -100,7 +100,7 @@ Duration: {{s['duration']}}{%endif%}
 
 {%if 'teaching' in p and len(p['teaching']) > 0%}
 <hr/><a name="teaching" />
-<h1><a href="#teaching">Teaching Experience</a></h1>
+<h1><a href="#teaching">Teaching Experience</a></h1><br/>
 {%for t in sorted(p['teaching'], key=date_key, reverse=True)%}
   <h2>{{t['course']}}</h2>
   <h3>{{t['organization']}}</h3>
@@ -117,6 +117,24 @@ Duration: {{s['duration']}}{%endif%}
   <br/><br/>
 {%endfor%}
 {%endif%}
+
+
+{%if 'membership' in p and len(p['membership']) > 0%}
+<hr/><a name="membership" />
+<h1><a href="#membership">Memberships</a></h1><br/>
+{%for m in sorted(p['membership'], key=date_key, reverse=True)%}
+  <h2>{{t['organization']}}</h2>
+  {{t['position']}},
+  <i>
+    {{t.get('begin_month', '')}} {{t['begin_year']}} - 
+    {{t.get('end_month', '')}} {{t.get('end_year', 'present')}}
+  </i>
+  {%if 'description' in t%}<br/>{{t['description']}}{%endif%}
+  {%if 'website' in t%}<a href="{{t['website']}}">[Website]</a>{%endif%}
+  <br/><br/>
+{%endfor%}
+{%endif%}
+
 
 {% endblock content %}
 {% block footer %}
