@@ -88,6 +88,7 @@ class HtmlBuilder(object):
         rc = self.rc
         os.makedirs(self.bldir, exist_ok=True)
         self.people()
+        self.projects()
         # static
         stsrc = os.path.join('templates', 'static')
         stdst = os.path.join(self.bldir, 'static')
@@ -149,3 +150,8 @@ class HtmlBuilder(object):
             projs.append(proj)
         projs.sort(key=id_key, reverse=reverse)
         return projs
+
+    def projects(self):
+        rc = self.rc
+        projs = all_docs_from_collection(rc.client, 'projects')
+        self.render('projects.html', 'projects.html', title='Projects', projects=projs)
