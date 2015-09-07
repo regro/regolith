@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block header %}
+<h1>Projects</h1>
+{% endblock header %}
+{% block content %}
+{% for proj in projects %}
+  {%if 'logo' in proj%}<a href="{{proj['website']}}">
+    <img src="{{proj['logo']}}" style="width:200px;height:200px;"/>
+  </a>{%endif%}
+  <h1><a href="{{proj['website']}}">{{proj['_id']}}</a></h1>
+  {{proj.get('description', '')}}
+  {%if 'other' in proj%}<ul>{%for o in proj['other']%}
+    <li>{{o}}</li>
+  {%endfor%}</ul>{%endif%}
+  {%if 'team' in proj%}<ul>{%for pos in proj['team']%}
+    <li><b>{{pos['name']}}:</b> {{pos['position']}}, 
+      {{pos.get('begin_month', '')}} {{pos['begin_year']}} - 
+      {{pos.get('end_month', '')}} {{pos.get('end_year', 'present')}}
+    </li>
+  {%endfor%}</ul>{%endif%}
+  <a href="{{proj['website']}}">{{proj['website']}}</a>
+  {%if 'repo' in proj%}<a href="{{proj['repo']}}">[Source Code]</a>{%endif%}
+  <hr/>
+{% endfor %}
+{% endblock content %}
+{% block footer %}
+{% endblock footer %}
