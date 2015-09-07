@@ -18,9 +18,18 @@ class HtmlBuilder(object):
                     'templates',
                     os.path.join(os.path.dirname(__file__), 'templates'),
                     ]))
+        self.construct_global_ctx()
 
-    def render(self, tname, fname, **ctx):
+    def construct_global_ctx(self):
+        self.gtx = gtx = {}
+        rc = self.rc
+        gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
+        
+
+    def render(self, tname, fname, **kwargs):
         template = self.env.get_template(tname)
+        ctx = dict(self.gtx)
+        ctx.update(kwargs)
         ctx['rc'] = ctx.get('rc', self.rc)
         ctx['static'] = ctx.get('static', 
                                os.path.relpath('static', os.path.dirname(fname)))
@@ -45,8 +54,8 @@ class HtmlBuilder(object):
         peeps_dir = os.path.join(self.bldir, 'people')
         os.makedirs(peeps_dir, exist_ok=True)
         peeps = []
-        for p in all_docs_from_collection(rc.client, 'people'):
-            peeps.append(p)
-        self.render('people.html', os.path.join('people', 'index.html'), people=peeps,
-                    title='People')
+        for p in self.gtx['people']:
+            self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
+                        title=p.get('name', ''))
+        self.render('people.html', os.path.join('people', 'index.html'), title='People')
         

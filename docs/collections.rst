@@ -12,6 +12,8 @@ This collection describes the members of the research group.  This is normally p
      "title": str, # eg Dr., etc.
      "position": str,  # such as professor, graduate student, or scientist
      "aka": [str],  # list of aliases
+     "avatar": str,  # URL to avatar
+     "bio": str,  # short biographical text
      }
 
 citations
