@@ -1,6 +1,7 @@
 """Builder for websites."""
 import os
 import shutil
+from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
 try:
@@ -15,10 +16,10 @@ from regolith.tools import all_docs_from_collection, year_month_to_float
 
 doc_date_key = lambda x: year_month_to_float(x.get('year', 1970), 
                                              x.get('month', 'jan'))
-
-
 ene_date_key = lambda x: year_month_to_float(x.get('end_year', 1970), 
                                              x.get('end_month', 'jan'))
+category_val = lambda x: x.get('category', '<uncategorized>')
+level_val = lambda x: x.get('level', '<no-level>')
 
 def date_key(x):
     if 'end_year' in x:
@@ -56,8 +57,11 @@ class HtmlBuilder(object):
         gtx['False'] = False
         gtx['None'] = None
         gtx['sorted'] = sorted
+        gtx['groupby'] = groupby
         gtx['date_key'] = date_key
         gtx['doc_date_key'] = doc_date_key
+        gtx['level_val'] = level_val
+        gtx['category_val'] = category_val
         gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
 
     def render(self, tname, fname, **kwargs):

@@ -82,7 +82,7 @@ This collection describes the members of the research group.  This is normally p
         },
         ...
         ],
-     "membership": [{ # list of str
+     "membership": [{ # list of dicts
         "organization": str,
         "position": str,
         "description": str, # optional
@@ -91,6 +91,13 @@ This collection describes the members of the research group.  This is normally p
         "end_year": int, # optional
         "end_month": str,  # optional
         "website": str,  # optional URL
+        },
+        ...
+        ],
+     "skills": [{ # list of dicts
+        "name": str,
+        "category": str, 
+        "level": str
         },
         ...
         ],
