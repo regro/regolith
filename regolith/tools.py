@@ -72,3 +72,49 @@ def all_docs_from_collection(client, collname):
             continue
         yield from db[collname].find()
 
+
+MONTHS = {
+    'jan': 1,
+    'jan.': 1,
+    'january': 1,
+    'feb': 2,
+    'feb.': 2,
+    'february': 2,
+    'mar': 3,
+    'mar.': 3,
+    'march': 3,
+    'apr': 4,
+    'apr.': 4,
+    'april': 4,
+    'may': 5,
+    'may.': 5,
+    'jun': 6,
+    'jun.': 6,
+    'june': 6,
+    'jul': 7,
+    'jul.': 7,
+    'july': 7,
+    'aug': 8,
+    'aug.': 8,
+    'august': 8,
+    'sep': 9,
+    'sep.': 9,
+    'sept': 9,
+    'sept.': 9,
+    'september': 9,
+    'oct': 10,
+    'oct.': 10,
+    'october': 10,
+    'nov': 11,
+    'nov.': 11,
+    'november': 11,
+    'dec': 12,
+    'dec.': 12,
+    'december': 12,
+    }
+
+def year_month_to_float(y, m):
+    """Converts years / months to a float, eg 2015.08 is August of 2015."""
+    y = int(y)
+    return y + (MONTHS[m.lower()] / 10.0)
+

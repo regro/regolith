@@ -7,6 +7,36 @@
 <h1>{{p['position'].capitalize()}}</h1>
 <img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
 <p>{{p.get('bio', '').replace('\n\n', '</p><p>')}}</p>
+
+<h1>Publications</h1>
+<ul>
+{% for pub in pubs %}
+  <li>
+  {% for a in pub['author'][:-1] %}
+    {% if a in names %}<b>{% endif %}{{a}}{% if a in names %}</b>{% endif %},
+  {% endfor %}
+  {% if len(pub['author']) > 1 %}
+    and
+  {% endif %}
+  {% set a = pub['author'][-1] %}
+  {% if a in names %}<b>{% endif %}{{a}}{% if a in names %}</b>{% endif %}.
+  <i>"{{pub.get('title', '')}}".</i> 
+  {{pub.get('journal', '')}}
+  {{pub.get('booktitle', '')}}.
+  {{pub.get('volume', '')}} 
+  {{'p. ' + pub['pages'] if 'pages' in pub else ''}} 
+  {{pub.get('address', '')}}
+  {% if 'month' in pub and 'year' in pub %}
+    {{pub['month'].capitalize()}} {{pub['year']}}
+  {% elif 'year' in pub %}
+    ({{pub['year']}})
+  {% endif %}
+  {% if 'link' in pub %}<a href="{{pub['link']}}">link</a>{% endif %}
+  {% if 'url' in pub %}<a href="{{pub['url']}}">download</a>{% endif %}
+  {% if 'doi' in pub %}<a href="{{pub['doi']}}">doi</a>{% endif %}
+  </li>
+{% endfor %}
+</ul>
 {% endfor %}
 {% endblock content %}
 {% block footer %}
