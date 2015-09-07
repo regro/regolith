@@ -123,14 +123,14 @@ Duration: {{s['duration']}}{%endif%}
 <hr/><a name="membership" />
 <h1><a href="#membership">Memberships</a></h1><br/>
 {%for m in sorted(p['membership'], key=date_key, reverse=True)%}
-  <h2>{{t['organization']}}</h2>
-  {{t['position']}},
+  <h2>{{m['organization']}}</h2>
+  {{m['position']}},
   <i>
-    {{t.get('begin_month', '')}} {{t['begin_year']}} - 
-    {{t.get('end_month', '')}} {{t.get('end_year', 'present')}}
+    {{m.get('begin_month', '')}} {{m['begin_year']}} - 
+    {{m.get('end_month', '')}} {{m.get('end_year', 'present')}}
   </i>
-  {%if 'description' in t%}<br/>{{t['description']}}{%endif%}
-  {%if 'website' in t%}<a href="{{t['website']}}">[Website]</a>{%endif%}
+  {%if 'description' in m%}<br/>{{m['description']}}{%endif%}
+  {%if 'website' in m%}<a href="{{m['website']}}">[Website]</a>{%endif%}
   <br/><br/>
 {%endfor%}
 {%endif%}
