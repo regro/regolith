@@ -1,10 +1,12 @@
 Collections
 ============
-This page describes recommended - but not required - schema for collections of a given name.
+This page describes recommended - but not required - schema for collections of a given 
+name.
 
 people
 -------
-This collection describes the members of the research group.  This is normally public data. 
+This collection describes the members of the research group.  This is normally public 
+data. 
 
 .. code:: python
 
@@ -110,3 +112,27 @@ things like ``ARTICLE``, and ``"_id"`` denotes the entry identifier.  Furthermor
 be a list of strings.  See the Python project `BibtexParser <https://bibtexparser.readthedocs.org/>`_ for more
 information.
 
+
+projects
+---------
+This collection describes the research group projects. This is normally public data. 
+
+.. code:: python
+
+    {"name": str,
+     "description": str,
+     "website": str,
+     "repo": str, # src code repo, if available
+     "logo": str, # url to logo, optional
+     "other": [str], # other information, list of str
+     "team": [{  # list of dicts
+        "name": str, # should match a person's name  or AKA
+        "position": str, 
+        "begin_year": int,
+        "begin_month": str, # optional
+        "end_year": int, # optional
+        "end_month": str,  # optional
+        },
+        ...
+        ],
+    }

@@ -12,11 +12,11 @@
 <hr/><a name="honors" />
 <h1><a href="#honors">Honors</a></h1>
 {%for h in sorted(p['honors'], key=doc_date_key, reverse=True)%}
-<h3>{{h['name']}}</h3>
-{{h.get('month', '')}} {{h['year']}}{%if 'duration' in h%}, 
-Duration: {{h['duration']}}{%endif%}
-{%if 'description' in h%}<br/>{{h['description']}}{%endif%}
-<br/><br/>
+  <h3>{{h['name']}}</h3>
+  {{h.get('month', '')}} {{h['year']}}{%if 'duration' in h%}, 
+  Duration: {{h['duration']}}{%endif%}
+  {%if 'description' in h%}<br/>{{h['description']}}{%endif%}
+  <br/><br/>
 {%endfor%}
 {%endif%}
 
@@ -44,11 +44,11 @@ Duration: {{h['duration']}}{%endif%}
 <hr/><a name="funding" />
 <h1><a href="#funding">Awards, Grants, & Contracts</a></h1>
 {%for f in sorted(p['funding'], key=doc_date_key, reverse=True)%}
-<h3>{{f['name']}}</h3>
-{{f.get('currency', '$')}}{{'{:,.2f}'.format(f['value'])}} in 
-{{f.get('month', '')}} {{f['year']}}{%if 'duration' in f%}, 
-Duration: {{f['duration']}}{%endif%}
-<br/><br/>
+  <h3>{{f['name']}}</h3>
+  {{f.get('currency', '$')}}{{'{:,.2f}'.format(f['value'])}} in 
+  {{f.get('month', '')}} {{f['year']}}{%if 'duration' in f%}, 
+  Duration: {{f['duration']}}{%endif%}
+  <br/><br/>
 {%endfor%}
 {%endif%}
 
@@ -57,11 +57,11 @@ Duration: {{f['duration']}}{%endif%}
 <hr/><a name="service" />
 <h1><a href="#service">Service</a></h1>
 {%for s in sorted(p['service'], key=doc_date_key, reverse=True)%}
-<h3>{{s['name']}}</h3>
-{{s.get('month', '')}} {{s['year']}}{%if 'duration' in s%}, 
-Duration: {{s['duration']}}{%endif%}
-{%if 'description' in s%}<br/>{{s['description']}}{%endif%}
-<br/><br/>
+  <h3>{{s['name']}}</h3>
+  {{s.get('month', '')}} {{s['year']}}{%if 'duration' in s%}, 
+  Duration: {{s['duration']}}{%endif%}
+  {%if 'description' in s%}<br/>{{s['description']}}{%endif%}
+  <br/><br/>
 {%endfor%}
 {%endif%}
 
