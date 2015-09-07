@@ -20,6 +20,7 @@ ene_date_key = lambda x: year_month_to_float(x.get('end_year', 1970),
                                              x.get('end_month', 'jan'))
 category_val = lambda x: x.get('category', '<uncategorized>')
 level_val = lambda x: x.get('level', '<no-level>')
+id_key = lambda x: x.get('_id', '')
 
 def date_key(x):
     if 'end_year' in x:
@@ -105,9 +106,10 @@ class HtmlBuilder(object):
             bibfile = self.make_bibtex_file(pubs, pid=p['_id'], person_dir=peeps_dir)
             ene = p.get('employment', []) + p.get('education', [])
             ene.sort(key=ene_date_key, reverse=True)
+            projs = self.filter_projects(names)
             self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
                         title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile, 
-                        education_and_employment=ene)
+                        education_and_employment=ene, projects=projs)
         self.render('people.html', os.path.join('people', 'index.html'), title='People')
 
     def filter_publications(self, authors, reverse=False):
@@ -135,3 +137,15 @@ class HtmlBuilder(object):
             f.write(self.bibwriter.write(self.bibdb))
         return fname
 
+    def filter_projects(self, authors, reverse=False):
+        rc = self.rc
+        projs = []
+        for proj in all_docs_from_collection(rc.client, 'projects'):
+            team_names = set(gets(proj['team'], 'name'))
+            if len(team_names & authors) == 0:
+                continue
+            proj = dict(proj)
+            proj['team'] = [x for x in proj['team'] if x['name'] in authors]
+            projs.append(proj)
+        projs.sort(key=id_key, reverse=reverse)
+        return projs

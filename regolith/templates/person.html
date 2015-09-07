@@ -66,6 +66,25 @@
 {%endif%}
 
 
+{%if len(projects) > 0%}
+<hr/><a name="projects" />
+<h1><a href="#projects">Projects</a></h1><br/>
+{%for proj in projects%}
+  <h2><a href="{{proj['website']}}">{{proj['_id']}}</a></h2>
+  <a href="{{proj['website']}}">
+    <img src="{{proj['logo']}}" style="width:150px;height:150px;"/>
+  </a>
+  {%if 'description' in proj%}<br/>{{proj['description']}}{%endif%}
+  <ul>{%for pos in sorted(proj['team'], key=date_key, reverse=True)%}
+    <li><b>{{pos['position']}}:</b><i>
+      {{pos.get('begin_month', '')}} {{pos['begin_year']}} - 
+      {{pos.get('end_month', '')}} {{pos.get('end_year', 'present')}}
+    </i></li>
+  {%endfor%}</ul>
+{%endfor%}
+{%endif%}
+
+
 <hr/><a name="pubs" />
 <h1><a href="#pubs">Publications</a></h1>
 {%if bibfile%}<h3><a href="{{p['_id']}}.bib">[Download bibtex]</a></h3>{%endif%}
