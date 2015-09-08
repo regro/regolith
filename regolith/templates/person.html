@@ -88,7 +88,7 @@
 <hr/><a name="pubs" />
 <h1><a href="#pubs">Publications</a></h1>
 {%if bibfile%}<h3><a href="{{p['_id']}}.bib">[Download bibtex]</a></h3>{%endif%}
-<ul>
+<ol>
 {% for pub in pubs %}
   <li>
   {% for a in pub['author'][:-1] %}
@@ -115,7 +115,7 @@
   {% if 'doi' in pub %}<a href="{{pub['doi']}}">doi</a>{% endif %}
   </li>
 {% endfor %}
-</ul>
+</ol>
 
 {%if 'teaching' in p and len(p['teaching']) > 0%}
 <hr/><a name="teaching" />
