@@ -149,3 +149,26 @@ This collection describes the research group news. This is normally public data.
      "month": str,
      "day": int,
      }
+
+
+jobs
+---------
+This collection describes the research group jobss. This is normally public data. 
+
+
+.. code:: python
+
+    {"_id": str or number, #
+     "title": str,
+     "description": str,
+     "open": bool,
+     "contact": str,  # contact information for how to apply
+     "positions": [str], # list of string positions such as "Graduate Student", "Post-doctoral Scholar", etc
+     "background_fields": [str], # previous disciplines, eg. Nucleare Engineering or Computer Science
+     "year": int, 
+     "month": str,
+     "day": int,
+     "start_date": str,  # date or ASAP or similar
+     "expertise": str,
+     "compensation": [str], # list of compensations
+     }
