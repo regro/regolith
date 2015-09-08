@@ -5,7 +5,7 @@ import shutil
 import subprocess
 from glob import iglob
 from warnings import warn
-
+from distutils.dir_util import copy_tree
 
 def ensure_deploy_dir(rc):
     """Ensure deployment dir is on rc and physically exists."""
@@ -29,16 +29,24 @@ def deploy_git(rc, name, url, src='html', dst=None):
     # copy the files over
     srcdir = os.path.join(rc.builddir, src)
     dstdir = os.path.join(targetdir, dst) if dst else targetdir
-    shutil.copytree(srcdir, dstdir)
+    copy_tree(srcdir, dstdir, verbose=1)
     # commit everything
     cmd = ['git', 'add', '.']
     subprocess.check_call(cmd, cwd=targetdir)
     # commit 
     cmd = ['git', 'commit', '-m', 'regolith auto-deploy at {0}'.format(time.time())]
-    subprocess.check_call(cmd, cwd=targetdir)
+    try:
+        subprocess.check_call(cmd, cwd=targetdir)
+    except subprocess.CalledProcessError: 
+        warn('Could not git commit to ' + targetdir, RuntimeWarning)
+        return
     # deploy!
     cmd = ['git', 'push']
-    #subprocess.check_call(cmd, cwd=targetdir)
+    try:
+        subprocess.check_call(cmd, cwd=targetdir)
+    except subprocess.CalledProcessError: 
+        warn('Could not git push from ' + targetdir, RuntimeWarning)
+        return    
 
 
 def deploy(rc, name, url, src='html', dst=None):
