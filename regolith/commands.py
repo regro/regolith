@@ -2,7 +2,7 @@
 import os
 import json
 
-from regolith.tools import string_types, ON_PYMONGO_V2, insert_many
+from regolith.tools import string_types, ON_PYMONGO_V2, insert_many, find_one_and_update
 from regolith.builder import builder
 from regolith.deploy import deploy as dploy
 
@@ -20,12 +20,13 @@ def _ingest_citations(rc):
     import bibtexparser
     with open(rc.filename, 'r') as f:
         bibs = bibtexparser.load(f)
+    coll = rc.client[rc.db][rc.coll]
     for bib in bibs.entries:
-        bib['_id'] = bib.pop('ID')
+        bibid = bib.pop('ID')
         bib['entrytype'] = bib.pop('ENTRYTYPE')
         if 'author' in bib:
             bib['author'] = [a.strip() for a in bib['author'].split(' and ')]
-    insert_many(rc.client[rc.db][rc.coll], bibs.entries)
+        find_one_and_update(coll, {'_id': bibid}, {'$set': bib}, upsert=True)
 
 
 def _determine_ingest_coll(rc):
