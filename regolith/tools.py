@@ -82,7 +82,7 @@ def find_one_and_update(coll, filter, update, **kwargs):
                 raise RuntimeError('could not update non-existing document')
             newdoc = dict(filter)
             newdoc.update(update['$set'])
-            return insert_one(newdoc)
+            return insert_one(coll, newdoc)
         return coll.update(doc, update, **kwargs)
     else:
         return coll.find_one_and_update(filter, update, **kwargs)
@@ -132,6 +132,10 @@ MONTHS = {
 def date_to_float(y, m, d=0):
     """Converts years / months / days to a float, eg 2015.0818 is August 18th 2015."""
     y = int(y)
+    try:
+        m = int(m)
+    except ValueError:
+        m = MONTHS[m.lower()]
     d = int(d)
-    return y + (MONTHS[m.lower()]/10.0) + (d/10000.0)
+    return y + (m/10.0) + (d/10000.0)
 
