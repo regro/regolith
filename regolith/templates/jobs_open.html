@@ -1,0 +1,8 @@
+<ul>{%for job in jobs%}
+  {%if job['open']%}
+  <li><a href="{{root}}/jobs/{{job['_id']}}.html"><b>{{job['body']}}</b>, 
+    opened on <i>{{job['month']}} {{job['day']}}, {{job['year']}}</i>. 
+    (#{{job['_id']}})</a>
+  </li>
+{%endif%}
+{%endfor%}</ul>

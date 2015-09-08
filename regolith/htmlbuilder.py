@@ -169,4 +169,4 @@ class HtmlBuilder(object):
         for job in self.gtx['jobs']:
             self.render('job.html', os.path.join('jobs', job['_id'] + '.html'), 
                 job=job, title='{0} ({1})'.format(job['title'], job['_id']))
-        #self.render('people.html', os.path.join('people', 'index.html'), title='People')
+        self.render('jobs.html', os.path.join('jobs', 'index.html'), title='Jobs')
