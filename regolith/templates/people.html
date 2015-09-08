@@ -4,7 +4,7 @@
 {% endblock header %}
 {% block content %}
 {% for p in people %}
-  <a href="{{root}}/people/{{p['_id']}}.html">
+  <a href="{{root}}/people/{{p['_id']}}.html" class="image-link">
     <img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
   </a>
   <h1><a href="{{root}}/people/{{p['_id']}}.html">{{p['title']}} {{p['name']}}</a></h1>

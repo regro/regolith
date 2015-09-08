@@ -71,7 +71,7 @@
 <h1><a href="#projects">Projects</a></h1><br/>
 {%for proj in projects%}
   <h2><a href="{{proj['website']}}">{{proj['_id']}}</a></h2>
-  {%if 'logo' in proj%}<a href="{{proj['website']}}">
+  {%if 'logo' in proj%}<a href="{{proj['website']}}" class="image-link">
     <img src="{{proj['logo']}}" style="width:150px;height:150px;"/>
   </a><br/>{%endif%}
   {%if 'description' in proj%}{{proj['description']}}{%endif%}

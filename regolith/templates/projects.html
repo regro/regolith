@@ -4,7 +4,7 @@
 {% endblock header %}
 {% block content %}
 {% for proj in projects %}
-  {%if 'logo' in proj%}<a href="{{proj['website']}}">
+  {%if 'logo' in proj%}<a href="{{proj['website']}}" class="image-link">
     <img src="{{proj['logo']}}" style="width:200px;height:200px;"/>
   </a>{%endif%}
   <h1><a href="{{proj['website']}}">{{proj['_id']}}</a></h1>
