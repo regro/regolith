@@ -87,6 +87,7 @@ class HtmlBuilder(object):
     def build(self):
         rc = self.rc
         os.makedirs(self.bldir, exist_ok=True)
+        self.root_index()
         self.people()
         self.projects()
         # static
@@ -95,6 +96,10 @@ class HtmlBuilder(object):
         if os.path.isdir(stdst):
             shutil.rmtree(stdst)
         shutil.copytree(stsrc, stdst)
+
+    def root_index(self):
+        rc = self.rc
+        self.render('root_index.html', 'index.html', title='Home')
 
     def people(self):
         rc = self.rc
