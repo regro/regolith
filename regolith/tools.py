@@ -113,8 +113,9 @@ MONTHS = {
     'december': 12,
     }
 
-def year_month_to_float(y, m):
-    """Converts years / months to a float, eg 2015.08 is August of 2015."""
+def date_to_float(y, m, d=0):
+    """Converts years / months / days to a float, eg 2015.0818 is August 18th 2015."""
     y = int(y)
-    return y + (MONTHS[m.lower()] / 10.0)
+    d = int(d)
+    return y + (MONTHS[m.lower()]/10.0) + (d/10000.0)
 

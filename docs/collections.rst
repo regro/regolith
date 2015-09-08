@@ -136,3 +136,16 @@ This collection describes the research group projects. This is normally public d
         ...
         ],
     }
+
+news
+---------
+This collection describes the research group news. This is normally public data. 
+
+.. code:: python
+
+    {"body": str, 
+     "author": str, # name that should match a person or AKA
+     "year": int, 
+     "month": str,
+     "day": int,
+     }

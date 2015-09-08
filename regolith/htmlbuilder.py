@@ -11,24 +11,23 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, year_month_to_float
+from regolith.tools import all_docs_from_collection, date_to_float
 
 
-doc_date_key = lambda x: year_month_to_float(x.get('year', 1970), 
-                                             x.get('month', 'jan'))
-ene_date_key = lambda x: year_month_to_float(x.get('end_year', 1970), 
-                                             x.get('end_month', 'jan'))
+doc_date_key = lambda x: date_to_float(x.get('year', 1970), x.get('month', 'jan'))
+ene_date_key = lambda x: date_to_float(x.get('end_year', 1970), x.get('end_month', 'jan'))
 category_val = lambda x: x.get('category', '<uncategorized>')
 level_val = lambda x: x.get('level', '<no-level>')
 id_key = lambda x: x.get('_id', '')
 
 def date_key(x):
     if 'end_year' in x:
-        v = year_month_to_float(x['end_year'], x.get('end_month', 'jan'))
+        v = date_to_float(x['end_year'], x.get('end_month', 'jan'), x.get('end_day', 0))
     elif 'year' in x:
-        v = year_month_to_float(x['year'], x.get('month', 'jan'))
+        v = date_to_float(x['year'], x.get('month', 'jan'), x.get('day', 0))
     elif 'begin_year' in x:
-        v = year_month_to_float(x['begin_year'], x.get('begin_month', 'jan'))
+        v = date_to_float(x['begin_year'], x.get('begin_month', 'jan'), 
+                                           x.get('begin_day', 0))
     else:
         raise KeyError('could not find year in ' + str(x))
     return v
@@ -71,6 +70,7 @@ class HtmlBuilder(object):
         gtx['level_val'] = level_val
         gtx['category_val'] = category_val
         gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
+        gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def render(self, tname, fname, **kwargs):
         template = self.env.get_template(tname)
