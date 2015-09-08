@@ -57,6 +57,33 @@ This is used to represent connection information to document stores, think PDFs,
 This is a string of the CNAME value.  This will be put into a file called CNAME in the root 
 HTML build dir, if it is present.
 
+
+``deploy``
+==========
+This is a list of deployment targets to send information to from the build directories.
+
+
+.. code-block:: python
+
+    [{  # list of dictionaries in order of precedence
+     'name': 'x',  # string identifier for store name
+     'url': 'http://...',  # location of the store
+     'src': 'path/to/src/in/builddir', # what are we copying, eg 'html'(optional, the default)
+     'dst': 'path/to/dest/in/deploydir/x' or None,  # inside of the resource location, optional
+     },
+     ...
+     ]
+
+
+``deploydir``
+======================
+The temporary location to for all deployment directories.  If not present, this 
+will default to a ``deploy`` dir inside of the ``builddir``
+
+.. code-block:: python
+
+    'path/to/dir' or None  # string, optional
+
 ---------------------------------
 Keys Usually Set by CLI
 ---------------------------------

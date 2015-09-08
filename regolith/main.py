@@ -17,6 +17,7 @@ DEFAULT_RC = RunControl(
 
 DISCONNECTED_COMMANDS = {
     'rc': lambda rc: print(rc._pformat()),
+    'deploy': commands.deploy,
     }
 
 CONNECTED_COMMANDS = {
@@ -70,6 +71,8 @@ def create_parser():
     # builder subparser
     bldp = subp.add_parser('build', help='builds various available targets')
     bldp.add_argument('build_targets', nargs='+', help='targets to build.')
+    # deploy subparser
+    depp = subp.add_parser('deploy', help='deploys what was built by regolith')
     return p
 
 

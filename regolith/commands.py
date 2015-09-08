@@ -4,6 +4,7 @@ import json
 
 from regolith.tools import string_types, ON_PYMONGO_V2, insert_many
 from regolith.builder import builder
+from regolith.deploy import deploy as dploy
 
 
 def add_cmd(rc):
@@ -64,4 +65,11 @@ def build(rc):
         bldr = builder(t, rc)
         bldr.build()
 
+
+def deploy(rc):
+    """Deploys all of the deployment targets."""
+    if not hasattr(rc, 'deploy') or len(rc.deploy) == 0:
+        raise RuntimeError('run control has no deployment targets!')
+    for target in rc.deploy:
+        dploy(rc, **target)
 
