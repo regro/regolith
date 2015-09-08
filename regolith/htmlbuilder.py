@@ -69,6 +69,7 @@ class HtmlBuilder(object):
         gtx['doc_date_key'] = doc_date_key
         gtx['level_val'] = level_val
         gtx['category_val'] = category_val
+        gtx['jobs'] = list(all_docs_from_collection(rc.client, 'jobs'))
         gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
@@ -90,6 +91,7 @@ class HtmlBuilder(object):
         self.root_index()
         self.people()
         self.projects()
+        self.jobs()
         # static
         stsrc = os.path.join('templates', 'static')
         stdst = os.path.join(self.bldir, 'static')
@@ -105,7 +107,6 @@ class HtmlBuilder(object):
         rc = self.rc
         peeps_dir = os.path.join(self.bldir, 'people')
         os.makedirs(peeps_dir, exist_ok=True)
-        peeps = []
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
@@ -160,3 +161,12 @@ class HtmlBuilder(object):
         rc = self.rc
         projs = all_docs_from_collection(rc.client, 'projects')
         self.render('projects.html', 'projects.html', title='Projects', projects=projs)
+
+    def jobs(self):
+        rc = self.rc
+        jobs_dir = os.path.join(self.bldir, 'jobs')
+        os.makedirs(jobs_dir, exist_ok=True)
+        for job in self.gtx['jobs']:
+            self.render('job.html', os.path.join('jobs', job['_id'] + '.html'), 
+                job=job, title='{0} ({1})'.format(job['title'], job['_id']))
+        #self.render('people.html', os.path.join('people', 'index.html'), title='People')
