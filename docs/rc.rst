@@ -52,6 +52,11 @@ This is used to represent connection information to document stores, think PDFs,
      ]
 
 
+``cname``
+============
+This is a string of the CNAME value.  This will be put into a file called CNAME in the root 
+HTML build dir, if it is present.
+
 ---------------------------------
 Keys Usually Set by CLI
 ---------------------------------

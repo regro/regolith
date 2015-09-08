@@ -92,6 +92,8 @@ class HtmlBuilder(object):
         self.people()
         self.projects()
         self.jobs()
+        self.nojekyll()
+        self.cname()
         # static
         stsrc = os.path.join('templates', 'static')
         stdst = os.path.join(self.bldir, 'static')
@@ -170,3 +172,15 @@ class HtmlBuilder(object):
             self.render('job.html', os.path.join('jobs', job['_id'] + '.html'), 
                 job=job, title='{0} ({1})'.format(job['title'], job['_id']))
         self.render('jobs.html', os.path.join('jobs', 'index.html'), title='Jobs')
+
+    def nojekyll(self):
+        """Touches a nojekyll file in the build dir"""
+        with open(os.path.join(self.bldir, '.nojekyll'), 'a+'):
+            pass
+
+    def cname(self):
+        rc = self.rc
+        if not hasattr(rc, 'cname'):
+            return
+        with open(os.path.join(self.bldir, 'CNAME'), 'w') as f:
+            f.write(rc.cname)
