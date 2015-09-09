@@ -17,3 +17,4 @@ Regolith is a content management system for research groups.
 
     rc
     collections
+    api/index
