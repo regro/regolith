@@ -1,5 +1,6 @@
+---------------------------------
 Top-level Configuration Keys
-================================
+---------------------------------
 Herein are described the top-level keys in the run control file.
 
 ``builddir``
@@ -12,7 +13,7 @@ The temporary location to build whatever it is needs building.
 
 
 ``mongodbpath``
-=============
+================
 The value to pass into the ``--dbpath`` option to ``mongod``.  Defaults to ``'${builddir}/_dbpath'``
 if unspecified. 
 

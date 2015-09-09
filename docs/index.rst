@@ -10,5 +10,10 @@
 
 Regolith 
 ========
-Regolith is a content management system for 
+Regolith is a content management system for research groups.
 
+.. toctree::
+    :maxdepth: 1
+
+    rc
+    collections
