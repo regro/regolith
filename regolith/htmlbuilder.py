@@ -91,6 +91,7 @@ class HtmlBuilder(object):
         self.root_index()
         self.people()
         self.projects()
+        self.blog()
         self.jobs()
         self.nojekyll()
         self.cname()
@@ -163,6 +164,18 @@ class HtmlBuilder(object):
         rc = self.rc
         projs = all_docs_from_collection(rc.client, 'projects')
         self.render('projects.html', 'projects.html', title='Projects', projects=projs)
+
+    def blog(self):
+        rc = self.rc
+        blog_dir = os.path.join(self.bldir, 'blog')
+        os.makedirs(blog_dir, exist_ok=True)
+        posts = list(all_docs_from_collection(rc.client, 'blog'))
+        posts.sort(key=ene_date_key, reverse=True)
+        for post in posts:
+            self.render('blog_post.html', os.path.join('blog', post['_id'] + '.html'), 
+                post=post, title=post['title'])
+        self.render('blog_index.html', os.path.join('blog', 'index.html'), title='Blog',
+                    posts=posts)
 
     def jobs(self):
         rc = self.rc

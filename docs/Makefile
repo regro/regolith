@@ -18,8 +18,8 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
 .PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
-DOCREPONAME = scopatz-xo.github.io
-DOCREPOURL  = git@github.com:scopatz/xo-docs.git
+DOCREPONAME = scopatz-regolith.github.io
+DOCREPOURL  = git@github.com:scopatz/regolith-docs.git
 
 
 help:

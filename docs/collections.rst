@@ -172,3 +172,32 @@ This collection describes the research group jobss. This is normally public data
      "expertise": str,
      "compensation": [str], # list of compensations
      }
+
+blog
+-----------
+This collection represents blog posts written by the members of the research group.
+
+.. code:: python
+
+    {"_id": str or number, # short represntation, such as this-is-my-title
+     "title": str,  # full human readable title
+     "original": str,  # URL of original post, if this is a repost, optional
+     "author": str, # name or AKA of author
+     "year": int, 
+     "month": str,
+     "day": int,
+     "post": str, # actual contents of the post
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
