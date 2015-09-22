@@ -10,6 +10,8 @@ from contextlib import contextmanager
 from pymongo import MongoClient
 from pymongo.errors import AutoReconnect, ConnectionFailure
 
+from regolith.tools import ON_PYMONGO_V2, ON_PYMONGO_V3
+
 
 def load_git_database(db, rc):
     """Loads a git database"""
@@ -80,6 +82,12 @@ def dump_database(db, client, rc):
     else:
         raise ValueError('Do not know how to dump this kind of database')
 
+def client_is_alive(client):
+    """Robust way to check if client is alive"""
+    try:
+        return client.alive()
+    except TypeError:
+        return True
 
 def create_client():
     """This creates ensures that a client is connected and alive."""
@@ -89,7 +97,7 @@ def create_client():
             client = MongoClient()
         except (AutoReconnect, ConnectionFailure):
             time.sleep(0.1)
-    while not client.alive():
+    while not client_is_alive(client):
         time.sleep(0.1)  # we need tp wait for the server to startup
     return client
 
@@ -108,7 +116,12 @@ def connect(rc):
     yield client
     for db in rc.databases:
         dump_database(db, client, rc)
-    client.disconnect()
+    if ON_PYMONGO_V2:
+        client.disconnect()
+    elif ON_PYMONGO_V3:
+        client.close()
+    else:
+        raise RuntimeError('did not recognize pymongo version')
     proc.terminate()
     if os.path.isdir(mongodbpath):
         shutil.rmtree(mongodbpath)
