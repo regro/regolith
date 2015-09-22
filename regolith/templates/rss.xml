@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+ <title>{{rc.groupname}} Blog</title>
+ <description>The official blog feed for {{rc.groupname}}</description>
+ <link>http://{{rc.cname}}</link>
+ <pubDate>{{rfc822now()}}</pubDate>
+ <ttl>1800</ttl>
+ {%for item in items%}
+ <item>
+  <title>{{item['title']}}</title>
+  <author>{{item['author']}}</author>
+  <pubDate>{{date_to_rfc822(item['year'], item['month'], item['day'])}}</pubDate>
+  <link>http://{{rc.cname}}/blog/{{item['_id']}}.html</link>
+  <description>{{item['post']}}</description>
+ </item>
+ {%endfor%}
+</channel>
+</rss>

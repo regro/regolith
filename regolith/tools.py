@@ -4,6 +4,8 @@ import os
 import re
 import sys
 import platform
+import email.utils
+from datetime import datetime
 
 import pymongo
 
@@ -129,13 +131,32 @@ MONTHS = {
     'december': 12,
     }
 
-def date_to_float(y, m, d=0):
-    """Converts years / months / days to a float, eg 2015.0818 is August 18th 2015."""
-    y = int(y)
+def month_to_int(m):
+    """Converts a month to an integer."""
     try:
         m = int(m)
     except ValueError:
         m = MONTHS[m.lower()]
+    return m
+
+
+def date_to_float(y, m, d=0):
+    """Converts years / months / days to a float, eg 2015.0818 is August 18th 2015."""
+    y = int(y)
+    m = month_to_int(m)
     d = int(d)
     return y + (m/10.0) + (d/10000.0)
+
+
+def date_to_rfc822(y, m, d=1):
+    """Converts a date to an RFC 822 formatted string."""
+    d = datetime(int(y), month_to_int(m), int(d))
+    return email.utils.format_datetime(d)
+
+
+def rfc822now():
+    """Creates a string of the current time according to RFC 822."""
+    now = datetime.utcnow()
+    return email.utils.format_datetime(now)
+
 

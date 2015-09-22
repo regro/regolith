@@ -52,6 +52,10 @@ This is used to represent connection information to document stores, think PDFs,
      ...
      ]
 
+``groupname``
+=====================
+This is a string of the research group name.
+
 
 ``cname``
 ============

@@ -11,7 +11,8 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, date_to_float
+from regolith.tools import all_docs_from_collection, date_to_float, date_to_rfc822, \
+    rfc822now
 
 
 doc_date_key = lambda x: date_to_float(x.get('year', 1970), x.get('month', 'jan'))
@@ -69,6 +70,8 @@ class HtmlBuilder(object):
         gtx['doc_date_key'] = doc_date_key
         gtx['level_val'] = level_val
         gtx['category_val'] = category_val
+        gtx['rfc822now'] = rfc822now
+        gtx['date_to_rfc822'] = date_to_rfc822
         gtx['jobs'] = list(all_docs_from_collection(rc.client, 'jobs'))
         gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
         gtx['all_docs_from_collection'] = all_docs_from_collection
@@ -176,6 +179,7 @@ class HtmlBuilder(object):
                 post=post, title=post['title'])
         self.render('blog_index.html', os.path.join('blog', 'index.html'), title='Blog',
                     posts=posts)
+        self.render('rss.xml', os.path.join('blog', 'rss.xml'), items=posts)
 
     def jobs(self):
         rc = self.rc
