@@ -1,4 +1,24 @@
 <head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <script src="https://cdn.jsdelivr.net/ace/1.2.0/min/ace.js"></script>
+  <link href="https://raw.githubusercontent.com/josdejong/jsoneditor/master/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
+  <script src="https://raw.githubusercontent.com/josdejong/jsoneditor/master/dist/jsoneditor.min.js"></script>
+
+  <script>
+  function makeEditor(elemId, jsonValue) {
+     // create the editor
+     var container = document.getElementById(elemId);
+     var options = {mode: 'code'};
+     var editor = new JSONEditor(container, options, jsonValue);
+     container.editor = editor;
+  }
+
+  function editorValue(editorId, bodyId) {
+     var container = document.getElementById(editorId);
+     var editor = container.editor;
+     document.getElementById(bodyId).value = editor.getText();
+  }
+  </script>
 </head>
 <body>
 <h1>Collection {{dbname}}/{{collname}}</h1>
@@ -9,15 +29,17 @@
 
 {% for doc in coll.find() %}
   {% set docdump = json_util.dumps(doc, sort_keys=True, indent=1) %}
-  {% set nrows = min(40, docdump.count('\n') + 1)%}
-  <div style="text-align:center;vertical-align:middle;">
+  <div id="{{doc._id}}" style="text-align:center;vertical-align:middle;">
   <h3>{{doc._id}} 
   {% if status and status_id == str(doc._id) %}
     [{{status}}]
   {% endif %}
   </h3>
-  <form id="{{doc._id}}" method="POST">
-    <textarea rows="{{nrows}}" cols="120" name="body" action="#{{doc._id}}">{{docdump}}</textarea>
+  <div id="jsoneditor{{doc._id}}" style="padding-left:5em;width:80em;height:25em;text-align:left;"></div>
+  <script>makeEditor("jsoneditor{{doc._id}}", {{docdump | safe}})</script>
+  <br/><br/>
+  <form method="POST" action="#{{doc._id}}" onsubmit="editorValue('jsoneditor{{doc._id}}', 'body{{doc._id}}');">
+    <input type="hidden" id="body{{doc._id}}" name="body" value="" />
     <input type="submit" value="Save" name="save"/>
     <input type="submit" value="Delete" name="delete"/>
     <input type="submit" value="Cancel" name="cancel"/>

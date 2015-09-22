@@ -190,7 +190,37 @@ This collection represents blog posts written by the members of the research gro
      }
 
 
+proposals
+-----------
+This collection represents proposals that have been submitted by the group.
 
+.. code:: python
+
+    {"_id": str or number, # short represntation, such as this-is-my-name
+     "title": str, # actual title of proposal
+     "pi": str,  # principal investigator name
+     "authors": [str], # other investigator names
+     "status": str, # e.g. 'submitted', 'accepted', 'rejected'
+     "ammount": int or float, # value of award
+     "currency": str, # typically '$' or 'USD'
+     "durration": int or float, # number of years
+     "year": int, 
+     "month": str,
+     "day": int,
+     "pre": { # Information about the pre-proposal, optional
+        "year": int, 
+        "month": str,
+        "day": int,
+        "narrative": str, # URL of document
+        "benefit_of_collaboration": str, # URL of document
+        "cv": [str], # URL to documents
+        },
+     "full": { # Information about the pre-proposal, optional
+        "narrative": str, # URL of document
+        "benefit_of_collaboration": str, # URL of document
+        "cv": [str], # URL to documents
+        },
+     }
 
 
 
