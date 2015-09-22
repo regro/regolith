@@ -9,6 +9,7 @@
 {%if post.get('original')%}
   <h3>This was originally posted at <a href="{{post['original']}}">{{post['original']}}</a>.</h3>
 {%endif%}
+<br/>
 {{post['post']}}
 {% endblock content %}
 {% block footer %}
