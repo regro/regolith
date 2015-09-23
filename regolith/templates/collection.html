@@ -44,12 +44,16 @@
     <input type="submit" value="Delete" name="delete"/>
     <input type="submit" value="Cancel" name="cancel"/>
   </form></div>
+  <br/><br/>
 {% endfor %}
 
-<div style="text-align:center;vertical-align:middle;">
+<div id="addnewdoc" style="text-align:center;vertical-align:middle;">
 <h3>Add New Entry</h3>
-<form id="addnewdoc" method="POST">
-  <textarea rows="4" cols="120" name="body" action="#addnewdoc">{"_id": {"$oid": "{{str(objectid.ObjectId())}}"}}</textarea>
+<div id="jsoneditoraddnewdoc" style="padding-left:5em;width:80em;height:25em;text-align:left;"></div>
+<script>makeEditor("jsoneditoraddnewdoc", {"_id": {"$oid": "{{str(objectid.ObjectId())}}"}})</script>
+<br/><br/>
+<form method="POST" action="#addnewdoc" onsubmit="editorValue('jsoneditoradnewdoc', 'bodyaddnewdoc');">
+  <input type="hidden" id="bodyaddnewdoc" name="body" value="" />
   <input type="submit" value="Add" name="add"/>
 </form></div>
 
