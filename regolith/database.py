@@ -84,10 +84,18 @@ def dump_database(db, client, rc):
 
 def client_is_alive(client):
     """Robust way to check if client is alive"""
-    try:
+    if ON_PYMONGO_V2:
         return client.alive()
-    except TypeError:
-        return True
+    elif ON_PYMONGO_V3:
+        cmd = ['mongostat', '--host', 'localhost', '-n', '1']
+        try:
+            subprocess.check_call(cmd)
+            alive = True
+        except subprocess.CalledProcessError: 
+            alive = False
+        return alive
+    else:
+        raise RuntimeError
 
 def create_client():
     """This creates ensures that a client is connected and alive."""
