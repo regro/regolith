@@ -39,7 +39,7 @@ def deploy_git(rc, name, url, src='html', dst=None):
         subprocess.check_call(cmd, cwd=targetdir)
     except subprocess.CalledProcessError: 
         warn('Could not git commit to ' + targetdir, RuntimeWarning)
-        return
+        # don't return, just in case...
     # deploy!
     cmd = ['git', 'push']
     try:
