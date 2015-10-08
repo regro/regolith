@@ -33,6 +33,31 @@ def date_key(x):
         raise KeyError('could not find year in ' + str(x))
     return v
 
+POSITION_LEVELS = {
+    '': -1,
+    'undergraduate research assistant': 1,
+    'graduate research assistant': 2,
+    'research assistant': 2,
+    'post-doctoral scholar': 3,
+    'assistant scientist': 4,
+    'research scientist': 4.5,
+    'associate scientist': 5,
+    'ajunct professor': 5,
+    'programer': 5,
+    'programmer': 5,
+    'visiting scientist': 6,
+    'research assistant professor': 7,
+    'assistant professor': 8,
+    'associate professor': 9,
+    'professor emeritus': 9,
+    'professor': 10,
+    }
+
+def position_key(x):
+    """Sorts a people based on thier position in the research group."""
+    pos = x.get('position', '').lower()
+    return POSITION_LEVELS.get(pos, -1)
+
 
 def gets(seq, key, default=None):
     """Gets a key from every element of a sequence if possible."""
@@ -73,7 +98,8 @@ class HtmlBuilder(object):
         gtx['rfc822now'] = rfc822now
         gtx['date_to_rfc822'] = date_to_rfc822
         gtx['jobs'] = list(all_docs_from_collection(rc.client, 'jobs'))
-        gtx['people'] = list(all_docs_from_collection(rc.client, 'people'))
+        gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'), 
+                               key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def render(self, tname, fname, **kwargs):
