@@ -1,4 +1,6 @@
 """Flask app for looking at information in regolith."""
+import traceback
+
 from flask import Flask, abort, request, render_template, redirect, url_for
 from bson import json_util, objectid
 
@@ -45,13 +47,25 @@ def collection_page(dbname, collname):
             status = 'canceled'
             status_id = str(body['_id'])
         elif 'save' in form:
-            body = json_util.loads(form['body'].strip())
+            try:
+                body = json_util.loads(form['body'].strip())
+            except Exception:
+                traceback.print_exc()
+                raise
             coll.save(body) 
             status = 'saved ✓'
             status_id = str(body['_id'])
         elif 'add' in form:
-            body = json_util.loads(form['body'].strip())
-            added = insert_one(coll, body)
+            try:
+                body = json_util.loads(form['body'].strip())
+            except Exception:
+                traceback.print_exc()
+                raise
+            try:
+                added = insert_one(coll, body)
+            except Exception:
+                traceback.print_exc()
+                raise
             status = 'added ✓'
             status_id = str(added.inserted_id)
         elif 'delete' in form:

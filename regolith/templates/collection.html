@@ -52,7 +52,7 @@
 <div id="jsoneditoraddnewdoc" style="padding-left:5em;width:80em;height:25em;text-align:left;"></div>
 <script>makeEditor("jsoneditoraddnewdoc", {"_id": {"$oid": "{{str(objectid.ObjectId())}}"}})</script>
 <br/><br/>
-<form method="POST" action="#addnewdoc" onsubmit="editorValue('jsoneditoradnewdoc', 'bodyaddnewdoc');">
+<form method="POST" action="#addnewdoc" onsubmit="editorValue('jsoneditoraddnewdoc', 'bodyaddnewdoc');">
   <input type="hidden" id="bodyaddnewdoc" name="body" value="" />
   <input type="submit" value="Add" name="add"/>
 </form></div>
