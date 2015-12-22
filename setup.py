@@ -43,7 +43,7 @@ def main():
         )
     if HAVE_SETUPTOOLS:
         skw['setup_requires'] = []
-        skw['install_requires'] = ['Jinja2', 'pymongo']
+        #skw['install_requires'] = ['Jinja2', 'pymongo']
     setup(**skw)
 
 logo = """
