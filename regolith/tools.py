@@ -160,3 +160,7 @@ def rfc822now():
     return email.utils.format_datetime(now)
 
 
+def gets(seq, key, default=None):
+    """Gets a key from every element of a sequence if possible."""
+    for x in seq:
+        yield x.get(key, default)

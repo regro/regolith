@@ -1,9 +1,11 @@
 """Generic builder."""
 
 
+from regolith.cvbuilder import CVBuilder
 from regolith.htmlbuilder import HtmlBuilder
 
 BUILDERS = {
+    'cv': CVBuilder,
     'html': HtmlBuilder,
     }
 

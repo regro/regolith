@@ -1,4 +1,4 @@
-"""Builder for websites."""
+"""Builder for CVs."""
 import os
 import shutil
 from itertools import groupby
@@ -11,15 +11,15 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, date_to_float, date_to_rfc822, \
-    rfc822now, gets
+from regolith.tools import all_docs_from_collection, date_to_float, \
+    date_to_rfc822, orfc822now, gets
 from regolith import doc_date_key, ene_date_key, category_val, level_val, \
     id_key, date_key, position_key
 
 
-class HtmlBuilder(object):
+class CVBuilder(object):
 
-    btype = 'html'
+    btype = 'cv'
 
     def __init__(self, rc):
         self.rc = rc
@@ -49,9 +49,6 @@ class HtmlBuilder(object):
         gtx['category_val'] = category_val
         gtx['rfc822now'] = rfc822now
         gtx['date_to_rfc822'] = date_to_rfc822
-        gtx['jobs'] = list(all_docs_from_collection(rc.client, 'jobs'))
-        gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'), 
-                               key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def render(self, tname, fname, **kwargs):
@@ -67,41 +64,31 @@ class HtmlBuilder(object):
             f.write(result)
 
     def build(self):
-        rc = self.rc
         os.makedirs(self.bldir, exist_ok=True)
-        self.root_index()
-        self.people()
-        self.projects()
-        self.blog()
-        self.jobs()
-        self.nojekyll()
-        self.cname()
+        self.cv()
         # static
-        stsrc = os.path.join('templates', 'static')
-        stdst = os.path.join(self.bldir, 'static')
-        if os.path.isdir(stdst):
-            shutil.rmtree(stdst)
-        shutil.copytree(stsrc, stdst)
-
-    def root_index(self):
-        rc = self.rc
-        self.render('root_index.html', 'index.html', title='Home')
+        #stsrc = os.path.join('templates', 'static')
+        #stdst = os.path.join(self.bldir, 'static')
+        #if os.path.isdir(stdst):
+        #    shutil.rmtree(stdst)
+        #shutil.copytree(stsrc, stdst)
 
     def people(self):
         rc = self.rc
-        peeps_dir = os.path.join(self.bldir, 'people')
-        os.makedirs(peeps_dir, exist_ok=True)
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
-            bibfile = self.make_bibtex_file(pubs, pid=p['_id'], person_dir=peeps_dir)
-            ene = p.get('employment', []) + p.get('education', [])
-            ene.sort(key=ene_date_key, reverse=True)
+            bibfile = self.make_bibtex_file(pubs, pid=p['_id'], 
+                                            person_dir=self.bldir)
+            emp = p.get('employment', [])
+            emp.sort(key=ene_date_key, reverse=True)
+            edu = p.get('education', []) 
+            edu.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
-            self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
-                        title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile, 
-                        education_and_employment=ene, projects=projs)
-        self.render('people.html', os.path.join('people', 'index.html'), title='People')
+            self.render('cv.tex', p['_id'] + '.tex'), p=p,
+                        title=p.get('name', ''), 
+                        pubs=pubs, names=names, bibfile=bibfile, 
+                        education=edu, employment=emp, projects=projs)
 
     def filter_publications(self, authors, reverse=False):
         rc = self.rc
@@ -141,41 +128,3 @@ class HtmlBuilder(object):
         projs.sort(key=id_key, reverse=reverse)
         return projs
 
-    def projects(self):
-        rc = self.rc
-        projs = all_docs_from_collection(rc.client, 'projects')
-        self.render('projects.html', 'projects.html', title='Projects', projects=projs)
-
-    def blog(self):
-        rc = self.rc
-        blog_dir = os.path.join(self.bldir, 'blog')
-        os.makedirs(blog_dir, exist_ok=True)
-        posts = list(all_docs_from_collection(rc.client, 'blog'))
-        posts.sort(key=ene_date_key, reverse=True)
-        for post in posts:
-            self.render('blog_post.html', os.path.join('blog', post['_id'] + '.html'), 
-                post=post, title=post['title'])
-        self.render('blog_index.html', os.path.join('blog', 'index.html'), title='Blog',
-                    posts=posts)
-        self.render('rss.xml', os.path.join('blog', 'rss.xml'), items=posts)
-
-    def jobs(self):
-        rc = self.rc
-        jobs_dir = os.path.join(self.bldir, 'jobs')
-        os.makedirs(jobs_dir, exist_ok=True)
-        for job in self.gtx['jobs']:
-            self.render('job.html', os.path.join('jobs', job['_id'] + '.html'), 
-                job=job, title='{0} ({1})'.format(job['title'], job['_id']))
-        self.render('jobs.html', os.path.join('jobs', 'index.html'), title='Jobs')
-
-    def nojekyll(self):
-        """Touches a nojekyll file in the build dir"""
-        with open(os.path.join(self.bldir, '.nojekyll'), 'a+'):
-            pass
-
-    def cname(self):
-        rc = self.rc
-        if not hasattr(rc, 'cname'):
-            return
-        with open(os.path.join(self.bldir, 'CNAME'), 'w') as f:
-            f.write(rc.cname)
