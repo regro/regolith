@@ -8,10 +8,7 @@
 % Alike 2.5 License. To view a copy of this license, visit 
 % http://creativecommons.org/licenses/by-nc-sa/2.5/ or send a letter to Creative 
 % Commons, 543 Howard Street, 5th Floor, San Francisco, California, 94105, USA.
-
-{{title}}
-
-{#
+{% raw %}
 \documentclass[letterpaper,11pt]{article}
 \newlength{\outerbordwidth}
 \pagestyle{empty}
@@ -118,6 +115,9 @@
 %\bibliographystyle{plain}
 
 \begin{document}
+{% endraw %}
+
+{#
 
 \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
 \textbf{\Large Dr. Anthony Michael Scopatz} & \textbf{\today} \\
@@ -655,5 +655,5 @@ University of Wisconsin-Madison & scopatz@gmail.com \\
     \end{itemize}
 \end{itemize}
 
-\end{document}
 #}
+\end{document}
