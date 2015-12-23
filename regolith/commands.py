@@ -1,11 +1,14 @@
 """Implementation of commands for command line."""
 import os
+import re
 import json
 
 from regolith.tools import string_types, ON_PYMONGO_V2, insert_many, find_one_and_update
 from regolith.builder import builder
 from regolith.deploy import deploy as dploy
 
+
+RE_AND = re.compile('\s+and\s+')
 
 def add_cmd(rc):
     """Adds documents to a collection in a database."""
@@ -25,7 +28,7 @@ def _ingest_citations(rc):
         bibid = bib.pop('ID')
         bib['entrytype'] = bib.pop('ENTRYTYPE')
         if 'author' in bib:
-            bib['author'] = [a.strip() for a in bib['author'].split(' and ')]
+            bib['author'] = [a.strip() for a in RE_AND.split(bib['author'])]
         find_one_and_update(coll, {'_id': bibid}, {'$set': bib}, upsert=True)
 
 

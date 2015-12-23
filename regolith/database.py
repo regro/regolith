@@ -132,4 +132,4 @@ def connect(rc):
         raise RuntimeError('did not recognize pymongo version')
     proc.terminate()
     if os.path.isdir(mongodbpath):
-        shutil.rmtree(mongodbpath)
+        shutil.rmtree(mongodbpath, ignore_errors=True)

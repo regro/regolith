@@ -42,6 +42,7 @@ POSITION_LEVELS = {
     'assistant scientist': 4,
     'research scientist': 4.5,
     'associate scientist': 5,
+    'research associate': 5, 
     'ajunct professor': 5,
     'programer': 5,
     'programmer': 5,
