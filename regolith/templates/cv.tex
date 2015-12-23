@@ -117,15 +117,14 @@
 \begin{document}
 {% endraw %}
 
-{#
 
 \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
-\textbf{\Large Dr. Anthony Michael Scopatz} & \textbf{\today} \\
-University of Wisconsin-Madison & scopatz@gmail.com \\
-%Austin, TX, U.S.A. &  \\
+\textbf{\Large {{p['title']}} {{p['name']}}} & \textbf{\today} \\
+{{employment[0]['organization']}} & {{p['email']}} \\
 \end{tabular*}
 \\
 
+{#
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Education \& Employment}
