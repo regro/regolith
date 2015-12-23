@@ -1,0 +1,659 @@
+% (c) 2002 Matthew Boedicker <mboedick@mboedick.org> (original author) 
+%     http://mboedick.org
+% (c) 2003-2007 David J. Grant <davidgrant-at-gmail.com> http://www.davidgrant.ca
+% (c) 2008 Nathaniel Johnston <nathaniel@nathanieljohnston.com> 
+%     http://www.nathanieljohnston.com
+%
+% This work is licensed under the Creative Commons Attribution-Noncommercial-Share 
+% Alike 2.5 License. To view a copy of this license, visit 
+% http://creativecommons.org/licenses/by-nc-sa/2.5/ or send a letter to Creative 
+% Commons, 543 Howard Street, 5th Floor, San Francisco, California, 94105, USA.
+
+{{title}}
+
+{#
+\documentclass[letterpaper,11pt]{article}
+\newlength{\outerbordwidth}
+\pagestyle{empty}
+\raggedbottom
+\raggedright
+\usepackage[svgnames]{xcolor}
+\usepackage{framed}
+\usepackage{tocloft}
+\usepackage[backend=bibtex,maxnames=99]{biblatex}
+\usepackage{hyperref}
+
+%-----------------------------------------------------------
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=red            % color of external links
+}
+
+%-----------------------------------------------------------
+%Edit these values as you see fit
+
+% Width of border outside of title bars
+\setlength{\outerbordwidth}{3pt}  
+% Outer background color of title bars (0 = black, 1 = white)
+\definecolor{shadecolor}{gray}{0.75}  
+% Inner background color of title bars
+\definecolor{shadecolorB}{gray}{0.93}  
+
+
+%-----------------------------------------------------------
+%Margin setup
+
+\setlength{\evensidemargin}{-0.25in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\paperheight}{11in}
+\setlength{\paperwidth}{8.5in}
+\setlength{\tabcolsep}{0in}
+\setlength{\textheight}{9.5in}
+\setlength{\textwidth}{7in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\topskip}{0in}
+\setlength{\voffset}{0.1in}
+
+
+%-----------------------------------------------------------
+%Custom commands
+\newcommand{\resitem}[1]{\item #1 \vspace{-2pt}}
+\newcommand{\resheading}[1]{\vspace{8pt}
+  \parbox{\textwidth}{\setlength{\fboxsep}{\outerbordwidth}
+    \begin{shaded}
+    \setlength{\fboxsep}{0pt}\framebox[\textwidth][l]{\setlength{\fboxsep}{4pt}\fcolorbox{shadecolorB}{shadecolorB}{\textbf{\sffamily{\mbox{~}\makebox[6.762in][l]{\large #1} \vphantom{p\^{E}}}}}}
+    \end{shaded}
+  }\vspace{-5pt}
+}
+
+\newcommand{\ressubheadingshort}[3]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{c}{\textbf{#1} \cftdotfill{\cftdotsep} #2} \\
+        \textit{#3} & \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{-24pt}
+}
+
+\newcommand{\ressubheading}[4]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{c}{\textbf{#1} \cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{c}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{-24pt}
+}
+
+\newcommand{\ressubheadingitems}[5]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{c}{\textbf{#1} \cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{c}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{-32pt}
+    \begin{itemize}\renewcommand{\labelitemi}{}
+        \item\begin{itemize}
+        #5
+        \end{itemize}
+    \end{itemize}
+}
+
+%-----------------------------------------------------------
+
+
+% Bibliography
+\bibliography{publications}{}
+%\bibliographystyle{plain}
+
+\begin{document}
+
+\begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
+\textbf{\Large Dr. Anthony Michael Scopatz} & \textbf{\today} \\
+University of Wisconsin-Madison & scopatz@gmail.com \\
+%Austin, TX, U.S.A. &  \\
+\end{tabular*}
+\\
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Education \& Employment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ressubheadingitems{CNERG, The University of Wisconsin-Madison}{Madison, WI}
+    {Associate Scientist, Engineering Physics Department}
+    {June 2013 - present}{
+    \resitem{Cyclus: An agent-based, discrete time nuclear fuel cycle simulator.}
+    \resitem{PyNE: The Nuclear Engineering Toolkit.}
+}
+
+\ressubheadingitems{The FLASH Center, The University of Chicago}{Chicago, IL}
+    {Research Scientist, Postdoctoral Scholar,  Astronomy \& Astrophysics Dept.}
+    {Nov 2011 - May 2013} {
+    \resitem{NIF: Simulation of magnetic field generation from neutral plasmas 
+             using FLASH.}
+    \resitem{CosmoB: Simulation of magnetic field generation from neutral plasmas 
+             using FLASH.}
+    \resitem{FLASH4: High-energy density physics capabilities and utilities.}
+    \resitem{Simulated Diagnostics: Schlieren, shadowgraphy, Langmuir probes, 
+             etc. from FLASH.}
+    \resitem{OpacPlot: HDF5-based equation of state and opacity file format.}
+}
+
+\ressubheadingitems{Enthought, Inc.}{Austin, TX}{Scientific Software Developer}
+    {May 2010 - October 2011}{
+    \resitem{PlotTool: Time series data visualization for J.P. Morgan Chase.}
+    \resitem{PivotTable: Data cube configuration, management, and visualization 
+             for J.P. Morgan Chase.}
+    \resitem{WIPP-PA: Waste Isolation Pilot Project Performance Assessment tool 
+             for Sandia Nat'l Labs.}
+    \resitem{EasyGuide2: Dental implant imaging software for Keystone Dental.}
+}
+
+\ressubheadingitems{The University of Texas at Austin}{Austin, TX}
+    {Ph.D. Mechanical Engineering, Nuclear and Radiation Engineering Program}
+    {2008 - 2011}{
+    \resitem{Adviser: Erich A. Schneider}
+    \resitem{Dissertation: Essential Physics for Fuel Cycle Modeling \& Analysis}
+    \resitem{Graduated with 3.74 GPA}
+}
+
+\ressubheadingitems{The University of Texas at Austin}{Austin, TX}
+    {M.S.E. Mechanical Engineering, Nuclear and Radiation Engineering Program}
+    {2006 - 2007}{
+    \resitem{Adviser: Erich A. Schneider}
+    \resitem{Thesis: Recyclable Uranium Options under the Global Nuclear Energy 
+             Partnership}
+}
+
+\ressubheadingitems{University of California, Santa Barbara}{Santa Barbara, CA}
+    {B.S. Physics}{2002 - 2006}{
+    \resitem{Graduated with a Major in Physics and a Minor in Mathematics}
+    \resitem{Graduated with 3.34 GPA}
+}
+
+\clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Awards, Grants \& Honours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \vspace{-2pt}
+\begin{center}\begin{tabular*}{6.6in}{l@{\extracolsep{\fill}}r}
+    \multicolumn{2}{c}{Communications Chair for SciPy 2014 \cftdotfill{\cftdotsep} 2014}\\
+    \multicolumn{2}{c}{Nuclear Energy University Programs 2013 \#5209 (\$612,731) \cftdotfill{\cftdotsep} 2013}\\
+    \multicolumn{2}{c}{Communications Chair for SciPy 2013 \cftdotfill{\cftdotsep} 2013}\\
+    \multicolumn{2}{c}{Omega Laser User's Group Travel Award (\$1,100) \cftdotfill{\cftdotsep} 2013}\\
+    \multicolumn{2}{c}{NIF User's Group Travel Award (\$1,150) \cftdotfill{\cftdotsep} 2013}\\
+    \multicolumn{2}{c}{Open Spaces Chair for SciPy 2012 \cftdotfill{\cftdotsep} 2012}\\
+    \multicolumn{2}{c}{Nuclear Energy University Programs 2012 \#4065 (\$395,000) \cftdotfill{\cftdotsep} 2012}\\
+    \multicolumn{2}{c}{Chair of ``Python \& Core Technologies'' Track at SciPy 2011 \cftdotfill{\cftdotsep} 2011}\\
+    \multicolumn{2}{c}{PyCon 2010 Program Committee Member\cftdotfill{\cftdotsep} 2010}\\
+    \multicolumn{2}{c}{Innovations in Fuel Cycle Research, 2nd place Systems Engineering and Analysis (\$2,500) \cftdotfill{\cftdotsep} 2010}\\
+    \multicolumn{2}{c}{Peer Reviewer for Nuclear Engineering \& Design (NED-D-09-00256) \cftdotfill{\cftdotsep} 2009}\\
+    \multicolumn{2}{c}{MCNPX Bug \#100 (\$20) \cftdotfill{\cftdotsep} 2009}\\
+    \multicolumn{2}{c}{Graduate Travel Award Fund (\$2,000) \cftdotfill{\cftdotsep} 2008}\\
+    \multicolumn{2}{c}{George J. Heuer, Jr. Ph.D. Endowed Graduate Fellowship Fund (\$2,500) \cftdotfill{\cftdotsep} 2007 - 2008}\\
+    \multicolumn{2}{c}{George J. Heuer, Jr. Ph.D. Endowed Graduate Fellowship Fund (\$2,500) \cftdotfill{\cftdotsep} 2006 - 2007}\\
+    \multicolumn{2}{c}{Undergraduate Research Scholarship (\$1,000) \cftdotfill{\cftdotsep} 2005} \\
+    \vphantom{E}
+\end{tabular*}
+\end{center}\vspace*{-16pt}
+
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Featured Publications}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+\item \fullcite{scopatz2015comphys}
+
+\item \fullcite{scopatz2013entropy}
+
+\item \fullcite{Scopatz2013a}
+
+\item \fullcite{scopatz2013flash}
+
+\item \fullcite{Scopatz2009}
+
+\end{enumerate}
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Research Experience}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ressubheadingitems{Associate Scientist}
+    {The University of Wisconsin-Madison}
+    {Engineering Physics}{June 2013 - present} {
+        \resitem{Agent-based nuclear fuel cycle simulation.}
+        \resitem{Project lead for Cyclus.}
+        \resitem{Nuclear engineering toolkit development via PyNE.}
+    }
+
+\ressubheadingitems{Research Scientist \& Postdoctoral Scholar}
+    {The University of Chicago}
+    {High Energy Density Physics}{November 2011 - May 2013} {
+        \resitem{Hydrodynamic simulations of laser-target interaction experiments.}
+        \resitem{Development of simulated diagnostic tools for FLASH simulations.}
+        \resitem{Development of workflow management and reproducibility tools for 
+                 FLASH.}
+    }
+
+\ressubheadingitems{Graduate Research Assistant}{The University of Texas at Austin}
+    {Nuclear Fuel Cycle \& Reactor Modeling}{August 2006 - August 2011} {
+        \resitem{Development of essential physics reactor models, computational 
+                 nuclear fuel cycle simulations, and information theoretic analysis.}
+        \resitem{Documentation of Indonesia and the nuclear fuel cycle (2006).}
+    }
+
+\ressubheadingitems{Summer Internship/Visiting Scientist}{Idaho National Laboratory}
+                  {Nuclear Fuel Cycle \& Reactor Modeling}{Summer 2007} {
+        \resitem{Modeled the use of recyclable uranium in light water reactors both 
+                 with respect to the fuel cycle as a whole and to specific components, 
+                 like the reactor and enrichment facilities.}
+    }
+
+\ressubheadingitems{Undergraduate Research Assistant}
+    {University of California, Santa Barbara}
+    {Terahertz Continuous Wave Spectroscopy}{2002 - 2005} {
+        \resitem{Studied the effect of Terahertz waves on biomacromolecules in water.}
+    }
+
+\ressubheadingitems{Summer Internship/Visiting Scientist}
+    {Los Alamos National Laboratory}{Terahertz Pump-Probe Spectroscopy}
+    {Summer 2004} {
+        \resitem{Looked at the effect of Terahertz waves on Erbium-Arsenide on a 
+                 Gallium-Arsenide substrate.}
+    }
+
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Major Software Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ressubheadingitems{Cyclus}{Project Lead}
+    {Next-Generation Agent-Based Nuclear Fuel Cycle Simulator}
+    {January 2012 - present} {
+    \resitem{Discrete facilities with discrete material transactions}
+    \resitem{Low barrier to entry, rapid payback to adoption}
+    \resitem{Website: \url{http://fuelcycle.org/}}
+    }
+
+\ressubheadingitems{PyNE}{Lead Developer}{The Nuclear Engineering Toolkit}
+    {April 2011 - present} {
+    \resitem{Nuclear data I/O and manipulation}
+    \resitem{Kernels for canonical problems (Bateman eq solvers, diffusion eq 
+             solvers, etc.)}
+    \resitem{Workflow management tools (I/O support for other codes, fundamental 
+             data types, etc.)}
+    \resitem{Website: \url{http://pyne.io/}}
+    }
+
+\ressubheadingitems{FLASH}{HEDP Developer}{MHD / Plasma Physics}{Nov 2011 - present} {
+    \resitem{Modular, parallel multiphysics simulation code for
+             terrestrial and astrophysical plasmas.}
+    \resitem{Features include: Uniform Grid, AMR, Ideal Gas EOS, Multimaterial 
+             EOS, Laser Ray Trace.}
+    \resitem{Website: \url{http://flash.uchicago.edu/site/}}
+    }
+
+\ressubheadingitems{yt}{Developer}{Volumetric Data Analysis}
+    {August 2012 - present} {
+    \resitem{Data access and manipulation}
+    \resitem{Visualization though Slices, projections, oblique slices}
+    \resitem{Parallel execution}
+    \resitem{Website: \url{http://yt-project.org/}}
+    }
+
+\ressubheadingitems{PyTables}{Lead Developer}{Pythonic Wrapper for HDF5}
+    {July 2011 - present} {
+    \resitem{Package for managing hierarchical datasets}
+    \resitem{Efficiently and easily copes with extremely large amounts of data}
+    \resitem{Website: \url{http://pytables.github.com/}}
+    }
+
+\ressubheadingitems{Bright}{Lead Developer}{Nuclear Fuel Cycle Component Collection}
+    {September 2006 - present} {
+    \resitem{Low-level essential physics models for fuel cycle components in C++}
+    \resitem{High-level fuel cycle interface in Python}
+    \resitem{Website: \url{http://bright-dev.github.com/bright/}}
+    }
+
+\ressubheadingitems{CHAR, xsgen}{Lead Developer}{Cross-sections Have Awesome Rates}
+    {May 2008 - present} {
+    \resitem{Cross section generator for Bright multi-group reactors.}
+    \resitem{Website: \url{http://bright-dev.github.io/xsgen/}}
+    }
+
+\ressubheadingitems{Enthought Tool Suite}{Developer}
+    {Tools for building scientific applications}{May 2010 - 2011} {
+    \resitem{Traits, Chaco, Mayavi}
+    \resitem{CodeTools, BlockCanvas, GraphCanvas}
+    \resitem{Website: \url{http://code.enthought.com/}}
+    }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Postdoctoral Publications}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+\item \fullcite{scopatz2015comphys}
+
+\item \fullcite{biondo2014quality}
+
+\item \fullcite{bates2014pyne}
+
+\item \fullcite{Gidden2014}
+
+\item \fullcite{meinecke2014turbulent}
+
+\item \fullcite{tzeferacos2014numerical}
+
+\item \fullcite{tzeferacos2014}
+
+\item \fullcite{Scopatz2013l}
+
+\item \fullcite{scopatz2013entropy}
+
+\item \fullcite{lamb2013validation}
+
+\item \fullcite{tzeferacos2013predictive}
+
+\item \fullcite{Scopatz2013i}
+
+\item \fullcite{Gidden2013a}
+
+\item \fullcite{Scopatz2013a}
+
+\item \fullcite{scopatz2012pyne}
+
+\item \fullcite{Scopatz2012q}
+
+\item \fullcite{scopatz2013flash}
+
+\item \fullcite{fatenejad2013modeling}
+
+\item \fullcite{Tzeferacos2012b}
+
+\item \fullcite{Scopatz2012p}
+
+\item \fullcite{Scopatz2012r}
+
+\item \fullcite{Scopatz2011d}
+
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Graduate Publications}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+\item \fullcite{huff2011rapid}
+
+\item \fullcite{Scopatz2010c}
+
+\item \fullcite{Scopatz2010b}
+
+\item \fullcite{Scopatz2010i}
+
+\item \fullcite{Scopatz2009c}
+
+\item \fullcite{schneider2009attachment}
+
+\item \fullcite{Scopatz2009g} 
+
+\item \fullcite{Scopatz2009}
+
+\item \fullcite{Li2009b}
+
+\item \fullcite{li2008impact}
+
+\item \fullcite{Schneider2008}
+
+\item \fullcite{Scopatz2008c}
+
+\item \fullcite{Schneider2007}
+
+\item \fullcite{harrison2007review}
+
+\end{enumerate}
+
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Undergraduate Publications}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+\item \fullcite{Prasankumar2005b}
+
+\item \fullcite{Prasankumar2005a}
+
+\item \fullcite{Prasankumar2005}
+
+\item \fullcite{Xu2004}
+
+\item \fullcite{Xu2003}
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Presentations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+\item \fullcite{scopatz2014pyneprog}
+
+\item \fullcite{scopatz2014kitware}
+
+\item \fullcite{Scopatz2013k}
+
+\item \fullcite{Scopatz2013j}
+
+\item \fullcite{Scopatz2013h}
+
+\item \fullcite{Scopatz2013f}
+
+\item \fullcite{Scopatz2013d}
+
+\item \fullcite{Scopatz2013c}
+
+\item \fullcite{Scopatz2013g}
+
+\item \fullcite{Scopatz2012t}
+
+\item \fullcite{Scopatz2012s}
+
+\item \fullcite{Scopatz2012e}
+
+\item \fullcite{Scopatz2012f}
+
+\item \fullcite{Scopatz2012g}
+
+\item \fullcite{Scopatz2012d}
+
+\item \fullcite{Scopatz2012l}
+
+\item \fullcite{Scopatz2012k}
+
+\item \fullcite{Scopatz2012m}
+
+\item \fullcite{Scopatz2012j}
+
+\item \fullcite{Scopatz2012i}
+
+\item \fullcite{Scopatz2012h}
+
+\item \fullcite{Scopatz2011c}
+
+\item \fullcite{Scopatz2011b}
+
+\item \fullcite{Scopatz2011a}
+
+\item \fullcite{Scopatz2011}
+
+\item \fullcite{Preston2011}
+
+\item \fullcite{Scopatz2010h}
+
+\item \fullcite{Scopatz2010g}
+
+\item \fullcite{Scopatz2010f}
+
+\item \fullcite{Scopatz2010a}
+
+\item \fullcite{Scopatz2010l}
+
+\item \fullcite{Scopatz2010j}
+
+\item \fullcite{Scopatz2010d}
+
+\item \fullcite{Scopatz2010e}
+
+\item \fullcite{Scopatz2009d}
+
+\item \fullcite{Scopatz2009f}
+
+\item \fullcite{Scopatz2008b}
+
+\item \fullcite{Harrison2007a}
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Posters}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+\item \fullcite{Scopatz2013e}
+
+\item \fullcite{Scopatz2013b}
+
+\item \fullcite{Tzeferacos2013a}
+
+\item \fullcite{Scopatz2012c}
+
+\item \fullcite{Flocke2012a}
+
+\item \fullcite{Fatenejad2012a}
+
+\item \fullcite{Scopatz2012a}
+
+\item \fullcite{Scopatz2012b}
+
+\item \fullcite{Tzeferacos2012a}
+
+\item \fullcite{Miranda2011}
+
+\item \fullcite{Scopatz2010k}
+
+\item \fullcite{Schneider2009}
+
+\item \fullcite{Li2009c}
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Teaching Experience}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ressubheadingitems{Scientific Computing with Python and SciPy}
+    {African Institute for Mathematical Sciences}{Lecturer}{September 2013 \& 2014} {
+    \resitem{Instructed 50+ students in a full 30 hour course in the basics of 
+             scientific computing in the context of the scientific Python stack.}
+    \resitem{\href{http://software-carpentry.org/blog/2013/09/scientific-computing-at-aims.html}{Summary},  
+             \href{https://bitbucket.org/scopatz/aims-scicomp.git}{Source Materials}
+             }
+    }
+
+\ressubheadingitems{HDF5 is for Lovers}
+    {SciPy 2012 \& 2014, PyCon Canada 2012, \& PyData Silicon Valley 2013}
+    {Instructor}{July 16, 2012;  November 10, 2012; March 18, 2013} {
+    \resitem{Instructed 130+ students in the use \& structure of HDF5 and PyTables.}
+    \resitem{\href{http://conference.scipy.org/scipy2012/schedule/tutor_schedule_1.php\#ti-76}{Tutorial Website} \& 
+             \href{http://www.youtube.com/watch?v=Nzx0HAd3FiI}{Video}, 
+             \href{https://github.com/scopatz/hdf5-is-for-lovers}{Source Materials}
+             }
+    }
+
+\ressubheadingitems{Python for Scientific Computing}{Enthought, Inc}{Instructor}
+    {2010-2012} {
+    \resitem{Instructed 11 week-long courses on scientific computing in Python 
+             at various universities, national labs, \& businesses.}
+    }
+
+\ressubheadingitems{SciPy Tutorial}{SciPy 2011}{Instructor}{July 11 2011} {
+    \resitem{Instructed 50 students in the SciPy Python package.}
+    \resitem{\href{http://conference.scipy.org/scipy2011/tutorials.php\#anthony}{Website}}
+    }
+
+\ressubheadingitems{Computational Methods in Nuclear Engineering}
+    {The University of Texas at Austin}{Teaching Assistant/Grader}
+    {Aug. 2010 - Dec. 2010} {
+    \resitem{Helped students develop and debug their discrete ordinates code 
+             throughout the course.}
+    }
+
+\ressubheadingitems{Astronomy 1}{University of California, Santa Barbara}
+    {Undergraduate Teaching Assistant/Grader}{Sept. 2005 - Dec. 2005} {
+    \resitem{Graded a first year Astronomy course and provided teaching 
+             assistance when required.}
+    }
+
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Memberships}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ressubheadingshort{American Nuclear Society}{{\em 2006 - present}}{Member}
+
+\ressubheadingshort{Python Software Foundation}{{\em 2013 - present}}{Fellow}
+
+\ressubheadingshort{NumFOCUS}{{\em 2011 - 2014}}{Board Member, Treasurer}
+
+\ressubheadingshort{Software Carpentry}{{\em 2011 - present}}{Instructor}
+
+\ressubheadingshort{The Hacker Within}{{\em 2009 - present}}{Member}
+
+\ressubheadingshort{inSCIght: The Scientific Computing Podcast}{{\em 2011 - 2013}}
+                   {Host \& Blogger}
+    
+\ressubheadingshort{American Physical Society}{{\em 2012 - 2013}}{Member}
+
+%\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Skills}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+\item
+    Programming Languages
+    \begin{itemize}
+        \resitem{{\bf Expert:} Python, Cython, C, C++, BASH}
+        \resitem{{\bf Intermediate:} Fortran 77/90/95, Haskell, Java, 
+                 JavaScript, Lua, Powersim}
+    \end{itemize}
+
+\item
+    Markup Languages
+    \begin{itemize}
+        \resitem{{\bf Expert:} rST, \LaTeX, HTML, CSS, XML, markdown}
+        \resitem{{\bf Intermediate:} PHP}
+    \end{itemize}
+
+\item
+    Specialized Software
+    \begin{itemize}
+        \resitem{{\bf Expert:} Linux, Unix, OS/2, SSH, HDF5, Boost::Python, NumPy, 
+                 SciPy, MatPlotLib, ORIGEN v2.2, MCNP/X, Mathematica, Serpent, OpenMC}
+        \resitem{{\bf Intermediate:} MATLAB, Maple, NJOY, Django, web2py, SQLite, MySQL}
+    \end{itemize}
+\end{itemize}
+
+\end{document}
+#}

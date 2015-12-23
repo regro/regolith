@@ -12,9 +12,9 @@ except ImportError:
     HAVE_BIBTEX_PARSER = False
 
 from regolith.tools import all_docs_from_collection, date_to_float, \
-    date_to_rfc822, orfc822now, gets
-from regolith import doc_date_key, ene_date_key, category_val, level_val, \
-    id_key, date_key, position_key
+    date_to_rfc822, rfc822now, gets
+from regolith.sorters import doc_date_key, ene_date_key, category_val, \
+    level_val, id_key, date_key, position_key
 
 
 class CVBuilder(object):
@@ -49,6 +49,8 @@ class CVBuilder(object):
         gtx['category_val'] = category_val
         gtx['rfc822now'] = rfc822now
         gtx['date_to_rfc822'] = date_to_rfc822
+        gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'), 
+                               key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def render(self, tname, fname, **kwargs):
@@ -65,7 +67,7 @@ class CVBuilder(object):
 
     def build(self):
         os.makedirs(self.bldir, exist_ok=True)
-        self.cv()
+        self.cvs()
         # static
         #stsrc = os.path.join('templates', 'static')
         #stdst = os.path.join(self.bldir, 'static')
@@ -73,7 +75,7 @@ class CVBuilder(object):
         #    shutil.rmtree(stdst)
         #shutil.copytree(stsrc, stdst)
 
-    def people(self):
+    def cvs(self):
         rc = self.rc
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
@@ -85,7 +87,7 @@ class CVBuilder(object):
             edu = p.get('education', []) 
             edu.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
-            self.render('cv.tex', p['_id'] + '.tex'), p=p,
+            self.render('cv.tex', p['_id'] + '.tex', p=p,
                         title=p.get('name', ''), 
                         pubs=pubs, names=names, bibfile=bibfile, 
                         education=edu, employment=emp, projects=projs)
