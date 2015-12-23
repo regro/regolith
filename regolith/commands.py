@@ -9,6 +9,7 @@ from regolith.deploy import deploy as dploy
 
 
 RE_AND = re.compile('\s+and\s+')
+RE_SPACE = re.compile('\s+')
 
 def add_cmd(rc):
     """Adds documents to a collection in a database."""
@@ -29,6 +30,8 @@ def _ingest_citations(rc):
         bib['entrytype'] = bib.pop('ENTRYTYPE')
         if 'author' in bib:
             bib['author'] = [a.strip() for a in RE_AND.split(bib['author'])]
+        if 'title' in bib:
+            bib['title'] = RE_SPACE.sub(' ', bib['title'])
         find_one_and_update(coll, {'_id': bibid}, {'$set': bib}, upsert=True)
 
 
