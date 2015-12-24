@@ -1,6 +1,8 @@
 """Builder for CVs."""
 import os
 import shutil
+import subprocess
+from glob import glob
 from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
@@ -16,6 +18,7 @@ from regolith.tools import all_docs_from_collection, date_to_float, \
 from regolith.sorters import doc_date_key, ene_date_key, category_val, \
     level_val, id_key, date_key, position_key
 
+LATEX_OPTS = ['-halt-on-error', '-file-line-error']
 
 class CVBuilder(object):
 
@@ -68,15 +71,11 @@ class CVBuilder(object):
 
     def build(self):
         os.makedirs(self.bldir, exist_ok=True)
-        self.cvs()
-        # static
-        #stsrc = os.path.join('templates', 'static')
-        #stdst = os.path.join(self.bldir, 'static')
-        #if os.path.isdir(stdst):
-        #    shutil.rmtree(stdst)
-        #shutil.copytree(stsrc, stdst)
+        self.latex()
+        self.pdf()
+        self.clean()
 
-    def cvs(self):
+    def latex(self):
         rc = self.rc
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
@@ -157,3 +156,26 @@ class CVBuilder(object):
             aghs.append(d)
         aghs.sort(key=(lambda x: x.get('_key', 0.0)), reverse=True)
         return aghs
+
+    def pdf(self):
+        """Compiles latex files to PDF"""
+        for p in self.gtx['people']:
+            base = p['_id']
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['bibtex'] + [base + '.aux'])
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['dvipdf', base])
+
+    def run(self, cmd):
+        subprocess.run(cmd, cwd=self.bldir, check=True)           
+
+    def clean(self):
+        postfixes = ['*.dvi', '*.toc', '*.aux', '*.out', '*.log', '*.bbl', 
+                     '*.blg', '*.log', '*.spl', '*~', '*.spl', '*.run.xml', 
+                     '*-blx.bib']        
+        to_rm = []
+        for pst in postfixes:
+            to_rm += glob(os.path.join(self.bldir, pst))
+        for f in set(to_rm):
+            os.remove(f)
