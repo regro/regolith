@@ -124,11 +124,50 @@
 \end{tabular*}
 \\
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Education}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for e in education %}
+\ressubheadingitems{ {{-e['institution']-}} }
+    { {{-e['location']-}} }
+    { {{-e['degree']-}} }
+    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} - 
+      {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
+    { {% for o in e.get('other', ()) %}
+        \resitem{ {{- o -}} }
+     {% endfor%}
+     {% if 'gpa' in e %}
+        \resitem{GPA: {{e['gpa']-}} }
+     {% endif %}
+    }
+{% endfor %}
+
 {#
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Education \& Employment}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ressubheadingitems{The University of Texas at Austin}{Austin, TX}
+    {Ph.D. Mechanical Engineering, Nuclear and Radiation Engineering Program}
+    {2008 - 2011}{
+    \resitem{Adviser: Erich A. Schneider}
+    \resitem{Dissertation: Essential Physics for Fuel Cycle Modeling \& Analysis}
+    \resitem{Graduated with 3.74 GPA}
+}
+
+\ressubheadingitems{The University of Texas at Austin}{Austin, TX}
+    {M.S.E. Mechanical Engineering, Nuclear and Radiation Engineering Program}
+    {2006 - 2007}{
+    \resitem{Adviser: Erich A. Schneider}
+    \resitem{Thesis: Recyclable Uranium Options under the Global Nuclear Energy 
+             Partnership}
+}
+
+\ressubheadingitems{University of California, Santa Barbara}{Santa Barbara, CA}
+    {B.S. Physics}{2002 - 2006}{
+    \resitem{Graduated with a Major in Physics and a Minor in Mathematics}
+    \resitem{Graduated with 3.34 GPA}
+}
+
+
 \ressubheadingitems{CNERG, The University of Wisconsin-Madison}{Madison, WI}
     {Associate Scientist, Engineering Physics Department}
     {June 2013 - present}{
@@ -159,29 +198,12 @@
     \resitem{EasyGuide2: Dental implant imaging software for Keystone Dental.}
 }
 
-\ressubheadingitems{The University of Texas at Austin}{Austin, TX}
-    {Ph.D. Mechanical Engineering, Nuclear and Radiation Engineering Program}
-    {2008 - 2011}{
-    \resitem{Adviser: Erich A. Schneider}
-    \resitem{Dissertation: Essential Physics for Fuel Cycle Modeling \& Analysis}
-    \resitem{Graduated with 3.74 GPA}
-}
-
-\ressubheadingitems{The University of Texas at Austin}{Austin, TX}
-    {M.S.E. Mechanical Engineering, Nuclear and Radiation Engineering Program}
-    {2006 - 2007}{
-    \resitem{Adviser: Erich A. Schneider}
-    \resitem{Thesis: Recyclable Uranium Options under the Global Nuclear Energy 
-             Partnership}
-}
-
-\ressubheadingitems{University of California, Santa Barbara}{Santa Barbara, CA}
-    {B.S. Physics}{2002 - 2006}{
-    \resitem{Graduated with a Major in Physics and a Minor in Mathematics}
-    \resitem{Graduated with 3.34 GPA}
-}
-
 \clearpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Employment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

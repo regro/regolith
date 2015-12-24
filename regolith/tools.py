@@ -131,6 +131,9 @@ MONTHS = {
     'december': 12,
     }
 
+SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'Jun', 'Jul', 
+                     'Aug', 'Sept', 'Oct', 'Nov', 'Dec')
+
 def month_to_int(m):
     """Converts a month to an integer."""
     try:
@@ -164,3 +167,14 @@ def gets(seq, key, default=None):
     """Gets a key from every element of a sequence if possible."""
     for x in seq:
         yield x.get(key, default)
+
+
+def month_and_year(m=None, y=None):
+    """Creates a string from month and year data, if available."""
+    if y is None:
+        return "present"
+    if m is None:
+        return str(y)
+    m = month_to_int(m)
+    return '{0} {1}'.format(SHORT_MONTH_NAMES[m], y)
+

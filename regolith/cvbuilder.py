@@ -12,7 +12,7 @@ except ImportError:
     HAVE_BIBTEX_PARSER = False
 
 from regolith.tools import all_docs_from_collection, date_to_float, \
-    date_to_rfc822, rfc822now, gets
+    date_to_rfc822, rfc822now, gets, month_and_year
 from regolith.sorters import doc_date_key, ene_date_key, category_val, \
     level_val, id_key, date_key, position_key
 
@@ -49,6 +49,7 @@ class CVBuilder(object):
         gtx['category_val'] = category_val
         gtx['rfc822now'] = rfc822now
         gtx['date_to_rfc822'] = date_to_rfc822
+        gtx['month_and_year'] = month_and_year
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'), 
                                key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
