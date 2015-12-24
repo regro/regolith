@@ -171,25 +171,19 @@
 \end{tabular*}
 \end{center}\vspace*{-16pt}
 
-{#
 
 
 %\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Featured Publications}
+\resheading{Recent Publications}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}
-\item \fullcite{scopatz2015comphys}
-
-\item \fullcite{scopatz2013entropy}
-
-\item \fullcite{Scopatz2013a}
-
-\item \fullcite{scopatz2013flash}
-
-\item \fullcite{Scopatz2009}
-
+{% for pub in pubs[:5] %}
+    \item \fullcite{ {{-pub['_id']-}} }
+{% endfor %}
 \end{enumerate}
+
+{#
 
 \clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
