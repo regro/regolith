@@ -88,6 +88,7 @@ class CVBuilder(object):
             edu = p.get('education', []) 
             edu.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
+            aghs = self.awards_grants_honors(p)
             self.render('cv.tex', p['_id'] + '.tex', p=p,
                         title=p.get('name', ''), 
                         pubs=pubs, names=names, bibfile=bibfile, 
@@ -131,3 +132,22 @@ class CVBuilder(object):
         projs.sort(key=id_key, reverse=reverse)
         return projs
 
+    def awards_grants_honors(self, p):
+        """Make sorted awards grants and honrs list."""
+        aghs = []
+        for x in p.get('funding', ()):
+            d = {'description': '{0} ({1}{2})'.format(x['name'], 
+                                                      x.get('currency', '$'),
+                                                      x['value']),
+                 'year': x['year'],
+                 '_key': date_to_float(x['year'], x.get('month', 0)),
+                 }
+            aghs.append(d)
+        for x in p.get('service', []) + p.get('honors', []):
+            d = {'description': x['name'], 
+                 'year': x['year'],
+                 '_key': date_to_float(x['year'], x.get('month', 0)),
+                 }
+            aghs.append(d)
+        aghs.sort(key=(lambda x: x.get('_key', 0.0)), reverse=True)
+        return aghs
