@@ -183,60 +183,28 @@
 {% endfor %}
 \end{enumerate}
 
-{#
 
-\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Research Experience}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\ressubheadingitems{Associate Scientist}
-    {The University of Wisconsin-Madison}
-    {Engineering Physics}{June 2013 - present} {
-        \resitem{Agent-based nuclear fuel cycle simulation.}
-        \resitem{Project lead for Cyclus.}
-        \resitem{Nuclear engineering toolkit development via PyNE.}
-    }
-
-\ressubheadingitems{Research Scientist \& Postdoctoral Scholar}
-    {The University of Chicago}
-    {High Energy Density Physics}{November 2011 - May 2013} {
-        \resitem{Hydrodynamic simulations of laser-target interaction experiments.}
-        \resitem{Development of simulated diagnostic tools for FLASH simulations.}
-        \resitem{Development of workflow management and reproducibility tools for 
-                 FLASH.}
-    }
-
-\ressubheadingitems{Graduate Research Assistant}{The University of Texas at Austin}
-    {Nuclear Fuel Cycle \& Reactor Modeling}{August 2006 - August 2011} {
-        \resitem{Development of essential physics reactor models, computational 
-                 nuclear fuel cycle simulations, and information theoretic analysis.}
-        \resitem{Documentation of Indonesia and the nuclear fuel cycle (2006).}
-    }
-
-\ressubheadingitems{Summer Internship/Visiting Scientist}{Idaho National Laboratory}
-                  {Nuclear Fuel Cycle \& Reactor Modeling}{Summer 2007} {
-        \resitem{Modeled the use of recyclable uranium in light water reactors both 
-                 with respect to the fuel cycle as a whole and to specific components, 
-                 like the reactor and enrichment facilities.}
-    }
-
-\ressubheadingitems{Undergraduate Research Assistant}
-    {University of California, Santa Barbara}
-    {Terahertz Continuous Wave Spectroscopy}{2002 - 2005} {
-        \resitem{Studied the effect of Terahertz waves on biomacromolecules in water.}
-    }
-
-\ressubheadingitems{Summer Internship/Visiting Scientist}
-    {Los Alamos National Laboratory}{Terahertz Pump-Probe Spectroscopy}
-    {Summer 2004} {
-        \resitem{Looked at the effect of Terahertz waves on Erbium-Arsenide on a 
-                 Gallium-Arsenide substrate.}
-    }
 
 %\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Major Software Projects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for proj in projects %}
+\ressubheadingitems{ {{-proj['_id']-}}}
+    {% set me = proj['team'][0] %}
+    { {{-me['position']-}} }
+    { {{-proj['description']-}} }
+    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} - 
+      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} } 
+    { {% for o in proj['other'] %}
+      \resitem{ {{-o-}} }
+      {% endfor %}
+      \resitem{Website: \url{ {{-proj['website']-}} } }
+    }
+{% endfor %}
+
+{#
+
 \ressubheadingitems{Cyclus}{Project Lead}
     {Next-Generation Agent-Based Nuclear Fuel Cycle Simulator}
     {January 2012 - present} {
