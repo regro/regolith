@@ -175,8 +175,6 @@ def month_and_year(m=None, y=None):
         return "present"
     if m is None:
         return str(y)
-    print('m pre', m)
     m = month_to_int(m)
-    print('m post', m)
     return '{0} {1}'.format(SHORT_MONTH_NAMES[m], y)
 
