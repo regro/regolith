@@ -100,6 +100,13 @@ class CVBuilder(object):
         for pub in all_docs_from_collection(rc.client, 'citations'):
             if len(set(pub['author']) & authors) == 0:
                 continue
+            bold_self = []
+            for a in pub['author']:
+                if a in authors:
+                    bold_self.append('\\bf{' + a + '}')
+                else:
+                    bold_self.append(a)
+            pub['author'] = bold_self
             pubs.append(pub)
         pubs.sort(key=doc_date_key, reverse=reverse)
         return pubs
