@@ -212,12 +212,43 @@
 {% endfor %}
 \end{enumerate}
 
-{#
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Teaching Experience}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for t in p['teaching'] %}
+\ressubheadingitems{ {{-t['course']-}} }
+    { {{-t['organization']-}} }
+    { {{-t['position']-}} }
+    { {{-month_and_year(t.get('month'), t.get('year'))-}}
+      {% if 'end_year' in t %}-
+        {{-month_and_year(t.get('end_month'), t.get('end_year'))-}}
+      {% endif %}
+    }
+    { {% if 'description' in t %}
+        \resitem{ {{-t['description']-}} }
+      {% endif %}
+      {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
+        \resitem{
+          {% if 'website' in t %}
+            \href{ {{-t['website']-}} }{Website}.  
+          {% endif %}
+          {% if 'syllabus' in t %}
+            \href{ {{-t['syllabus']-}} }{Syllabus}.
+          {% endif %}
+          {% if 'video' in t %}
+            \href{ {{-t['video']-}} }{Video}.  
+          {% endif %}
+          {% if 'materials' in t %}
+            \href{ {{-t['materials']-}} }{Source Materials}.  
+          {% endif %}
+        }
+      {% endif %}
+    }
+{% endfor %}
+
+{#
 \ressubheadingitems{Scientific Computing with Python and SciPy}
     {African Institute for Mathematical Sciences}{Lecturer}{September 2013 \& 2014} {
     \resitem{Instructed 50+ students in a full 30 hour course in the basics of 

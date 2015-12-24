@@ -131,7 +131,7 @@ MONTHS = {
     'december': 12,
     }
 
-SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'Jun', 'Jul', 
+SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 
                      'Aug', 'Sept', 'Oct', 'Nov', 'Dec')
 
 def month_to_int(m):
@@ -175,6 +175,8 @@ def month_and_year(m=None, y=None):
         return "present"
     if m is None:
         return str(y)
+    print('m pre', m)
     m = month_to_int(m)
+    print('m post', m)
     return '{0} {1}'.format(SHORT_MONTH_NAMES[m], y)
 
