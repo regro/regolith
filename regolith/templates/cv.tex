@@ -108,14 +108,13 @@
 }
 
 %-----------------------------------------------------------
-
+{% endraw %}
 
 % Bibliography
 \bibliography{ {{-p['_id']-}} }{}
 %\bibliographystyle{plain}
 
 \begin{document}
-{% endraw %}
 
 
 \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
@@ -266,11 +265,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Skills}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
 {%for cat, cgrp in groupby(p['skills'], key=category_val)%}
   \item {{cat}} 
   \begin{itemize}{%for lvl, lgrp in groupby(cgrp, key=level_val)%}
     \resitem{\bf{ {{-lvl.capitalize()}}:} {{gets(lgrp, 'name', '<nemo>') | join(', ')-}} }
   {%endfor%}\end{itemize}
 {%endfor%}
+\end{itemize}
 {%endif%}
 \end{document}

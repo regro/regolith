@@ -117,12 +117,17 @@ class CVBuilder(object):
     def make_bibtex_file(self, pubs, pid, person_dir='.'):
         if not HAVE_BIBTEX_PARSER:
             return None
+        skip_keys = set(['ID', 'ENTRYTYPE', 'author'])
         self.bibdb.entries = ents = []
         for pub in pubs:
             ent = dict(pub)
             ent['ID'] = ent.pop('_id')
             ent['ENTRYTYPE'] = ent.pop('entrytype')
             ent['author'] = ' and '.join(ent['author'])
+            for key in ent.keys():
+                if key in skip_keys:
+                    continue
+                ent[key] = latex_safe(ent[key])
             ents.append(ent)
         fname = os.path.join(person_dir, pid) + '.bib'
         with open(fname, 'w') as f:
