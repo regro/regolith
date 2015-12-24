@@ -7,7 +7,7 @@ from regolith.tools import all_docs_from_collection, date_to_float, date_to_rfc8
 
 
 doc_date_key = lambda x: date_to_float(x.get('year', 1970), x.get('month', 'jan'))
-ene_date_key = lambda x: date_to_float(x.get('end_year', 1970), x.get('end_month', 'jan'))
+ene_date_key = lambda x: date_to_float(x.get('end_year', 4242), x.get('end_month', 'dec'))
 category_val = lambda x: x.get('category', '<uncategorized>')
 level_val = lambda x: x.get('level', '<no-level>')
 id_key = lambda x: x.get('_id', '')
