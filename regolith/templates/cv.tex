@@ -271,7 +271,7 @@
 {%for cat, cgrp in groupby(p['skills'], key=category_val)%}
   \item {{cat}} 
   \begin{itemize}{%for lvl, lgrp in groupby(cgrp, key=level_val)%}
-    \resitem{\bf{ {{-lvl.capitalize()}}:} {{gets(lgrp, 'name', '<nemo>') | join(', ')-}} }
+    \resitem{\textbf{ {{-lvl.capitalize()}}:} {{gets(lgrp, 'name', '<nemo>') | join(', ')-}} }
   {%endfor%}\end{itemize}
 {%endfor%}
 \end{itemize}

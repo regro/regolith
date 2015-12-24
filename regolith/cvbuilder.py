@@ -106,7 +106,7 @@ class CVBuilder(object):
             bold_self = []
             for a in pub['author']:
                 if a in authors:
-                    bold_self.append('\\bf{' + a + '}')
+                    bold_self.append('\\textbf{' + a + '}')
                 else:
                     bold_self.append(a)
             pub['author'] = bold_self
