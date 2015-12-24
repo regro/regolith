@@ -173,6 +173,7 @@
 
 
 %\clearpage
+{%if len(pubs) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Recent Publications}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,8 +182,7 @@
     \item \fullcite{ {{-pub['_id']-}} }
 {% endfor %}
 \end{enumerate}
-
-
+{% endif %}
 
 %\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,6 +203,7 @@
     }
 {% endfor %}
 
+{%if len(pubs) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{All Publications}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,6 +212,7 @@
     \item \fullcite{ {{-pub['_id']-}} }
 {% endfor %}
 \end{enumerate}
+{% endif %}
 
 
 
