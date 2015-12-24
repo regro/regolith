@@ -20,6 +20,9 @@ from regolith.sorters import doc_date_key, ene_date_key, category_val, \
 
 LATEX_OPTS = ['-halt-on-error', '-file-line-error']
 
+def latex_safe(s):
+    return s.replace('&', '\&').replace('$', '\$')
+
 class CVBuilder(object):
 
     btype = 'cv'
@@ -53,6 +56,7 @@ class CVBuilder(object):
         gtx['rfc822now'] = rfc822now
         gtx['date_to_rfc822'] = date_to_rfc822
         gtx['month_and_year'] = month_and_year
+        gtx['latex_safe'] = latex_safe
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'), 
                                key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
