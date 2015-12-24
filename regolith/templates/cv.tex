@@ -255,10 +255,10 @@
 \resheading{Memberships}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for m in p['membership'] %}
-\ressubheadingshort{ {{-m['organization']-}} }
+\ressubheadingshort{ {{-latex_safe(m['organization'])-}} }
     {\em{ {{-month_and_year(m.get('begin_month'), m.get('begin_year'))-}} - 
           {{-month_and_year(m.get('end_month'), m.get('end_year'))-}} } }
-    { {{-m['position']-}} }
+    { {{-latex_safe(m['position'])-}} }
 {% endfor %}
 
 
