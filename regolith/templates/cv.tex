@@ -157,32 +157,22 @@
     }
 {% endfor %}
 
-{#
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Awards, Grants \& Honours}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \vspace{-2pt}
+\vspace{-2pt}
 \begin{center}\begin{tabular*}{6.6in}{l@{\extracolsep{\fill}}r}
-    \multicolumn{2}{c}{Communications Chair for SciPy 2014 \cftdotfill{\cftdotsep} 2014}\\
-    \multicolumn{2}{c}{Nuclear Energy University Programs 2013 \#5209 (\$612,731) \cftdotfill{\cftdotsep} 2013}\\
-    \multicolumn{2}{c}{Communications Chair for SciPy 2013 \cftdotfill{\cftdotsep} 2013}\\
-    \multicolumn{2}{c}{Omega Laser User's Group Travel Award (\$1,100) \cftdotfill{\cftdotsep} 2013}\\
-    \multicolumn{2}{c}{NIF User's Group Travel Award (\$1,150) \cftdotfill{\cftdotsep} 2013}\\
-    \multicolumn{2}{c}{Open Spaces Chair for SciPy 2012 \cftdotfill{\cftdotsep} 2012}\\
-    \multicolumn{2}{c}{Nuclear Energy University Programs 2012 \#4065 (\$395,000) \cftdotfill{\cftdotsep} 2012}\\
-    \multicolumn{2}{c}{Chair of ``Python \& Core Technologies'' Track at SciPy 2011 \cftdotfill{\cftdotsep} 2011}\\
-    \multicolumn{2}{c}{PyCon 2010 Program Committee Member\cftdotfill{\cftdotsep} 2010}\\
-    \multicolumn{2}{c}{Innovations in Fuel Cycle Research, 2nd place Systems Engineering and Analysis (\$2,500) \cftdotfill{\cftdotsep} 2010}\\
-    \multicolumn{2}{c}{Peer Reviewer for Nuclear Engineering \& Design (NED-D-09-00256) \cftdotfill{\cftdotsep} 2009}\\
-    \multicolumn{2}{c}{MCNPX Bug \#100 (\$20) \cftdotfill{\cftdotsep} 2009}\\
-    \multicolumn{2}{c}{Graduate Travel Award Fund (\$2,000) \cftdotfill{\cftdotsep} 2008}\\
-    \multicolumn{2}{c}{George J. Heuer, Jr. Ph.D. Endowed Graduate Fellowship Fund (\$2,500) \cftdotfill{\cftdotsep} 2007 - 2008}\\
-    \multicolumn{2}{c}{George J. Heuer, Jr. Ph.D. Endowed Graduate Fellowship Fund (\$2,500) \cftdotfill{\cftdotsep} 2006 - 2007}\\
-    \multicolumn{2}{c}{Undergraduate Research Scholarship (\$1,000) \cftdotfill{\cftdotsep} 2005} \\
+{% for agh in aghs %}
+    \multicolumn{2}{c}{ {{-agh['description']-}} 
+                        \cftdotfill{\cftdotsep} 
+                        {{-agh['year']-}} }\\
+{% endfor %}
     \vphantom{E}
 \end{tabular*}
 \end{center}\vspace*{-16pt}
+
+{#
+
 
 %\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

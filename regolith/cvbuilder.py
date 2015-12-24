@@ -90,7 +90,7 @@ class CVBuilder(object):
             projs = self.filter_projects(names)
             aghs = self.awards_grants_honors(p)
             self.render('cv.tex', p['_id'] + '.tex', p=p,
-                        title=p.get('name', ''), 
+                        title=p.get('name', ''), aghs=aghs, 
                         pubs=pubs, names=names, bibfile=bibfile, 
                         education=edu, employment=emp, projects=projs)
 
@@ -137,8 +137,7 @@ class CVBuilder(object):
         aghs = []
         for x in p.get('funding', ()):
             d = {'description': '{0} ({1}{2})'.format(x['name'], 
-                                                      x.get('currency', '$'),
-                                                      x['value']),
+                    x.get('currency', '$').replace('$', '\$'), x['value']),
                  'year': x['year'],
                  '_key': date_to_float(x['year'], x.get('month', 0)),
                  }
