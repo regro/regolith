@@ -21,7 +21,7 @@ from regolith.sorters import doc_date_key, ene_date_key, category_val, \
 LATEX_OPTS = ['-halt-on-error', '-file-line-error']
 
 def latex_safe(s):
-    return s.replace('&', '\&').replace('$', '\$')
+    return s.replace('&', '\&').replace('$', '\$').replace('#', '\#')
 
 class CVBuilder(object):
 
@@ -146,14 +146,14 @@ class CVBuilder(object):
         """Make sorted awards grants and honrs list."""
         aghs = []
         for x in p.get('funding', ()):
-            d = {'description': '{0} ({1}{2})'.format(x['name'], 
+            d = {'description': '{0} ({1}{2:,})'.format(latex_safe(x['name']), 
                     x.get('currency', '$').replace('$', '\$'), x['value']),
                  'year': x['year'],
                  '_key': date_to_float(x['year'], x.get('month', 0)),
                  }
             aghs.append(d)
         for x in p.get('service', []) + p.get('honors', []):
-            d = {'description': x['name'], 
+            d = {'description': latex_safe(x['name']), 
                  'year': x['year'],
                  '_key': date_to_float(x['year'], x.get('month', 0)),
                  }

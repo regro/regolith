@@ -196,10 +196,11 @@
     { {{-proj['description']-}} }
     { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} - 
       {{month_and_year(me.get('end_month'), me.get('end_year'))-}} } 
-    { {% for o in proj['other'] %}
+    {\begin{itemize} {% for o in proj['other'] %}
         \resitem{ {{-latex_safe(o)-}} }
       {% endfor %}
       \resitem{Website: \url{ {{-proj['website']-}} } }
+     \end{itemize}
     }
 {% endfor %}
 
@@ -226,25 +227,25 @@
         {{-month_and_year(t.get('end_month'), t.get('end_year'))-}}
       {% endif %}
     }
-    { {% if 'description' in t %}
-        \resitem{ {{-t['description']-}} }
+    {\begin{itemize} {% if 'description' in t %}
+        \resitem{ {{-latex_safe(t['description'])-}} }
       {% endif %}
       {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
         \resitem{
           {% if 'website' in t %}
-            \href{ {{-t['website']-}} }{Website}.  
+            \href{ {{-latex_safe(t['website'])-}} }{Website}.  
           {% endif %}
           {% if 'syllabus' in t %}
-            \href{ {{-t['syllabus']-}} }{Syllabus}.
+            \href{ {{-latex_safe(t['syllabus'])-}} }{Syllabus}.
           {% endif %}
           {% if 'video' in t %}
-            \href{ {{-t['video']-}} }{Video}.  
+            \href{ {{-latex_safe(t['video'])-}} }{Video}.  
           {% endif %}
           {% if 'materials' in t %}
-            \href{ {{-t['materials']-}} }{Source Materials}.  
+            \href{ {{-latex_safe(t['materials'])-}} }{Source Materials}.  
           {% endif %}
         }
-      {% endif %}
+      {% endif %}\end{itemize}
     }
 {% endfor %}
 
