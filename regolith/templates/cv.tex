@@ -142,69 +142,22 @@
     }
 {% endfor %}
 
-{#
-
-
-\ressubheadingitems{The University of Texas at Austin}{Austin, TX}
-    {Ph.D. Mechanical Engineering, Nuclear and Radiation Engineering Program}
-    {2008 - 2011}{
-    \resitem{Adviser: Erich A. Schneider}
-    \resitem{Dissertation: Essential Physics for Fuel Cycle Modeling \& Analysis}
-    \resitem{Graduated with 3.74 GPA}
-}
-
-\ressubheadingitems{The University of Texas at Austin}{Austin, TX}
-    {M.S.E. Mechanical Engineering, Nuclear and Radiation Engineering Program}
-    {2006 - 2007}{
-    \resitem{Adviser: Erich A. Schneider}
-    \resitem{Thesis: Recyclable Uranium Options under the Global Nuclear Energy 
-             Partnership}
-}
-
-\ressubheadingitems{University of California, Santa Barbara}{Santa Barbara, CA}
-    {B.S. Physics}{2002 - 2006}{
-    \resitem{Graduated with a Major in Physics and a Minor in Mathematics}
-    \resitem{Graduated with 3.34 GPA}
-}
-
-
-\ressubheadingitems{CNERG, The University of Wisconsin-Madison}{Madison, WI}
-    {Associate Scientist, Engineering Physics Department}
-    {June 2013 - present}{
-    \resitem{Cyclus: An agent-based, discrete time nuclear fuel cycle simulator.}
-    \resitem{PyNE: The Nuclear Engineering Toolkit.}
-}
-
-\ressubheadingitems{The FLASH Center, The University of Chicago}{Chicago, IL}
-    {Research Scientist, Postdoctoral Scholar,  Astronomy \& Astrophysics Dept.}
-    {Nov 2011 - May 2013} {
-    \resitem{NIF: Simulation of magnetic field generation from neutral plasmas 
-             using FLASH.}
-    \resitem{CosmoB: Simulation of magnetic field generation from neutral plasmas 
-             using FLASH.}
-    \resitem{FLASH4: High-energy density physics capabilities and utilities.}
-    \resitem{Simulated Diagnostics: Schlieren, shadowgraphy, Langmuir probes, 
-             etc. from FLASH.}
-    \resitem{OpacPlot: HDF5-based equation of state and opacity file format.}
-}
-
-\ressubheadingitems{Enthought, Inc.}{Austin, TX}{Scientific Software Developer}
-    {May 2010 - October 2011}{
-    \resitem{PlotTool: Time series data visualization for J.P. Morgan Chase.}
-    \resitem{PivotTable: Data cube configuration, management, and visualization 
-             for J.P. Morgan Chase.}
-    \resitem{WIPP-PA: Waste Isolation Pilot Project Performance Assessment tool 
-             for Sandia Nat'l Labs.}
-    \resitem{EasyGuide2: Dental implant imaging software for Keystone Dental.}
-}
-
-\clearpage
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Employment}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for e in employment %}
+\ressubheadingitems{ {{-e['organization']-}} }
+    { {{-e['location']-}} }
+    { {{-e['position']-}} }
+    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} - 
+      {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
+    { {% for o in e.get('other', ()) %}
+        \resitem{ {{- o -}} }
+     {% endfor%}
+    }
+{% endfor %}
 
+{#
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Awards, Grants \& Honours}
