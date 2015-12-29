@@ -7,6 +7,11 @@ from glob import iglob
 from warnings import warn
 from distutils.dir_util import copy_tree
 
+try:
+    import hglib
+except:
+    hglib = None
+
 def ensure_deploy_dir(rc):
     """Ensure deployment dir is on rc and physically exists."""
     if not hasattr(rc, 'deploydir') or rc.deploydir is None:
@@ -48,12 +53,35 @@ def deploy_git(rc, name, url, src='html', dst=None):
         warn('Could not git push from ' + targetdir, RuntimeWarning)
         return    
 
+def deploy_hg(rc, name, url, src='html', dst=None):
+    """Loads an hg database"""
+    if hglib is None:
+        raise ImportError('hglib')
+    targetdir = os.path.join(rc.deploydir, name)
+    # get or update the database
+    if os.path.isdir(targetdir):
+        client = hglib.open(targetdir)
+        client.pull(update=True)
+    else:
+        # Strip off hg+
+        hglib.clone(url[3:], targetdir)
+        client = hglib.open(targetdir)
+    # copy the files over
+    srcdir = os.path.join(rc.builddir, src)
+    dstdir = os.path.join(targetdir, dst) if dst else targetdir
+    copy_tree(srcdir, dstdir, verbose=1)
+    # commit everything
+    client.commit(message='regolith auto-deploy at {0}'.format(time.time()),
+                  addremove=True)
+    client.push()
 
 def deploy(rc, name, url, src='html', dst=None):
     """Deploys a target"""
     ensure_deploy_dir(rc)
     if url.startswith('git') or url.endswith('.git'):
         deploy_git(rc, name, url, src=src, dst=dst)
+    elif url.startswith('hg+'):
+        deploy_hg(rc, name, url, src=src, dst=dst)
     else:
         raise ValueError('Do not know how to deploy to this kind of URL: ' + url)
 
