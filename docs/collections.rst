@@ -223,11 +223,61 @@ This collection represents proposals that have been submitted by the group.
      }
 
 
+students
+-----------
+This is a collection of student names and metadata.
+
+.. code:: python
+    
+    {"_id": str, # short represntation, such as this-is-my-name
+     "aka": [str],  # list of aliases, optional
+     "email": str, # email address, optional
+    }
 
 
+courses
+----------
+This is a collection that describes a course, when it happened, and
+who is taking it.
+
+.. code:: python
+
+    {"_id": str, # course unique id, such a EMCH-558-2016-S
+     "department": str, # department code, e.g. EMCH
+     "number": int or str,  # class number, e.g. 558
+     "year": int,  # year taught, e.g. 2016
+     "season": str,  # semester or quarter instructed in, e.g. 'F', 'W', 'S', or 'M'
+     "students": [str],  # names of students enrolled in course
+     "syllabus": str,  # syllabus file name in store, optional
+    }
 
 
+assignments
+------------
+Assignment info.
+
+.. code:: python
+
+    {"_id": str, # unique id, such a HW01-EMCH-558-2016-S
+     "course": str,  # id of the course
+     "category": str,  # such as 'homework' or 'final'
+     "file": str,  # path to assignment file in store, optional
+     "solution": str,  # path to solution file in store, optional
+     "points": [int or float],  # list of number of points possible for each
+                                # question. Length is the number of questions
+    }
 
 
+grades
+-------
+The grade for a student on an assignment.
 
+.. code:: python
+
+    {"_id": str, # unique id, typically the student-name-assignment
+     "student": str,  # student id
+     "assignment": str,  # assignment id
+     "points": [int or float],  # the number of point earned on each question
+     "file": str,  # path to file in store
+    }
 
