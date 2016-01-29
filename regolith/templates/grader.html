@@ -99,12 +99,13 @@ function assignmentChanged(assignment) {
 
   // remove existing score nodes
   var offset = 2;
-  for (i = gradeForm.length - 1; i >= 0; i--) {
+  var ln = gradeForm.length;
+  for (i = ln - 1; i >= 6; i--) {
     console.log(gradeForm.childNodes[i].name);
     console.log(gradeForm.childNodes[i].type)
-    if (typeof gradeForm.childNodes[i] === 'undefined') {
-        gradeForm.removeChild(gradeForm.childNodes[i]);
-    };
+    //if (typeof gradeForm.childNodes[i].name === 'undefined') {
+    gradeForm.childNodes[i].remove();
+    //};
     console.log(i);
   }
  
