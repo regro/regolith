@@ -72,6 +72,7 @@ def create_parser():
     strp.add_argument('documents', nargs='+', help='paths to documents, i.e. '
                                                    'PDFs, images, etc.')
     strp.add_argument('-f', '--force', dest='force', default=False, 
+                      action='store_true',
                       help='forces copy of file if one of the same name '
                            'already exists')
     # app subparser
