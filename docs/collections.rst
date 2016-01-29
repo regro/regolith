@@ -283,7 +283,7 @@ The grade for a student on an assignment.
      "student": str,  # student id
      "assignment": str,  # assignment id
      "course": str, # course id
-     "score": [int or float],  # the number of points earned on each question
+     "scores": [int or float],  # the number of points earned on each question
      "filename": str,  # path to file in store, optional
     }
 
