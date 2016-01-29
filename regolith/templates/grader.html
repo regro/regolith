@@ -9,7 +9,7 @@
     <option value=''>Select Course</option>
     {% for course in rc.client[dbname]['courses'].find() %}
     {% if course['active'] %}
-    <option value="{{course['name']}}">{{course['name']}}</option>
+    <option value="{{course['_id']}}">{{course['_id']}}</option>
     {% endif %}
     {% endfor %}
   </select>
@@ -31,11 +31,6 @@
     <button name="Create" value="create">Create</button>
   </form>
   </div>
-{% endfor %}
-
-<form action="shutdown" method="post">
-  <button name="shutdown" value="shutdown">Shutdown Server</button>
-</form>
 
 <script type="text/javascript">
 function trucateSelectAfterFirst(sdoc) {
@@ -68,11 +63,11 @@ function courseChanged(course) {
   switch(course){
     {% for course in rc.client[dbname]['courses'].find() %}
     {% if course['active'] %}
-    case "{{course['name']}}":
+    case "{{course['_id']}}":
       studentOptions = {{course['students']}};
       assignmentOptions = [
         {% for a in rc.client[dbname]['assignments'].find() %}
-        {% if course['name'] in a['courses'] %}
+        {% if course['_id'] in a['courses'] %}
         "{{a['_id']}}",
         {% endif %}
         {% endfor %}
@@ -92,4 +87,9 @@ function studentChanged(student) {
 function assignementChanged(assignment) {
 } 
 </script>
+{% endfor %}
+
+<form action="shutdown" method="post">
+  <button name="shutdown" value="shutdown">Shutdown Server</button>
+</form>
 </body>
