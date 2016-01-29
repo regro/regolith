@@ -145,6 +145,7 @@ function assignmentChanged(assignment) {
     scoreInput.setAttribute("name", scorename);
     scoreInput.min = 0;
     scoreInput.max = points[i];
+    scoreInput.step = 0.001;
     scoreInput.required = true;
 
     // create label
