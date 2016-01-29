@@ -7,7 +7,7 @@ import subprocess
 def find_store(rc):
     for store in rc.stores:
         if store['name'] == rc.storename:
-            return s
+            return store
     else:
         msg = "Could not find the store {0!r}".format(rc.storename)
         raise RuntimeError(msg)
@@ -18,9 +18,13 @@ def storage_path(store, rc):
     name, url = store['name'], store['url']
     for db in rc.databases:
         if db['name'] == name and db['url'] == url:
-            return os.path.join(rc.builddir, '_dbs', name, store['path'])
+            path = os.path.join(rc.builddir, '_dbs', name, store['path'])
+            break
     else:
-        return os.path.join(rc.builddir, '_stores', name, store['path'])
+        path = os.path.join(rc.builddir, '_stores', name, store['path'])
+    os.makedirs(path, exist_ok=True)
+    return path
+
 
 def sync_git(store, path):
     """Syncs the local documents via git."""
