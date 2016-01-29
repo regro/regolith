@@ -54,7 +54,7 @@ function courseChanged(course) {
   var selectStudent = document.getElementById('students');
   trucateSelectAfterFirst(selectStudent);
       
-  var selectAssigment = document.getElementById('assignments');
+  var selectAssignment = document.getElementById('assignments');
   trucateSelectAfterFirst(selectAssignment);
       
   var studentOptions;
@@ -64,13 +64,13 @@ function courseChanged(course) {
     {% for course in rc.client[dbname]['courses'].find() %}
     {% if course['active'] %}
     case "{{course['_id']}}":
-      studentOptions = {{course['students']}};
+      studentOptions = {{json_util.dumps(course['students']) | safe}};
       assignmentOptions = [
-        {% for a in rc.client[dbname]['assignments'].find() %}
-        {% if course['_id'] in a['courses'] %}
+        {%- for a in rc.client[dbname]['assignments'].find() -%}
+        {%- if course['_id'] in a['courses'] -%}
         "{{a['_id']}}",
-        {% endif %}
-        {% endfor %}
+        {%- endif -%}
+        {%- endfor -%}
         ];
       break;
     {% endif %}
@@ -78,7 +78,7 @@ function courseChanged(course) {
     default:
   }      
   extendSelectOptions(selectStudent, studentOptions);
-  extendSelectOptions(selectAssigment, assignmentOptions);       
+  extendSelectOptions(selectAssignment, assignmentOptions);       
 }
   
 function studentChanged(student) {  

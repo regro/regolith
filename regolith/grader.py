@@ -14,7 +14,7 @@ def root():
     rc = app.rc
     if request.method == 'POST':
         form = request.form
-    return render_template('grader.html', rc=rc)
+    return render_template('grader.html', rc=rc, json_util=json_util, str=str)
 
 
 def shutdown_server():
