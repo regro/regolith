@@ -4,14 +4,27 @@
 <h1>Welcome to the Regolith Grader!</h1>
 {% for dbname in rc.client.database_names() if dbname != 'local' %}
   <h3>{{ dbname }}</h3>
-  <ul>
-  {% for coursename in rc.client[dbname]['courses'] %}
-    <li>{{coursename}}</li>
-  {% endfor %}
-  </ul>
 
-  <div style="margin-left:1.5em;">
-  <b>Add new collection:</b>
+  <select id='courses' onchange='courseChanged(this.value);'>
+    <option value=''>Select Course</option>
+    {% for course in rc.client[dbname]['courses'].find() %}
+    {% if course['active'] %}
+    <option value="{{course['name']}}">{{course['name']}}</option>
+    {% endif %}
+    {% endfor %}
+  </select>
+  <br/><br/>
+
+  <select id='students' onchange='studentChanged(this.value);'>
+    <option value=''>Select Student</option>
+  </select>
+  <br/><br/>
+
+  <select id='assignments' onchange='assignmentChanged(this.value);'>
+    <option value=''>Select Assignment</option>
+  </select>
+  <br/><br/>
+
   <form action="" method="post">
     <textarea rows="1" cols="16" name="dbname" style="display:none;">{{dbname}}</textarea>
     <textarea rows="1" cols="16" name="collname" ></textarea>
@@ -23,4 +36,60 @@
 <form action="shutdown" method="post">
   <button name="shutdown" value="shutdown">Shutdown Server</button>
 </form>
+
+<script type="text/javascript">
+function trucateSelectAfterFirst(sdoc) {
+  var ln = sdoc.length - 1;
+  while (ln > 0) { 
+    sdoc.remove(1);  // rm all but first element
+    ln--;
+  }
+}
+
+function extendSelectOptions(sdoc, opts) {
+  for (i = 0; i < opts.length; i++) {
+    var option = document.createElement('option'); 
+    option.text = opts[i];
+    option.value = opts[i];
+    sdoc.add(option);
+  } 
+}
+
+function courseChanged(course) {  
+  var selectStudent = document.getElementById('students');
+  trucateSelectAfterFirst(selectStudent);
+      
+  var selectAssigment = document.getElementById('assignments');
+  trucateSelectAfterFirst(selectAssignment);
+      
+  var studentOptions;
+  var assignmentOptions;
+      
+  switch(course){
+    {% for course in rc.client[dbname]['courses'].find() %}
+    {% if course['active'] %}
+    case "{{course['name']}}":
+      studentOptions = {{course['students']}};
+      assignmentOptions = [
+        {% for a in rc.client[dbname]['assignments'].find() %}
+        {% if course['name'] in a['courses'] %}
+        "{{a['_id']}}",
+        {% endif %}
+        {% endfor %}
+        ];
+      break;
+    {% endif %}
+    {% endfor %}
+    default:
+  }      
+  extendSelectOptions(selectStudent, studentOptions);
+  extendSelectOptions(selectAssigment, assignmentOptions);       
+}
+  
+function studentChanged(student) {  
+}
+  
+function assignementChanged(assignment) {
+} 
+</script>
 </body>
