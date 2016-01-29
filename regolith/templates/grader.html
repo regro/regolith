@@ -92,6 +92,8 @@ function studentChanged(student) {
   var studentForm = document.getElementById('student');
   studentForm.value = student;
 }
+
+var scoreNodes = [];
   
 function assignmentChanged(assignment) {
   var gradeForm = document.getElementById('gradeform');
@@ -99,15 +101,16 @@ function assignmentChanged(assignment) {
 
   // remove existing score nodes
   var offset = 2;
-  var ln = gradeForm.length;
-  for (i = ln - 1; i >= 6; i--) {
-    console.log(gradeForm.childNodes[i].name);
-    console.log(gradeForm.childNodes[i].type)
+  //var ln = scoreNodes.length;
+  while (scoreNodes.length > 0) {
+    snode = scoreNodes.pop();
+    console.log(snode.name);
+    console.log(snode.type)
     //if (typeof gradeForm.childNodes[i].name === 'undefined') {
-    gradeForm.childNodes[i].remove();
-    //};
-    console.log(i);
+    snode.remove();
+    delete snode;
   }
+  //scoreNodes = [];
  
   // get selections
   var points;
@@ -134,6 +137,7 @@ function assignmentChanged(assignment) {
   var br = document.createElement("BR");
   loc = gradeForm.childNodes.length - offset;
   gradeForm.insertBefore(br, gradeForm.childNodes[loc]);
+  scoreNodes.push(br);
   for (i = 0; i < points.length; i++) {
     var scoreInput = document.createElement("INPUT");
     scoreInput.setAttribute("type", "number");
@@ -147,16 +151,23 @@ function assignmentChanged(assignment) {
     var scoreQuest = document.createTextNode(questions[i] + " [max=" + points[i].toString() + "]: ");
     scoreLabel.appendChild(scoreQuest);
     var br = document.createElement("BR");
+
     loc = gradeForm.childNodes.length - offset;
     gradeForm.insertBefore(scoreLabel, gradeForm.childNodes[loc]);
+    scoreNodes.push(scoreLabel);
+
     loc = gradeForm.childNodes.length - offset;
     gradeForm.insertBefore(scoreInput, gradeForm.childNodes[loc]);
+    scoreNodes.push(scoreInput);
+
     loc = gradeForm.childNodes.length - offset;
     gradeForm.insertBefore(br, gradeForm.childNodes[loc]);
+    scoreNodes.push(br);
   }
   var br = document.createElement("BR");
   loc = gradeForm.childNodes.length - offset;
   gradeForm.insertBefore(br, gradeForm.childNodes[loc]);
+  scoreNodes.push(br);
 
   var assignmentForm = document.getElementById('assignment');
   assignmentForm.value = assignment;
