@@ -251,6 +251,7 @@ who is taking it.
      "syllabus": str,  # syllabus file name in store, optional
      "weights": {str: float},  # mapping from assignment category name
                                # to fraction of final grade.
+     "active": bool,  # whether  or not the course is actively being taught
     }
 
 
@@ -261,10 +262,12 @@ Assignment info.
 .. code:: python
 
     {"_id": str, # unique id, such a HW01-EMCH-558-2016-S
-     "course": str,  # id of the course
+     "courses": [str],  # ids of the courses
      "category": str,  # such as 'homework' or 'final'
      "file": str,  # path to assignment file in store, optional
      "solution": str,  # path to solution file in store, optional
+     "question": [str],  # titles for the questions on this assignment, 
+                         # optional, defaults to 1-indexed ints if absent.
      "points": [int or float],  # list of number of points possible for each
                                 # question. Length is the number of questions
     }
@@ -276,10 +279,10 @@ The grade for a student on an assignment.
 
 .. code:: python
 
-    {"_id": str, # unique id, typically the student-name-assignment
+    {"_id": str, # unique id, typically the student-assignment-course
      "student": str,  # student id
      "assignment": str,  # assignment id
-     "points": [int or float],  # the number of point earned on each question
+     "score": [int or float],  # the number of points earned on each question
      "file": str,  # path to file in store
     }
 
