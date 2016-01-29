@@ -3,7 +3,7 @@
 <body>
 <h1>Welcome to the Regolith Grader!</h1>
 {% for dbname in rc.client.database_names() if dbname != 'local' %}
-  <h3>{{ dbname }}</h3>
+  <h3>{{ dbname }}{% if status %} [{{status}}]{% endif %}</h3>
 
   <select id='courses' onchange='courseChanged(this.value);'>
     <option value=''>Select Course</option>
@@ -25,10 +25,13 @@
   </select>
   <br/><br/>
 
-  <form action="" method="post">
+  <form action="" method="post" id="gradeform">
     <textarea rows="1" cols="16" name="dbname" style="display:none;">{{dbname}}</textarea>
-    <textarea rows="1" cols="16" name="collname" ></textarea>
-    <button name="Create" value="create">Create</button>
+    <textarea rows="1" cols="16" name="course" id="course" style="display:none;"></textarea>
+    <textarea rows="1" cols="16" name="student" id="student" style="display:none;"></textarea>
+    <textarea rows="1" cols="16" name="assignment" id="assignment" style="display:none;"></textarea>
+    Filename: <textarea rows="1" cols="16" name="filename" id="filename"></textarea><br/>
+    <button name="Submit" value="submit">Submit</button>
   </form>
   </div>
 
@@ -78,17 +81,48 @@ function courseChanged(course) {
     default:
   }      
   extendSelectOptions(selectStudent, studentOptions);
-  extendSelectOptions(selectAssignment, assignmentOptions);       
+  extendSelectOptions(selectAssignment, assignmentOptions);
+
+  var courseForm = document.getElementById('course');
+  courseForm.value = course;
 }
   
 function studentChanged(student) {  
+  var studentForm = document.getElementById('student');
+  studentForm.value = student;
 }
   
-function assignementChanged(assignment) {
-} 
+function assignmentChanged(assignment) {
+
+  var points;
+  var questions;
+
+  switch(assignment){
+    {% for assignment in rc.client[dbname]['assignments'].find() %}
+    case "{{assignment['_id']}}":
+      points = {{json_util.dumps(assignment['points']) | safe}};
+      {% if 'questions' in assignment -%}
+      questions = {{json_util.dumps(assignment['questions']) | safe}};
+      (%- else -%)
+      questions = {{json_util.dumps(["Problem " + str(i) for i in range(1, len(assignment['points'])+1)]) | safe}};
+      {%- endif %}
+      break;
+    {% endfor %}
+    default:
+  }      
+
+    //var x = document.createElement("INPUT");
+    //x.setAttribute("type", "number");
+
+  var assignmentForm = document.getElementById('assignment');
+  assignmentForm.value = assignment;
+}
 </script>
 {% endfor %}
 
+<br/><br/>
+<hr/>
+<br/><br/>
 <form action="shutdown" method="post">
   <button name="shutdown" value="shutdown">Shutdown Server</button>
 </form>

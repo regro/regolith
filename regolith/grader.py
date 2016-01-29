@@ -12,9 +12,16 @@ app = Flask('regolith')
 @app.route('/', methods=['GET', 'POST'])
 def root():
     rc = app.rc
+    status = None
     if request.method == 'POST':
         form = request.form
-    return render_template('grader.html', rc=rc, json_util=json_util, str=str)
+        if 'shutdown' in form:
+            return shutdown()
+        grade_id = '{student}-{assignment}-{course}'.format(**form)
+        status = 'submitted {0} ✓'.format(grade_id)
+        print(form)
+    return render_template('grader.html', rc=rc, json_util=json_util, str=str,
+                           status=status)
 
 
 def shutdown_server():
