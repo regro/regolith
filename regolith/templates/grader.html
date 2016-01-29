@@ -30,7 +30,8 @@
     <textarea rows="1" cols="16" name="course" id="course" style="display:none;"></textarea>
     <textarea rows="1" cols="16" name="student" id="student" style="display:none;"></textarea>
     <textarea rows="1" cols="16" name="assignment" id="assignment" style="display:none;"></textarea>
-    Filename: <textarea rows="1" cols="16" name="filename" id="filename"></textarea><br/>
+    <label for="filename">Filename: </label>
+    <textarea rows="1" cols="16" name="filename" id="filename"></textarea><br/>
     <button name="Submit" value="submit">Submit</button>
   </form>
   </div>
@@ -93,10 +94,23 @@ function studentChanged(student) {
 }
   
 function assignmentChanged(assignment) {
+  var gradeForm = document.getElementById('gradeform');
+  console.log(gradeForm.length);
 
+  // remove existing score nodes
+  var offset = 2;
+  for (i = gradeForm.length - 1; i >= 0; i--) {
+    console.log(gradeForm.childNodes[i].name);
+    console.log(gradeForm.childNodes[i].type)
+    if (typeof gradeForm.childNodes[i] === 'undefined') {
+        gradeForm.removeChild(gradeForm.childNodes[i]);
+    };
+    console.log(i);
+  }
+ 
+  // get selections
   var points;
   var questions;
-
   switch(assignment){
     {% for assignment in rc.client[dbname]['assignments'].find() %}
     case "{{assignment['_id']}}":
@@ -116,16 +130,15 @@ function assignmentChanged(assignment) {
   }      
 
   var loc;
-  var gradeForm = document.getElementById('gradeform');
   var br = document.createElement("BR");
-  loc = gradeForm.childNodes.length - 2;
+  loc = gradeForm.childNodes.length - offset;
   gradeForm.insertBefore(br, gradeForm.childNodes[loc]);
   for (i = 0; i < points.length; i++) {
     var scoreInput = document.createElement("INPUT");
-    scoreInput.type = "number";
+    scoreInput.setAttribute("type", "number");
     var scorename = "score" + i.toString();
     scoreInput.id = scorename;
-    scoreInput.name = scorename;
+    scoreInput.setAttribute("name", scorename);
     scoreInput.min = 0;
     scoreInput.max = points[i];
     var scoreLabel = document.createElement("LABEL");
@@ -133,15 +146,15 @@ function assignmentChanged(assignment) {
     var scoreQuest = document.createTextNode(questions[i] + " [max=" + points[i].toString() + "]: ");
     scoreLabel.appendChild(scoreQuest);
     var br = document.createElement("BR");
-    loc = gradeForm.childNodes.length - 2;
+    loc = gradeForm.childNodes.length - offset;
     gradeForm.insertBefore(scoreLabel, gradeForm.childNodes[loc]);
-    loc = gradeForm.childNodes.length - 2;
+    loc = gradeForm.childNodes.length - offset;
     gradeForm.insertBefore(scoreInput, gradeForm.childNodes[loc]);
-    loc = gradeForm.childNodes.length - 2;
+    loc = gradeForm.childNodes.length - offset;
     gradeForm.insertBefore(br, gradeForm.childNodes[loc]);
   }
   var br = document.createElement("BR");
-  loc = gradeForm.childNodes.length - 2;
+  loc = gradeForm.childNodes.length - offset;
   gradeForm.insertBefore(br, gradeForm.childNodes[loc]);
 
   var assignmentForm = document.getElementById('assignment');
