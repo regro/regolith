@@ -1,5 +1,6 @@
 """Tools for document storgage."""
 import os
+import shutil
 import subprocess
 
 
@@ -43,10 +44,48 @@ def sync(store, path):
         raise ValueError('Do not know how to sync this kind of storage.')
 
 
+def copydocs(store, path, rc):
+    """Copies files to the staging area."""
+    for doc in rc.documents:
+        dst = os.path.join(path, os.path.split(doc)[1])
+        if not rc.force and os.path.isfile(dst):
+            raise RuntimeError(dst + ' already exists!')
+        shutil.copy2(doc, dst)
+
+
+def push_git(store, path):
+    """Pushes the local documents via git."""
+    storedir, _ = os.path.split(path)
+    cmd = ['git', 'add', '.']
+    subprocess.check_call(cmd, cwd=storedir)
+    cmd = ['git', 'commit', '-m', 'regolith auto-store commit']
+    try:
+        subprocess.check_call(cmd, cwd=storedir)
+    except subprocess.CalledProcessError: 
+        warn('Could not git commit to ' + storedir, RuntimeWarning)
+        return
+    cmd = ['git', 'push']
+    try:
+        subprocess.check_call(cmd, cwd=storedir)
+    except subprocess.CalledProcessError: 
+        warn('Could not git push from ' + storedir, RuntimeWarning)
+        return
+
+
+def push(store, path):
+    """Pushes the local documents."""
+    url = store['url']
+    if url.startswith('git') or url.endswith('.git'):
+        push_git(store, path)
+    else:
+        raise ValueError('Do not know how to push to this kind of storage.')
+
+
 def main(rc):
     """Copies files into the local storage location and uploads them."""
     store = find_store(rc)
     path = storage_path(store, rc)
-    sync()
-    #copy()
-    #push()
+    sync(store, path)
+    copydocs(store, path, rc)
+    push(store, path)
+

@@ -71,6 +71,9 @@ def create_parser():
     strp.add_argument('storename', help='storage name')
     strp.add_argument('documents', nargs='+', help='paths to documents, i.e. '
                                                    'PDFs, images, etc.')
+    strp.add_argument('-f', '--force', dest='force', default=False, 
+                      help='forces copy of file if one of the same name '
+                           'already exists')
     # app subparser
     appp = subp.add_parser('app', help='starts up a flask app for inspecting and '
                                        'modifying regolith data.')
