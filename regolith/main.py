@@ -8,6 +8,7 @@ from regolith.runcontrol import RunControl, NotSpecified
 from regolith.validators import DEFAULT_VALIDATORS
 from regolith.database import connect
 from regolith import commands
+from regolith import storage
 
 DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
@@ -18,6 +19,7 @@ DEFAULT_RC = RunControl(
 DISCONNECTED_COMMANDS = {
     'rc': lambda rc: print(rc._pformat()),
     'deploy': commands.deploy,
+    'store': storage.main,
     }
 
 CONNECTED_COMMANDS = {
@@ -63,6 +65,12 @@ def create_parser():
     ingp.add_argument('--coll', dest='coll',  default=None, 
                       help='collection name, if this is not given it is infered from the '
                            'file type or file name.')
+    # store subparser
+    strp = subp.add_parser('store', help='stores a file into the approriate '
+                                         'storage location.')
+    strp.add_argument('storename', help='storage name')
+    strp.add_argument('documents', nargs='+', help='paths to documents, i.e. '
+                                                   'PDFs, images, etc.')
     # app subparser
     appp = subp.add_parser('app', help='starts up a flask app for inspecting and '
                                        'modifying regolith data.')

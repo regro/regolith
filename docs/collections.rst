@@ -249,6 +249,8 @@ who is taking it.
      "season": str,  # semester or quarter instructed in, e.g. 'F', 'W', 'S', or 'M'
      "students": [str],  # names of students enrolled in course
      "syllabus": str,  # syllabus file name in store, optional
+     "weights": {str: float},  # mapping from assignment category name
+                               # to fraction of final grade.
     }
 
 

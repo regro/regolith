@@ -52,6 +52,7 @@ def ingest(rc):
     else:
         raise ValueError("don't know how to ingest collection {0!r}".format(rc.coll))
 
+
 def app(rc):
     """Runs flask app"""
     from regolith.app import app
