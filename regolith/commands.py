@@ -52,10 +52,7 @@ def ingest(rc):
     else:
         raise ValueError("don't know how to ingest collection {0!r}".format(rc.coll))
 
-
-def app(rc):
-    """Runs flask app"""
-    from regolith.app import app
+def _run_app(app, rc):
     if hasattr(app, 'rc'):
         raise RuntimeError('cannot assign rc to app')
     app.rc = rc
@@ -65,6 +62,18 @@ def app(rc):
     print("\n$ curl -d '' http://localhost:5000/shutdown\n")
     app.run(host='localhost')
     del app.rc
+
+
+def app(rc):
+    """Runs flask app"""
+    from regolith.app import app
+    _run_app(app, rc)
+
+
+def grade(rc):
+    """Runs flask grading app"""
+    from regolith.grader import app
+    _run_app(app, rc)
 
 
 def build(rc):

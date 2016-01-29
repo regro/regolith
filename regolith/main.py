@@ -26,6 +26,7 @@ CONNECTED_COMMANDS = {
     'add': commands.add_cmd,
     'ingest': commands.ingest,
     'app': commands.app,
+    'grade': commands.grade,
     'build': commands.build,
     }
 
@@ -80,6 +81,11 @@ def create_parser():
                                        'modifying regolith data.')
     appp.add_argument('--debug', dest='debug', action='store_true', default=False, 
                       help='starts server in debug mode')
+    # grade subparser
+    grdp = subp.add_parser('grade', help='starts up a flask app for adding '
+                                         'grades to the database.')
+    grdp.add_argument('--debug', dest='debug', action='store_true', 
+                      default=False, help='starts server in debug mode')
     # builder subparser
     bldp = subp.add_parser('build', help='builds various available targets')
     bldp.add_argument('build_targets', nargs='+', help='targets to build.')
