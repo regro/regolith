@@ -116,8 +116,8 @@ def dump_hg_database(db, client, rc):
         to_add.append(os.path.join(dbdir, db['path'], collection + '.json'))
     # update the repo
     client = hglib.open(dbdir)
-    if not any(client.status(include=_)[0][0].decode("ascii") in ('MAR!?')
-               for _ in to_add):
+    if len(client.status(include=to_add, modified=True,
+                        unknown=True, added=True)) == 0:
         return
     client.commit(message='regolith auto-commit', include=to_add,
                   addremove=True)
