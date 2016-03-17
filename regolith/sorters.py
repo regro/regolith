@@ -1,6 +1,7 @@
 """Builder for websites."""
 import os
 from itertools import groupby
+import string
 
 from regolith.tools import all_docs_from_collection, date_to_float, date_to_rfc822, \
     rfc822now
@@ -48,6 +49,8 @@ POSITION_LEVELS = {
 def position_key(x):
     """Sorts a people based on thier position in the research group."""
     pos = x.get('position', '').lower()
-    return POSITION_LEVELS.get(pos, -1)
+    first_letter_last = x.get('name', 'zappa').rsplit(None, 1)[-1][0].upper()
+    backward_position = 26 - string.ascii_uppercase.index(first_letter_last)
+    return (POSITION_LEVELS.get(pos, -1), backward_position)
 
 
