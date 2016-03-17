@@ -3,6 +3,11 @@ import os
 import shutil
 import subprocess
 
+try:
+    import hglib
+except:
+    hglib = None
+
 
 def find_store(rc):
     for store in rc.stores:
@@ -39,11 +44,25 @@ def sync_git(store, path):
     subprocess.check_call(cmd, cwd=cwd)
 
 
+def sync_hg(store, path):
+    """Syncs the local documents via hg."""
+    storedir, _ = os.path.split(path)
+    # get or update the storage
+    if os.path.isdir(os.path.join(storedir, ".hg")):
+        client = hglib.open(storedir)
+        client.pull(update=True, force=True)
+    else:
+        # Strip off three characters for hg+
+        client = hglib.clone(store['url'][3:], storedir)
+
+
 def sync(store, path):
     """Syncs the local documents."""
     url = store['url']
     if url.startswith('git') or url.endswith('.git'):
         sync_git(store, path)
+    elif url.startswith('hg+'):
+        sync_hg(store, path)
     else:
         raise ValueError('Do not know how to sync this kind of storage.')
 
@@ -76,11 +95,23 @@ def push_git(store, path):
         return
 
 
+def push_hg(store, path):
+    """Pushes the local documents via git."""
+    storedir, _ = os.path.split(path)
+    client = hglib.open(storedir)
+    if len(client.status(modified=True, unknown=True, added=True)) == 0:
+        return
+    client.commit(message='regolith auto-commit', addremove=True)
+    client.push()
+
+
 def push(store, path):
     """Pushes the local documents."""
     url = store['url']
     if url.startswith('git') or url.endswith('.git'):
         push_git(store, path)
+    elif url.startswith('hg+'):
+        push_hg(store, path)
     else:
         raise ValueError('Do not know how to push to this kind of storage.')
 
