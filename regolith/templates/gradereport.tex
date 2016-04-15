@@ -46,9 +46,31 @@
 
 \section*{ {{category.capitalize()}} }
 
-{% for asgn in asngs %}
+{% for asgn, sg in zip(asngs, student_grades[category]) %}
 {% set asgn_id = asgn['_id'] %}
 \subsection*{ {{asgn_id}} }
+
+\begin{tabular}[h]{|l|c|c|c|c|}
+\hline
+\hline
+\textbf{Question} & \textbf{Score} & \textbf{Max} & \textbf{Mean} & \textbf{STD} \\
+{% for i in range(len(asgn['points'])) %}
+\hline
+\textbf{ {{asgn['question'][i]}} } &
+    {{sg['scores'][i]}} &
+    {{asgn['points'][i]}} &
+    {{stats[asgn_id][0][i]}} &
+    {{stats[asgn_id][1][i]}} \\
+{% endfor %}
+\hline
+\hline
+\textbf{Total} &
+    {{sum(sg['scores'])}} &
+    {{sum(asgn['points'])}} &
+    {{stats[asgn_id][0][i]}} &
+    {{stats[asgn_id][1][i]}} \\
+\hline
+\end{tabular}
 {% endfor %}
 
 

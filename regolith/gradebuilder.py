@@ -49,11 +49,14 @@ class GradeReportBuilder(object):
         self.gtx = gtx = {}
         rc = self.rc
         gtx['len'] = len
+        gtx['sum'] = sum
+        gtx['zip'] = zip
         gtx['True'] = True
         gtx['False'] = False
         gtx['None'] = None
         gtx['sorted'] = sorted
         gtx['groupby'] = groupby
+        gtx['range'] = range
         gtx['gets'] = gets
         gtx['date_key'] = date_key
         gtx['doc_date_key'] = doc_date_key
@@ -84,7 +87,6 @@ class GradeReportBuilder(object):
     def build(self):
         os.makedirs(self.bldir, exist_ok=True)
         self.latex()
-        self.pdf()
         self.clean()
 
     def latex(self):
@@ -121,9 +123,6 @@ class GradeReportBuilder(object):
     def pdf(self, base):
         """Compiles latex files to PDF"""
         self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-        #self.run(['bibtex'] + [base + '.aux'])
-        #self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-        #self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
         self.run(['dvipdf', base])
 
     def run(self, cmd):
