@@ -41,4 +41,17 @@
 \begin{document}
 \maketitle
 
+{% for category, asngs in sorted(grouped_assignments.items()) %}
+\hrulefill
+
+\section*{ {{category.capitalize()}} }
+
+{% for asgn in asngs %}
+{% set asgn_id = asgn['_id'] %}
+\subsection*{ {{asgn_id}} }
+{% endfor %}
+
+
+{% endfor %}
+
 \end{document}
