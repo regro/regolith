@@ -1,12 +1,12 @@
-% (c) 2002 Matthew Boedicker <mboedick@mboedick.org> (original author) 
+% (c) 2002 Matthew Boedicker <mboedick@mboedick.org> (original author)
 %     http://mboedick.org
 % (c) 2003-2007 David J. Grant <davidgrant-at-gmail.com> http://www.davidgrant.ca
-% (c) 2008 Nathaniel Johnston <nathaniel@nathanieljohnston.com> 
+% (c) 2008 Nathaniel Johnston <nathaniel@nathanieljohnston.com>
 %     http://www.nathanieljohnston.com
 %
-% This work is licensed under the Creative Commons Attribution-Noncommercial-Share 
-% Alike 2.5 License. To view a copy of this license, visit 
-% http://creativecommons.org/licenses/by-nc-sa/2.5/ or send a letter to Creative 
+% This work is licensed under the Creative Commons Attribution-Noncommercial-Share
+% Alike 2.5 License. To view a copy of this license, visit
+% http://creativecommons.org/licenses/by-nc-sa/2.5/ or send a letter to Creative
 % Commons, 543 Howard Street, 5th Floor, San Francisco, California, 94105, USA.
 {% raw %}
 \documentclass[letterpaper,11pt]{article}
@@ -34,11 +34,11 @@
 %Edit these values as you see fit
 
 % Width of border outside of title bars
-\setlength{\outerbordwidth}{3pt}  
+\setlength{\outerbordwidth}{3pt}
 % Outer background color of title bars (0 = black, 1 = white)
-\definecolor{shadecolor}{gray}{0.75}  
+\definecolor{shadecolor}{gray}{0.75}
 % Inner background color of title bars
-\definecolor{shadecolorB}{gray}{0.93}  
+\definecolor{shadecolorB}{gray}{0.93}
 
 
 %-----------------------------------------------------------
@@ -130,7 +130,7 @@
 \ressubheadingitems{ {{-latex_safe(e['institution'])-}} }
     { {{-e['location']-}} }
     { {{-latex_safe(e['degree'])-}} }
-    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} - 
+    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} -
       {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
     { {% for o in e.get('other', ()) %}
         \resitem{ {{-latex_safe(o)-}} }
@@ -148,7 +148,7 @@
 \ressubheadingitems{ {{-latex_safe(e['organization'])-}} }
     { {{-e['location']-}} }
     { {{-latex_safe(e['position'])-}} }
-    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} - 
+    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} -
       {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
     { {% for o in e.get('other', ()) %}
         \resitem{ {{-latex_safe(o)-}} }
@@ -162,8 +162,8 @@
 \vspace{-2pt}
 \begin{center}\begin{tabular*}{6.6in}{l@{\extracolsep{\fill}}r}
 {% for agh in aghs %}
-    \multicolumn{2}{c}{ {{-agh['description']-}} 
-                        \cftdotfill{\cftdotsep} 
+    \multicolumn{2}{c}{ {{-agh['description']-}}
+                        \cftdotfill{\cftdotsep}
                         {{-agh['year']-}} }\\
 {% endfor %}
     \vphantom{E}
@@ -189,18 +189,19 @@
 \resheading{Major Software Projects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for proj in projects %}
-\ressubheadingitems{ {{-proj['_id']-}}}
-    {% set me = proj['team'][0] %}
+{% set me = proj['team'][0] %}
+\ressubheadingitems{ {{-proj['_id']-}} }
     { {{-me['position']-}} }
     { {{-proj['description']-}} }
-    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} - 
-      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} } 
+    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
+      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
     {\begin{itemize} {% for o in proj['other'] %}
         \resitem{ {{-latex_safe(o)-}} }
       {% endfor %}
       \resitem{Website: \url{ {{-proj['website']-}} } }
      \end{itemize}
     }
+\vspace{0.5em}
 {% endfor %}
 
 {%if len(pubs) > 0%}
@@ -234,16 +235,16 @@
       {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
         \resitem{
           {% if 'website' in t %}
-            \href{ {{-latex_safe(t['website'])-}} }{Website}.  
+            \href{ {{-latex_safe(t['website'])-}} }{Website}.
           {% endif %}
           {% if 'syllabus' in t %}
             \href{ {{-latex_safe(t['syllabus'])-}} }{Syllabus}.
           {% endif %}
           {% if 'video' in t %}
-            \href{ {{-latex_safe(t['video'])-}} }{Video}.  
+            \href{ {{-latex_safe(t['video'])-}} }{Video}.
           {% endif %}
           {% if 'materials' in t %}
-            \href{ {{-latex_safe(t['materials'])-}} }{Source Materials}.  
+            \href{ {{-latex_safe(t['materials'])-}} }{Source Materials}.
           {% endif %}
         }
       {% endif %}\end{itemize}
@@ -257,7 +258,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for m in p['membership'] %}
 \ressubheadingshort{ {{-latex_safe(m['organization'])-}} }
-    {\em{ {{-month_and_year(m.get('begin_month'), m.get('begin_year'))-}} - 
+    {\em{ {{-month_and_year(m.get('begin_month'), m.get('begin_year'))-}} -
           {{-month_and_year(m.get('end_month'), m.get('end_year'))-}} } }
     { {{-latex_safe(m['position'])-}} }
 {% endfor %}
@@ -269,7 +270,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{itemize}
 {%for cat, cgrp in groupby(p['skills'], key=category_val)%}
-  \item {{cat}} 
+  \item {{cat}}
   \begin{itemize}{%for lvl, lgrp in groupby(cgrp, key=level_val)%}
     \resitem{\textbf{ {{-lvl.capitalize()}}:} {{gets(lgrp, 'name', '<nemo>') | join(', ')-}} }
   {%endfor%}\end{itemize}
