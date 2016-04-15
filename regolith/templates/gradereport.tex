@@ -1,0 +1,44 @@
+{% raw %}
+\documentclass[letterpaper,11pt]{article}
+\newlength{\outerbordwidth}
+\pagestyle{empty}
+\raggedbottom
+\raggedright
+\usepackage[svgnames]{xcolor}
+\usepackage{framed}
+\usepackage{tocloft}
+\usepackage[backend=bibtex,maxnames=99]{biblatex}
+\usepackage{hyperref}
+
+%-----------------------------------------------------------
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=red            % color of external links
+}
+
+%-----------------------------------------------------------
+%Edit these values as you see fit
+
+% Width of border outside of title bars
+\setlength{\outerbordwidth}{3pt}
+% Outer background color of title bars (0 = black, 1 = white)
+\definecolor{shadecolor}{gray}{0.75}
+% Inner background color of title bars
+\definecolor{shadecolorB}{gray}{0.93}
+
+
+%-----------------------------------------------------------
+{% endraw %}
+
+\title{ {{course_id}} Grades }
+\author{ {{student_id}} }
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\end{document}

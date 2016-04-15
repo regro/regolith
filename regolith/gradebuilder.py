@@ -89,20 +89,41 @@ class GradeReportBuilder(object):
 
     def latex(self):
         rc = self.rc
-        for course in courses:
+        for course in self.gtx['courses']:
+            course_id = course['_id']
             stats = self.makestats(course)
+            asgn = filter((lambda x: course_id in x['courses']),
+                          self.gtx['assignments'])
+            catfunc = lambda x: x['category']
+            asgn = sorted(asgn, key=catfunc)
+            grouped_assignments = {k: list(i) for k, i in groupby(asgn, catfunc)}
             for student_id in course['students']:
-                self.render('gradereport.tex', p['_id'] + '.tex', p=p,
-                            title=p.get('name', ''), stats=stats)
-                self.pdf(p)
+                base = self.basename(student_id, course_id)
+                student_grade_list = list(filter(
+                    (lambda x: (x['student'] == student_id and
+                               x['course'] == course_id)), self.gtx['grades']))
+                student_grades = {k: [] for k in grouped_assignments.keys()}
+                for category, asngs in grouped_assignments.items():
+                    for asgn in asngs:
+                        for sg in student_grade_list:
+                            if sg['assignment'] == asgn['_id']:
+                                student_grades[category].append(sg)
+                                break
+                        else:
+                            student_grades[category].append(None)
+                self.render('gradereport.tex', base + '.tex', p=student_id,
+                            title=student_id, stats=stats,
+                            student_id=student_id, course_id=course_id,
+                            grouped_assignments=grouped_assignments,
+                            student_grades=student_grades)
+                self.pdf(base)
 
-    def pdf(self, p):
+    def pdf(self, base):
         """Compiles latex files to PDF"""
-        base = p['_id']
         self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-        self.run(['bibtex'] + [base + '.aux'])
-        self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-        self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+        #self.run(['bibtex'] + [base + '.aux'])
+        #self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+        #self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
         self.run(['dvipdf', base])
 
     def run(self, cmd):
@@ -139,3 +160,10 @@ class GradeReportBuilder(object):
                                     np.mean(np.sum(data, axis=1)),
                                     np.std(np.sum(data, axis=1)))
         return stats
+
+    def basename(self, student_id, course_id):
+        """Returns the base file name for a student in a course."""
+        name = student_id.replace('.', '').replace(' ', '')
+        name += '-' + course_id
+        return name
+
