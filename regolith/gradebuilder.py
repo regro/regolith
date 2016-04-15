@@ -113,11 +113,16 @@ class GradeReportBuilder(object):
                                 break
                         else:
                             student_grades[category].append(None)
+                student_totals, student_wavg = self.maketotals(student_grades,
+                                                               grouped_assignments,
+                                                               course)
                 self.render('gradereport.tex', base + '.tex', p=student_id,
                             title=student_id, stats=stats,
                             student_id=student_id, course_id=course_id,
                             grouped_assignments=grouped_assignments,
-                            student_grades=student_grades)
+                            student_grades=student_grades,
+                            student_totals=student_totals,
+                            student_wavg=student_wavg)
                 self.pdf(base)
 
     def pdf(self, base):
@@ -158,6 +163,13 @@ class GradeReportBuilder(object):
                                     np.std(data, axis=0),
                                     np.mean(np.sum(data, axis=1)),
                                     np.std(np.sum(data, axis=1)))
+        # handle stats for ungraded assignments
+        for assignment in self.gtx['assignments']:
+            assignment_id = assignment['_id']
+            if assignment_id not in stats:
+                n = len(assignment['points'])
+                z = (0,) * n
+                stats[assignment_id] = (z, z, 0, 0)
         return stats
 
     def basename(self, student_id, course_id):
@@ -166,3 +178,28 @@ class GradeReportBuilder(object):
         name += '-' + course_id
         return name
 
+    def maketotals(self, student_grades, grouped_assignments, course):
+        """Makes total grades."""
+        totals = []
+        totalweight = totalfrac = 0.0
+        for category in student_grades.keys():
+            cat = [category]
+            sgtot = catmax = 0
+            for sg, asgn in zip(student_grades[category],
+                                grouped_assignments[category]):
+                if sg is not None:
+                    sgtot += sum(sg['scores'])
+                catmax += sum(asgn['points'])
+            cat.append(sgtot)
+            cat.append(catmax)
+            weight = course['weights'][category]
+            cat.append(weight)
+            totalweight += weight
+            catfrac = sgtot / catmax
+            #cat.append(catfrac)
+            wfrac = catfrac * weight
+            cat.append(wfrac)
+            totalfrac += wfrac
+            totals.append(cat)
+        wtotal = totalfrac / totalweight
+        return sorted(totals), wtotal

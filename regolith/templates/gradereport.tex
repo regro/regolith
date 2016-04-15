@@ -41,8 +41,25 @@
 \begin{document}
 \maketitle
 
+\begin{tabular}[h]{|l||c|c|c|c|}
+\hline
+\textbf{Category} & \textbf{Score} & \textbf{Max} & \textbf{Weight} &
+    \textbf{Weighted Frac} \\
+{% for row in student_totals %}
+\hline
+\textbf{ {{row[0]}} }
+{% for x in row[1:] %}
+    & {{x}}
+{% endfor %} \\
+{% endfor %}
+\hline
+\end{tabular}
+
+\vspace{1em}
+\textbf{Total weighted average:} {{student_wavg*100}}\%
+
 {% for category, asngs in sorted(grouped_assignments.items()) %}
-\hrulefill
+\vspace{1em}\hrulefill
 
 \section*{ {{category.capitalize()}} }
 
@@ -50,25 +67,31 @@
 {% set asgn_id = asgn['_id'] %}
 \subsection*{ {{asgn_id}} }
 
-\begin{tabular}[h]{|l|c|c|c|c|}
-\hline
+\begin{tabular}[h]{|l||c|c|c|c|}
 \hline
 \textbf{Question} & \textbf{Score} & \textbf{Max} & \textbf{Mean} & \textbf{STD} \\
 {% for i in range(len(asgn['points'])) %}
 \hline
-\textbf{ {{asgn['question'][i]}} } &
+\textbf{ {{asgn['questions'][i]}} } &
+    {% if sg == None %}
+    {\color{red} nil} &
+    {% else %}
     {{sg['scores'][i]}} &
+    {% endif %}
     {{asgn['points'][i]}} &
     {{stats[asgn_id][0][i]}} &
     {{stats[asgn_id][1][i]}} \\
 {% endfor %}
 \hline
-\hline
 \textbf{Total} &
+    {% if sg == None %}
+    {\color{red} nil} &
+    {% else %}
     {{sum(sg['scores'])}} &
+    {% endif %}
     {{sum(asgn['points'])}} &
-    {{stats[asgn_id][0][i]}} &
-    {{stats[asgn_id][1][i]}} \\
+    {{stats[asgn_id][2]}} &
+    {{stats[asgn_id][3]}} \\
 \hline
 \end{tabular}
 {% endfor %}
