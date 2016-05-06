@@ -56,7 +56,13 @@
 \end{tabular}
 
 \vspace{1em}
-\textbf{Total weighted average:} {{student_wavg*100}}\%
+\textbf{Total weighted average, raw:} {{student_wavg*100}}\%
+
+\textbf{Best weighted average, raw:} {{max_wavg*100}}\%
+
+\textbf{Curve, $100 - \mathrm{best}$:} {{curve*100}}\%
+
+\textbf{Total weighted average, curved:} {{(student_wavg+curve)*100}}\%
 
 {% for category, asngs in sorted(grouped_assignments.items()) %}
 \vspace{1em}\hrulefill

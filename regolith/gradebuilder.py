@@ -99,8 +99,10 @@ class GradeReportBuilder(object):
             catfunc = lambda x: x['category']
             asgn = sorted(asgn, key=catfunc)
             grouped_assignments = {k: list(i) for k, i in groupby(asgn, catfunc)}
+
+            student_wavgs = []
+            students_kwargs = {}
             for student_id in course['students']:
-                base = self.basename(student_id, course_id)
                 student_grade_list = list(filter(
                     (lambda x: (x['student'] == student_id and
                                x['course'] == course_id)), self.gtx['grades']))
@@ -116,13 +118,22 @@ class GradeReportBuilder(object):
                 student_totals, student_wavg = self.maketotals(student_grades,
                                                                grouped_assignments,
                                                                course)
+                student_wavgs.append(student_wavg)
+                students_kwargs[student_id] = dict(
+                    title=student_id, stats=stats,
+                    student_id=student_id, course_id=course_id,
+                    grouped_assignments=grouped_assignments,
+                    student_grades=student_grades,
+                    student_totals=student_totals,
+                    student_wavg=student_wavg
+                    )
+            max_wavg = max(student_wavgs)
+            curve = 1.0 - max_wavg
+            for student_id in course['students']:
+                base = self.basename(student_id, course_id)
                 self.render('gradereport.tex', base + '.tex', p=student_id,
-                            title=student_id, stats=stats,
-                            student_id=student_id, course_id=course_id,
-                            grouped_assignments=grouped_assignments,
-                            student_grades=student_grades,
-                            student_totals=student_totals,
-                            student_wavg=student_wavg)
+                            max_wavg=max_wavg, curve=curve,
+                            **students_kwargs[student_id])
                 self.pdf(base)
 
     def pdf(self, base):
