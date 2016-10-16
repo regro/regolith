@@ -44,12 +44,6 @@ def fallback(cond, backup):
     return dec
 
 
-def insert_many(coll, docs):
-    if ON_PYMONGO_V2:
-        return coll.insert(docs)
-    else:
-        return coll.insert_many(docs)
-
 def all_docs_from_collection(client, collname):
     """Yield all entries in for all collections of a given name in a given database."""
     for dbname in client.keys():
@@ -58,22 +52,6 @@ def all_docs_from_collection(client, collname):
         if collname not in client.collection_names(dbname):
             continue
         yield from client.all_documents(dbname, collname)
-
-
-def find_one_and_update(coll, filter, update, **kwargs):
-    """Implements find one and updated capabilities"""
-    if ON_PYMONGO_V2:
-        doc = coll.find_one(filter)
-        if doc is None:
-            if not kwargs.get('upsert', False):
-                raise RuntimeError('could not update non-existing document')
-            newdoc = dict(filter)
-            newdoc.update(update['$set'])
-            return insert_one(coll, newdoc)
-        return coll.update(doc, update, **kwargs)
-    else:
-        return coll.find_one_and_update(filter, update, **kwargs)
-
 
 
 MONTHS = {

@@ -3,7 +3,7 @@ import os
 import re
 import json
 
-from regolith.tools import string_types, ON_PYMONGO_V2, insert_many, find_one_and_update
+from regolith.tools import string_types
 from regolith.builder import builder
 from regolith.deploy import deploy as dploy
 
@@ -17,7 +17,7 @@ def add_cmd(rc):
     coll = db[rc.coll]
     docs = [json.loads(doc) if isinstance(doc, string_types) else doc
             for doc in rc.documents]
-    insert_many(coll, docs)
+    rc.client.insert_many(rc.db, rc.coll, docs)
 
 
 def _ingest_citations(rc):
@@ -32,7 +32,8 @@ def _ingest_citations(rc):
             bib['author'] = [a.strip() for a in RE_AND.split(bib['author'])]
         if 'title' in bib:
             bib['title'] = RE_SPACE.sub(' ', bib['title'])
-        find_one_and_update(coll, {'_id': bibid}, {'$set': bib}, upsert=True)
+        rc.client.update_one(rc.db, rc.coll, {'_id': bibid},
+                             {'$set': bib}, upsert=True)
 
 
 def _determine_ingest_coll(rc):
