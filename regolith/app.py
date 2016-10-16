@@ -1,8 +1,8 @@
 """Flask app for looking at information in regolith."""
+import json
 import traceback
 
 from flask import Flask, abort, request, render_template, redirect, url_for
-from bson import json_util, objectid
 
 app = Flask('regolith')
 
@@ -41,12 +41,12 @@ def collection_page(dbname, collname):
         if 'shutdown' in form:
             return shutdown()
         elif 'cancel' in form:
-            body = json_util.loads(form['body'].strip())
+            body = json.loads(form['body'].strip())
             status = 'canceled'
             status_id = str(body['_id'])
         elif 'save' in form:
             try:
-                body = json_util.loads(form['body'].strip())
+                body = json.loads(form['body'].strip())
             except Exception:
                 traceback.print_exc()
                 raise
@@ -55,7 +55,7 @@ def collection_page(dbname, collname):
             status_id = str(body['_id'])
         elif 'add' in form:
             try:
-                body = json_util.loads(form['body'].strip())
+                body = json.loads(form['body'].strip())
             except Exception:
                 traceback.print_exc()
                 raise
@@ -67,8 +67,8 @@ def collection_page(dbname, collname):
             status = 'added ✓'
             status_id = str(added.inserted_id)
         elif 'delete' in form:
-            body = json_util.loads(form['body'].strip())
+            body = json.loads(form['body'].strip())
             deled = rc.client.delete_one(dbname, collname, body)
     return render_template('collection.html', rc=rc, dbname=dbname, len=len, str=str,
-                           status=status, status_id=status_id, objectid=objectid,
-                           collname=collname, coll=coll, json_util=json_util, min=min)
+                           status=status, status_id=status_id,
+                           collname=collname, coll=coll, json=json, min=min)

@@ -67,7 +67,7 @@ class FileSystemClient:
     def __getitem__(self, key):
         return self.dbs[key]
 
-    def collection_names(self, dbname):
+    def collection_names(self, dbname, include_system_collections=True):
         """Returns the collaction names for a database."""
         return set(self.dbs[dbname].keys())
 
