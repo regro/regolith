@@ -12,11 +12,19 @@ try:
 except:
     hglib = None
 
+from regolith.tools import dbdirname, dbpathname
+from regolith.mongoclient import MongoClient
+
+
+CLIENTS = {
+    'mongo': MongoClient,
+    'mongodb': MongoClient,
+    }
+
 
 def load_git_database(db, client, rc):
     """Loads a git database"""
-    dbsdir = os.path.join(rc.builddir, '_dbs')
-    dbdir = os.path.join(dbsdir, db['name'])
+    dbdir = dbdirname(db, rc)
     # get or update the database
     if os.path.isdir(dbdir):
         cmd = ['git', 'pull']
@@ -28,12 +36,12 @@ def load_git_database(db, client, rc):
     # import all of the data
     client.load_database(db)
 
+
 def load_hg_database(db, client, rc):
     """Loads an hg database"""
     if hglib is None:
         raise ImportError('hglib')
-    dbsdir = os.path.join(rc.builddir, '_dbs')
-    dbdir = os.path.join(dbsdir, db['name'])
+    dbdir = dbdirname(db, rc)
     # get or update the database
     if os.path.isdir(dbdir):
         client = hglib.open(dbdir)
@@ -58,8 +66,7 @@ def load_database(db, client, rc):
 
 def dump_git_database(db, client, rc):
     """Dumps a git database"""
-    dbsdir = os.path.join(rc.builddir, '_dbs')
-    dbdir = os.path.join(dbsdir, db['name'])
+    dbdir = dbdirname(db, rc)
     # dump all of the data
     client.dump_database(db)
     # update the repo
@@ -81,8 +88,7 @@ def dump_git_database(db, client, rc):
 
 def dump_hg_database(db, client, rc):
     """Dumps an hg database"""
-    dbsdir = os.path.join(rc.builddir, '_dbs')
-    dbdir = os.path.join(dbsdir, db['name'])
+    dbdir = dbdirname(db, rc)
     # dump all of the data
     client.dump_database(db)
     # update the repo

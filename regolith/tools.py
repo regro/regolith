@@ -22,12 +22,27 @@ ON_LINUX = (platform.system() == 'Linux')
 ON_POSIX = (os.name == 'posix')
 
 
+def dbdirname(db, rc):
+    """Gets the database dir name."""
+    dbsdir = os.path.join(rc.builddir, '_dbs')
+    dbdir = os.path.join(dbsdir, db['name'])
+    return dbdir
+
+
+def dbpathname(db, rc):
+    """Gets the database path name."""
+    dbdir = dbdirname(db, rc)
+    dbpath = os.path.join(dbdir, db['path'])
+    return dbpath
+
+
 def fallback(cond, backup):
     """Decorator for returning the object if cond is true and a backup if cond is false.
     """
     def dec(obj):
         return obj if cond else backup
     return dec
+
 
 @fallback(ON_PYMONGO_V2, None)
 class InsertOneProxy(object):

@@ -16,6 +16,9 @@ try:
 except ImportError:
     MONGO_AVAILABLE = False
 
+from regolith.tools import dbdirname, dbpathname
+
+
 if not MONGO_AVAILABLE:
     ON_PYMONGO_V2 = ON_PYMONGO_V3 = False
 elif pymongo.version.split('.')[0] == '2':
@@ -24,6 +27,7 @@ elif pymongo.version.split('.')[0] == '2':
 else:
     ON_PYMONGO_V2 = False
     ON_PYMONGO_V3 = True
+
 
 
 class MongoClient:
@@ -82,9 +86,7 @@ class MongoClient:
 
     def load_database(self, db):
         """Loads a database via mongoimport.  Takes a database dict db."""
-        dbsdir = os.path.join(self.rc.builddir, '_dbs')
-        dbdir = os.path.join(dbsdir, db['name'])
-        dbpath = os.path.join(dbdir, db['path'])
+        dbpath = dbpathname(db, self.rc)
         for f in iglob(os.path.join(dbpath, '*.json')):
             base, ext = os.path.splitext(os.path.split(f)[-1])
             cmd = ['mongoimport', '--db',  db['name'], '--collection', base,
@@ -93,10 +95,7 @@ class MongoClient:
 
     def dump_database(self, db):
         """Dumps a database dict via mongoexport."""
-        dbsdir = os.path.join(self.rc.builddir, '_dbs')
-        dbdir = os.path.join(dbsdir, db['name'])
-        # dump all of the data
-        dbpath = os.path.join(dbdir, db['path'])
+        dbpath = dbpathname(db, self.rc)
         os.makedirs(dbpath, exist_ok=True)
         to_add = []
         colls = self.client[db['name']].collection_names(
