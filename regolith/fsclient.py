@@ -57,3 +57,17 @@ class FileSystemClient:
     def close(self):
         self.dbs = None
         self.closed = True
+
+    def keys(self):
+        return self.dbs.keys()
+
+    def __getitem__(self, key):
+        return self.dbs[key]
+
+    def collection_names(self, dbname):
+        """Returns the collaction names for a database."""
+        return set(self.dbs[dbname].keys())
+
+    def all_documents(self, dbname, collname):
+        """Returns an iteratable over all documents in a collection."""
+        return self.dbs[dbname][collname].values()

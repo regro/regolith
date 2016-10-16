@@ -121,3 +121,18 @@ class MongoClient:
         mongodbpath = self.rc.mongodbpath
         if os.path.isdir(mongodbpath):
             shutil.rmtree(mongodbpath, ignore_errors=True)
+
+    def keys(self):
+        return self.client.database_names()
+
+    def __getitem__(self, key):
+        return self.client[key]
+
+    def collection_names(self, dbname):
+        """Returns the collection names for the database name."""
+        return self.client[dbname].collection_names()
+
+    def all_documents(self, dbname, collname):
+        """Returns an iteratable over all documents in a collection."""
+        return self.client.[dbname][collname].find()
+

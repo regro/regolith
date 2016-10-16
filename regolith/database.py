@@ -13,12 +13,15 @@ except:
     hglib = None
 
 from regolith.tools import dbdirname, dbpathname
+from regolith.fsclient import FileSystemClient
 from regolith.mongoclient import MongoClient
 
 
 CLIENTS = {
     'mongo': MongoClient,
     'mongodb': MongoClient,
+    'fs': FileSystemClient,
+    'filesystem': FileSystemClient,
     }
 
 

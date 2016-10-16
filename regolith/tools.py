@@ -73,13 +73,12 @@ def delete_one(coll, doc):
 
 def all_docs_from_collection(client, collname):
     """Yield all entries in for all collections of a given name in a given database."""
-    for dbname in client.database_names():
+    for dbname in client.keys():
         if dbname == 'local':
             continue
-        db = client[dbname]
-        if collname not in db.collection_names():
+        if collname not in client.collection_names(dbname):
             continue
-        yield from db[collname].find()
+        yield from client.all_documents(dbname, collname)
 
 
 def find_one_and_update(coll, filter, update, **kwargs):
