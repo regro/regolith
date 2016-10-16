@@ -58,7 +58,7 @@ def ensure_database(db):
     db['path'] = ensure_string(db['path'])
     db['public'] = to_bool(db.get('public', True))
     return db
-    
+
 
 def ensure_databases(dbs):
     """Ensures each dataset in a list of databases"""
@@ -71,7 +71,7 @@ def ensure_store(store):
     store['path'] = ensure_string(store.get('path', None) or '')
     store['public'] = to_bool(store.get('public', True))
     return store
-    
+
 
 def ensure_stores(stores):
     """Ensures each store in a list of stores"""
@@ -79,7 +79,8 @@ def ensure_stores(stores):
 
 
 DEFAULT_VALIDATORS = {
-    'builddir': (is_string, ensure_string), 
+    'builddir': (is_string, ensure_string),
+    'client': (is_string, ensure_string),
     'databases': (always_false, ensure_databases),
     'stores': (always_false, ensure_stores),
     }

@@ -44,24 +44,11 @@ def fallback(cond, backup):
     return dec
 
 
-def insert_one(coll, doc):
-    if ON_PYMONGO_V2:
-        i = coll.insert(doc)
-        return InsertOneProxy(i, True)
-    else:
-        return coll.insert_one(doc)
-
 def insert_many(coll, docs):
     if ON_PYMONGO_V2:
         return coll.insert(docs)
     else:
         return coll.insert_many(docs)
-
-def delete_one(coll, doc):
-    if ON_PYMONGO_V2:
-        return coll.remove(doc, multi=False)
-    else:
-        return coll.delete_one(doc)
 
 def all_docs_from_collection(client, collname):
     """Yield all entries in for all collections of a given name in a given database."""

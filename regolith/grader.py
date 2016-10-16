@@ -4,8 +4,6 @@ import traceback
 from flask import Flask, abort, request, render_template, redirect, url_for
 from bson import json_util, objectid
 
-from regolith.tools import insert_one, delete_one
-
 app = Flask('regolith')
 
 
@@ -61,7 +59,7 @@ def insert_grade(grade, form, rc):
     except (KeyError, AttributeError):
         abort(404)
     try:
-        added = insert_one(coll, grade)
+        added = rc.client.insert_one(dbname, collname, grade)
     except Exception:
         traceback.print_exc()
         raise

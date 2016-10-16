@@ -13,7 +13,8 @@ from regolith import storage
 DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
     builddir='_build',
-    mongodbpath=property(lambda self: os.path.join(self.builddir, '_dbpath'))
+    mongodbpath=property(lambda self: os.path.join(self.builddir, '_dbpath')),
+    client='filesystem',
     )
 
 DISCONNECTED_COMMANDS = {
@@ -63,7 +64,7 @@ def create_parser():
                                           'resource into a database')
     ingp.add_argument('db', help='database name')
     ingp.add_argument('filename', help='file to ingest')
-    ingp.add_argument('--coll', dest='coll',  default=None, 
+    ingp.add_argument('--coll', dest='coll',  default=None,
                       help='collection name, if this is not given it is infered from the '
                            'file type or file name.')
     # store subparser
@@ -72,19 +73,19 @@ def create_parser():
     strp.add_argument('storename', help='storage name')
     strp.add_argument('documents', nargs='+', help='paths to documents, i.e. '
                                                    'PDFs, images, etc.')
-    strp.add_argument('-f', '--force', dest='force', default=False, 
+    strp.add_argument('-f', '--force', dest='force', default=False,
                       action='store_true',
                       help='forces copy of file if one of the same name '
                            'already exists')
     # app subparser
     appp = subp.add_parser('app', help='starts up a flask app for inspecting and '
                                        'modifying regolith data.')
-    appp.add_argument('--debug', dest='debug', action='store_true', default=False, 
+    appp.add_argument('--debug', dest='debug', action='store_true', default=False,
                       help='starts server in debug mode')
     # grade subparser
     grdp = subp.add_parser('grade', help='starts up a flask app for adding '
                                          'grades to the database.')
-    grdp.add_argument('--debug', dest='debug', action='store_true', 
+    grdp.add_argument('--debug', dest='debug', action='store_true',
                       default=False, help='starts server in debug mode')
     # builder subparser
     bldp = subp.add_parser('build', help='builds various available targets')
@@ -100,11 +101,11 @@ def filter_databases(rc):
     public_only = rc._get('public_only', False)
     if public_only:
         dbs = [db for db in dbs if db['public']]
-    dbname = rc._get('db') 
+    dbname = rc._get('db')
     if dbname is not None:
         dbs = [db for db in dbs if db['name'] == dbname]
     rc.databases = dbs
-    
+
 
 def main(args=None):
     rc = DEFAULT_RC

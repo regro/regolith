@@ -4,8 +4,6 @@ import traceback
 from flask import Flask, abort, request, render_template, redirect, url_for
 from bson import json_util, objectid
 
-from regolith.tools import insert_one, delete_one
-
 app = Flask('regolith')
 
 
@@ -52,7 +50,7 @@ def collection_page(dbname, collname):
             except Exception:
                 traceback.print_exc()
                 raise
-            coll.save(body) 
+            coll.save(body)
             status = 'saved ✓'
             status_id = str(body['_id'])
         elif 'add' in form:
@@ -62,7 +60,7 @@ def collection_page(dbname, collname):
                 traceback.print_exc()
                 raise
             try:
-                added = insert_one(coll, body)
+                added = rc.client.insert_one(dbname, collname, body)
             except Exception:
                 traceback.print_exc()
                 raise
@@ -70,7 +68,7 @@ def collection_page(dbname, collname):
             status_id = str(added.inserted_id)
         elif 'delete' in form:
             body = json_util.loads(form['body'].strip())
-            deled = delete_one(coll, body)
+            deled = rc.client.delete_one(dbname, collname, body)
     return render_template('collection.html', rc=rc, dbname=dbname, len=len, str=str,
                            status=status, status_id=status_id, objectid=objectid,
                            collname=collname, coll=coll, json_util=json_util, min=min)
