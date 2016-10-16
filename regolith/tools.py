@@ -7,8 +7,6 @@ import platform
 import email.utils
 from datetime import datetime
 
-import pymongo
-
 if sys.version_info[0] >= 3:
     string_types = (str, bytes)
     unicode_type = str
@@ -23,12 +21,6 @@ ON_MAC = (platform.system() == 'Darwin')
 ON_LINUX = (platform.system() == 'Linux')
 ON_POSIX = (os.name == 'posix')
 
-if pymongo.version.split('.')[0] == '2':
-    ON_PYMONGO_V2 = True
-    ON_PYMONGO_V3 = False
-else:
-    ON_PYMONGO_V2 = False
-    ON_PYMONGO_V3 = True
 
 def fallback(cond, backup):
     """Decorator for returning the object if cond is true and a backup if cond is false.
@@ -63,7 +55,7 @@ def delete_one(coll, doc):
         return coll.remove(doc, multi=False)
     else:
         return coll.delete_one(doc)
-    
+
 def all_docs_from_collection(client, collname):
     """Yield all entries in for all collections of a given name in a given database."""
     for dbname in client.database_names():
@@ -88,7 +80,7 @@ def find_one_and_update(coll, filter, update, **kwargs):
         return coll.update(doc, update, **kwargs)
     else:
         return coll.find_one_and_update(filter, update, **kwargs)
-    
+
 
 
 MONTHS = {
@@ -131,7 +123,7 @@ MONTHS = {
     'december': 12,
     }
 
-SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 
+SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
                      'Aug', 'Sept', 'Oct', 'Nov', 'Dec')
 
 def month_to_int(m):
