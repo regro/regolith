@@ -1,8 +1,8 @@
 """Flask app for grading regolith."""
+import json
 import traceback
 
 from flask import Flask, abort, request, render_template, redirect, url_for
-from bson import json_util, objectid
 
 app = Flask('regolith')
 
@@ -18,7 +18,7 @@ def root():
         grade = form_to_grade(form)
         insert_grade(grade, form, rc)
         status = 'submitted {0} ✓'.format(grade['_id'])
-    return render_template('grader.html', rc=rc, json_util=json_util, str=str,
+    return render_template('grader.html', json=json, rc=rc, str=str,
                            status=status, range=range, len=len)
 
 
@@ -27,6 +27,7 @@ def shutdown_server():
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
+
 
 @app.route('/shutdown', methods=['GET', 'POST'])
 def shutdown():

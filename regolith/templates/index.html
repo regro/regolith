@@ -2,7 +2,7 @@
 </head>
 <body>
 <h1>Welcome to Regolith!</h1>
-{% for dbname in rc.client.database_names() if dbname != 'local' %}
+{% for dbname in rc.client.keys() if dbname != 'local' %}
   <h3>{{ dbname }}</h3>
   <ul>
   {% for collname in rc.client[dbname].collection_names(include_system_collections=False) %}

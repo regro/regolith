@@ -2,12 +2,12 @@
 </head>
 <body>
 <h1>Welcome to the Regolith Grader!</h1>
-{% for dbname in rc.client.database_names() if dbname != 'local' %}
+{% for dbname in rc.client.keys() if dbname != 'local' %}
   <h3>{{ dbname }}{% if status %} [{{status}}]{% endif %}</h3>
 
   <select id='courses' onchange='courseChanged(this.value);'>
     <option value=''>Select Course</option>
-    {% for course in rc.client[dbname]['courses'].find() %}
+    {% for course in rc.client.all_documents(dbname, 'courses') %}
     {% if course['active'] %}
     <option value="{{course['_id']}}">{{course['_id']}}</option>
     {% endif %}
@@ -39,7 +39,7 @@
 <script type="text/javascript">
 function trucateSelectAfterFirst(sdoc) {
   var ln = sdoc.length - 1;
-  while (ln > 0) { 
+  while (ln > 0) {
     sdoc.remove(1);  // rm all but first element
     ln--;
   }
@@ -47,30 +47,30 @@ function trucateSelectAfterFirst(sdoc) {
 
 function extendSelectOptions(sdoc, opts) {
   for (i = 0; i < opts.length; i++) {
-    var option = document.createElement('option'); 
+    var option = document.createElement('option');
     option.text = opts[i];
     option.value = opts[i];
     sdoc.add(option);
-  } 
+  }
 }
 
-function courseChanged(course) {  
+function courseChanged(course) {
   var selectStudent = document.getElementById('students');
   trucateSelectAfterFirst(selectStudent);
-      
+
   var selectAssignment = document.getElementById('assignments');
   trucateSelectAfterFirst(selectAssignment);
-      
+
   var studentOptions;
   var assignmentOptions;
-      
+
   switch(course){
-    {% for course in rc.client[dbname]['courses'].find() %}
+    {% for course in rc.client.all_documents(dbname, 'courses') %}
     {% if course['active'] %}
     case "{{course['_id']}}":
-      studentOptions = {{json_util.dumps(course['students']) | safe}};
+      studentOptions = {{json.dumps(course['students']) | safe}};
       assignmentOptions = [
-        {%- for a in rc.client[dbname]['assignments'].find() -%}
+        {%- for a in rc.client.all_documents(dbname, 'assignments') -%}
         {%- if course['_id'] in a['courses'] -%}
         "{{a['_id']}}",
         {%- endif -%}
@@ -80,15 +80,15 @@ function courseChanged(course) {
     {% endif %}
     {% endfor %}
     default:
-  }      
+  }
   extendSelectOptions(selectStudent, studentOptions);
   extendSelectOptions(selectAssignment, assignmentOptions);
 
   var courseForm = document.getElementById('course');
   courseForm.value = course;
 }
-  
-function studentChanged(student) {  
+
+function studentChanged(student) {
   var studentForm = document.getElementById('student');
   studentForm.value = student;
 }
@@ -101,7 +101,7 @@ function insertSecondToLast(form, node) {
   form.insertBefore(node, form.childNodes[loc]);
   scoreNodes.push(node);
 }
-  
+
 function assignmentChanged(assignment) {
   var offset = 2;
   var gradeForm = document.getElementById('gradeform');
@@ -112,16 +112,16 @@ function assignmentChanged(assignment) {
     snode.remove();
     delete snode;
   }
- 
+
   // get selections
   var points;
   var questions;
   switch(assignment){
-    {% for assignment in rc.client[dbname]['assignments'].find() %}
+    {% for assignment in rc.client.all_documents(dbname, 'assignments') %}
     case "{{assignment['_id']}}":
-      points = {{json_util.dumps(assignment['points']) | safe}};
+      points = {{json.dumps(assignment['points']) | safe}};
       {% if 'questions' in assignment -%}
-      questions = {{json_util.dumps(assignment['questions']) | safe}};
+      questions = {{json.dumps(assignment['questions']) | safe}};
       {%- else -%}
       questions = [
         {%- for i in range(1, len(assignment['points'])+1) %}
@@ -132,7 +132,7 @@ function assignmentChanged(assignment) {
       break;
     {% endfor %}
     default:
-  }      
+  }
 
   var br = document.createElement("BR");
   insertSecondToLast(gradeForm, br);
