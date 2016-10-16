@@ -141,7 +141,7 @@ class MongoClient:
 
     def all_documents(self, dbname, collname):
         """Returns an iteratable over all documents in a collection."""
-        return self.client.[dbname][collname].find()
+        return self.client[dbname][collname].find()
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
