@@ -79,8 +79,8 @@ def ensure_stores(stores):
 
 
 DEFAULT_VALIDATORS = {
+    'backend': (is_string, ensure_string),
     'builddir': (is_string, ensure_string),
-    'client': (is_string, ensure_string),
     'databases': (always_false, ensure_databases),
     'stores': (always_false, ensure_stores),
     }

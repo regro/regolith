@@ -71,7 +71,7 @@ def dump_git_database(db, client, rc):
     """Dumps a git database"""
     dbdir = dbdirname(db, rc)
     # dump all of the data
-    client.dump_database(db)
+    to_add = client.dump_database(db)
     # update the repo
     cmd = ['git', 'add'] + to_add
     subprocess.check_call(cmd, cwd=dbdir)
@@ -93,7 +93,7 @@ def dump_hg_database(db, client, rc):
     """Dumps an hg database"""
     dbdir = dbdirname(db, rc)
     # dump all of the data
-    client.dump_database(db)
+    to_add = client.dump_database(db)
     # update the repo
     hgclient = hglib.open(dbdir)
     if len(hgclient.status(include=to_add, modified=True,
@@ -118,7 +118,7 @@ def dump_database(db, client, rc):
 @contextmanager
 def connect(rc):
     """Context manager for ensuring that database is properly setup and torn down"""
-    client = CLIENTS[rc.client](rc)
+    client = CLIENTS[rc.backend](rc)
     for db in rc.databases:
         load_database(db, client, rc)
     yield client

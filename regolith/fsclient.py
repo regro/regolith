@@ -21,7 +21,7 @@ class FileSystemClient:
         return not self.closed
 
     def open(self):
-        self.dbs = defaultdict(lambda: deafultdict(dict))
+        self.dbs = defaultdict(lambda: defaultdict(dict))
         self.closed = False
 
     def load_database(self, db):
@@ -45,6 +45,7 @@ class FileSystemClient:
         """Dumps a database back to the filesystem."""
         dbpath = dbpathname(db, self.rc)
         os.makedirs(dbpath, exist_ok=True)
+        to_add = []
         for collname, collection in self.dbs[db['name']].items():
             print('dumping ' + collname + '...', file=sys.stderr)
             docs = sorted(collection.values(), key=self._id_key)
@@ -53,6 +54,8 @@ class FileSystemClient:
             f = os.path.join(dbpath, collname + '.json')
             with open(f, 'w') as fh:
                 fh.write(s)
+            to_add.append(os.path.join(db['path'], collname + '.json'))
+        return to_add
 
     def close(self):
         self.dbs = None

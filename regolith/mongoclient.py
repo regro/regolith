@@ -113,6 +113,7 @@ class MongoClient:
                    '--collection', collection, '--out', f]
             subprocess.check_call(cmd)
             to_add.append(os.path.join(db['path'], collection + '.json'))
+        return to_add
 
     def close(self):
         """Closes the database connection."""
