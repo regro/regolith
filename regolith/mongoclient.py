@@ -16,7 +16,7 @@ try:
 except ImportError:
     MONGO_AVAILABLE = False
 
-from regolith.tools import dbdirname, dbpathname
+from regolith.tools import dbdirname, dbpathname, fallback
 
 
 if not MONGO_AVAILABLE:
@@ -28,6 +28,13 @@ else:
     ON_PYMONGO_V2 = False
     ON_PYMONGO_V3 = True
 
+
+@fallback(ON_PYMONGO_V2, None)
+class InsertOneProxy(object):
+
+    def __init__(self, inserted_id, acknowledged):
+        self.inserted_id = inserted_id
+        self.acknowledged = acknowledged
 
 
 class MongoClient:
@@ -136,3 +143,42 @@ class MongoClient:
         """Returns an iteratable over all documents in a collection."""
         return self.client.[dbname][collname].find()
 
+    def insert_one(self, dbname, collname, doc):
+        """Inserts one document to a database/collection."""
+        coll = self.client[dbname][collname]
+        if ON_PYMONGO_V2:
+            i = coll.insert(doc)
+            return InsertOneProxy(i, True)
+        else:
+            return coll.insert_one(doc)
+
+    def insert_many(self, dbname, collname, docs):
+        """Inserts many documents into a database/collection."""
+        coll = self.client[dbname][collname]
+        if ON_PYMONGO_V2:
+            return coll.insert(docs)
+        else:
+            return coll.insert_many(docs)
+
+    def delete_one(self, dbname, collname, doc):
+        """Removes a single document from a collection"""
+        coll = self.client[dbname][collname]
+        if ON_PYMONGO_V2:
+            return coll.remove(doc, multi=False)
+        else:
+            return coll.delete_one(doc)
+
+    def update_one(self, dbname, collname, filter, update, **kwargs):
+        """Updates one document."""
+        coll = self.client[dbname][collname]
+        if ON_PYMONGO_V2:
+            doc = coll.find_one(filter)
+            if doc is None:
+                if not kwargs.get('upsert', False):
+                    raise RuntimeError('could not update non-existing document')
+                newdoc = dict(filter)
+                newdoc.update(update['$set'])
+                return self.insert_one(dbname, collname, newdoc)
+            return coll.update(doc, update, **kwargs)
+        else:
+            return coll.find_one_and_update(filter, update, **kwargs)

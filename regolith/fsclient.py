@@ -71,3 +71,39 @@ class FileSystemClient:
     def all_documents(self, dbname, collname):
         """Returns an iteratable over all documents in a collection."""
         return self.dbs[dbname][collname].values()
+
+    def insert_one(self, dbname, collname, doc):
+        """Inserts one document to a database/collection."""
+        coll = self.dbs[dbname][collname]
+        coll[doc['_id']] = doc
+
+    def insert_many(self, dbname, collname, docs):
+        """Inserts many documents into a database/collection."""
+        coll = self.dbs[dbname][collname]
+        for doc in docs:
+            coll[doc['_id']] = doc
+
+    def delete_one(self, dbname, collname, doc):
+        """Removes a single document from a collection"""
+        coll = self.dbs[dbname][collname]
+        del coll[doc['_id']]
+
+    def find_one(self, dbname, collname, filter):
+        """Finds the first document matching filter."""
+        coll = self.dbs[dbname][collname]
+        for doc in coll.values():
+            matches = True
+            for key, value in filter.items():
+                if key not in doc or doc[key] != value:
+                    matches = False
+                    break
+            if matches:
+                return doc
+
+    def update_one(self, dbname, collname, filter, update, **kwargs):
+        """Updates one document."""
+        coll = self.dbs[dbname][collname]
+        doc = self.find_one(dbname, collname, filter)
+        newdoc = dict(filter if doc is None else doc)
+        newdoc.update(update['$set'])
+        coll[newdoc['_id']] = newdoc

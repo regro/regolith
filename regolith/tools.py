@@ -44,14 +44,6 @@ def fallback(cond, backup):
     return dec
 
 
-@fallback(ON_PYMONGO_V2, None)
-class InsertOneProxy(object):
-
-    def __init__(self, inserted_id, acknowledged):
-        self.inserted_id = inserted_id
-        self.acknowledged = acknowledged
-
-
 def insert_one(coll, doc):
     if ON_PYMONGO_V2:
         i = coll.insert(doc)
