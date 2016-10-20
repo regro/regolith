@@ -19,7 +19,8 @@ def root():
         insert_grade(grade, form, rc)
         status = 'submitted {0} ✓'.format(grade['_id'])
     return render_template('grader.html', json=json, rc=rc, str=str,
-                           status=status, range=range, len=len)
+                           status=status, range=range, len=len, sorted=sorted,
+                           by_id=lambda x: x['_id'])
 
 
 def shutdown_server():

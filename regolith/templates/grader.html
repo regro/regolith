@@ -65,12 +65,12 @@ function courseChanged(course) {
   var assignmentOptions;
 
   switch(course){
-    {% for course in rc.client.all_documents(dbname, 'courses') %}
+    {% for course in sorted(rc.client.all_documents(dbname, 'courses'), key=by_id) %}
     {% if course['active'] %}
     case "{{course['_id']}}":
-      studentOptions = {{json.dumps(course['students']) | safe}};
+      studentOptions = {{json.dumps(sorted(course['students'])) | safe}};
       assignmentOptions = [
-        {%- for a in rc.client.all_documents(dbname, 'assignments') -%}
+        {%- for a in sorted(rc.client.all_documents(dbname, 'assignments'), key=by_id) -%}
         {%- if course['_id'] in a['courses'] -%}
         "{{a['_id']}}",
         {%- endif -%}
@@ -117,7 +117,7 @@ function assignmentChanged(assignment) {
   var points;
   var questions;
   switch(assignment){
-    {% for assignment in rc.client.all_documents(dbname, 'assignments') %}
+    {% for assignment in sorted(rc.client.all_documents(dbname, 'assignments'), key=by_id) %}
     case "{{assignment['_id']}}":
       points = {{json.dumps(assignment['points']) | safe}};
       {% if 'questions' in assignment -%}
