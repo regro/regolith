@@ -92,6 +92,8 @@ class GradeReportBuilder(object):
     def latex(self):
         rc = self.rc
         for course in self.gtx['courses']:
+            if not course.get('active', True):
+                continue
             course_id = course['_id']
             stats = self.makestats(course)
             asgn = filter((lambda x: course_id in x['courses']),
