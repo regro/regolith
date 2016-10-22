@@ -103,10 +103,31 @@ def grade_email(rc):
     return messages
 
 
+def class_email(rc):
+    """Sends an email to all students in the active classes."""
+    gradedir = os.path.join(rc.builddir, GradeReportBuilder.btype)
+    addresses = {x['_id']: x['email'] for x in \
+                 list(all_docs_from_collection(rc.client, 'students'))}
+    messages = []
+    for course in all_docs_from_collection(rc.client, 'courses'):
+        if not course.get('active', True):
+            continue
+        course_id = course['_id']
+        subject = '[{0}] {1}'.format(course_id, rc.subject)
+        for student_id in course['students']:
+            message = make_message(rc, addresses[student_id],
+                                   subject=subject,
+                                   body=rc.body,
+                                   attachments=rc.attachments)
+            messages.append(message)
+    return messages
+
+
 EMAIL_CONSTRUCTORS = {
     'test': test_email,
     'grade': grade_email,
     'grades': grade_email,
+    'class': class_email,
     }
 
 def emailer(rc):

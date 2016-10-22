@@ -99,6 +99,12 @@ def create_parser():
                                            '"grades".')
     emlp.add_argument('--to', default=None, dest='to',
                       help='receiver of email')
+    empl.add_argument('--subject', dest='subject', help='email subject line',
+                      default='')
+    empl.add_argument('--body', dest='body', help='email body, as restructured text',
+                      default='')
+    empl.add_argument('--attach', nargs='+', dest='attachments', default=(),
+                      help='attachments to send along as well.')
     return p
 
 
