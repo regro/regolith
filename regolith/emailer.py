@@ -54,7 +54,7 @@ def make_message(rc, to, subject='', body='', attachments=()):
             _, ext = os.path.splitext(attachment)
             att = ATTACHERS[ext](attachment)
             att.add_header('content-disposition', 'attachment',
-                           filename=attachment)
+                           filename=os.path.basename(attachment))
             msg.attach(att)
     msg['Subject'] = subject
     msg['From'] = rc.email['from']
