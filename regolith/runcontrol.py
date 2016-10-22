@@ -66,7 +66,7 @@ has not been given.
 
 class RunControl(object):
     """A composable configuration class. Unlike argparse.Namespace,
-    this keeps the object dictionary (__dict__) separate from the run 
+    this keeps the object dictionary (__dict__) separate from the run
     control attributes dictionary (_dict).
     """
 
@@ -192,7 +192,7 @@ class RunControl(object):
             else:
                 validator, convertor = always_true, noop
         return value if validator(value) else convertor(value)
-        
+
 
 
 def flatten(iterable):

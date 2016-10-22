@@ -88,7 +88,7 @@ def ensure_email(email):
     else:
         email['cred'] = email['url'] + '.cred'
     if not os.path.isfile(email['cred']):
-        user = input('User name for ' + email['url'] + ': ')
+        user = input('Email address for ' + email['url'] + ': ')
         password = getpass()
         s = user + '\n' + password
         with open(email['cred'], 'w') as f:
@@ -96,8 +96,11 @@ def ensure_email(email):
     with open(email['cred']) as f:
         email['from'] = f.readline().strip()
         email['password'] = f.readline().strip()
+    email['user'] = email['from'].partition('@')[0]
     email['port'] = int(email.get('port', 0))
-    store['tls'] = to_bool(email.get('tls', False))
+    email['verbosity'] = int(email.get('verbosity', 0))
+    email['tls'] = to_bool(email.get('tls', False))
+    return email
 
 
 DEFAULT_VALIDATORS = {

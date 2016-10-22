@@ -10,7 +10,7 @@ def make_message(rc, to, subject='', body=''):
     """Creates an email following the approriate format."""
     kw = {'from': rc.email['from'], 'to': to, 'subject': subject, 'body': body}
     message = MESSAGE.format(**kw)
-    return message
+    return (to, message)
 
 
 def test_email(rc):
@@ -32,10 +32,11 @@ def emailer(rc):
     emails = constructor(rc)
     conf = rc.email
     with smtplib.SMTP(conf['url'], port=conf['port']) as smtp:
+        smtp.set_debuglevel(conf['verbosity'])
         if conf['tls']:
             smtp.starttls()
             smtp.ehlo()
-        smtp.login(conf['from'], conf['password'])
+        smtp.login(conf['user'], conf['password'])
         for to, message in emails:
             print('sending email to ' + to + '...')
             smtp.sendmail(conf['from'], to, message)
