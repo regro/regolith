@@ -99,7 +99,7 @@ def create_parser():
                                            '"grades".')
     emlp.add_argument('--to', default=None, dest='to',
                       help='receiver of email')
-    empl.add_argument('--subject', dest='subject', help='email subject line',
+    emlp.add_argument('--subject', dest='subject', help='email subject line',
                       default='')
     emlp.add_argument('--body', dest='body', help='email body, as restructured text',
                       default='')
