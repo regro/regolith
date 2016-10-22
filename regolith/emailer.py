@@ -67,7 +67,8 @@ def test_email(rc):
     if rc.to is None:
         raise ValueError('--to must be given to send a test email.')
     with tempfile.NamedTemporaryFile(suffix='.rst') as f:
-        f.write(b'This is *only* a test attachment.')
+        f.write(b'This is *only* a test attachment.\n')
+        f.flush()
         message = make_message(rc, rc.to, subject='Regolith test email',
                                body='This is *only* a test. Do not be alarmed.',
                                attachments=[f.name])
