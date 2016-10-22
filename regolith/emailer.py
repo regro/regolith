@@ -22,7 +22,7 @@ def attach_txt(filename):
 
 
 def attach_pdf(filename):
-    with open(filename, 'r') as f:
+    with open(filename, 'rb') as f:
         pdf = f.read()
     msg = MIMEApplication(pdf, _subtype="pdf")
     return msg
