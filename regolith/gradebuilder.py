@@ -187,7 +187,8 @@ class GradeReportBuilder(object):
                 stats[assignment_id] = (z, z, 0, 0)
         return stats
 
-    def basename(self, student_id, course_id):
+    @staticmethod
+    def basename(student_id, course_id):
         """Returns the base file name for a student in a course."""
         name = student_id.replace('.', '').replace(' ', '')
         name += '-' + course_id
