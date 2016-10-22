@@ -58,6 +58,7 @@ class GradeReportBuilder(object):
         gtx['groupby'] = groupby
         gtx['range'] = range
         gtx['gets'] = gets
+        gtx['id_key'] = lambda x: x['_id']
         gtx['date_key'] = date_key
         gtx['doc_date_key'] = doc_date_key
         gtx['level_val'] = level_val
@@ -100,7 +101,8 @@ class GradeReportBuilder(object):
                           self.gtx['assignments'])
             catfunc = lambda x: x['category']
             asgn = sorted(asgn, key=catfunc)
-            grouped_assignments = {k: list(i) for k, i in groupby(asgn, catfunc)}
+            grouped_assignments = {k: sorted(i, key=lambda x: x['_id']) \
+                                   for k, i in groupby(asgn, catfunc)}
 
             student_wavgs = []
             students_kwargs = {}

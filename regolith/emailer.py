@@ -75,8 +75,14 @@ def test_email(rc):
     return [message]
 
 
+def grade_email(rc):
+    return []
+
+
 EMAIL_CONSTRUCTORS = {
     'test': test_email,
+    'grade': grade_email,
+    'grades': grade_email,
     }
 
 def emailer(rc):
