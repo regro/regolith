@@ -1,5 +1,7 @@
 """Validators and convertors for regolith input."""
+import os
 import re
+from getpass import getpass
 
 from regolith.tools import string_types
 
@@ -78,9 +80,30 @@ def ensure_stores(stores):
     return list(map(ensure_store, stores))
 
 
+def ensure_email(email):
+    """Ensures the email top-level key is well formed."""
+    email['url'] = ensure_string(email['url'])
+    if 'cred' in email:
+        email['cred'] = ensure_string(email['cred'])
+    else:
+        email['cred'] = email['url'] + '.cred'
+    if not os.path.isfile(email['cred']):
+        user = input('User name for ' + email['url'] + ': ')
+        password = getpass()
+        s = user + '\n' + password
+        with open(email['cred'], 'w') as f:
+            f.write(s)
+    with open(email['cred']) as f:
+        email['from'] = f.readline().strip()
+        email['password'] = f.readline().strip()
+    email['port'] = int(email.get('port', 0))
+    store['tls'] = to_bool(email.get('tls', False))
+
+
 DEFAULT_VALIDATORS = {
     'backend': (is_string, ensure_string),
     'builddir': (is_string, ensure_string),
     'databases': (always_false, ensure_databases),
     'stores': (always_false, ensure_stores),
+    'email': (always_false, ensure_email),
     }

@@ -5,6 +5,7 @@ import json
 
 from regolith.tools import string_types
 from regolith.builder import builder
+from regolith.emailer import emailer as email
 from regolith.deploy import deploy as dploy
 
 

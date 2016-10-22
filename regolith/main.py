@@ -29,6 +29,7 @@ CONNECTED_COMMANDS = {
     'app': commands.app,
     'grade': commands.grade,
     'build': commands.build,
+    'email': commands.email,
     }
 
 
@@ -92,6 +93,12 @@ def create_parser():
     bldp.add_argument('build_targets', nargs='+', help='targets to build.')
     # deploy subparser
     depp = subp.add_parser('deploy', help='deploys what was built by regolith')
+    # builder subparser
+    emlp = subp.add_parser('email', help='automates emailing')
+    emlp.add_argument('email_target', help='targets to email, eg "test" or '
+                                           '"grades".')
+    emlp.add_argument('--to', default=None, dest='to',
+                      help='receiver of email')
     return p
 
 
