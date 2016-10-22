@@ -101,9 +101,9 @@ def create_parser():
                       help='receiver of email')
     empl.add_argument('--subject', dest='subject', help='email subject line',
                       default='')
-    empl.add_argument('--body', dest='body', help='email body, as restructured text',
+    emlp.add_argument('--body', dest='body', help='email body, as restructured text',
                       default='')
-    empl.add_argument('--attach', nargs='+', dest='attachments', default=(),
+    emlp.add_argument('--attach', nargs='+', dest='attachments', default=(),
                       help='attachments to send along as well.')
     return p
 
