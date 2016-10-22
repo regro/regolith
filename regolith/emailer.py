@@ -1,4 +1,5 @@
 """Emails people via SMTP"""
+import os
 import smtplib
 import tempfile
 from email.mime.text import MIMEText
@@ -38,13 +39,11 @@ def make_message(rc, to, subject='', body='', attachments=()):
     to attach.
     """
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = subject
-    msg['From'] = rc.email['from']
-    msg['To'] = to
     plain = MIMEText(body, 'plain')
     msg.attach(plain)
     if publish_string is not None:
-        html = publish_string(body, writer_name='html')
+        html = publish_string(body, writer_name='html',
+                              settings_overrides={'output_encoding': 'unicode'})
         html = MIMEText(html, 'html')
         msg.attach(html)
     if attachments:
@@ -57,6 +56,9 @@ def make_message(rc, to, subject='', body='', attachments=()):
             att.add_header('content-disposition', 'attachment',
                            filename=attachment)
             msg.attach(att)
+    msg['Subject'] = subject
+    msg['From'] = rc.email['from']
+    msg['To'] = to
     return (to, msg.as_string())
 
 
