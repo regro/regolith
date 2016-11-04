@@ -153,7 +153,7 @@ This collection describes the research group news. This is normally public data.
 
 jobs
 ---------
-This collection describes the research group jobss. This is normally public data. 
+This collection describes the research group jobs. This is normally public data. 
 
 
 .. code:: python
