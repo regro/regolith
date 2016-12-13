@@ -134,17 +134,20 @@ class GradeReportBuilder(object):
             max_wavg = max(student_wavgs)
             curve = 1.0 - max_wavg
             # Make grades
+            scale = course.get('scale', DEFAULT_LETTER_SCALE)
             for student_id in course['students']:
                 skw = students_kwargs[student_id]
-                skw['student_letter_grade'] = find_letter_grade(
-                    skw['student_wavg'] + curve,
-                    course.get('scale', DEFAULT_LETTER_SCALE)
-                    )
+                skw['student_letter_grade_raw'] = find_letter_grade(
+                    skw['student_wavg'], scale)
+                skw['student_letter_grade_curved'] = find_letter_grade(
+                    skw['student_wavg'] + curve, scale)
+            show_letter_plot = self.plot_letter_grades(students_kwargs, scale)
             # render PDF
             for student_id in course['students']:
                 base = self.basename(student_id, course_id)
                 self.render('gradereport.tex', base + '.tex', p=student_id,
                             max_wavg=max_wavg, curve=curve,
+                            show_letter_plot=show_letter_plot,
                             **students_kwargs[student_id])
                 self.pdf(base)
 
@@ -227,6 +230,40 @@ class GradeReportBuilder(object):
             totals.append(cat)
         wtotal = totalfrac / totalweight
         return sorted(totals), wtotal
+
+    def plot_letter_grades(self, students_kwargs, scale):
+        """Plots the letter grades in a historgram"""
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            return False
+        bins = [x[1] for x in scale[::-1]]
+        raws = []
+        curveds = []
+        for skw in students_kwargs.values():
+            raws.append(skw['student_letter_grade_raw'])
+            curveds.append(skw['student_letter_grade_curved'])
+        n = len(raws)
+        rfreq = [raws.count(l)/n for l in bins]
+        cfreq = [curveds.count(l)/n for l in bins]
+        width = 1.0
+        pos = np.arange(len(bins))
+        f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+        ax1.set_xticks(pos + (width / 2))
+        ax1.set_xticklabels(bins)
+        ax1.set_xlabel('Raw Grade')
+        ax1.set_ylabel('Fraction of Class')
+        ax1.bar(pos, rfreq, width, color='yellow')
+        ax1.grid(True)
+        ax2.set_xticks(pos + (width / 2))
+        ax2.set_xticklabels(bins)
+        ax2.set_xlabel('Curved Grade')
+        ax2.bar(pos, cfreq, width, color='green')
+        ax2.grid(True)
+        base = os.path.join(self.bldir, 'student-letter-grade-dist')
+        plt.savefig(base + '.png', bbox_inches='tight')
+        plt.savefig(base + '.eps', bbox_inches='tight')
+        return True
 
 
 DEFAULT_LETTER_SCALE = (
