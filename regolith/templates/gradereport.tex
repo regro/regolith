@@ -9,6 +9,9 @@
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
+{% if show_letter_plot %}
+\usepackage{graphicx}
+{% endif %}
 
 %-----------------------------------------------------------
 % Hyperlink setup
@@ -67,6 +70,14 @@
 \textbf{Total weighted average, curved:} {{(student_wavg+curve)*100}}\%
 
 \textbf{Letter Grade, curved:} {{student_letter_grade_curved}}
+
+{% if show_letter_plot %}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{student-letter-grade-dist.eps}
+\end{figure}
+{% endif %}
+
 
 {% for category, asngs in sorted(grouped_assignments.items()) %}
 \vspace{1em}\hrulefill
