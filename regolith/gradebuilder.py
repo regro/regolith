@@ -133,6 +133,14 @@ class GradeReportBuilder(object):
                     )
             max_wavg = max(student_wavgs)
             curve = 1.0 - max_wavg
+            # Make grades
+            for student_id in course['students']:
+                skw = students_kwargs[student_id]
+                skw['student_letter_grade'] = find_letter_grade(
+                    skw['student_wavg'] + curve,
+                    course.get('scale', DEFAULT_LETTER_SCALE)
+                    )
+            # render PDF
             for student_id in course['students']:
                 base = self.basename(student_id, course_id)
                 self.render('gradereport.tex', base + '.tex', p=student_id,
@@ -219,3 +227,27 @@ class GradeReportBuilder(object):
             totals.append(cat)
         wtotal = totalfrac / totalweight
         return sorted(totals), wtotal
+
+
+DEFAULT_LETTER_SCALE = (
+    (0.97, "A+"),
+    (0.93, "A"),
+    (0.90, "A-"),
+    (0.87, "B+"),
+    (0.83, "B"),
+    (0.80, "B-"),
+    (0.77, "C+"),
+    (0.73, "C"),
+    (0.70, "C-"),
+    (0.67, "D+"),
+    (0.63, "D"),
+    (0.60, "D-"),
+    (-1.0, "F"),
+    )
+
+def find_letter_grade(score, scale=DEFAULT_LETTER_SCALE):
+    """Finds the letter grade from a score and a value."""
+    for lower, letter in scale:
+        if lower <= score:
+            return letter
+    return letter
