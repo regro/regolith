@@ -112,5 +112,9 @@ def register(rc):
         rc.format = os.path.splitext(rc.filename)[1][1:]
     loader = LOADERS[rc.format]
     students = loader(rc.filename)
+    if rc.dry_run:
+        from pprint import pprint
+        pprint(students)
+        return
     add_students_to_db(students, rc)
     add_students_to_course(students, rc)

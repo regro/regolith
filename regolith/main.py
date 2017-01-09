@@ -114,6 +114,8 @@ def create_parser():
     clp.add_argument('-f', '--format', dest='format', default=None,
                      help='file / school format to read information from. Current values are '
                           '"json" and "usc". Determined from extension if not available.')
+    clp.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
+                     default=False, help='only does a dry run and reports results')
     return p
 
 
