@@ -13,8 +13,17 @@ def load_json(filename):
     return students
 
 
-RE_ID = re.compile('[A-Z]\d+')
-RE_NAME = re.compile('[A-Za-z]+')
+RE_ID = re.compile('^[A-Z]\d+$')
+RE_NAME = re.compile('^[A-Za-z-]+$')
+
+
+def _check_name(name, label, full):
+    parts = (name[:-1] if name.endswith('.') else name).split()
+    for part in parts:
+        if RE_NAME.match(part) is None:
+            print('skipping because of {} name: {}'.format(label, full))
+            return False
+    return True
 
 
 class UscHtmlParser(HTMLParser):
@@ -52,7 +61,7 @@ class UscHtmlParser(HTMLParser):
         if tag == 'table':
             self.intable = False
         elif tag == 'tr':
-            if len(self.student) > 0 and '_id' in student:
+            if len(self.student) > 0 and '_id' in self.student:
                 self.students.append(self.student)
             self.student = None
             self.inrow = False
@@ -67,11 +76,9 @@ class UscHtmlParser(HTMLParser):
             last, _, first = data.partition(',')
             first = first.strip()
             last = last.strip()
-            if RE_NAME.match(first) is None:
-                print('skipping because of first name:' + data)
+            if not _check_name(first, 'first', data):
                 return
-            if RE_NAME.match(last[:-1] if last.endswith('.') else last) is None:
-                print('skipping because of last name:' + data)
+            if not _check_name(last, 'last', data):
                 return
             self.student['_id'] = first + ' ' + last
         elif RE_ID.match(data) is not None:
