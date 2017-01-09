@@ -116,6 +116,7 @@ def create_parser():
                           '"json" and "usc". Determined from extension if not available.')
     clp.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                      default=False, help='only does a dry run and reports results')
+    clp.add_argument('--db', help='database name', dest='db', default=None)
     return p
 
 

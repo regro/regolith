@@ -3,6 +3,7 @@ import os
 import re
 import json
 from html.parser import HTMLParser
+from pprint import pprint, pformat
 
 
 def load_json(filename):
@@ -29,10 +30,10 @@ class UscHtmlParser(HTMLParser):
         return (self.intable or self.inrow or self.incol)
 
     def handle_starttag(self, tag, attrs):
-        if not self.should_handle():
-            return
         if tag == 'table':  # we don't support nesting tables
             self.intable = True
+        if not self.should_handle():
+            return
         elif tag == 'tr':
             self.inrow = True
             self.student = {}
@@ -51,7 +52,7 @@ class UscHtmlParser(HTMLParser):
         if tag == 'table':
             self.intable = False
         elif tag == 'tr':
-            if len(self.student) > 0:
+            if len(self.student) > 0 and '_id' in student:
                 self.students.append(self.student)
             self.student = None
             self.inrow = False
@@ -63,12 +64,16 @@ class UscHtmlParser(HTMLParser):
             return
         if ',' in data:
             # found name
-            last, first = data.partition(',')
+            last, _, first = data.partition(',')
+            first = first.strip()
+            last = last.strip()
             if RE_NAME.match(first) is None:
+                print('skipping because of first name:' + data)
                 return
             if RE_NAME.match(last[:-1] if last.endswith('.') else last) is None:
+                print('skipping because of last name:' + data)
                 return
-            self.student['_id'] = first.strip() + ' ' + last.strip()
+            self.student['_id'] = first + ' ' + last
         elif RE_ID.match(data) is not None:
             self.student['university_id'] = data
 
@@ -113,8 +118,15 @@ def register(rc):
     loader = LOADERS[rc.format]
     students = loader(rc.filename)
     if rc.dry_run:
-        from pprint import pprint
         pprint(students)
         return
+    if rc.db is None:
+        dbs = rc.client.keys()
+        if len(dbs) == 1:
+            rc.db = list(dbs)[0]
+        else:
+            raise RuntimeError('More than one database present in run control, '
+                               'please select one with the "--db" option. '
+                               'Available dbs are: ' + pformat(dbs))
     add_students_to_db(students, rc)
     add_students_to_course(students, rc)
