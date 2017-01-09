@@ -92,3 +92,8 @@ def deploy(rc):
     for target in rc.deploy:
         dploy(rc, **target)
 
+
+def classlist(rc):
+    """Sets values for the class list."""
+    from regolith.classlist import register
+    register(rc)

@@ -30,6 +30,7 @@ CONNECTED_COMMANDS = {
     'grade': commands.grade,
     'build': commands.build,
     'email': commands.email,
+    'classlist': commands.classlist,
     }
 
 
@@ -93,7 +94,7 @@ def create_parser():
     bldp.add_argument('build_targets', nargs='+', help='targets to build.')
     # deploy subparser
     depp = subp.add_parser('deploy', help='deploys what was built by regolith')
-    # builder subparser
+    # email subparser
     emlp = subp.add_parser('email', help='automates emailing')
     emlp.add_argument('email_target', help='targets to email, eg "test" or '
                                            '"grades".')
@@ -105,6 +106,14 @@ def create_parser():
                       default='')
     emlp.add_argument('--attach', nargs='+', dest='attachments', default=(),
                       help='attachments to send along as well.')
+    # classlist subparser
+    clp = subp.add_parser('classlist', help='updates classlist information from file')
+    clp.add_argument('op', help='operatation to perform, such as "add" or "replace".')
+    clp.add_argument('filename', help='file to read class information from.')
+    clp.add_argument('course_id', help='course identifier whose registry should be updated')
+    clp.add_argument('-f', '--format', dest='format', default=None,
+                     help='file / school format to read information from. Current values are '
+                          '"json" and "usc". Determined from extension if not available.')
     return p
 
 
@@ -132,6 +141,7 @@ def main(args=None):
     else:
         with connect(rc) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)
+
 
 if __name__ == '__main__':
     main()
