@@ -123,17 +123,29 @@ def class_email(rc):
     return messages
 
 
+def list_email(rc):
+    """List class emails"""
+    course = rc.client.find_one(rc.db, 'courses', {'_id': rc.course_id})
+    student_ids = set(course['students'])
+    students = rc.client[rc.db]['students']
+    emails = [s['email'] for s in students.values() if s['_id'] in student_ids]
+    print(','.join(sorted(emails)))
+
+
 EMAIL_CONSTRUCTORS = {
     'test': test_email,
     'grade': grade_email,
     'grades': grade_email,
     'class': class_email,
+    'list': list_email,
     }
 
 def emailer(rc):
     """Constructs and sends out emails"""
     constructor = EMAIL_CONSTRUCTORS[rc.email_target]
     emails = constructor(rc)
+    if emails is None:
+        return
     conf = rc.email
     with smtplib.SMTP(conf['url'], port=conf['port']) as smtp:
         smtp.set_debuglevel(conf['verbosity'])
