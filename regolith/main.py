@@ -106,6 +106,9 @@ def create_parser():
                       default='')
     emlp.add_argument('--attach', nargs='+', dest='attachments', default=(),
                       help='attachments to send along as well.')
+    emlp.add_argument('-c', '--course-id', dest='course_id', default=None,
+                      help='course identifier that should be emailed.')
+    emlp.add_argument('--db', help='database name', dest='db', default=None)
     # classlist subparser
     clp = subp.add_parser('classlist', help='updates classlist information from file')
     clp.add_argument('op', help='operatation to perform, such as "add" or "replace".')
@@ -129,6 +132,8 @@ def filter_databases(rc):
     dbname = rc._get('db')
     if dbname is not None:
         dbs = [db for db in dbs if db['name'] == dbname]
+    elif len(dbs) == 1:
+        rc.db = dbs[0]['name']
     rc.databases = dbs
 
 
