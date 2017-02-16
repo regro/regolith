@@ -15,11 +15,13 @@ def root():
         form = request.form
         if 'shutdown' in form:
             return shutdown()
-        print(form)
-        return
-        grade = form_to_grade(form)
+        if 'rowdata' in form:
+            grade = form_to_grade_row(form)
+        else:
+            grade = form_to_grade_assignment(form)
         insert_grade(grade, form, rc)
         status = 'submitted {0} ✓'.format(grade['_id'])
+        return status
     return render_template('grader.html', json=json, rc=rc, str=str,
                            status=status, range=range, len=len, sorted=sorted,
                            enumerate=enumerate, by_id=lambda x: x['_id'])
@@ -38,8 +40,8 @@ def shutdown():
     return 'Regolith server shutting down...\n'
 
 
-def form_to_grade(form):
-    """Creates a grade dict from a form."""
+def form_to_grade_assignment(form):
+    """Creates a grade dict from an assignment form."""
     grade_id = '{student}-{assignment}-{course}'.format(**form)
     grade = {'_id': grade_id,
              'student': form['student'],
@@ -49,6 +51,30 @@ def form_to_grade(form):
     if form['filename']:
         grade['filename'] = form['filename']
     scores = {int(k[5:]): float(v) for k, v in form.items() if k.startswith('score')}
+    scores = sorted(scores.items())
+    grade['scores'] = [v for _, v in scores]
+    return grade
+
+
+
+def form_to_grade_row(form):
+    """Creates a grade dict from a row form."""
+    course = form['course']
+    student = form['student']
+    assignment, _, _ = form['assignment'].partition('[')
+    rowdata = json.loads(form['rowdata'])
+    grade = {'student': student,
+             'assignment': assignment,
+             'course': course,
+             }
+    grade['_id'] = '{student}-{assignment}-{course}'.format(**grade)
+    scores = {}
+    for k, v in rowdata.items():
+        if not k.startswith(assignment):
+            continue
+        _, _, n = k.partition('[')
+        n, _, _ = n.partition(']')
+        scores[int(n)] = v
     scores = sorted(scores.items())
     grade['scores'] = [v for _, v in scores]
     return grade

@@ -50,9 +50,9 @@
       http.setRequestHeader("Content-type","application/x-www-form-urlencoded");
       var params = "dbname={{dbname}}&" +
                    "course={{course_id}}&" +
-                   "assignmemnt=" + grid.getCellColumn($cell) + "&" +
+                   "assignment=" + grid.getCellColumn($cell) + "&" +
                    "student=" + rowData.student + "&" +
-                   "rowData=" + JSON.stringify(rowData);
+                   "rowdata=" + JSON.stringify(rowData);
       http.send(params);
       http.onload = function() {};
     });
