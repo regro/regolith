@@ -1,6 +1,7 @@
 """Builder for websites."""
 import os
 import shutil
+from copy import deepcopy
 from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
@@ -50,7 +51,7 @@ class HtmlBuilder(object):
         gtx['rfc822now'] = rfc822now
         gtx['date_to_rfc822'] = date_to_rfc822
         gtx['jobs'] = list(all_docs_from_collection(rc.client, 'jobs'))
-        gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'), 
+        gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
@@ -59,7 +60,7 @@ class HtmlBuilder(object):
         ctx = dict(self.gtx)
         ctx.update(kwargs)
         ctx['rc'] = ctx.get('rc', self.rc)
-        ctx['static'] = ctx.get('static', 
+        ctx['static'] = ctx.get('static',
                                os.path.relpath('static', os.path.dirname(fname)))
         ctx['root'] = ctx.get('root', os.path.relpath('/', os.path.dirname(fname)))
         result = template.render(ctx)
@@ -99,7 +100,7 @@ class HtmlBuilder(object):
             ene.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
             self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
-                        title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile, 
+                        title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile,
                         education_and_employment=ene, projects=projs)
         self.render('people.html', os.path.join('people', 'index.html'), title='People')
 
@@ -109,7 +110,7 @@ class HtmlBuilder(object):
         for pub in all_docs_from_collection(rc.client, 'citations'):
             if len(set(pub['author']) & authors) == 0:
                 continue
-            pubs.append(pub)
+            pubs.append(deepcopy(pub))
         pubs.sort(key=doc_date_key, reverse=reverse)
         return pubs
 
@@ -153,7 +154,7 @@ class HtmlBuilder(object):
         posts = list(all_docs_from_collection(rc.client, 'blog'))
         posts.sort(key=ene_date_key, reverse=True)
         for post in posts:
-            self.render('blog_post.html', os.path.join('blog', post['_id'] + '.html'), 
+            self.render('blog_post.html', os.path.join('blog', post['_id'] + '.html'),
                 post=post, title=post['title'])
         self.render('blog_index.html', os.path.join('blog', 'index.html'), title='Blog',
                     posts=posts)
@@ -164,7 +165,7 @@ class HtmlBuilder(object):
         jobs_dir = os.path.join(self.bldir, 'jobs')
         os.makedirs(jobs_dir, exist_ok=True)
         for job in self.gtx['jobs']:
-            self.render('job.html', os.path.join('jobs', job['_id'] + '.html'), 
+            self.render('job.html', os.path.join('jobs', job['_id'] + '.html'),
                 job=job, title='{0} ({1})'.format(job['title'], job['_id']))
         self.render('jobs.html', os.path.join('jobs', 'index.html'), title='Jobs')
 
