@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 from glob import glob
+from copy import deepcopy
 from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
@@ -57,7 +58,7 @@ class CVBuilder(object):
         gtx['date_to_rfc822'] = date_to_rfc822
         gtx['month_and_year'] = month_and_year
         gtx['latex_safe'] = latex_safe
-        gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'), 
+        gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
@@ -66,7 +67,7 @@ class CVBuilder(object):
         ctx = dict(self.gtx)
         ctx.update(kwargs)
         ctx['rc'] = ctx.get('rc', self.rc)
-        ctx['static'] = ctx.get('static', 
+        ctx['static'] = ctx.get('static',
                                os.path.relpath('static', os.path.dirname(fname)))
         ctx['root'] = ctx.get('root', os.path.relpath('/', os.path.dirname(fname)))
         result = template.render(ctx)
@@ -84,17 +85,17 @@ class CVBuilder(object):
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
-            bibfile = self.make_bibtex_file(pubs, pid=p['_id'], 
+            bibfile = self.make_bibtex_file(pubs, pid=p['_id'],
                                             person_dir=self.bldir)
             emp = p.get('employment', [])
             emp.sort(key=ene_date_key, reverse=True)
-            edu = p.get('education', []) 
+            edu = p.get('education', [])
             edu.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
             aghs = self.awards_grants_honors(p)
             self.render('cv.tex', p['_id'] + '.tex', p=p,
-                        title=p.get('name', ''), aghs=aghs, 
-                        pubs=pubs, names=names, bibfile=bibfile, 
+                        title=p.get('name', ''), aghs=aghs,
+                        pubs=pubs, names=names, bibfile=bibfile,
                         education=edu, employment=emp, projects=projs)
 
     def filter_publications(self, authors, reverse=False):
@@ -103,6 +104,7 @@ class CVBuilder(object):
         for pub in all_docs_from_collection(rc.client, 'citations'):
             if len(set(pub['author']) & authors) == 0:
                 continue
+            pub = deepcopy(pub)
             bold_self = []
             for a in pub['author']:
                 if a in authors:
@@ -151,14 +153,14 @@ class CVBuilder(object):
         """Make sorted awards grants and honrs list."""
         aghs = []
         for x in p.get('funding', ()):
-            d = {'description': '{0} ({1}{2:,})'.format(latex_safe(x['name']), 
+            d = {'description': '{0} ({1}{2:,})'.format(latex_safe(x['name']),
                     x.get('currency', '$').replace('$', '\$'), x['value']),
                  'year': x['year'],
                  '_key': date_to_float(x['year'], x.get('month', 0)),
                  }
             aghs.append(d)
         for x in p.get('service', []) + p.get('honors', []):
-            d = {'description': latex_safe(x['name']), 
+            d = {'description': latex_safe(x['name']),
                  'year': x['year'],
                  '_key': date_to_float(x['year'], x.get('month', 0)),
                  }
@@ -177,12 +179,12 @@ class CVBuilder(object):
             self.run(['dvipdf', base])
 
     def run(self, cmd):
-        subprocess.run(cmd, cwd=self.bldir, check=True)           
+        subprocess.run(cmd, cwd=self.bldir, check=True)
 
     def clean(self):
-        postfixes = ['*.dvi', '*.toc', '*.aux', '*.out', '*.log', '*.bbl', 
-                     '*.blg', '*.log', '*.spl', '*~', '*.spl', '*.run.xml', 
-                     '*-blx.bib']        
+        postfixes = ['*.dvi', '*.toc', '*.aux', '*.out', '*.log', '*.bbl',
+                     '*.blg', '*.log', '*.spl', '*~', '*.spl', '*.run.xml',
+                     '*-blx.bib']
         to_rm = []
         for pst in postfixes:
             to_rm += glob(os.path.join(self.bldir, pst))
