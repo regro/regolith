@@ -18,6 +18,11 @@ try:
 except ImportError:
     np = None
 
+try:
+    import scipy.stats as st
+except ImportError:
+    st = None
+
 from regolith.tools import all_docs_from_collection, date_to_float, \
     date_to_rfc822, rfc822now, gets, month_and_year
 from regolith.sorters import doc_date_key, ene_date_key, category_val, \
@@ -185,10 +190,24 @@ class GradeReportBuilder(object):
             scores[assignment_id].append(grade['scores'])
         stats = {}
         for assignment_id, data in scores.items():
-            stats[assignment_id] = (np.mean(data, axis=0),
-                                    np.std(data, axis=0),
-                                    np.mean(np.sum(data, axis=1)),
-                                    np.std(np.sum(data, axis=1)))
+            mu = np.mean(data, axis=0)
+            sig = np.std(data, axis=0)
+            max_score = np.max(data, axis=0)
+            norm = st.norm(mu, sig)
+            percent_above_60 = 1.0 - norm.cdf(0.6 * max_score)
+            percent_above_80 = 1.0 - norm.cdf(0.8 * max_score)
+            total = np.sum(data, axis=1)
+            total_mu = np.mean(total, axis=0)
+            total_sig = np.std(total, axis=0)
+            total_max_score = np.max(total, axis=0)
+            total_norm = st.norm(total_mu, total_sig)
+            total_percent_above_60 = 1.0 - total_norm.cdf(0.6 * total_max_score)
+            total_percent_above_80 = 1.0 - total_norm.cdf(0.8 * total_max_score)
+            stats[assignment_id] = (
+                mu, sig, max_score, percent_above_60, percent_above_80,
+                total_mu, total_sig, total_max_score, total_percent_above_60,
+                total_percent_above_80,
+                )
         # handle stats for ungraded assignments
         for assignment in self.gtx['assignments']:
             assignment_id = assignment['_id']
