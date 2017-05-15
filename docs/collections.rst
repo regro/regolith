@@ -237,7 +237,7 @@ This collection represents grants that have been awarded to the group.
      "call_for_proposals": str,  # optional, URL to the call for proposals
      "narrative": str, # optional, URL of document
      "benefit_of_collaboration": str, # optional, URL of document
-     "ammount": int or float, # value of award
+     "amount": int or float, # value of award
      "currency": str, # typically '$' or 'USD'
      "begin_year": int,
      "begin_month": str, # optional
@@ -247,8 +247,9 @@ This collection represents grants that have been awarded to the group.
      "end_day": str,  # optional
      "team": [{  # list of dicts
         "name": str, # should match a person's name  or AKA
-        "position": str,   # PI, Co-PI, Co-I, etc.
-        "subaward_amount", int,  # optional
+        "position": str,   # PI, Co-PI, Co-I, Researcher, etc.
+        "institution": str, # The institution of this investigator
+        "subaward_amount", int or float,  # optional
         "cv": str,  # optional, URL of document
         },
         ...

@@ -92,11 +92,17 @@ class CVBuilder(object):
             edu = p.get('education', [])
             edu.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
+            pi_grants, pi_amount, _ = self.filter_grants(self, names, pi=True)
+            coi_grants, coi_amount, coi_sub_amount = self.filter_grants(self, names, pi=False)
             aghs = self.awards_grants_honors(p)
             self.render('cv.tex', p['_id'] + '.tex', p=p,
                         title=p.get('name', ''), aghs=aghs,
                         pubs=pubs, names=names, bibfile=bibfile,
-                        education=edu, employment=emp, projects=projs)
+                        education=edu, employment=emp, projects=projs,
+                        pi_grants=pi_grants, pi_amount=pi_amount,
+                        coi_grants=coi_grants, coi_amount=coi_amount,
+                        coi_sub_amount=coi_sub_amount,
+                        )
 
     def filter_publications(self, authors, reverse=False):
         rc = self.rc
@@ -148,6 +154,32 @@ class CVBuilder(object):
             projs.append(proj)
         projs.sort(key=id_key, reverse=reverse)
         return projs
+
+    def filter_grants(self, names, pi=True, reverse=True):
+        rc = self.rc
+        grants = []
+        total_amount = 0.0
+        subaward_amount = 0.0
+        for grant in all_docs_from_collection(rc.client, 'grants'):
+            team_names = set(gets(proj['team'], 'name'))
+            if len(team_names & names) == 0:
+                continue
+            grant = deepcopy(grant)
+            person = [x for x in grant['team'] if x['names'] in name][0]
+            if pi:
+                if person['position'].lower() == 'pi':
+                    total_amount += grant['amount']
+                else:
+                    continue
+            else:
+                if person['position'].lower() == 'pi':
+                    continue
+                else:
+                    total_amount += grant['amount']
+                    subaward_amount += person.get('subaward_amount', 0.0)
+            grants.append(grant)
+        grants.sort(key=ene_date_key, reverse=reverse)
+        return grants, total_amount, subaward_amount
 
     def awards_grants_honors(self, p):
         """Make sorted awards grants and honrs list."""
