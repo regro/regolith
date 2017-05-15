@@ -159,7 +159,7 @@
 
 {% if len(pi_grants) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Grants as PI}
+\resheading{Grants as Lead PI}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {\Large\underline{Lifetime Total Grant Amount as PI:} \textbf{ \${{"{:,.2f}".format(pi_amount)}} }}
 
@@ -190,10 +190,10 @@
 
 {% if len(coi_grants) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Grants as Participating not as PI}
+\resheading{Grants as Non-Lead PI}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {\Large\underline{Lifetime Subaward Grant Amount:} \textbf{ \${{"{:,.2f}".format(coi_sub_amount)}} }
-of \textbf{ \${{"{:,.2f}".format(coi_amount)}} }}
+subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 
 {% for grant in coi_grants %}
 \ressubheadingitems{ {{-grant['title']-}} }
