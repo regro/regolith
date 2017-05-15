@@ -1,12 +1,12 @@
 Collections
 ============
-This page describes recommended - but not required - schema for collections of a given 
+This page describes recommended - but not required - schema for collections of a given
 name.
 
 people
 -------
-This collection describes the members of the research group.  This is normally public 
-data. 
+This collection describes the members of the research group.  This is normally public
+data.
 
 .. code:: python
 
@@ -45,7 +45,7 @@ data.
         "name": str,
         "value": float,
         "currency": str, # optional, defaults to "$"
-        "year": int, 
+        "year": int,
         "month": str, # optional
         "duration": str or int, # optional length of award
         },
@@ -54,7 +54,7 @@ data.
      "service": [{ # list of dictionaries
         "name": str,
         "description": str, # optional
-        "year": int, 
+        "year": int,
         "month": str, # optional
         "duration": str or int, # optional length of service
         },
@@ -63,7 +63,7 @@ data.
      "honors": [{ # list of dictionaries
         "name": str,
         "description": str, # optional
-        "year": int, 
+        "year": int,
         "month": str, # optional
         },
         ...
@@ -72,7 +72,7 @@ data.
         "course": str,  # name of the course
         "organization": str,
         "position": str,
-        "year": int, 
+        "year": int,
         "month": str, # optional
         "end_year": int, # optional
         "end_month": str,  # optional
@@ -98,7 +98,7 @@ data.
         ],
      "skills": [{ # list of dicts
         "name": str,
-        "category": str, 
+        "category": str,
         "level": str
         },
         ...
@@ -115,7 +115,7 @@ information.
 
 projects
 ---------
-This collection describes the research group projects. This is normally public data. 
+This collection describes the research group projects. This is normally public data.
 
 .. code:: python
 
@@ -127,7 +127,7 @@ This collection describes the research group projects. This is normally public d
      "other": [str], # other information, list of str
      "team": [{  # list of dicts
         "name": str, # should match a person's name  or AKA
-        "position": str, 
+        "position": str,
         "begin_year": int,
         "begin_month": str, # optional
         "end_year": int, # optional
@@ -139,13 +139,13 @@ This collection describes the research group projects. This is normally public d
 
 news
 ---------
-This collection describes the research group news. This is normally public data. 
+This collection describes the research group news. This is normally public data.
 
 .. code:: python
 
-    {"body": str, 
+    {"body": str,
      "author": str, # name that should match a person or AKA
-     "year": int, 
+     "year": int,
      "month": str,
      "day": int,
      }
@@ -153,7 +153,7 @@ This collection describes the research group news. This is normally public data.
 
 jobs
 ---------
-This collection describes the research group jobs. This is normally public data. 
+This collection describes the research group jobs. This is normally public data.
 
 
 .. code:: python
@@ -165,7 +165,7 @@ This collection describes the research group jobs. This is normally public data.
      "contact": str,  # contact information for how to apply
      "positions": [str], # list of string positions such as "Graduate Student", "Post-doctoral Scholar", etc
      "background_fields": [str], # previous disciplines, eg. Nucleare Engineering or Computer Science
-     "year": int, 
+     "year": int,
      "month": str,
      "day": int,
      "start_date": str,  # date or ASAP or similar
@@ -183,7 +183,7 @@ This collection represents blog posts written by the members of the research gro
      "title": str,  # full human readable title
      "original": str,  # URL of original post, if this is a repost, optional
      "author": str, # name or AKA of author
-     "year": int, 
+     "year": int,
      "month": str,
      "day": int,
      "post": str, # actual contents of the post
@@ -204,11 +204,11 @@ This collection represents proposals that have been submitted by the group.
      "ammount": int or float, # value of award
      "currency": str, # typically '$' or 'USD'
      "durration": int or float, # number of years
-     "year": int, 
+     "year": int,
      "month": str,
      "day": int,
      "pre": { # Information about the pre-proposal, optional
-        "year": int, 
+        "year": int,
         "month": str,
         "day": int,
         "narrative": str, # URL of document
@@ -223,12 +223,45 @@ This collection represents proposals that have been submitted by the group.
      }
 
 
+grants
+------
+This collection represents grants that have been awarded to the group.
+
+.. code:: python
+
+    {"_id": str or number, # short represntation, such as this-is-my-name
+     "title": str, # actual title of proposal
+     "funder": str, # the agency funding the work
+     "program": str, # the program the work was funded under
+     "grant_id": str, # optional, the identfier for this work, eg #42024
+     "call_for_proposals": str,  # optional, URL to the call for proposals
+     "narrative": str, # optional, URL of document
+     "benefit_of_collaboration": str, # optional, URL of document
+     "ammount": int or float, # value of award
+     "currency": str, # typically '$' or 'USD'
+     "begin_year": int,
+     "begin_month": str, # optional
+     "begin_day": int,  # optional
+     "end_year": int, # optional
+     "end_month": str,  # optional
+     "end_day": str,  # optional
+     "team": [{  # list of dicts
+        "name": str, # should match a person's name  or AKA
+        "position": str,   # PI, Co-PI, Co-I, etc.
+        "subaward_amount", int,  # optional
+        "cv": str,  # optional, URL of document
+        },
+        ...
+        ],
+     }
+
+
 students
 -----------
 This is a collection of student names and metadata.
 
 .. code:: python
-    
+
     {"_id": str, # short represntation, such as this-is-my-name
      "aka": [str],  # list of aliases, optional
      "email": str, # email address, optional
@@ -266,7 +299,7 @@ Assignment info.
      "category": str,  # such as 'homework' or 'final'
      "file": str,  # path to assignment file in store, optional
      "solution": str,  # path to solution file in store, optional
-     "question": [str],  # titles for the questions on this assignment, 
+     "question": [str],  # titles for the questions on this assignment,
                          # optional, defaults to 1-indexed ints if absent.
      "points": [int or float],  # list of number of points possible for each
                                 # question. Length is the number of questions
