@@ -240,10 +240,10 @@ This collection represents grants that have been awarded to the group.
      "amount": int or float, # value of award
      "currency": str, # typically '$' or 'USD'
      "begin_year": int,
-     "begin_month": str, # optional
+     "begin_month": str,
      "begin_day": int,  # optional
-     "end_year": int, # optional
-     "end_month": str,  # optional
+     "end_year": int,
+     "end_month": str,
      "end_day": str,  # optional
      "team": [{  # list of dicts
         "name": str, # should match a person's name  or AKA

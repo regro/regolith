@@ -92,8 +92,8 @@ class CVBuilder(object):
             edu = p.get('education', [])
             edu.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
-            pi_grants, pi_amount, _ = self.filter_grants(self, names, pi=True)
-            coi_grants, coi_amount, coi_sub_amount = self.filter_grants(self, names, pi=False)
+            pi_grants, pi_amount, _ = self.filter_grants(names, pi=True)
+            coi_grants, coi_amount, coi_sub_amount = self.filter_grants(names, pi=False)
             aghs = self.awards_grants_honors(p)
             self.render('cv.tex', p['_id'] + '.tex', p=p,
                         title=p.get('name', ''), aghs=aghs,
@@ -161,11 +161,11 @@ class CVBuilder(object):
         total_amount = 0.0
         subaward_amount = 0.0
         for grant in all_docs_from_collection(rc.client, 'grants'):
-            team_names = set(gets(proj['team'], 'name'))
+            team_names = set(gets(grant['team'], 'name'))
             if len(team_names & names) == 0:
                 continue
             grant = deepcopy(grant)
-            person = [x for x in grant['team'] if x['names'] in name][0]
+            person = [x for x in grant['team'] if x['name'] in names][0]
             if pi:
                 if person['position'].lower() == 'pi':
                     total_amount += grant['amount']
