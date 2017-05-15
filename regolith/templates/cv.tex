@@ -187,6 +187,41 @@
 {% endfor %}
 {% endif %}
 
+
+{% if len(coi_grants) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Grants as Participating not as PI}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\Large\underline{Lifetime Subaward Grant Amount:} \textbf{ \${{"{:,.2f}".format(coi_sub_amount)}} }
+of \textbf{ \${{"{:,.2f}".format(coi_amount)}} }}
+
+{% for grant in coi_grants %}
+\ressubheadingitems{ {{-grant['title']-}} }
+    { \${{-"{:,.2f}".format(grant['subaward_amount'])-}} }
+    { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
+    { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
+      {{month_and_year(grant.get('end_month'), grant.get('end_year'))-}} }
+    {
+      \resitem{Role: {{grant['me']['position']-}} }
+      \resitem{Total award: \${{-"{:,.2f}".format(grant['amount'])-}} }
+      \resitem{PI: {{grant['pi']['name']}} at {{grant['pi']['institution']}} }
+      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
+        \resitem{
+          {%- if 'narrative' in grant %}
+            \href{ {{-latex_safe(grant['narrative'])-}} }{Narrative}.
+          {%- endif %}
+          {%- if 'benefit_of_collaboration' in grant %}
+            \href{ {{-latex_safe(grant['benefit_of_collaboration'])-}} }{Benefit of Collaboration}.
+          {%- endif %}
+          {%- if 'call_for_proposals' in grant %}
+            \href{ {{-latex_safe(grant['call_for_proposals'])-}} }{Call for Proposals}.
+          {%- endif %}
+        }
+      {% endif %}
+    }
+{% endfor %}
+{% endif %}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Awards \& Honours}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

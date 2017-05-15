@@ -177,6 +177,9 @@ class CVBuilder(object):
                 else:
                     total_amount += grant['amount']
                     subaward_amount += person.get('subaward_amount', 0.0)
+                    grant['subaward_amount'] = person.get('subaward_amount', 0.0)
+                    grant['pi'] = [x for x in grant['team'] if x['position'].lower() == 'pi'][0]
+                    grant['me'] = person
             grants.append(grant)
         grants.sort(key=ene_date_key, reverse=reverse)
         return grants, total_amount, subaward_amount
