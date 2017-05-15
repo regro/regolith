@@ -171,39 +171,6 @@
 \end{center}\vspace*{-16pt}
 
 
-
-%\clearpage
-{%if len(pubs) > 0%}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Recent Publications}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{enumerate}
-{% for pub in pubs[:5] %}
-    \item \fullcite{ {{-pub['_id']-}} }
-{% endfor %}
-\end{enumerate}
-{% endif %}
-
-%\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Software Projects}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for proj in projects %}
-{% set me = proj['team'][0] %}
-\ressubheadingitems{ {{-proj['_id']-}} }
-    { {{-me['position']-}} }
-    { {{-proj['description']-}} }
-    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
-      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
-    {\begin{itemize} {% for o in proj['other'] %}
-        \resitem{ {{-latex_safe(o)-}} }
-      {% endfor %}
-      \resitem{Website: \url{ {{-proj['website']-}} } }
-     \end{itemize}
-    }
-\vspace{0.5em}
-{% endfor %}
-
 {%if len(pubs) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{All Publications}
@@ -216,6 +183,25 @@
 {% endif %}
 
 
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Major Software Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for proj in projects %}
+{% set me = proj['team'][0] %}
+\ressubheadingitems{ {{-proj['_id']-}} }
+    { {{-me['position']-}} }
+    { {{-proj['description']-}} }
+    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
+      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
+    {
+      {% for o in proj['other'] %}
+        \resitem{ {{-latex_safe(o)-}} }
+      {% endfor %}
+      \resitem{Website: \url{ {{-proj['website']-}} } }
+    }
+\vspace{0.5em}
+{% endfor %}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Teaching Experience}
@@ -229,25 +215,25 @@
         {{-month_and_year(t.get('end_month'), t.get('end_year'))-}}
       {% endif %}
     }
-    {\begin{itemize} {% if 'description' in t %}
+    { {% if 'description' in t %}
         \resitem{ {{-latex_safe(t['description'])-}} }
       {% endif %}
       {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
         \resitem{
-          {% if 'website' in t %}
+          {%- if 'website' in t %}
             \href{ {{-latex_safe(t['website'])-}} }{Website}.
-          {% endif %}
-          {% if 'syllabus' in t %}
+          {%- endif %}
+          {%- if 'syllabus' in t %}
             \href{ {{-latex_safe(t['syllabus'])-}} }{Syllabus}.
-          {% endif %}
-          {% if 'video' in t %}
+          {%- endif %}
+          {%- if 'video' in t %}
             \href{ {{-latex_safe(t['video'])-}} }{Video}.
-          {% endif %}
-          {% if 'materials' in t %}
+          {%- endif %}
+          {%- if 'materials' in t %}
             \href{ {{-latex_safe(t['materials'])-}} }{Source Materials}.
-          {% endif %}
+          {%- endif %}
         }
-      {% endif %}\end{itemize}
+      {% endif %}
     }
 {% endfor %}
 
