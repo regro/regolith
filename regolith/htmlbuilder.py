@@ -176,7 +176,7 @@ class HtmlBuilder(object):
         abs_dir = os.path.join(self.bldir, 'abstracts')
         os.makedirs(abs_dir, exist_ok=True)
         for ab in self.gtx['abstracts']:
-            self.render('abstract.html', os.path.join('abstracts', job['_id'] + '.html'),
+            self.render('abstract.html', os.path.join('abstracts', ab['_id'] + '.html'),
                 abstract=ab, title='{0} {1} - {2}'.format(ab['firstname'], ab['lastname'],
                                                           ab['title']))
 
