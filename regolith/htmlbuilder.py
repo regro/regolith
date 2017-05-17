@@ -53,6 +53,7 @@ class HtmlBuilder(object):
         gtx['jobs'] = list(all_docs_from_collection(rc.client, 'jobs'))
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)
+        gtx['abstracts'] = list(all_docs_from_collection(rc.client, 'abstracts'))
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def render(self, tname, fname, **kwargs):
@@ -75,6 +76,7 @@ class HtmlBuilder(object):
         self.projects()
         self.blog()
         self.jobs()
+        self.abstracts()
         self.nojekyll()
         self.cname()
         # static
@@ -168,6 +170,15 @@ class HtmlBuilder(object):
             self.render('job.html', os.path.join('jobs', job['_id'] + '.html'),
                 job=job, title='{0} ({1})'.format(job['title'], job['_id']))
         self.render('jobs.html', os.path.join('jobs', 'index.html'), title='Jobs')
+
+    def abstracts(self):
+        rc = self.rc
+        abs_dir = os.path.join(self.bldir, 'abstracts')
+        os.makedirs(abs_dir, exist_ok=True)
+        for ab in self.gtx['abstracts']:
+            self.render('abstract.html', os.path.join('abstracts', job['_id'] + '.html'),
+                abstract=ab, title='{0} {1} - {2}'.format(ab['firstname'], ab['lastname'],
+                                                          ab['title']))
 
     def nojekyll(self):
         """Touches a nojekyll file in the build dir"""
