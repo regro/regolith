@@ -263,15 +263,15 @@ class GradeReportBuilder(object):
             raws.append(skw['student_letter_grade_raw'])
             curveds.append(skw['student_letter_grade_curved'])
         n = len(raws)
-        rfreq = [raws.count(l)/n for l in bins]
-        cfreq = [curveds.count(l)/n for l in bins]
+        rfreq = [raws.count(l) for l in bins]
+        cfreq = [curveds.count(l) for l in bins]
         width = 1.0
         pos = np.arange(len(bins))
         f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
         ax1.set_xticks(pos + (width / 2))
         ax1.set_xticklabels(bins)
         ax1.set_xlabel('Raw Grade')
-        ax1.set_ylabel('Fraction of Class')
+        ax1.set_ylabel('Number of Students')
         ax1.bar(pos, rfreq, width, color='yellow')
         ax1.grid(True)
         ax2.set_xticks(pos + (width / 2))
