@@ -32,6 +32,7 @@ ATTACHERS = {
     '.txt': attach_txt,
     '.rst': attach_txt,
     '.pdf': attach_pdf,
+    '.ipynb': attach_txt,
     }
 
 
