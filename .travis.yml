@@ -27,6 +27,7 @@ script:
   - set -e
   - # Command to build your docs
   - pip install doctr
+  - conda install --file requirements/doc.txt
   - cd docs
   - make html
   - cd ..
