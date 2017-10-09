@@ -1,11 +1,14 @@
 """Builder for Grade Reports."""
 import os
+import sys
+import pdb
 import shutil
+import traceback
 import subprocess
 from glob import glob
 from itertools import groupby
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 try:
     from bibtexparser.bwriter import BibTexWriter
     from bibtexparser.bibdatabase import BibDatabase
@@ -44,7 +47,8 @@ class GradeReportBuilder(object):
         self.env = Environment(loader=FileSystemLoader([
                     'templates',
                     os.path.join(os.path.dirname(__file__), 'templates'),
-                    ]))
+                    ]),
+                    )
         self.construct_global_ctx()
         if HAVE_BIBTEX_PARSER:
             self.bibdb = BibDatabase()
@@ -86,7 +90,12 @@ class GradeReportBuilder(object):
         ctx['static'] = ctx.get('static',
                                os.path.relpath('static', os.path.dirname(fname)))
         ctx['root'] = ctx.get('root', os.path.relpath('/', os.path.dirname(fname)))
-        result = template.render(ctx)
+        try:
+            result = template.render(ctx)
+        except:
+            type, value, tb = sys.exc_info()
+            traceback.print_exc()
+            pdb.post_mortem(tb)
         with open(os.path.join(self.bldir, fname), 'wt') as f:
             f.write(result)
 
@@ -214,7 +223,7 @@ class GradeReportBuilder(object):
             if assignment_id not in stats:
                 n = len(assignment['points'])
                 z = (0,) * n
-                stats[assignment_id] = (z, z, 0, 0)
+                stats[assignment_id] = (z, z, z, z, z, 0, 0, 0, 0, 0)
         return stats
 
     @staticmethod
