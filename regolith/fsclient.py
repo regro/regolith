@@ -108,5 +108,5 @@ class FileSystemClient:
         coll = self.dbs[dbname][collname]
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)
-        newdoc.update(update['$set'])
+        newdoc.update(update)
         coll[newdoc['_id']] = newdoc

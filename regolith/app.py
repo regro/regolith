@@ -50,7 +50,7 @@ def collection_page(dbname, collname):
             except Exception:
                 traceback.print_exc()
                 raise
-            coll.save(body)
+            rc.client.update_one(dbname, collname, {'_id': body['_id']}, body)
             status = 'saved ✓'
             status_id = str(body['_id'])
         elif 'add' in form:
