@@ -56,13 +56,16 @@ def load_rcfile(fname):
 def create_parser():
     p = ArgumentParser()
     subp = p.add_subparsers(title='cmd', dest='cmd')
+
     # rc subparser
     rcp = subp.add_parser('rc', help='prints run control')
+
     # add subparser
     addp = subp.add_parser('add', help='adds a record to a database and collection')
     addp.add_argument('db', help='database name')
     addp.add_argument('coll', help='collection name')
     addp.add_argument('documents', nargs='+', help='documents, in JSON / mongodb format')
+
     # ingest subparser
     ingp = subp.add_parser('ingest', help='ingest many records from a foreign '
                                           'resource into a database')
@@ -71,8 +74,9 @@ def create_parser():
     ingp.add_argument('--coll', dest='coll',  default=None,
                       help='collection name, if this is not given it is infered from the '
                            'file type or file name.')
+
     # store subparser
-    strp = subp.add_parser('store', help='stores a file into the approriate '
+    strp = subp.add_parser('store', help='stores a file into the appropriate '
                                          'storage location.')
     strp.add_argument('storename', help='storage name')
     strp.add_argument('documents', nargs='+', help='paths to documents, i.e. '
@@ -81,16 +85,19 @@ def create_parser():
                       action='store_true',
                       help='forces copy of file if one of the same name '
                            'already exists')
+
     # app subparser
     appp = subp.add_parser('app', help='starts up a flask app for inspecting and '
                                        'modifying regolith data.')
     appp.add_argument('--debug', dest='debug', action='store_true', default=False,
                       help='starts server in debug mode')
+
     # grade subparser
     grdp = subp.add_parser('grade', help='starts up a flask app for adding '
                                          'grades to the database.')
     grdp.add_argument('--debug', dest='debug', action='store_true',
                       default=False, help='starts server in debug mode')
+
     # builder subparser
     bldp = subp.add_parser('build', help='builds various available targets',
                            formatter_class=RawTextHelpFormatter)
@@ -100,6 +107,7 @@ def create_parser():
 
     # deploy subparser
     depp = subp.add_parser('deploy', help='deploys what was built by regolith')
+
     # email subparser
     emlp = subp.add_parser('email', help='automates emailing')
     emlp.add_argument('email_target', help='targets to email, eg "test" or '
@@ -115,6 +123,7 @@ def create_parser():
     emlp.add_argument('-c', '--course-id', dest='course_id', default=None,
                       help='course identifier that should be emailed.')
     emlp.add_argument('--db', help='database name', dest='db', default=None)
+
     # classlist subparser
     clp = subp.add_parser('classlist', help='updates classlist information from file')
     clp.add_argument('op', help='operatation to perform, such as "add" or "replace".')
