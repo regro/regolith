@@ -2,13 +2,14 @@
 from __future__ import print_function
 import os
 import json
-from argparse import ArgumentParser
+from argparse import ArgumentParser, RawTextHelpFormatter
 
 from regolith.runcontrol import RunControl, NotSpecified
 from regolith.validators import DEFAULT_VALIDATORS
 from regolith.database import connect
 from regolith import commands
 from regolith import storage
+from regolith.builder import BUILDERS
 
 DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
@@ -90,8 +91,12 @@ def create_parser():
     grdp.add_argument('--debug', dest='debug', action='store_true',
                       default=False, help='starts server in debug mode')
     # builder subparser
-    bldp = subp.add_parser('build', help='builds various available targets')
-    bldp.add_argument('build_targets', nargs='+', help='targets to build.')
+    bldp = subp.add_parser('build', help='builds various available targets',
+                           formatter_class=RawTextHelpFormatter)
+    bldp.add_argument('build_targets', nargs='+',
+                      help='targets to build. Currently valid targets are: \n{}'.
+                      format([k for k in BUILDERS]))
+
     # deploy subparser
     depp = subp.add_parser('deploy', help='deploys what was built by regolith')
     # email subparser
