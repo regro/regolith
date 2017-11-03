@@ -4,6 +4,7 @@ import os
 import json
 from argparse import ArgumentParser, RawTextHelpFormatter
 
+from regolith.commands import INGEST_COLL_LU
 from regolith.runcontrol import RunControl, NotSpecified
 from regolith.validators import DEFAULT_VALIDATORS
 from regolith.database import connect
@@ -66,7 +67,7 @@ def create_parser():
     ingp = subp.add_parser('ingest', help='ingest many records from a foreign '
                                           'resource into a database')
     ingp.add_argument('db', help='database name')
-    ingp.add_argument('filename', help='file to ingest')
+    ingp.add_argument('filename', help='file to ingest. Currently valid formats are: \n{}'.format([k for k in INGEST_COLL_LU]))
     ingp.add_argument('--coll', dest='coll',  default=None,
                       help='collection name, if this is not given it is infered from the '
                            'file type or file name.')

@@ -12,6 +12,9 @@ from regolith.deploy import deploy as dploy
 RE_AND = re.compile('\s+and\s+')
 RE_SPACE = re.compile('\s+')
 
+INGEST_COLL_LU = {'.bib': 'citations'}
+
+
 def add_cmd(rc):
     """Adds documents to a collection in a database."""
     db = rc.client[rc.db]
@@ -40,9 +43,7 @@ def _ingest_citations(rc):
 def _determine_ingest_coll(rc):
     f = rc.filename
     base, ext = os.path.splitext(f)
-    if ext == '.bib':
-        return 'citations'
-    return base
+    return INGEST_COLL_LU.get(ext, base)
 
 
 def ingest(rc):
