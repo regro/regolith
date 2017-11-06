@@ -114,7 +114,9 @@ class HtmlBuilder(object):
         rc = self.rc
         pubs = []
         for pub in all_docs_from_collection(rc.client, 'citations'):
-            if len(set(pub.get('author', []) + set('editor', [])) & authors) == 0:
+            s = set(pub.get('author', []))
+            # s |= set(pub.get('editor', []))
+            if len(s & authors) == 0:
                 continue
             pubs.append(deepcopy(pub))
         pubs.sort(key=doc_date_key, reverse=reverse)
@@ -128,7 +130,9 @@ class HtmlBuilder(object):
             ent = dict(pub)
             ent['ID'] = ent.pop('_id')
             ent['ENTRYTYPE'] = ent.pop('entrytype')
-            ent['author'] = ' and '.join(ent['author'])
+            for n in ['author', 'editor']:
+                if n in ent:
+                    ent[n] = ' and '.join(ent[n])
             ents.append(ent)
         fname = os.path.join(person_dir, pid) + '.bib'
         with open(fname, 'w') as f:
