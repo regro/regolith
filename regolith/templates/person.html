@@ -100,6 +100,7 @@
   {% set a = pub['author'][-1] %}
   {% if a in names %}<b>{% endif %}{{a}}{% if a in names %}</b>{% endif %}.
   <i>"{{pub.get('title', '')}}".</i> 
+  {{pub.get('version', '')}}
   {{pub.get('journal', '')}}
   {{pub.get('booktitle', '')}}.
   {{pub.get('volume', '')}} 
