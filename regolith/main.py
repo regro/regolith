@@ -61,7 +61,8 @@ def create_parser():
     rcp = subp.add_parser('rc', help='prints run control')
 
     # add subparser
-    addp = subp.add_parser('add', help='adds a record to a database and collection')
+    addp = subp.add_parser('add',
+                           help='adds a record to a database and collection')
     addp.add_argument('db', help='database name')
     addp.add_argument('coll', help='collection name')
     addp.add_argument('documents', nargs='+', help='documents, in JSON / mongodb format')
@@ -70,7 +71,9 @@ def create_parser():
     ingp = subp.add_parser('ingest', help='ingest many records from a foreign '
                                           'resource into a database')
     ingp.add_argument('db', help='database name')
-    ingp.add_argument('filename', help='file to ingest. Currently valid formats are: \n{}'.format([k for k in INGEST_COLL_LU]))
+    ingp.add_argument('filename',
+                      help='file to ingest. Currently valid formats are: \n{}'
+                           ''.format([k for k in INGEST_COLL_LU]))
     ingp.add_argument('--coll', dest='coll',  default=None,
                       help='collection name, if this is not given it is infered from the '
                            'file type or file name.')
