@@ -16,10 +16,10 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, date_to_float, \
-    date_to_rfc822, rfc822now, gets, month_and_year
-from regolith.sorters import doc_date_key, ene_date_key, category_val, \
-    level_val, id_key, date_key, position_key
+from regolith.tools import (all_docs_from_collection, date_to_float,
+                            date_to_rfc822, rfc822now, gets, month_and_year)
+from regolith.sorters import (doc_date_key, ene_date_key, category_val,
+                              level_val, id_key, date_key, position_key)
 
 LATEX_OPTS = ['-halt-on-error', '-file-line-error']
 
