@@ -97,14 +97,18 @@ class HtmlBuilder(object):
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
-            bibfile = self.make_bibtex_file(pubs, pid=p['_id'], person_dir=peeps_dir)
+            bibfile = self.make_bibtex_file(pubs, pid=p['_id'],
+                                            person_dir=peeps_dir)
             ene = p.get('employment', []) + p.get('education', [])
             ene.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
-            self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
-                        title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile,
+            self.render('person.html',
+                        os.path.join('people', p['_id'] + '.html'), p=p,
+                        title=p.get('name', ''), pubs=pubs, names=names,
+                        bibfile=bibfile,
                         education_and_employment=ene, projects=projs)
-        self.render('people.html', os.path.join('people', 'index.html'), title='People')
+        self.render('people.html', os.path.join('people', 'index.html'),
+                    title='People')
 
     def filter_publications(self, authors, reverse=False):
         rc = self.rc
