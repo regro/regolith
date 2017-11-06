@@ -114,7 +114,7 @@ class HtmlBuilder(object):
         rc = self.rc
         pubs = []
         for pub in all_docs_from_collection(rc.client, 'citations'):
-            if len(set(pub['author']) & authors) == 0:
+            if len(set(pub.get('author', []) + set('editor', [])) & authors) == 0:
                 continue
             pubs.append(deepcopy(pub))
         pubs.sort(key=doc_date_key, reverse=reverse)

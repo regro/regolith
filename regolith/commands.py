@@ -26,12 +26,20 @@ def add_cmd(rc):
 def _ingest_citations(rc):
     import bibtexparser
     from bibtexparser.bparser import BibTexParser
+    from bibtexparser.customization import getnames
+
     parser = BibTexParser()
     parser.ignore_nonstandard_types = False
 
     def customizations(record):
-        if 'author' in record:
-            record['author'] = record['author'].split(', ')
+        for n in ['author', 'editor']:
+            if n in record:
+                a = [i for i in record[n].replace('\n', ' ').split(', ')]
+                b = [i.split(" and ") for i in a]
+                c = [item for sublist in b for item in sublist]
+                d = [i.strip() for i in c]
+                record[n] = getnames(d)
+
         return record
 
     parser.customization = customizations
