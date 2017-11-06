@@ -25,6 +25,8 @@ install:
 
 script:
   - set -e
+  - conda install --file requirements/test.txt
+  - flake8 regolith
   - # Command to build your docs
   - pip install doctr
   - conda install --file requirements/doc.txt
