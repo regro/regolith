@@ -56,6 +56,7 @@ def collection_page(dbname, collname):
         elif 'add' in form:
             try:
                 body = json.loads(form['body'].strip())
+                print(body)
             except Exception:
                 traceback.print_exc()
                 raise
@@ -65,7 +66,7 @@ def collection_page(dbname, collname):
                 traceback.print_exc()
                 raise
             status = 'added ✓'
-            status_id = str(added.inserted_id)
+            status_id = str(body['_id'])
         elif 'delete' in form:
             body = json.loads(form['body'].strip())
             deled = rc.client.delete_one(dbname, collname, body)
