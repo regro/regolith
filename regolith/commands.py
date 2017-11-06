@@ -26,8 +26,11 @@ def add_cmd(rc):
 
 def _ingest_citations(rc):
     import bibtexparser
+    from bibtexparser.bparser import BibTexParser
+    parser = BibTexParser()
+    parser.ignore_nonstandard_types = False
     with open(rc.filename, 'r') as f:
-        bibs = bibtexparser.load(f)
+        bibs = bibtexparser.load(f, parser=parser)
     coll = rc.client[rc.db][rc.coll]
     for bib in bibs.entries:
         bibid = bib.pop('ID')
