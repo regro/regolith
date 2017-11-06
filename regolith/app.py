@@ -22,6 +22,7 @@ def shutdown_server():
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
+
 @app.route('/shutdown', methods=['GET', 'POST'])
 def shutdown():
     shutdown_server()
@@ -70,6 +71,7 @@ def collection_page(dbname, collname):
         elif 'delete' in form:
             body = json.loads(form['body'].strip())
             deled = rc.client.delete_one(dbname, collname, body)
-    return render_template('collection.html', rc=rc, dbname=dbname, len=len, str=str,
+    return render_template('collection.html', rc=rc, dbname=dbname, len=len,
+                           str=str,
                            status=status, status_id=status_id,
                            collname=collname, coll=coll, json=json, min=min)

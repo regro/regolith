@@ -7,9 +7,11 @@ from copy import deepcopy
 from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
+
 try:
     from bibtexparser.bwriter import BibTexWriter
     from bibtexparser.bibdatabase import BibDatabase
+
     HAVE_BIBTEX_PARSER = True
 except ImportError:
     HAVE_BIBTEX_PARSER = False
@@ -27,16 +29,15 @@ def latex_safe(s):
 
 
 class PubListBuilder(object):
-
     btype = 'publist'
 
     def __init__(self, rc):
         self.rc = rc
         self.bldir = os.path.join(rc.builddir, self.btype)
         self.env = Environment(loader=FileSystemLoader([
-                    'templates',
-                    os.path.join(os.path.dirname(__file__), 'templates'),
-                    ]))
+            'templates',
+            os.path.join(os.path.dirname(__file__), 'templates'),
+        ]))
         self.construct_global_ctx()
         if HAVE_BIBTEX_PARSER:
             self.bibdb = BibDatabase()
@@ -70,8 +71,10 @@ class PubListBuilder(object):
         ctx.update(kwargs)
         ctx['rc'] = ctx.get('rc', self.rc)
         ctx['static'] = ctx.get('static',
-                               os.path.relpath('static', os.path.dirname(fname)))
-        ctx['root'] = ctx.get('root', os.path.relpath('/', os.path.dirname(fname)))
+                                os.path.relpath('static',
+                                                os.path.dirname(fname)))
+        ctx['root'] = ctx.get('root',
+                              os.path.relpath('/', os.path.dirname(fname)))
         result = template.render(ctx)
         with open(os.path.join(self.bldir, fname), 'wt') as f:
             f.write(result)

@@ -47,14 +47,14 @@ def form_to_grade_assignment(form):
              'student': form['student'],
              'assignment': form['assignment'],
              'course': form['course'],
-            }
+             }
     if form['filename']:
         grade['filename'] = form['filename']
-    scores = {int(k[5:]): float(v) for k, v in form.items() if k.startswith('score')}
+    scores = {int(k[5:]): float(v) for k, v in form.items() if
+              k.startswith('score')}
     scores = sorted(scores.items())
     grade['scores'] = [v for _, v in scores]
     return grade
-
 
 
 def form_to_grade_row(form):

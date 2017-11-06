@@ -117,7 +117,8 @@ def dump_database(db, client, rc):
 
 @contextmanager
 def connect(rc):
-    """Context manager for ensuring that database is properly setup and torn down"""
+    """Context manager for ensuring that database is properly setup and 
+    torn down"""
     client = CLIENTS[rc.backend](rc)
     for db in rc.databases:
         load_database(db, client, rc)

@@ -17,13 +17,13 @@ DEFAULT_RC = RunControl(
     backend='filesystem',
     builddir='_build',
     mongodbpath=property(lambda self: os.path.join(self.builddir, '_dbpath')),
-    )
+)
 
 DISCONNECTED_COMMANDS = {
     'rc': lambda rc: print(rc._pformat()),
     'deploy': commands.deploy,
     'store': storage.main,
-    }
+}
 
 CONNECTED_COMMANDS = {
     'add': commands.add_cmd,
@@ -33,7 +33,7 @@ CONNECTED_COMMANDS = {
     'build': commands.build,
     'email': commands.email,
     'classlist': commands.classlist,
-    }
+}
 
 
 def load_json_rcfile(fname):
@@ -49,7 +49,8 @@ def load_rcfile(fname):
     if ext == '.json':
         rc = load_json_rcfile(fname)
     else:
-        raise RuntimeError('could not detemine run control file type from extension.')
+        raise RuntimeError('could not detemine run control '
+                           'file type from extension.')
     return rc
 
 
@@ -65,8 +66,11 @@ def create_parser():
                            help='adds a record to a database and collection')
     addp.add_argument('db', help='database name')
     addp.add_argument('coll', help='collection name')
-    addp.add_argument('documents', nargs='+', help='documents, in JSON / mongodb format')
+    addp.add_argument('documents', nargs='+',
+                      help='documents, in JSON / mongodb format')
 
+    addp.add_argument('documents', nargs='+',
+                      help='documents, in JSON / mongodb format')
     # ingest subparser
     ingp = subp.add_parser('ingest', help='ingest many records from a foreign '
                                           'resource into a database')
@@ -75,7 +79,8 @@ def create_parser():
                       help='file to ingest. Currently valid formats are: \n{}'
                            ''.format([k for k in INGEST_COLL_LU]))
     ingp.add_argument('--coll', dest='coll',  default=None,
-                      help='collection name, if this is not given it is infered from the '
+                      help='collection name, if this is '
+                           'not given it is infered from the '
                            'file type or file name.')
 
     # store subparser
@@ -90,9 +95,11 @@ def create_parser():
                            'already exists')
 
     # app subparser
-    appp = subp.add_parser('app', help='starts up a flask app for inspecting and '
-                                       'modifying regolith data.')
-    appp.add_argument('--debug', dest='debug', action='store_true', default=False,
+    appp = subp.add_parser('app',
+                           help='starts up a flask app for inspecting and '
+                                'modifying regolith data.')
+    appp.add_argument('--debug', dest='debug', action='store_true',
+                      default=False,
                       help='starts server in debug mode')
 
     # grade subparser
@@ -119,7 +126,8 @@ def create_parser():
                       help='receiver of email')
     emlp.add_argument('--subject', dest='subject', help='email subject line',
                       default='')
-    emlp.add_argument('--body', dest='body', help='email body, as restructured text',
+    emlp.add_argument('--body', dest='body',
+                      help='email body, as restructured text',
                       default='')
     emlp.add_argument('--attach', nargs='+', dest='attachments', default=(),
                       help='attachments to send along as well.')
@@ -128,15 +136,22 @@ def create_parser():
     emlp.add_argument('--db', help='database name', dest='db', default=None)
 
     # classlist subparser
-    clp = subp.add_parser('classlist', help='updates classlist information from file')
-    clp.add_argument('op', help='operatation to perform, such as "add" or "replace".')
+    clp = subp.add_parser('classlist',
+                          help='updates classlist information from file')
+    clp.add_argument('op',
+                     help='operatation to perform, such as "add" or "replace".'
+                     )
     clp.add_argument('filename', help='file to read class information from.')
-    clp.add_argument('course_id', help='course identifier whose registry should be updated')
+    clp.add_argument('course_id',
+                     help='course identifier whose registry should be updated')
     clp.add_argument('-f', '--format', dest='format', default=None,
-                     help='file / school format to read information from. Current values are '
-                          '"json" and "usc". Determined from extension if not available.')
+                     help='file / school format to read information from. '
+                          'Current values are '
+                          '"json" and "usc". Determined from extension '
+                          'if not available.')
     clp.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
-                     default=False, help='only does a dry run and reports results')
+                     default=False,
+                     help='only does a dry run and reports results')
     clp.add_argument('--db', help='database name', dest='db', default=None)
     return p
 
