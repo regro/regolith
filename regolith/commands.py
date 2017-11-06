@@ -8,7 +8,6 @@ from regolith.builder import builder
 from regolith.emailer import emailer as email
 from regolith.deploy import deploy as dploy
 
-
 RE_AND = re.compile('\s+and\s+')
 RE_SPACE = re.compile('\s+')
 
@@ -29,6 +28,13 @@ def _ingest_citations(rc):
     from bibtexparser.bparser import BibTexParser
     parser = BibTexParser()
     parser.ignore_nonstandard_types = False
+
+    def customizations(record):
+        if 'author' in record:
+            record['author'] = record['author'].split(', ')
+        return record
+
+    parser.customization = customizations
     with open(rc.filename, 'r') as f:
         bibs = bibtexparser.load(f, parser=parser)
     coll = rc.client[rc.db][rc.coll]
@@ -36,11 +42,12 @@ def _ingest_citations(rc):
         bibid = bib.pop('ID')
         bib['entrytype'] = bib.pop('ENTRYTYPE')
         if 'author' in bib:
-            bib['author'] = [a.strip() for a in RE_AND.split(bib['author'])]
+            bib['author'] = [a.strip() for b in bib['author'] for a in
+                             RE_AND.split(b)]
         if 'title' in bib:
             bib['title'] = RE_SPACE.sub(' ', bib['title'])
         rc.client.update_one(rc.db, rc.coll, {'_id': bibid},
-                             {'$set': bib}, upsert=True)
+                             bib, upsert=True)
 
 
 def _determine_ingest_coll(rc):
@@ -56,7 +63,9 @@ def ingest(rc):
     if rc.coll == 'citations':
         _ingest_citations(rc)
     else:
-        raise ValueError("don't know how to ingest collection {0!r}".format(rc.coll))
+        raise ValueError(
+            "don't know how to ingest collection {0!r}".format(rc.coll))
+
 
 def _run_app(app, rc):
     if hasattr(app, 'rc'):
