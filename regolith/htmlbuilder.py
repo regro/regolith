@@ -115,6 +115,7 @@ class HtmlBuilder(object):
         pubs = []
         for pub in all_docs_from_collection(rc.client, 'citations'):
             s = set(pub.get('author', []))
+            # XXX: If editor but not author, but breaks multiple places
             # s |= set(pub.get('editor', []))
             if len(s & authors) == 0:
                 continue
