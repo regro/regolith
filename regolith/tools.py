@@ -92,6 +92,7 @@ MONTHS = {
     'dec': 12,
     'dec.': 12,
     'december': 12,
+    '': 1
     }
 
 SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',

@@ -97,20 +97,27 @@ class HtmlBuilder(object):
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
-            bibfile = self.make_bibtex_file(pubs, pid=p['_id'], person_dir=peeps_dir)
+            bibfile = self.make_bibtex_file(pubs, pid=p['_id'],
+                                            person_dir=peeps_dir)
             ene = p.get('employment', []) + p.get('education', [])
             ene.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
-            self.render('person.html', os.path.join('people', p['_id'] + '.html'), p=p,
-                        title=p.get('name', ''), pubs=pubs, names=names, bibfile=bibfile,
+            self.render('person.html',
+                        os.path.join('people', p['_id'] + '.html'), p=p,
+                        title=p.get('name', ''), pubs=pubs, names=names,
+                        bibfile=bibfile,
                         education_and_employment=ene, projects=projs)
-        self.render('people.html', os.path.join('people', 'index.html'), title='People')
+        self.render('people.html', os.path.join('people', 'index.html'),
+                    title='People')
 
     def filter_publications(self, authors, reverse=False):
         rc = self.rc
         pubs = []
         for pub in all_docs_from_collection(rc.client, 'citations'):
-            if len(set(pub['author']) & authors) == 0:
+            s = set(pub.get('author', []))
+            # XXX: If editor but not author, but breaks multiple places
+            # s |= set(pub.get('editor', []))
+            if len(s & authors) == 0:
                 continue
             pubs.append(deepcopy(pub))
         pubs.sort(key=doc_date_key, reverse=reverse)
@@ -124,7 +131,9 @@ class HtmlBuilder(object):
             ent = dict(pub)
             ent['ID'] = ent.pop('_id')
             ent['ENTRYTYPE'] = ent.pop('entrytype')
-            ent['author'] = ' and '.join(ent['author'])
+            for n in ['author', 'editor']:
+                if n in ent:
+                    ent[n] = ' and '.join(ent[n])
             ents.append(ent)
         fname = os.path.join(person_dir, pid) + '.bib'
         with open(fname, 'w') as f:
