@@ -12,12 +12,12 @@ from glob import iglob
 try:
     import pymongo
     from pymongo.errors import AutoReconnect, ConnectionFailure
+
     MONGO_AVAILABLE = True
 except ImportError:
     MONGO_AVAILABLE = False
 
 from regolith.tools import dbdirname, dbpathname, fallback
-
 
 if not MONGO_AVAILABLE:
     ON_PYMONGO_V2 = ON_PYMONGO_V3 = False
@@ -31,7 +31,6 @@ else:
 
 @fallback(ON_PYMONGO_V2, None)
 class InsertOneProxy(object):
-
     def __init__(self, inserted_id, acknowledged):
         self.inserted_id = inserted_id
         self.acknowledged = acknowledged
@@ -42,7 +41,8 @@ class MongoClient:
 
     def __init__(self, rc):
         if not MONGO_AVAILABLE:
-            raise RuntimeError("MongoDB is not available on the current system.")
+            raise RuntimeError(
+                "MongoDB is not available on the current system.")
         self.rc = rc
         self.client = self.proc = None
         # actually startup mongo
@@ -58,7 +58,7 @@ class MongoClient:
 
     def _startserver(self):
         self.proc = subprocess.Popen(['mongod', '--dbpath', mongodbpath],
-                                      universal_newlines=True)
+                                     universal_newlines=True)
         print('mongod pid: {0}'.format(self.proc.pid), file=sys.stderr)
 
     def is_alive(self):
@@ -96,7 +96,7 @@ class MongoClient:
         dbpath = dbpathname(db, self.rc)
         for f in iglob(os.path.join(dbpath, '*.json')):
             base, ext = os.path.splitext(os.path.split(f)[-1])
-            cmd = ['mongoimport', '--db',  db['name'], '--collection', base,
+            cmd = ['mongoimport', '--db', db['name'], '--collection', base,
                    '--file', f]
             subprocess.check_call(cmd)
 
@@ -106,10 +106,10 @@ class MongoClient:
         os.makedirs(dbpath, exist_ok=True)
         to_add = []
         colls = self.client[db['name']].collection_names(
-                                            include_system_collections=False)
+            include_system_collections=False)
         for collection in colls:
             f = os.path.join(dbpath, collection + '.json')
-            cmd = ['mongoexport', '--db',  db['name'],
+            cmd = ['mongoexport', '--db', db['name'],
                    '--collection', collection, '--out', f]
             subprocess.check_call(cmd)
             to_add.append(os.path.join(db['path'], collection + '.json'))
@@ -176,7 +176,8 @@ class MongoClient:
             doc = coll.find_one(filter)
             if doc is None:
                 if not kwargs.get('upsert', False):
-                    raise RuntimeError('could not update non-existing document')
+                    raise RuntimeError(
+                        'could not update non-existing document')
                 newdoc = dict(filter)
                 newdoc.update(update['$set'])
                 return self.insert_one(dbname, collname, newdoc)

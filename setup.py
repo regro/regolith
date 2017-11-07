@@ -37,13 +37,14 @@ def main():
         classifiers=['Programming Language :: Python :: 3'],
         packages=['regolith'],
         package_dir={'regolith': 'regolith'},
-        package_data={'regolith': ['templates/*', 'static/*.*', 'static/img/*.*']},
+        package_data={'regolith': ['templates/*', 'static/*.*', 
+                                   'static/img/*.*']},
         scripts=['scripts/regolith'],
         zip_safe=False,
         )
     if HAVE_SETUPTOOLS:
         skw['setup_requires'] = []
-        #skw['install_requires'] = ['Jinja2', 'pymongo']
+        # skw['install_requires'] = ['Jinja2', 'pymongo']
     setup(**skw)
 
 logo = """

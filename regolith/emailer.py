@@ -14,6 +14,7 @@ except ImportError:
 from regolith.gradebuilder import GradeReportBuilder
 from regolith.tools import all_docs_from_collection
 
+
 def attach_txt(filename):
     with open(filename, 'r') as f:
         txt = f.read()
@@ -33,7 +34,7 @@ ATTACHERS = {
     '.rst': attach_txt,
     '.pdf': attach_pdf,
     '.ipynb': attach_txt,
-    }
+}
 
 
 def make_message(rc, to, subject='', body='', attachments=()):
@@ -46,7 +47,8 @@ def make_message(rc, to, subject='', body='', attachments=()):
     msg.attach(plain)
     if publish_string is not None:
         html = publish_string(body, writer_name='html',
-                              settings_overrides={'output_encoding': 'unicode'})
+                              settings_overrides={
+                                  'output_encoding': 'unicode'})
         html = MIMEText(html, 'html')
         msg.attach(html)
     if attachments:
@@ -93,8 +95,8 @@ def grade_email(rc):
             fname = os.path.join(gradedir, base)
             if not os.path.isfile(fname):
                 raise RuntimeError(fname + ' does not exist, please run '
-                                   '"regolith build grade" prior to emailing '
-                                   'grades.')
+                                           '"regolith build grade" prior to emailing '
+                                           'grades.')
             message = make_message(rc, addresses[student_id],
                                    subject="Current grades for " + course_id,
                                    body='Please see the attached PDF and '
@@ -139,7 +141,8 @@ EMAIL_CONSTRUCTORS = {
     'grades': grade_email,
     'class': class_email,
     'list': list_email,
-    }
+}
+
 
 def emailer(rc):
     """Constructs and sends out emails"""

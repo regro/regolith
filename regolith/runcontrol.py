@@ -20,6 +20,7 @@ from regolith.validators import always_true, noop
 
 FORBIDDEN_NAMES = frozenset(['del', 'global'])
 
+
 def warn_forbidden_name(forname, inname=None, rename=None):
     """Warns the user that a forbidden name has been found."""
     msg = "found forbidden name {0!r}".format(forname)
@@ -30,15 +31,16 @@ def warn_forbidden_name(forname, inname=None, rename=None):
     warn(msg, RuntimeWarning)
 
 
-
 def ensuredirs(f):
     """For a file path, ensure that its directory path exists."""
     d = os.path.split(f)[0]
     if not os.path.isdir(d):
         os.makedirs(d)
 
+
 def touch(filename):
-    """Opens a file and updates the mtime, like the posix command of the same name."""
+    """Opens a file and updates the mtime,
+    like the posix command of the same name."""
     with io.open(filename, 'a') as f:
         os.utime(filename, None)
 
@@ -49,6 +51,7 @@ def exec_file(filename, glb=None, loc=None):
         src = f.read()
     exec(compile(src, filename, "exec"), glb, loc)
 
+
 #
 # Run Control
 #
@@ -56,13 +59,16 @@ def exec_file(filename, glb=None, loc=None):
 class NotSpecifiedType(object):
     """A helper class singleton for run control meaning that a 'real' value
     has not been given."""
+
     def __repr__(self):
         return "NotSpecified"
+
 
 NotSpecified = NotSpecifiedType()
 """A helper class singleton for run control meaning that a 'real' value
 has not been given.
 """
+
 
 class RunControl(object):
     """A composable configuration class. Unlike argparse.Namespace,
@@ -140,7 +146,7 @@ class RunControl(object):
 
     def __contains__(self, key):
         return key in self._dict or key in self.__dict__ or \
-                                    key in self.__class__.__dict__
+               key in self.__class__.__dict__
 
     def __eq__(self, other):
         if hasattr(other, '_dict'):
@@ -194,7 +200,6 @@ class RunControl(object):
         return value if validator(value) else convertor(value)
 
 
-
 def flatten(iterable):
     """Generator which returns flattened version of nested sequences."""
     for el in iterable:
@@ -205,6 +210,7 @@ def flatten(iterable):
                 yield subel
         else:
             yield el
+
 
 #
 # Memoization
@@ -218,7 +224,6 @@ def ishashable(x):
         elif isinstance(x, Iterable):
             return all(map(ishashable, x))
         else:
-         return True
+            return True
     else:
         return False
-

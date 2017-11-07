@@ -86,8 +86,8 @@ class UscHtmlParser(HTMLParser):
 
 
 def load_usc(filename):
-    """Returns students as a list of dicts from an HTML file obtainted from the University of
-    South Carolina.
+    """Returns students as a list of dicts from an HTML file obtainted 
+    from the University of South Carolina.
     """
     with open(filename) as f:
         html = f.read()
@@ -132,8 +132,9 @@ def register(rc):
         if len(dbs) == 1:
             rc.db = list(dbs)[0]
         else:
-            raise RuntimeError('More than one database present in run control, '
-                               'please select one with the "--db" option. '
+            raise RuntimeError('More than one database present in run '
+                               'control, please select one with the "--db" '
+                               'option. '
                                'Available dbs are: ' + pformat(dbs))
     add_students_to_db(students, rc)
     add_students_to_course(students, rc)

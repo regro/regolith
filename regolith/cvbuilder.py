@@ -7,9 +7,11 @@ from copy import deepcopy
 from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
+
 try:
     from bibtexparser.bwriter import BibTexWriter
     from bibtexparser.bibdatabase import BibDatabase
+
     HAVE_BIBTEX_PARSER = True
 except ImportError:
     HAVE_BIBTEX_PARSER = False
@@ -21,20 +23,21 @@ from regolith.sorters import doc_date_key, ene_date_key, category_val, \
 
 LATEX_OPTS = ['-halt-on-error', '-file-line-error']
 
+
 def latex_safe(s):
     return s.replace('&', '\&').replace('$', '\$').replace('#', '\#')
 
-class CVBuilder(object):
 
+class CVBuilder(object):
     btype = 'cv'
 
     def __init__(self, rc):
         self.rc = rc
         self.bldir = os.path.join(rc.builddir, self.btype)
         self.env = Environment(loader=FileSystemLoader([
-                    'templates',
-                    os.path.join(os.path.dirname(__file__), 'templates'),
-                    ]))
+            'templates',
+            os.path.join(os.path.dirname(__file__), 'templates'),
+        ]))
         self.construct_global_ctx()
         if HAVE_BIBTEX_PARSER:
             self.bibdb = BibDatabase()
@@ -68,8 +71,10 @@ class CVBuilder(object):
         ctx.update(kwargs)
         ctx['rc'] = ctx.get('rc', self.rc)
         ctx['static'] = ctx.get('static',
-                               os.path.relpath('static', os.path.dirname(fname)))
-        ctx['root'] = ctx.get('root', os.path.relpath('/', os.path.dirname(fname)))
+                                os.path.relpath('static',
+                                                os.path.dirname(fname)))
+        ctx['root'] = ctx.get('root',
+                              os.path.relpath('/', os.path.dirname(fname)))
         result = template.render(ctx)
         with open(os.path.join(self.bldir, fname), 'wt') as f:
             f.write(result)
@@ -93,7 +98,8 @@ class CVBuilder(object):
             edu.sort(key=ene_date_key, reverse=True)
             projs = self.filter_projects(names)
             pi_grants, pi_amount, _ = self.filter_grants(names, pi=True)
-            coi_grants, coi_amount, coi_sub_amount = self.filter_grants(names, pi=False)
+            coi_grants, coi_amount, coi_sub_amount = self.filter_grants(names,
+                                                                        pi=False)
             aghs = self.awards_grants_honors(p)
             self.render('cv.tex', p['_id'] + '.tex', p=p,
                         title=p.get('name', ''), aghs=aghs,
@@ -177,8 +183,10 @@ class CVBuilder(object):
                 else:
                     total_amount += grant['amount']
                     subaward_amount += person.get('subaward_amount', 0.0)
-                    grant['subaward_amount'] = person.get('subaward_amount', 0.0)
-                    grant['pi'] = [x for x in grant['team'] if x['position'].lower() == 'pi'][0]
+                    grant['subaward_amount'] = person.get('subaward_amount',
+                                                          0.0)
+                    grant['pi'] = [x for x in grant['team'] if
+                                   x['position'].lower() == 'pi'][0]
                     grant['me'] = person
             grants.append(grant)
         grants.sort(key=ene_date_key, reverse=reverse)
@@ -188,10 +196,12 @@ class CVBuilder(object):
         """Make sorted awards grants and honrs list."""
         aghs = []
         for x in p.get('funding', ()):
-            d = {'description': '{0} ({1}{2:,})'.format(latex_safe(x['name']),
-                    x.get('currency', '$').replace('$', '\$'), x['value']),
-                 'year': x['year'],
-                 '_key': date_to_float(x['year'], x.get('month', 0)),
+            d = {'description': '{0} ({1}{2:,})'.format(
+                latex_safe(x['name']), 
+                x.get('currency', '$').replace('$', '\$'),
+                x['value']),
+                'year': x['year'],
+                '_key': date_to_float(x['year'], x.get('month', 0)),
                  }
             aghs.append(d)
         for x in p.get('service', []) + p.get('honors', []):

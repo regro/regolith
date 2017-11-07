@@ -37,15 +37,19 @@ def dbpathname(db, rc):
 
 
 def fallback(cond, backup):
-    """Decorator for returning the object if cond is true and a backup if cond is false.
+    """Decorator for returning the object if cond is true and a backup if cond
+    is false.
     """
+
     def dec(obj):
         return obj if cond else backup
+
     return dec
 
 
 def all_docs_from_collection(client, collname):
-    """Yield all entries in for all collections of a given name in a given database."""
+    """Yield all entries in for all collections of
+    a given name in a given database."""
     for dbname in client.keys():
         if dbname == 'local':
             continue
@@ -98,6 +102,7 @@ MONTHS = {
 SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
                      'Aug', 'Sept', 'Oct', 'Nov', 'Dec')
 
+
 def month_to_int(m):
     """Converts a month to an integer."""
     try:
@@ -112,7 +117,7 @@ def date_to_float(y, m, d=0):
     y = int(y)
     m = month_to_int(m)
     d = int(d)
-    return y + (m/100.0) + (d/100000.0)
+    return y + (m / 100.0) + (d / 100000.0)
 
 
 def date_to_rfc822(y, m, d=1):
@@ -141,4 +146,3 @@ def month_and_year(m=None, y=None):
         return str(y)
     m = month_to_int(m)
     return '{0} {1}'.format(SHORT_MONTH_NAMES[m], y)
-

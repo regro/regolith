@@ -12,6 +12,7 @@ try:
 except:
     hglib = None
 
+
 def ensure_deploy_dir(rc):
     """Ensure deployment dir is on rc and physically exists."""
     if not hasattr(rc, 'deploydir') or rc.deploydir is None:
@@ -39,19 +40,21 @@ def deploy_git(rc, name, url, src='html', dst=None):
     cmd = ['git', 'add', '.']
     subprocess.check_call(cmd, cwd=targetdir)
     # commit 
-    cmd = ['git', 'commit', '-m', 'regolith auto-deploy at {0}'.format(time.time())]
+    cmd = ['git', 'commit', '-m',
+           'regolith auto-deploy at {0}'.format(time.time())]
     try:
         subprocess.check_call(cmd, cwd=targetdir)
-    except subprocess.CalledProcessError: 
+    except subprocess.CalledProcessError:
         warn('Could not git commit to ' + targetdir, RuntimeWarning)
         # don't return, just in case...
     # deploy!
     cmd = ['git', 'push']
     try:
         subprocess.check_call(cmd, cwd=targetdir)
-    except subprocess.CalledProcessError: 
+    except subprocess.CalledProcessError:
         warn('Could not git push from ' + targetdir, RuntimeWarning)
-        return    
+        return
+
 
 def deploy_hg(rc, name, url, src='html', dst=None):
     """Loads an hg database"""
@@ -75,6 +78,7 @@ def deploy_hg(rc, name, url, src='html', dst=None):
                   addremove=True)
     client.push()
 
+
 def deploy(rc, name, url, src='html', dst=None):
     """Deploys a target"""
     ensure_deploy_dir(rc)
@@ -83,5 +87,5 @@ def deploy(rc, name, url, src='html', dst=None):
     elif url.startswith('hg+'):
         deploy_hg(rc, name, url, src=src, dst=dst)
     else:
-        raise ValueError('Do not know how to deploy to this kind of URL: ' + url)
-
+        raise ValueError(
+            'Do not know how to deploy to this kind of URL: ' + url)

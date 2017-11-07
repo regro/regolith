@@ -25,6 +25,8 @@ install:
 
 script:
   - set -e
+  - conda install --file requirements/run.txt
+  - conda install --file requirements/test.txt
   - # Command to build your docs
   - pip install doctr
   - conda install --file requirements/doc.txt
@@ -32,6 +34,7 @@ script:
   - make html
   - cd ..
   - doctr deploy . --deploy-repo ergs/regolith-docs --built-docs ./docs/_build/html
+  - flake8 regolith
 
 notifications:
   email: false
