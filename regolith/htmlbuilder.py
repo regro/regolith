@@ -73,7 +73,6 @@ class HtmlBuilder(object):
         os.makedirs(self.bldir, exist_ok=True)
         self.root_index()
         self.people()
-        self.collabs()
         self.projects()
         self.blog()
         self.jobs()
@@ -94,7 +93,9 @@ class HtmlBuilder(object):
     def people(self):
         rc = self.rc
         peeps_dir = os.path.join(self.bldir, 'people')
+        former_peeps_dir = os.path.join(self.bldir, 'former')
         os.makedirs(peeps_dir, exist_ok=True)
+        os.makedirs(former_peeps_dir, exist_ok=True)
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
