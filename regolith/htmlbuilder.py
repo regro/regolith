@@ -73,6 +73,7 @@ class HtmlBuilder(object):
         os.makedirs(self.bldir, exist_ok=True)
         self.root_index()
         self.people()
+        self.collabs()
         self.projects()
         self.blog()
         self.jobs()
@@ -109,6 +110,9 @@ class HtmlBuilder(object):
                         education_and_employment=ene, projects=projs)
         self.render('people.html', os.path.join('people', 'index.html'),
                     title='People')
+
+        self.render('former.html', os.path.join('former', 'index.html'),
+                    title='Former Members')
 
     def filter_publications(self, authors, reverse=False):
         rc = self.rc
