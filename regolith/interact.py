@@ -13,4 +13,4 @@ for db in rc.databases:
 col = {}
 # XXX: this does only one db currently
 for db in client.collection_names(rc.db):
-    col[db] = list(all_docs_from_collection(rc.client, db))
+    col[db] = list(all_docs_from_collection(client, db))
