@@ -93,7 +93,9 @@ class HtmlBuilder(object):
     def people(self):
         rc = self.rc
         peeps_dir = os.path.join(self.bldir, 'people')
+        former_peeps_dir = os.path.join(self.bldir, 'former')
         os.makedirs(peeps_dir, exist_ok=True)
+        os.makedirs(former_peeps_dir, exist_ok=True)
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
             pubs = self.filter_publications(names, reverse=True)
@@ -109,6 +111,9 @@ class HtmlBuilder(object):
                         education_and_employment=ene, projects=projs)
         self.render('people.html', os.path.join('people', 'index.html'),
                     title='People')
+
+        self.render('former.html', os.path.join('former', 'index.html'),
+                    title='Former Members')
 
     def filter_publications(self, authors, reverse=False):
         rc = self.rc
