@@ -3,7 +3,7 @@
 <h1>Former Members</h1>
 {% endblock header %}
 {% block content %}
-{% for p in people if p.get('active', False) %}
+{% for p in people if not p.get('active', True) %}
   <a href="{{root}}/people/{{p['_id']}}.html" class="image-link">
     <img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
   </a>

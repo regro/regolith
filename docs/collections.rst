@@ -103,6 +103,8 @@ data.
         },
         ...
         ],
+     "active": bool  # If the person is an active member
+     "collab": bool  # If the person is a collaborator
      }
 
 citations
