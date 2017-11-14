@@ -1,12 +1,5 @@
 """
 Loads the dbs for interactive sessions
-
-Usage
------
-from regolith.interact import *
-cj = col['people']['CJ-Wright']
-active = [p for p in col['people'] if p.get('active', True)]
-
 """
 from regolith.main import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.database import CLIENTS, load_database, dump_database
