@@ -1,4 +1,7 @@
-**Added:** None
+**Added:**
+
+* Rever release tool
+* Interactive session support
 
 **Changed:** None
 
