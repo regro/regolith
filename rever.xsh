@@ -1,5 +1,4 @@
 $PROJECT = 'regolith'
-$REVER_DIR = 'rever-tmp'
 $ACTIVITIES = ['version_bump', 'changelog', 'tag', 'conda_forge']
 
 $VERSION_BUMP_PATTERNS = [
