@@ -2,6 +2,7 @@
 import os
 import sys
 import json
+import yaml
 from glob import iglob
 from collections import defaultdict
 
@@ -16,6 +17,7 @@ class FileSystemClient:
         self.closed = True
         self.dbs = None
         self.open()
+        self._collfiletypes = {}
 
     def is_alive(self):
         return not self.closed
@@ -29,7 +31,9 @@ class FileSystemClient:
         dbs = self.dbs
         dbpath = dbpathname(db, self.rc)
         for f in iglob(os.path.join(dbpath, '*.json')):
-            base, ext = os.path.splitext(os.path.split(f)[-1])
+            collfilename = os.path.split(f)[-1]
+            base, ext = os.path.splitext(collfilename)
+            self._collfiletypes[base] = 'json'
             print('loading ' + f + '...', file=sys.stderr)
             with open(f) as fh:
                 lines = fh.readlines()
@@ -41,6 +45,15 @@ class FileSystemClient:
     def _id_key(doc):
         return doc['_id']
 
+    def dump_json(self, docs, collname, dbpath):
+        """Dumps json docs and returns filename"""
+        lines = [json.dumps(doc, sort_keys=True) for doc in docs]
+        s = '\n'.join(lines)
+        f = os.path.join(dbpath, collname + '.json')
+        with open(f, 'w') as fh:
+            fh.write(s)
+        return f
+
     def dump_database(self, db):
         """Dumps a database back to the filesystem."""
         dbpath = dbpathname(db, self.rc)
@@ -49,12 +62,12 @@ class FileSystemClient:
         for collname, collection in self.dbs[db['name']].items():
             print('dumping ' + collname + '...', file=sys.stderr)
             docs = sorted(collection.values(), key=self._id_key)
-            lines = [json.dumps(doc, sort_keys=True) for doc in docs]
-            s = '\n'.join(lines)
-            f = os.path.join(dbpath, collname + '.json')
-            with open(f, 'w') as fh:
-                fh.write(s)
-            to_add.append(os.path.join(db['path'], collname + '.json'))
+            filetype = self._collfiletypes.get(collname, 'yaml')
+            if filetype == 'json':
+                filename = self.dump_json(docs, collname, dbpath)
+            else:
+                raise ValueError('did not recognize file type for regolith')
+            to_add.append(filename)
         return to_add
 
     def close(self):
