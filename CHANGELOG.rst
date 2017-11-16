@@ -4,6 +4,18 @@ Regolith Change Log
 
 .. current developments
 
+v0.1.5
+====================
+
+**Added:**
+
+* Rever release tool
+* Interactive session support
+* run better release
+
+
+
+
 v0.1.4
 ====================
 
