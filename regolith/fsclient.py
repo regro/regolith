@@ -36,22 +36,22 @@ def dump_json(filename, docs):
 
 def load_yaml(filename, return_inst=False):
     """Loads a YAML file and returns a dict of its documents."""
+    inst = YAML()
     with open(filename) as fh:
-        yaml = YAML()
-        docs = yaml.load(fh)
+        docs = inst.load(fh)
     for _id, doc in docs.items():
         doc['_id'] = _id
-    return (docs, yaml) if return_insts else docs
+    return (docs, inst) if return_inst else docs
 
 
 def dump_yaml(filename, docs, inst=None):
     """Dumps a dict of documents into a file."""
     inst = YAML() if inst is None else inst
     inst.indent(mapping=2, sequence=4, offset=2)
-    for doc in docs:
+    for doc in docs.values():
         _id = doc.pop('_id')
     with open(filename, 'w') as fh:
-        yaml.dump(docs, stream=fh)
+        inst.dump(docs, stream=fh)
 
 
 def json_to_yaml(inp, out):
@@ -98,7 +98,7 @@ class FileSystemClient:
     def load_yaml(self, db, dbpath):
         """Loads the YAML part of a database."""
         dbs = self.dbs
-        for f in iglob(os.path.join(dbpath, '*.ya?ml')):
+        for f in iglob(os.path.join(dbpath, '*.y?ml')):
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
             self._collexts[base] = ext
@@ -118,14 +118,16 @@ class FileSystemClient:
         """Dumps json docs and returns filename"""
         f = os.path.join(dbpath, collname + '.json')
         dump_json(f, docs)
-        return f
+        filename = os.path.split(f)[-1]
+        return filename
 
     def dump_yaml(self, docs, collname, dbpath):
         """Dumps json docs and returns filename"""
         f = os.path.join(dbpath, collname + self._collexts.get(collname, '.yaml'))
         inst = self._yamlinsts.get((dbpath, collname), None)
         dump_yaml(f, docs, inst=inst)
-        return f
+        filename = os.path.split(f)[-1]
+        return filename
 
     def dump_database(self, db):
         """Dumps a database back to the filesystem."""
@@ -141,7 +143,7 @@ class FileSystemClient:
                 filename = self.dump_yaml(collection, collname, dbpath)
             else:
                 raise ValueError('did not recognize file type for regolith')
-            to_add.append(filename)
+            to_add.append(os.path.join(db['path'], filename))
         return to_add
 
     def close(self):

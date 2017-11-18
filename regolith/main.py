@@ -37,6 +37,9 @@ CONNECTED_COMMANDS = {
     'classlist': commands.classlist,
     }
 
+NEED_RC = set(CONNECTED_COMMANDS.keys())
+NEED_RC |= {'rc', 'deploy', 'store'}
+
 
 def load_json_rcfile(fname):
     """Loads a JSON run control file."""
@@ -167,11 +170,13 @@ def filter_databases(rc):
 
 def main(args=None):
     rc = DEFAULT_RC
-    rc._update(load_rcfile('regolithrc.json'))
     parser = create_parser()
     ns = parser.parse_args(args)
+    if ns.cmd in NEED_RC:
+        rc._update(load_rcfile('regolithrc.json'))
     rc._update(ns.__dict__)
-    filter_databases(rc)
+    if ns.cmd in NEED_RC:
+        filter_databases(rc)
     if rc.cmd in DISCONNECTED_COMMANDS:
         DISCONNECTED_COMMANDS[rc.cmd](rc)
     else:
