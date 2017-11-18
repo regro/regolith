@@ -5,7 +5,7 @@ import json
 from glob import iglob
 from collections import defaultdict
 
-import yaml
+from ruamel.yaml import YAML
 
 from regolith.tools import dbdirname, dbpathname
 
@@ -34,17 +34,20 @@ def dump_json(filename, docs):
         fh.write(s)
 
 
-def load_yaml(filename):
+def load_yaml(filename, return_inst=False):
     """Loads a YAML file and returns a dict of its documents."""
     with open(filename) as fh:
+        yaml = YAML()
         docs = yaml.load(fh)
     for _id, doc in docs.items():
         doc['_id'] = _id
-    return docs
+    return (docs, yaml) if return_insts else docs
 
 
-def dump_yaml(filename, docs):
+def dump_yaml(filename, docs, inst=None):
     """Dumps a dict of documents into a file."""
+    inst = YAML() if inst is None else inst
+    inst.indent(mapping=2, sequence=4, offset=2)
     for doc in docs:
         _id = doc.pop('_id')
     with open(filename, 'w') as fh:
@@ -73,6 +76,7 @@ class FileSystemClient:
         self.open()
         self._collfiletypes = {}
         self._collexts = {}
+        self._yamlinsts = {}
 
     def is_alive(self):
         return not self.closed
@@ -100,7 +104,8 @@ class FileSystemClient:
             self._collexts[base] = ext
             self._collfiletypes[base] = 'yaml'
             print('loading ' + f + '...', file=sys.stderr)
-            dbs[db['name']][base] = load_yaml(f)
+            dbs[db['name']][base], inst = load_yaml(f, return_inst=True)
+            self._yamlinsts[dbpath, base] = inst
 
     def load_database(self, db):
         """Loads a database."""
@@ -118,7 +123,8 @@ class FileSystemClient:
     def dump_yaml(self, docs, collname, dbpath):
         """Dumps json docs and returns filename"""
         f = os.path.join(dbpath, collname + self._collexts.get(collname, '.yaml'))
-        dump_yaml(f, docs)
+        inst = self._yamlinsts.get((dbpath, collname), None)
+        dump_yaml(f, docs, inst=inst)
         return f
 
     def dump_database(self, db):
