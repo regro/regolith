@@ -23,6 +23,8 @@ DISCONNECTED_COMMANDS = {
     'rc': lambda rc: print(rc._pformat()),
     'deploy': commands.deploy,
     'store': storage.main,
+    'json-to-yaml': commands.json_to_yaml,
+    'yaml-to-json': commands.yaml_to_json,
     }
 
 CONNECTED_COMMANDS = {
@@ -34,6 +36,9 @@ CONNECTED_COMMANDS = {
     'email': commands.email,
     'classlist': commands.classlist,
     }
+
+NEED_RC = set(CONNECTED_COMMANDS.keys())
+NEED_RC |= {'rc', 'deploy', 'store'}
 
 
 def load_json_rcfile(fname):
@@ -138,6 +143,14 @@ def create_parser():
     clp.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                      default=False, help='only does a dry run and reports results')
     clp.add_argument('--db', help='database name', dest='db', default=None)
+
+    # JSON-to-YAML subparser
+    jty = subp.add_parser('json-to-yaml', help='Converts files from JSON to YAML')
+    jty.add_argument('files', nargs='+', help='file names to convert')
+
+    # YAML-to-JSON subparser
+    ytj = subp.add_parser('yaml-to-json', help='Converts files from YAML to JSON')
+    ytj.add_argument('files', nargs='+', help='file names to convert')
     return p
 
 
@@ -157,11 +170,13 @@ def filter_databases(rc):
 
 def main(args=None):
     rc = DEFAULT_RC
-    rc._update(load_rcfile('regolithrc.json'))
     parser = create_parser()
     ns = parser.parse_args(args)
+    if ns.cmd in NEED_RC:
+        rc._update(load_rcfile('regolithrc.json'))
     rc._update(ns.__dict__)
-    filter_databases(rc)
+    if ns.cmd in NEED_RC:
+        filter_databases(rc)
     if rc.cmd in DISCONNECTED_COMMANDS:
         DISCONNECTED_COMMANDS[rc.cmd](rc)
     else:

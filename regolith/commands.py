@@ -118,3 +118,21 @@ def classlist(rc):
     """Sets values for the class list."""
     from regolith.classlist import register
     register(rc)
+
+
+def json_to_yaml(rc):
+    """Converts JSON to YAML"""
+    from regolith import fsclient
+    for inp in rc.files:
+        base, ext = os.path.splitext(inp)
+        out = base + '.yaml'
+        fsclient.json_to_yaml(inp, out)
+
+
+def yaml_to_json(rc):
+    """Converts YAML to JSON"""
+    from regolith import fsclient
+    for inp in rc.files:
+        base, ext = os.path.splitext(inp)
+        out = base + '.json'
+        fsclient.yaml_to_json(inp, out)

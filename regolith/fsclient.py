@@ -5,7 +5,65 @@ import json
 from glob import iglob
 from collections import defaultdict
 
+from ruamel.yaml import YAML
+
 from regolith.tools import dbdirname, dbpathname
+
+
+def _id_key(doc):
+    return doc['_id']
+
+
+def load_json(filename):
+    """Loads a JSON file and returns a dict of its documents."""
+    docs = {}
+    with open(filename) as fh:
+        lines = fh.readlines()
+    for line in lines:
+        doc = json.loads(line)
+        docs[doc['_id']] = doc
+    return docs
+
+
+def dump_json(filename, docs):
+    """Dumps a dict of documents into a file."""
+    docs = sorted(docs.values(), key=_id_key)
+    lines = [json.dumps(doc, sort_keys=True) for doc in docs]
+    s = '\n'.join(lines)
+    with open(filename, 'w') as fh:
+        fh.write(s)
+
+
+def load_yaml(filename, return_inst=False):
+    """Loads a YAML file and returns a dict of its documents."""
+    inst = YAML()
+    with open(filename) as fh:
+        docs = inst.load(fh)
+    for _id, doc in docs.items():
+        doc['_id'] = _id
+    return (docs, inst) if return_inst else docs
+
+
+def dump_yaml(filename, docs, inst=None):
+    """Dumps a dict of documents into a file."""
+    inst = YAML() if inst is None else inst
+    inst.indent(mapping=2, sequence=4, offset=2)
+    for doc in docs.values():
+        _id = doc.pop('_id')
+    with open(filename, 'w') as fh:
+        inst.dump(docs, stream=fh)
+
+
+def json_to_yaml(inp, out):
+    """Converts a JSON file to a YAML one."""
+    docs = load_json(inp)
+    dump_yaml(out, docs)
+
+
+def yaml_to_json(inp, out):
+    """Converts a YAML file to a JSON one."""
+    docs = load_yaml(inp)
+    dump_json(out, docs)
 
 
 class FileSystemClient:
@@ -16,6 +74,9 @@ class FileSystemClient:
         self.closed = True
         self.dbs = None
         self.open()
+        self._collfiletypes = {}
+        self._collexts = {}
+        self._yamlinsts = {}
 
     def is_alive(self):
         return not self.closed
@@ -24,22 +85,49 @@ class FileSystemClient:
         self.dbs = defaultdict(lambda: defaultdict(dict))
         self.closed = False
 
+    def load_json(self, db, dbpath):
+        """Loads the JSON part of a database."""
+        dbs = self.dbs
+        for f in iglob(os.path.join(dbpath, '*.json')):
+            collfilename = os.path.split(f)[-1]
+            base, ext = os.path.splitext(collfilename)
+            self._collfiletypes[base] = 'json'
+            print('loading ' + f + '...', file=sys.stderr)
+            dbs[db['name']][base] = load_json(f)
+
+    def load_yaml(self, db, dbpath):
+        """Loads the YAML part of a database."""
+        dbs = self.dbs
+        for f in iglob(os.path.join(dbpath, '*.y?ml')):
+            collfilename = os.path.split(f)[-1]
+            base, ext = os.path.splitext(collfilename)
+            self._collexts[base] = ext
+            self._collfiletypes[base] = 'yaml'
+            print('loading ' + f + '...', file=sys.stderr)
+            dbs[db['name']][base], inst = load_yaml(f, return_inst=True)
+            self._yamlinsts[dbpath, base] = inst
+
     def load_database(self, db):
         """Loads a database."""
-        dbs = self.dbs
         dbpath = dbpathname(db, self.rc)
-        for f in iglob(os.path.join(dbpath, '*.json')):
-            base, ext = os.path.splitext(os.path.split(f)[-1])
-            print('loading ' + f + '...', file=sys.stderr)
-            with open(f) as fh:
-                lines = fh.readlines()
-            for line in lines:
-                doc = json.loads(line)
-                dbs[db['name']][base][doc['_id']] = doc
+        self.load_json(db, dbpath)
+        self.load_yaml(db, dbpath)
 
-    @staticmethod
-    def _id_key(doc):
-        return doc['_id']
+
+    def dump_json(self, docs, collname, dbpath):
+        """Dumps json docs and returns filename"""
+        f = os.path.join(dbpath, collname + '.json')
+        dump_json(f, docs)
+        filename = os.path.split(f)[-1]
+        return filename
+
+    def dump_yaml(self, docs, collname, dbpath):
+        """Dumps json docs and returns filename"""
+        f = os.path.join(dbpath, collname + self._collexts.get(collname, '.yaml'))
+        inst = self._yamlinsts.get((dbpath, collname), None)
+        dump_yaml(f, docs, inst=inst)
+        filename = os.path.split(f)[-1]
+        return filename
 
     def dump_database(self, db):
         """Dumps a database back to the filesystem."""
@@ -48,13 +136,14 @@ class FileSystemClient:
         to_add = []
         for collname, collection in self.dbs[db['name']].items():
             print('dumping ' + collname + '...', file=sys.stderr)
-            docs = sorted(collection.values(), key=self._id_key)
-            lines = [json.dumps(doc, sort_keys=True) for doc in docs]
-            s = '\n'.join(lines)
-            f = os.path.join(dbpath, collname + '.json')
-            with open(f, 'w') as fh:
-                fh.write(s)
-            to_add.append(os.path.join(db['path'], collname + '.json'))
+            filetype = self._collfiletypes.get(collname, 'yaml')
+            if filetype == 'json':
+                filename = self.dump_json(collection, collname, dbpath)
+            elif filetype == 'yaml':
+                filename = self.dump_yaml(collection, collname, dbpath)
+            else:
+                raise ValueError('did not recognize file type for regolith')
+            to_add.append(os.path.join(db['path'], filename))
         return to_add
 
     def close(self):
