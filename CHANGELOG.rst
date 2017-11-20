@@ -4,6 +4,17 @@ Regolith Change Log
 
 .. current developments
 
+v0.1.6
+====================
+
+**Added:**
+
+* Use Rever's whitespace parsing
+* Fix template news
+
+
+
+
 v0.1.5
 ====================
 
