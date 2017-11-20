@@ -52,7 +52,10 @@ def collection_page(dbname, collname):
                 body = json.loads(form['body'].strip())
             except Exception:
                 td = tempfile.TemporaryDirectory()
-                with open(os.path.join(td.name, 'regolith.txt')) as f:
+                n = os.path.join(td.name, 'regolith.txt')
+                print('Error in json parsing writing text file to {}. '
+                      'Please try again.'.format(n))
+                with open(n) as f:
                     f.write(form['body'])
                 traceback.print_exc()
                 raise
@@ -65,7 +68,10 @@ def collection_page(dbname, collname):
                 print(body)
             except Exception:
                 td = tempfile.TemporaryDirectory()
-                with open(os.path.join(td.name, 'regolith.txt')) as f:
+                n = os.path.join(td.name, 'regolith.txt')
+                print('Error in json parsing writing text file to {}. '
+                      'Please try again.'.format(n))
+                with open(n) as f:
                     f.write(form['body'])
                 traceback.print_exc()
                 raise
