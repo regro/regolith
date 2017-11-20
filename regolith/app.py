@@ -1,6 +1,8 @@
 """Flask app for looking at information in regolith."""
 import json
 import traceback
+import tempfile
+import os
 
 from flask import Flask, abort, request, render_template, redirect, url_for
 
@@ -21,6 +23,7 @@ def shutdown_server():
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
+
 
 @app.route('/shutdown', methods=['GET', 'POST'])
 def shutdown():
@@ -48,6 +51,9 @@ def collection_page(dbname, collname):
             try:
                 body = json.loads(form['body'].strip())
             except Exception:
+                td = tempfile.TemporaryDirectory()
+                with open(os.path.join(td.name, 'regolith.txt')) as f:
+                    f.write(form['body'])
                 traceback.print_exc()
                 raise
             rc.client.update_one(dbname, collname, {'_id': body['_id']}, body)
@@ -58,6 +64,9 @@ def collection_page(dbname, collname):
                 body = json.loads(form['body'].strip())
                 print(body)
             except Exception:
+                td = tempfile.TemporaryDirectory()
+                with open(os.path.join(td.name, 'regolith.txt')) as f:
+                    f.write(form['body'])
                 traceback.print_exc()
                 raise
             try:
@@ -70,6 +79,7 @@ def collection_page(dbname, collname):
         elif 'delete' in form:
             body = json.loads(form['body'].strip())
             deled = rc.client.delete_one(dbname, collname, body)
-    return render_template('collection.html', rc=rc, dbname=dbname, len=len, str=str,
+    return render_template('collection.html', rc=rc, dbname=dbname, len=len,
+                           str=str,
                            status=status, status_id=status_id,
                            collname=collname, coll=coll, json=json, min=min)
