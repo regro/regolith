@@ -113,7 +113,6 @@ class FileSystemClient:
         self.load_json(db, dbpath)
         self.load_yaml(db, dbpath)
 
-
     def dump_json(self, docs, collname, dbpath):
         """Dumps json docs and returns filename"""
         f = os.path.join(dbpath, collname + '.json')
