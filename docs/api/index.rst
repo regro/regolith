@@ -14,7 +14,9 @@ For those of you who want the gritty details.
     database
     builder
     htmlbuilder
+    cvbuilder
     deploy
+    basebuilder
     
 
 **Helpers:**
@@ -23,6 +25,7 @@ For those of you who want the gritty details.
     :maxdepth: 1
 
     tools
+    dates
     validators
     commands
     main

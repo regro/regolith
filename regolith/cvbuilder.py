@@ -3,7 +3,7 @@ import os
 import subprocess
 from glob import glob
 
-from regolith.builder_base import BuilderBase
+from regolith.basebuilder import BuilderBase
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import all_docs_from_collection, month_and_year, \
     filter_publications, \

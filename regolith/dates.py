@@ -1,3 +1,5 @@
+"""Date based tools"""
+
 MONTHS = {
     'jan': 1,
     'jan.': 1,
@@ -50,7 +52,8 @@ def month_to_int(m):
 
 
 def date_to_float(y, m, d=0):
-    """Converts years / months / days to a float, eg 2015.0818 is August 18th 2015."""
+    """Converts years / months / days to a float, eg 2015.0818 is August
+    18th 2015. """
     y = int(y)
     m = month_to_int(m)
     d = int(d)
