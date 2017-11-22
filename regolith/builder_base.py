@@ -1,17 +1,7 @@
 """Builder Base Class"""
 import os
-import shutil
-from copy import deepcopy
-from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
-
-from regolith.latex import make_bibtex_file
-
-from regolith.tools import all_docs_from_collection, date_to_rfc822, \
-    rfc822now, gets
-from regolith.sorters import doc_date_key, ene_date_key, category_val, \
-    level_val, id_key, date_key, position_key
 
 
 class BuilderBase(object):
@@ -25,6 +15,9 @@ class BuilderBase(object):
         self.gtx = {}
         self.construct_global_ctx()
         self.cmds = []
+
+    def construct_global_ctx(self):
+        pass
 
     def render(self, tname, fname, **kwargs):
         template = self.env.get_template(tname)

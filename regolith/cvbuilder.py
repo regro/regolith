@@ -1,13 +1,9 @@
 """Builder for CVs."""
 import os
 import subprocess
-from copy import deepcopy
 from glob import glob
 from itertools import groupby
 
-from jinja2 import Environment, FileSystemLoader
-
-from regolith.latex import latex_safe, LATEX_OPTS
 from regolith.builder_base import BuilderBase
 
 try:
@@ -18,94 +14,11 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, date_to_float, \
-    date_to_rfc822, rfc822now, gets, month_and_year
+from regolith.tools import all_docs_from_collection, date_to_rfc822, rfc822now, gets, month_and_year, \
+    filter_publications, \
+    filter_projects, filter_grants, awards_grants_honors, latex_safe, LATEX_OPTS, make_bibtex_file
 from regolith.sorters import doc_date_key, ene_date_key, category_val, \
-    level_val, id_key, date_key, position_key
-from regolith.latex import make_bibtex_file
-
-
-def filter_publications(citations, authors, reverse=False):
-    pubs = []
-    for pub in citations:
-        if len(set(pub['author']) & authors) == 0:
-            continue
-        pub = deepcopy(pub)
-        bold_self = []
-        for a in pub['author']:
-            if a in authors:
-                bold_self.append('\\textbf{' + a + '}')
-            else:
-                bold_self.append(a)
-        pub['author'] = bold_self
-        pubs.append(pub)
-    pubs.sort(key=doc_date_key, reverse=reverse)
-    return pubs
-
-
-def filter_projects(projects, authors, reverse=False):
-    projs = []
-    for proj in projects:
-        team_names = set(gets(proj['team'], 'name'))
-        if len(team_names & authors) == 0:
-            continue
-        proj = dict(proj)
-        proj['team'] = [x for x in proj['team'] if x['name'] in authors]
-        projs.append(proj)
-    projs.sort(key=id_key, reverse=reverse)
-    return projs
-
-
-def filter_grants(input_grants, names, pi=True, reverse=True):
-    grants = []
-    total_amount = 0.0
-    subaward_amount = 0.0
-    for grant in input_grants:
-        team_names = set(gets(grant['team'], 'name'))
-        if len(team_names & names) == 0:
-            continue
-        grant = deepcopy(grant)
-        person = [x for x in grant['team'] if x['name'] in names][0]
-        if pi:
-            if person['position'].lower() == 'pi':
-                total_amount += grant['amount']
-            else:
-                continue
-        else:
-            if person['position'].lower() == 'pi':
-                continue
-            else:
-                total_amount += grant['amount']
-                subaward_amount += person.get('subaward_amount', 0.0)
-                grant['subaward_amount'] = person.get('subaward_amount',
-                                                      0.0)
-                grant['pi'] = [x for x in grant['team'] if
-                               x['position'].lower() == 'pi'][0]
-                grant['me'] = person
-        grants.append(grant)
-    grants.sort(key=ene_date_key, reverse=reverse)
-    return grants, total_amount, subaward_amount
-
-
-def awards_grants_honors(p):
-    """Make sorted awards grants and honors list."""
-    aghs = []
-    for x in p.get('funding', ()):
-        d = {'description': '{0} ({1}{2:,})'.format(
-            latex_safe(x['name']),
-            x.get('currency', '$').replace('$', '\$'), x['value']),
-            'year': x['year'],
-            '_key': date_to_float(x['year'], x.get('month', 0)),
-        }
-        aghs.append(d)
-    for x in p.get('service', []) + p.get('honors', []):
-        d = {'description': latex_safe(x['name']),
-             'year': x['year'],
-             '_key': date_to_float(x['year'], x.get('month', 0)),
-             }
-        aghs.append(d)
-    aghs.sort(key=(lambda x: x.get('_key', 0.0)), reverse=True)
-    return aghs
+    level_val, date_key, position_key
 
 
 class CVBuilder(BuilderBase):
