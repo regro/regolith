@@ -44,11 +44,11 @@ class BuilderBase(object):
 
         Parameters
         ----------
-        tname: str
+        tname : str
             Template name
-        fname: str
+        fname : str
             Resulting file name
-        kwargs: dict
+        kwargs : dict
             Additional kwargs to the renderer
         """
         template = self.env.get_template(tname)

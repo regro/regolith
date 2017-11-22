@@ -12,6 +12,7 @@ from regolith.tools import all_docs_from_collection, month_and_year, \
 
 
 class CVBuilder(BuilderBase):
+    """Build CV from database entries"""
     btype = 'cv'
 
     def __init__(self, rc):
@@ -19,6 +20,7 @@ class CVBuilder(BuilderBase):
         self.cmds = ['latex', 'pdf', 'clean']
 
     def construct_global_ctx(self):
+        """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -29,6 +31,7 @@ class CVBuilder(BuilderBase):
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def latex(self):
+        """Render latex template"""
         rc = self.rc
         for p in self.gtx['people']:
             names = frozenset(p.get('aka', []) + [p['name']])
@@ -67,9 +70,11 @@ class CVBuilder(BuilderBase):
             self.run(['dvipdf', base])
 
     def run(self, cmd):
+        """Run command in build dir"""
         subprocess.run(cmd, cwd=self.bldir, check=True)
 
     def clean(self):
+        """Remove files created by latex"""
         postfixes = ['*.dvi', '*.toc', '*.aux', '*.out', '*.log', '*.bbl',
                      '*.blg', '*.log', '*.spl', '*~', '*.spl', '*.run.xml',
                      '*-blx.bib']

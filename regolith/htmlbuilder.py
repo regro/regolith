@@ -9,6 +9,7 @@ from regolith.tools import all_docs_from_collection, filter_publications, \
 
 
 class HtmlBuilder(BuilderBase):
+    """Build HTML files for website"""
     btype = 'html'
 
     def __init__(self, rc):
@@ -18,6 +19,7 @@ class HtmlBuilder(BuilderBase):
                      'jobs', 'abstracts', 'nojekyll', 'cname', 'finish']
 
     def construct_global_ctx(self):
+        """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -29,6 +31,8 @@ class HtmlBuilder(BuilderBase):
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def finish(self):
+        """Move files over to their destination and remove them from the
+        source"""
         # static
         stsrc = os.path.join('templates', 'static')
         stdst = os.path.join(self.bldir, 'static')
@@ -37,9 +41,11 @@ class HtmlBuilder(BuilderBase):
         shutil.copytree(stsrc, stdst)
 
     def root_index(self):
+        """Render root index"""
         self.render('root_index.html', 'index.html', title='Home')
 
     def people(self):
+        """Render people, former members, and each person"""
         rc = self.rc
         peeps_dir = os.path.join(self.bldir, 'people')
         former_peeps_dir = os.path.join(self.bldir, 'former')
@@ -68,12 +74,14 @@ class HtmlBuilder(BuilderBase):
                     title='Former Members')
 
     def projects(self):
+        """Render projects"""
         rc = self.rc
         projs = all_docs_from_collection(rc.client, 'projects')
         self.render('projects.html', 'projects.html', title='Projects',
                     projects=projs)
 
     def blog(self):
+        """Render the blog and rss"""
         rc = self.rc
         blog_dir = os.path.join(self.bldir, 'blog')
         os.makedirs(blog_dir, exist_ok=True)
@@ -89,6 +97,7 @@ class HtmlBuilder(BuilderBase):
         self.render('rss.xml', os.path.join('blog', 'rss.xml'), items=posts)
 
     def jobs(self):
+        """Render the jobs and each job"""
         jobs_dir = os.path.join(self.bldir, 'jobs')
         os.makedirs(jobs_dir, exist_ok=True)
         for job in self.gtx['jobs']:
@@ -99,6 +108,7 @@ class HtmlBuilder(BuilderBase):
                     title='Jobs')
 
     def abstracts(self):
+        """Render each abstract"""
         abs_dir = os.path.join(self.bldir, 'abstracts')
         os.makedirs(abs_dir, exist_ok=True)
         for ab in self.gtx['abstracts']:
@@ -115,6 +125,7 @@ class HtmlBuilder(BuilderBase):
             pass
 
     def cname(self):
+        """Add CNAME"""
         rc = self.rc
         if not hasattr(rc, 'cname'):
             return
