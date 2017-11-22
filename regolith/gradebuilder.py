@@ -26,8 +26,8 @@ try:
 except ImportError:
     st = None
 
-from regolith.tools import all_docs_from_collection, date_to_float, \
-    date_to_rfc822, rfc822now, gets, month_and_year
+from regolith.tools import all_docs_from_collection, date_to_rfc822, rfc822now, gets, month_and_year
+from regolith.dates import date_to_float
 from regolith.sorters import doc_date_key, ene_date_key, category_val, \
     level_val, id_key, date_key, position_key
 
