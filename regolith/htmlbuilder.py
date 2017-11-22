@@ -1,15 +1,11 @@
 """Builder for websites."""
 import os
 import shutil
-from itertools import groupby
-
 
 from regolith.builder_base import BuilderBase
-
-from regolith.tools import all_docs_from_collection, date_to_rfc822, \
-    rfc822now, gets, filter_publications, filter_projects, make_bibtex_file
-from regolith.sorters import doc_date_key, ene_date_key, category_val, \
-    level_val, id_key, date_key, position_key
+from regolith.sorters import ene_date_key, position_key
+from regolith.tools import all_docs_from_collection, filter_publications, \
+    filter_projects, make_bibtex_file
 
 
 class HtmlBuilder(BuilderBase):
@@ -22,21 +18,9 @@ class HtmlBuilder(BuilderBase):
                      'jobs', 'abstracts', 'nojekyll', 'cname', 'finish']
 
     def construct_global_ctx(self):
-        self.gtx = gtx = {}
+        super().construct_global_ctx()
+        gtx = self.gtx
         rc = self.rc
-        gtx['len'] = len
-        gtx['True'] = True
-        gtx['False'] = False
-        gtx['None'] = None
-        gtx['sorted'] = sorted
-        gtx['groupby'] = groupby
-        gtx['gets'] = gets
-        gtx['date_key'] = date_key
-        gtx['doc_date_key'] = doc_date_key
-        gtx['level_val'] = level_val
-        gtx['category_val'] = category_val
-        gtx['rfc822now'] = rfc822now
-        gtx['date_to_rfc822'] = date_to_rfc822
         gtx['jobs'] = list(all_docs_from_collection(rc.client, 'jobs'))
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)

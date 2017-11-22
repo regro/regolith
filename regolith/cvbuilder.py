@@ -2,23 +2,13 @@
 import os
 import subprocess
 from glob import glob
-from itertools import groupby
 
 from regolith.builder_base import BuilderBase
-
-try:
-    from bibtexparser.bwriter import BibTexWriter
-    from bibtexparser.bibdatabase import BibDatabase
-
-    HAVE_BIBTEX_PARSER = True
-except ImportError:
-    HAVE_BIBTEX_PARSER = False
-
-from regolith.tools import all_docs_from_collection, date_to_rfc822, rfc822now, gets, month_and_year, \
+from regolith.sorters import ene_date_key, position_key
+from regolith.tools import all_docs_from_collection, month_and_year, \
     filter_publications, \
-    filter_projects, filter_grants, awards_grants_honors, latex_safe, LATEX_OPTS, make_bibtex_file
-from regolith.sorters import doc_date_key, ene_date_key, category_val, \
-    level_val, date_key, position_key
+    filter_projects, filter_grants, awards_grants_honors, latex_safe, \
+    LATEX_OPTS, make_bibtex_file
 
 
 class CVBuilder(BuilderBase):
@@ -29,21 +19,9 @@ class CVBuilder(BuilderBase):
         self.cmds = ['latex', 'pdf', 'clean']
 
     def construct_global_ctx(self):
+        super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx['len'] = len
-        gtx['True'] = True
-        gtx['False'] = False
-        gtx['None'] = None
-        gtx['sorted'] = sorted
-        gtx['groupby'] = groupby
-        gtx['gets'] = gets
-        gtx['date_key'] = date_key
-        gtx['doc_date_key'] = doc_date_key
-        gtx['level_val'] = level_val
-        gtx['category_val'] = category_val
-        gtx['rfc822now'] = rfc822now
-        gtx['date_to_rfc822'] = date_to_rfc822
         gtx['month_and_year'] = month_and_year
         gtx['latex_safe'] = latex_safe
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
