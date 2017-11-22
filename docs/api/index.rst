@@ -27,3 +27,4 @@ For those of you who want the gritty details.
     commands
     main
     app
+    interactive
