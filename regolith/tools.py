@@ -25,8 +25,9 @@ if sys.version_info[0] >= 3:
     string_types = (str, bytes)
     unicode_type = str
 else:
-    string_types = (str, unicode)
-    unicode_type = unicode
+    pass
+    # string_types = (str, unicode)
+    # unicode_type = unicode
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 
@@ -51,8 +52,8 @@ def dbpathname(db, rc):
 
 
 def fallback(cond, backup):
-    """Decorator for returning the object if cond is true and a backup if cond is false.
-    """
+    """Decorator for returning the object if cond is true and a backup if
+    cond is false. """
 
     def dec(obj):
         return obj if cond else backup
@@ -61,7 +62,8 @@ def fallback(cond, backup):
 
 
 def all_docs_from_collection(client, collname):
-    """Yield all entries in for all collections of a given name in a given database."""
+    """Yield all entries in for all collections of a given name in a given
+    database. """
     for dbname in client.keys():
         if dbname == 'local':
             continue
@@ -103,6 +105,19 @@ def month_and_year(m=None, y=None):
 
 
 def filter_publications(citations, authors, reverse=False, bold=True):
+    """Filter publications by the author(s)
+
+    Parameters
+    ----------
+    citations : list of dict
+        The publication citations
+    authors : set of str
+        The authors to be filtered against
+    reverse : bool, optional
+        If True reverse the order, defaults to False
+    bold : bool, optional
+        If True put latex bold around the author(s) in question
+    """
     pubs = []
     for pub in citations:
         if len(set(pub['author']) & authors) == 0:
@@ -124,6 +139,17 @@ def filter_publications(citations, authors, reverse=False, bold=True):
 
 
 def filter_projects(projects, authors, reverse=False):
+    """Filter projects by the author(s)
+
+    Parameters
+    ----------
+    projects : list of dict
+        The publication citations
+    authors : set of str
+        The authors to be filtered against
+    reverse : bool, optional
+        If True reverse the order, defaults to False
+    """
     projs = []
     for proj in projects:
         team_names = set(gets(proj['team'], 'name'))
@@ -137,6 +163,19 @@ def filter_projects(projects, authors, reverse=False):
 
 
 def filter_grants(input_grants, names, pi=True, reverse=True):
+    """Filter grants by those involved
+
+    Parameters
+    ----------
+    input_grants : list of dict
+        The publication citations
+    names : set of str
+        The authors to be filtered against
+    pi : bool, optional
+        If True add the grant amount to that person's total amount
+    reverse : bool, optional
+        If True reverse the order, defaults to False
+    """
     grants = []
     total_amount = 0.0
     subaward_amount = 0.0
@@ -168,7 +207,13 @@ def filter_grants(input_grants, names, pi=True, reverse=True):
 
 
 def awards_grants_honors(p):
-    """Make sorted awards grants and honors list."""
+    """Make sorted awards grants and honors list.
+    
+    Parameters
+    ----------
+    p : dict
+        The person entry
+    """
     aghs = []
     for x in p.get('funding', ()):
         d = {'description': '{0} ({1}{2:,})'.format(
@@ -189,10 +234,27 @@ def awards_grants_honors(p):
 
 
 def latex_safe(s):
+    """Make string latex safe
+    
+    Parameters
+    ----------
+    s : str
+    """
     return s.replace('&', '\&').replace('$', '\$').replace('#', '\#')
 
 
 def make_bibtex_file(pubs, pid, person_dir='.'):
+    """Make a bibtex file given the publications
+    
+    Parameters
+    ----------
+    pubs : list of dict
+        The publications
+    pid : str
+        The person id
+    person_dir : str, optional
+        The person's directory
+    """
     if not HAVE_BIBTEX_PARSER:
         return None
     skip_keys = {'ID', 'ENTRYTYPE', 'author'}
