@@ -20,7 +20,7 @@ The following lists key names mapped to its type and meaning for each entry.
 YAML Example
 ------------
 
-.. code-block:: yml
+.. code-block:: yaml
 
     hw01-rx-power:
       category: homework
