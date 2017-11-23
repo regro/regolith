@@ -13,3 +13,4 @@ The following contain the regolith schemas and examples in both YAML and JSON/Mo
     citations
     people
     projects
+    news
