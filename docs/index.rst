@@ -60,7 +60,8 @@ Run Control
 
 Database Collections
 ====================
-Collections are the regolith (and mongo) abstraction for tables. Entries (or rows) in
+**Collections** are the regolith (and mongo) abstraction for *tables*.
+**Entries** (or *rows*) in
 a collection must follow the schema defined below. In general, the following notions
 hold:
 
