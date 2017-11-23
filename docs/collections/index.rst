@@ -11,6 +11,7 @@ The following contain the regolith schemas and examples in both YAML and JSON/Mo
     assignments
     blog
     citations
+    jobs
     people
     projects
     news
