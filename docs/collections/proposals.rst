@@ -96,7 +96,7 @@ JSON/Mongo Example
      "pre": {"year": 1998,
              "month": "Aug",
              "day": 2,
-             "narrative": "http://some.com/pdf"
+             "narrative": "http://some.com/pdf",
              "benefit_of_collaboration": "http://pdf.com/benefit_of_collaboration",
              "cv": ["http://pdf.com/scopatz-cv",
                     "http://pdf.com/flanagan-cv"]},
