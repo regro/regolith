@@ -8,6 +8,7 @@ The following contain the regolith schemas and examples in both YAML and JSON/Mo
 .. toctree::
     :maxdepth: 1
 
+    abstracts
     assignments
     blog
     citations
