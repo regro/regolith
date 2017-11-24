@@ -72,4 +72,17 @@ JSON/Mongo Example
      "number": 552,
      "scale": [[0.875, "A"],
                [0.8125, "B+"],
-               [0.75, "B"], [0.6875, "C+"], [0.625, "C"], [0.5625, "D+"], [0.5, "D"], [-1.0, "F"]], "season": "F", "students": ["Alexandra J. Bland", "Anthony L. Quinn", "Benjamin D. Rowland", "Brandon K. Bolton", "Bryson J. Hayes", "Coleman F. Terrapin", "Craig Chelednik", "David L. Chappell", "Gretchen C. Mitschelen", "Heather A. Rodriguez", "Jacob A. Yingling", "Joshua A. Halbritter", "Joseph R. Markovich", "Luke Richardson", "Matthew G. Shalloo", "Matthew J. Weeks", "Peyton S. Brumfield", "Robert J. Shearman", "Ryan T. Sanders", "Sahithi Reddy Dudipala", "Sean P. Kavanaugh", "Tashiema L. Wilson", "Todd M. Gorny", "Treyvon J. Brunson", "Michael Tuten", "Tyler W. Smith", "William M. Housley"], "syllabus": "emch552-2016-f-syllabus.pdf", "weights": {"class-notes": 0.15, "final": 0.3, "homework": 0.35, "midterm": 0.2}, "year": 2016}
+               [0.75, "B"],
+               [0.6875, "C+"],
+               [0.625, "C"],
+               [0.5625, "D+"],
+               [0.5, "D"],
+               [-1.0, "F"]],
+     "season": "F",
+     "students": ["Human A. Person", "Human B. Person"],
+     "syllabus": "emch552-2016-f-syllabus.pdf",
+     "weights": {"class-notes": 0.15,
+                 "final": 0.3,
+                 "homework": 0.35,
+                 "midterm": 0.2},
+     "year": 2016}
