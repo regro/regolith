@@ -12,6 +12,7 @@ The following contain the regolith schemas and examples in both YAML and JSON/Mo
     blog
     citations
     courses
+    grades
     grants
     jobs
     news
