@@ -435,7 +435,7 @@ JSON/Mongo Example
                 "name": "Python"},
                {"category": "Programming Languages",
                 "level": "expert",
-                "name": "Cython"},
+                "name": "Cython"}],
     "teaching": [{"course": "EMCH 552: Intro to Nuclear Engineering",
                   "description": "This course is an introduction to nuclear physics.",
                   "month": "August",
