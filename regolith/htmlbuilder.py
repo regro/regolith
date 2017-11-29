@@ -13,7 +13,7 @@ class HtmlBuilder(BuilderBase):
     btype = 'html'
 
     def __init__(self, rc):
-        super.__init__(rc)
+        super().__init__(rc)
         # TODO: get this from the RC
         self.cmds = ['root_index', 'people', 'projects', 'blog',
                      'jobs', 'abstracts', 'nojekyll', 'cname', 'finish']
