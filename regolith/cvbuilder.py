@@ -46,9 +46,11 @@ class CVBuilder(BuilderBase):
             edu.sort(key=ene_date_key, reverse=True)
             projs = filter_projects(
                 all_docs_from_collection(rc.client, 'projects'), names)
-            pi_grants, pi_amount, _ = filter_grants(names, pi=True)
-            coi_grants, coi_amount, coi_sub_amount = filter_grants(
-                all_docs_from_collection(rc.client, 'grants'), names, pi=False)
+            grants = list(all_docs_from_collection(rc.client, 'grants'))
+            pi_grants, pi_amount, _ = filter_grants(grants, names, pi=True)
+            coi_grants, coi_amount, coi_sub_amount = filter_grants(grants,
+                                                                   names,
+                                                                   pi=False)
             aghs = awards_grants_honors(p)
             self.render('cv.tex', p['_id'] + '.tex', p=p,
                         title=p.get('name', ''), aghs=aghs,

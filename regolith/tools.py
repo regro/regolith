@@ -168,7 +168,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True):
     Parameters
     ----------
     input_grants : list of dict
-        The publication citations
+        The grants to filter
     names : set of str
         The authors to be filtered against
     pi : bool, optional
@@ -208,7 +208,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True):
 
 def awards_grants_honors(p):
     """Make sorted awards grants and honors list.
-    
+
     Parameters
     ----------
     p : dict
@@ -235,7 +235,7 @@ def awards_grants_honors(p):
 
 def latex_safe(s):
     """Make string latex safe
-    
+
     Parameters
     ----------
     s : str
@@ -245,7 +245,7 @@ def latex_safe(s):
 
 def make_bibtex_file(pubs, pid, person_dir='.'):
     """Make a bibtex file given the publications
-    
+
     Parameters
     ----------
     pubs : list of dict
