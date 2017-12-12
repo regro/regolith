@@ -21,7 +21,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :begin_day: int,  start day of the grant, optional
 :end_year: int, end year of the grant
 :end_month": str, end month of the grant
-:end_day: str, end day of teh grant, optional
+:end_day: str, end day of the grant, optional
 :team: list of dicts, information about the team members participating in the grant.
     These dicts have the following form:
 
