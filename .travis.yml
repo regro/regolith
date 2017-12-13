@@ -20,7 +20,7 @@ install:
   - conda update conda
 
   # Install dependencies
-  - conda install -n test --file requirements/run.txt
+  - conda create -n test --file requirements/run.txt
   - source activate test
   - python setup.py install
 
