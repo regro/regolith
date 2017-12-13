@@ -16,7 +16,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :institution: str, name of the inistitution
 :references: str, HTML string of reference for the abstract itself, optional
 :text: str, HTML string of the abstract.
-:timestamp: The time when the abstract was submitted.
+:timestamp: float, The time when the abstract was submitted.
 
 
 YAML Example

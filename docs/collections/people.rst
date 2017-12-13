@@ -54,7 +54,7 @@ The following lists key names mapped to its type and meaning for each entry.
           ]
 
 :funding: list of dicts, Funding and scholarship that the group member has
-    individually obtained in the past (optional). **WARNING:** this is not to be confused
+    individually obtained in the past, optional. **WARNING:** this is not to be confused
     with the **grants** collection, that may refee back to group members.
     These dicts have the following form:
 
@@ -70,7 +70,7 @@ The following lists key names mapped to its type and meaning for each entry.
           ...
           ]
 
-:service: list of dicts, Service that this group member has provided (optional).
+:service: list of dicts, Service that this group member has provided, optional.
     These dicts have the following form:
 
     .. code-block:: python
@@ -84,7 +84,7 @@ The following lists key names mapped to its type and meaning for each entry.
           ...
           ]
 
-:honors: list of dicts, Honors that have been awarded to this group member (optional).
+:honors: list of dicts, Honors that have been awarded to this group member, optional.
     These dicts have the following form:
 
     .. code-block:: python
@@ -97,7 +97,7 @@ The following lists key names mapped to its type and meaning for each entry.
           ...
           ]
 
-:teaching: list of dicts, Courses that this group member has taught, if any (optional).
+:teaching: list of dicts, Courses that this group member has taught, if any, optional.
     These dicts have the following form:
 
     .. code-block:: python
@@ -118,7 +118,7 @@ The following lists key names mapped to its type and meaning for each entry.
           ...
           ]
 
-:membership: list of dicts, Profesional organizations this member is a part of (optional).
+:membership: list of dicts, Profesional organizations this member is a part of, optional.
     These dicts have the following form:
 
     .. code-block:: python
@@ -135,7 +135,7 @@ The following lists key names mapped to its type and meaning for each entry.
           ...
           ]
 
-:skills: list of dicts, Skill the group member has (optional)
+:skills: list of dicts, Skill the group member has, optional
     These dicts have the following form:
 
     .. code-block:: python

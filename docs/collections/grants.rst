@@ -30,7 +30,7 @@ The following lists key names mapped to its type and meaning for each entry.
         [{"name": str, # should match a person's name  or AKA
           "position": str,   # PI, Co-PI, Co-I, Researcher, etc.
           "institution": str, # The institution of this investigator
-          "subaward_amount", int or float,  # optional
+          "subaward_amount": int or float,  # optional
           "cv": str,  # optional, URL of document
           },
           ...

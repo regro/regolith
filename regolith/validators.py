@@ -116,7 +116,12 @@ DEFAULT_VALIDATORS = {
 }
 
 
-def validate_schema(record, schema, key=None):
+# TODO: run this as a lint like thing rather than raising at the first error
+def validate_schema(record, schema, keys=()):
+    print(keys)
+    print(schema)
+    print(record)
+    print('=========================================')
     if isinstance(record, dict):
         total_keys = set(schema.keys())
         remove_keys = ['required', 'type', 'description']
@@ -129,16 +134,20 @@ def validate_schema(record, schema, key=None):
             if k not in schema:
                 pass
             if k not in record and schema[k].get('required', False):
-                raise ValueError('{} is required'.format(k))
+                raise ValueError('{} is required in {}'.format(k, keys))
             elif k in record and k in schema:
-                validate_schema(record[k], schema[k], k)
+                validate_schema(record[k], schema[k], keys + (k, ))
     elif isinstance(record, collections.Iterable) and not isinstance(record,
                                                                      str):
-        for r in record:
-            validate_schema(r, schema, key)
+        if isinstance(record[0], dict):
+            for r in record:
+                validate_schema(r, schema['type'], keys)
+        else:
+            for r in record:
+                validate_schema(r, schema, keys)
     else:
         if not isinstance(record, schema['type']):
             raise ValueError('Schema expected type: {}, '
                              'got type: {} in '
                              '{{{}:{}}}'.format(type(record),
-                                                schema['type'], key, record))
+                                                schema['type'], keys, record))
