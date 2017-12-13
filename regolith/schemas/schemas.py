@@ -1,3 +1,4 @@
+"""Database schemas"""
 schemas = {
     'grants': {
         '_id':

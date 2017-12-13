@@ -1,4 +1,4 @@
-"""Validators and convertors for regolith input."""
+"""Validators and converters for regolith input."""
 import collections
 import os
 import re
@@ -118,10 +118,18 @@ DEFAULT_VALIDATORS = {
 
 # TODO: run this as a lint like thing rather than raising at the first error
 def validate_schema(record, schema, keys=()):
-    print(keys)
-    print(schema)
-    print(record)
-    print('=========================================')
+    """Validate a database record against a schema
+
+    Parameters
+    ----------
+    record : dict
+        The database record to be tracked
+    schema : dict
+        The schema to validate the record against
+    keys : tuple
+        The sequential keys for the data being accessed, used for
+        printing/debuging errors
+    """
     if isinstance(record, dict):
         total_keys = set(schema.keys())
         remove_keys = ['required', 'type', 'description']
