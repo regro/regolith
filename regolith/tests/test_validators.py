@@ -1,6 +1,6 @@
 from regolith.validators import validate_schema
-from regolith.schemas.schemas import schemas
-from regolith.schemas.exemplars import exemplars
+from regolith.schemas import schemas
+from regolith.exemplars import exemplars
 import pytest
 
 
