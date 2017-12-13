@@ -116,36 +116,29 @@ DEFAULT_VALIDATORS = {
 }
 
 
-def validate_schema(record, schema):
+def validate_schema(record, schema, key=None):
     if isinstance(record, dict):
-        total_keys = set(record.keys())
-        total_keys.update(set(schema.keys()))
+        total_keys = set(schema.keys())
+        remove_keys = ['required', 'type', 'description']
+        for k in remove_keys:
+            if k in total_keys:
+                total_keys.remove(k)
+        total_keys.update(set(record.keys()))
+
         for k in total_keys:
             if k not in schema:
                 pass
             if k not in record and schema[k].get('required', False):
                 raise ValueError('{} is required'.format(k))
             elif k in record and k in schema:
-                print(k)
-                validate_schema(record[k], schema[k])
+                validate_schema(record[k], schema[k], k)
     elif isinstance(record, collections.Iterable) and not isinstance(record,
                                                                      str):
         for r in record:
-            validate_schema(r, schema)
+            validate_schema(r, schema, key)
     else:
         if not isinstance(record, schema['type']):
             raise ValueError('Schema expected type: {}, '
-                             'got type: {}'.format(type(record),
-                                                   schema['type']))
-
-
-dict_schema = {'key':
-                   {'type': str, 'required': True}
-               }
-dict_schema2 = {'key':
-                    {'key1': {'type': str, 'required': True, 'description':
-                              'key one schema'},
-                     'key2': {'type': [int, float], 'required': False},
-                     'key3': [{'type': [int, float], 'required': False}]
-                     }
-                }
+                             'got type: {} in '
+                             '{{{}:{}}}'.format(type(record),
+                                                schema['type'], key, record))

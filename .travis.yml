@@ -20,11 +20,14 @@ install:
   - conda update conda
 
   # Install dependencies
-  - conda install python
+  - conda install -n test --file requirements/run.txt
+  - source activate test
   - python setup.py install
 
 script:
   - set -e
+  - conda install --file requirements/test.txt
+  - pytest -vvs .
   - # Command to build your docs
   - pip install doctr
   - conda install --file requirements/doc.txt
