@@ -2,7 +2,10 @@
 import collections
 import os
 import re
+
+from cerberus import Validator
 from getpass import getpass
+
 
 from regolith.tools import string_types
 
@@ -116,46 +119,17 @@ DEFAULT_VALIDATORS = {
 }
 
 
-# TODO: run this as a lint like thing rather than raising at the first error
-def validate_schema(record, schema, keys=()):
-    """Validate a database record against a schema
+def pop_description(schema):
+    """Pop description off the schema since Cerberus doesn't support it"""
+    if isinstance(schema, dict):
+        schema.pop('description', None)
+        for v in schema.values():
+            pop_description(v)
 
-    Parameters
-    ----------
-    record : dict
-        The database record to be tracked
-    schema : dict
-        The schema to validate the record against
-    keys : tuple
-        The sequential keys for the data being accessed, used for
-        printing/debuging errors
-    """
-    if isinstance(record, dict):
-        total_keys = set(schema.keys())
-        remove_keys = ['required', 'type', 'description']
-        for k in remove_keys:
-            if k in total_keys:
-                total_keys.remove(k)
-        total_keys.update(set(record.keys()))
 
-        for k in total_keys:
-            if k not in schema:
-                pass
-            if k not in record and schema[k].get('required', False):
-                raise ValueError('{} is required in {}'.format(k, keys))
-            elif k in record and k in schema:
-                validate_schema(record[k], schema[k], keys + (k, ))
-    elif isinstance(record, collections.Iterable) and not isinstance(record,
-                                                                     str):
-        if isinstance(record[0], dict):
-            for r in record:
-                validate_schema(r, schema['type'], keys)
-        else:
-            for r in record:
-                validate_schema(r, schema, keys)
-    else:
-        if not isinstance(record, schema['type']):
-            raise ValueError('Schema expected type: {}, '
-                             'got type: {} in '
-                             '{{{}:{}}}'.format(type(record),
-                                                schema['type'], keys, record))
+def validate(db, record):
+    from regolith.schemas import schemas
+    schema = schemas[db]
+    pop_description(schema)
+    v = Validator(schema, allow_unknown=True)
+    return v.validate(record)
