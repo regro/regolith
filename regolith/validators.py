@@ -128,8 +128,23 @@ def pop_description(schema):
 
 
 def validate(db, record):
+    """Validate a record for a given db
+    
+    Parameters
+    ----------
+    db : str
+        The name of the db in question
+    record : dict
+        The record to be validated
+
+    Returns
+    -------
+    bool:
+        True is valid
+
+    """
     from regolith.schemas import schemas
     schema = schemas[db]
     pop_description(schema)
     v = Validator(schema, allow_unknown=True)
-    return v.validate(record)
+    return v.validate(record), v.errors

@@ -200,7 +200,7 @@ schemas = {
                  'other': {
                      'description': 'other information about the project',
                      'required': False,
-                     'type': 'string'},
+                     'type': ['list','string']},
                  'repo': {
                      'description': 'URL of the source code repo, if available',
                      'required': False,
@@ -288,7 +288,7 @@ schemas = {
                                   'for identifying the group member in '
                                   'citations or elsewhere.',
                    'required': True,
-                   'type': 'string'},
+                   'type': ['string', 'list']},
                'avatar': {
                    'description': 'URL to avatar',
                    'required': True,
@@ -324,7 +324,7 @@ schemas = {
                    'description': 'Employment information, similar to '
                                   'educational information.',
                    'required': True,
-                   'type': 'string',
+                   'type': 'list',
                    'schema': {
                        'begin_month': {'required': False, 'type': 'string'},
                        'begin_year': {'required': True, 'type': 'integer'},

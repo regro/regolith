@@ -6,6 +6,8 @@ import os
 
 from flask import Flask, abort, request, render_template, redirect, url_for
 
+from regolith.validators import validate
+
 app = Flask('regolith')
 
 
@@ -59,6 +61,17 @@ def collection_page(dbname, collname):
                     f.write(form['body'])
                 traceback.print_exc()
                 raise
+            tv, errors = validate(dbname, body)
+            if not tv:
+                td = tempfile.TemporaryDirectory()
+                n = os.path.join(td.name, 'regolith.txt')
+                print(errors)
+                print('Writing text file to {}. '
+                      'Please try again.'.format(n))
+                with open(n) as f:
+                    f.write(form['body'])
+                raise ValueError('Error while validating the record')
+
             rc.client.update_one(dbname, collname, {'_id': body['_id']}, body)
             status = 'saved ✓'
             status_id = str(body['_id'])
@@ -75,6 +88,16 @@ def collection_page(dbname, collname):
                     f.write(form['body'])
                 traceback.print_exc()
                 raise
+            tv, errors = validate(dbname, body)
+            if not tv:
+                td = tempfile.TemporaryDirectory()
+                n = os.path.join(td.name, 'regolith.txt')
+                print(errors)
+                print('Writing text file to {}. '
+                      'Please try again.'.format(n))
+                with open(n) as f:
+                    f.write(form['body'])
+                raise ValueError('Error while validating the record')
             try:
                 added = rc.client.insert_one(dbname, collname, body)
             except Exception:
