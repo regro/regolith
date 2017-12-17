@@ -459,6 +459,12 @@ def pop_description(schema):
             pop_description(v)
 
 
+class MyValidator(Validator):
+    def _validate_description(self, description, field, value):
+        if False:
+            self._error(field, "Shouldn't be here")
+
+
 def validate(db, record):
     """Validate a record for a given db
 
@@ -478,8 +484,7 @@ def validate(db, record):
 
     """
     schema = SCHEMAS[db]
-    pop_description(schema)
-    v = Validator(schema)
+    v = MyValidator(schema)
     return v.validate(record), v.errors
 
 
