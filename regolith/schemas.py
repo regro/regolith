@@ -479,7 +479,7 @@ def validate(db, record):
     """
     schema = SCHEMAS[db]
     pop_description(schema)
-    v = Validator(schema, allow_unknown=True)
+    v = Validator(schema)
     return v.validate(record), v.errors
 
 
