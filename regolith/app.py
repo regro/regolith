@@ -6,7 +6,7 @@ import os
 
 from flask import Flask, abort, request, render_template, redirect, url_for
 
-from regolith.validators import validate
+from regolith.schemas import validate
 
 app = Flask('regolith')
 

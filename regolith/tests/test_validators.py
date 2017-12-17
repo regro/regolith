@@ -1,8 +1,6 @@
 import pytest
 
-from regolith.exemplars import EXEMPLARS
-from regolith.schemas import SCHEMAS
-from regolith.validators import validate
+from regolith.schemas import SCHEMAS, validate, EXEMPLARS
 
 
 @pytest.mark.parametrize('key', SCHEMAS.keys())

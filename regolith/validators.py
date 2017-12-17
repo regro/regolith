@@ -2,8 +2,6 @@
 import os
 from getpass import getpass
 
-from cerberus import Validator
-
 from regolith.tools import string_types
 
 
@@ -114,34 +112,3 @@ DEFAULT_VALIDATORS = {
     'stores': (always_false, ensure_stores),
     'email': (always_false, ensure_email),
 }
-
-
-def pop_description(schema):
-    """Pop description off the schema since Cerberus doesn't support it"""
-    if isinstance(schema, dict):
-        schema.pop('description', None)
-        for v in schema.values():
-            pop_description(v)
-
-
-def validate(db, record):
-    """Validate a record for a given db
-    
-    Parameters
-    ----------
-    db : str
-        The name of the db in question
-    record : dict
-        The record to be validated
-
-    Returns
-    -------
-    bool:
-        True is valid
-
-    """
-    from regolith.schemas import SCHEMAS
-    schema = SCHEMAS[db]
-    pop_description(schema)
-    v = Validator(schema, allow_unknown=True)
-    return v.validate(record), v.errors
