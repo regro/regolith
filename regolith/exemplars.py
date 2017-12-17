@@ -1,5 +1,5 @@
 """Exemplars of the database schemas"""
-exemplars = {'abstracts': {'_id': 'Mouginot.Model',
+EXEMPLARS = {'abstracts': {'_id': 'Mouginot.Model',
                            'coauthors': 'P.P.H. Wilson',
                            'email': 'mouginot@wisc.edu',
                            'firstname': 'Baptiste',

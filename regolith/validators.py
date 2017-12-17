@@ -1,11 +1,8 @@
 """Validators and converters for regolith input."""
-import collections
 import os
-import re
-
-from cerberus import Validator
 from getpass import getpass
 
+from cerberus import Validator
 
 from regolith.tools import string_types
 
@@ -143,8 +140,8 @@ def validate(db, record):
         True is valid
 
     """
-    from regolith.schemas import schemas
-    schema = schemas[db]
+    from regolith.schemas import SCHEMAS
+    schema = SCHEMAS[db]
     pop_description(schema)
     v = Validator(schema, allow_unknown=True)
     return v.validate(record), v.errors

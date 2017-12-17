@@ -1,5 +1,5 @@
 """Database schemas"""
-schemas = {
+SCHEMAS = {
     'grants': {
         '_id':
             {'description': 'short representation, such as this-is-my-name',
@@ -67,7 +67,12 @@ schemas = {
                                       'type': ('integer', 'float')}}}},
         'title': {'description': 'actual title of proposal / grant',
                   'required': True,
-                  'type': 'string'}},
+                  'type': 'string'},
+        'status': {'description': 'status of the grant',
+                   'required': True,
+                   'type': 'string',
+                   'allowed': ['pending', 'declined', 'accepted', 'in-prep']}
+    },
     'abstracts': {
         '_id': {
             'description': 'Unique identifier for submission. This generally '
@@ -200,9 +205,10 @@ schemas = {
                  'other': {
                      'description': 'other information about the project',
                      'required': False,
-                     'type': ['list','string']},
+                     'type': ['list', 'string']},
                  'repo': {
-                     'description': 'URL of the source code repo, if available',
+                     'description': 'URL of the source code repo, if '
+                                    'available',
                      'required': False,
                      'type': 'string'},
                  'team': {
@@ -220,7 +226,10 @@ schemas = {
                  },
                  'website': {'description': 'URL of the website.',
                              'required': True,
-                             'type': 'string'}},
+                             'type': 'string'},
+                 'grant': {'description': 'Grant id if there is a grant '
+                                          'supporting this project',
+                           'type': 'string'}},
     'proposals': {
         '_id': {'description': 'short represntation, such as this-is-my-name',
                 'required': True,
