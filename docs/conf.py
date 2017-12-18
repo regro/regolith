@@ -298,6 +298,8 @@ def format_key(schema, key, indent_str=''):
                               description=schema[key].get('description', ''),
                               type=schema[key].get('type', '')), indent_str)
     s = s.replace(', , ', ', ')
+    if schema.get('schema', False):
+        s += '\n'
     for inner_key in schema.get('schema', ()):
         s += format_key(schema['schema'], inner_key,
                         indent_str=indent_str + '\t')

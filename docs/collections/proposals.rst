@@ -26,33 +26,33 @@ YAML Example
 .. code-block:: yaml
 
 	mypropsal:
-	  durration: 3
-	  pre:
-	    cv:
-	      - http://pdf.com/scopatz-cv
-	      - http://pdf.com/flanagan-cv
-	    narrative: http://some.com/pdf
-	    month: Aug
-	    benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
-	    day: 2
-	    year: 1998
-	  month: Aug
-	  status: submitted
 	  day: 18
 	  full:
+	    benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
 	    narrative: http://some.com/pdf
 	    cv:
 	      - http://pdf.com/scopatz-cv
 	      - http://pdf.com/flanagan-cv
-	    benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
 	  ammount: 1000000.0
-	  pi: Anthony Scopatz
+	  status: submitted
+	  durration: 3
+	  year: 1999
+	  title: A very fine proposal indeed
+	  pre:
+	    benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
+	    narrative: http://some.com/pdf
+	    day: 2
+	    cv:
+	      - http://pdf.com/scopatz-cv
+	      - http://pdf.com/flanagan-cv
+	    month: Aug
+	    year: 1998
 	  currency: USD
 	  authors:
 	    - Anthony Scopatz
 	    - Robert Flanagan
-	  year: 1999
-	  title: A very fine proposal indeed
+	  pi: Anthony Scopatz
+	  month: Aug
 
 
 JSON/Mongo Example

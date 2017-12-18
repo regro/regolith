@@ -25,14 +25,14 @@ YAML Example
 	    - EMCH-558-2016-S
 	    - EMCH-758-2016-S
 	  category: homework
-	  questions:
-	    - 1-9
-	    - 1-10
-	    - 1-12
 	  points:
 	    - 1
 	    - 2
 	    - 3
+	  questions:
+	    - 1-9
+	    - 1-10
+	    - 1-12
 
 
 JSON/Mongo Example

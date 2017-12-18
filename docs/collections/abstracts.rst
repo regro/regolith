@@ -24,17 +24,17 @@ YAML Example
 .. code-block:: yaml
 
 	Mouginot.Model:
-	  firstname: Baptiste
 	  institution: University of Wisconsin-Madison
-	  timestamp: 5/5/2017 13:15:59
-	  coauthors: P.P.H. Wilson
-	  lastname: Mouginot
+	  firstname: Baptiste
+	  email: mouginot@wisc.edu
 	  title: Model Performance Analysis
 	  references: '[1] B. MOUGINOT, “cyCLASS: CLASS models for Cyclus,”, Figshare, https://dx.doi.org/10.6084/m9.figshare.3468671.v2
 	    (2016).'
-	  email: mouginot@wisc.edu
+	  coauthors: P.P.H. Wilson
+	  timestamp: 5/5/2017 13:15:59
 	  text: The CLASS team has developed high quality predictors based on pre-trained
 	    neural network...
+	  lastname: Mouginot
 
 
 JSON/Mongo Example

@@ -8,6 +8,7 @@ The following lists key names mapped to its type and meaning for each entry.
 
 :_id: string, short represntation, such as this-is-my-name, required
 :aka: ('list', 'string'), list of aliases, optional
+
 :email: string, email address, optional
 :university_id: string, The university identifier for the student, optional
 

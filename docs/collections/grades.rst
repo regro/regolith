@@ -22,11 +22,11 @@ YAML Example
 	Human A. Person-rx-power-hw02-EMCH-758-2017-S:
 	  student: hap
 	  course: EMCH-758-2017-S
-	  assignment: 2017-rx-power-hw02
 	  scores:
 	    - 1
 	    - 1.6
 	    - 3
+	  assignment: 2017-rx-power-hw02
 
 
 JSON/Mongo Example

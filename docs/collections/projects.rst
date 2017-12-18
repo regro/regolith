@@ -14,12 +14,13 @@ The following lists key names mapped to its type and meaning for each entry.
 :other: ['list', 'string'], other information about the project, optional
 :repo: string, URL of the source code repo, if available, optional
 :team: list, People who are/have been woking on this project., required
+
 	:end_month: string, optional
-	:begin_year: integer, optional
-	:end_year: integer, optional
-	:position: string, optional
-	:begin_month: string, optional
 	:name: string, optional
+	:begin_month: string, optional
+	:begin_year: integer, optional
+	:position: string, optional
+	:end_year: integer, optional
 :website: string, URL of the website., required
 
 
@@ -29,21 +30,21 @@ YAML Example
 .. code-block:: yaml
 
 	Cyclus:
+	  logo: http://fuelcycle.org/_static/big_c.png
+	  description: Agent-Based Nuclear Fuel Cycle Simulator
+	  name: Cyclus
+	  team:
+	    - end_month: July
+	      name: Anthony Scopatz
+	      end_year: 2015
+	      begin_month: June
+	      begin_year: 2013
+	      position: Project Lead
+	  website: http://fuelcycle.org/
 	  other:
 	    - Discrete facilities with discrete material transactions
 	    - Low barrier to entry, rapid payback to adoption
-	  logo: http://fuelcycle.org/_static/big_c.png
-	  website: http://fuelcycle.org/
-	  description: Agent-Based Nuclear Fuel Cycle Simulator
-	  team:
-	    - end_month: July
-	      begin_year: 2013
-	      end_year: 2015
-	      position: Project Lead
-	      begin_month: June
-	      name: Anthony Scopatz
 	  repo: https://github.com/cyclus/cyclus/
-	  name: Cyclus
 
 
 JSON/Mongo Example

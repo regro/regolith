@@ -22,13 +22,13 @@ YAML Example
 .. code-block:: yaml
 
 	my-vision:
-	  original: https://scopatz.com/my-vision/
-	  author: Anthony Scopatz
-	  title: My Vision
-	  post: I would like see things move forward. Deep, I know!
-	  month: September
-	  day: 18
 	  year: 2015
+	  title: My Vision
+	  day: 18
+	  post: I would like see things move forward. Deep, I know!
+	  author: Anthony Scopatz
+	  original: https://scopatz.com/my-vision/
+	  month: September
 
 
 JSON/Mongo Example
