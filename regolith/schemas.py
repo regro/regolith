@@ -762,16 +762,33 @@ def validate(db, record):
 
 
 schema_top_docs = {
-    'abstracts': 'Abstracts for a conference or workshop. This is generally public information\n\n',
+    'abstracts': 'Abstracts for a conference or workshop. This is generally '
+                 'public information\n\n',
     'assignments': 'Information about assignments for classes.\n\n',
-    'blog': 'This collection represents blog posts written by the members of the research group.\n\n',
-    'citations': 'This collection should contain bibtex equivalent fields.  Additionally,\nthe keys ``"entrytype"`` denotes things like ``ARTICLE``, and ``"_id"`` denotes\nthe entry identifier.  Furthermore, the ``"author"`` key should be a list of\nstrings.  See the Python project `BibtexParser <https://bibtexparser.readthedocs.org/>`_\nfor more information.\n\n',
-    'courses': 'This is a collection that describes a course, when it happened, and\nwho is taking it. This is likely private.\n\n',
-    'grades': 'The grade for a student on an assignment. This information should be private.\n\n',
-    'grants': 'This collection represents grants that have been awarded to the group.\n\n',
-    'jobs': 'This collection describes the research group jobs. This is normally public data.\n\n\n',
-    'news': 'This collection describes the research group news. This is normally public data.\n\n',
-    'people': 'This collection describes the members of the research group.  This is normally public\ndata.\n\n',
-    'projects': 'This collection describes the research group projects. This is normally public data.\n\n',
-    'proposals': 'This collection represents proposals that have been submitted by the group.\n\n',
-    'students': 'This is a collection of student names and metadata. This should probably be private.\n\n'}
+    'blog': 'This collection represents blog posts written by the members of '
+            'the research group.\n\n',
+    'citations': 'This collection should contain bibtex equivalent fields.  '
+                 'Additionally,\nthe keys ``"entrytype"`` denotes things '
+                 'like ``ARTICLE``, and ``"_id"`` denotes\nthe entry '
+                 'identifier.  Furthermore, the ``"author"`` key should be a '
+                 'list of\nstrings.  See the Python project `BibtexParser '
+                 '<https://bibtexparser.readthedocs.org/>`_\nfor more '
+                 'information.\n\n',
+    'courses': 'This is a collection that describes a course, when it '
+               'happened, and\nwho is taking it. This is likely private.\n\n',
+    'grades': 'The grade for a student on an assignment. This information '
+              'should be private.\n\n',
+    'grants': 'This collection represents grants that have been awarded to '
+              'the group.\n\n',
+    'jobs': 'This collection describes the research group jobs. This is '
+            'normally public data.\n\n\n',
+    'news': 'This collection describes the research group news. This is '
+            'normally public data.\n\n',
+    'people': 'This collection describes the members of the research group.  '
+              'This is normally public\ndata.\n\n',
+    'projects': 'This collection describes the research group projects. This '
+                'is normally public data.\n\n',
+    'proposals': 'This collection represents proposals that have been '
+                 'submitted by the group.\n\n',
+    'students': 'This is a collection of student names and metadata. This '
+                'should probably be private.\n\n'}
