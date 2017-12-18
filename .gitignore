@@ -58,3 +58,6 @@ target/
 
 # Rever
 rever/
+
+# Auto sphinx docs
+docs/collections/auto

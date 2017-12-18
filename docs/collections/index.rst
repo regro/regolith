@@ -8,16 +8,16 @@ The following contain the regolith schemas and examples in both YAML and JSON/Mo
 .. toctree::
     :maxdepth: 1
 
-    abstracts
-    assignments
-    blog
+    auto/abstracts
+    auto/assignments
+    auto/blog
     citations
     courses
-    grades
-    grants
+    auto/grades
+    auto/grants
     jobs
     news
-    people
-    projects
-    proposals
-    students
+    auto/people
+    auto/projects
+    auto/proposals
+    auto/students

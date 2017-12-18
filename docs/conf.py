@@ -11,7 +11,6 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
 import json
 import tempfile
 from textwrap import indent
@@ -277,9 +276,6 @@ schema_top_docs = {
     'proposals': 'This collection represents proposals that have been submitted by the group.\n\n',
     'students': 'This is a collection of student names and metadata. This should probably be private.\n\n'}
 
-from pprint import pprint
-import string
-
 
 def format_key(schema, key, indent_str=''):
     s = ''
@@ -308,7 +304,7 @@ def format_key(schema, key, indent_str=''):
 
 
 def build_schema_doc(key):
-    fn = 'collections/' + key + '.rst'
+    fn = 'collections/auto/' + key + '.rst'
     with open(fn, 'w') as f:
         s = ''
         s += key.title() + '\n'
@@ -326,7 +322,7 @@ def build_schema_doc(key):
         temp = tempfile.NamedTemporaryFile()
         temp2 = tempfile.NamedTemporaryFile()
         with open(temp.name, 'w') as ff:
-            json.dump(EXEMPLARS[key], ff)
+            json.dump(EXEMPLARS[key], ff, sort_keys=True)
         jd = json.dumps(EXEMPLARS[key], sort_keys=True,
                         indent=4, separators=(',', ': '))
         json_to_yaml(temp.name, temp2.name)
