@@ -19,7 +19,7 @@ import cloud_sptheme as csp
 
 from regolith import __version__ as REGOLITH_VERSION
 from regolith.fsclient import json_to_yaml
-from regolith.schemas import SCHEMAS, EXEMPLARS, schema_top_docs
+from regolith.schemas import SCHEMAS, EXEMPLARS
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -293,13 +293,14 @@ def build_schema_doc(key):
         s = ''
         s += key.title() + '\n'
         s += '=' * len(key) + '\n'
-        s += schema_top_docs[key]
+        s += SCHEMAS[key]['_description']['description']
         s += 'Schema\n------\nThe following lists key names mapped to its type and meaning for each entry.\n\n'
         schema = SCHEMAS[key]
         schema_list = list(schema.keys())
         schema_list.sort()
         for k in schema_list:
-            s += format_key(schema[k], key=k)
+            if k not in ['_description']:
+                s += format_key(schema[k], key=k)
         s += '\n\n'
         s += 'YAML Example\n------------\n\n'
         s += '.. code-block:: yaml\n\n'
