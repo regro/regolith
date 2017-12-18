@@ -451,14 +451,6 @@ SCHEMAS = {
 }
 
 
-def pop_description(schema):
-    """Pop description off the schema since Cerberus doesn't support it"""
-    if isinstance(schema, dict):
-        schema.pop('description', None)
-        for v in schema.values():
-            pop_description(v)
-
-
 class MyValidator(Validator):
     def _validate_description(self, description, field, value):
         if False:

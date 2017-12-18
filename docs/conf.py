@@ -102,7 +102,7 @@ pygments_style = 'pastie'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'redcloud'
-#html_theme = 'blackcloud'
+# html_theme = 'blackcloud'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -253,3 +253,63 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+schema_top_docs = {
+    'abstracts': 'Abstracts for a conference or workshop. This is generally public information\n\n',
+    'assignments': 'Information about assignments for classes.\n\n',
+    'blank': '\n',
+    'blog': 'This collection represents blog posts written by the members of the research group.\n\n',
+    'citations': 'This collection should contain bibtex equivalent fields.  Additionally,\nthe keys ``"entrytype"`` denotes things like ``ARTICLE``, and ``"_id"`` denotes\nthe entry identifier.  Furthermore, the ``"author"`` key should be a list of\nstrings.  See the Python project `BibtexParser <https://bibtexparser.readthedocs.org/>`_\nfor more information.\n\n',
+    'courses': 'This is a collection that describes a course, when it happened, and\nwho is taking it. This is likely private.\n\n',
+    'grades': 'The grade for a student on an assignment. This information should be private.\n\n',
+    'grants': 'This collection represents grants that have been awarded to the group.\n\n',
+    'jobs': 'This collection describes the research group jobs. This is normally public data.\n\n\n',
+    'news': 'This collection describes the research group news. This is normally public data.\n\n',
+    'people': 'This collection describes the members of the research group.  This is normally public\ndata.\n\n',
+    'projects': 'This collection describes the research group projects. This is normally public data.\n\n',
+    'proposals': 'This collection represents proposals that have been submitted by the group.\n\n',
+    'students': 'This is a collection of student names and metadata. This should probably be private.\n\n'}
+
+from regolith.schemas import SCHEMAS, EXEMPLARS
+from regolith.fsclient import json_to_yaml
+import json
+from io import StringIO
+
+def format_key(schema, key, indent=''):
+    s = ''
+    line_format = ':{key}: {type}, {description}\n'
+    s += line_format.format(
+        key=schema[key],
+        type=schema[key]['type]'],
+        description=schema[key]['description'])
+    if 'schema' in schema:
+        for key in schema['schema']:
+            s += format_key(schema['schema'], key, indent=indent+'\t')
+    return s
+
+
+def build_schema_doc(key):
+    fn = key + '_test.rst'
+    with open(fn, 'w') as f:
+        s = ''
+        s += key
+        s += '=' * len(key)
+        s += 'Schema\n------\nThe following lists key names mapped to its type and meaning for each entry.\n\n'
+        schema = SCHEMAS[key]
+        line_format = ':{key}: {type}, {description}\n'
+        for k in schema:
+            s += line_format.format(key=k, type=schema[k]['type'],
+                                    description=schema[k]['description'])
+        s += '\n\n'
+        s += 'YAML Example\n------------\n\n'
+        s += '.. code-block:: yaml\n\n'
+        jd = json.dumps(EXEMPLARS[key])
+        sio = StringIO()
+        json_to_yaml(jd, sio)
+        s += sio.getvalue()
+        s += '\n\n'
+        s += 'JSON/Mongo Example\n------------------\n\n'
+        s += '.. code-block:: json\n\n'
+        s += jd
+        s += '\n'
+        f.write(s)
