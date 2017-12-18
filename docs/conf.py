@@ -79,7 +79,7 @@ release = REGOLITH_VERSION
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', 'collections/blank.rst']
+exclude_patterns = ['_build', ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -263,7 +263,6 @@ texinfo_documents = [
 schema_top_docs = {
     'abstracts': 'Abstracts for a conference or workshop. This is generally public information\n\n',
     'assignments': 'Information about assignments for classes.\n\n',
-    'blank': '\n',
     'blog': 'This collection represents blog posts written by the members of the research group.\n\n',
     'citations': 'This collection should contain bibtex equivalent fields.  Additionally,\nthe keys ``"entrytype"`` denotes things like ``ARTICLE``, and ``"_id"`` denotes\nthe entry identifier.  Furthermore, the ``"author"`` key should be a list of\nstrings.  See the Python project `BibtexParser <https://bibtexparser.readthedocs.org/>`_\nfor more information.\n\n',
     'courses': 'This is a collection that describes a course, when it happened, and\nwho is taking it. This is likely private.\n\n',
