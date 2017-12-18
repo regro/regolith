@@ -294,7 +294,8 @@ def build_schema_doc(key):
         s += key.title() + '\n'
         s += '=' * len(key) + '\n'
         s += SCHEMAS[key]['_description']['description']
-        s += 'Schema\n------\nThe following lists key names mapped to its type and meaning for each entry.\n\n'
+        s += 'Schema\n------\nThe following lists key names mapped to its ' \
+             'type and meaning for each entry.\n\n '
         schema = SCHEMAS[key]
         schema_list = list(schema.keys())
         schema_list.sort()
