@@ -1,44 +1,23 @@
 Proposals
-============
+=========
 This collection represents proposals that have been submitted by the group.
 
 Schema
 ------
 The following lists key names mapped to its type and meaning for each entry.
 
-:_id: str or number, short represntation, such as this-is-my-name
-:title: str, actual title of proposal
-:pi: str, principal investigator name
-:authors: list of str, other investigator names
-:status: str, e.g. 'submitted', 'accepted', 'rejected'
-:ammount: int or float, value of award
-:currency: str, typically '$' or 'USD'
-:durration: int or float, number of years
-:year: int, Year that the proposal is due
-:month: str, month that the proposal is due
-:day: int, day that the proposal is due
-:pre: dict,  Information about the pre-proposal, optional.
-    This dict has the following form:
-
-    .. code-block:: python
-
-        {"year": int,
-         "month": str,
-         "day": int,
-         "narrative": str, # URL of document
-         "benefit_of_collaboration": str, # URL of document
-         "cv": list of str, # URL to documents
-         }
-
-:full: Information about the pre-proposal, optional
-    This dict has the following form:
-
-    .. code-block:: python
-
-        {"narrative": str, # URL of document
-         "benefit_of_collaboration": str, # URL of document
-         "cv": list of str, # URL to documents
-         }
+:_id: ('string', 'integer', 'float'), short represntation, such as this-is-my-name, required
+:ammount: ('integer', 'float'), value of award, required
+:authors: string, other investigator names, required
+:currency: string, typically '$' or 'USD', required
+:day: integer, day that the proposal is due, required
+:durration: ('integer', 'float'), number of years, required
+:month: string, month that the proposal is due, required
+:pi: string, principal investigator name, required
+:pre: dict, Information about the pre-proposal, optional
+:status: string, e.g. 'submitted', 'accepted', 'rejected', required
+:title: string, actual title of proposal, required
+:year: integer, Year that the proposal is due, required
 
 
 YAML Example
@@ -46,34 +25,34 @@ YAML Example
 
 .. code-block:: yaml
 
-    mypropsal:
-        title: A very fine proposal indeed
-        pi: Anthony Scopatz
-        authors:
-            - Anthony Scopatz
-            - Robert Flanagan
-        status: submitted
-        ammount: 1000000.0
-        currency: USD
-        durration: 3
-        year: 1999
-        month: Aug
-        day: 18
-        pre:
-            year: 1998
-            month: Aug
-            day: 2
-            narrative: http://some.com/pdf
-            benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
-            cv:
-                - http://pdf.com/scopatz-cv
-                - http://pdf.com/flanagan-cv
-        full:
-            narrative: http://some.com/pdf
-            benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
-            cv:
-                - http://pdf.com/scopatz-cv
-                - http://pdf.com/flanagan-cv
+	mypropsal:
+	  durration: 3
+	  pre:
+	    cv:
+	      - http://pdf.com/scopatz-cv
+	      - http://pdf.com/flanagan-cv
+	    narrative: http://some.com/pdf
+	    month: Aug
+	    benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
+	    day: 2
+	    year: 1998
+	  month: Aug
+	  status: submitted
+	  day: 18
+	  full:
+	    narrative: http://some.com/pdf
+	    cv:
+	      - http://pdf.com/scopatz-cv
+	      - http://pdf.com/flanagan-cv
+	    benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
+	  ammount: 1000000.0
+	  pi: Anthony Scopatz
+	  currency: USD
+	  authors:
+	    - Anthony Scopatz
+	    - Robert Flanagan
+	  year: 1999
+	  title: A very fine proposal indeed
 
 
 JSON/Mongo Example
@@ -81,28 +60,38 @@ JSON/Mongo Example
 
 .. code-block:: json
 
-    {"_id": "mypropsal",
-     "title": "A very fine proposal indeed",
-     "pi": "Anthony Scopatz",
-     "authors": ["Anthony Scopatz",
-                 "Robert Flanagan"],
-     "status": "submitted",
-     "ammount": 1000000.0,
-     "currency": "USD",
-     "durration": 3,
-     "year": 1999,
-     "month": "Aug",
-     "day": 18,
-     "pre": {"year": 1998,
-             "month": "Aug",
-             "day": 2,
-             "narrative": "http://some.com/pdf",
-             "benefit_of_collaboration": "http://pdf.com/benefit_of_collaboration",
-             "cv": ["http://pdf.com/scopatz-cv",
-                    "http://pdf.com/flanagan-cv"]},
-     "full": {"narrative": "http://some.com/pdf"
-             "benefit_of_collaboration": "http://pdf.com/benefit_of_collaboration",
-             "cv": ["http://pdf.com/scopatz-cv",
-                    "http://pdf.com/flanagan-cv"]}
-    }
-
+	{
+	    "_id": "mypropsal",
+	    "ammount": 1000000.0,
+	    "authors": [
+	        "Anthony Scopatz",
+	        "Robert Flanagan"
+	    ],
+	    "currency": "USD",
+	    "day": 18,
+	    "durration": 3,
+	    "full": {
+	        "benefit_of_collaboration": "http://pdf.com/benefit_of_collaboration",
+	        "cv": [
+	            "http://pdf.com/scopatz-cv",
+	            "http://pdf.com/flanagan-cv"
+	        ],
+	        "narrative": "http://some.com/pdf"
+	    },
+	    "month": "Aug",
+	    "pi": "Anthony Scopatz",
+	    "pre": {
+	        "benefit_of_collaboration": "http://pdf.com/benefit_of_collaboration",
+	        "cv": [
+	            "http://pdf.com/scopatz-cv",
+	            "http://pdf.com/flanagan-cv"
+	        ],
+	        "day": 2,
+	        "month": "Aug",
+	        "narrative": "http://some.com/pdf",
+	        "year": 1998
+	    },
+	    "status": "submitted",
+	    "title": "A very fine proposal indeed",
+	    "year": 1999
+	}

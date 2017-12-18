@@ -12,8 +12,15 @@
 # serve to show the default.
 
 import sys, os
+import json
+import tempfile
+from textwrap import indent
+
 import cloud_sptheme as csp
+
 from regolith import __version__ as REGOLITH_VERSION
+from regolith.fsclient import json_to_yaml
+from regolith.schemas import SCHEMAS, EXEMPLARS
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -270,46 +277,66 @@ schema_top_docs = {
     'proposals': 'This collection represents proposals that have been submitted by the group.\n\n',
     'students': 'This is a collection of student names and metadata. This should probably be private.\n\n'}
 
-from regolith.schemas import SCHEMAS, EXEMPLARS
-from regolith.fsclient import json_to_yaml
-import json
-from io import StringIO
+from pprint import pprint
+import string
 
-def format_key(schema, key, indent=''):
+
+def format_key(schema, key, indent_str=''):
     s = ''
-    line_format = ':{key}: {type}, {description}\n'
-    s += line_format.format(
-        key=schema[key],
-        type=schema[key]['type]'],
-        description=schema[key]['description'])
-    if 'schema' in schema:
-        for key in schema['schema']:
-            s += format_key(schema['schema'], key, indent=indent+'\t')
+    line_format = ':{key}: {type}, {description}, required\n'
+    line_format_o = ':{key}: {type}, {description}, optional\n'
+    if not schema.get('required', False):
+        lf = line_format_o
+    else:
+        lf = line_format
+    if 'type' in schema and 'description' in schema:
+        s += indent(lf.format(key=key,
+                              description=schema.get('description', ''),
+                              type=schema.get('type', '')), indent_str)
+    elif 'type' in schema[key]:
+        s += indent(lf.format(key=key,
+                              description=schema[key].get('description', ''),
+                              type=schema[key].get('type', '')), indent_str)
+    s = s.replace(', , ', ', ')
+    for inner_key in schema.get('schema', ()):
+        s += format_key(schema['schema'], inner_key,
+                        indent_str=indent_str + '\t')
+
     return s
 
 
 def build_schema_doc(key):
-    fn = key + '_test.rst'
+    fn = 'collections/' + key + '.rst'
     with open(fn, 'w') as f:
         s = ''
-        s += key
-        s += '=' * len(key)
+        s += key.title() + '\n'
+        s += '=' * len(key) + '\n'
+        s += schema_top_docs[key]
         s += 'Schema\n------\nThe following lists key names mapped to its type and meaning for each entry.\n\n'
         schema = SCHEMAS[key]
-        line_format = ':{key}: {type}, {description}\n'
-        for k in schema:
-            s += line_format.format(key=k, type=schema[k]['type'],
-                                    description=schema[k]['description'])
+        schema_list = list(schema.keys())
+        schema_list.sort()
+        for k in schema_list:
+            s += format_key(schema[k], key=k)
         s += '\n\n'
         s += 'YAML Example\n------------\n\n'
         s += '.. code-block:: yaml\n\n'
-        jd = json.dumps(EXEMPLARS[key])
-        sio = StringIO()
-        json_to_yaml(jd, sio)
-        s += sio.getvalue()
+        temp = tempfile.NamedTemporaryFile()
+        temp2 = tempfile.NamedTemporaryFile()
+        with open(temp.name, 'w') as ff:
+            json.dump(EXEMPLARS[key], ff)
+        jd = json.dumps(EXEMPLARS[key], sort_keys=True,
+                        indent=4, separators=(',', ': '))
+        json_to_yaml(temp.name, temp2.name)
+        with open(temp2.name, 'r') as ff:
+            s += indent(ff.read(), '\t')
         s += '\n\n'
         s += 'JSON/Mongo Example\n------------------\n\n'
         s += '.. code-block:: json\n\n'
-        s += jd
+        s += indent(jd, '\t')
         s += '\n'
         f.write(s)
+
+
+for k in SCHEMAS:
+    build_schema_doc(k)
