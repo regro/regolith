@@ -95,12 +95,14 @@ def collection_page(dbname, collname):
             if not tv:
                 td = tempfile.TemporaryDirectory()
                 n = os.path.join(td.name, 'regolith.txt')
-                print(errors)
-                print('Writing text file to {}. '
-                      'Please try again.'.format(n))
                 with open(n) as f:
                     f.write(form['body'])
-                raise ValueError('Error while validating the record')
+                raise ValueError('Error while validating the record,'
+                                 ' writing text file to {}. '
+                                 'Please try again.\n\n'
+                                 'Your errors were\n'
+                                 '------------------'
+                                 '{}'.format(n, errors))
             try:
                 added = rc.client.insert_one(dbname, collname, body)
             except Exception:
