@@ -288,14 +288,14 @@ def format_key(schema, key, indent_str=''):
 
 
 def build_schema_doc(key):
-    fn = 'collections/auto/' + key + '.rst'
+    fn = 'collections/' + key + '.rst'
     with open(fn, 'w') as f:
         s = ''
         s += key.title() + '\n'
         s += '=' * len(key) + '\n'
-        s += SCHEMAS[key]['_description']['description']
+        s += SCHEMAS[key]['_description']['description'] + '\n\n'
         s += 'Schema\n------\nThe following lists key names mapped to its ' \
-             'type and meaning for each entry.\n\n '
+             'type and meaning for each entry.\n\n'
         schema = SCHEMAS[key]
         schema_list = list(schema.keys())
         schema_list.sort()

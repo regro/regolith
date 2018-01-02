@@ -49,14 +49,14 @@ def dump_yaml(filename, docs, inst=None):
     """Dumps a dict of documents into a file."""
     inst = YAML() if inst is None else inst
     inst.indent(mapping=2, sequence=4, offset=2)
-    my_sorted_dict = ruamel.yaml.comments.CommentedMap()
+    sorted_dict = ruamel.yaml.comments.CommentedMap()
     for k, doc in docs.items():
         _id = doc.pop('_id')
-        my_sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
+        sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
         for kk in sorted(doc.keys()):
-            my_sorted_dict[k][kk] = doc[kk]
+            sorted_dict[k][kk] = doc[kk]
     with open(filename, 'w') as fh:
-        inst.dump(my_sorted_dict, stream=fh)
+        inst.dump(sorted_dict, stream=fh)
 
 
 def json_to_yaml(inp, out):
