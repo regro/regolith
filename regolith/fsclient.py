@@ -135,7 +135,6 @@ class FileSystemClient:
     def load_database(self, db):
         """Loads a database."""
         dbpath = dbpathname(db, self.rc)
-        print(dbpath)
         self.load_json(db, dbpath)
         self.load_yaml(db, dbpath)
 

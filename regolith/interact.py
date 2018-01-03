@@ -16,5 +16,5 @@ for db in rc.databases:
 
 col = {}
 db_names = set([db['name'] for db in rc.databases])
-mega_db = client.mega_db
+mega_db = client.mega_dball_docs_from_collection
 
