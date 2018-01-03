@@ -78,6 +78,7 @@ class FileSystemClient:
         self.rc = rc
         self.closed = True
         self.dbs = None
+        self.mega_db = None
         self.open()
         self._collfiletypes = {}
         self._collexts = {}
@@ -88,6 +89,7 @@ class FileSystemClient:
 
     def open(self):
         self.dbs = defaultdict(lambda: defaultdict(dict))
+        self.mega_db = defaultdict(lambda: defaultdict(dict))
         self.closed = False
 
     def load_json(self, db, dbpath):
@@ -98,23 +100,42 @@ class FileSystemClient:
             base, ext = os.path.splitext(collfilename)
             self._collfiletypes[base] = 'json'
             print('loading ' + f + '...', file=sys.stderr)
-            dbs[db['name']][base] = load_json(f)
+            coll = load_json(f)
+            dbs[db['name']][base] = coll
+            if base in self.mega_db:
+                for k, v in coll.items():
+                    if k in self.mega_db[base]:
+                        self.mega_db[base][k].update(v)
+                    else:
+                        self.mega_db[base][k] = v
+            else:
+                self.mega_db[base] = coll
 
     def load_yaml(self, db, dbpath):
         """Loads the YAML part of a database."""
         dbs = self.dbs
-        for f in iglob(os.path.join(dbpath, '*.y?ml')):
+        for f in iglob(os.path.join(dbpath, '*.y*ml')):
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
             self._collexts[base] = ext
             self._collfiletypes[base] = 'yaml'
             print('loading ' + f + '...', file=sys.stderr)
-            dbs[db['name']][base], inst = load_yaml(f, return_inst=True)
+            coll, inst = load_yaml(f, return_inst=True)
+            dbs[db['name']][base] = coll
             self._yamlinsts[dbpath, base] = inst
+            if base in self.mega_db:
+                for k, v in coll.items():
+                    if k in self.mega_db[base]:
+                        self.mega_db[base][k].update(v)
+                    else:
+                        self.mega_db[base][k] = v
+            else:
+                self.mega_db[base] = coll
 
     def load_database(self, db):
         """Loads a database."""
         dbpath = dbpathname(db, self.rc)
+        print(dbpath)
         self.load_json(db, dbpath)
         self.load_yaml(db, dbpath)
 

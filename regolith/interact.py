@@ -11,9 +11,10 @@ filter_databases(rc)
 
 client = CLIENTS[rc.backend](rc)
 for db in rc.databases:
+    print(db)
     load_database(db, client, rc)
 
 col = {}
-# XXX: this does only one db currently
-for db in client.collection_names(rc.db):
-    col[db] = list(all_docs_from_collection(client, db))
+db_names = set([db['name'] for db in rc.databases])
+mega_db = client.mega_db
+
