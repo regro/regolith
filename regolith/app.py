@@ -6,6 +6,9 @@ import os
 
 from flask import Flask, abort, request, render_template, redirect, url_for
 
+from regolith.schemas import validate
+
+
 app = Flask('regolith')
 
 
@@ -55,10 +58,23 @@ def collection_page(dbname, collname):
                 n = os.path.join(td.name, 'regolith.txt')
                 print('Error in json parsing writing text file to {}. '
                       'Please try again.'.format(n))
-                with open(n) as f:
+                with open(n, 'w') as f:
                     f.write(form['body'])
                 traceback.print_exc()
                 raise
+            tv, errors = validate(dbname, body)
+            if not tv:
+                td = tempfile.TemporaryDirectory()
+                n = os.path.join(td.name, 'regolith.txt')
+                with open(n, 'w') as f:
+                    f.write(form['body'])
+                raise ValueError('Error while validating the record,'
+                                 ' writing text file to {}. '
+                                 'Please try again.\n\n'
+                                 'Your errors were\n'
+                                 '------------------'
+                                 '{}'.format(n, errors))
+
             rc.client.update_one(dbname, collname, {'_id': body['_id']}, body)
             status = 'saved ✓'
             status_id = str(body['_id'])
@@ -75,6 +91,18 @@ def collection_page(dbname, collname):
                     f.write(form['body'])
                 traceback.print_exc()
                 raise
+            tv, errors = validate(dbname, body)
+            if not tv:
+                td = tempfile.TemporaryDirectory()
+                n = os.path.join(td.name, 'regolith.txt')
+                with open(n) as f:
+                    f.write(form['body'])
+                raise ValueError('Error while validating the record,'
+                                 ' writing text file to {}. '
+                                 'Please try again.\n\n'
+                                 'Your errors were\n'
+                                 '------------------'
+                                 '{}'.format(n, errors))
             try:
                 added = rc.client.insert_one(dbname, collname, body)
             except Exception:

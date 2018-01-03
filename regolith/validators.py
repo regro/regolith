@@ -1,9 +1,9 @@
-"""Validators and convertors for regolith input."""
+"""Validators and converters for regolith input."""
 import os
-import re
 from getpass import getpass
 
 from regolith.tools import string_types
+
 
 def noop(x):
     """Does nothing, just returns the input."""
@@ -29,6 +29,7 @@ def is_bool(x):
     """Tests if something is a boolean"""
     return isinstance(x, bool)
 
+
 def is_string(x):
     """Tests if something is a string"""
     return isinstance(x, string_types)
@@ -53,6 +54,7 @@ def ensure_string(x):
         return x
     else:
         return str(x)
+
 
 def ensure_database(db):
     db['name'] = ensure_string(db['name'])
@@ -109,4 +111,4 @@ DEFAULT_VALIDATORS = {
     'databases': (always_false, ensure_databases),
     'stores': (always_false, ensure_stores),
     'email': (always_false, ensure_email),
-    }
+}

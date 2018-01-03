@@ -11,9 +11,15 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import json
+import tempfile
+from textwrap import indent
+
 import cloud_sptheme as csp
+
 from regolith import __version__ as REGOLITH_VERSION
+from regolith.fsclient import json_to_yaml
+from regolith.schemas import SCHEMAS, EXEMPLARS
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -73,7 +79,7 @@ release = REGOLITH_VERSION
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', 'collections/blank.rst']
+exclude_patterns = ['_build', ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -102,7 +108,7 @@ pygments_style = 'pastie'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'redcloud'
-#html_theme = 'blackcloud'
+# html_theme = 'blackcloud'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -253,3 +259,68 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+
+def format_key(schema, key, indent_str=''):
+    s = ''
+    line_format = ':{key}: {type}, {description}, required\n'
+    line_format_o = ':{key}: {type}, {description}, optional\n'
+    if not schema.get('required', False):
+        lf = line_format_o
+    else:
+        lf = line_format
+    if 'type' in schema and 'description' in schema:
+        s += indent(lf.format(key=key,
+                              description=schema.get('description', ''),
+                              type=schema.get('type', '')), indent_str)
+    elif 'type' in schema[key]:
+        s += indent(lf.format(key=key,
+                              description=schema[key].get('description', ''),
+                              type=schema[key].get('type', '')), indent_str)
+    s = s.replace(', , ', ', ')
+    if schema.get('schema', False):
+        s += '\n'
+    for inner_key in schema.get('schema', ()):
+        s += format_key(schema['schema'], inner_key,
+                        indent_str=indent_str + '\t')
+
+    return s
+
+
+def build_schema_doc(key):
+    fn = 'collections/' + key + '.rst'
+    with open(fn, 'w') as f:
+        s = ''
+        s += key.title() + '\n'
+        s += '=' * len(key) + '\n'
+        s += SCHEMAS[key]['_description']['description'] + '\n\n'
+        s += 'Schema\n------\nThe following lists key names mapped to its ' \
+             'type and meaning for each entry.\n\n'
+        schema = SCHEMAS[key]
+        schema_list = list(schema.keys())
+        schema_list.sort()
+        for k in schema_list:
+            if k not in ['_description']:
+                s += format_key(schema[k], key=k)
+        s += '\n\n'
+        s += 'YAML Example\n------------\n\n'
+        s += '.. code-block:: yaml\n\n'
+        temp = tempfile.NamedTemporaryFile()
+        temp2 = tempfile.NamedTemporaryFile()
+        with open(temp.name, 'w') as ff:
+            json.dump(EXEMPLARS[key], ff, sort_keys=True)
+        jd = json.dumps(EXEMPLARS[key], sort_keys=True,
+                        indent=4, separators=(',', ': '))
+        json_to_yaml(temp.name, temp2.name)
+        with open(temp2.name, 'r') as ff:
+            s += indent(ff.read(), '\t')
+        s += '\n\n'
+        s += 'JSON/Mongo Example\n------------------\n\n'
+        s += '.. code-block:: json\n\n'
+        s += indent(jd, '\t')
+        s += '\n'
+        f.write(s)
+
+
+for k in SCHEMAS:
+    build_schema_doc(k)

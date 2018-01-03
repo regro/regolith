@@ -6,6 +6,7 @@ from glob import iglob
 from collections import defaultdict
 
 from ruamel.yaml import YAML
+import ruamel.yaml
 
 from regolith.tools import dbdirname, dbpathname
 
@@ -48,10 +49,14 @@ def dump_yaml(filename, docs, inst=None):
     """Dumps a dict of documents into a file."""
     inst = YAML() if inst is None else inst
     inst.indent(mapping=2, sequence=4, offset=2)
-    for doc in docs.values():
+    sorted_dict = ruamel.yaml.comments.CommentedMap()
+    for k, doc in docs.items():
         _id = doc.pop('_id')
+        sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
+        for kk in sorted(doc.keys()):
+            sorted_dict[k][kk] = doc[kk]
     with open(filename, 'w') as fh:
-        inst.dump(docs, stream=fh)
+        inst.dump(sorted_dict, stream=fh)
 
 
 def json_to_yaml(inp, out):
