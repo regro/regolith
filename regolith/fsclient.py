@@ -3,7 +3,7 @@ import os
 import sys
 import json
 from glob import iglob
-from collections import defaultdict
+from collections import defaultdict, ChainMap
 
 from ruamel.yaml import YAML
 import ruamel.yaml
@@ -78,7 +78,7 @@ class FileSystemClient:
         self.rc = rc
         self.closed = True
         self.dbs = None
-        self.mega_db = None
+        self.chained_db = None
         self.open()
         self._collfiletypes = {}
         self._collexts = {}
@@ -89,7 +89,7 @@ class FileSystemClient:
 
     def open(self):
         self.dbs = defaultdict(lambda: defaultdict(dict))
-        self.mega_db = defaultdict(lambda: defaultdict(dict))
+        self.chained_db = defaultdict(lambda: defaultdict(dict))
         self.closed = False
 
     def load_json(self, db, dbpath):
@@ -102,14 +102,15 @@ class FileSystemClient:
             print('loading ' + f + '...', file=sys.stderr)
             coll = load_json(f)
             dbs[db['name']][base] = coll
-            if base in self.mega_db:
+            if base in self.chained_db:
                 for k, v in coll.items():
-                    if k in self.mega_db[base]:
-                        self.mega_db[base][k].update(v)
+                    if k in self.chained_db[base]:
+                        self.chained_db[base][k] = (self.chained_db[base][k].
+                            new_child(v))
                     else:
-                        self.mega_db[base][k] = v
+                        self.chained_db[base][k] = ChainMap(v)
             else:
-                self.mega_db[base] = coll
+                self.chained_db[base] = coll
 
     def load_yaml(self, db, dbpath):
         """Loads the YAML part of a database."""
@@ -123,14 +124,15 @@ class FileSystemClient:
             coll, inst = load_yaml(f, return_inst=True)
             dbs[db['name']][base] = coll
             self._yamlinsts[dbpath, base] = inst
-            if base in self.mega_db:
+            if base in self.chained_db:
                 for k, v in coll.items():
-                    if k in self.mega_db[base]:
-                        self.mega_db[base][k].update(v)
+                    if k in self.chained_db[base]:
+                        self.chained_db[base][k] = (self.chained_db[base][k].
+                            new_child(v))
                     else:
-                        self.mega_db[base][k] = v
+                        self.chained_db[base][k] = ChainMap(v)
             else:
-                self.mega_db[base] = coll
+                self.chained_db[base] = coll
 
     def load_database(self, db):
         """Loads a database."""
@@ -184,9 +186,9 @@ class FileSystemClient:
         """Returns the collaction names for a database."""
         return set(self.dbs[dbname].keys())
 
-    def all_documents(self, dbname, collname):
+    def all_documents(self, collname):
         """Returns an iteratable over all documents in a collection."""
-        return self.dbs[dbname][collname].values()
+        return self.chained_db[collname].values()
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""

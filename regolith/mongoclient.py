@@ -5,6 +5,10 @@ import time
 import shutil
 import subprocess
 from glob import iglob
+from warnings import warn
+
+warn("Mongo support will be deprecated in the near future please use "
+     "fsclient.FileSystemClient")
 
 #
 # setup mongo
@@ -141,7 +145,7 @@ class MongoClient:
         return self.client[dbname].collection_names()
 
     def all_documents(self, dbname, collname):
-        """Returns an iteratable over all documents in a collection."""
+        """Returns an iterable over all documents in a collection."""
         return self.client[dbname][collname].find()
 
     def insert_one(self, dbname, collname, doc):
