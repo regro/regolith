@@ -89,7 +89,7 @@ class FileSystemClient:
 
     def open(self):
         self.dbs = defaultdict(lambda: defaultdict(dict))
-        self.chained_db = defaultdict(lambda: defaultdict(dict))
+        self.chained_db = {}
         self.closed = False
 
     def load_json(self, db, dbpath):
@@ -102,15 +102,6 @@ class FileSystemClient:
             print('loading ' + f + '...', file=sys.stderr)
             coll = load_json(f)
             dbs[db['name']][base] = coll
-            if base in self.chained_db:
-                for k, v in coll.items():
-                    if k in self.chained_db[base]:
-                        self.chained_db[base][k] = (self.chained_db[base][k].
-                            new_child(v))
-                    else:
-                        self.chained_db[base][k] = ChainMap(v)
-            else:
-                self.chained_db[base] = coll
 
     def load_yaml(self, db, dbpath):
         """Loads the YAML part of a database."""
@@ -124,15 +115,6 @@ class FileSystemClient:
             coll, inst = load_yaml(f, return_inst=True)
             dbs[db['name']][base] = coll
             self._yamlinsts[dbpath, base] = inst
-            if base in self.chained_db:
-                for k, v in coll.items():
-                    if k in self.chained_db[base]:
-                        self.chained_db[base][k] = (self.chained_db[base][k].
-                            new_child(v))
-                    else:
-                        self.chained_db[base][k] = ChainMap(v)
-            else:
-                self.chained_db[base] = coll
 
     def load_database(self, db):
         """Loads a database."""

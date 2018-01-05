@@ -1,4 +1,5 @@
 python
 ruamel.yaml
+docutils
 jinja2
 cerberus
