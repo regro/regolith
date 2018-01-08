@@ -38,7 +38,7 @@ def dump_json(filename, docs):
 def load_yaml(filename, return_inst=False):
     """Loads a YAML file and returns a dict of its documents."""
     inst = YAML()
-    with open(filename) as fh:
+    with open(filename, encoding='utf-8') as fh:
         docs = inst.load(fh)
     for _id, doc in docs.items():
         doc['_id'] = _id
@@ -55,7 +55,7 @@ def dump_yaml(filename, docs, inst=None):
         sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
         for kk in sorted(doc.keys()):
             sorted_dict[k][kk] = doc[kk]
-    with open(filename, 'w') as fh:
+    with open(filename, 'w', encoding='utf-8') as fh:
         inst.dump(sorted_dict, stream=fh)
 
 
