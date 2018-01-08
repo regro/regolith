@@ -18,7 +18,7 @@ def _id_key(doc):
 def load_json(filename):
     """Loads a JSON file and returns a dict of its documents."""
     docs = {}
-    with open(filename) as fh:
+    with open(filename, encoding='utf-8') as fh:
         lines = fh.readlines()
     for line in lines:
         doc = json.loads(line)
@@ -31,7 +31,7 @@ def dump_json(filename, docs):
     docs = sorted(docs.values(), key=_id_key)
     lines = [json.dumps(doc, sort_keys=True) for doc in docs]
     s = '\n'.join(lines)
-    with open(filename, 'w') as fh:
+    with open(filename, 'w', encoding='utf-8') as fh:
         fh.write(s)
 
 
