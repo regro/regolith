@@ -9,6 +9,7 @@ class ChainDB(ChainMap):
     def __getitem__(self, key):
         res = None
         results = []
+        # Try to get all the data from all the mappings
         for i, mapping in enumerate(self.maps):
             results.append(mapping.get(key, None))
         # if all the results are mapping create a ChainDB
@@ -19,5 +20,7 @@ class ChainDB(ChainMap):
                 else:
                     res.maps.append(result)
         else:
-            return results[-1]
+            for result in reversed(results):
+                if result is not None:
+                    return result
         return res
