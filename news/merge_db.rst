@@ -7,7 +7,7 @@
 **Changed:**
 
 * ``all_docs_from_collection`` use the ``chained_db`` to pull from all dbs at
-  once.
+  once. This is a breaking API change for ``rc.client.all_documents``
 
 **Deprecated:**
 
