@@ -11,7 +11,7 @@ class ChainDB(ChainMap):
         res = None
         results = []
         # Try to get all the data from all the mappings
-        for i, mapping in enumerate(self.maps):
+        for mapping in self.maps:
             results.append(mapping.get(key, None))
         # if all the results are mapping create a ChainDB
         if all([isinstance(result, MutableMapping) for result in results]):
@@ -25,3 +25,14 @@ class ChainDB(ChainMap):
                 if result is not None:
                     return result
         return res
+
+    def __setitem__(self, key, value):
+        if key not in self:
+            super().__setitem__(key, value)
+        else:
+            res = None
+            results = []
+            # Try to get all the data from all the mappings
+            for mapping in reversed(self.maps):
+                if key in mapping:
+                    mapping[key] = value
