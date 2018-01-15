@@ -106,16 +106,22 @@ def add_students_to_db(students, rc):
     """Add new students to the student directory."""
     for student in students:
         rc.client.update_one(rc.db, 'students', {'_id': student['_id']},
-                             {'$set': student}, upsert=True)
+                             student, upsert=True)
 
 
 def add_students_to_course(students, rc):
     """Add students to the course listed"""
     course = rc.client.find_one(rc.db, 'courses', {'_id': rc.course_id})
-    registry = set(course['students']) | {s['_id'] for s in students}
+    registry = {s['_id'] for s in students}
+    if rc.op == 'add':
+        registry |= set(course['students'])
+    elif rc.op == 'replace':
+        pass
+    else:
+        raise ValueError('operation {0!r} nor recognized'.format(rc.op))
     course['students'] = sorted(registry)
     rc.client.update_one(rc.db, 'courses', {'_id': rc.course_id},
-                         {'$set': course}, upsert=True)
+                         course, upsert=True)
 
 
 def register(rc):
