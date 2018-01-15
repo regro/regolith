@@ -1,6 +1,7 @@
 """Base class for chaining DBs"""
 
-from collections import ChainMap, MutableMapping
+from collections import ChainMap
+from collections.abc import MutableMapping
 
 
 class ChainDB(ChainMap):
