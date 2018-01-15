@@ -27,7 +27,7 @@
   <button name="shutdown" value="shutdown">Shutdown Server</button>
 </form>
 
-{% for doc in rc.client.all_documents( collname) %}
+{% for doc in rc.client.all_documents(collname) %}
   {% set docdump = json.dumps(doc, sort_keys=True, indent=1) %}
   <div id="{{doc._id}}" style="text-align:center;vertical-align:middle;">
   <h3>{{doc._id}}
