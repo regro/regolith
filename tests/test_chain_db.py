@@ -121,8 +121,7 @@ def test_exactness_setting_multi_novel():
     assert isinstance(z['a']['m'], list)
     assert isinstance(z['a'].maps[0], dict)
     assert g is z['a'].maps[0]['mm']
-    # We sent this to the first map not the last
-    assert z['a']['m'] is not g
+    assert g is z['a']['mm']
 
 
 def test_dicts_in_lists():
