@@ -25,6 +25,3 @@ class ChainDB(ChainMap):
                 if result is not None:
                     return result
         return res
-
-    def __setitem__(self, key, value):
-        pass

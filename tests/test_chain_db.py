@@ -56,3 +56,12 @@ def test_exactness():
     m1 = {'a': {'m': d}}
     z = ChainDB(m1)
     assert d is z['a']['m'].maps[0]
+
+
+def test_exactness_setting():
+    d = {'y': 1}
+    m1 = {'a': {'m': d}}
+    z = ChainDB(m1)
+    e = {'z': 2}
+    z['a']['m'] = e
+    assert e is z['a']['m'].maps[0]
