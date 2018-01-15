@@ -49,3 +49,10 @@ def test_mixed_mapping():
     print(z['a'])
     print(z['a']['m'])
     assert z['a']['m'] == 1
+
+
+def test_exactness():
+    d = {'y': 1}
+    m1 = {'a': {'m': d}}
+    z = ChainDB(m1)
+    assert d is z['a']['m'].maps[0]
