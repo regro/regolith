@@ -32,13 +32,13 @@ def test_double_mapping():
 
 
 def test_list_mapping():
-    m1 = {'a': {'m': [1, 2]}}
-    m2 = {'a': {'m': [3, 4]}}
+    m1 = {'a': {'m': 'x'}}
+    m2 = {'a': {'m': 'y'}}
     z = ChainDB(m1)
     z.maps.append(m2)
     assert isinstance(z['a'], ChainDB)
-    assert isinstance(z['a']['m'], list)
-    assert z['a']['m'] == [3, 4]
+    assert isinstance(z['a']['m'], str)
+    assert z['a']['m'] == 'y'
 
 
 def test_mixed_mapping():
@@ -74,16 +74,16 @@ def test_exactness_setting():
 
 
 def test_exactness_setting_multi():
-    d = [1, 2]
-    e = [3, 4]
+    d = 'a'
+    e = 'b'
     m1 = {'a': {'m': d}}
     m2 = {'a': {'m': e}}
     z = ChainDB(m1)
     z.maps.append(m2)
-    g = [-1, -2]
+    g = 'c'
     z['a']['m'] = g
     assert isinstance(z['a'], ChainDB)
-    assert isinstance(z['a']['m'], list)
+    assert isinstance(z['a']['m'], str)
     assert isinstance(z['a'].maps[0], dict)
     assert g is z['a'].maps[1]['m']
     # We sent this to the first map not the last
