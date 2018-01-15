@@ -1,5 +1,7 @@
 """Base class for chaining DBs"""
 
+import itertools
+
 from collections import ChainMap
 from collections.abc import MutableMapping
 
@@ -21,6 +23,8 @@ class ChainDB(ChainMap):
                     res = ChainDB(result)
                 else:
                     res.maps.append(result)
+        elif all([isinstance(result, list) for result in results]):
+            return list(itertools.chain(*results))
         else:
             for result in reversed(results):
                 if result is not None:
