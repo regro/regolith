@@ -128,7 +128,7 @@ def create_parser():
                       default='')
     emlp.add_argument('--attach', nargs='+', dest='attachments', default=(),
                       help='attachments to send along as well.')
-    emlp.add_argument('-c', '--course-id', dest='course_id', default=None,
+    emlp.add_argument('-c', '--course-id', dest='course_ids', default=(), nargs='+',
                       help='course identifier that should be emailed.')
     emlp.add_argument('--db', help='database name', dest='db', default=None)
 
