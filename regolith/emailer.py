@@ -119,7 +119,6 @@ def class_email(rc):
         if course_id not in rc.course_ids:
             continue
         subject = '[{0}] {1}'.format(course_id, rc.subject)
-        continue
         for student_id in course['students']:
             message = make_message(rc, addresses[student_id],
                                    subject=subject,
