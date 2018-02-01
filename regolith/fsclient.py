@@ -95,9 +95,8 @@ class FileSystemClient:
     def load_json(self, db, dbpath):
         """Loads the JSON part of a database."""
         dbs = self.dbs
-        for f in iglob(os.path.join(dbpath, '*.json')):
-            if f not in db['blacklist']:
-                continue
+        for f in [file for file in iglob(os.path.join(dbpath, '*.json'))
+                  if file not in db['blacklist']]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
             self._collfiletypes[base] = 'json'
@@ -107,9 +106,8 @@ class FileSystemClient:
     def load_yaml(self, db, dbpath):
         """Loads the YAML part of a database."""
         dbs = self.dbs
-        for f in iglob(os.path.join(dbpath, '*.y*ml')):
-            if f not in db['blacklist']:
-                continue
+        for f in [file for file in iglob(os.path.join(dbpath, '*.y*ml'))
+                  if file not in db['blacklist']]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
             self._collexts[base] = ext
