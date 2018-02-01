@@ -10,7 +10,7 @@
 <h1>Welcome to the Regolith Grader!</h1>
 {% for dbname in rc.client.keys() if dbname != 'local' %}
   <h3>{{ dbname }}{% if status %} [{{status}}]{% endif %}</h3>
-  {% for course in sorted(rc.client.all_documents( 'courses'), key=by_id) %}
+  {% for course in sorted(rc.client.all_documents('courses'), key=by_id) %}
   {% if course['active'] %}
     {% set course_id = course['_id'] %}
     <h4>Course: {{course_id}}</h4>
