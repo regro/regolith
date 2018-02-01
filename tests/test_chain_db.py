@@ -144,7 +144,6 @@ def test_dicts_in_lists():
 def test_dicts_in_lists_mutation():
     c = [{'m': 1}, {'n': 2}]
     d = [{'o': 3}, {'p': 4}]
-    t = c + d
     m1 = {'a': {'b': c}}
     m2 = {'a': {'b': d}}
     z = ChainDB(m1)
