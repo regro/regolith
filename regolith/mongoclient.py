@@ -7,9 +7,6 @@ import subprocess
 from glob import iglob
 from warnings import warn
 
-warn("Mongo support will be deprecated in the near future please use "
-     "fsclient.FileSystemClient")
-
 #
 # setup mongo
 #
@@ -45,6 +42,8 @@ class MongoClient:
     """A client backed by MongoDB."""
 
     def __init__(self, rc):
+        warn("Mongo support will be deprecated in the near future please use "
+             "fsclient.FileSystemClient")
         if not MONGO_AVAILABLE:
             raise RuntimeError("MongoDB is not available on the current system.")
         self.rc = rc
