@@ -115,11 +115,14 @@ def dump_database(db, client, rc):
 
 @contextmanager
 def connect(rc):
-    """Context manager for ensuring that database is properly setup and torn down"""
+    """Context manager for ensuring that database is properly setup and torn
+    down"""
     client = CLIENTS[rc.backend](rc)
     client.open()
     chained_db = {}
     for db in rc.databases:
+        if 'blacklist' not in db:
+            db['blacklist'] = ['.travis.yml', '.travis.yaml']
         load_database(db, client, rc)
         for base, coll in client.dbs[db['name']].items():
             if base not in chained_db:
