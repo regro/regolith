@@ -80,10 +80,10 @@ def test_exactness_setting_multi():
     m2 = {'a': {'m': e}}
     z = ChainDB(m1)
     z.maps.append(m2)
-    g = 'c'
+    g = ('c', )
     z['a']['m'] = g
     assert isinstance(z['a'], ChainDB)
-    assert isinstance(z['a']['m'], str)
+    assert isinstance(z['a']['m'], tuple)
     assert isinstance(z['a'].maps[0], dict)
     assert g is z['a'].maps[1]['m']
     # We sent this to the first map not the last
@@ -104,8 +104,8 @@ def test_exactness_setting_multi2():
     assert isinstance(z['a']['m'], list)
     assert isinstance(z['a'].maps[0], dict)
     assert g is z['a'].maps[1]['mm']
-    # We sent this to the first map not the last
-    assert z['a']['m'] is not g
+    assert z['a']['mm'] is g
+    assert z['a']['m'] == [1, 2, 3, 4]
 
 
 def test_exactness_setting_multi_novel():
@@ -134,8 +134,26 @@ def test_dicts_in_lists():
     z.maps.append(m2)
     assert isinstance(z['a'], ChainDB)
     assert isinstance(z['a']['b'], list)
-    assert z['a']['b'] is not t
+    assert z['a']['b'] == t
     assert c[0] is z['a']['b'][0]
     assert c[1] is z['a']['b'][1]
     assert d[0] is z['a']['b'][2]
     assert d[1] is z['a']['b'][3]
+
+
+def test_dicts_in_lists_mutation():
+    c = [{'m': 1}, {'n': 2}]
+    d = [{'o': 3}, {'p': 4}]
+    t = c + d
+    m1 = {'a': {'b': c}}
+    m2 = {'a': {'b': d}}
+    z = ChainDB(m1)
+    z.maps.append(m2)
+    append_list = z['a']['b']
+    append_list.append({'hi': 'world'})
+    assert isinstance(append_list, list)
+    assert z['a']['b'] != append_list
+
+    extend_list = z['a']['b']
+    extend_list.extend([{'hi': 'world'}, {'spam': 'eggs'}])
+    assert z['a']['b'] != extend_list

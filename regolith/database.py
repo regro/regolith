@@ -1,19 +1,16 @@
 """Helps manage mongodb setup and connections."""
 import os
-import time
-import shutil
 import subprocess
-from glob import iglob
-from warnings import warn
-from collections import ChainMap, defaultdict
+from collections import ChainMap
 from contextlib import contextmanager
+from warnings import warn
 
 try:
     import hglib
 except:
     hglib = None
 
-from regolith.tools import dbdirname, dbpathname
+from regolith.tools import dbdirname
 from regolith.fsclient import FileSystemClient
 from regolith.mongoclient import MongoClient
 

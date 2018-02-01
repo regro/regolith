@@ -1,14 +1,14 @@
 """Contains a client database backed by the file system."""
+import json
 import os
 import sys
-import json
+from collections import defaultdict
 from glob import iglob
-from collections import defaultdict, ChainMap
 
-from ruamel.yaml import YAML
 import ruamel.yaml
+from ruamel.yaml import YAML
 
-from regolith.tools import dbdirname, dbpathname
+from regolith.tools import dbpathname
 
 
 def _id_key(doc):
@@ -100,8 +100,7 @@ class FileSystemClient:
             base, ext = os.path.splitext(collfilename)
             self._collfiletypes[base] = 'json'
             print('loading ' + f + '...', file=sys.stderr)
-            coll = load_json(f)
-            dbs[db['name']][base] = coll
+            dbs[db['name']][base] = load_json(f)
 
     def load_yaml(self, db, dbpath):
         """Loads the YAML part of a database."""

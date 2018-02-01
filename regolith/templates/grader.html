@@ -18,7 +18,7 @@
     <script type="text/javascript">
     var courseColumns = [
         {name: "student", type: "string"},
-        {%- for assign in sorted(rc.client.all_documents( 'assignments'), key=by_id) -%}
+        {%- for assign in sorted(rc.client.all_documents('assignments'), key=by_id) -%}
         {%- if course_id in assign['courses'] -%}
         {%- for i, question in enumerate(assign['questions']) -%}
             {name: "{{assign['_id']}}[{{i}}]", type: "float"},
@@ -32,7 +32,7 @@
     var courseData = [
         {% for student in course['students'] %}
         {student: "{{student}}",
-          {%- for grade in rc.client.all_documents( 'grades') -%}
+          {%- for grade in rc.client.all_documents('grades') -%}
           {%- if course_id == grade['course'] and student == grade['student'] -%}
           {%- for i, score in enumerate(grade['scores']) -%}
             "{{grade['assignment']}}[{{i}}]": {{score}},
