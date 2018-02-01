@@ -1,18 +1,16 @@
 """Helps manage mongodb setup and connections."""
 import os
-import time
-import shutil
 import subprocess
-from glob import iglob
-from warnings import warn
+from collections import ChainMap
 from contextlib import contextmanager
+from warnings import warn
 
 try:
     import hglib
 except:
     hglib = None
 
-from regolith.tools import dbdirname, dbpathname
+from regolith.tools import dbdirname
 from regolith.fsclient import FileSystemClient
 from regolith.mongoclient import MongoClient
 
@@ -117,10 +115,24 @@ def dump_database(db, client, rc):
 
 @contextmanager
 def connect(rc):
-    """Context manager for ensuring that database is properly setup and torn down"""
+    """Context manager for ensuring that database is properly setup and torn
+    down"""
     client = CLIENTS[rc.backend](rc)
+    client.open()
+    chained_db = {}
     for db in rc.databases:
+        if 'blacklist' not in db:
+            db['blacklist'] = ['.travis.yml', '.travis.yaml']
         load_database(db, client, rc)
+        for base, coll in client.dbs[db['name']].items():
+            if base not in chained_db:
+                chained_db[base] = {}
+            for k, v in coll.items():
+                if k in chained_db[base]:
+                    chained_db[base][k].maps.append(v)
+                else:
+                    chained_db[base][k] = ChainMap(v)
+    client.chained_db = chained_db
     yield client
     for db in rc.databases:
         dump_database(db, client, rc)

@@ -1,14 +1,14 @@
 """Contains a client database backed by the file system."""
+import json
 import os
 import sys
-import json
-from glob import iglob
 from collections import defaultdict
+from glob import iglob
 
-from ruamel.yaml import YAML
 import ruamel.yaml
+from ruamel.yaml import YAML
 
-from regolith.tools import dbdirname, dbpathname
+from regolith.tools import dbpathname
 
 
 def _id_key(doc):
@@ -78,6 +78,7 @@ class FileSystemClient:
         self.rc = rc
         self.closed = True
         self.dbs = None
+        self.chained_db = None
         self.open()
         self._collfiletypes = {}
         self._collexts = {}
@@ -88,12 +89,14 @@ class FileSystemClient:
 
     def open(self):
         self.dbs = defaultdict(lambda: defaultdict(dict))
+        self.chained_db = {}
         self.closed = False
 
     def load_json(self, db, dbpath):
         """Loads the JSON part of a database."""
         dbs = self.dbs
-        for f in iglob(os.path.join(dbpath, '*.json')):
+        for f in [file for file in iglob(os.path.join(dbpath, '*.json'))
+                  if file not in db['blacklist']]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
             self._collfiletypes[base] = 'json'
@@ -103,13 +106,15 @@ class FileSystemClient:
     def load_yaml(self, db, dbpath):
         """Loads the YAML part of a database."""
         dbs = self.dbs
-        for f in iglob(os.path.join(dbpath, '*.y?ml')):
+        for f in [file for file in iglob(os.path.join(dbpath, '*.y*ml'))
+                  if file not in db['blacklist']]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
             self._collexts[base] = ext
             self._collfiletypes[base] = 'yaml'
             print('loading ' + f + '...', file=sys.stderr)
-            dbs[db['name']][base], inst = load_yaml(f, return_inst=True)
+            coll, inst = load_yaml(f, return_inst=True)
+            dbs[db['name']][base] = coll
             self._yamlinsts[dbpath, base] = inst
 
     def load_database(self, db):
@@ -164,9 +169,9 @@ class FileSystemClient:
         """Returns the collaction names for a database."""
         return set(self.dbs[dbname].keys())
 
-    def all_documents(self, dbname, collname):
+    def all_documents(self, collname):
         """Returns an iteratable over all documents in a collection."""
-        return self.dbs[dbname][collname].values()
+        return self.chained_db[collname].values()
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""

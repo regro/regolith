@@ -64,12 +64,7 @@ def fallback(cond, backup):
 def all_docs_from_collection(client, collname):
     """Yield all entries in for all collections of a given name in a given
     database. """
-    for dbname in client.keys():
-        if dbname == 'local':
-            continue
-        if collname not in client.collection_names(dbname):
-            continue
-        yield from client.all_documents(dbname, collname)
+    yield from client.all_documents(collname)
 
 
 SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
