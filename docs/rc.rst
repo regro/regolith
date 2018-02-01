@@ -133,3 +133,7 @@ Sting that is a path to a file to operate on.
 ================
 Boolean for whether to run in debug mode or not.
 
+``blacklist``
+===============
+List of files to not load when loading databases. If not provided, blacklists
+``['.travis.yml', '.travis.yaml']``
