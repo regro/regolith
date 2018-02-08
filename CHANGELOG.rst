@@ -4,6 +4,17 @@ Regolith Change Log
 
 .. current developments
 
+v0.1.9
+====================
+
+**Fixed:**
+
+* ``all_documents`` now returns the values of an empty dict if the collection
+  doesn't exist
+
+
+
+
 v0.1.8
 ====================
 
