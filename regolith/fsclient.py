@@ -171,7 +171,7 @@ class FileSystemClient:
 
     def all_documents(self, collname):
         """Returns an iteratable over all documents in a collection."""
-        return self.chained_db[collname].values()
+        return self.chained_db.get(collname, {}).values()
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
