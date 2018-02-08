@@ -4,6 +4,7 @@ from regolith.cvbuilder import CVBuilder
 from regolith.htmlbuilder import HtmlBuilder
 from regolith.publistbuilder import PubListBuilder
 from regolith.gradebuilder import GradeReportBuilder
+from regolith.resumebuilder import ResumeBuilder
 
 
 BUILDERS = {
@@ -12,6 +13,7 @@ BUILDERS = {
     'publist': PubListBuilder,
     'grade': GradeReportBuilder,
     'grades': GradeReportBuilder,
+    'resume': ResumeBuilder,
     }
 
 
