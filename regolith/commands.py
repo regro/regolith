@@ -136,3 +136,10 @@ def yaml_to_json(rc):
         base, ext = os.path.splitext(inp)
         out = base + '.json'
         fsclient.yaml_to_json(inp, out)
+
+
+def validate(rc):
+    """Validate the combined database against the schemas"""
+    from regolith.schemas import validate
+    for coll in rc.client.chained_db:
+        validate(coll, rc.client.chained_db[coll])
