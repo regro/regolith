@@ -35,6 +35,7 @@ CONNECTED_COMMANDS = {
     'build': commands.build,
     'email': commands.email,
     'classlist': commands.classlist,
+    'validate': commands.validate
     }
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
