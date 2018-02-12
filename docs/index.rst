@@ -89,3 +89,13 @@ For those who want to dive deeper into the library itself.
     :maxdepth: 1
 
     api/index
+
+
+Regolith Commands
+=================
+Shell commmands for regolith
+
+.. toctree::
+     :maxdepth: 1
+
+     commands/index

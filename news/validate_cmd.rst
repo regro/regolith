@@ -8,6 +8,8 @@
 
 **Removed:** None
 
-**Fixed:** None
+**Fixed:**
+
+* If a collection is not in the schema it is auto valid
 
 **Security:** None
