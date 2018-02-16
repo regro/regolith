@@ -41,3 +41,13 @@ class ChainDB(ChainMap):
             for mapping in reversed(self.maps):
                 if key in mapping:
                     mapping[key] = value
+
+
+def convert_to_dict(cm):
+    if isinstance(cm, (ChainMap, ChainDB)):
+        r = {}
+        for k, v in cm.items():
+            r[k] = convert_to_dict(v)
+        return r
+    else:
+        return cm
