@@ -63,7 +63,7 @@ def collection_page(dbname, collname):
                     f.write(form['body'])
                 traceback.print_exc()
                 raise
-            tv, errors = validate(dbname, body)
+            tv, errors = validate(dbname, body, rc.schemas)
             if not tv:
                 td = tempfile.TemporaryDirectory()
                 n = os.path.join(td.name, 'regolith.txt')
@@ -92,7 +92,7 @@ def collection_page(dbname, collname):
                     f.write(form['body'])
                 traceback.print_exc()
                 raise
-            tv, errors = validate(dbname, body)
+            tv, errors = validate(dbname, body, rc.schemas)
             if not tv:
                 td = tempfile.TemporaryDirectory()
                 n = os.path.join(td.name, 'regolith.txt')
