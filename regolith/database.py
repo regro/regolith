@@ -54,6 +54,16 @@ def load_hg_database(db, client, rc):
     client.load_database(db)
 
 
+def load_local_database(db, client, rc):
+    """Loads a local database"""
+    # make sure that we expand user stuff
+    db['url'] = os.path.expanduser(db['url'])
+    # tell everything this is a local 
+    rc.local = True
+    # import all of the data
+    client.load_database(db)
+
+
 def load_database(db, client, rc):
     """Loads a database"""
     url = db['url']
@@ -61,6 +71,8 @@ def load_database(db, client, rc):
         load_git_database(db, client, rc)
     elif url.startswith('hg+'):
         load_hg_database(db, client, rc)
+    elif os.path.exists(url):
+        load_local_database(db, client, rc)
     else:
         raise ValueError('Do not know how to load this kind of database')
 
@@ -102,6 +114,14 @@ def dump_hg_database(db, client, rc):
     hgclient.push()
 
 
+def dump_local_database(db, client, rc):
+    """Dumps a local database"""
+    dbdir = dbdirname(db, rc)
+    # dump all of the data
+    client.dump_database(db)
+    return
+
+
 def dump_database(db, client, rc):
     """Dumps a database"""
     url = db['url']
@@ -109,6 +129,8 @@ def dump_database(db, client, rc):
         dump_git_database(db, client, rc)
     elif url.startswith('hg+'):
         dump_hg_database(db, client, rc)
+    elif os.path.exists(url):
+        dump_local_database(db, client, rc)
     else:
         raise ValueError('Do not know how to dump this kind of database')
 
