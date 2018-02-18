@@ -1,5 +1,6 @@
 """The main CLI for regolith"""
 from __future__ import print_function
+import copy
 import os
 import json
 from argparse import ArgumentParser, RawTextHelpFormatter
@@ -11,6 +12,7 @@ from regolith.database import connect
 from regolith import commands
 from regolith import storage
 from regolith.builder import BUILDERS
+from regolith.schemas import SCHEMAS
 
 DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
@@ -181,6 +183,14 @@ def main(args=None):
     if ns.cmd in NEED_RC:
         rc._update(load_rcfile('regolithrc.json'))
     rc._update(ns.__dict__)
+    if 'schemas' in rc._dict:
+        user_schema = copy.deepcopy(rc.schemas)
+        rc.schemas = copy.deepcopy(SCHEMAS)
+        for k in user_schema:
+            for k2, v in user_schema[k].items():
+                rc.schemas[k][k2].update(v)
+    else:
+        rc.schemas = SCHEMAS
     if ns.cmd in NEED_RC:
         filter_databases(rc)
     if rc.cmd in DISCONNECTED_COMMANDS:
