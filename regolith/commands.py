@@ -141,7 +141,8 @@ def yaml_to_json(rc):
 def validate(rc):
     """Validate the combined database against the schemas"""
     from regolith.schemas import validate
-    print('\nVALIDATING\n')
-    for coll in rc.client.chained_db:
-        validate(coll, rc.client.chained_db[coll])
-    print('\nNO ERORS IN DBS\n')
+    print('=' * 10 + '\nVALIDATING\n')
+    for name, collection in rc.client.chained_db.items():
+        for doc_id, doc in collection.items():
+            validate(name, doc)
+    print('\nNO ERORS IN DBS\n' + '=' * 15)
