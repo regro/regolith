@@ -17,6 +17,7 @@ DEFAULT_RC = RunControl(
     backend='filesystem',
     builddir='_build',
     mongodbpath=property(lambda self: os.path.join(self.builddir, '_dbpath')),
+    local=False
     )
 
 DISCONNECTED_COMMANDS = {
