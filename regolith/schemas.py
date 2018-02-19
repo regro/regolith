@@ -763,11 +763,12 @@ def validate(coll, record, schemas):
 
     Parameters
     ----------
-    schemas
     coll : str
         The name of the db in question
     record : dict
         The record to be validated
+    schemas : dict
+        The schema to validate against
 
     Returns
     -------
