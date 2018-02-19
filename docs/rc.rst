@@ -146,7 +146,7 @@ For example:
 
 .. code-block:: python
 
-    schema = {'people': {'name': {'type': 'anyof_type': ['string', 'number']}}}
+    schema = {'people': {'name': {'anyof_type': ['string', 'number']}}}
 
 would allow the names of people to also be
 `numbers <https://youtu.be/nW-bFGzNMXw?t=42s>`_.
