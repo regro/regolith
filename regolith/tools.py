@@ -104,7 +104,7 @@ def month_and_year(m=None, y=None):
 
 
 def filter_publications(citations, authors, reverse=False, bold=True):
-    """Filter publications by the author(s)
+    """Filter publications by the author(s)/editor(s)
 
     Parameters
     ----------
@@ -119,7 +119,9 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     """
     pubs = []
     for pub in citations:
-        if len(set(pub['author']) & authors) == 0:
+        if len(set(pub.get('author', []))
+               & set(pub.get('editor', []))
+               & authors) == 0:
             continue
         pub = deepcopy(pub)
         if bold:
