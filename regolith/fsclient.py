@@ -132,7 +132,8 @@ class FileSystemClient:
 
     def dump_yaml(self, docs, collname, dbpath):
         """Dumps json docs and returns filename"""
-        f = os.path.join(dbpath, collname + self._collexts.get(collname, '.yaml'))
+        f = os.path.join(dbpath, collname + self._collexts.get(collname, 
+                                                               '.yaml'))
         inst = self._yamlinsts.get((dbpath, collname), None)
         dump_yaml(f, docs, inst=inst)
         filename = os.path.split(f)[-1]
