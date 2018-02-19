@@ -216,6 +216,7 @@ def awards_grants_honors(p):
         The person entry
     """
     aghs = []
+    print(p['name'])
     for x in p.get('funding', ()):
         d = {'description': '{0} ({1}{2:,})'.format(
             latex_safe(x['name']),
@@ -225,10 +226,20 @@ def awards_grants_honors(p):
         }
         aghs.append(d)
     for x in p.get('service', []) + p.get('honors', []):
-        d = {'description': latex_safe(x['name']),
-             'year': x['year'],
-             '_key': date_to_float(x['year'], x.get('month', 0)),
-             }
+        print(x)
+        d = {'description': latex_safe(x['name']), }
+        if 'year' in x:
+            d.update({'year': x['year'],
+                      '_key': date_to_float(x['year'],
+                                            x.get('month', 0))})
+        elif 'begin_year' in x and 'end_year' in x:
+            d.update({'year': '{}-{}'.format(x['begin_year'], x['end_year']),
+                      '_key': date_to_float(x['begin_year'],
+                                            x.get('month', 0))})
+        elif 'begin_year' in x:
+            d.update({'year': '{}'.format(x['begin_year']),
+                      '_key': date_to_float(x['begin_year'],
+                                            x.get('month', 0))})
         aghs.append(d)
     aghs.sort(key=(lambda x: x.get('_key', 0.0)), reverse=True)
     return aghs
@@ -241,7 +252,8 @@ def latex_safe(s):
     ----------
     s : str
     """
-    return s.replace('&', '\&').replace('$', '\$').replace('#', '\#')
+    return (s.replace('&', '\&').replace('$', '\$').replace('#', '\#')
+            .replace('_', '\_'))
 
 
 def make_bibtex_file(pubs, pid, person_dir='.'):
