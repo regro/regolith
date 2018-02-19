@@ -140,7 +140,7 @@ List of files to not load when loading databases. If not provided, blacklists
 
 ``schemas``
 ===========
-Dict of dicts of dicts which overrides the schema for a key in a collection.
+Dict of dicts which overrides the schema for a key in a collection.
 
 For example:
 
