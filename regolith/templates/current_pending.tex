@@ -1,0 +1,58 @@
+%%
+%% Author: christopher
+%% 2/18/18
+%%
+
+% Preamble
+\documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
+
+
+% Packages
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{booktabs,dcolumn}
+\usepackage{siunitx}
+
+\setlength{\parindent}{0pt}
+
+% Document
+\begin{document}
+\bf Current and Pending Support
+\bf {{-latex_safe(pi).upper-}}
+\vskip 14pt
+
+{% for g in grants}
+\vskip 12pt\noindent\bf Investigator: {{-latex_safe(pi)-}}
+\bf Other Agencies to which proposal submitted:
+{{-latex_safe(g.get("other_funders_submitted", 'None'))-}}
+
+\bf Project/Proposal Title:  {{-latex_safe(g['proposal_title'])-}}
+
+{% if len(authors) > 1}
+(multi-PI grant.  SJB amt = \${{-"{:,}".format(float(g['amount']))-}}
+{% else %}
+Total Award Amount \${{-"{:,}".format(float(g['amount']))-}}
+{% endif %}
+
+\bf Source of Support:
+{{-g.get('funder', 'None')-}}
+
+\bf Total Award Amount:
+\${{-"{:,}".format(float(g.get('funds_awarded', 0)))-}}
+\bf Total Award Period Covered:
+{{-g.get('award_start_date')-}}
+-
+{{-g.get('award_end_date')-}}
+
+\bf Location of Project: {{-g.get('institution')-}}
+
+\bf Person Months per Year Committed to Project:
+Academic:
+{{-str(g.get('person_months_summer', 'None'))-}}
+\bf Summer:
+{{-str(g.get('person_months_summer', 'None'))-}}
+
+\bf Describe Research Including Synergies and Delineation with Respect to this Proposal/Award: {{-g.get('project_scope', 'False')-}}
+{% end for %}
+
+\end{document}

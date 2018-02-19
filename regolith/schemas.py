@@ -452,7 +452,7 @@ SCHEMAS = {
             'description': 'the number of points earned on each question',
             'required': True,
             'type': 'list',
-            'schema': {'type':['integer', 'float']}},
+            'schema': {'type': ['integer', 'float']}},
         'student': {'description': 'student id',
                     'required': True,
                     'type': 'string'}},
@@ -751,7 +751,6 @@ SCHEMAS = {
         'grant_id': {'description': 'the identifier for this work',
                      'required': False,
                      'type': 'string'},
-
         'other_funders_submitted': {'description': 'other funders the grant'
                                                    'was submitted to',
                                     'required': False,
