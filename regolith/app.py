@@ -7,6 +7,7 @@ import os
 from flask import Flask, abort, request, render_template, redirect, url_for
 
 from regolith.schemas import validate
+from regolith.chained_db import _convert_to_dict
 
 
 app = Flask('regolith')
@@ -116,4 +117,5 @@ def collection_page(dbname, collname):
     return render_template('collection.html', rc=rc, dbname=dbname, len=len,
                            str=str,
                            status=status, status_id=status_id,
-                           collname=collname, coll=coll, json=json, min=min)
+                           collname=collname, coll=coll, json=json, min=min,
+                           conv=_convert_to_dict)
