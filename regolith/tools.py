@@ -115,7 +115,9 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     """
     pubs = []
     for pub in citations:
-        if len(set(pub.get('author', [])) & authors) == 0:
+        if len(set(pub.get('author', []))
+               & set(pub.get('editor', []))
+               & authors) == 0:
             continue
         pub = deepcopy(pub)
         if bold:
