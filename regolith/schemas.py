@@ -380,7 +380,8 @@ SCHEMAS = {
         'courses': {
             'description': 'ids of the courses that have this assignment',
             'required': True,
-            'type': 'string'},
+            'type': 'list',
+            'schema': {'type': 'string'}},
         'file': {'description': 'path to assignment file in store',
                  'required': False,
                  'type': 'string'},
@@ -388,11 +389,13 @@ SCHEMAS = {
             'description': 'list of number of points possible for each '
                            'question. Length is the number of questions',
             'required': True,
-            'type': ('integer', 'float')},
-        'question': {
+            'type': 'list',
+            'schema': {'type': ['integer', 'float']}},
+        'questions': {
             'description': 'titles for the questions on this assignment',
             'required': False,
-            'type': 'string'},
+            'type': 'list',
+            'schema': {'type': 'string'}},
         'solution': {'description': 'path to solution file in store',
                      'required': False,
                      'type': 'string'}},
@@ -448,7 +451,8 @@ SCHEMAS = {
         'scores': {
             'description': 'the number of points earned on each question',
             'required': True,
-            'type': ('integer', 'float')},
+            'type': 'list',
+            'schema': {'type':['integer', 'float']}},
         'student': {'description': 'student id',
                     'required': True,
                     'type': 'string'}},
