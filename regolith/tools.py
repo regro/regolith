@@ -100,7 +100,7 @@ def month_and_year(m=None, y=None):
 
 
 def filter_publications(citations, authors, reverse=False, bold=True):
-    """Filter publications by the author(s)
+    """Filter publications by the author(s)/editor(s)
 
     Parameters
     ----------
