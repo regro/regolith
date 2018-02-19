@@ -35,6 +35,7 @@ CONNECTED_COMMANDS = {
     'build': commands.build,
     'email': commands.email,
     'classlist': commands.classlist,
+    'validate': commands.validate
     }
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
@@ -151,6 +152,10 @@ def create_parser():
     # YAML-to-JSON subparser
     ytj = subp.add_parser('yaml-to-json', help='Converts files from YAML to JSON')
     ytj.add_argument('files', nargs='+', help='file names to convert')
+
+    # Validator
+    val = subp.add_parser('validate',
+                          help='Validates db')
     return p
 
 
