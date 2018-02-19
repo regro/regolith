@@ -1,12 +1,14 @@
-"""Builder Base Class"""
+"""Builder Base Classes"""
 import os
+import subprocess
+from glob import glob
 from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
 
 from regolith.sorters import doc_date_key, category_val, \
     level_val, date_key
-from regolith.tools import date_to_rfc822, rfc822now, gets
+from regolith.tools import date_to_rfc822, rfc822now, gets, LATEX_OPTS
 
 
 class BuilderBase(object):
@@ -70,3 +72,35 @@ class BuilderBase(object):
         os.makedirs(self.bldir, exist_ok=True)
         for cmd in self.cmds:
             getattr(self, cmd)()
+
+
+class LatexBuilderBase(BuilderBase):
+    """Base class for Latex builders"""
+    def __init__(self, rc):
+        super().__init__(rc)
+        self.cmds = ['latex', 'pdf', 'clean']
+
+    def run(self, cmd):
+        """Run command in build dir"""
+        subprocess.run(cmd, cwd=self.bldir, check=True)
+
+    def pdf(self):
+        """Compiles latex files to PDF"""
+        for p in self.gtx['people']:
+            base = p['_id']
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['bibtex'] + [base + '.aux'])
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['dvipdf', base])
+
+    def clean(self):
+        """Remove files created by latex"""
+        postfixes = ['*.dvi', '*.toc', '*.aux', '*.out', '*.log', '*.bbl',
+                     '*.blg', '*.log', '*.spl', '*~', '*.spl', '*.run.xml',
+                     '*-blx.bib']
+        to_rm = []
+        for pst in postfixes:
+            to_rm += glob(os.path.join(self.bldir, pst))
+        for f in set(to_rm):
+            os.remove(f)
