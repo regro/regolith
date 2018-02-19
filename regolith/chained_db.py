@@ -43,11 +43,11 @@ class ChainDB(ChainMap):
                     mapping[key] = value
 
 
-def convert_to_dict(cm):
+def _convert_to_dict(cm):
     if isinstance(cm, (ChainMap, ChainDB)):
         r = {}
         for k, v in cm.items():
-            r[k] = convert_to_dict(v)
+            r[k] = _convert_to_dict(v)
         return r
     else:
         return cm
