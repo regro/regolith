@@ -1,14 +1,26 @@
 """Builder for current and pending reports."""
-import os
-import subprocess
-from glob import glob
+import time
+
+import datetime
 
 from regolith.basebuilder import BuilderBase
-from regolith.sorters import ene_date_key, position_key
+from regolith.sorters import position_key
 from regolith.tools import (all_docs_from_collection, month_and_year,
-                            filter_publications, filter_projects,
-                            filter_grants, awards_grants_honors, latex_safe,
-                            LATEX_OPTS, make_bibtex_file)
+                            filter_grants, latex_safe)
+
+
+def is_current(sd, sm, sy, ed, em, ey):
+    s = '{}/{}/{}'.format(sd, sm, sy)
+    e = '{}/{}/{}'.format(ed, em, ey)
+    start = time.mktime(datetime.datetime.strptime(s, "%d/%m/%Y").timetuple())
+    end = time.mktime(datetime.datetime.strptime(e, "%d/%m/%Y").timetuple())
+    return start < time.time() < end
+
+
+def is_pending(sd, sm, sy):
+    s = '{}/{}/{}'.format(sd, sm, sy)
+    start = time.mktime(datetime.datetime.strptime(s, "%d/%m/%Y").timetuple())
+    return time.time() < start
 
 
 class CPBuilder(BuilderBase):
@@ -42,8 +54,21 @@ class CPBuilder(BuilderBase):
                 if pi_name in frozenset(p.get('aka', []) + [p['name']]):
                     pi = p
                     break
-            grants, _, _ = filter_grants(self.gtx['grants'], {pi['name']})
-            
+
+            current_grants = [g for g in self.gtx['grants']
+                              if is_current(*[g[s] for s in ['start_day',
+                                                             'start_month',
+                                                             'start_year',
+                                                             'end_day',
+                                                             'end_month',
+                                                             'end_year']])]
+            pending_grants = [g for g in self.gtx['grants']
+                              if is_pending(*[g[s] for s in ['start_day',
+                                                             'start_month',
+                                                             'start_year', ]])]
+            grants, _, _ = filter_grants(current_grants + pending_grants,
+                                         {pi['name']})
+
             self.render('current_pending.tex', 'cpp.tex',
                         pi=pi,
                         grants=grants)
