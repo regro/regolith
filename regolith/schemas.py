@@ -116,6 +116,11 @@ EXEMPLARS = {
                'title': 'SymPy 1.1 Release Support',
                'total_amount': 3000.0,
                },
+    'group': {'_id': 'sb',
+              'name': 'The Billinge Group',
+              'pi': 'Simon Billinge',
+              'department': 'Applied Physics and Applied Mathematics',
+              'institution': 'Columbia University'},
     'jobs': {'_id': '0004',
              'background_fields': ['Data Science',
                                    'Data Engineering',
@@ -545,6 +550,27 @@ SCHEMAS = {
                          'required': True,
                          'type': ('integer', 'float')},
     },
+    'group': {'_description': {'description': 'This collection represents '
+                                              'top level information about the'
+                                              'group.'},
+              '_id': {'description': 'short representation, '
+                                     'such as this-is-my-name',
+                      'required': True,
+                      'type': ('string', 'integer', 'float')},
+              'name': {'description': 'the group name',
+                       'required': True,
+                       'type': 'string'},
+              'pi': {'description': "the name of the PI",
+                     'required': True,
+                     'type': 'string'},
+              'department': {'description': 'the department of the group',
+                             'required': True,
+                             'type': 'string'},
+              'institution': {'description': 'the hosting institution for the'
+                                             'group',
+                              'type': 'string',
+                              'required': True}
+              },
     'people': {
         '_description': {
             'description': 'This collection describes the members of the '

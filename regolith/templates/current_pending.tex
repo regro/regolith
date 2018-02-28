@@ -1,9 +1,3 @@
-%%
-%% Author: christopher
-%% 2/18/18
-%%
-
-% Preamble
 \documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
 
 
@@ -18,18 +12,18 @@
 % Document
 \begin{document}
 \bf Current and Pending Support
-\bf {{-latex_safe(pi).upper-}}
+\bf {{-latex_safe(pi['name']).upper-}}
 \vskip 14pt
 
 {% for g in grants}
-\vskip 12pt\noindent\bf Investigator: {{-latex_safe(pi)-}}
-\bf Other Agencies to which proposal submitted:
+\vskip 12pt\noindent\bf Investigator: {{-latex_safe(pi['name'])-}}
+\bf \ Other Agencies to which proposal submitted:
 {{-latex_safe(g.get("other_funders_submitted", 'None'))-}}
 
 \bf Project/Proposal Title:  {{-latex_safe(g['proposal_title'])-}}
-
-{% if len(authors) > 1}
-(multi-PI grant.  SJB amt = \${{-"{:,}".format(float(g['amount']))-}}
+{% if len(team) > 1}
+\ (multi-PI grant.  {{-latex_safe(pi['initials'])-}}
+amt = \${{-"{:,}".format(float(g['subaward_amount']))-}}
 {% else %}
 Total Award Amount \${{-"{:,}".format(float(g['amount']))-}}
 {% endif %}
@@ -48,11 +42,12 @@ Total Award Amount \${{-"{:,}".format(float(g['amount']))-}}
 
 \bf Person Months per Year Committed to Project:
 Academic:
-{{-str(g.get('person_months_summer', 'None'))-}}
-\bf Summer:
-{{-str(g.get('person_months_summer', 'None'))-}}
+{{-str(g.get('person_months_academic', 0))-}}
+\bf \ Summer:
+{{-str(g.get('person_months_summer', 0))-}}
 
-\bf Describe Research Including Synergies and Delineation with Respect to this Proposal/Award: {{-g.get('project_scope', 'False')-}}
+\bf Describe Research Including Synergies and Delineation with
+Respect to this Proposal/Award: {{-g.get('scope', 'False')-}}
 {% end for %}
 
 \end{document}
