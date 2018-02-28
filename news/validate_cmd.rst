@@ -2,6 +2,11 @@
 
 * Command for validating the combined database ``regolith validate``
 
+* Group collection for tracking top level group information
+
+* ``CPBuilder`` a builder (and associated template) for Current and Pending
+  reports
+
 **Changed:** None
 
 **Deprecated:** None
