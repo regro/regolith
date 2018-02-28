@@ -758,7 +758,7 @@ class NoDescriptionValidator(Validator):
             pass
 
 
-def validate(coll, record):
+def validate(coll, record, schemas):
     """Validate a record for a given db
 
     Parameters
@@ -767,6 +767,8 @@ def validate(coll, record):
         The name of the db in question
     record : dict
         The record to be validated
+    schemas : dict
+        The schema to validate against
 
     Returns
     -------
@@ -776,8 +778,8 @@ def validate(coll, record):
         The errors encountered (if any)
 
     """
-    if coll in SCHEMAS:
-        schema = SCHEMAS[coll]
+    if coll in schemas:
+        schema = schemas[coll]
         v = NoDescriptionValidator(schema)
         return v.validate(record), v.errors
     else:

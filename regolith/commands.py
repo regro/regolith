@@ -144,5 +144,5 @@ def validate(rc):
     print('=' * 10 + '\nVALIDATING\n')
     for name, collection in rc.client.chained_db.items():
         for doc_id, doc in collection.items():
-            validate(name, doc)
+            validate(name, doc, rc.schemas)
     print('\nNO ERORS IN DBS\n' + '=' * 15)

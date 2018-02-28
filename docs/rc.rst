@@ -137,3 +137,18 @@ Boolean for whether to run in debug mode or not.
 ===============
 List of files to not load when loading databases. If not provided, blacklists
 ``['.travis.yml', '.travis.yaml']``
+
+``schemas``
+===========
+Dict of dicts which overrides the schema for a key in a collection.
+
+For example:
+
+.. code-block:: python
+
+    schema = {'people': {'name': {'anyof_type': ['string', 'number']}}}
+
+would allow the names of people to also be
+`numbers <https://youtu.be/nW-bFGzNMXw?t=42s>`_.
+
+See the collections for a complete list of the schemas.
