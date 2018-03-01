@@ -1,12 +1,26 @@
-"""Builder Base Class"""
+"""Builder Base Classes"""
 import os
+import subprocess
+from glob import glob
 from itertools import groupby
 
 from jinja2 import Environment, FileSystemLoader
 
-from regolith.sorters import doc_date_key, category_val, \
-    level_val, date_key
-from regolith.tools import date_to_rfc822, rfc822now, gets
+try:
+    from bibtexparser.bwriter import BibTexWriter
+    from bibtexparser.bibdatabase import BibDatabase
+
+    HAVE_BIBTEX_PARSER = True
+except ImportError:
+    HAVE_BIBTEX_PARSER = False
+
+from regolith.sorters import (doc_date_key, category_val, level_val, date_key)
+from regolith.tools import (date_to_rfc822, rfc822now, gets, LATEX_OPTS,
+                            month_and_year)
+
+
+def latex_safe(s):
+    return s.replace('&', '\&').replace('$', '\$').replace('#', '\#')
 
 
 class BuilderBase(object):
@@ -70,3 +84,42 @@ class BuilderBase(object):
         os.makedirs(self.bldir, exist_ok=True)
         for cmd in self.cmds:
             getattr(self, cmd)()
+
+
+class LatexBuilderBase(BuilderBase):
+    """Base class for Latex builders"""
+    def __init__(self, rc):
+        super().__init__(rc)
+        self.cmds = ['latex', 'clean']
+        if HAVE_BIBTEX_PARSER:
+            self.bibdb = BibDatabase()
+            self.bibwriter = BibTexWriter()
+
+    def construct_global_ctx(self):
+        super().construct_global_ctx()
+        gtx = self.gtx
+        gtx['month_and_year'] = month_and_year
+        gtx['latex_safe'] = latex_safe
+
+    def run(self, cmd):
+        """Run command in build dir"""
+        subprocess.run(cmd, cwd=self.bldir, check=True)
+
+    def pdf(self, base):
+        """Compiles latex files to PDF"""
+        self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+        self.run(['bibtex'] + [base + '.aux'])
+        self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+        self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+        self.run(['dvipdf', base])
+
+    def clean(self):
+        """Remove files created by latex"""
+        postfixes = ['*.dvi', '*.toc', '*.aux', '*.out', '*.log', '*.bbl',
+                     '*.blg', '*.log', '*.spl', '*~', '*.spl', '*.run.xml',
+                     '*-blx.bib']
+        to_rm = []
+        for pst in postfixes:
+            to_rm += glob(os.path.join(self.bldir, pst))
+        for f in set(to_rm):
+            os.remove(f)

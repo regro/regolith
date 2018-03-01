@@ -119,7 +119,7 @@
 
 \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
 \textbf{\Large {{p['title']}} {{p['name']}}} & \textbf{\today} \\
-{{employment[0]['organization']}} & {{p['email']}} \\
+{{employment[0]['organization'] if employment else ''}} & {{p['email']}} \\
 \end{tabular*}
 \\
 

@@ -1,12 +1,7 @@
 """Builder for publication lists."""
 import os
-import shutil
-import subprocess
-from glob import glob
 from copy import deepcopy
-from itertools import groupby
 
-from jinja2 import Environment, FileSystemLoader
 try:
     from bibtexparser.bwriter import BibTexWriter
     from bibtexparser.bibdatabase import BibDatabase
@@ -14,73 +9,24 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, date_to_rfc822, rfc822now, gets, month_and_year
-from regolith.dates import date_to_float
-from regolith.sorters import doc_date_key, ene_date_key, category_val, \
-    level_val, id_key, date_key, position_key
+from regolith.tools import all_docs_from_collection
+from regolith.sorters import doc_date_key, ene_date_key, position_key
+from regolith.basebuilder import LatexBuilderBase, latex_safe
 
 LATEX_OPTS = ['-halt-on-error', '-file-line-error']
 
 
-def latex_safe(s):
-    return s.replace('&', '\&').replace('$', '\$').replace('#', '\#')
-
-
-class PubListBuilder(object):
+class PubListBuilder(LatexBuilderBase):
 
     btype = 'publist'
-
-    def __init__(self, rc):
-        self.rc = rc
-        self.bldir = os.path.join(rc.builddir, self.btype)
-        self.env = Environment(loader=FileSystemLoader([
-                    'templates',
-                    os.path.join(os.path.dirname(__file__), 'templates'),
-                    ]))
-        self.construct_global_ctx()
-        if HAVE_BIBTEX_PARSER:
-            self.bibdb = BibDatabase()
-            self.bibwriter = BibTexWriter()
 
     def construct_global_ctx(self):
         self.gtx = gtx = {}
         rc = self.rc
-        gtx['len'] = len
-        gtx['True'] = True
-        gtx['False'] = False
-        gtx['None'] = None
-        gtx['sorted'] = sorted
-        gtx['groupby'] = groupby
-        gtx['gets'] = gets
-        gtx['date_key'] = date_key
-        gtx['doc_date_key'] = doc_date_key
-        gtx['level_val'] = level_val
-        gtx['category_val'] = category_val
-        gtx['rfc822now'] = rfc822now
-        gtx['date_to_rfc822'] = date_to_rfc822
-        gtx['month_and_year'] = month_and_year
-        gtx['latex_safe'] = latex_safe
+
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
-
-    def render(self, tname, fname, **kwargs):
-        template = self.env.get_template(tname)
-        ctx = dict(self.gtx)
-        ctx.update(kwargs)
-        ctx['rc'] = ctx.get('rc', self.rc)
-        ctx['static'] = ctx.get('static',
-                               os.path.relpath('static', os.path.dirname(fname)))
-        ctx['root'] = ctx.get('root', os.path.relpath('/', os.path.dirname(fname)))
-        result = template.render(ctx)
-        with open(os.path.join(self.bldir, fname), 'wt') as f:
-            f.write(result)
-
-    def build(self):
-        os.makedirs(self.bldir, exist_ok=True)
-        self.latex()
-        self.pdf()
-        self.clean()
 
     def latex(self):
         rc = self.rc
@@ -96,6 +42,7 @@ class PubListBuilder(object):
                         pubs=pubs, names=names, bibfile=bibfile,
                         employment=emp,
                         )
+            self.pdf(p['_id'])
 
     def filter_publications(self, authors, reverse=False):
         rc = self.rc
@@ -134,26 +81,3 @@ class PubListBuilder(object):
         with open(fname, 'w') as f:
             f.write(self.bibwriter.write(self.bibdb))
         return fname
-
-    def pdf(self):
-        """Compiles latex files to PDF"""
-        for p in self.gtx['people']:
-            base = p['_id']
-            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-            self.run(['bibtex'] + [base + '.aux'])
-            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-            self.run(['dvipdf', base])
-
-    def run(self, cmd):
-        subprocess.run(cmd, cwd=self.bldir, check=True)
-
-    def clean(self):
-        postfixes = ['*.dvi', '*.toc', '*.aux', '*.out', '*.log', '*.bbl',
-                     '*.blg', '*.log', '*.spl', '*~', '*.spl', '*.run.xml',
-                     '*-blx.bib']
-        to_rm = []
-        for pst in postfixes:
-            to_rm += glob(os.path.join(self.bldir, pst))
-        for f in set(to_rm):
-            os.remove(f)
