@@ -17,8 +17,6 @@ class CVBuilder(LatexBuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx['month_and_year'] = month_and_year
-        gtx['latex_safe'] = latex_safe
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)
         gtx['all_docs_from_collection'] = all_docs_from_collection
@@ -53,3 +51,4 @@ class CVBuilder(LatexBuilderBase):
                         coi_grants=coi_grants, coi_amount=coi_amount,
                         coi_sub_amount=coi_sub_amount,
                         )
+            self.pdf(p['_id'])
