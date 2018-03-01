@@ -216,7 +216,6 @@ def awards_grants_honors(p):
         The person entry
     """
     aghs = []
-    print(p['name'])
     for x in p.get('funding', ()):
         d = {'description': '{0} ({1}{2:,})'.format(
             latex_safe(x['name']),
@@ -226,7 +225,6 @@ def awards_grants_honors(p):
         }
         aghs.append(d)
     for x in p.get('service', []) + p.get('honors', []):
-        print(x)
         d = {'description': latex_safe(x['name']), }
         if 'year' in x:
             d.update({'year': x['year'],
