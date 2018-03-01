@@ -53,3 +53,4 @@ class ResumeBuilder(LatexBuilderBase):
                         coi_grants=coi_grants, coi_amount=coi_amount,
                         coi_sub_amount=coi_sub_amount,
                         )
+            self.pdf(p['_id'])
