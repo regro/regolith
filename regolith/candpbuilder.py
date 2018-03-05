@@ -3,7 +3,7 @@ import time
 
 import datetime
 
-from regolith.basebuilder import BuilderBase
+from regolith.basebuilder import LatexBuilderBase
 from regolith.sorters import position_key
 from regolith.tools import (all_docs_from_collection, month_and_year,
                             filter_grants, latex_safe)
@@ -23,21 +23,15 @@ def is_pending(sd, sm, sy):
     return time.time() < start
 
 
-class CPBuilder(BuilderBase):
+class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
     btype = 'cv'
-
-    def __init__(self, rc):
-        super().__init__(rc)
-        self.cmds = ['latex', 'pdf', 'clean']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx['month_and_year'] = month_and_year
-        gtx['latex_safe'] = latex_safe
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)
         gtx['grants'] = sorted(all_docs_from_collection(rc.client, 'grants'),
