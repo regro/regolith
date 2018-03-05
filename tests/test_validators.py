@@ -5,6 +5,6 @@ from regolith.schemas import SCHEMAS, validate, EXEMPLARS
 
 @pytest.mark.parametrize('key', SCHEMAS.keys())
 def test_validation(key):
-    b, err = validate(key, EXEMPLARS[key])
+    b, err = validate(key, EXEMPLARS[key], SCHEMAS)
     print(err)
     assert b
