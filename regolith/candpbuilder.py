@@ -5,8 +5,7 @@ import datetime
 
 from regolith.basebuilder import LatexBuilderBase
 from regolith.sorters import position_key
-from regolith.tools import (all_docs_from_collection, month_and_year,
-                            filter_grants, latex_safe)
+from regolith.tools import (all_docs_from_collection, filter_grants)
 
 
 def is_current(sd, sm, sy, ed, em, ey):
@@ -25,7 +24,7 @@ def is_pending(sd, sm, sy):
 
 class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
-    btype = 'cv'
+    btype = 'cp'
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -63,6 +62,4 @@ class CPBuilder(LatexBuilderBase):
             grants, _, _ = filter_grants(current_grants + pending_grants,
                                          {pi['name']})
 
-            self.render('current_pending.tex', 'cpp.tex',
-                        pi=pi,
-                        grants=grants)
+            self.render('current_pending.tex', 'cpp.tex', pi=pi, grants=grants)
