@@ -4,6 +4,30 @@ Regolith Change Log
 
 .. current developments
 
+v0.1.10
+====================
+
+**Added:**
+
+* Regolith commands can run using a local db rather than a remote
+* ``LatexBuilderBase`` a base class for building latex documents
+* Users can override keys in each collection's schema via the RC
+* Command for validating the combined database ``regolith validate``
+
+
+**Changed:**
+
+* ``CVBuilder`` and ``ResumeBuilder`` builders now inheret from ``LatexBuilderBase``
+
+
+**Fixed:**
+
+* Use get syntax with ``filter_publications`` in case author not in dict
+* If a collection is not in the schema it is auto valid
+
+
+
+
 v0.1.9
 ====================
 
