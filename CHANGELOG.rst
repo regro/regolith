@@ -4,6 +4,16 @@ Regolith Change Log
 
 .. current developments
 
+v0.1.11
+====================
+
+**Fixed:**
+
+* Local DBs were not being loaded properly
+
+
+
+
 v0.1.10
 ====================
 
