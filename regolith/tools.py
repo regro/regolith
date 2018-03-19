@@ -39,13 +39,12 @@ ON_POSIX = (os.name == 'posix')
 
 def dbdirname(db, rc):
     """Gets the database dir name."""
-    if rc.local is False:
+    if db.get('local', False) is False:
         dbsdir = os.path.join(rc.builddir, '_dbs')
         dbdir = os.path.join(dbsdir, db['name'])
-        return dbdir
     else:
-        dbdir = os.path.join(db['url'], db['name'])
-        return dbdir
+        dbdir = db['url']
+    return dbdir
 
 
 def dbpathname(db, rc):
