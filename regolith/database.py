@@ -58,8 +58,6 @@ def load_local_database(db, client, rc):
     """Loads a local database"""
     # make sure that we expand user stuff
     db['url'] = os.path.expanduser(db['url'])
-    # tell everything this is a local 
-    rc.local = True
     # import all of the data
     client.load_database(db)
 
@@ -71,10 +69,11 @@ def load_database(db, client, rc):
         load_git_database(db, client, rc)
     elif url.startswith('hg+'):
         load_hg_database(db, client, rc)
-    elif os.path.exists(url):
+    elif os.path.exists(os.path.expanduser(url)):
         load_local_database(db, client, rc)
     else:
-        raise ValueError('Do not know how to load this kind of database')
+        raise ValueError('Do not know how to load this kind of database: '
+                         '{}'.format(db))
 
 
 def dump_git_database(db, client, rc):
