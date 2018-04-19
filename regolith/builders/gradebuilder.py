@@ -15,8 +15,8 @@ try:
 except ImportError:
     st = None
 
-from regolith.basebuilder import LatexBuilderBase
-from regolith.tools import all_docs_from_collection, month_and_year
+from regolith.builders.basebuilder import LatexBuilderBase
+from regolith.tools import all_docs_from_collection
 
 
 def latex_safe(s):

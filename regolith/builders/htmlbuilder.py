@@ -2,7 +2,7 @@
 import os
 import shutil
 
-from regolith.basebuilder import BuilderBase
+from regolith.builders.basebuilder import BuilderBase
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     filter_projects, make_bibtex_file
