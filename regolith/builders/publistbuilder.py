@@ -11,7 +11,7 @@ except ImportError:
 
 from regolith.tools import all_docs_from_collection
 from regolith.sorters import doc_date_key, ene_date_key, position_key
-from regolith.basebuilder import LatexBuilderBase, latex_safe
+from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
 
 LATEX_OPTS = ['-halt-on-error', '-file-line-error']
 
