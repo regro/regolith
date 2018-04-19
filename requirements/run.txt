@@ -2,4 +2,4 @@ python
 ruamel.yaml
 docutils
 jinja2
-cerberus ==1.1
+cerberus
