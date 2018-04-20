@@ -29,7 +29,7 @@ script:
   - conda install --file requirements/test.txt
   - pytest -vvs .
   - # Command to build your docs
-  - pip install doctr
+  - conda install doctr
   - conda install --file requirements/doc.txt
   - cd docs
   - make html
