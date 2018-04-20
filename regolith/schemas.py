@@ -572,7 +572,7 @@ SCHEMAS = {
             'description': 'Employment information, similar to educational '
                            'information.',
             'required': True,
-            'scheama': {'type': 'dict',
+            'schema': {'type': 'dict',
                         'schema': {
                             'begin_month': {
                                 'required': False,
@@ -610,7 +610,7 @@ SCHEMAS = {
             'description': 'Honors that have been awarded to this '
                            'group member',
             'required': False,
-            'scehma': {'type': 'dict',
+            'schema': {'type': 'dict',
                        'schema': {
                            'description': {
                                'required': False,
