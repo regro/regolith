@@ -35,7 +35,7 @@ def main():
         url='https://github.com/scopatz/regolith',
         platforms='Cross Platform',
         classifiers=['Programming Language :: Python :: 3'],
-        packages=['regolith'],
+        packages=['regolith', 'regolith.builders'],
         package_dir={'regolith': 'regolith'},
         package_data={'regolith': ['templates/*', 'static/*.*', 'static/img/*.*']},
         scripts=['scripts/regolith'],
