@@ -53,4 +53,6 @@ class ResumeBuilder(LatexBuilderBase):
                         coi_grants=coi_grants, coi_amount=coi_amount,
                         coi_sub_amount=coi_sub_amount,
                         )
-            self.pdf(p['_id'])
+            # TODO: this seems like something for the base class to handle
+            if not self.rc['no_pdf']:
+                self.pdf(p['_id'])

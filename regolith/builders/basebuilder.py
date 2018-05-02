@@ -30,7 +30,8 @@ class BuilderBase(object):
         self.bldir = os.path.join(rc.builddir, self.btype)
         self.env = Environment(loader=FileSystemLoader([
             'templates',
-            os.path.join(os.path.dirname(__file__), 'templates'),
+            os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                         'templates'),
         ]))
         self.gtx = {}
         self.construct_global_ctx()
