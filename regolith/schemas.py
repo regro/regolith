@@ -340,7 +340,8 @@ We are committed to open & accessible research tools and methods.''',
         'projects': '''ERGS is involved in a large number of computational 
 projects. Please visit the <a href="projects.html">projects page</a> for more 
 information!
-'''
+''',
+        'email': '<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>'
     }
 }
 
@@ -847,7 +848,11 @@ SCHEMAS = {
         'mission_statement': {'description': 'Mission statement of the group',
                               'type': 'string'},
         'projects': {'description': 'About line for projects',
-                     'type': 'string'}
+                     'type': 'string',
+                     'required': True},
+        'email': {'description': 'Contact email for the group',
+                  'type': 'string',
+                  'required': True}
     }
 }
 
