@@ -28,6 +28,7 @@ class HtmlBuilder(BuilderBase):
                                key=position_key, reverse=True)
         gtx['abstracts'] = list(
             all_docs_from_collection(rc.client, 'abstracts'))
+        gtx['group'] = all_docs_from_collection(rc.client, 'group')
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def finish(self):
