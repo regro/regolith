@@ -14,7 +14,7 @@ builder_map = ['cv',
 def test_builder(bm, make_db):
     repo = make_db
     os.chdir(repo)
-    subprocess.run(['regolith', 'build', bm, '--no-pdf'])
+    subprocess.run(['regolith', 'build', bm, '--no-pdf'], check=True)
     os.chdir(os.path.join(repo, '_build', bm))
     expected_base = os.path.join(os.path.dirname(__file__),
                                  'outputs')
