@@ -51,5 +51,5 @@ class CVBuilder(LatexBuilderBase):
                         coi_sub_amount=coi_sub_amount,
                         )
             # TODO: this seems like something for the base class to handle
-            if not self.rc['no_pdf']:
+            if not self.rc.no_pdf:
                 self.pdf(p['_id'])

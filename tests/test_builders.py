@@ -4,7 +4,6 @@ import subprocess
 
 import pytest
 
-
 builder_map = ['cv',
                # HTML support pending the group collection
                # 'html',
@@ -27,9 +26,7 @@ def test_builder(bm, make_db):
             # os.makedirs(os.path.join(expected_base, bm), exist_ok=True)
             # shutil.copyfile(file, os.path.join(expected_base, bm, file))
 
-            if (file in os.listdir(os.path.join(expected_base, bm))
-                    and os.path.splitext(file)[-1] not in ext_blacklist):
-
+            if file in os.listdir(os.path.join(expected_base, bm)):
                 with open(os.path.join(repo, '_build', bm, file), 'r') as f:
                     actual = f.read()
                 with open(os.path.join(expected_base, bm, file), 'r') as f:
