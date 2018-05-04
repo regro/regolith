@@ -5,13 +5,10 @@ import subprocess
 import pytest
 
 
-# builder_map = {'builder': [('filename1', 'expected_output')]}
 builder_map = ['cv',
                # HTML support pending the group collection
                # 'html',
                'resume', 'publist']
-
-ext_blacklist = ['.pdf']
 
 
 @pytest.mark.parametrize('bm', builder_map)
