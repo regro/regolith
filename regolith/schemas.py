@@ -1,6 +1,8 @@
 """Database schemas, examples, and tools"""
 from cerberus import Validator
 
+from .sorters import POSITION_LEVELS
+
 EXEMPLARS = {
     'abstracts': {'_id': 'Mouginot.Model',
                   'coauthors': 'P.P.H. Wilson',
@@ -700,7 +702,7 @@ SCHEMAS = {
         'position': {
             'description': 'such as professor, graduate student, or scientist',
             'required': True,
-            'type': 'string'},
+            'type': 'list', 'allowed': list(POSITION_LEVELS.keys())},
         'service': {
             'description': 'Service that this group member has provided',
             'required': False,
