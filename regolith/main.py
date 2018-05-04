@@ -119,6 +119,7 @@ def create_parser():
     bldp.add_argument('--no-pdf', dest='no_pdf',
                       help="don't produce PDFs during the build "
                            "(for builds which produce PDFs)",
+                      action='store_true',
                       default=False)
 
     # deploy subparser
