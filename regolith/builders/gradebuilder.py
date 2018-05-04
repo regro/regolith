@@ -120,8 +120,7 @@ class GradeReportBuilder(LatexBuilderBase):
                             show_letter_plot=show_letter_plot,
                             **students_kwargs[student_id])
                 # TODO: this seems like something for the base class to handle
-                if not self.rc['no_pdf']:
-                    self.pdf(base)
+                self.pdf(base)
 
     def makestats(self, course):
         """Returns a dictionary of statistics for a course whose keys are
