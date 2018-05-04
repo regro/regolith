@@ -18,7 +18,7 @@ ext_blacklist = ['.pdf']
 def test_builder(bm, make_db):
     repo = make_db
     os.chdir(repo)
-    subprocess.run(['regolith', 'build', bm])
+    subprocess.run(['regolith', 'build', bm, '--no-pdf'])
     os.chdir(os.path.join(repo, '_build', bm))
     expected_base = os.path.join(os.path.dirname(__file__),
                                  'outputs')
