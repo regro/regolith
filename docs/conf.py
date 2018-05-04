@@ -277,6 +277,17 @@ def format_key(schema, key, indent_str=''):
         s += indent(lf.format(key=key,
                               description=schema[key].get('description', ''),
                               type=schema[key].get('type', '')), indent_str)
+    allowed = ''
+    if 'allowed' in schema or 'allowed' in schema.get(key, {}):
+        allowed = (schema.get('allowed', '')
+                   or schema.get(key, {}).get('allowed', ''))
+    if allowed:
+        s += indent('\nAllowed values: \n', indent_str + '\t')
+        for allow in allowed:
+            if allow:
+                s += indent('* {}\n'.format(allow), indent_str + '\t' * 2)
+            else:
+                s += indent("* ``''``\n", indent_str + '\t' * 2)
     s = s.replace(', , ', ', ')
     if schema.get('schema', False):
         s += '\n'

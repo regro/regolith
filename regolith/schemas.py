@@ -3,6 +3,8 @@ from cerberus import Validator
 
 from .sorters import POSITION_LEVELS
 
+SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
+
 EXEMPLARS = {
     'abstracts': {'_id': 'Mouginot.Model',
                   'coauthors': 'P.P.H. Wilson',
@@ -702,7 +704,7 @@ SCHEMAS = {
         'position': {
             'description': 'such as professor, graduate student, or scientist',
             'required': True,
-            'type': 'list', 'allowed': list(POSITION_LEVELS.keys())},
+            'type': 'list', 'allowed': list(SORTED_POSITION)},
         'service': {
             'description': 'Service that this group member has provided',
             'required': False,
