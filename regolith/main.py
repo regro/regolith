@@ -116,6 +116,11 @@ def create_parser():
     bldp.add_argument('build_targets', nargs='+',
                       help='targets to build. Currently valid targets are: \n{}'.
                       format([k for k in BUILDERS]))
+    bldp.add_argument('--no-pdf', dest='pdf',
+                      help="don't produce PDFs during the build "
+                           "(for builds which produce PDFs)",
+                      action='store_false',
+                      default=True)
 
     # deploy subparser
     depp = subp.add_parser('deploy', help='deploys what was built by regolith')

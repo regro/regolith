@@ -119,6 +119,7 @@ class GradeReportBuilder(LatexBuilderBase):
                             max_wavg=max_wavg, curve=curve,
                             show_letter_plot=show_letter_plot,
                             **students_kwargs[student_id])
+                # TODO: this seems like something for the base class to handle
                 self.pdf(base)
 
     def makestats(self, course):

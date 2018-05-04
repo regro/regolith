@@ -21,7 +21,8 @@ class PubListBuilder(LatexBuilderBase):
     btype = 'publist'
 
     def construct_global_ctx(self):
-        self.gtx = gtx = {}
+        super().construct_global_ctx()
+        gtx = self.gtx
         rc = self.rc
 
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),

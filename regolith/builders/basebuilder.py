@@ -30,7 +30,8 @@ class BuilderBase(object):
         self.bldir = os.path.join(rc.builddir, self.btype)
         self.env = Environment(loader=FileSystemLoader([
             'templates',
-            os.path.join(os.path.dirname(__file__), 'templates'),
+            os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                         'templates'),
         ]))
         self.gtx = {}
         self.construct_global_ctx()
@@ -107,11 +108,12 @@ class LatexBuilderBase(BuilderBase):
 
     def pdf(self, base):
         """Compiles latex files to PDF"""
-        self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-        self.run(['bibtex'] + [base + '.aux'])
-        self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-        self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
-        self.run(['dvipdf', base])
+        if self.rc.pdf:
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['bibtex'] + [base + '.aux'])
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['latex'] + LATEX_OPTS + [base + '.tex'])
+            self.run(['dvipdf', base])
 
     def clean(self):
         """Remove files created by latex"""
