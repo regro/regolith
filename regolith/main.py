@@ -119,7 +119,8 @@ def create_parser():
     bldp.add_argument('--no-pdf', dest='pdf',
                       help="don't produce PDFs during the build "
                            "(for builds which produce PDFs)",
-                      action='store_false')
+                      action='store_false',
+                      default=True)
 
     # deploy subparser
     depp = subp.add_parser('deploy', help='deploys what was built by regolith')
