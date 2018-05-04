@@ -43,8 +43,7 @@ class PubListBuilder(LatexBuilderBase):
                         pubs=pubs, names=names, bibfile=bibfile,
                         employment=emp,
                         )
-            if not self.rc.no_pdf:
-                self.pdf(p['_id'])
+            self.pdf(p['_id'])
 
     def filter_publications(self, authors, reverse=False):
         rc = self.rc
