@@ -47,6 +47,7 @@ def test_builder(bm, make_db):
                     print(f.name)
                     expected = f.read()
 
+                print(len(actual), len(expected))
                 # Skip because of a date time in
                 if file != 'rss.xml':
                     assert expected == actual
