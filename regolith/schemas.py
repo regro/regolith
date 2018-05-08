@@ -119,7 +119,7 @@ EXEMPLARS = {
                     'name': 'Aaron Meurer',
                     'position': 'researcher'}],
                'title': 'SymPy 1.1 Release Support',
-               'status': 'pending',},
+               'status': 'pending',
                'title': 'SymPy 1.1 Release Support'},
     'group': {
         '_id': 'ergs',
