@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
- <title>test Blog</title>
- <description>The official blog feed for test</description>
+ <title>ERGS Blog</title>
+ <description>The official blog feed for ERGS</description>
  <link>http://</link>
- <pubDate>Fri, 04 May 2018 21:20:25 -0000</pubDate>
+ <pubDate>Tue, 08 May 2018 17:36:38 -0000</pubDate>
  <ttl>1800</ttl>
  
  <item>
