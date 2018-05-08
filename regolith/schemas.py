@@ -1,5 +1,11 @@
 """Database schemas, examples, and tools"""
+from warnings import warn
+
 from cerberus import Validator
+
+from .sorters import POSITION_LEVELS
+
+SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 
 EXEMPLARS = {
     'abstracts': {'_id': 'Mouginot.Model',
@@ -112,6 +118,8 @@ EXEMPLARS = {
                    {'institution': 'University of South Carolina',
                     'name': 'Aaron Meurer',
                     'position': 'researcher'}],
+               'title': 'SymPy 1.1 Release Support',
+               'status': 'pending',
                'title': 'SymPy 1.1 Release Support'},
     'group': {
         '_id': 'ergs',
@@ -311,12 +319,12 @@ EXEMPLARS = {
                            'position': 'Project Lead'}],
                  'website': 'http://fuelcycle.org/'},
     'proposals': {'_id': 'mypropsal',
-                  'ammount': 1000000.0,
+                  'amount': 1000000.0,
                   'authors': ['Anthony Scopatz',
                               'Robert Flanagan'],
                   'currency': 'USD',
                   'day': 18,
-                  'durration': 3,
+                  'duration': 3,
                   'full': {
                       'benefit_of_collaboration': 'http://pdf.com'
                                                   '/benefit_of_collaboration',
@@ -398,7 +406,7 @@ SCHEMAS = {
         'courses': {
             'description': 'ids of the courses that have this assignment',
             'required': True,
-            'type': 'string'},
+            'anyof_type': ['string', 'list']},
         'file': {'description': 'path to assignment file in store',
                  'required': False,
                  'type': 'string'},
@@ -406,11 +414,11 @@ SCHEMAS = {
             'description': 'list of number of points possible for each '
                            'question. Length is the number of questions',
             'required': True,
-            'type': ('integer', 'float')},
-        'question': {
+            'type': 'list', 'schema': {'anyof_type': ['integer', 'float']}},
+        'questions': {
             'description': 'titles for the questions on this assignment',
             'required': False,
-            'type': 'string'},
+            'type': 'list'},
         'solution': {'description': 'path to solution file in store',
                      'required': False,
                      'type': 'string'}},
@@ -466,7 +474,7 @@ SCHEMAS = {
         'scores': {
             'description': 'the number of points earned on each question',
             'required': True,
-            'type': ('integer', 'float')},
+            'type': 'list', 'schema': {'anyof_type': ['integer', 'float']}},
         'student': {'description': 'student id',
                     'required': True,
                     'type': 'string'}},
@@ -501,7 +509,7 @@ SCHEMAS = {
         'end_day': {'description': 'end day of the grant',
                     'required': False,
                     'type': ('string', 'integer')},
-        'end_month"': {'description': 'end month of the grant',
+        'end_month': {'description': 'end month of the grant',
                        'required': False,
                        'type': 'string'},
         'end_year': {'description': 'end year of the grant',
@@ -617,7 +625,8 @@ SCHEMAS = {
                                'type': ('float', 'string')},
                            'institution': {'required': True, 'type': 'string'},
                            'location': {'required': True, 'type': 'string'},
-                           'other': {'required': False, 'type': 'string'}}},
+                           'other': {'required': False,
+                                     'anyof_type': ['string', 'list']}}},
             'type': 'list'},
         'email': {'description': 'email address of the group member',
                   'required': False,
@@ -640,7 +649,8 @@ SCHEMAS = {
                             'organization': {
                                 'required': True,
                                 'type': 'string'},
-                            'other': {'required': False, 'type': 'string'},
+                            'other': {'required': False,
+                                      'anyof_type': ['string', 'list']},
                             'position': {'required': True, 'type': 'string'}}},
             'type': 'list'},
         'funding': {
@@ -700,7 +710,7 @@ SCHEMAS = {
         'position': {
             'description': 'such as professor, graduate student, or scientist',
             'required': True,
-            'type': 'string'},
+            'type': 'string', 'eallowed': list(SORTED_POSITION)},
         'service': {
             'description': 'Service that this group member has provided',
             'required': False,
@@ -808,7 +818,7 @@ SCHEMAS = {
                    'type': ('integer', 'float')},
         'authors': {'description': 'other investigator names',
                     'required': True,
-                    'type': 'string'},
+                    'anyof_type': ['list', 'string']},
         'currency': {'description': "typically '$' or 'USD'",
                      'required': True,
                      'type': 'string'},
@@ -818,6 +828,9 @@ SCHEMAS = {
         'duration': {'description': 'number of years',
                      'required': True,
                      'type': ('integer', 'float')},
+        'full': {'description': 'full body of the proposal',
+                 'required': False,
+                 'type': 'dict'},
         'month': {'description': 'month that the proposal is due',
                   'required': True,
                   'type': 'string'},
@@ -827,9 +840,10 @@ SCHEMAS = {
         'pre': {'description': 'Information about the pre-proposal',
                 'required': False,
                 'type': 'dict'},
-        'status': {'description': "e.g. 'submitted', 'accepted', 'rejected'",
+        'status': {'description': "e.g. 'pending', 'accepted', 'rejected'",
                    'required': True,
-                   'type': 'string'},
+                   'type': 'string',
+                   'eallowed': ['pending', 'declined', 'accepted', 'in-prep']},
         'title': {'description': 'actual title of proposal',
                   'required': True,
                   'type': 'string'},
@@ -859,8 +873,22 @@ SCHEMAS = {
 
 class NoDescriptionValidator(Validator):
     def _validate_description(self, description, field, value):
+        """Don't validate descriptions
+
+        The rule's arguments are validated against this schema:
+        {'type': 'string'}"""
         if False:
             pass
+
+    def _validate_eallowed(self, eallowed, field, value):
+        """Test if value is in list
+        The rule's arguments are validated against this schema:
+        {'type': 'list'}
+        """
+        if value not in eallowed:
+            warn('"{}" is not in the preferred entries for "{}", please '
+                 'consider changing this entry to conform or add this to the '
+                 '``eallowed`` field in the schema.'.format(value, field))
 
 
 def validate(coll, record, schemas):

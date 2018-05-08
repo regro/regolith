@@ -1,5 +1,6 @@
 """Copyright (c) 2017, Anthony Scopatz
 All rights reserved."""
+from copy import deepcopy
 import json
 import os
 import shutil
@@ -39,7 +40,7 @@ def make_db():
                    ]}, f)
     os.mkdir('db')
     # Write collection docs
-    for coll, example in EXEMPLARS.items():
+    for coll, example in deepcopy(EXEMPLARS).items():
         dump_yaml('db/{}.yaml'.format(coll), {example['_id']: example})
     subprocess.run(['git', 'add', '.'])
     subprocess.run(['git', 'commit', '-am', 'Initial readme'])
