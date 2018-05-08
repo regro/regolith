@@ -39,9 +39,12 @@ def test_builder(bm, make_db):
             if file in os.listdir(os.path.join(expected_base, bm, root)):
                 with open(os.path.join(repo, '_build', bm, root, file),
                           'r') as f:
+                    print(f.name)
                     actual = f.read()
+
                 with open(os.path.join(expected_base, bm, root, file),
                           'r') as f:
+                    print(f.name)
                     expected = f.read()
 
                 # Skip because of a date time in
