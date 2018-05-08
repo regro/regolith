@@ -29,7 +29,7 @@ def make_db():
     with open('README', 'w') as f:
         f.write('testing ' + name)
     with open('regolithrc.json', 'w') as f:
-        json.dump({"groupname": "test",
+        json.dump({"groupname": "ERGS",
                    "databases": [
                        {"name": "test",
                         'url': repo,

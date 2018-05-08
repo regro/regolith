@@ -287,3 +287,30 @@ def make_bibtex_file(pubs, pid, person_dir='.'):
     with open(fname, 'w') as f:
         f.write(bibwriter.write(bibdb))
     return fname
+
+
+def document_by_value(documents, address, value):
+    """Get a specific document by one of its values
+
+    Parameters
+    ----------
+    documents: generator
+        Generator which yields the documents
+    address: str or tuple
+        The address of the data in the document
+    value: any
+        The expected value for the document
+
+    Returns
+    -------
+    dict:
+        The first document which matches the request
+    """
+    if isinstance(address, str):
+        address = (address, )
+    for g_doc in documents:
+        doc = deepcopy(g_doc)
+        for address in address:
+            doc = doc[address]
+        if doc == value:
+            return g_doc

@@ -113,6 +113,28 @@ EXEMPLARS = {
                     'name': 'Aaron Meurer',
                     'position': 'researcher'}],
                'title': 'SymPy 1.1 Release Support'},
+    'group': {
+        '_id': 'ergs',
+        'pi_name': 'Anthony Scopatz',
+        'department': 'Mechanical Engineering',
+        'institution': 'University of South Carolina',
+        'name': 'ERGS',
+        'website': 'www.ergs.sc.edu',
+        'mission_statement': '''<b>ERGS</b>, or <i>Energy Research Group: 
+    Scopatz</i>, is the Computational 
+    <a href="http://www.me.sc.edu/nuclear/">Nuclear Engineering</a>
+    research group at the 
+    <a href="http://sc.edu/">University of South Carolina</a>. 
+    Our focus is on uncertainty quantification & predictive modeling, nuclear fuel 
+    cycle simulation, and improving nuclear engineering techniques through 
+    automation.
+    We are committed to open & accessible research tools and methods.''',
+        'projects': '''ERGS is involved in a large number of computational 
+    projects. Please visit the <a href="projects.html">projects page</a> for more 
+    information!
+    ''',
+        'email': '<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>'
+    },
     'jobs': {'_id': '0004',
              'background_fields': ['Data Science',
                                    'Data Engineering',
@@ -320,7 +342,8 @@ EXEMPLARS = {
     'students': {'_id': 'Human A. Person',
                  'aka': ['H. A. Person'],
                  'email': 'haperson@uni.edu',
-                 'university_id': 'HAP42'}}
+                 'university_id': 'HAP42'},
+}
 
 SCHEMAS = {
     'abstracts': {
@@ -518,6 +541,37 @@ SCHEMAS = {
         'title': {'description': 'actual title of proposal / grant',
                   'required': True,
                   'type': 'string'}},
+    'group': {
+        '_description': {'description': 'Information about the research group'
+                                        'this is generally public information'},
+        '_id': {
+            'description': 'Unique identifier for submission. This generally '
+                           'includes the author name and part of the title.',
+            'required': True,
+            'type': 'string'},
+        'pi_name': {'description': 'The name of the Principle Investigator',
+                    'required': True,
+                    'type': 'string'},
+        'department': {'description': 'Name of host department',
+                       'required': True,
+                       'type': 'string'},
+        'institution': {'description': 'Name of the host institution',
+                        'required': True,
+                        'type': 'string'},
+        'name': {'description': 'Name of the group',
+                 'required': True,
+                 'type': 'string'},
+        'website': {'description': 'URL to group webpage',
+                    'type': 'string'},
+        'mission_statement': {'description': 'Mission statement of the group',
+                              'type': 'string'},
+        'projects': {'description': 'About line for projects',
+                     'type': 'string',
+                     'required': True},
+        'email': {'description': 'Contact email for the group',
+                  'type': 'string',
+                  'required': True}
+    },
     'people': {
         '_description': {
             'description': 'This collection describes the members of the '
@@ -799,7 +853,8 @@ SCHEMAS = {
         'university_id': {
             'description': 'The university identifier for the student',
             'required': False,
-            'type': 'string'}}}
+            'type': 'string'}},
+}
 
 
 class NoDescriptionValidator(Validator):

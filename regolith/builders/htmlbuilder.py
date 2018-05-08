@@ -5,7 +5,7 @@ import shutil
 from regolith.builders.basebuilder import BuilderBase
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
-    filter_projects, make_bibtex_file
+    filter_projects, make_bibtex_file, document_by_value
 
 
 class HtmlBuilder(BuilderBase):
@@ -28,6 +28,9 @@ class HtmlBuilder(BuilderBase):
                                key=position_key, reverse=True)
         gtx['abstracts'] = list(
             all_docs_from_collection(rc.client, 'abstracts'))
+        gtx['group'] = document_by_value(
+            all_docs_from_collection(rc.client, 'group'),
+            'name', rc.groupname)
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
     def finish(self):
