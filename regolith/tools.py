@@ -309,6 +309,7 @@ def document_by_value(documents, address, value):
     if isinstance(address, str):
         address = (address, )
     for g_doc in documents:
+        print(g_doc)
         key, doc = g_doc
         for address in address:
             doc = doc[address]
