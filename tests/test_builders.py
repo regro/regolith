@@ -5,9 +5,9 @@ import subprocess
 import pytest
 
 builder_map = [
-    # 'cv',
+    'cv',
     'html',
-    # 'resume', 'publist'
+    'resume', 'publist'
 ]
 
 
