@@ -27,7 +27,8 @@ install:
 script:
   - set -e
   - conda install --file requirements/test.txt
-  - pytest -vvs --cov=regolith .
+  - coverage run run_tests.py
+  - coverage report -m
   - codecov
   - # Command to build your docs
   - conda install doctr
