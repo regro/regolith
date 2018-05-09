@@ -197,7 +197,7 @@ class GradeReportBuilder(LatexBuilderBase):
             cat.append(wfrac)
             totalfrac += wfrac
             totals.append(cat)
-        wtotal = totalfrac / totalweight
+        wtotal = 0.0 if not totalweight else totalfrac / totalweight
         return sorted(totals), wtotal
 
     def plot_letter_grades(self, students_kwargs, scale):
