@@ -1,6 +1,6 @@
 [run]
 source = 
-    regolith
+    test
 [report]
 omit =
     */python?.?/*

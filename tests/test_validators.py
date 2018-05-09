@@ -19,9 +19,7 @@ def test_exemplars(key):
     if isinstance(EXEMPLARS[key], list):
         for e in EXEMPLARS[key]:
             v = validate(key, e, SCHEMAS)
-            pprint(v[1])
             assert v[0]
     else:
         v = validate(key, EXEMPLARS[key], SCHEMAS)
-        pprint(v[1])
         assert v[0]
