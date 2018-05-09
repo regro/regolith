@@ -15,7 +15,7 @@ BUILDERS = {
     'grade': GradeReportBuilder,
     'grades': GradeReportBuilder,
     'resume': ResumeBuilder,
-    'cp': CPBuilder
+    'current-pending': CPBuilder
     }
 
 
