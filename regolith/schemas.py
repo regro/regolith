@@ -118,10 +118,9 @@ EXEMPLARS = {
                    {'institution': 'University of South Carolina',
                     'name': 'Aaron Meurer',
                     'position': 'researcher'}],
-               'title': 'SymPy 1.1 Release Support',
                'status': 'pending',
                'title': 'SymPy 1.1 Release Support'},
-    'group': {
+    'groups': {
         '_id': 'ergs',
         'pi_name': 'Anthony Scopatz',
         'department': 'Mechanical Engineering',
@@ -266,6 +265,7 @@ EXEMPLARS = {
                        'name': "NIF User's Group Travel Award",
                        'value': 1150,
                        'year': 2013}],
+               'initials': 'AMS',
                'membership': [{'begin_year': 2006,
                                'organization': 'American Nuclear Society',
                                'position': 'Member'},
@@ -522,6 +522,17 @@ SCHEMAS = {
                      'required': False,
                      'type': 'string'},
         'narrative': {'description': '', 'required': False, 'type': 'string'},
+        'person_months_academic': {
+            'description': 'Number of months of funding during the academic'
+                           'year',
+            'required': False,
+            'type': int
+        },
+        'person_months_summer': {
+            'description': 'Number of months of funding during the summer',
+            'required': False,
+            'type': int
+        },
         'program': {'description': 'the program the work was funded under',
                     'required': True,
                     'type': 'string'},
@@ -529,6 +540,13 @@ SCHEMAS = {
                    'description': 'status of the grant',
                    'required': True,
                    'type': 'string'},
+        'scope': {
+            'description': 'The scope of the grant, answers the prompt: '
+                           '"Describe Research Including Synergies and '
+                           'Delineation with Respect to this Proposal/Award:"',
+            'required': False,
+            'type': 'string'
+        },
         'team': {
             'description': 'information about the team members participating '
                            'in the grant.',
@@ -549,7 +567,7 @@ SCHEMAS = {
         'title': {'description': 'actual title of proposal / grant',
                   'required': True,
                   'type': 'string'}},
-    'group': {
+    'groups': {
         '_description': {'description': 'Information about the research group'
                                         'this is generally public information'},
         '_id': {
@@ -683,6 +701,11 @@ SCHEMAS = {
                            'name': {'required': True, 'type': 'string'},
                            'year': {'required': True, 'type': 'integer'}}},
             'type': 'list'},
+        'initials': {
+            'description': 'The canonical initials for this group member',
+            'required': False,
+            'type': 'string'
+        },
         'membership': {
             'description': 'Professional organizations this member is '
                            'a part of',
