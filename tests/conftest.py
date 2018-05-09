@@ -1,12 +1,12 @@
 """Copyright (c) 2017, Anthony Scopatz
 All rights reserved."""
-from copy import deepcopy
 import json
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
+from copy import deepcopy
 
 import pytest
 
@@ -41,7 +41,11 @@ def make_db():
     os.mkdir('db')
     # Write collection docs
     for coll, example in deepcopy(EXEMPLARS).items():
-        dump_yaml('db/{}.yaml'.format(coll), {example['_id']: example})
+        if isinstance(example, list):
+            d = {dd['_id']: dd for dd in example}
+        else:
+            d = {example['_id']: example}
+        dump_yaml('db/{}.yaml'.format(coll), d)
     subprocess.run(['git', 'add', '.'])
     subprocess.run(['git', 'commit', '-am', 'Initial readme'])
     yield repo
