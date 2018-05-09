@@ -1,6 +1,6 @@
 [run]
 source = 
-    xpdan
+    regolith
 [report]
 omit =
     */python?.?/*
