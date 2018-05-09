@@ -526,12 +526,12 @@ SCHEMAS = {
             'description': 'Number of months of funding during the academic'
                            'year',
             'required': False,
-            'type': int
+            'type': 'integer'
         },
         'person_months_summer': {
             'description': 'Number of months of funding during the summer',
             'required': False,
-            'type': int
+            'type': 'integer'
         },
         'program': {'description': 'the program the work was funded under',
                     'required': True,

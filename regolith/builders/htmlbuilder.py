@@ -29,7 +29,7 @@ class HtmlBuilder(BuilderBase):
         gtx['abstracts'] = list(
             all_docs_from_collection(rc.client, 'abstracts'))
         gtx['group'] = document_by_value(
-            all_docs_from_collection(rc.client, 'group'),
+            all_docs_from_collection(rc.client, 'groups'),
             'name', rc.groupname)
         gtx['all_docs_from_collection'] = all_docs_from_collection
 
