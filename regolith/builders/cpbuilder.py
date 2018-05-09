@@ -21,7 +21,7 @@ def has_started(sd, sm, sy):
 def has_finished(ed, em, ey):
     e = '{}/{}/{}'.format(ed, month_to_int(em), ey)
     end = time.mktime(datetime.datetime.strptime(e, "%d/%m/%Y").timetuple())
-    return time.time() < end
+    return end < time.time()
 
 
 def is_current(sd, sm, sy, ed, em, ey):
@@ -43,8 +43,8 @@ class CPBuilder(LatexBuilderBase):
         rc = self.rc
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)
-        gtx['grants'] = sorted(all_docs_from_collection(rc.client, 'grants'))
-        gtx['groups'] = sorted(all_docs_from_collection(rc.client, 'groups'))
+        gtx['grants'] = all_docs_from_collection(rc.client, 'grants')
+        gtx['groups'] = all_docs_from_collection(rc.client, 'groups')
         gtx['all_docs_from_collection'] = all_docs_from_collection
         gtx['float'] = float
         gtx['str'] = str
@@ -56,7 +56,8 @@ class CPBuilder(LatexBuilderBase):
             pi = fuzzy_retrieval(self.gtx['people'], ['aka', 'name'],
                                  group['pi_name'])
 
-            current_grants = [g for g in self.gtx['grants']
+            grants = list(self.gtx['grants'])
+            current_grants = [g for g in grants
                               if
                               is_current(*[g.get(s, 1) for s in ['begin_day',
                                                                  'begin_month',
@@ -64,12 +65,16 @@ class CPBuilder(LatexBuilderBase):
                                                                  'end_day',
                                                                  'end_month',
                                                                  'end_year']])]
-            pending_grants = [g for g in self.gtx['grants']
+            pending_grants = [g for g in grants
                               if is_pending(*[g[s] for s in ['begin_day',
                                                              'begin_month',
-                                                             'begin_year', ]])]
-            current_grants, _, _ = filter_grants(current_grants, {pi['name']})
-            pending_grants, _, _ = filter_grants(pending_grants, {pi['name']})
+                                                             'begin_year']])]
+            current_grants, _, _ = filter_grants(current_grants, {pi['name']},
+                                                 pi=False,
+                                                 multi_pi=True)
+            pending_grants, _, _ = filter_grants(pending_grants, {pi['name']},
+                                                 pi=False,
+                                                 multi_pi=True)
             grants = pending_grants + current_grants
             for grant in grants:
                 grant.update(
