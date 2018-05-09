@@ -34,7 +34,7 @@ def is_pending(sd, sm, sy):
 
 class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
-    btype = 'cp'
+    btype = 'current-pending'
 
     def construct_global_ctx(self):
         """Constructs the global context"""
