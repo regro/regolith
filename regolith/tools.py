@@ -314,3 +314,43 @@ def document_by_value(documents, address, value):
             doc = doc[address]
         if doc == value:
             return g_doc
+
+
+def fuzzy_retrieval(documents, sources, value):
+    """Retrieve a document from the documents where value is compared against
+    multiple potential sources
+
+    Parameters
+    ----------
+    documents: generator
+        The documents
+    sources: iterable
+        The potential data sources
+    value:
+        The value to compare against to find the document of interest
+
+    Returns
+    -------
+    dict:
+        The document
+
+    Examples
+    --------
+    >>> fuzzy_retrieval(people, ['aka', 'name'], 'pi_name')
+
+    This would get the person entry for where either the alias or the name was
+    ``pi_name``.
+
+    """
+    for doc in documents:
+        fs = []
+        for source in sources:
+            # TODO: This needs to be nested get
+            # (so source can be a tuple of keys)
+            v = doc.get(source, [])
+            if isinstance(v, list):
+                fs.extend(v)
+            else:
+                fs.append(v)
+        if value in frozenset(doc.get('aka', []) + [doc['name']]):
+            return doc

@@ -4,11 +4,7 @@ import subprocess
 
 import pytest
 
-builder_map = [
-    'cv',
-    'html',
-    'resume', 'publist'
-]
+builder_map = ['cv', 'html', 'resume', 'publist', 'current-pending']
 
 
 @pytest.mark.parametrize('bm', builder_map)
