@@ -96,30 +96,65 @@ EXEMPLARS = {
         'assignment': '2017-rx-power-hw02',
         'course': 'EMCH-758-2017-S',
         'scores': [1, 1.6, 3]},
-    'grants': {'_id': 'SymPy-1.1',
-               'amount': 3000.0,
-               'begin_day': 1,
-               'begin_month': 'May',
-               'begin_year': 2017,
-               'call_for_proposals': 'https://groups.google.com/d/msg'
-                                     '/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ',
-               'end_day': 31,
-               'end_month': 'December',
-               'end_year': 2017,
-               'funder': 'NumFOCUS',
-               'narrative': 'https://docs.google.com/document/d/1nZxqoL'
-                            '-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp'
-                            '=sharing',
-               'program': 'Small Development Grants',
-               'team': [
-                   {'institution': 'University of South Carolina',
-                    'name': 'Anthony Scopatz',
-                    'position': 'PI'},
-                   {'institution': 'University of South Carolina',
-                    'name': 'Aaron Meurer',
-                    'position': 'researcher'}],
-               'status': 'pending',
-               'title': 'SymPy 1.1 Release Support'},
+    'grants': [
+        {'_id': 'SymPy-1.1',
+         'amount': 3000.0,
+         'begin_day': 1,
+         'begin_month': 'May',
+         'begin_year': 2030,
+         'call_for_proposals': 'https://groups.google.com/d/msg'
+                               '/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ',
+         'end_day': 31,
+         'end_month': 'December',
+         'end_year': 2030,
+         'funder': 'NumFOCUS',
+         'narrative': 'https://docs.google.com/document/d/1nZxqoL'
+                      '-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp'
+                      '=sharing',
+         'program': 'Small Development Grants',
+         'team': [
+             {'institution': 'University of South Carolina',
+              'name': 'Anthony Scopatz',
+              'position': 'PI'},
+             {'institution': 'University of South Carolina',
+              'name': 'Aaron Meurer',
+              'position': 'researcher'}],
+         'status': 'pending',
+         'title': 'SymPy 1.1 Release Support'},
+        {'_id': 'dmref15',
+         'account': 'GG012345',
+         'amount': 982785.0,
+         'begin_day': 1,
+         'begin_month': 'october',
+         'begin_year': 2015,
+         'end_day': 30,
+         'end_month': 'september',
+         'end_year': 2018,
+         'funder': 'NSF',
+         'grant_id': 'DMREF-1534910',
+         'institution': 'Columbia University',
+         'notes': ' Designing Materials to Revolutionize and Engineer our Future '
+                  '(DMREF) ',
+         'person_months_academic': 0.0,
+         'person_months_summer': 0.25,
+         'program': 'DMREF',
+         'scope': 'This grant is to develop complex modeling methods for regularizing '
+                  'ill-posed nanostructure inverse problems using data analytic and '
+                  'machine learning based approaches. This does not overlap with any '
+                  'other grant.',
+         'team': [{'institution': 'Columbia Unviersity',
+                   'name': 'qdu',
+                   'position': 'Co-PI'},
+                  {'institution': 'Columbia Unviersity',
+                   'name': 'dhsu',
+                   'position': 'Co-PI'},
+                  {'institution': 'Columbia Unviersity',
+                   'name': 'Anthony Scopatz',
+                   'position': 'PI',
+                   'subaward_amount': 330000.0}],
+         'title': 'DMREF: Novel, data validated, nanostructure determination methods '
+                  'for accelerating materials discovery'}
+    ],
     'groups': {
         '_id': 'ergs',
         'pi_name': 'Anthony Scopatz',
@@ -335,6 +370,61 @@ EXEMPLARS = {
                            'name': 'Anthony Scopatz',
                            'position': 'Project Lead'}],
                  'website': 'http://fuelcycle.org/'},
+    'proposals': [
+        {'_id': 'mypropsal',
+         'amount': 1000000.0,
+         'authors': ['Anthony Scopatz',
+                     'Robert Flanagan'],
+         'currency': 'USD',
+         'day': 18,
+         'duration': 3,
+         'full': {
+             'benefit_of_collaboration': 'http://pdf.com'
+                                         '/benefit_of_collaboration',
+             'cv': [
+                 'http://pdf.com/scopatz-cv',
+                 'http://pdf.com/flanagan-cv'],
+             'narrative': 'http://some.com/pdf'},
+         'month': 'Aug',
+         'pi': 'Anthony Scopatz',
+         'pre': {
+             'benefit_of_collaboration': 'http://pdf.com'
+                                         '/benefit_of_collaboration',
+             'cv': [
+                 'http://pdf.com/scopatz-cv',
+                 'http://pdf.com/flanagan-cv'],
+             'day': 2,
+             'month': 'Aug',
+             'narrative': 'http://some.com/pdf',
+             'year': 1998},
+         'status': 'pending',
+         'title': 'A very fine proposal indeed',
+         'year': 1999},
+        {'_id': 'dmref15',
+         'amount': 982785.0,
+         'authors': ['qdu', 'dhsu', 'sbillinge'],
+         'call_for_proposals': 'http://www.nsf.gov/pubs/2014/nsf14591/'
+                               'nsf14591.htm',
+         'currency': '$',
+         'day': 2,
+         'duration': 3,
+         'month': 'february',
+         'other_agencies_submitted': 'None',
+         'pi': 'Simon Billinge',
+         'status': 'approved',
+         'team': [{'institution': 'Columbia Unviersity',
+                   'name': 'qdu',
+                   'position': 'Co-PI'},
+                  {'institution': 'Columbia Unviersity',
+                   'name': 'dhsu',
+                   'position': 'Co-PI'},
+                  {'institution': 'Columbia Unviersity',
+                   'name': 'sbillinge',
+                   'position': 'PI',
+                   'subaward_amount': 330000.0}],
+         'title': 'DMREF: Novel, data validated, nanostructure determination methods '
+                  'for accelerating materials discovery',
+         'year': 2015}],
     'proposals': {'_id': 'mypropsal',
                   'amount': 1000000.0,
                   'authors': ['Anthony Scopatz',
@@ -365,7 +455,7 @@ EXEMPLARS = {
                   'title': 'A very fine proposal indeed',
                   'year': 1999},
     'students': {'_id': 'Human A. Person',
-                 'aka': ['H. A. Person', 'hperson'],
+                 'aka': ['H. A. Person'],
                  'email': 'haperson@uni.edu',
                  'university_id': 'HAP42'},
 }
@@ -502,6 +592,12 @@ SCHEMAS = {
         '_id': {'description': 'short representation, such as this-is-my-name',
                 'required': True,
                 'type': ('string', 'integer', 'float')},
+        'account': {'description': 'the account number which holds the funds',
+                    'required': False,
+                    'type': 'string'},
+        'admin': {'description': 'the group administering the grant',
+                  'type': 'string',
+                  'required': False},
         'amount': {'description': 'value of award',
                    'required': True,
                    'type': ('integer', 'float')},
@@ -517,6 +613,7 @@ SCHEMAS = {
         'benefit_of_collaboration': {'description': '',
                                      'required': False,
                                      'type': 'string'},
+        # TODO: maybe this should move to proposals?
         'call_for_proposals': {'description': '',
                                'required': False,
                                'type': 'string'},
@@ -538,24 +635,30 @@ SCHEMAS = {
         'grant_id': {'description': 'the identifier for this work',
                      'required': False,
                      'type': 'string'},
+        'institution': {'description': 'the host institution for the grant',
+                        'type': 'string',
+                        'required': False},
         'narrative': {'description': '', 'required': False, 'type': 'string'},
+        'notes': {'description': 'notes about the grant', 'required': False,
+                  'type': 'string'},
         'person_months_academic': {
             'description': 'Number of months of funding during the academic'
                            'year',
             'required': False,
-            'type': 'integer'
+            'anyof_type': ['integer', 'float']
         },
         'person_months_summer': {
             'description': 'Number of months of funding during the summer',
             'required': False,
-            'type': 'integer'
+            'anyof_type': ['integer', 'float']
         },
         'program': {'description': 'the program the work was funded under',
                     'required': True,
                     'type': 'string'},
+        # TODO: maybe this should be moved to proposals?
         'status': {'allowed': ['pending', 'declined', 'accepted', 'in-prep'],
                    'description': 'status of the grant',
-                   'required': True,
+                   'required': False,
                    'type': 'string'},
         'scope': {
             'description': 'The scope of the grant, answers the prompt: '
@@ -564,6 +667,7 @@ SCHEMAS = {
             'required': False,
             'type': 'string'
         },
+        # TODO: maybe this should be duplicated in proposals?
         'team': {
             'description': 'information about the team members participating '
                            'in the grant.',
@@ -926,6 +1030,9 @@ SCHEMAS = {
         'authors': {'description': 'other investigator names',
                     'required': True,
                     'anyof_type': ['list', 'string']},
+        'call_for_proposals': {'description': '',
+                               'required': False,
+                               'type': 'string'},
         'currency': {'description': "typically '$' or 'USD'",
                      'required': True,
                      'type': 'string'},
@@ -941,6 +1048,10 @@ SCHEMAS = {
         'month': {'description': 'month that the proposal is due',
                   'required': True,
                   'type': 'string'},
+        'other_agencies_submitted': {
+            'description': 'Other agencies the proposal has been sent to',
+            'anyof_type': ['list', 'string'],
+            'required': False},
         'pi': {'description': 'principal investigator name',
                'required': True,
                'type': 'string'},
@@ -951,6 +1062,23 @@ SCHEMAS = {
                    'required': True,
                    'type': 'string',
                    'eallowed': ['pending', 'declined', 'accepted', 'in-prep']},
+        'team': {
+            'description': 'information about the team members participating '
+                           'in the grant.',
+            'required': False,
+            'schema': {'schema': {'cv': {'required': False, 'type': 'string'},
+                                  'institution': {
+                                      'required': True,
+                                      'type': 'string'},
+                                  'name': {'required': True, 'type': 'string'},
+                                  'position': {
+                                      'required': True,
+                                      'type': 'string'},
+                                  'subaward_amount': {
+                                      'required': False,
+                                      'type': ('integer', 'float')}},
+                       'type': 'dict'},
+            'type': 'list'},
         'title': {'description': 'actual title of proposal',
                   'required': True,
                   'type': 'string'},

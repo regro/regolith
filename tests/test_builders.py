@@ -4,7 +4,13 @@ import subprocess
 
 import pytest
 
-builder_map = ['cv', 'html', 'resume', 'publist', 'current-pending']
+builder_map = [
+    'cv',
+    'html',
+    'resume',
+    'publist',
+    'current-pending'
+]
 
 
 @pytest.mark.parametrize('bm', builder_map)
@@ -13,7 +19,9 @@ def test_builder(bm, make_db):
     os.chdir(repo)
     if bm == 'html':
         os.makedirs('templates/static')
-    subprocess.run(['regolith', 'build', bm, '--no-pdf'], check=True)
+    subprocess.run(['regolith', 'build', bm,
+                    '--no-pdf'
+                    ], check=True)
     os.chdir(os.path.join(repo, '_build', bm))
     expected_base = os.path.join(os.path.dirname(__file__),
                                  'outputs')
@@ -41,6 +49,6 @@ def test_builder(bm, make_db):
                           'r') as f:
                     expected = f.read()
 
-                # Skip because of a date time in
+            #     Skip because of a date time in
                 if file != 'rss.xml':
                     assert expected == actual

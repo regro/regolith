@@ -162,7 +162,7 @@ def filter_projects(projects, authors, reverse=False):
     return projs
 
 
-def filter_grants(input_grants, names, pi=True, reverse=True):
+def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     """Filter grants by those involved
 
     Parameters
@@ -175,6 +175,8 @@ def filter_grants(input_grants, names, pi=True, reverse=True):
         If True add the grant amount to that person's total amount
     reverse : bool, optional
         If True reverse the order, defaults to False
+    multi_pi : bool, optional
+        If True compute sub-awards for multi PI grants, defaults to False
     """
     grants = []
     total_amount = 0.0
@@ -190,6 +192,10 @@ def filter_grants(input_grants, names, pi=True, reverse=True):
                 total_amount += grant['amount']
             else:
                 continue
+        elif multi_pi:
+            grant['subaward_amount'] = person.get('subaward_amount',
+                                                  0.0)
+            grant['multi_pi'] = any(gets(grant['team'], 'subaward_amount'))
         else:
             if person['position'].lower() == 'pi':
                 continue
