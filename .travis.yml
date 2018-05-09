@@ -27,7 +27,7 @@ install:
 script:
   - set -e
   - conda install --file requirements/test.txt
-  - pytest -vvs .
+  - pytest -vvs --cov=regolith .
   - # Command to build your docs
   - conda install doctr
   - conda install --file requirements/doc.txt
