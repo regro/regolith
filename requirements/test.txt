@@ -2,3 +2,4 @@ ruamel.yaml
 pytest
 bibtexparser
 pytest-cov
+codecov
