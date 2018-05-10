@@ -1,15 +1,13 @@
 """Builder for Current and Pending Reports."""
+import datetime
 import time
 
-import datetime
-
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.sorters import ene_date_key, position_key
-from regolith.tools import (all_docs_from_collection, filter_publications,
-                            filter_projects,
-                            filter_grants, awards_grants_honors,
-                            make_bibtex_file, fuzzy_retrieval)
 from regolith.dates import month_to_int
+from regolith.fsclient import _id_key
+from regolith.sorters import position_key
+from regolith.tools import (all_docs_from_collection, filter_grants,
+                            fuzzy_retrieval)
 
 
 def has_started(sd, sm, sy):
@@ -43,8 +41,10 @@ class CPBuilder(LatexBuilderBase):
         rc = self.rc
         gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
                                key=position_key, reverse=True)
-        gtx['grants'] = all_docs_from_collection(rc.client, 'grants')
-        gtx['groups'] = all_docs_from_collection(rc.client, 'groups')
+        gtx['grants'] = sorted(all_docs_from_collection(rc.client, 'grants'),
+                               key=_id_key)
+        gtx['groups'] = sorted(all_docs_from_collection(rc.client, 'groups'),
+                               key=_id_key)
         gtx['all_docs_from_collection'] = all_docs_from_collection
         gtx['float'] = float
         gtx['str'] = str

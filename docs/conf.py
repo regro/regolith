@@ -11,6 +11,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+from collections.abc import MutableMapping
 import json
 import tempfile
 from textwrap import indent
@@ -329,7 +330,7 @@ def build_schema_doc(key):
         temp = tempfile.NamedTemporaryFile()
         temp2 = tempfile.NamedTemporaryFile()
         documents = EXEMPLARS[key]
-        if not isinstance(documents, list):
+        if isinstance(documents, MutableMapping):
             documents = [documents]
         documents = {doc['_id']: doc for doc in documents}
         dump_json(temp.name, documents)
