@@ -103,6 +103,6 @@ def test_builder_python(bm, make_db):
                           'r') as f:
                     expected = f.read()
 
-            #     Skip because of a date time in
+            # Skip because of a date time in
                 if file != 'rss.xml':
                     assert expected == actual
