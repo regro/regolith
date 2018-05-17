@@ -303,6 +303,23 @@ EXEMPLARS = {
                                    '-PxiboYdM/edit?usp=sharing',
                        'year': 2017}],
                'title': 'Dr.'},
+    'presentations': {'_id': '18sb_ignobel',
+                      'abstract': 'n/a',
+                      'authors': '[sbanerjee, cliu, sbillinge]',
+                      'begin_year': 2018,
+                      'begin_month': 'May',
+                      'begin_day': 22,
+                      'department': '',
+                      'end_year': 2018,
+                      'end_month': 'May',
+                      'end_day': 22,
+                      'institution': 'bnl',
+                      'meeting_name': '2018 NSLS-II and CFN Users Meeting',
+                      'project': '[18sob_clustermining]',
+                      'title': 'ClusterMining: extracting core structures of '
+                               'metallic nanoparticles from the atomic pair '
+                               'distribution function',
+                      'type': 'poster'},
     'projects': {'_id': 'Cyclus',
                  'name': 'Cyclus',
                  'description': 'Agent-Based Nuclear Fuel Cycle Simulator',
@@ -786,6 +803,72 @@ SCHEMAS = {
         'title': {'description': 'for example, Dr., etc.',
                   'required': False,
                   'type': 'string'}},
+
+    'presentations': {
+        '_description': {
+            'description': 'This collection describes presentations that group'
+                           'members make at conferences, symposia, seminars and'
+                           'so on.'},
+        '_id': {'description': 'unique id for the presentation',
+                'required': True,
+                'type': 'string'},
+        'abstract': {'description': 'abstract of the presentation',
+                        'required': False,
+                        'type': 'string'},
+        'authors': {'description': 'Author list.  Each entry must be discoverable'
+                                   'in the name or aka of a person',
+                        'required': True,
+                        'type': 'string'},
+        'begin_year': {'description': 'year the conference or trip begins.',
+                        'required': True,
+                        'type': 'integer'},
+        'begin_month': {'required': True,
+                       'type': 'string'},
+        'begin_day': {'required': False,
+                        'type': 'integer'},
+        'department': {'description': 'department of the institution where the'
+                                      'presentation will be made, if '
+                                      'applicable.  should be discoverable in '
+                                      'institutions.',
+                        'required': False,
+                        'type': 'string'},
+        'end_year': {'description': 'year the conference or trip ends',
+                       'required': False,
+                       'type': 'integer'},
+        'end_month': {'required': False,
+                        'type': 'string'},
+        'end_day': {'required': False,
+                      'type': 'integer'},
+        'institution': {'description': 'institution where the'
+                                       'presentation will be made, if '
+                                       'applicable.  should be discoverable in '
+                                       'institutions.',
+                       'required': False,
+                       'type': 'string'},
+        'meeting_name': {'description': 'full name of the conference or '
+                                        'meeting.  If it is a departmental '
+                                        'seminar or colloquium, write Seminar'
+                                        'or Colloquium and fill in department '
+                                        'and institution fields',
+                        'required': True,
+                        'type': 'string'},
+        'project': {'description': 'project or list of projects that this '
+                                   'presentation is associated with.  Should be'
+                                   'discoverable in projects collection',
+                    'required': False,
+                    'type': 'string'},
+        'title': {'description': 'title of the presentation',
+                  'required': True,
+                  'type': 'string'},
+        'type': {'description': 'type of presentation',
+                 'items': {'type': 'string',
+                           'enum': ['award','colloquium', 'contributed_oral',
+                                    'invited', 'keynote',
+                                    'plenary', 'poster',
+                                    'seminar']
+                           },
+                 'required': True,
+                 'type': 'string'},
     'projects': {
         '_description': {
             'description': 'This collection describes the research group '
