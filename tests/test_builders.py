@@ -29,19 +29,6 @@ def test_builder(bm, make_db):
                                  'outputs')
     for root, dirs, files in os.walk('.'):
         for file in files:
-
-            # Use this for bootstrapping the tests,
-            # confirm by hand that files look correct
-            # if root != '.':
-            #     os.makedirs(os.path.join(expected_base, bm, root),
-            #                 exist_ok=True)
-            # if root == '.':
-            #     shutil.copyfile(os.path.join(file),
-            #                     os.path.join(expected_base, bm, file))
-            # else:
-            #     shutil.copyfile(os.path.join(root, file),
-            #                     os.path.join(expected_base, bm, root, file))
-
             if file in os.listdir(os.path.join(expected_base, bm, root)):
                 with open(os.path.join(repo, '_build', bm, root, file),
                           'r') as f:
@@ -51,7 +38,7 @@ def test_builder(bm, make_db):
                           'r') as f:
                     expected = f.read()
 
-            #     Skip because of a date time in
+            # Skip because of a date time in
                 if file != 'rss.xml':
                     assert expected == actual
 
@@ -68,19 +55,6 @@ def test_builder_python(bm, make_db):
                                  'outputs')
     for root, dirs, files in os.walk('.'):
         for file in files:
-
-            # Use this for bootstrapping the tests,
-            # confirm by hand that files look correct
-            # if root != '.':
-            #     os.makedirs(os.path.join(expected_base, bm, root),
-            #                 exist_ok=True)
-            # if root == '.':
-            #     shutil.copyfile(os.path.join(file),
-            #                     os.path.join(expected_base, bm, file))
-            # else:
-            #     shutil.copyfile(os.path.join(root, file),
-            #                     os.path.join(expected_base, bm, root, file))
-
             if file in os.listdir(os.path.join(expected_base, bm, root)):
                 with open(os.path.join(repo, '_build', bm, root, file),
                           'r') as f:
@@ -90,6 +64,6 @@ def test_builder_python(bm, make_db):
                           'r') as f:
                     expected = f.read()
 
-            #     Skip because of a date time in
+            # Skip because of a date time in
                 if file != 'rss.xml':
                     assert expected == actual
