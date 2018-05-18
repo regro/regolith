@@ -339,18 +339,18 @@ EXEMPLARS = {
                        'year': 2017}],
                'title': 'Dr.'},
     'presentations': {'_id': '18sb_ignobel',
-                      'abstract': 'n/a',
-                      'authors': '[sbanerjee, cliu, sbillinge]',
+                      'abstract': 'We pulled apart graphite with tape',
+                      'authors': ['sbanerjee', 'cliu', 'sbillinge'],
                       'begin_year': 2018,
                       'begin_month': 'May',
                       'begin_day': 22,
-                      'department': '',
+                      'department': 'APAM',
                       'end_year': 2018,
                       'end_month': 'May',
                       'end_day': 22,
                       'institution': 'bnl',
                       'meeting_name': '2018 NSLS-II and CFN Users Meeting',
-                      'project': '[18sob_clustermining]',
+                      'project': '18sob_clustermining',
                       'title': 'ClusterMining: extracting core structures of '
                                'metallic nanoparticles from the atomic pair '
                                'distribution function',
@@ -426,7 +426,7 @@ EXEMPLARS = {
                   'for accelerating materials discovery',
          'year': 2015}],
     'students': {'_id': 'Human A. Person',
-                 'aka': ['H. A. Person', 'hperson'],
+                 'aka': ['H. A. Person'],
                  'email': 'haperson@uni.edu',
                  'university_id': 'HAP42'},
 }
@@ -890,10 +890,9 @@ SCHEMAS = {
                      'required': False,
                      'type': 'string'},
         'authors': {
-            'description': 'Author list.  Each entry must be discoverable'
-                           'in the name or aka of a person',
+            'description': 'Author list.',
             'required': True,
-            'type': 'string'},
+            'anyof_type': ['string', 'list']},
         'begin_year': {'description': 'year the conference or trip begins.',
                        'required': True,
                        'type': 'integer'},
@@ -916,8 +915,7 @@ SCHEMAS = {
                     'type': 'integer'},
         'institution': {'description': 'institution where the'
                                        'presentation will be made, if '
-                                       'applicable.  should be discoverable in '
-                                       'institutions.',
+                                       'applicable.',
                         'required': False,
                         'type': 'string'},
         'meeting_name': {'description': 'full name of the conference or '
@@ -927,24 +925,20 @@ SCHEMAS = {
                                         'and institution fields',
                          'required': True,
                          'type': 'string'},
-    },
-    'project': {'description': 'project or list of projects that this '
-                               'presentation is associated with.  Should be'
-                               'discoverable in projects collection',
-                'required': False,
-                'type': 'string'},
-    'title': {'description': 'title of the presentation',
-              'required': True,
-              'type': 'string'},
-    'type': {'description': 'type of presentation',
-             'items': {'type': 'string',
-                       'eallowed': ['award', 'colloquium', 'contributed_oral',
-                                    'invited', 'keynote', 'nobel',
-                                    'plenary', 'poster',
-                                    'seminar']
-                       },
-             'required': True,
-             'type': 'string'},
+        'project': {'description': 'project or list of projects that this '
+                                   'presentation is associated with.  Should be'
+                                   'discoverable in projects collection',
+                    'required': False,
+                    'anyof_type': ['string', 'list']},
+        'title': {'description': 'title of the presentation',
+                  'required': True,
+                  'type': 'string'},
+        'type': {'description': 'type of presentation',
+                 'eallowed': ['award', 'colloquium', 'contributed_oral',
+                              'invited', 'keynote', 'nobel', 'plenary',
+                              'poster', 'seminar'],
+                 'required': True,
+                 'type': 'string'}},
     'projects': {
         '_description': {
             'description': 'This collection describes the research group '
