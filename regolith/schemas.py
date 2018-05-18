@@ -878,7 +878,6 @@ SCHEMAS = {
         'title': {'description': 'for example, Dr., etc.',
                   'required': False,
                   'type': 'string'}},
-
     'presentations': {
         '_description': {
             'description': 'This collection describes presentations that group'
@@ -937,8 +936,8 @@ SCHEMAS = {
                   'type': 'string'},
         'type': {'description': 'type of presentation',
                  'items': {'type': 'string',
-                           'enum': ['award','colloquium', 'contributed_oral',
-                                    'invited', 'keynote',
+                           'eallowed': ['award','colloquium', 'contributed_oral',
+                                    'invited', 'keynote','nobel',
                                     'plenary', 'poster',
                                     'seminar']
                            },
