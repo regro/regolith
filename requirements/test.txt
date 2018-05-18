@@ -1,3 +1,5 @@
 ruamel.yaml
 pytest
 bibtexparser
+coverage
+codecov

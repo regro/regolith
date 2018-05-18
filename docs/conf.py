@@ -11,6 +11,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+from collections.abc import MutableMapping
 import json
 import tempfile
 from textwrap import indent
@@ -18,7 +19,7 @@ from textwrap import indent
 import cloud_sptheme as csp
 
 from regolith import __version__ as REGOLITH_VERSION
-from regolith.fsclient import json_to_yaml
+from regolith.fsclient import json_to_yaml, dump_json, _id_key
 from regolith.schemas import SCHEMAS, EXEMPLARS
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -328,10 +329,15 @@ def build_schema_doc(key):
         s += '.. code-block:: yaml\n\n'
         temp = tempfile.NamedTemporaryFile()
         temp2 = tempfile.NamedTemporaryFile()
-        with open(temp.name, 'w') as ff:
-            json.dump(EXEMPLARS[key], ff, sort_keys=True)
-        jd = json.dumps(EXEMPLARS[key], sort_keys=True,
-                        indent=4, separators=(',', ': '))
+        documents = EXEMPLARS[key]
+        if isinstance(documents, MutableMapping):
+            documents = [documents]
+        documents = {doc['_id']: doc for doc in documents}
+        dump_json(temp.name, documents)
+        docs = sorted(documents.values(), key=_id_key)
+        lines = [json.dumps(doc, sort_keys=True,
+                            indent=4, separators=(',', ': ')) for doc in docs]
+        jd = '\n'.join(lines)
         json_to_yaml(temp.name, temp2.name)
         with open(temp2.name, 'r') as ff:
             s += indent(ff.read(), '\t')
