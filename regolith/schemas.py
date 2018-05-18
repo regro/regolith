@@ -527,8 +527,8 @@ SCHEMAS = {
                     'required': False,
                     'type': ('string', 'integer')},
         'end_month': {'description': 'end month of the grant',
-                       'required': False,
-                       'type': 'string'},
+                      'required': False,
+                      'type': 'string'},
         'end_year': {'description': 'end year of the grant',
                      'required': True,
                      'type': 'integer'},
@@ -671,22 +671,22 @@ SCHEMAS = {
                            'information.',
             'required': True,
             'schema': {'type': 'dict',
-                        'schema': {
-                            'begin_month': {
-                                'required': False,
-                                'type': 'string'},
-                            'begin_year': {
-                                'required': True,
-                                'type': 'integer'},
-                            'end_month': {'required': False, 'type': 'string'},
-                            'end_year': {'required': False, 'type': 'integer'},
-                            'location': {'required': True, 'type': 'string'},
-                            'organization': {
-                                'required': True,
-                                'type': 'string'},
-                            'other': {'required': False,
-                                      'anyof_type': ['string', 'list']},
-                            'position': {'required': True, 'type': 'string'}}},
+                       'schema': {
+                           'begin_month': {
+                               'required': False,
+                               'type': 'string'},
+                           'begin_year': {
+                               'required': True,
+                               'type': 'integer'},
+                           'end_month': {'required': False, 'type': 'string'},
+                           'end_year': {'required': False, 'type': 'integer'},
+                           'location': {'required': True, 'type': 'string'},
+                           'organization': {
+                               'required': True,
+                               'type': 'string'},
+                           'other': {'required': False,
+                                     'anyof_type': ['string', 'list']},
+                           'position': {'required': True, 'type': 'string'}}},
             'type': 'list'},
         'funding': {
             'description': 'Funding and scholarship that the group member '
@@ -812,62 +812,64 @@ SCHEMAS = {
                 'required': True,
                 'type': 'string'},
         'abstract': {'description': 'abstract of the presentation',
-                        'required': False,
-                        'type': 'string'},
-        'authors': {'description': 'Author list.  Each entry must be discoverable'
-                                   'in the name or aka of a person',
-                        'required': True,
-                        'type': 'string'},
+                     'required': False,
+                     'type': 'string'},
+        'authors': {
+            'description': 'Author list.  Each entry must be discoverable'
+                           'in the name or aka of a person',
+            'required': True,
+            'type': 'string'},
         'begin_year': {'description': 'year the conference or trip begins.',
-                        'required': True,
-                        'type': 'integer'},
+                       'required': True,
+                       'type': 'integer'},
         'begin_month': {'required': True,
-                       'type': 'string'},
+                        'type': 'string'},
         'begin_day': {'required': False,
-                        'type': 'integer'},
+                      'type': 'integer'},
         'department': {'description': 'department of the institution where the'
                                       'presentation will be made, if '
                                       'applicable.  should be discoverable in '
                                       'institutions.',
-                        'required': False,
-                        'type': 'string'},
-        'end_year': {'description': 'year the conference or trip ends',
-                       'required': False,
-                       'type': 'integer'},
-        'end_month': {'required': False,
-                        'type': 'string'},
-        'end_day': {'required': False,
-                      'type': 'integer'},
-        'institution': {'description': 'institution where the'
-                                       'presentation will be made, if '
-                                       'applicable.  should be discoverable in '
-                                       'institutions.',
                        'required': False,
                        'type': 'string'},
-        'meeting_name': {'description': 'full name of the conference or '
-                                        'meeting.  If it is a departmental '
-                                        'seminar or colloquium, write Seminar'
-                                        'or Colloquium and fill in department '
-                                        'and institution fields',
-                        'required': True,
-                        'type': 'string'},
-        'project': {'description': 'project or list of projects that this '
-                                   'presentation is associated with.  Should be'
-                                   'discoverable in projects collection',
+        'end_year': {'description': 'year the conference or trip ends',
+                     'required': False,
+                     'type': 'integer'},
+        'end_month': {'required': False,
+                      'type': 'string'},
+        'end_day': {'required': False,
+                    'type': 'integer'},
+    },
+    'institution': {'description': 'institution where the'
+                                   'presentation will be made, if '
+                                   'applicable.  should be discoverable in '
+                                   'institutions.',
                     'required': False,
                     'type': 'string'},
-        'title': {'description': 'title of the presentation',
-                  'required': True,
-                  'type': 'string'},
-        'type': {'description': 'type of presentation',
-                 'items': {'type': 'string',
-                           'eallowed': ['award','colloquium', 'contributed_oral',
-                                    'invited', 'keynote','nobel',
+    'meeting_name': {'description': 'full name of the conference or '
+                                    'meeting.  If it is a departmental '
+                                    'seminar or colloquium, write Seminar'
+                                    'or Colloquium and fill in department '
+                                    'and institution fields',
+                     'required': True,
+                     'type': 'string'},
+    'project': {'description': 'project or list of projects that this '
+                               'presentation is associated with.  Should be'
+                               'discoverable in projects collection',
+                'required': False,
+                'type': 'string'},
+    'title': {'description': 'title of the presentation',
+              'required': True,
+              'type': 'string'},
+    'type': {'description': 'type of presentation',
+             'items': {'type': 'string',
+                       'eallowed': ['award', 'colloquium', 'contributed_oral',
+                                    'invited', 'keynote', 'nobel',
                                     'plenary', 'poster',
                                     'seminar']
-                           },
-                 'required': True,
-                 'type': 'string'},
+                       },
+             'required': True,
+             'type': 'string'},
     'projects': {
         '_description': {
             'description': 'This collection describes the research group '
@@ -972,7 +974,8 @@ SCHEMAS = {
         'university_id': {
             'description': 'The university identifier for the student',
             'required': False,
-            'type': 'string'}},
+            'type': 'string'}
+    },
 }
 
 
