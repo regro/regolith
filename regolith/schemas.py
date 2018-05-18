@@ -426,7 +426,7 @@ EXEMPLARS = {
                   'for accelerating materials discovery',
          'year': 2015}],
     'students': {'_id': 'Human A. Person',
-                 'aka': ['H. A. Person'],
+                 'aka': ['H. A. Person', 'hperson'],
                  'email': 'haperson@uni.edu',
                  'university_id': 'HAP42'},
 }
@@ -914,20 +914,20 @@ SCHEMAS = {
                       'type': 'string'},
         'end_day': {'required': False,
                     'type': 'integer'},
+        'institution': {'description': 'institution where the'
+                                       'presentation will be made, if '
+                                       'applicable.  should be discoverable in '
+                                       'institutions.',
+                        'required': False,
+                        'type': 'string'},
+        'meeting_name': {'description': 'full name of the conference or '
+                                        'meeting.  If it is a departmental '
+                                        'seminar or colloquium, write Seminar'
+                                        'or Colloquium and fill in department '
+                                        'and institution fields',
+                         'required': True,
+                         'type': 'string'},
     },
-    'institution': {'description': 'institution where the'
-                                   'presentation will be made, if '
-                                   'applicable.  should be discoverable in '
-                                   'institutions.',
-                    'required': False,
-                    'type': 'string'},
-    'meeting_name': {'description': 'full name of the conference or '
-                                    'meeting.  If it is a departmental '
-                                    'seminar or colloquium, write Seminar'
-                                    'or Colloquium and fill in department '
-                                    'and institution fields',
-                     'required': True,
-                     'type': 'string'},
     'project': {'description': 'project or list of projects that this '
                                'presentation is associated with.  Should be'
                                'discoverable in projects collection',
