@@ -426,7 +426,7 @@ EXEMPLARS = {
                   'for accelerating materials discovery',
          'year': 2015}],
     'students': {'_id': 'Human A. Person',
-                 'aka': ['H. A. Person'],
+                 'aka': ['H. A. Person', 'hperson'],
                  'email': 'haperson@uni.edu',
                  'university_id': 'HAP42'},
 }
