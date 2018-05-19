@@ -265,33 +265,23 @@ texinfo_documents = [
 
 def format_key(schema, key, indent_str=''):
     s = ''
+    if key == 'schema':
+        return s
     line_format = ':{key}: {type}, {description}, required\n'
     line_format_o = ':{key}: {type}, {description}, optional\n'
     if not schema.get('required', False):
         lf = line_format_o
     else:
         lf = line_format
-    if (('type' in schema or 'anyof_type' in schema)
-            and 'description' in schema):
+    if 'type' in schema.get(key, {}) or 'anyof_type' in schema.get(key, {}):
+        schema = schema[key]
+    if 'type' in schema or 'anyof_type' in schema:
         s += indent(
             lf.format(key=key,
                       description=schema.get('description', ''),
                       type=schema.get('type', schema.get('anyof_type', ''))),
             indent_str)
-    elif 'type' in schema[key] or 'anyof_type' in schema[key]:
-        s += indent(
-            lf.format(key=key,
-                      description=schema[key].get('description', ''),
-                      type=schema[key].get(
-                          'type', schema[key].get('anyof_type', ''))),
-            indent_str)
-    allowed = ''
-    if ('allowed' in schema
-            or 'allowed' in schema.get(key, {})
-            or 'eallowed' in schema
-            or 'eallowed' in schema.get(key, {})):
-        allowed = (schema.get('allowed', '')
-                   or schema.get(key, {}).get('allowed', ''))
+    allowed = (schema.get('allowed', '') or schema.get('eallowed', ''))
     if allowed:
         s += indent('\nAllowed values: \n', indent_str + '\t')
         for allow in allowed:
