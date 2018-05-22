@@ -92,6 +92,7 @@ def make_bad_db():
     os.chdir(cwd)
     rmtree(repo)
 
+
 def rmtree(dirname):
     """Remove a directory, even if it has read-only files (Windows).
     Git creates read-only files that must be removed on teardown. See
