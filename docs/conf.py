@@ -341,3 +341,37 @@ def build_schema_doc(key):
 
 for k in SCHEMAS:
     build_schema_doc(k)
+
+
+from subprocess import check_output
+
+
+def build_cli_doc(cli):
+    fn = 'commands/' + cli + '.rst'
+    out = check_output(['regolith', cli, '-h']).decode('utf-8')
+    s = '{}\n'.format(cli) + '=' * len(cli) + '\n\n'
+    s += '.. code-block:: bash\n\n'
+    s += indent(out, '\t') + '\n'
+    with open(fn, 'w') as f:
+        f.write(s)
+
+from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
+# build CLI docs
+clis = sorted(set(CONNECTED_COMMANDS.keys()) | set(DISCONNECTED_COMMANDS.keys()))
+for cli in clis:
+    build_cli_doc(cli)
+
+cli_index = '''.. _commands:
+
+=================
+Regolith Commands
+=================
+Shell commands for regolith
+
+.. toctree::
+    :maxdepth: 1
+
+'''
+cli_index += indent('\n'.join(clis), '    ')
+with open('commands/index.rst', 'w') as f:
+    f.write(cli_index)
