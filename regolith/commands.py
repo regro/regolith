@@ -151,6 +151,7 @@ def validate(rc):
                 if errored_print is False:
                     errored_print = True
                     print('Errors found in {}'.format(name))
+                    print('='*len('Errors found in {}'.format(name)))
                 print('ERROR in {}:'.format(doc_id))
                 pprint(v[1])
                 print('-'*15)
