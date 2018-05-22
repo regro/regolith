@@ -14,12 +14,14 @@
 from collections.abc import MutableMapping
 import json
 import tempfile
+from subprocess import check_output
 from textwrap import indent
 
 import cloud_sptheme as csp
 
 from regolith import __version__ as REGOLITH_VERSION
 from regolith.fsclient import json_to_yaml, dump_json, _id_key
+from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
 from regolith.schemas import SCHEMAS, EXEMPLARS
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -343,9 +345,6 @@ for k in SCHEMAS:
     build_schema_doc(k)
 
 
-from subprocess import check_output
-
-
 def build_cli_doc(cli):
     fn = 'commands/' + cli + '.rst'
     out = check_output(['regolith', cli, '-h']).decode('utf-8')
@@ -355,9 +354,10 @@ def build_cli_doc(cli):
     with open(fn, 'w') as f:
         f.write(s)
 
-from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
+
 # build CLI docs
-clis = sorted(set(CONNECTED_COMMANDS.keys()) | set(DISCONNECTED_COMMANDS.keys()))
+clis = sorted(set(CONNECTED_COMMANDS.keys()) |
+              set(DISCONNECTED_COMMANDS.keys()))
 for cli in clis:
     build_cli_doc(cli)
 
