@@ -1,5 +1,6 @@
 """Implementation of commands for command line."""
 import os
+from pprint import pprint
 import re
 import json
 
@@ -142,7 +143,20 @@ def validate(rc):
     """Validate the combined database against the schemas"""
     from regolith.schemas import validate
     print('=' * 10 + '\nVALIDATING\n')
+    any_errors = False
     for name, collection in rc.client.chained_db.items():
+        errored_print = False
         for doc_id, doc in collection.items():
-            validate(name, doc, rc.schemas)
-    print('\nNO ERORS IN DBS\n' + '=' * 15)
+            v = validate(name, doc, rc.schemas)
+            if v[0] is False:
+                if errored_print is False:
+                    errored_print = True
+                    any_errors = True
+                    print('Errors found in {}'.format(name))
+                    print('='*len('Errors found in {}'.format(name)))
+                print('ERROR in {}:'.format(doc_id))
+                pprint(v[1])
+                print('-'*15)
+                print('\n')
+    if not any_errors:
+        print('\nNO ERRORS IN DBS\n' + '=' * 15)
