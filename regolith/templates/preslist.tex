@@ -1,0 +1,37 @@
+\documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
+
+
+% Packages
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{booktabs,dcolumn}
+\usepackage{siunitx}
+
+\setlength{\parindent}{0pt}
+
+% Document
+\begin{document}
+\textbf{Presentations}
+
+\textbf{ {{-latex_safe(pi['name']).upper() }}}
+\vskip 14pt
+
+\begin{enumerate}
+{% for pres in presentations %}
+\item {{ latex_safe(pres['authors']) }}, {\bf {{ latex_safe(pres['title']) }} },
+{% set inst = pres['institution'] %}
+{% if pres['type'] in ['colloquium', 'seminar'] %}
+{\it {{ latex_safe(pres['type']).title() }} },
+{\it {{ latex_safe(inst['department']) }} },
+{\it {{ latex_safe(inst['name']) }} },
+{\it {{ latex_safe(inst['city']) }} }\
+{\it {{ latex_safe(inst['state']) }} },
+{% else %}
+{\it {{ latex_safe(pres['meeting_name']) }} },
+{\it {{ latex_safe(pres['location']) }} },
+{% endif %}
+{\it {{ latex_safe(pres['begin_month']) }} }\
+( {{ latex_safe(pres['begin_year']) }} ).
+
+
+\end{document}

@@ -11,7 +11,8 @@ builder_map = [
     'html',
     'resume',
     'publist',
-    'current-pending'
+    'current-pending',
+    'preslist'
 ]
 
 
