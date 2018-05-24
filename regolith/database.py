@@ -1,7 +1,6 @@
 """Helps manage mongodb setup and connections."""
 import os
 import subprocess
-from collections import ChainMap
 from contextlib import contextmanager
 from warnings import warn
 
@@ -10,6 +9,7 @@ try:
 except:
     hglib = None
 
+from regolith.chained_db import ChainDB
 from regolith.tools import dbdirname
 from regolith.fsclient import FileSystemClient
 from regolith.mongoclient import MongoClient
@@ -152,7 +152,7 @@ def connect(rc):
                 if k in chained_db[base]:
                     chained_db[base][k].maps.append(v)
                 else:
-                    chained_db[base][k] = ChainMap(v)
+                    chained_db[base][k] = ChainDB(v)
     client.chained_db = chained_db
     yield client
     for db in rc.databases:
