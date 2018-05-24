@@ -338,7 +338,7 @@ EXEMPLARS = {
                                    '-PxiboYdM/edit?usp=sharing',
                        'year': 2017}],
                'title': 'Dr.'},
-    'presentations': {'_id': '18sb_ignobel',
+    'presentations': [{'_id': '18sb_ignobel',
                       'abstract': 'We pulled apart graphite with tape',
                       'authors': ['sbanerjee', 'cliu', 'sbillinge'],
                       'begin_year': 2018,
@@ -349,12 +349,29 @@ EXEMPLARS = {
                       'end_month': 'May',
                       'end_day': 22,
                       'institution': 'bnl',
+                      'location': 'Upton, NY',
                       'meeting_name': '2018 NSLS-II and CFN Users Meeting',
                       'project': '18sob_clustermining',
                       'title': 'ClusterMining: extracting core structures of '
                                'metallic nanoparticles from the atomic pair '
                                'distribution function',
                       'type': 'poster'},
+                      {'_id': '18sb04_kentstate',
+                       'abstract': 'We made the case for local structure',
+                       'authors': ['sbillinge'],
+                       'begin_year': 2018,
+                       'begin_month': 'May',
+                       'begin_day': 22,
+                       'department': 'physics',
+                       'end_year': 2018,
+                       'end_month': 'May',
+                       'end_day': 22,
+                       'institution': 'kentstateu',
+                       'project': '18kj_conservation',
+                       'title': 'Nanostructure challenges and successes from '
+                                '16th Century warships to 21st Century energy',
+                       'type': 'colloquium'}
+                      ],
     'projects': {'_id': 'Cyclus',
                  'name': 'Cyclus',
                  'description': 'Agent-Based Nuclear Fuel Cycle Simulator',
@@ -925,6 +942,11 @@ SCHEMAS = {
                                         'and institution fields',
                          'required': True,
                          'type': 'string'},
+        # TODO: conditional validation.  If type=colloq or seminar, required is
+        # institution and department, otherwise location
+        'location': {'description': 'city and {state or country} of meeting',
+                    'required': False,
+                    'type': 'string'},
         'project': {'description': 'project or list of projects that this '
                                    'presentation is associated with.  Should be'
                                    'discoverable in projects collection',
