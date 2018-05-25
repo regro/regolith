@@ -999,7 +999,7 @@ SCHEMAS = {
                                         'seminar or colloquium, write Seminar'
                                         'or Colloquium and fill in department '
                                         'and institution fields',
-                         'required': True,
+                         'required': False,
                          'type': 'string'},
         # TODO: conditional validation.  If type=colloq or seminar, required is
         # institution and department, otherwise location
