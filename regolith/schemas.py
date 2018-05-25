@@ -184,17 +184,17 @@ EXEMPLARS = {
                      'departments': [
                          {'chemistry': 'Department of Chemistry'},
                          {'apam': 'Department of Applied Physics'
-                                    'and Applied Mathematics'},
+                                  'and Applied Mathematics'},
                          {'cheme': 'Department of Chemical'
-                                     'Engineering'},
+                                   'Engineering'},
                          {'cs': 'Computer Science Department'},
                          {'eaee': 'Department of Earth and'
-                                    'Environmental Engineering'}],
+                                  'Environmental Engineering'}],
                      'name': 'Columbia University',
                      'schools': [
                          {'seas': 'School of Engineering and '
-                                    'Applied Science',
-                            'aka': ['SEAS', 'Columbia Engineering']}
+                                  'Applied Science',
+                          'aka': ['SEAS', 'Columbia Engineering']}
                      ],
                      'state': 'New York',
                      'zip': '10027'},
@@ -373,6 +373,7 @@ EXEMPLARS = {
                        'location': 'Upton, NY',
                        'meeting_name': '2018 NSLS-II and CFN Users Meeting',
                        'project': '18sob_clustermining',
+                       'status': 'accepted',
                        'title': 'ClusterMining: extracting core structures of '
                                 'metallic nanoparticles from the atomic pair '
                                 'distribution function',
@@ -389,6 +390,7 @@ EXEMPLARS = {
                        'end_day': 22,
                        'institution': 'kentstateu',
                        'project': '18kj_conservation',
+                       'status': 'accepted',
                        'title': 'Nanostructure challenges and successes from '
                                 '16th Century warships to 21st Century energy',
                        'type': 'colloquium'}
@@ -1009,6 +1011,12 @@ SCHEMAS = {
                                    'discoverable in projects collection',
                     'required': False,
                     'anyof_type': ['string', 'list']},
+        'status': {
+            'description': 'was the invitation accepted or declined, was '
+                           'the trip cancelled?',
+            'required': True,
+            'type': 'string',
+            'eallowed': ['accepted', 'declined', 'cancelled']},
         'title': {'description': 'title of the presentation',
                   'required': True,
                   'type': 'string'},
