@@ -15,4 +15,5 @@ def test_fuzzy_retrieval():
                       'Scopatz, A M',
                       'Anthony Michael Scopatz'],
               'name': 'Anthony Scopatz'}
-    fuzzy_retrieval([person], ['aka', 'name', '_id'], 'scopatz')
+    assert fuzzy_retrieval([person], ['aka', 'name', '_id'],
+                           'scopatz') == person
