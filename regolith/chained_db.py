@@ -1,9 +1,27 @@
-"""Base class for chaining DBs"""
+"""Base class for chaining DBs
+
+ChainDBSingleton
+Copyright 2015-2016, the xonsh developers
+"""
 
 import itertools
 
 from collections import ChainMap
 from collections.abc import MutableMapping
+
+
+class ChainDBSingleton(object):
+    """Singleton for representing when no default value is given."""
+
+    __inst = None
+
+    def __new__(cls):
+        if ChainDBSingleton.__inst is None:
+            ChainDBSingleton.__inst = object.__new__(cls)
+        return ChainDBSingleton.__inst
+
+
+Singleton = ChainDBSingleton()
 
 
 class ChainDB(ChainMap):
@@ -15,7 +33,7 @@ class ChainDB(ChainMap):
         results = []
         # Try to get all the data from all the mappings
         for mapping in self.maps:
-            results.append(mapping.get(key, "--bad-request--"))
+            results.append(mapping.get(key, Singleton))
         # if all the results are mapping create a ChainDB
         if all([isinstance(result, MutableMapping) for result in results]):
             for result in results:
@@ -27,7 +45,7 @@ class ChainDB(ChainMap):
             return list(itertools.chain(*results))
         else:
             for result in reversed(results):
-                if result is not "--bad-request--":
+                if result is not Singleton:
                     return result
             raise KeyError('That key is none of the current mappings')
         return res
