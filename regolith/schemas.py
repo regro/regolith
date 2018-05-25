@@ -177,6 +177,26 @@ EXEMPLARS = {
     ''',
         'email': '<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>'
     },
+    'institutions': {'_id': 'columbiau',
+                     'aka': ['Columbia University', 'Columbia'],
+                     'city': 'New York',
+                     'country': 'USA',
+                     'departments':
+                         - {'chemistry': 'Department of Chemistry'}
+                         - {'apam': 'Department of Applied Physics'
+                                    'and Applied Mathematics'}
+                         - {'cheme': 'Department of Chemical'
+                                      'Engineering'}
+                         - {'cs': 'Computer Science Department'}
+                         - {'eaee': 'Department of Earth and '
+                                    'Environmental Engineering'},
+                     'name': 'Columbia University',
+                     'schools':
+                         - {'seas': 'School of Engineering and '
+                                    'Applied Science',
+                            'aka': ['SEAS', 'Columbia Engineering']},
+                     'state': 'New York',
+                     'zip': '10027'},
     'jobs': {'_id': '0004',
              'background_fields': ['Data Science',
                                    'Data Engineering',
@@ -706,6 +726,42 @@ SCHEMAS = {
         'email': {'description': 'Contact email for the group',
                   'type': 'string',
                   'required': True}
+    },
+    'institutions': {
+        '_description': {
+            'description': 'This collection will contain all the institutions'
+                           'in the world and their departments and addresses'},
+        '_id': {'description': 'unique identifier for the institution.',
+                'required': True,
+                'type': 'string'},
+        'aka': {'description': 'list of all the different names this '
+                               'the institution is known by',
+                'required': True,
+                'type': 'list'},
+        'city': {'description': 'the city where the institution is',
+                'required': True,
+                'type': 'string'},
+        'country': {'description': 'The city where the instution is',
+                'required': True,
+                'type': 'string'},
+        'departments': {'description': 'all the departments and centers and'
+                                       'various units in the institution',
+                        'required': False,
+                        'type': 'list'},
+        'name': {'description': 'the canonical name of the institutions',
+                'required': True,
+                'type': 'string'},
+        'schools': {'description': 'this is more for universities, but it '
+                                   'be used for larger divisions in big '
+                                   'organizations',
+                'required': False,
+                'type': 'list'},
+        'state': {'description': 'the state where the institution is',
+                'required': True,
+                'type': 'string'},
+        'zip': {'description': 'the zip or postal code of the institution',
+                'required': True,
+                'type': 'string'},
     },
     'people': {
         '_description': {
