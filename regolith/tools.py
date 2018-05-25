@@ -1,5 +1,6 @@
 """Misc. regolith tools.
 """
+from collections.abc import Sequence
 import email.utils
 import os
 import platform
