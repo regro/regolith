@@ -1,5 +1,6 @@
 """Misc. regolith tools.
 """
+from collections.abc import Sequence
 import email.utils
 import os
 import platform
@@ -358,5 +359,12 @@ def fuzzy_retrieval(documents, sources, value):
                 fs.extend(v)
             else:
                 fs.append(v)
-        if value in frozenset(doc.get(k, []) for k in sources):
+        returns = []
+        for k in sources:
+            ret = doc.get(k)
+            if isinstance(ret, Sequence):
+                returns.extend(ret)
+            else:
+                returns.append(ret)
+        if value in frozenset(returns):
             return doc
