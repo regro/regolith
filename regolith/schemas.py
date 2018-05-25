@@ -181,20 +181,21 @@ EXEMPLARS = {
                      'aka': ['Columbia University', 'Columbia'],
                      'city': 'New York',
                      'country': 'USA',
-                     'departments':
-                         - {'chemistry': 'Department of Chemistry'}
-                         - {'apam': 'Department of Applied Physics'
-                                    'and Applied Mathematics'}
-                         - {'cheme': 'Department of Chemical'
-                                      'Engineering'}
-                         - {'cs': 'Computer Science Department'}
-                         - {'eaee': 'Department of Earth and '
-                                    'Environmental Engineering'},
+                     'departments': [
+                         {'chemistry': 'Department of Chemistry'},
+                         {'apam': 'Department of Applied Physics'
+                                    'and Applied Mathematics'},
+                         {'cheme': 'Department of Chemical'
+                                     'Engineering'},
+                         {'cs': 'Computer Science Department'},
+                         {'eaee': 'Department of Earth and'
+                                    'Environmental Engineering'}],
                      'name': 'Columbia University',
-                     'schools':
-                         - {'seas': 'School of Engineering and '
+                     'schools': [
+                         {'seas': 'School of Engineering and '
                                     'Applied Science',
-                            'aka': ['SEAS', 'Columbia Engineering']},
+                            'aka': ['SEAS', 'Columbia Engineering']}
+                     ],
                      'state': 'New York',
                      'zip': '10027'},
     'jobs': {'_id': '0004',
@@ -359,23 +360,23 @@ EXEMPLARS = {
                        'year': 2017}],
                'title': 'Dr.'},
     'presentations': [{'_id': '18sb_ignobel',
-                      'abstract': 'We pulled apart graphite with tape',
-                      'authors': ['sbanerjee', 'cliu', 'sbillinge'],
-                      'begin_year': 2018,
-                      'begin_month': 'May',
-                      'begin_day': 22,
-                      'department': 'APAM',
-                      'end_year': 2018,
-                      'end_month': 'May',
-                      'end_day': 22,
-                      'institution': 'bnl',
-                      'location': 'Upton, NY',
-                      'meeting_name': '2018 NSLS-II and CFN Users Meeting',
-                      'project': '18sob_clustermining',
-                      'title': 'ClusterMining: extracting core structures of '
-                               'metallic nanoparticles from the atomic pair '
-                               'distribution function',
-                      'type': 'poster'},
+                       'abstract': 'We pulled apart graphite with tape',
+                       'authors': ['sbanerjee', 'cliu', 'sbillinge'],
+                       'begin_year': 2018,
+                       'begin_month': 'May',
+                       'begin_day': 22,
+                       'department': 'APAM',
+                       'end_year': 2018,
+                       'end_month': 'May',
+                       'end_day': 22,
+                       'institution': 'bnl',
+                       'location': 'Upton, NY',
+                       'meeting_name': '2018 NSLS-II and CFN Users Meeting',
+                       'project': '18sob_clustermining',
+                       'title': 'ClusterMining: extracting core structures of '
+                                'metallic nanoparticles from the atomic pair '
+                                'distribution function',
+                       'type': 'poster'},
                       {'_id': '18sb04_kentstate',
                        'abstract': 'We made the case for local structure',
                        'authors': ['sbillinge'],
@@ -739,26 +740,26 @@ SCHEMAS = {
                 'required': True,
                 'type': 'list'},
         'city': {'description': 'the city where the institution is',
-                'required': True,
-                'type': 'string'},
+                 'required': True,
+                 'type': 'string'},
         'country': {'description': 'The city where the instution is',
-                'required': True,
-                'type': 'string'},
+                    'required': True,
+                    'type': 'string'},
         'departments': {'description': 'all the departments and centers and'
                                        'various units in the institution',
                         'required': False,
                         'type': 'list'},
         'name': {'description': 'the canonical name of the institutions',
-                'required': True,
-                'type': 'string'},
+                 'required': True,
+                 'type': 'string'},
         'schools': {'description': 'this is more for universities, but it '
                                    'be used for larger divisions in big '
                                    'organizations',
-                'required': False,
-                'type': 'list'},
+                    'required': False,
+                    'type': 'list'},
         'state': {'description': 'the state where the institution is',
-                'required': True,
-                'type': 'string'},
+                  'required': True,
+                  'type': 'string'},
         'zip': {'description': 'the zip or postal code of the institution',
                 'required': True,
                 'type': 'string'},
@@ -1001,8 +1002,8 @@ SCHEMAS = {
         # TODO: conditional validation.  If type=colloq or seminar, required is
         # institution and department, otherwise location
         'location': {'description': 'city and {state or country} of meeting',
-                    'required': False,
-                    'type': 'string'},
+                     'required': False,
+                     'type': 'string'},
         'project': {'description': 'project or list of projects that this '
                                    'presentation is associated with.  Should be'
                                    'discoverable in projects collection',
