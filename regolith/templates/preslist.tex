@@ -13,11 +13,12 @@
 \begin{document}
 \textbf{Presentations}
 
-\textbf{ {{-latex_safe(pi['name']).upper() }}}
+\textbf{ {{-latex_safe(pi['pi_name']).upper() }}}
 \vskip 14pt
 
 \begin{enumerate}
 {% for pres in presentations %}
+pres['authors'] = ', '.join(pres['authors'])
 \item {{ latex_safe(pres['authors']) }}, {\bf {{ latex_safe(pres['title']) }} },
 {% set inst = pres['institution'] %}
 {% if pres['type'] in ['colloquium', 'seminar'] %}
