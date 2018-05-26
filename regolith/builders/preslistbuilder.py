@@ -57,6 +57,10 @@ class PresListBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
+        for group in self.gtx['groups']:
+            pi = fuzzy_retrieval(self.gtx['people'], ['aka', 'name'],
+                                 group['pi_name'])
+
         presentationsdict = deepcopy(self.gtx['presentations'])
         for pres in presentationsdict:
             pauthors = pres['authors']
@@ -69,6 +73,6 @@ class PresListBuilder(LatexBuilderBase):
                 pres['institution'] = fuzzy_retrieval(self.gtx['institutions'],
                                                       ['aka', 'name', '_id'],
                                                       pres['institution'])
-        self.render('preslist.tex', 'presentations.tex',
+        self.render('preslist.tex', 'presentations.tex', pi=pi,
                     presentations=presentationsdict)
         self.pdf('presentations')
