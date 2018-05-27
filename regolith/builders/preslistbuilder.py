@@ -59,7 +59,7 @@ class PresListBuilder(LatexBuilderBase):
         """Render latex template"""
         for group in self.gtx['groups']:
             pi = fuzzy_retrieval(self.gtx['people'], ['aka', 'name', '_id'],
-                                 group['pi_name'])['name']
+                                 group['pi_name'])
 
         presentationsdict = deepcopy(self.gtx['presentations'])
         for pres in presentationsdict:
