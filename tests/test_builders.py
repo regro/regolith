@@ -16,6 +16,8 @@ builder_map = [
 ]
 
 
+@pytest.mark.skipif(os.name == 'nt',
+                    reason="Windows not working with subprocess run")
 @pytest.mark.parametrize('bm', builder_map)
 def test_builder(bm, make_db):
     repo = make_db
@@ -23,7 +25,7 @@ def test_builder(bm, make_db):
     if bm == 'html':
         os.makedirs('templates/static', exist_ok=True)
     subprocess.run(['regolith', 'build', bm,
-                    '--no-pdf'
+                    '--no-pdf',
                     ], check=True)
     os.chdir(os.path.join(repo, '_build', bm))
     expected_base = os.path.join(os.path.dirname(__file__),
@@ -39,7 +41,7 @@ def test_builder(bm, make_db):
                           'r') as f:
                     expected = f.read()
 
-            # Skip because of a date time in
+                # Skip because of a date time in
                 if file != 'rss.xml':
                     assert expected == actual
 
@@ -65,6 +67,6 @@ def test_builder_python(bm, make_db):
                           'r') as f:
                     expected = f.read()
 
-            # Skip because of a date time in
+                # Skip because of a date time in
                 if file != 'rss.xml':
                     assert expected == actual
