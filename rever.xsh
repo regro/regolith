@@ -1,5 +1,5 @@
 $PROJECT = 'regolith'
-$ACTIVITIES = ['version_bump', 'changelog', 'tag', 'push_tag', 'conda_forge', 'ghrelease']
+$ACTIVITIES = ['version_bump', 'changelog', 'tag', 'push_tag', 'ghrelease', 'conda_forge']
 
 $VERSION_BUMP_PATTERNS = [
     ('regolith/__init__.py', '__version__\s*=.*', "__version__ = '$VERSION'"),
