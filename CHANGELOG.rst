@@ -4,6 +4,64 @@ Regolith Change Log
 
 .. current developments
 
+v0.2.0
+====================
+
+**Added:**
+
+* ``CPBuilder`` for building current and pending support reports
+
+* ``initials`` field to ``people`` document
+
+* ``person_months_academic``, ``person_months_summer``, and ``scope`` to
+  ``grant`` document
+
+* ``fuzzy_retrieval`` tool for getting documents based off of multiple
+  potential fields (eg. ``name`` and ``aka`` for searching people)
+* Tests for the exemplars
+* Group collection for tracking research group information
+
+* ``document_by_value`` tool for getting a document by it's value
+
+* ``bibtexparser`` to test deps
+* Builder integration tests
+
+* Option for not making PDFs during the build process
+  (for PDF building builders)
+* Added presentations schema and exemplar
+* Second exemplars for ``grants`` and ``proposals``
+* ``bootstrap_builders`` for generating the outputs to test the builders
+  against
+* publist tex file to tests
+
+
+**Changed:**
+
+* moved builders into ``builders`` folder
+* ``group`` collection to ``groups`` collection
+* Use the position sorter to enumerate the possible positions in the schema
+* ``base.html`` and ``index.html`` for webpages are auto-generated (if not
+  present)
+
+* test against ``html`` in addition to other builders
+
+
+**Fixed:**
+
+* Pin to cerberus 1.1 in requirements. 1.2 causing testing problems.
+* Fixed error that anded authors and editors
+* Error in ``setup.py`` which caused builders to not be found
+
+* Error in ``BaseBuilder`` which caused it to look in the wrong spot for
+  templates
+* Fixed bug in grad builder when the total wieght is zero.
+* Actually use ``ChainedDB`` when working with the DBs
+
+* Error in ``ChainedDB`` which caused bad keys to return with ``None``
+
+
+
+
 v0.1.11
 ====================
 
