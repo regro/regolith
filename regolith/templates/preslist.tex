@@ -18,8 +18,6 @@
 
 \begin{enumerate}
 {% for pres in presentations %}
-[simon here]
-[pres['authors'] = ', '.join(author) for author in pres['authors']]
 \item {{ latex_safe(pres['authors']) }}, {\bf {{ latex_safe(pres['title']) }} },
 {% set inst = pres['institution'] %}
 {% if pres['type'] in ['colloquium', 'seminar'] %}
