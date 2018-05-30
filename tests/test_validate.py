@@ -55,3 +55,4 @@ def test_validate_bad(make_bad_db):
     out = subprocess.check_output(['regolith', 'validate']).decode('utf-8')
     assert 'Errors found in ' in out
     assert 'NO ERRORS IN DBS' not in out
+
