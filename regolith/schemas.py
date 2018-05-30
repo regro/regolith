@@ -1,4 +1,5 @@
 """Database schemas, examples, and tools"""
+import copy
 from warnings import warn
 
 from cerberus import Validator
@@ -1200,7 +1201,7 @@ def validate(coll, record, schemas):
 
     """
     if coll in schemas:
-        schema = schemas[coll]
+        schema = copy.deepcopy(schemas[coll])
         v = NoDescriptionValidator(schema)
         return v.validate(record), v.errors
     else:
