@@ -69,6 +69,9 @@ class PresListBuilder(LatexBuilderBase):
             pres['authors'] = [
                 fuzzy_retrieval(self.gtx['people'], ['aka', 'name', '_id'],
                                 author)['name'] for author in pauthors]
+
+            authorlist = ', '.join(pres['authors'])
+            pres['authors'] = authorlist
             if 'institution' in pres:
                 pres['institution'] = fuzzy_retrieval(self.gtx['institutions'],
                                                       ['aka', 'name', '_id'],
