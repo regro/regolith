@@ -22,7 +22,7 @@
 {% set inst = pres['institution'] %}
 {% if pres['type'] in ['colloquium', 'seminar'] %}
 {\it {{ latex_safe(pres['type']).title() }} },
-{\it {{ latex_safe(inst['department']) }} },
+{\it {{ latex_safe(pres['department']) }} },
 {\it {{ latex_safe(inst['name']) }} },
 {\it {{ latex_safe(inst['city']) }} }\
 {\it {{ latex_safe(inst['state']) }} },
@@ -31,7 +31,7 @@
 {\it {{ latex_safe(pres['location']) }} },
 {% endif %}
 {\it {{ latex_safe(pres['begin_month']) }} }\
-( {{ latex_safe(pres['begin_year']) }} ).
+( {{ pres['begin_year'] }} ).
 {% endfor %}
 
 \end{document}
