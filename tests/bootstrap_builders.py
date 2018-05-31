@@ -8,6 +8,7 @@ from copy import deepcopy
 
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
+from regolith.main import main
 
 
 builder_map = [
@@ -84,7 +85,8 @@ def bootstrap_builders():
     for bm in builder_map:
         if bm == 'html':
             os.makedirs('templates/static')
-        subprocess.run(['regolith', 'build', bm, '--no-pdf'], check=True)
+        main(['build', bm, '--no-pdf'])
+#        subprocess.run(['regolith', 'build', bm, '--no-pdf'], check=True)
         os.chdir(os.path.join(repo, '_build', bm))
         expected_base = os.path.join(os.path.dirname(__file__), 'outputs')
         for root, dirs, files in os.walk('.'):

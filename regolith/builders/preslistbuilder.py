@@ -52,8 +52,11 @@ class PresListBuilder(LatexBuilderBase):
                 pres['institution'] = fuzzy_retrieval(self.gtx['institutions'],
                                                       ['aka', 'name', '_id'],
                                                       pres['institution'])
-            if 'department' in pres:
-                pres['department'] = pres['institution'][pres['department']]
+                if 'department' in pres:
+                    print('simon, ', pres['institution']['departments']
+                    [pres['department']])
+                    fulldept = pres['institution']['departments'][pres['department']]
+                    pres['department'] = fulldept
         self.render('preslist.tex', 'presentations.tex', pi=pi,
                     presentations=presentationsdict)
         self.pdf('presentations')
