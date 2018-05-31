@@ -14,24 +14,25 @@
 \textbf{Presentations}
 
 \textbf{ {{-latex_safe(pi['name']).upper() }}}
-\vskip
+\vskip 12pt
 
 \begin{enumerate}
 {% for pres in presentations %}
-\item {{ latex_safe(pres['authors']) }}, {\bf {{ latex_safe(pres['title']) }} },
-{% set inst = pres['institution'] %}
-{% if pres['type'] in ['colloquium', 'seminar'] %}
-{\it {{ latex_safe(pres['type']).title() }} },
-{\it {{ latex_safe(pres['department']) }} },
-{\it {{ latex_safe(inst['name']) }} },
-{\it {{ latex_safe(inst['city']) }} }\
-{\it {{ latex_safe(inst['state']) }} },
-{% else %}
-{\it {{ latex_safe(pres['meeting_name']) }} },
-{\it {{ latex_safe(pres['location']) }} },
-{% endif %}
-{\it {{ latex_safe(pres['begin_month']) }} }\
-( {{ pres['begin_year'] }} ).
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(pres['title'])-}} },
+{%-set inst = pres['institution'] %}
+{%-if pres['type'] in ['colloquium', 'seminar']%}
+{\it {{ latex_safe(pres['type']).title()-}} },
+{\it {{ latex_safe(pres['department'])-}} },
+{\it {{ latex_safe(inst['name'])-}} },
+{\it {{ latex_safe(inst['city'])-}} }\
+{\it {{ latex_safe(inst['state'])-}}},
+{%-else %}
+{\it {{ latex_safe(pres['meeting_name'])-}} },
+{\it {{ latex_safe(pres['location'])-}} },
+{%-endif %}
+{\it {{ latex_safe(pres['begin_month'])-}} }\
+( {{-pres['begin_year']-}} ).
 {% endfor %}
+\end{enumerate}
 
 \end{document}

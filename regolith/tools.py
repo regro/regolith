@@ -365,7 +365,5 @@ def fuzzy_retrieval(documents, sources, value):
                 returns.append(ret)
             else:
                 returns.extend(ret)
-        print(returns)
-        print(frozenset(returns))
         if value in frozenset(returns):
             return doc
