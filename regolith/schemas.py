@@ -183,6 +183,7 @@ EXEMPLARS = {
                      'city': 'New York',
                      'country': 'USA',
                      'departments': [
+                         {'physics': 'Department of Physics'},
                          {'chemistry': 'Department of Chemistry'},
                          {'apam': 'Department of Applied Physics'
                                   'and Applied Mathematics'},
