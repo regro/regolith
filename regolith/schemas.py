@@ -362,7 +362,7 @@ EXEMPLARS = {
                                    '-PxiboYdM/edit?usp=sharing',
                        'year': 2017}],
                'title': 'Dr.'},
-    'presentations': [{'_id': '18sb_ignobel',
+    'presentations': [{'_id': '18sb_nslsii',
                        'abstract': 'We pulled apart graphite with tape',
                        'authors': ['scopatz'],
                        'begin_year': 2018,
@@ -375,6 +375,8 @@ EXEMPLARS = {
                        'institution': 'columbiau',
                        'location': 'Upton, NY',
                        'meeting_name': '2018 NSLS-II and CFN Users Meeting',
+                       'notes': ['We hope the weather will be sunny',
+                          'if the weather is nice we will go to the beach'],
                        'project': '18sob_clustermining',
                        'status': 'accepted',
                        'title': 'ClusterMining: extracting core structures of '
@@ -392,6 +394,7 @@ EXEMPLARS = {
                        'end_month': 'May',
                        'end_day': 22,
                        'institution': 'columbiau',
+                       'notes': ['what a week!'],
                        'project': '18kj_conservation',
                        'status': 'accepted',
                        'title': 'Nanostructure challenges and successes from '
@@ -1009,6 +1012,9 @@ SCHEMAS = {
         'location': {'description': 'city and {state or country} of meeting',
                      'required': False,
                      'type': 'string'},
+        'notes': {'description': 'any reminder or memory aid about anything',
+                     'required': False,
+                     'anyof_type': ['list', 'string']},
         'project': {'description': 'project or list of projects that this '
                                    'presentation is associated with.  Should be'
                                    'discoverable in projects collection',
