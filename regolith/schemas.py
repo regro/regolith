@@ -373,7 +373,7 @@ EXEMPLARS = {
                        'end_month': 'May',
                        'end_day': 22,
                        'institution': 'columbiau',
-                       'location': 'Upton, NY',
+                       'location': 'Upton NY',
                        'meeting_name': '2018 NSLS-II and CFN Users Meeting',
                        'notes': ['We hope the weather will be sunny',
                                  'if the weather is nice we will go to the '
