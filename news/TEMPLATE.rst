@@ -1,8 +1,4 @@
-**Added:**
-
-* Added presentations schema and exemplar
-* Added institutions schema and exemplar
-* Added presentation list builder
+**Added:** None
 
 **Changed:** None
 

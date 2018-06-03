@@ -199,7 +199,7 @@ EXEMPLARS = {
                                   'Applied Science',
                           'aka': ['SEAS', 'Columbia Engineering']
                      },
-                     'state': 'New York',
+                     'state': 'NY',
                      'zip': '10027'},
     'jobs': {'_id': '0004',
              'background_fields': ['Data Science',
