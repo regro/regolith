@@ -53,10 +53,8 @@ class PresListBuilder(LatexBuilderBase):
                                                       ['aka', 'name', '_id'],
                                                       pres['institution'])
                 if 'department' in pres:
-                    print('simon, ', pres['institution']['departments']
-                    [pres['department']])
- #                   fulldept = pres['institution']['departments'][pres['department']]
- #                   pres['department'] = fulldept
+                    pres['department'] = pres['institution']['departments'][
+                        pres['department']]
         self.render('preslist.tex', 'presentations.tex', pi=pi,
                     presentations=presentationsdict)
         self.pdf('presentations')

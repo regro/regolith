@@ -134,8 +134,8 @@ EXEMPLARS = {
          'funder': 'NSF',
          'grant_id': 'DMREF-1534910',
          'institution': 'Columbia University',
-         'notes': ' Designing Materials to Revolutionize and Engineer our Future '
-                  '(DMREF) ',
+         'notes': ' Designing Materials to Revolutionize and Engineer our '
+                  'Future (DMREF)',
          'person_months_academic': 0.0,
          'person_months_summer': 0.25,
          'program': 'DMREF',
@@ -153,8 +153,8 @@ EXEMPLARS = {
                    'name': 'Anthony Scopatz',
                    'position': 'PI',
                    'subaward_amount': 330000.0}],
-         'title': 'DMREF: Novel, data validated, nanostructure determination methods '
-                  'for accelerating materials discovery'}
+         'title': 'DMREF: Novel, data validated, nanostructure determination '
+                  'methods for accelerating materials discovery'}
     ],
     'groups': {
         '_id': 'ergs',
@@ -168,13 +168,13 @@ EXEMPLARS = {
     <a href="http://www.me.sc.edu/nuclear/">Nuclear Engineering</a>
     research group at the 
     <a href="http://sc.edu/">University of South Carolina</a>. 
-    Our focus is on uncertainty quantification & predictive modeling, nuclear fuel 
-    cycle simulation, and improving nuclear engineering techniques through 
+    Our focus is on uncertainty quantification & predictive modeling, nuclear 
+    fuel cycle simulation, and improving nuclear engineering techniques through 
     automation.
     We are committed to open & accessible research tools and methods.''',
         'projects': '''ERGS is involved in a large number of computational 
-    projects. Please visit the <a href="projects.html">projects page</a> for more 
-    information!
+    projects. Please visit the <a href="projects.html">projects page</a> for 
+    more information!
     ''',
         'email': '<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>'
     },
@@ -186,18 +186,18 @@ EXEMPLARS = {
                          'physics': 'Department of Physics',
                          'chemistry': 'Department of Chemistry',
                          'apam': 'Department of Applied Physics'
-                                  'and Applied Mathematics',
+                                 'and Applied Mathematics',
                          'cheme': 'Department of Chemical'
-                                   'Engineering',
+                                  'Engineering',
                          'cs': 'Computer Science Department',
                          'eaee': 'Department of Earth and'
-                                  'Environmental Engineering'
+                                 'Environmental Engineering'
                      },
                      'name': 'Columbia University',
                      'schools': {
                          'seas': 'School of Engineering and '
-                                  'Applied Science',
-                          'aka': ['SEAS', 'Columbia Engineering']
+                                 'Applied Science',
+                         'aka': ['SEAS', 'Columbia Engineering']
                      },
                      'state': 'NY',
                      'zip': '10027'},
@@ -368,7 +368,7 @@ EXEMPLARS = {
                        'begin_year': 2018,
                        'begin_month': 'May',
                        'begin_day': 22,
-                       'department': 'APAM',
+                       'department': 'apam',
                        'end_year': 2018,
                        'end_month': 'May',
                        'end_day': 22,
@@ -376,7 +376,8 @@ EXEMPLARS = {
                        'location': 'Upton, NY',
                        'meeting_name': '2018 NSLS-II and CFN Users Meeting',
                        'notes': ['We hope the weather will be sunny',
-                          'if the weather is nice we will go to the beach'],
+                                 'if the weather is nice we will go to the '
+                                 'beach'],
                        'project': '18sob_clustermining',
                        'status': 'accepted',
                        'title': 'ClusterMining: extracting core structures of '
@@ -1013,11 +1014,11 @@ SCHEMAS = {
                      'required': False,
                      'type': 'string'},
         'notes': {'description': 'any reminder or memory aid about anything',
-                     'required': False,
-                     'anyof_type': ['list', 'string']},
+                  'required': False,
+                  'anyof_type': ['list', 'string']},
         'project': {'description': 'project or list of projects that this '
-                                   'presentation is associated with.  Should be'
-                                   'discoverable in projects collection',
+                                   'presentation is associated with.  Should '
+                                   'be discoverable in projects collection',
                     'required': False,
                     'anyof_type': ['string', 'list']},
         'status': {
