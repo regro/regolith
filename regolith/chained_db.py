@@ -47,7 +47,7 @@ class ChainDB(ChainMap):
             for result in reversed(results):
                 if result is not Singleton:
                     return result
-            raise KeyError('That key is none of the current mappings')
+            raise KeyError('{} is none of the current mappings'.format(key))
         return res
 
     def __setitem__(self, key, value):
