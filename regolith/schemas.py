@@ -1,4 +1,5 @@
 """Database schemas, examples, and tools"""
+import copy
 from warnings import warn
 
 from cerberus import Validator
@@ -133,8 +134,8 @@ EXEMPLARS = {
          'funder': 'NSF',
          'grant_id': 'DMREF-1534910',
          'institution': 'Columbia University',
-         'notes': ' Designing Materials to Revolutionize and Engineer our Future '
-                  '(DMREF) ',
+         'notes': ' Designing Materials to Revolutionize and Engineer our '
+                  'Future (DMREF)',
          'person_months_academic': 0.0,
          'person_months_summer': 0.25,
          'program': 'DMREF',
@@ -152,8 +153,8 @@ EXEMPLARS = {
                    'name': 'Anthony Scopatz',
                    'position': 'PI',
                    'subaward_amount': 330000.0}],
-         'title': 'DMREF: Novel, data validated, nanostructure determination methods '
-                  'for accelerating materials discovery'}
+         'title': 'DMREF: Novel, data validated, nanostructure determination '
+                  'methods for accelerating materials discovery'}
     ],
     'groups': {
         '_id': 'ergs',
@@ -167,16 +168,39 @@ EXEMPLARS = {
     <a href="http://www.me.sc.edu/nuclear/">Nuclear Engineering</a>
     research group at the 
     <a href="http://sc.edu/">University of South Carolina</a>. 
-    Our focus is on uncertainty quantification & predictive modeling, nuclear fuel 
-    cycle simulation, and improving nuclear engineering techniques through 
+    Our focus is on uncertainty quantification & predictive modeling, nuclear 
+    fuel cycle simulation, and improving nuclear engineering techniques through 
     automation.
     We are committed to open & accessible research tools and methods.''',
         'projects': '''ERGS is involved in a large number of computational 
-    projects. Please visit the <a href="projects.html">projects page</a> for more 
-    information!
+    projects. Please visit the <a href="projects.html">projects page</a> for 
+    more information!
     ''',
         'email': '<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>'
     },
+    'institutions': {'_id': 'columbiau',
+                     'aka': ['Columbia University', 'Columbia'],
+                     'city': 'New York',
+                     'country': 'USA',
+                     'departments': {
+                         'physics': 'Department of Physics',
+                         'chemistry': 'Department of Chemistry',
+                         'apam': 'Department of Applied Physics'
+                                 'and Applied Mathematics',
+                         'cheme': 'Department of Chemical'
+                                  'Engineering',
+                         'cs': 'Computer Science Department',
+                         'eaee': 'Department of Earth and'
+                                 'Environmental Engineering'
+                     },
+                     'name': 'Columbia University',
+                     'schools': {
+                         'seas': 'School of Engineering and '
+                                 'Applied Science',
+                         'aka': ['SEAS', 'Columbia Engineering']
+                     },
+                     'state': 'NY',
+                     'zip': '10027'},
     'jobs': {'_id': '0004',
              'background_fields': ['Data Science',
                                    'Data Engineering',
@@ -338,23 +362,46 @@ EXEMPLARS = {
                                    '-PxiboYdM/edit?usp=sharing',
                        'year': 2017}],
                'title': 'Dr.'},
-    'presentations': {'_id': '18sb_ignobel',
-                      'abstract': 'We pulled apart graphite with tape',
-                      'authors': ['sbanerjee', 'cliu', 'sbillinge'],
-                      'begin_year': 2018,
-                      'begin_month': 'May',
-                      'begin_day': 22,
-                      'department': 'APAM',
-                      'end_year': 2018,
-                      'end_month': 'May',
-                      'end_day': 22,
-                      'institution': 'bnl',
-                      'meeting_name': '2018 NSLS-II and CFN Users Meeting',
-                      'project': '18sob_clustermining',
-                      'title': 'ClusterMining: extracting core structures of '
-                               'metallic nanoparticles from the atomic pair '
-                               'distribution function',
-                      'type': 'poster'},
+    'presentations': [{'_id': '18sb_nslsii',
+                       'abstract': 'We pulled apart graphite with tape',
+                       'authors': ['scopatz'],
+                       'begin_year': 2018,
+                       'begin_month': 'May',
+                       'begin_day': 22,
+                       'department': 'apam',
+                       'end_year': 2018,
+                       'end_month': 'May',
+                       'end_day': 22,
+                       'institution': 'columbiau',
+                       'location': 'Upton NY',
+                       'meeting_name': '2018 NSLS-II and CFN Users Meeting',
+                       'notes': ['We hope the weather will be sunny',
+                                 'if the weather is nice we will go to the '
+                                 'beach'],
+                       'project': '18sob_clustermining',
+                       'status': 'accepted',
+                       'title': 'ClusterMining: extracting core structures of '
+                                'metallic nanoparticles from the atomic pair '
+                                'distribution function',
+                       'type': 'poster'},
+                      {'_id': '18sb04_kentstate',
+                       'abstract': 'We made the case for local structure',
+                       'authors': ['scopatz'],
+                       'begin_year': 2018,
+                       'begin_month': 'May',
+                       'begin_day': 22,
+                       'department': 'physics',
+                       'end_year': 2018,
+                       'end_month': 'May',
+                       'end_day': 22,
+                       'institution': 'columbiau',
+                       'notes': ['what a week!'],
+                       'project': '18kj_conservation',
+                       'status': 'accepted',
+                       'title': 'Nanostructure challenges and successes from '
+                                '16th Century warships to 21st Century energy',
+                       'type': 'colloquium'}
+                      ],
     'projects': {'_id': 'Cyclus',
                  'name': 'Cyclus',
                  'description': 'Agent-Based Nuclear Fuel Cycle Simulator',
@@ -690,6 +737,42 @@ SCHEMAS = {
                   'type': 'string',
                   'required': True}
     },
+    'institutions': {
+        '_description': {
+            'description': 'This collection will contain all the institutions'
+                           'in the world and their departments and addresses'},
+        '_id': {'description': 'unique identifier for the institution.',
+                'required': True,
+                'type': 'string'},
+        'aka': {'description': 'list of all the different names this '
+                               'the institution is known by',
+                'required': True,
+                'type': 'list'},
+        'city': {'description': 'the city where the institution is',
+                 'required': True,
+                 'type': 'string'},
+        'country': {'description': 'The city where the instution is',
+                    'required': True,
+                    'type': 'string'},
+        'departments': {'description': 'all the departments and centers and'
+                                       'various units in the institution',
+                        'required': False,
+                        'type': 'dict'},
+        'name': {'description': 'the canonical name of the institutions',
+                 'required': True,
+                 'type': 'string'},
+        'schools': {'description': 'this is more for universities, but it '
+                                   'be used for larger divisions in big '
+                                   'organizations',
+                    'required': False,
+                    'type': 'dict'},
+        'state': {'description': 'the state where the institution is',
+                  'required': True,
+                  'type': 'string'},
+        'zip': {'description': 'the zip or postal code of the institution',
+                'required': True,
+                'type': 'string'},
+    },
     'people': {
         '_description': {
             'description': 'This collection describes the members of the '
@@ -923,13 +1006,27 @@ SCHEMAS = {
                                         'seminar or colloquium, write Seminar'
                                         'or Colloquium and fill in department '
                                         'and institution fields',
-                         'required': True,
+                         'required': False,
                          'type': 'string'},
+        # TODO: conditional validation.  If type=colloq or seminar, required is
+        # institution and department, otherwise location
+        'location': {'description': 'city and {state or country} of meeting',
+                     'required': False,
+                     'type': 'string'},
+        'notes': {'description': 'any reminder or memory aid about anything',
+                  'required': False,
+                  'anyof_type': ['list', 'string']},
         'project': {'description': 'project or list of projects that this '
-                                   'presentation is associated with.  Should be'
-                                   'discoverable in projects collection',
+                                   'presentation is associated with.  Should '
+                                   'be discoverable in projects collection',
                     'required': False,
                     'anyof_type': ['string', 'list']},
+        'status': {
+            'description': 'was the invitation accepted or declined, was '
+                           'the trip cancelled?',
+            'required': True,
+            'type': 'string',
+            'eallowed': ['accepted', 'declined', 'cancelled']},
         'title': {'description': 'title of the presentation',
                   'required': True,
                   'type': 'string'},
@@ -1113,7 +1210,7 @@ def validate(coll, record, schemas):
 
     """
     if coll in schemas:
-        schema = schemas[coll]
+        schema = copy.deepcopy(schemas[coll])
         v = NoDescriptionValidator(schema)
         return v.validate(record), v.errors
     else:

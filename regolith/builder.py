@@ -2,6 +2,7 @@
 
 from regolith.builders.cvbuilder import CVBuilder
 from regolith.builders.htmlbuilder import HtmlBuilder
+from regolith.builders.preslistbuilder import PresListBuilder
 from regolith.builders.publistbuilder import PubListBuilder
 from regolith.builders.gradebuilder import GradeReportBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
@@ -15,7 +16,8 @@ BUILDERS = {
     'grade': GradeReportBuilder,
     'grades': GradeReportBuilder,
     'resume': ResumeBuilder,
-    'current-pending': CPBuilder
+    'current-pending': CPBuilder,
+    'preslist': PresListBuilder
     }
 
 

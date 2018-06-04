@@ -358,5 +358,12 @@ def fuzzy_retrieval(documents, sources, value):
                 fs.extend(v)
             else:
                 fs.append(v)
-        if value in frozenset(doc.get('aka', []) + [doc['name']]):
+        returns = []
+        for k in sources:
+            ret = doc.get(k, [])
+            if isinstance(ret, str):
+                returns.append(ret)
+            else:
+                returns.extend(ret)
+        if value in frozenset(returns):
             return doc
