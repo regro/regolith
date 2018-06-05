@@ -577,6 +577,35 @@ SCHEMAS = {
         'year': {'description': 'Publication year',
                  'required': True,
                  'type': 'integer'}},
+    'experiments': {
+        '_description': {
+            'description': 'This collection represents experiments (physical'
+                           'or otherwise) run by members of the group.'},
+        '_id': {
+            'description': 'short representation, such as this-is-my-title',
+            'required': True,
+            'type': 'string'},
+        'lead_experimenter': {'description': 'The lead experimenter for the '
+                                             'experiment',
+                              'required': True,
+                              'type': 'string'},
+        'pi': {'description': 'The pi for the experiment',
+               'required': True,
+               'type': 'string'},
+        'identifiers': {'description': 'List of identifiers for the experiment'
+                                       '(eg. SAF number)',
+                        'required': False,
+                        'type': 'list'},
+        'projects': {'description': 'List of projects associated with this'
+                                    'experiment',
+                     'required': True,
+                     'type': 'list'},
+        'samples': {'description': 'List of samples in the experiment, note'
+                                   'that samples could be computational eg.'
+                                   'data sets used in the experiment.',
+                    'required': False,
+                    'type': 'list'}
+    },
     'grades': {
         '_description': {
             'description': 'The grade for a student on an assignment. This '
