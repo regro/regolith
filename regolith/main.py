@@ -19,7 +19,8 @@ DEFAULT_RC = RunControl(
     backend='filesystem',
     builddir='_build',
     mongodbpath=property(lambda self: os.path.join(self.builddir, '_dbpath')),
-    local=False
+    local=False,
+    user_config=os.path.expanduser('~/.config/regolith/user.json')
     )
 
 DISCONNECTED_COMMANDS = {
@@ -186,6 +187,8 @@ def main(args=None):
     parser = create_parser()
     ns = parser.parse_args(args)
     if ns.cmd in NEED_RC:
+        if os.path.exists(rc.user_config):
+            rc._update(load_rcfile(rc.user_config))
         rc._update(load_rcfile('regolithrc.json'))
     rc._update(ns.__dict__)
     if 'schemas' in rc._dict:
