@@ -37,7 +37,9 @@ def main():
         classifiers=['Programming Language :: Python :: 3'],
         packages=['regolith', 'regolith.builders'],
         package_dir={'regolith': 'regolith'},
-        package_data={'regolith': ['templates/*', 'static/*.*', 'static/img/*.*']},
+        package_data={'regolith': ['templates/*', 'static/*.*',
+                                   'static/img/*.*',
+                                   '*.xsh']},
         scripts=['scripts/regolith'],
         zip_safe=False,
         )
