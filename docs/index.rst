@@ -11,7 +11,7 @@
 Regolith
 ========
 Regolith is a content management system for software & research groups.
-Regolith creates and manages a database of people, publictaions, projects,
+Regolith creates and manages a database of people, publications, projects,
 proposals & grants, courses, and more! From this database, regolith is then
 able to:
 
@@ -96,6 +96,6 @@ Regolith Commands
 Shell commmands for regolith
 
 .. toctree::
-     :maxdepth: 1
+     :maxdepth: 2
 
      commands/index
