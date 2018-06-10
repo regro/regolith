@@ -162,6 +162,7 @@ EXEMPLARS = {
         'department': 'Mechanical Engineering',
         'institution': 'University of South Carolina',
         'name': 'ERGS',
+        'aka': ['Energy Research Group Something', 'Scopatz Group'],
         'website': 'www.ergs.sc.edu',
         'mission_statement': '''<b>ERGS</b>, or <i>Energy Research Group: 
     Scopatz</i>, is the Computational 
@@ -717,6 +718,8 @@ SCHEMAS = {
                            'includes the author name and part of the title.',
             'required': True,
             'type': 'string'},
+        'aka': {'required': True, 'type': 'list',
+                'description': 'other names for the group'},
         'pi_name': {'description': 'The name of the Principle Investigator',
                     'required': True,
                     'type': 'string'},
