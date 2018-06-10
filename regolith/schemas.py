@@ -248,7 +248,9 @@ EXEMPLARS = {
                               'Nuclear and Radiation Engineering '
                               'Program',
                     'end_year': 2011,
-                    'institution': 'The University of Texas at Austin',
+                    'group': 'ergs',
+                    'institution': 'columbiau',
+                    'department': 'apam',
                     'location': 'Austin, TX',
                     'other': [
                         'Adviser: Erich A. Schneider',
@@ -275,6 +277,7 @@ EXEMPLARS = {
                'email': 'scopatz@cec.sc.edu',
                'employment': [
                    {'begin_year': 2015,
+                    'group': 'ergs',
                     'location': 'Columbia, SC',
                     'organization': 'The University of South Carolina',
                     'other': [
@@ -811,13 +814,19 @@ SCHEMAS = {
                                'type': 'string'},
                            'begin_year': {'required': True, 'type': 'integer'},
                            'degree': {'required': True, 'type': 'string'},
+                           'department': {'required': False, 'type': 'string',
+                                          'description': 'department within'
+                                                         'the institution'},
+                           'group': {'required': False, 'type': 'string',
+                                     'description': 'this employment is/was in'
+                                                    'a group in groups coll'},
                            'end_month': {'required': False, 'type': 'string'},
                            'end_year': {'required': True, 'type': 'integer'},
                            'gpa': {
                                'required': False,
                                'type': ('float', 'string')},
                            'institution': {'required': True, 'type': 'string'},
-                           'location': {'required': True, 'type': 'string'},
+                           'location': {'required': False, 'type': 'string'},
                            'other': {'required': False,
                                      'anyof_type': ['string', 'list']}}},
             'type': 'list'},
@@ -838,7 +847,10 @@ SCHEMAS = {
                                'type': 'integer'},
                            'end_month': {'required': False, 'type': 'string'},
                            'end_year': {'required': False, 'type': 'integer'},
-                           'location': {'required': True, 'type': 'string'},
+                           'group': {'required': False, 'type': 'string',
+                                     'description': 'this employment is/was in'
+                                                    'a group in groups coll'},
+                           'location': {'required': False, 'type': 'string'},
                            'organization': {
                                'required': True,
                                'type': 'string'},
