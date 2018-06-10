@@ -2,7 +2,7 @@
 
 **Changed:**
 
-ENH: added group item in people schema
+ * added group item in people schema
 
 **Deprecated:** None
 
