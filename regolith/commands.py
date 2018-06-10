@@ -145,7 +145,7 @@ def validate(rc):
     from regolith.schemas import validate
     print('=' * 10 + '\nVALIDATING\n')
     any_errors = False
-    if hasattr(rc, 'collection'):
+    if getattr(rc, 'collection'):
         db = {rc.collection: rc.client.chained_db[rc.collection]}
     else:
         db = rc.client.chained_db
