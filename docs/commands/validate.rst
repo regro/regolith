@@ -1,17 +1,14 @@
-.. _regolith_validate:
+validate
+========
 
-******************************************************
-``validate``
-******************************************************
-Validate the combined database against the existing schemas.
+.. code-block:: bash
 
+	usage: regolith validate [-h] [--collection COLLECTION]
 
-Command
--------
-
-.. code-block:: sh
-
-   regolith validate
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  --collection COLLECTION
+	                        If provided only validate that collection
 
 Misc
 ----

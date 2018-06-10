@@ -195,9 +195,9 @@ EXEMPLARS = {
                      },
                      'name': 'Columbia University',
                      'schools': {
-                         'seas': 'School of Engineering and '
-                                 'Applied Science',
-                         'aka': ['SEAS', 'Columbia Engineering']
+                         'seas': {'name': 'School of Engineering and '
+                                          'Applied Science',
+                                  'aka': ['SEAS', 'Columbia Engineering']}
                      },
                      'state': 'NY',
                      'zip': '10027'},
@@ -746,12 +746,12 @@ SCHEMAS = {
                 'type': 'string'},
         'aka': {'description': 'list of all the different names this '
                                'the institution is known by',
-                'required': True,
+                'required': False,
                 'type': 'list'},
         'city': {'description': 'the city where the institution is',
                  'required': True,
                  'type': 'string'},
-        'country': {'description': 'The city where the instution is',
+        'country': {'description': 'The country where the institution is',
                     'required': True,
                     'type': 'string'},
         'departments': {'description': 'all the departments and centers and'
@@ -768,10 +768,12 @@ SCHEMAS = {
                     'type': 'dict'},
         'state': {'description': 'the state where the institution is',
                   'required': True,
-                  'type': 'string'},
+                  'type': 'string',
+                  'dependencies': {'country': 'USA'}},
         'zip': {'description': 'the zip or postal code of the institution',
                 'required': True,
-                'type': 'string'},
+                'type': 'string',
+                'dependencies': {'country': 'USA'}},
     },
     'people': {
         '_description': {
@@ -881,6 +883,7 @@ SCHEMAS = {
             'required': False,
             'type': 'string'
         },
+        # TODO: include `link`
         'membership': {
             'description': 'Professional organizations this member is '
                            'a part of',
@@ -909,6 +912,7 @@ SCHEMAS = {
             'description': 'such as professor, graduate student, or scientist',
             'required': True,
             'type': 'string', 'eallowed': list(SORTED_POSITION)},
+        # TODO: need to handle year vs. begin_year stuff
         'service': {
             'description': 'Service that this group member has provided',
             'required': False,
@@ -920,7 +924,10 @@ SCHEMAS = {
                            'duration': {'required': False, 'type': 'string'},
                            'month': {'required': False, 'type': 'string'},
                            'name': {'required': True, 'type': 'string'},
-                           'year': {'required': True, 'type': 'integer'}}},
+                           'year': {'required': True, 'type': 'integer'},
+                           'other': {'required': False,
+                                     'anyof_type': ['string', 'list']}
+                       }},
             'type': 'list'},
         'skills': {'description': 'Skill the group member has',
                    'required': False,

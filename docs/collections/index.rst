@@ -16,6 +16,7 @@ The following contain the regolith schemas and examples in both YAML and JSON/Mo
     grades
     grants
     groups
+    institutions
     jobs
     news
     people

@@ -345,12 +345,47 @@ for k in SCHEMAS:
     build_schema_doc(k)
 
 
+docs_not_in_schemas = ['citations', 'courses', 'jobs', 'news']
+all_collection_docs = sorted(list(SCHEMAS.keys()) + docs_not_in_schemas)
+
+collections_header = '''.. _regolith_collections:
+
+=================
+Collections
+=================
+The following contain the regolith schemas and examples in both YAML and JSON/Mongo.
+
+.. toctree::
+    :maxdepth: 1
+
+'''
+
+collections_header += indent('\n'.join(all_collection_docs), '    ')
+
+with open('collections/index.rst', 'w') as f:
+    f.write(collections_header)
+
+
+
 def build_cli_doc(cli):
     fn = 'commands/' + cli + '.rst'
     out = check_output(['regolith', cli, '-h']).decode('utf-8')
     s = '{}\n'.format(cli) + '=' * len(cli) + '\n\n'
     s += '.. code-block:: bash\n\n'
     s += indent(out, '\t') + '\n'
+    if cli == 'validate':
+        s += '''Misc
+----
+
+This can also be added as a git hook by adding the following to
+``.git/hooks/pre-commit``
+
+.. code-block:: sh
+
+    #!/bin/sh
+    regolith validate
+
+This can be enabled with ``chmod +x .git/hooks/pre-commit``'''
     with open(fn, 'w') as f:
         f.write(s)
 
@@ -368,10 +403,15 @@ Regolith Commands
 =================
 Shell commands for regolith
 
+{}
+
 .. toctree::
     :maxdepth: 1
 
 '''
 cli_index += indent('\n'.join(clis), '    ')
 with open('commands/index.rst', 'w') as f:
-    f.write(cli_index)
+    out = check_output(['regolith', '-h']).decode('utf-8')
+    s = '.. code-block:: bash\n\n'
+    s += indent(out, '\t') + '\n'
+    f.write(cli_index.format(s))
