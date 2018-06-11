@@ -164,6 +164,8 @@ def create_parser():
     # Validator
     val = subp.add_parser('validate',
                           help='Validates db')
+    val.add_argument('--collection', dest='collection', default=None,
+                     help='If provided only validate that collection')
     return p
 
 

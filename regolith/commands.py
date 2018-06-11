@@ -3,6 +3,7 @@ import os
 from pprint import pprint
 import re
 import json
+import sys
 
 from regolith.tools import string_types
 from regolith.builder import builder
@@ -144,7 +145,11 @@ def validate(rc):
     from regolith.schemas import validate
     print('=' * 10 + '\nVALIDATING\n')
     any_errors = False
-    for name, collection in rc.client.chained_db.items():
+    if getattr(rc, 'collection'):
+        db = {rc.collection: rc.client.chained_db[rc.collection]}
+    else:
+        db = rc.client.chained_db
+    for name, collection in db.items():
         errored_print = False
         for doc_id, doc in collection.items():
             v = validate(name, doc, rc.schemas)
@@ -160,3 +165,5 @@ def validate(rc):
                 print('\n')
     if not any_errors:
         print('\nNO ERRORS IN DBS\n' + '=' * 15)
+    else:
+        sys.exit("Validation failed on some records")
