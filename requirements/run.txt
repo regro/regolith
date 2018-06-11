@@ -4,3 +4,4 @@ docutils
 jinja2
 cerberus
 xonsh
+rever
