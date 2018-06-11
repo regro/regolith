@@ -37,6 +37,23 @@ class PresListBuilder(LatexBuilderBase):
             pi = fuzzy_retrieval(self.gtx['people'], ['aka', 'name', '_id'],
                                  group['pi_name'])
 
+        # get all group members
+        grpmember = []
+        print(self.gtx['people'][0]['_id'])
+        for person in self.gtx['people']:
+            for position in person.get('education', {}):
+                if position.get('group', None) == 'bg':
+                    grpmember.append(person['_id'])
+        print('grpmembers',grpmember)
+        gets = [fuzzy_retrieval(self.gtx['people'],['_id'],
+                               person) for person in ['sbillinge','sbanerjee']]
+        print('gets',[person['name'] for person in gets])
+
+ #       for person in self.gtx['people']:
+ #           grp_members = fuzzy_retrieval(self.gtx['people'],
+ #                                         ['aka', '_id', 'name'],
+ #                                         pi['_id'])
+
         presentationsdict = deepcopy(self.gtx['presentations'])
         for pres in presentationsdict:
             pauthors = pres['authors']
