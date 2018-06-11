@@ -250,7 +250,7 @@ EXEMPLARS = {
                               'Program',
                     'end_year': 2011,
                     'group': 'ergs',
-                    'institution': 'columbiau',
+                    'institution': 'The University of Texas at Austin',
                     'department': 'apam',
                     'location': 'Austin, TX',
                     'other': [
