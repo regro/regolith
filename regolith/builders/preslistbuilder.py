@@ -31,17 +31,17 @@ class PresListBuilder(LatexBuilderBase):
         gtx['str'] = str
         gtx['zip'] = zip
 
-    def list_group_members(self):
+    def list_group_members(self, grp):
         # get all group members
         grpmembers = []
         print(self.gtx['people'][0]['_id'])
         for person in self.gtx['people']:
             for position in person.get('education', {}):
-                if position.get('group', None) == 'bg':
+                if position.get('group', None) == grp:
                     if person['_id'] not in grpmembers:
                         grpmembers.append(person['_id'])
             for position in person.get('employment', {}):
-                if position.get('group', None) == 'bg':
+                if position.get('group', None) == grp:
                     if person['_id'] not in grpmembers:
                         grpmembers.append(person['_id'])
         return grpmembers
@@ -52,7 +52,8 @@ class PresListBuilder(LatexBuilderBase):
         for group in self.gtx['groups']:
             pi = fuzzy_retrieval(self.gtx['people'], ['aka', 'name', '_id'],
                                  group['pi_name'])
-        listgrpmembers = self.get_group_members()
+        listgrpmembers = self.list_group_members('bg')
+        print(listgrpmembers)
         grpmembers = [fuzzy_retrieval(self.gtx['people'], ['_id'],
                                 person) for person in listgrpmembers]
         presentationsdict = deepcopy(self.gtx['presentations'])
