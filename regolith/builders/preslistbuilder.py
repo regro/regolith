@@ -31,7 +31,7 @@ class PresListBuilder(LatexBuilderBase):
         gtx['str'] = str
         gtx['zip'] = zip
 
-    def get_group_members(self):
+    def list_group_members(self):
         # get all group members
         grpmembers = []
         print(self.gtx['people'][0]['_id'])
