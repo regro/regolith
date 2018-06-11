@@ -31,7 +31,11 @@ def load_git_database(db, client, rc):
     # get or update the database
     if os.path.isdir(dbdir):
         with indir(dbdir):
-            git pull upstream master or git pull origin master or git pull @(rc.remote) master or git pull @(rc.remote) @(rc.branch) or git pull
+            (git pull upstream master
+             or git pull origin master
+             or git pull @(rc.remote) master
+             or git pull @(rc.remote) @(rc.branch)
+             or git pull)
     else:
         git clone @(db['url']) dbdir
     with indir(dbdir):
@@ -96,6 +100,8 @@ def dump_git_database(db, client, rc):
         warn('Could not git commit to ' + dbdir, RuntimeWarning)
         return
     cmd = ['git', 'push']
+    if hasattr(rc, 'remote') and hasattr(rc, 'branch'):
+        cmd += [rc.remote, rc.branch]
     try:
         subprocess.check_call(cmd, cwd=dbdir)
     except subprocess.CalledProcessError:
