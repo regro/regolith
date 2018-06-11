@@ -31,7 +31,11 @@ def load_git_database(db, client, rc):
     # get or update the database
     if os.path.isdir(dbdir):
         with indir(dbdir):
-            git pull upstream master or git pull origin master or git pull @(rc.remote) master or git pull @(rc.remote) @(rc.branch) or git pull
+            (![git pull upstream master]
+             or ![git pull origin master]
+             or ![git pull @(rc.remote) master]
+             or ![git pull @(rc.remote) @(rc.branch)]
+             or ![git pull])
     else:
         git clone @(db['url']) dbdir
     with indir(dbdir):
