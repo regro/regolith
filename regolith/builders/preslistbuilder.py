@@ -31,10 +31,32 @@ class PresListBuilder(LatexBuilderBase):
         gtx['str'] = str
         gtx['zip'] = zip
 
-    def list_group_members(self, grp):
-        # get all group members
+    def group_member_ids(self, grp):
+        """Get a list of all group member ids
+
+        Parameters
+        ----------
+        grp: string
+            The id of the group
+
+        Returns
+        -------
+        list:
+            The list of ids of the people in the group
+
+        Notes
+        -----
+        - Groups that are being tracked are listed in the groups collection
+        with a name and an id.
+        - People are in a group during an educational or employment period.
+        - To assign a person to a tracked group during one such period, add
+        a "group" key to that education/employment item with a value
+        that is the group name.
+        - This function takes the group id that is passed and searches
+        the people collection for all people that have been
+        assigned to that group in some period of time and returns a list of
+        """
         grpmembers = []
-        print(self.gtx['people'][0]['_id'])
         for person in self.gtx['people']:
             for position in person.get('education', {}):
                 if position.get('group', None) == grp:
@@ -52,28 +74,39 @@ class PresListBuilder(LatexBuilderBase):
         for group in self.gtx['groups']:
             pi = fuzzy_retrieval(self.gtx['people'], ['aka', 'name', '_id'],
                                  group['pi_name'])
-        listgrpmembers = self.list_group_members('bg')
-        print(listgrpmembers)
-        grpmembers = [fuzzy_retrieval(self.gtx['people'], ['_id'],
-                                person) for person in listgrpmembers]
-        presentationsdict = deepcopy(self.gtx['presentations'])
-        for pres in presentationsdict:
-            pauthors = pres['authors']
-            if isinstance(pauthors, str):
-                pauthors = [pauthors]
-            pres['authors'] = [
-                fuzzy_retrieval(self.gtx['people'], ['aka', 'name', '_id'],
-                                author)['name'] for author in pauthors]
 
-            authorlist = ', '.join(pres['authors'])
-            pres['authors'] = authorlist
-            if 'institution' in pres:
-                pres['institution'] = fuzzy_retrieval(self.gtx['institutions'],
-                                                      ['aka', 'name', '_id'],
-                                                      pres['institution'])
-                if 'department' in pres:
-                    pres['department'] = pres['institution']['departments'][
-                        pres['department']]
-        self.render('preslist.tex', 'presentations.tex', pi=pi,
-                    presentations=presentationsdict)
-        self.pdf('presentations')
+#        all_grps = [name.key() for name in self.gtx['groups']]
+#        all_grps = self.gtx['groups'].getkeys()
+#        print('all grps',all_grps)
+# List(set(first_list)|set(second_list))
+        # fixme, want to iterate over all groups in groups.yml
+        grp = self.rc.groupname
+        grpmember_ids = self.group_member_ids(grp)
+        print('ids',grpmember_ids)
+        grpmembers = [fuzzy_retrieval(self.gtx['people'], ['_id', 'aka', 'name'],
+                                person) for person in grpmember_ids]
+
+        for member in grpmember_ids:
+            presentationsdict = deepcopy(self.gtx['presentations'])
+            for pres in presentationsdict:
+                pauthors = pres['authors']
+                if isinstance(pauthors, str):
+                    pauthors = [pauthors]
+                if member in pauthors:
+                    pres['authors'] = [
+                        fuzzy_retrieval(self.gtx['people'], ['aka', 'name', '_id'],
+                                        author)['name'] for author in pauthors]
+
+                    authorlist = ', '.join(pres['authors'])
+                    pres['authors'] = authorlist
+                    if 'institution' in pres:
+                        pres['institution'] = fuzzy_retrieval(self.gtx['institutions'],
+                                                              ['aka', 'name', '_id'],
+                                                              pres['institution'])
+                        if 'department' in pres:
+                            pres['department'] = pres['institution']['departments'][
+                                pres['department']]
+            outfile = 'presentations-'+member+'.tex'
+            self.render('preslist.tex', outfile, pi=pi,
+                        presentations=presentationsdict)
+            self.pdf('presentations')
