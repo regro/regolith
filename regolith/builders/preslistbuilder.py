@@ -73,6 +73,8 @@ class PresListBuilder(LatexBuilderBase):
             for member in grpmember_ids:
                 presentations = deepcopy(self.gtx['presentations'])
                 presclean = list()
+                
+                # build the filtered collection
                 for pres in presentations:
                     pauthors = pres['authors']
                     if isinstance(pauthors, str):
@@ -84,6 +86,8 @@ class PresListBuilder(LatexBuilderBase):
                         pauthors]
                     if member in authorids:
                         presclean.append(pres)
+
+                # format the filtered collection
                 for pres in presclean:
                     pauthors = pres['authors']
                     if isinstance(pauthors, str):
