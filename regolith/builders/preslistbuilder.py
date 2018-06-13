@@ -62,7 +62,6 @@ class PresListBuilder(LatexBuilderBase):
                 for position in person.get(k, {}):
                     if position.get('group', None) == grp:
                         grpmembers.add(person['_id'])
-        print(grpmembers)
         return grpmembers
 
     def latex(self):
@@ -73,7 +72,7 @@ class PresListBuilder(LatexBuilderBase):
             for member in grpmember_ids:
                 presentations = deepcopy(self.gtx['presentations'])
                 presclean = list()
-                
+
                 # build the filtered collection
                 for pres in presentations:
                     pauthors = pres['authors']
