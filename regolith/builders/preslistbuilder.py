@@ -71,32 +71,26 @@ class PresListBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         for group in self.gtx['groups']:
-            pi = fuzzy_retrieval(self.gtx['people'], ['aka', 'name', '_id'],
-                                 group['pi_name'])
-
-        #        all_grps = [name.key() for name in self.gtx['groups']]
-        #        all_grps = self.gtx['groups'].getkeys()
-        #        print('all grps',all_grps)
-        # List(set(first_list)|set(second_list))
-        # fixme, want to iterate over all groups in groups.yml
-        grp = self.rc.groupname
-        grpmember_ids = self.group_member_ids(grp)
-        # remove, don't think I need it here
-        # grpmembers = [fuzzy_retrieval(self.gtx['people'], ['_id', 'aka', 'name'],
-        #                       person) for person in grpmember_ids]
-
-        for member in grpmember_ids:
-            presentationsdict = deepcopy(self.gtx['presentations'])
-            for pres in presentationsdict:
-                pauthors = pres['authors']
-                if isinstance(pauthors, str):
-                    pauthors = [pauthors]
-                if member in pauthors:
+            grp = group['_id']
+            grpmember_ids = self.group_member_ids(grp)
+            for member in grpmember_ids:
+                presentations = deepcopy(self.gtx['presentations'])
+                presclean = list()
+                for pres in presentations:
+                    pauthors = pres['authors']
+                    if isinstance(pauthors, str):
+                        pauthors = [pauthors]
+                    if member in pauthors:
+                        presclean.append(pres)
+                for pres in presclean:
+                    pauthors = pres['authors']
+                    if isinstance(pauthors, str):
+                        pauthors = [pauthors]
                     pres['authors'] = [
                         fuzzy_retrieval(self.gtx['people'],
                                         ['aka', 'name', '_id'],
-                                        author)['name'] for author in pauthors]
-
+                                        author)['name'] for author in
+                        pauthors]
                     authorlist = ', '.join(pres['authors'])
                     pres['authors'] = authorlist
                     if 'institution' in pres:
@@ -106,9 +100,12 @@ class PresListBuilder(LatexBuilderBase):
                             pres['institution'])
                         if 'department' in pres:
                             pres['department'] = \
-                            pres['institution']['departments'][
-                                pres['department']]
-            outfile = 'presentations-' + member + '.tex'
-            self.render('preslist.tex', outfile, pi=pi,
-                        presentations=presentationsdict)
-            self.pdf('presentations')
+                                pres['institution']['departments'][
+                                    pres['department']]
+                if len(presclean) > 0:
+                    outfile = 'presentations-' + grp + '-' + member + '.tex'
+                    pi = [person for person in self.gtx['people']
+                          if person['_id'] is member][0]
+                    self.render('preslist.tex', outfile, pi=pi,
+                                presentations=presclean)
+                    self.pdf('presentations')
