@@ -77,7 +77,12 @@ class PresListBuilder(LatexBuilderBase):
                     pauthors = pres['authors']
                     if isinstance(pauthors, str):
                         pauthors = [pauthors]
-                    if member in pauthors:
+                    authorids = [
+                        fuzzy_retrieval(self.gtx['people'],
+                                        ['aka', 'name', '_id'],
+                                        author)['_id'] for author in
+                        pauthors]
+                    if member in authorids:
                         presclean.append(pres)
                 for pres in presclean:
                     pauthors = pres['authors']
