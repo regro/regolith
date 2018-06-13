@@ -37,35 +37,32 @@ class PresListBuilder(LatexBuilderBase):
         Parameters
         ----------
         grp: string
-            The id of the group
+            The id of the group in groups.yml
 
         Returns
         -------
-        list:
-            The list of ids of the people in the group
+        set:
+            The set of ids of the people in the group
 
         Notes
         -----
-        - Groups that are being tracked are listed in the groups collection
+        - Groups that are being tracked are listed in the groups.yml collection
         with a name and an id.
         - People are in a group during an educational or employment period.
         - To assign a person to a tracked group during one such period, add
         a "group" key to that education/employment item with a value
-        that is the group name.
+        that is the group id.
         - This function takes the group id that is passed and searches
         the people collection for all people that have been
         assigned to that group in some period of time and returns a list of
         """
-        grpmembers = []
+        grpmembers = set()
         for person in self.gtx['people']:
-            for position in person.get('education', {}):
-                if position.get('group', None) == grp:
-                    if person['_id'] not in grpmembers:
-                        grpmembers.append(person['_id'])
-            for position in person.get('employment', {}):
-                if position.get('group', None) == grp:
-                    if person['_id'] not in grpmembers:
-                        grpmembers.append(person['_id'])
+            for k in ['education', 'employment']:
+                for position in person.get(k, {}):
+                    if position.get('group', None) == grp:
+                        grpmembers.add(person['_id'])
+        print(grpmembers)
         return grpmembers
 
     def latex(self):
@@ -108,4 +105,4 @@ class PresListBuilder(LatexBuilderBase):
                           if person['_id'] is member][0]
                     self.render('preslist.tex', outfile, pi=pi,
                                 presentations=presclean)
-                    self.pdf('presentations')
+#                    self.pdf('presentations')
