@@ -71,6 +71,7 @@ class PresListBuilder(LatexBuilderBase):
             grpmember_ids = self.group_member_ids(grp)
             for member in grpmember_ids:
                 presentations = deepcopy(self.gtx['presentations'])
+                firstclean = list()
                 presclean = list()
 
                 # build the filtered collection
@@ -84,6 +85,9 @@ class PresListBuilder(LatexBuilderBase):
                                         author)['_id'] for author in
                         pauthors]
                     if member in authorids:
+                        firstclean.append(pres)
+                for pres in firstclean:
+                    if str(pres['status']) == 'accepted':
                         presclean.append(pres)
 
                 # format the filtered collection
