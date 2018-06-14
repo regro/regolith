@@ -71,10 +71,17 @@ class PresListBuilder(LatexBuilderBase):
             grpmember_ids = self.group_member_ids(grp)
             for member in grpmember_ids:
                 presentations = deepcopy(self.gtx['presentations'])
+#                types = ['all']
+                types = ['invited']
+#                statuses = ['all']
+                statuses = ['accepted']
+
                 firstclean = list()
+                secondclean = list()
                 presclean = list()
 
                 # build the filtered collection
+                # only list the talk if the group member is an author
                 for pres in presentations:
                     pauthors = pres['authors']
                     if isinstance(pauthors, str):
@@ -86,8 +93,13 @@ class PresListBuilder(LatexBuilderBase):
                         pauthors]
                     if member in authorids:
                         firstclean.append(pres)
+                # only list the presentation if it is accepted
                 for pres in firstclean:
-                    if str(pres['status']) == 'accepted':
+                    if pres['status'] in statuses or 'all' in statuses:
+                        secondclean.append(pres)
+                # only list the presentation if it is invited
+                for pres in secondclean:
+                    if pres['type'] in types or 'all' in types:
                         presclean.append(pres)
 
                 # format the filtered collection
