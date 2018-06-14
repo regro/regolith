@@ -71,10 +71,10 @@ class PresListBuilder(LatexBuilderBase):
             grpmember_ids = self.group_member_ids(grp)
             for member in grpmember_ids:
                 presentations = deepcopy(self.gtx['presentations'])
-#                types = ['all']
-                types = ['invited']
-#                statuses = ['all']
-                statuses = ['accepted']
+                types = ['all']
+#                types = ['invited']
+                statuses = ['all']
+#                statuses = ['accepted']
 
                 firstclean = list()
                 secondclean = list()
@@ -86,11 +86,13 @@ class PresListBuilder(LatexBuilderBase):
                     pauthors = pres['authors']
                     if isinstance(pauthors, str):
                         pauthors = [pauthors]
-                    authorids = [
+                    authors = [
                         fuzzy_retrieval(self.gtx['people'],
                                         ['aka', 'name', '_id'],
-                                        author)['_id'] for author in
+                                        author) for author in
                         pauthors]
+                    authorids = [author['_id'] for author in authors
+                                 if author is not None]
                     if member in authorids:
                         firstclean.append(pres)
                 # only list the presentation if it is accepted
@@ -107,7 +109,11 @@ class PresListBuilder(LatexBuilderBase):
                     pauthors = pres['authors']
                     if isinstance(pauthors, str):
                         pauthors = [pauthors]
-                    pres['authors'] = [
+                    holdauthors = pauthors
+                    pres['authors'] = [ author if
+                        fuzzy_retrieval(self.gtx['people'],
+                                        ['aka', 'name', '_id'],
+                                        author) is None else
                         fuzzy_retrieval(self.gtx['people'],
                                         ['aka', 'name', '_id'],
                                         author)['name'] for author in
