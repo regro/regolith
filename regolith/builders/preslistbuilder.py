@@ -1,5 +1,24 @@
-"""Builder for Lists of Presentations."""
-from copy import deepcopy
+"""Builder for Lists of Presentations.
+
+This builder will build a presentation list for each group-member in each group
+listed in groups.yml.  Group members are indicated in the employment and
+education sections of the individual in people.yml.
+
+There are a number of filtering options, i.e., for presentation-type (invited,
+colloquium, seminar, poster, contributed_oral) and for whether the invitation
+was accepted or declined.  As of now, these filters can only be updated by
+editing this file but may appear as command-line options later.  It will also
+get institution and department information from institutions.yml if they are
+there.
+
+The author list is built from information in people.yml where possible.  The
+does a fuzzy search for the person in people.yml but if the person is absent
+from people, it will still build but using the string name given in
+the presentations.yml.
+
+The presentations are output in a ./_build directory."""
+
+from copy import deepcopy, copy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
@@ -72,9 +91,9 @@ class PresListBuilder(LatexBuilderBase):
             for member in grpmember_ids:
                 presentations = deepcopy(self.gtx['presentations'])
                 types = ['all']
-#                types = ['invited']
+                #                types = ['invited']
                 statuses = ['all']
-#                statuses = ['accepted']
+                #                statuses = ['accepted']
 
                 firstclean = list()
                 secondclean = list()
@@ -109,26 +128,40 @@ class PresListBuilder(LatexBuilderBase):
                     pauthors = pres['authors']
                     if isinstance(pauthors, str):
                         pauthors = [pauthors]
-                    holdauthors = pauthors
-                    pres['authors'] = [ author if
-                        fuzzy_retrieval(self.gtx['people'],
-                                        ['aka', 'name', '_id'],
-                                        author) is None else
-                        fuzzy_retrieval(self.gtx['people'],
-                                        ['aka', 'name', '_id'],
-                                        author)['name'] for author in
-                        pauthors]
+                    pres['authors'] = [author if
+                                       fuzzy_retrieval(self.gtx['people'],
+                                                       ['aka', 'name', '_id'],
+                                                       author) is None else
+                                       fuzzy_retrieval(self.gtx['people'],
+                                                       ['aka', 'name', '_id'],
+                                                       author)['name'] for
+                                       author in
+                                       pauthors]
                     authorlist = ', '.join(pres['authors'])
                     pres['authors'] = authorlist
                     if 'institution' in pres:
-                        pres['institution'] = fuzzy_retrieval(
-                            self.gtx['institutions'],
-                            ['aka', 'name', '_id'],
-                            pres['institution'])
+                        try:
+                            pres['institution'] = fuzzy_retrieval(
+                                self.gtx['institutions'],
+                                ['aka', 'name', '_id'],
+                                pres['institution'])
+                        except:
+                            exit('ERROR: institution {} not found in '
+                                 'institutions.yml.  Please add and '
+                                 'rerun'.format(
+                                pres['institution']))
                         if 'department' in pres:
-                            pres['department'] = \
-                                pres['institution']['departments'][
-                                    pres['department']]
+                            try:
+                                pres['department'] = \
+                                    pres['institution']['departments'][
+                                        pres['department']]
+                            except:
+                                print('WARNING: department {} not found in'
+                                      ' {} in institutions.yml.  Pres list will'
+                                      ' build but please check it carefully and'
+                                      ' please add the dept to the institution!'.format(
+                                    pres['department'],
+                                    pres['institution']['_id']))
                 if len(presclean) > 0:
                     outfile = 'presentations-' + grp + '-' + member + '.tex'
                     pi = [person for person in self.gtx['people']
