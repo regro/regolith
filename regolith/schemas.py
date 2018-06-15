@@ -964,8 +964,8 @@ SCHEMAS = {
     'presentations': {
         '_description': {
             'description': 'This collection describes presentations that group'
-                           'members make at conferences, symposia, seminars and'
-                           'so on.'},
+                           'members make at conferences, symposia, seminars '
+                           'and so on.'},
         '_id': {'description': 'unique id for the presentation',
                 'required': True,
                 'type': 'string'},
@@ -988,7 +988,8 @@ SCHEMAS = {
                                       'applicable.  should be discoverable in '
                                       'institutions.',
                        'required': False,
-                       'type': 'string'},
+                       'type': 'string',
+                       'dependencies': {'type': ['colloquium', 'seminar']}},
         'end_year': {'description': 'year the conference or trip ends',
                      'required': False,
                      'type': 'integer'},
@@ -1000,7 +1001,8 @@ SCHEMAS = {
                                        'presentation will be made, if '
                                        'applicable.',
                         'required': False,
-                        'type': 'string'},
+                        'type': 'string',
+                        'dependencies': {'type': ['colloquium', 'seminar']}},
         'meeting_name': {'description': 'full name of the conference or '
                                         'meeting.  If it is a departmental '
                                         'seminar or colloquium, write Seminar'
@@ -1008,11 +1010,12 @@ SCHEMAS = {
                                         'and institution fields',
                          'required': False,
                          'type': 'string'},
-        # TODO: conditional validation.  If type=colloq or seminar, required is
-        # institution and department, otherwise location
         'location': {'description': 'city and {state or country} of meeting',
                      'required': False,
-                     'type': 'string'},
+                     'type': 'string',
+                     'dependencies': {'type': ['award', 'contributed_oral',
+                              'invited', 'keynote', 'nobel', 'plenary',
+                              'poster']}},
         'notes': {'description': 'any reminder or memory aid about anything',
                   'required': False,
                   'anyof_type': ['list', 'string']},
@@ -1026,7 +1029,7 @@ SCHEMAS = {
                            'the trip cancelled?',
             'required': True,
             'type': 'string',
-            'eallowed': ['accepted', 'declined', 'cancelled']},
+            'eallowed': ['submitted', 'accepted', 'declined', 'cancelled']},
         'title': {'description': 'title of the presentation',
                   'required': True,
                   'type': 'string'},
