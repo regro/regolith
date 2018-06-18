@@ -184,20 +184,22 @@ EXEMPLARS = {
                      'city': 'New York',
                      'country': 'USA',
                      'departments': {
-                         {'_id': 'physics', 'name': 'Department of Physics',
-                          'aka': ['Dept. of Physics', 'Physics']},
-                         {'_id': 'chemistry', 'name': 'Department of Chemistry',
-                          'aka': ['Chemistry', 'Dept. of Chemistry']},
-                         {'_id':'apam', 'name': 'Department of Applied Physics'
-                                 'and Applied Mathematics', 'aka': ['APAM']},
+                         'physics': {'name': 'Department of Physics',
+                                     'aka': ['Dept. of Physics', 'Physics']},
+                         'chemistry': {'name': 'Department of Chemistry',
+                                       'aka': ['Chemistry',
+                                               'Dept. of Chemistry']},
+                         'apam': {'name': 'Department of Applied Physics'
+                                          'and Applied Mathematics',
+                                  'aka': ['APAM']},
                      },
                      'name': 'Columbia University',
                      'schools': {
-                         '_id': 'seas', 'name': 'School of Engineering and '
+                         'seas': {'name': 'School of Engineering and '
                                           'Applied Science',
-                                'aka': ['SEAS', 'Columbia Engineering',
-                                        'Fu Foundation School of Engineering'
-                                        'and Applied Science']
+                                  'aka': ['SEAS', 'Columbia Engineering',
+                                          'Fu Foundation School of Engineering '
+                                          'and Applied Science']},
                      },
                      'state': 'NY',
                      'zip': '10027'},
@@ -765,16 +767,15 @@ SCHEMAS = {
                         'type': 'dict',
                         'schema': {'type': 'dict',
                                    'schema': {
-                                        'name': {
-                                            'description': 'The canonical name',
-                                            'required': True,
-                                            'type': 'string'}
-                                            },
-                                        'aka': {
-                                            'required': False,
-                                            'type': 'list'
-                                        },
-                                    },
+                                       'name': {
+                                           'description': 'The canonical name',
+                                           'required': True,
+                                           'type': 'string'},
+                                       'aka': {
+                                           'required': False,
+                                           'type': 'list'},
+                                   },
+                        },
                         },
         'name': {'description': 'the canonical name of the institutions',
                  'required': True,
@@ -793,9 +794,9 @@ SCHEMAS = {
                                    'aka': {
                                        'required': False,
                                        'type': 'list'},
-                                    },
                                },
                     },
+        },
         'state': {'description': 'the state where the institution is',
                   'required': True,
                   'type': 'string',
