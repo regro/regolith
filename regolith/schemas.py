@@ -762,11 +762,9 @@ SCHEMAS = {
         'departments': {'description': 'all the departments and centers and'
                                        'various units in the institution',
                         'required': False,
+                        'type': 'dict',
                         'schema': {'type': 'dict',
                                    'schema': {
-                                        '_id': {
-                                            'required': True,
-                                            'type': 'string'},
                                         'name': {
                                             'description': 'The canonical name',
                                             'required': True,
@@ -785,11 +783,9 @@ SCHEMAS = {
                                    'be used for larger divisions in big '
                                    'organizations',
                     'required': False,
+                    'type': 'dict',
                     'schema': {'type': 'dict',
                                'schema': {
-                                   '_id': {
-                                       'required': True,
-                                       'type': 'string'},
                                    'name': {
                                        'description': 'The canonical name',
                                        'required': True,
