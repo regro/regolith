@@ -161,6 +161,8 @@ def validate(rc):
                     print('='*len('Errors found in {}'.format(name)))
                 print('ERROR in {}:'.format(doc_id))
                 pprint(v[1])
+                for vv in v[1]:
+                    pprint(doc[vv])
                 print('-'*15)
                 print('\n')
     if not any_errors:
