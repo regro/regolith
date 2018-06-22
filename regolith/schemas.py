@@ -183,26 +183,27 @@ EXEMPLARS = {
                      'aka': ['Columbia University', 'Columbia'],
                      'city': 'New York',
                      'country': 'USA',
-                     'departments': {{'_id': 'physics',
-                                      'name': 'Department of Physics',
-                                      'aka': ['Dept. of Physics', 'Physics']},
-                                     {'_id': 'chemistry',
-                                      'name': 'Department of Chemistry',
-                                      'aka': ['Chemistry',
-                                              'Dept. of Chemistry']},
-                                     {'_id': 'apam',
-                                      'name': 'Department of Applied Physics'
-                                              'and Applied Mathematics',
-                                      'aka': ['APAM']}
-                                     },
+                     'departments': {'physics': {
+                         'name': 'Department of Physics',
+                         'aka': ['Dept. of Physics', 'Physics']},
+                         'chemistry': {
+                             'name': 'Department of Chemistry',
+                             'aka': ['Chemistry',
+                                     'Dept. of Chemistry']},
+                         'apam': {
+                             'name': 'Department of Applied Physics'
+                                     'and Applied Mathematics',
+                             'aka': ['APAM'],
+                         'bad': 'bad'}
+                     },
                      'name': 'Columbia University',
-                     'schools': {{'_id': 'seas',
-                                  'name': 'School of Engineering and '
-                                          'Applied Science',
-                                  'aka': ['SEAS', 'Columbia Engineering',
-                                          'Fu Foundation School of Engineering '
-                                          'and Applied Science']}
-                                 },
+                     'schools': {'seas': {
+                         'name': 'School of Engineering and '
+                                 'Applied Science',
+                         'aka': ['SEAS', 'Columbia Engineering',
+                                 'Fu Foundation School of Engineering '
+                                 'and Applied Science']}
+                     },
                      'state': 'NY',
                      'zip': '10027'},
     'jobs': {'_id': '0004',
@@ -767,17 +768,19 @@ SCHEMAS = {
             'description': 'all the departments and centers and'
                            'various units in the institution',
             'required': False,
-            'schema': {'type': 'dict',
-                       'schema': {
-                           'name': {
-                               'description': 'The canonical name',
-                               'required': True,
-                               'type': 'string'},
-                           'aka': {
-                               'required': False,
-                               'type': 'list'}
-                       }
-                       },
+            # Allow unkown department names, but check their content
+            'allow_unknown': {'schema': {
+                    'type': 'dict',
+                    'schema': {
+                        'name': {
+                            'description': 'The canonical name',
+                            'required': True,
+                            'type': 'string'},
+                        'aka': {
+                            'required': False,
+                            'type': 'list'}
+                    }}
+            },
             'type': 'dict'},
         'name': {'description': 'the canonical name of the institutions',
                  'required': True,
@@ -788,17 +791,15 @@ SCHEMAS = {
                            'organizations',
             'required': False,
             'type': 'dict',
-            'schema': {'type': 'dict',
-                       'schema': {
-                           'name': {
-                               'description': 'The canonical name',
-                               'required': True,
-                               'type': 'string'},
-                           'aka': {
-                               'required': False,
-                               'type': 'list'}
-                       }
-                       },
+            # 'schema': {'type': 'dict',
+            #            'schema': {
+            #                'name': {
+            #                    'description': 'The canonical name',
+            #                    'required': True,
+            #                    'type': 'string'},
+            #                'aka': {
+            #                    'required': False,
+            #                    'type': 'list'}}},
         },
         'state': {'description': 'the state where the institution is',
                   'required': True,
@@ -1072,17 +1073,19 @@ SCHEMAS = {
                     'required': False,
                     'anyof_type': ['string', 'list']},
         'status': {
-            'description': 'was the invitation accepted or declined, was '
+            'description': 'Is the application in prep or submitted, '
+                           'was the invitation accepted or declined, was '
                            'the trip cancelled?',
             'required': True,
             'type': 'string',
-            'eallowed': ['accepted', 'declined', 'cancelled']},
+            'eallowed': ['in-prep', 'submitted',
+                         'accepted', 'declined', 'cancelled']},
         'title': {'description': 'title of the presentation',
                   'required': True,
                   'type': 'string'},
         'type': {'description': 'type of presentation',
                  'eallowed': ['award', 'colloquium', 'contributed_oral',
-                              'invited', 'keynote', 'nobel', 'plenary',
+                              'invited', 'keynote', 'plenary',
                               'poster', 'seminar'],
                  'required': True,
                  'type': 'string'}},
