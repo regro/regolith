@@ -162,7 +162,7 @@ def validate(rc):
                 print('ERROR in {}:'.format(doc_id))
                 pprint(v[1])
                 for vv in v[1]:
-                    pprint(doc[vv])
+                    pprint(doc.get(vv))
                 print('-'*15)
                 print('\n')
     if not any_errors:
