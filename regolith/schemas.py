@@ -183,24 +183,26 @@ EXEMPLARS = {
                      'aka': ['Columbia University', 'Columbia'],
                      'city': 'New York',
                      'country': 'USA',
-                     'departments': {
-                         'physics': {'name': 'Department of Physics',
-                                     'aka': ['Dept. of Physics', 'Physics']},
-                         'chemistry': {'name': 'Department of Chemistry',
-                                       'aka': ['Chemistry',
-                                               'Dept. of Chemistry']},
-                         'apam': {'name': 'Department of Applied Physics'
-                                          'and Applied Mathematics',
-                                  'aka': ['APAM']},
-                     },
+                     'departments': {{'_id': 'physics',
+                                      'name': 'Department of Physics',
+                                      'aka': ['Dept. of Physics', 'Physics']},
+                                     {'_id': 'chemistry',
+                                      'name': 'Department of Chemistry',
+                                      'aka': ['Chemistry',
+                                              'Dept. of Chemistry']},
+                                     {'_id': 'apam',
+                                      'name': 'Department of Applied Physics'
+                                              'and Applied Mathematics',
+                                      'aka': ['APAM']}
+                                     },
                      'name': 'Columbia University',
-                     'schools': {
-                         'seas': {'name': 'School of Engineering and '
+                     'schools': {{'_id': 'seas',
+                                  'name': 'School of Engineering and '
                                           'Applied Science',
                                   'aka': ['SEAS', 'Columbia Engineering',
                                           'Fu Foundation School of Engineering '
-                                          'and Applied Science']},
-                     },
+                                          'and Applied Science']}
+                                 },
                      'state': 'NY',
                      'zip': '10027'},
     'jobs': {'_id': '0004',
@@ -761,41 +763,42 @@ SCHEMAS = {
         'country': {'description': 'The country where the institution is',
                     'required': True,
                     'type': 'string'},
-        'departments': {'description': 'all the departments and centers and'
-                                       'various units in the institution',
-                        'required': False,
-                        'type': 'dict',
-                        'schema': {'type': 'dict',
-                                   'schema': {
-                                       'name': {
-                                           'description': 'The canonical name',
-                                           'required': True,
-                                           'type': 'string'},
-                                       'aka': {
-                                           'required': False,
-                                           'type': 'list'},
-                                   },
-                        },
-                        },
+        'departments': {
+            'description': 'all the departments and centers and'
+                           'various units in the institution',
+            'required': False,
+            'schema': {'type': 'dict',
+                       'schema': {
+                           'name': {
+                               'description': 'The canonical name',
+                               'required': True,
+                               'type': 'string'},
+                           'aka': {
+                               'required': False,
+                               'type': 'list'}
+                       }
+                       },
+            'type': 'dict'},
         'name': {'description': 'the canonical name of the institutions',
                  'required': True,
                  'type': 'string'},
-        'schools': {'description': 'this is more for universities, but it '
-                                   'be used for larger divisions in big '
-                                   'organizations',
-                    'required': False,
-                    'type': 'dict',
-                    'schema': {'type': 'dict',
-                               'schema': {
-                                   'name': {
-                                       'description': 'The canonical name',
-                                       'required': True,
-                                       'type': 'string'},
-                                   'aka': {
-                                       'required': False,
-                                       'type': 'list'},
-                               },
-                    },
+        'schools': {
+            'description': 'this is more for universities, but it '
+                           'be used for larger divisions in big '
+                           'organizations',
+            'required': False,
+            'type': 'dict',
+            'schema': {'type': 'dict',
+                       'schema': {
+                           'name': {
+                               'description': 'The canonical name',
+                               'required': True,
+                               'type': 'string'},
+                           'aka': {
+                               'required': False,
+                               'type': 'list'}
+                       }
+                       },
         },
         'state': {'description': 'the state where the institution is',
                   'required': True,
