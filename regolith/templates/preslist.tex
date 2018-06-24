@@ -6,8 +6,6 @@
 \usepackage{times}
 \usepackage{booktabs,dcolumn}
 \usepackage{siunitx}
-%\usepackage{stringstrings} % \capitalize, \caselower
-%\newcommand{\sentencecase}[1]{\caselower[e]{#1}\capitalize{\thestring}}
 
 % Document
 \begin{document}
@@ -18,7 +16,7 @@
 
 \begin{enumerate}
 {% for pres in presentations %}
-\item {{ latex_safe(pres['authors'])-}}, %\bf{ {{ latex_safe(pres['title']).capitalize()-}} },
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(pres['title'])-}} },
 {%-set inst = pres['institution'] %}
 {%-if pres['type'] in ['colloquium', 'seminar']%}
 {\it {{ latex_safe(pres['type']).title()-}} },
