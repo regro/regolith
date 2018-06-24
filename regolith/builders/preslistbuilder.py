@@ -24,7 +24,7 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (all_docs_from_collection, fuzzy_retrieval)
-
+from regolith.stylers import sentencecase
 
 class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""
@@ -124,6 +124,9 @@ class PresListBuilder(LatexBuilderBase):
                         presclean.append(pres)
 
                 # format the filtered collection
+                # make title sentencecase but preserve capitalization of things in braces
+                pres['title'] = sentencecase(pres['title'])
+                # build author list
                 for pres in presclean:
                     pauthors = pres['authors']
                     if isinstance(pauthors, str):
