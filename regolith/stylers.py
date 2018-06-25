@@ -10,7 +10,7 @@ def sentencecase(sentence):
     ----------
     sentence: str
         The sentence
-        
+
     Returns
     -------
         The sentence in sentence-case (but preserving any text wrapped in braces)

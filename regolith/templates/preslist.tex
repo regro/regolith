@@ -16,7 +16,8 @@
 
 \begin{enumerate}
 {% for pres in presentations %}
-\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(pres['title'])-}} },
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
+          sentencecase(pres['title']))-}} },
 {%-set inst = pres['institution'] %}
 {%-if pres['type'] in ['colloquium', 'seminar']%}
 {\it {{ latex_safe(pres['type']).title()-}} },

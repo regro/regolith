@@ -170,5 +170,5 @@ class PresListBuilder(LatexBuilderBase):
                     pi = [person for person in self.gtx['people']
                           if person['_id'] is member][0]
                     self.render('preslist.tex', outfile, pi=pi,
-                                presentations=presclean)
+                                presentations=presclean, sentencecase=sentencecase)
 #                    self.pdf('presentations')
