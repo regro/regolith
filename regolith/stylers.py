@@ -3,18 +3,20 @@
 import re
 
 
-def sentencecase(string):
-    """returns a string in sentencecase but with text in braces preserved
+def sentencecase(sentence):
+    """returns a sentence in sentencecase but with text in braces preserved
 
-    parameters
+    Parameters
     ----------
-    string
-        The string
-    :returns
-        The string in sentence-case (but preserving any text wrapped in braces
+    sentence: str
+        The sentence
+        
+    Returns
+    -------
+        The sentence in sentence-case (but preserving any text wrapped in braces)
     """
-    freezecaps = re.findall("\{[^{}]+\}", string)
-    datalow = string.capitalize()
+    freezecaps = re.findall("\{[^{}]+\}", sentence)
+    datalow = sentence.capitalize()
     sentencecase = re.split("\{[^{}]+\}", datalow)
     title = ''
     freezecaps.reverse()
