@@ -13,7 +13,11 @@ def sentencecase(sentence):
 
     Returns
     -------
-        The sentence in sentence-case (but preserving any text wrapped in braces)
+    The sentence in sentence-case (but preserving any text  wrapped in braces)
+
+    Notes
+    -----
+    tbd or n/a are returned lower case, not sentence case.
     """
     freezecaps = re.findall("\{[^{}]+\}", sentence)
     datalow = sentence.capitalize()
@@ -25,4 +29,8 @@ def sentencecase(sentence):
             title = title + word + freezecaps.pop()
         else:
             title = title + word
+    if title.lower() == 'n/a':
+        title = title.lower()
+    if title.lower() == 'tbd':
+        title = title.lower()
     return title
