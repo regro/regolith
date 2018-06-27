@@ -24,7 +24,8 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (all_docs_from_collection, fuzzy_retrieval)
-from regolith.stylers import sentencecase
+from regolith.stylers import sentencecase, month_fullnames
+
 
 class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""
@@ -138,10 +139,13 @@ class PresListBuilder(LatexBuilderBase):
                                        fuzzy_retrieval(self.gtx['people'],
                                                        ['aka', 'name', '_id'],
                                                        author)['name'] for
-                                       author in
-                                       pauthors]
+                                       author in pauthors]
                     authorlist = ', '.join(pres['authors'])
                     pres['authors'] = authorlist
+                    pres['begin_month'] = int(pres['begin_month'])
+                    pres['date'] = str(pres['begin_year']) + '-' + str(
+                        pres['begin_month']) + '-' + str(pres['begin_day'])
+                    print(pres['_id'], pres['date'])
                     if 'institution' in pres:
                         try:
                             pres['institution'] = fuzzy_retrieval(
@@ -170,5 +174,7 @@ class PresListBuilder(LatexBuilderBase):
                     pi = [person for person in self.gtx['people']
                           if person['_id'] is member][0]
                     self.render('preslist.tex', outfile, pi=pi,
-                                presentations=presclean, sentencecase=sentencecase)
+                                presentations=presclean,
+                                sentencecase=sentencecase,
+                                monthstyle=month_fullnames)
 #                    self.pdf('presentations')
