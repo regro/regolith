@@ -152,3 +152,16 @@ would allow the names of people to also be
 `numbers <https://youtu.be/nW-bFGzNMXw?t=42s>`_.
 
 See the collections for a complete list of the schemas.
+
+
+------------------
+User Configuration
+------------------
+Users can also provide information available to all databases via a local user
+configuration file.
+The file must be stored in ``'~/.config/regolith/user.json`` and can have
+keys similar to ``regolithrc.json``.
+Note that these keys are applied before the ``regolithrc.json`` so if there
+are conflicting keys the user keys are overridden.
+These keys could be used for storing information for emailing, git remotes,
+and other configuration.
