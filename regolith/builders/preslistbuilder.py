@@ -19,6 +19,7 @@ the presentations.yml.
 The presentations are output in a ./_build directory."""
 
 from copy import deepcopy, copy
+import datetime
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
@@ -143,8 +144,8 @@ class PresListBuilder(LatexBuilderBase):
                     authorlist = ', '.join(pres['authors'])
                     pres['authors'] = authorlist
                     pres['begin_month'] = int(pres['begin_month'])
-                    pres['date'] = str(pres['begin_year']) + '-' + str(
-                        pres['begin_month']) + '-' + str(pres['begin_day'])
+                    date = datetime.date(pres['begin_year'], pres['begin_month']
+                                         , pres['begin_day'])
                     pres['suffix'] = {1: "$^\mathrm{st}$", 2: "$^\mathrm{nd}$",
                                       3: "$^\mathrm{rd}$"}.get(
                         pres['begin_day'] % 10, "$^\mathrm{th}$")
