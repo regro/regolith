@@ -145,7 +145,6 @@ class PresListBuilder(LatexBuilderBase):
                     pres['begin_month'] = int(pres['begin_month'])
                     pres['date'] = str(pres['begin_year']) + '-' + str(
                         pres['begin_month']) + '-' + str(pres['begin_day'])
-                    print(pres['_id'], pres['date'])
                     if 'institution' in pres:
                         try:
                             pres['institution'] = fuzzy_retrieval(
