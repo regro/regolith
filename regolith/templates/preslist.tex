@@ -29,8 +29,8 @@
 {\it {{ latex_safe(pres['meeting_name'])-}} },
 {\it {{ latex_safe(pres['location'])-}} },
 {%-endif %}
-{\it {{ latex_safe(pres['begin_month'])-}} }\
-( {{-pres['begin_year']-}} ).
+{ {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
+{{-pres['begin_day']}} ( {{-pres['begin_year']-}} ).
 {% endfor %}
 \end{enumerate}
 
