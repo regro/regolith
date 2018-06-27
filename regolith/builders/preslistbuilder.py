@@ -144,8 +144,9 @@ class PresListBuilder(LatexBuilderBase):
                     authorlist = ', '.join(pres['authors'])
                     pres['authors'] = authorlist
                     pres['begin_month'] = int(pres['begin_month'])
-                    pres['date'] = datetime.date(pres['begin_year'], pres['begin_month']
-                                         , pres['begin_day'])
+                    pres['date'] = datetime.date(pres['begin_year'],
+                                                 pres['begin_month']
+                                                 , pres['begin_day'])
                     pres['suffix'] = {1: "$^\mathrm{st}$", 2: "$^\mathrm{nd}$",
                                       3: "$^\mathrm{rd}$"}.get(
                         pres['begin_day'] % 10, "$^\mathrm{th}$")
@@ -173,8 +174,8 @@ class PresListBuilder(LatexBuilderBase):
                                     pres['department'],
                                     pres['institution']['_id']))
                 if len(presclean) > 0:
-                    newlist = sorted(presclean, key=lambda k: k.get('date',datetime.date.today()), reverse=True)
-                    presclean = newlist
+                    presclean = sorted(presclean, key=lambda
+                        k: k.get('date', None), reverse=True)
                     outfile = 'presentations-' + grp + '-' + member + '.tex'
                     pi = [person for person in self.gtx['people']
                           if person['_id'] is member][0]
