@@ -4,6 +4,8 @@ import subprocess
 from contextlib import contextmanager
 from warnings import warn
 
+from rever.tools import indir
+
 try:
     import hglib
 except:
@@ -28,12 +30,19 @@ def load_git_database(db, client, rc):
     dbdir = dbdirname(db, rc)
     # get or update the database
     if os.path.isdir(dbdir):
-        cmd = ['git', 'pull']
-        cwd = dbdir
+        with indir(dbdir):
+            (![git pull upstream master]
+             or ![git pull origin master]
+             or ![git pull @(rc.remote) master]
+             or ![git pull @(rc.remote) @(rc.branch)]
+             or ![git pull])
     else:
-        cmd = ['git', 'clone', db['url'], dbdir]
-        cwd = None
-    subprocess.check_call(cmd, cwd=cwd)
+        git clone @(db['url']) dbdir
+    with indir(dbdir):
+        if getattr(rc, 'branch'):
+            branch = rc.branch
+            git checkout @(branch) or git checkout -b @(branch) master
+
     # import all of the data
     client.load_database(db)
 
@@ -91,6 +100,8 @@ def dump_git_database(db, client, rc):
         warn('Could not git commit to ' + dbdir, RuntimeWarning)
         return
     cmd = ['git', 'push']
+    if hasattr(rc, 'remote') and hasattr(rc, 'branch'):
+        cmd += [rc.remote, rc.branch]
     try:
         subprocess.check_call(cmd, cwd=dbdir)
     except subprocess.CalledProcessError:
