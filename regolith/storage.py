@@ -2,6 +2,7 @@
 import os
 import shutil
 from xonsh.lib import subprocess
+from contextlib import contextmanager
 
 try:
     import hglib
@@ -116,10 +117,34 @@ def push(store, path):
         raise ValueError("Do not know how to push to this kind of storage.")
 
 
-def main(rc):
-    """Copies files into the local storage location and uploads them."""
+class StorageClient(object):
+    def __init__(self, rc, store, path):
+        self.rc = rc
+        self.store = store
+        self.path = path
+
+    def copydoc(self, doc):
+        """Copies file to the staging area."""
+        dst = os.path.join(self.path, os.path.split(doc)[1])
+        if not self.rc.force and os.path.isfile(dst):
+            raise RuntimeError(dst + ' already exists!')
+        shutil.copy2(doc, dst)
+
+    def retrieve(self, file_name):
+        return os.path.join(self.path, file_name)
+
+
+@contextmanager
+def store_client(rc):
     store = find_store(rc)
     path = storage_path(store, rc)
     sync(store, path)
-    copydocs(store, path, rc)
+    yield StorageClient(rc, store, path)
     push(store, path)
+
+
+def main(rc):
+    """Copies files into the local storage location and uploads them."""
+    with store_client(rc) as sclient:
+        for doc in rc.documents:
+            sclient.copydoc(doc)
