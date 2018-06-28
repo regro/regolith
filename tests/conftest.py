@@ -85,6 +85,10 @@ def make_bad_db():
         else:
             d = {example['_id']: example}
         d.update({'bad': {'_id': 'bad', 'bad': True}})
+        if coll == 'presentations':
+            d.update({'bad_inst': {'_id': 'bad_inst',
+                                   'institution': 'noinstitution',
+                                   'department': 'nodept'}})
         dump_yaml('db/{}.yaml'.format(coll), d)
     subprocess.run(['git', 'add', '.'])
     subprocess.run(['git', 'commit', '-am', 'Initial readme'])

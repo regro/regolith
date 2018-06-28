@@ -183,22 +183,26 @@ EXEMPLARS = {
                      'aka': ['Columbia University', 'Columbia'],
                      'city': 'New York',
                      'country': 'USA',
-                     'departments': {
-                         'physics': 'Department of Physics',
-                         'chemistry': 'Department of Chemistry',
-                         'apam': 'Department of Applied Physics'
-                                 'and Applied Mathematics',
-                         'cheme': 'Department of Chemical'
-                                  'Engineering',
-                         'cs': 'Computer Science Department',
-                         'eaee': 'Department of Earth and'
-                                 'Environmental Engineering'
+                     'departments': {'physics': {
+                         'name': 'Department of Physics',
+                         'aka': ['Dept. of Physics', 'Physics']},
+                         'chemistry': {
+                             'name': 'Department of Chemistry',
+                             'aka': ['Chemistry',
+                                     'Dept. of Chemistry']},
+                         'apam': {
+                             'name': 'Department of Applied Physics'
+                                     'and Applied Mathematics',
+                             'aka': ['APAM'],
+                         'bad': 'bad'}
                      },
                      'name': 'Columbia University',
-                     'schools': {
-                         'seas': {'name': 'School of Engineering and '
-                                          'Applied Science',
-                                  'aka': ['SEAS', 'Columbia Engineering']}
+                     'schools': {'seas': {
+                         'name': 'School of Engineering and '
+                                 'Applied Science',
+                         'aka': ['SEAS', 'Columbia Engineering',
+                                 'Fu Foundation School of Engineering '
+                                 'and Applied Science']}
                      },
                      'state': 'NY',
                      'zip': '10027'},
@@ -370,11 +374,11 @@ EXEMPLARS = {
                        'abstract': 'We pulled apart graphite with tape',
                        'authors': ['scopatz'],
                        'begin_year': 2018,
-                       'begin_month': 'May',
+                       'begin_month': 5,
                        'begin_day': 22,
                        'department': 'apam',
                        'end_year': 2018,
-                       'end_month': 'May',
+                       'end_month': 5,
                        'end_day': 22,
                        'institution': 'columbiau',
                        'location': 'Upton NY',
@@ -392,11 +396,11 @@ EXEMPLARS = {
                        'abstract': 'We made the case for local structure',
                        'authors': ['scopatz'],
                        'begin_year': 2018,
-                       'begin_month': 'May',
+                       'begin_month': 5,
                        'begin_day': 22,
                        'department': 'physics',
                        'end_year': 2018,
-                       'end_month': 'May',
+                       'end_month': 5,
                        'end_day': 22,
                        'institution': 'columbiau',
                        'notes': ['what a week!'],
@@ -760,18 +764,43 @@ SCHEMAS = {
         'country': {'description': 'The country where the institution is',
                     'required': True,
                     'type': 'string'},
-        'departments': {'description': 'all the departments and centers and'
-                                       'various units in the institution',
-                        'required': False,
-                        'type': 'dict'},
+        'departments': {
+            'description': 'all the departments and centers and'
+                           'various units in the institution',
+            'required': False,
+            # Allow unkown department names, but check their content
+            'allow_unknown': {'schema': {
+                    'type': 'dict',
+                    'schema': {
+                        'name': {
+                            'description': 'The canonical name',
+                            'required': True,
+                            'type': 'string'},
+                        'aka': {
+                            'required': False,
+                            'type': 'list'}
+                    }}
+            },
+            'type': 'dict'},
         'name': {'description': 'the canonical name of the institutions',
                  'required': True,
                  'type': 'string'},
-        'schools': {'description': 'this is more for universities, but it '
-                                   'be used for larger divisions in big '
-                                   'organizations',
-                    'required': False,
-                    'type': 'dict'},
+        'schools': {
+            'description': 'this is more for universities, but it '
+                           'be used for larger divisions in big '
+                           'organizations',
+            'required': False,
+            'type': 'dict',
+            # 'schema': {'type': 'dict',
+            #            'schema': {
+            #                'name': {
+            #                    'description': 'The canonical name',
+            #                    'required': True,
+            #                    'type': 'string'},
+            #                'aka': {
+            #                    'required': False,
+            #                    'type': 'list'}}},
+        },
         'state': {'description': 'the state where the institution is',
                   'required': True,
                   'type': 'string',
@@ -1002,7 +1031,7 @@ SCHEMAS = {
                        'required': True,
                        'type': 'integer'},
         'begin_month': {'required': True,
-                        'type': 'string'},
+                        'type': 'integer'},
         'begin_day': {'required': False,
                       'type': 'integer'},
         'department': {'description': 'department of the institution where the'
@@ -1015,7 +1044,7 @@ SCHEMAS = {
                      'required': False,
                      'type': 'integer'},
         'end_month': {'required': False,
-                      'type': 'string'},
+                      'type': 'integer'},
         'end_day': {'required': False,
                     'type': 'integer'},
         'institution': {'description': 'institution where the'
@@ -1044,17 +1073,19 @@ SCHEMAS = {
                     'required': False,
                     'anyof_type': ['string', 'list']},
         'status': {
-            'description': 'was the invitation accepted or declined, was '
+            'description': 'Is the application in prep or submitted, '
+                           'was the invitation accepted or declined, was '
                            'the trip cancelled?',
             'required': True,
             'type': 'string',
-            'eallowed': ['accepted', 'declined', 'cancelled']},
+            'eallowed': ['in-prep', 'submitted',
+                         'accepted', 'declined', 'cancelled']},
         'title': {'description': 'title of the presentation',
                   'required': True,
                   'type': 'string'},
         'type': {'description': 'type of presentation',
                  'eallowed': ['award', 'colloquium', 'contributed_oral',
-                              'invited', 'keynote', 'nobel', 'plenary',
+                              'invited', 'keynote', 'plenary',
                               'poster', 'seminar'],
                  'required': True,
                  'type': 'string'}},
