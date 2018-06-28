@@ -125,9 +125,6 @@ class PresListBuilder(LatexBuilderBase):
                     if pres['type'] in types or 'all' in types:
                         presclean.append(pres)
 
-                # format the filtered collection
-                # make title sentencecase but preserve capitalization of things in braces
-                pres['title'] = sentencecase(pres['title'])
                 # build author list
                 for pres in presclean:
                     pauthors = pres['authors']
