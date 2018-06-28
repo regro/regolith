@@ -19,7 +19,7 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-LATEX_OPTS = ['-halt-on-error', '-file-line-error']
+LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
 if sys.version_info[0] >= 3:
     string_types = (str, bytes)
@@ -31,26 +31,26 @@ else:
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 
-ON_WINDOWS = (platform.system() == 'Windows')
-ON_MAC = (platform.system() == 'Darwin')
-ON_LINUX = (platform.system() == 'Linux')
-ON_POSIX = (os.name == 'posix')
+ON_WINDOWS = platform.system() == "Windows"
+ON_MAC = platform.system() == "Darwin"
+ON_LINUX = platform.system() == "Linux"
+ON_POSIX = os.name == "posix"
 
 
 def dbdirname(db, rc):
     """Gets the database dir name."""
-    if db.get('local', False) is False:
-        dbsdir = os.path.join(rc.builddir, '_dbs')
-        dbdir = os.path.join(dbsdir, db['name'])
+    if db.get("local", False) is False:
+        dbsdir = os.path.join(rc.builddir, "_dbs")
+        dbdir = os.path.join(dbsdir, db["name"])
     else:
-        dbdir = db['url']
+        dbdir = db["url"]
     return dbdir
 
 
 def dbpathname(db, rc):
     """Gets the database path name."""
     dbdir = dbdirname(db, rc)
-    dbpath = os.path.join(dbdir, db['path'])
+    dbpath = os.path.join(dbdir, db["path"])
     return dbpath
 
 
@@ -70,8 +70,21 @@ def all_docs_from_collection(client, collname):
     yield from client.all_documents(collname)
 
 
-SHORT_MONTH_NAMES = (None, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-                     'Aug', 'Sept', 'Oct', 'Nov', 'Dec')
+SHORT_MONTH_NAMES = (
+    None,
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
+)
 
 
 def date_to_rfc822(y, m, d=1):
@@ -99,7 +112,7 @@ def month_and_year(m=None, y=None):
     if m is None:
         return str(y)
     m = month_to_int(m)
-    return '{0} {1}'.format(SHORT_MONTH_NAMES[m], y)
+    return "{0} {1}".format(SHORT_MONTH_NAMES[m], y)
 
 
 def filter_publications(citations, authors, reverse=False, bold=True):
@@ -118,19 +131,23 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     """
     pubs = []
     for pub in citations:
-        if len(set(pub.get('author', []))
-               | set(pub.get('editor', []))
-               & authors) == 0:
+        if (
+            len(
+                set(pub.get("author", []))
+                | set(pub.get("editor", [])) & authors
+            )
+            == 0
+        ):
             continue
         pub = deepcopy(pub)
         if bold:
             bold_self = []
-            for a in pub['author']:
+            for a in pub["author"]:
                 if a in authors:
-                    bold_self.append('\\textbf{' + a + '}')
+                    bold_self.append("\\textbf{" + a + "}")
                 else:
                     bold_self.append(a)
-            pub['author'] = bold_self
+            pub["author"] = bold_self
         else:
             pub = deepcopy(pub)
         pubs.append(pub)
@@ -152,11 +169,11 @@ def filter_projects(projects, authors, reverse=False):
     """
     projs = []
     for proj in projects:
-        team_names = set(gets(proj['team'], 'name'))
+        team_names = set(gets(proj["team"], "name"))
         if len(team_names & authors) == 0:
             continue
         proj = dict(proj)
-        proj['team'] = [x for x in proj['team'] if x['name'] in authors]
+        proj["team"] = [x for x in proj["team"] if x["name"] in authors]
         projs.append(proj)
     projs.sort(key=id_key, reverse=reverse)
     return projs
@@ -182,31 +199,30 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     total_amount = 0.0
     subaward_amount = 0.0
     for grant in input_grants:
-        team_names = set(gets(grant['team'], 'name'))
+        team_names = set(gets(grant["team"], "name"))
         if len(team_names & names) == 0:
             continue
         grant = deepcopy(grant)
-        person = [x for x in grant['team'] if x['name'] in names][0]
+        person = [x for x in grant["team"] if x["name"] in names][0]
         if pi:
-            if person['position'].lower() == 'pi':
-                total_amount += grant['amount']
+            if person["position"].lower() == "pi":
+                total_amount += grant["amount"]
             else:
                 continue
         elif multi_pi:
-            grant['subaward_amount'] = person.get('subaward_amount',
-                                                  0.0)
-            grant['multi_pi'] = any(gets(grant['team'], 'subaward_amount'))
+            grant["subaward_amount"] = person.get("subaward_amount", 0.0)
+            grant["multi_pi"] = any(gets(grant["team"], "subaward_amount"))
         else:
-            if person['position'].lower() == 'pi':
+            if person["position"].lower() == "pi":
                 continue
             else:
-                total_amount += grant['amount']
-                subaward_amount += person.get('subaward_amount', 0.0)
-                grant['subaward_amount'] = person.get('subaward_amount',
-                                                      0.0)
-                grant['pi'] = [x for x in grant['team'] if
-                               x['position'].lower() == 'pi'][0]
-                grant['me'] = person
+                total_amount += grant["amount"]
+                subaward_amount += person.get("subaward_amount", 0.0)
+                grant["subaward_amount"] = person.get("subaward_amount", 0.0)
+                grant["pi"] = [
+                    x for x in grant["team"] if x["position"].lower() == "pi"
+                ][0]
+                grant["me"] = person
         grants.append(grant)
     grants.sort(key=ene_date_key, reverse=reverse)
     return grants, total_amount, subaward_amount
@@ -221,30 +237,42 @@ def awards_grants_honors(p):
         The person entry
     """
     aghs = []
-    for x in p.get('funding', ()):
-        d = {'description': '{0} ({1}{2:,})'.format(
-            latex_safe(x['name']),
-            x.get('currency', '$').replace('$', '\$'), x['value']),
-            'year': x['year'],
-            '_key': date_to_float(x['year'], x.get('month', 0)),
+    for x in p.get("funding", ()):
+        d = {
+            "description": "{0} ({1}{2:,})".format(
+                latex_safe(x["name"]),
+                x.get("currency", "$").replace("$", "\$"),
+                x["value"],
+            ),
+            "year": x["year"],
+            "_key": date_to_float(x["year"], x.get("month", 0)),
         }
         aghs.append(d)
-    for x in p.get('service', []) + p.get('honors', []):
-        d = {'description': latex_safe(x['name']), }
-        if 'year' in x:
-            d.update({'year': x['year'],
-                      '_key': date_to_float(x['year'],
-                                            x.get('month', 0))})
-        elif 'begin_year' in x and 'end_year' in x:
-            d.update({'year': '{}-{}'.format(x['begin_year'], x['end_year']),
-                      '_key': date_to_float(x['begin_year'],
-                                            x.get('month', 0))})
-        elif 'begin_year' in x:
-            d.update({'year': '{}'.format(x['begin_year']),
-                      '_key': date_to_float(x['begin_year'],
-                                            x.get('month', 0))})
+    for x in p.get("service", []) + p.get("honors", []):
+        d = {"description": latex_safe(x["name"])}
+        if "year" in x:
+            d.update(
+                {
+                    "year": x["year"],
+                    "_key": date_to_float(x["year"], x.get("month", 0)),
+                }
+            )
+        elif "begin_year" in x and "end_year" in x:
+            d.update(
+                {
+                    "year": "{}-{}".format(x["begin_year"], x["end_year"]),
+                    "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                }
+            )
+        elif "begin_year" in x:
+            d.update(
+                {
+                    "year": "{}".format(x["begin_year"]),
+                    "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                }
+            )
         aghs.append(d)
-    aghs.sort(key=(lambda x: x.get('_key', 0.0)), reverse=True)
+    aghs.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)
     return aghs
 
 
@@ -255,11 +283,15 @@ def latex_safe(s):
     ----------
     s : str
     """
-    return (s.replace('&', '\&').replace('$', '\$').replace('#', '\#')
-            .replace('_', '\_'))
+    return (
+        s.replace("&", "\&")
+        .replace("$", "\$")
+        .replace("#", "\#")
+        .replace("_", "\_")
+    )
 
 
-def make_bibtex_file(pubs, pid, person_dir='.'):
+def make_bibtex_file(pubs, pid, person_dir="."):
     """Make a bibtex file given the publications
 
     Parameters
@@ -273,24 +305,24 @@ def make_bibtex_file(pubs, pid, person_dir='.'):
     """
     if not HAVE_BIBTEX_PARSER:
         return None
-    skip_keys = {'ID', 'ENTRYTYPE', 'author'}
+    skip_keys = {"ID", "ENTRYTYPE", "author"}
     bibdb = BibDatabase()
     bibwriter = BibTexWriter()
     bibdb.entries = ents = []
     for pub in pubs:
         ent = dict(pub)
-        ent['ID'] = ent.pop('_id')
-        ent['ENTRYTYPE'] = ent.pop('entrytype')
-        for n in ['author', 'editor']:
+        ent["ID"] = ent.pop("_id")
+        ent["ENTRYTYPE"] = ent.pop("entrytype")
+        for n in ["author", "editor"]:
             if n in ent:
-                ent[n] = ' and '.join(ent[n])
+                ent[n] = " and ".join(ent[n])
         for key in ent.keys():
             if key in skip_keys:
                 continue
             ent[key] = latex_safe(ent[key])
         ents.append(ent)
-    fname = os.path.join(person_dir, pid) + '.bib'
-    with open(fname, 'w') as f:
+    fname = os.path.join(person_dir, pid) + ".bib"
+    with open(fname, "w") as f:
         f.write(bibwriter.write(bibdb))
     return fname
 
@@ -313,7 +345,7 @@ def document_by_value(documents, address, value):
         The first document which matches the request
     """
     if isinstance(address, str):
-        address = (address, )
+        address = (address,)
     for g_doc in documents:
         doc = deepcopy(g_doc)
         for address in address:
