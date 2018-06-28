@@ -10,15 +10,15 @@ from regolith.builders.cpbuilder import CPBuilder
 
 
 BUILDERS = {
-    'cv': CVBuilder,
-    'html': HtmlBuilder,
-    'publist': PubListBuilder,
-    'grade': GradeReportBuilder,
-    'grades': GradeReportBuilder,
-    'resume': ResumeBuilder,
-    'current-pending': CPBuilder,
-    'preslist': PresListBuilder
-    }
+    "cv": CVBuilder,
+    "html": HtmlBuilder,
+    "publist": PubListBuilder,
+    "grade": GradeReportBuilder,
+    "grades": GradeReportBuilder,
+    "resume": ResumeBuilder,
+    "current-pending": CPBuilder,
+    "preslist": PresListBuilder,
+}
 
 
 def builder(btype, rc):

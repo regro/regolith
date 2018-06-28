@@ -13,15 +13,15 @@ def load_json(filename):
     return students
 
 
-RE_ID = re.compile('^[A-Z]\d+$')
-RE_NAME = re.compile('^[A-Za-z-]+$')
+RE_ID = re.compile("^[A-Z]\d+$")
+RE_NAME = re.compile("^[A-Za-z-]+$")
 
 
 def _check_name(name, label, full):
-    parts = (name[:-1] if name.endswith('.') else name).split()
+    parts = (name[:-1] if name.endswith(".") else name).split()
     for part in parts:
         if RE_NAME.match(part) is None:
-            print('skipping because of {} name: {}'.format(label, full))
+            print("skipping because of {} name: {}".format(label, full))
             return False
     return True
 
@@ -36,53 +36,53 @@ class UscHtmlParser(HTMLParser):
         self.intable = self.inrow = self.incol = False
 
     def should_handle(self):
-        return (self.intable or self.inrow or self.incol)
+        return self.intable or self.inrow or self.incol
 
     def handle_starttag(self, tag, attrs):
-        if tag == 'table':  # we don't support nesting tables
+        if tag == "table":  # we don't support nesting tables
             self.intable = True
         if not self.should_handle():
             return
-        elif tag == 'tr':
+        elif tag == "tr":
             self.inrow = True
             self.student = {}
-        elif tag == 'td':
+        elif tag == "td":
             self.incol = True
-        elif tag == 'a' and self.incol:
+        elif tag == "a" and self.incol:
             for attr, val in attrs:
-                if attr == 'href' and val.startswith('mailto:'):
-                    _, _, email = val.partition(':')
-                    self.student['email'] = email
+                if attr == "href" and val.startswith("mailto:"):
+                    _, _, email = val.partition(":")
+                    self.student["email"] = email
                     break
 
     def handle_endtag(self, tag):
         if not self.should_handle():
             return
-        if tag == 'table':
+        if tag == "table":
             self.intable = False
-        elif tag == 'tr':
-            if len(self.student) > 0 and '_id' in self.student:
+        elif tag == "tr":
+            if len(self.student) > 0 and "_id" in self.student:
                 self.students.append(self.student)
             self.student = None
             self.inrow = False
-        elif tag == 'td':
+        elif tag == "td":
             self.incol = False
 
     def handle_data(self, data):
         if not self.incol:
             return
-        if ',' in data:
+        if "," in data:
             # found name
-            last, _, first = data.partition(',')
+            last, _, first = data.partition(",")
             first = first.strip()
             last = last.strip()
-            if not _check_name(first, 'first', data):
+            if not _check_name(first, "first", data):
                 return
-            if not _check_name(last, 'last', data):
+            if not _check_name(last, "last", data):
                 return
-            self.student['_id'] = first + ' ' + last
+            self.student["_id"] = first + " " + last
         elif RE_ID.match(data) is not None:
-            self.student['university_id'] = data
+            self.student["university_id"] = data
 
 
 def load_usc(filename):
@@ -96,32 +96,31 @@ def load_usc(filename):
     return parser.students
 
 
-LOADERS = {
-    'usc': load_usc,
-    'json': load_json,
-    }
+LOADERS = {"usc": load_usc, "json": load_json}
 
 
 def add_students_to_db(students, rc):
     """Add new students to the student directory."""
     for student in students:
-        rc.client.update_one(rc.db, 'students', {'_id': student['_id']},
-                             student, upsert=True)
+        rc.client.update_one(
+            rc.db, "students", {"_id": student["_id"]}, student, upsert=True
+        )
 
 
 def add_students_to_course(students, rc):
     """Add students to the course listed"""
-    course = rc.client.find_one(rc.db, 'courses', {'_id': rc.course_id})
-    registry = {s['_id'] for s in students}
-    if rc.op == 'add':
-        registry |= set(course['students'])
-    elif rc.op == 'replace':
+    course = rc.client.find_one(rc.db, "courses", {"_id": rc.course_id})
+    registry = {s["_id"] for s in students}
+    if rc.op == "add":
+        registry |= set(course["students"])
+    elif rc.op == "replace":
         pass
     else:
-        raise ValueError('operation {0!r} nor recognized'.format(rc.op))
-    course['students'] = sorted(registry)
-    rc.client.update_one(rc.db, 'courses', {'_id': rc.course_id},
-                         course, upsert=True)
+        raise ValueError("operation {0!r} nor recognized".format(rc.op))
+    course["students"] = sorted(registry)
+    rc.client.update_one(
+        rc.db, "courses", {"_id": rc.course_id}, course, upsert=True
+    )
 
 
 def register(rc):
@@ -138,8 +137,10 @@ def register(rc):
         if len(dbs) == 1:
             rc.db = list(dbs)[0]
         else:
-            raise RuntimeError('More than one database present in run control, '
-                               'please select one with the "--db" option. '
-                               'Available dbs are: ' + pformat(dbs))
+            raise RuntimeError(
+                "More than one database present in run control, "
+                'please select one with the "--db" option. '
+                "Available dbs are: " + pformat(dbs)
+            )
     add_students_to_db(students, rc)
     add_students_to_course(students, rc)
