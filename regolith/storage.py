@@ -1,7 +1,7 @@
 """Tools for document storgage."""
 import os
 import shutil
-import subprocess
+from xonsh.lib import subprocess
 
 try:
     import hglib
