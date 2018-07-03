@@ -24,33 +24,41 @@ import datetime
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
-from regolith.tools import (all_docs_from_collection, fuzzy_retrieval)
+from regolith.tools import all_docs_from_collection, fuzzy_retrieval
 from regolith.stylers import sentencecase, month_fullnames
 
 
 class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""
-    btype = 'preslist'
+
+    btype = "preslist"
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx['people'] = sorted(all_docs_from_collection(rc.client, 'people'),
-                               key=position_key, reverse=True)
-        gtx['grants'] = sorted(all_docs_from_collection(rc.client, 'grants'),
-                               key=_id_key)
-        gtx['groups'] = sorted(all_docs_from_collection(rc.client, 'groups'),
-                               key=_id_key)
-        gtx['presentations'] = sorted(all_docs_from_collection(
-            rc.client, 'presentations'), key=_id_key)
-        gtx['institutions'] = sorted(all_docs_from_collection(
-            rc.client, 'institutions'), key=_id_key)
-        gtx['all_docs_from_collection'] = all_docs_from_collection
-        gtx['float'] = float
-        gtx['str'] = str
-        gtx['zip'] = zip
+        gtx["people"] = sorted(
+            all_docs_from_collection(rc.client, "people"),
+            key=position_key,
+            reverse=True,
+        )
+        gtx["grants"] = sorted(
+            all_docs_from_collection(rc.client, "grants"), key=_id_key
+        )
+        gtx["groups"] = sorted(
+            all_docs_from_collection(rc.client, "groups"), key=_id_key
+        )
+        gtx["presentations"] = sorted(
+            all_docs_from_collection(rc.client, "presentations"), key=_id_key
+        )
+        gtx["institutions"] = sorted(
+            all_docs_from_collection(rc.client, "institutions"), key=_id_key
+        )
+        gtx["all_docs_from_collection"] = all_docs_from_collection
+        gtx["float"] = float
+        gtx["str"] = str
+        gtx["zip"] = zip
 
     def group_member_ids(self, grp):
         """Get a list of all group member ids
@@ -78,23 +86,23 @@ class PresListBuilder(LatexBuilderBase):
         assigned to that group in some period of time and returns a list of
         """
         grpmembers = set()
-        for person in self.gtx['people']:
-            for k in ['education', 'employment']:
+        for person in self.gtx["people"]:
+            for k in ["education", "employment"]:
                 for position in person.get(k, {}):
-                    if position.get('group', None) == grp:
-                        grpmembers.add(person['_id'])
+                    if position.get("group", None) == grp:
+                        grpmembers.add(person["_id"])
         return grpmembers
 
     def latex(self):
         """Render latex template"""
-        for group in self.gtx['groups']:
-            grp = group['_id']
+        for group in self.gtx["groups"]:
+            grp = group["_id"]
             grpmember_ids = self.group_member_ids(grp)
             for member in grpmember_ids:
-                presentations = deepcopy(self.gtx['presentations'])
-                types = ['all']
+                presentations = deepcopy(self.gtx["presentations"])
+                types = ["all"]
                 #                types = ['invited']
-                statuses = ['all']
+                statuses = ["all"]
                 #                statuses = ['accepted']
 
                 firstclean = list()
@@ -104,80 +112,108 @@ class PresListBuilder(LatexBuilderBase):
                 # build the filtered collection
                 # only list the talk if the group member is an author
                 for pres in presentations:
-                    pauthors = pres['authors']
+                    pauthors = pres["authors"]
                     if isinstance(pauthors, str):
                         pauthors = [pauthors]
                     authors = [
-                        fuzzy_retrieval(self.gtx['people'],
-                                        ['aka', 'name', '_id'],
-                                        author) for author in
-                        pauthors]
-                    authorids = [author['_id'] for author in authors
-                                 if author is not None]
+                        fuzzy_retrieval(
+                            self.gtx["people"], ["aka", "name", "_id"], author
+                        )
+                        for author in pauthors
+                    ]
+                    authorids = [
+                        author["_id"]
+                        for author in authors
+                        if author is not None
+                    ]
                     if member in authorids:
                         firstclean.append(pres)
                 # only list the presentation if it is accepted
                 for pres in firstclean:
-                    if pres['status'] in statuses or 'all' in statuses:
+                    if pres["status"] in statuses or "all" in statuses:
                         secondclean.append(pres)
                 # only list the presentation if it is invited
                 for pres in secondclean:
-                    if pres['type'] in types or 'all' in types:
+                    if pres["type"] in types or "all" in types:
                         presclean.append(pres)
 
                 # build author list
                 for pres in presclean:
-                    pauthors = pres['authors']
+                    pauthors = pres["authors"]
                     if isinstance(pauthors, str):
                         pauthors = [pauthors]
-                    pres['authors'] = [author if
-                                       fuzzy_retrieval(self.gtx['people'],
-                                                       ['aka', 'name', '_id'],
-                                                       author) is None else
-                                       fuzzy_retrieval(self.gtx['people'],
-                                                       ['aka', 'name', '_id'],
-                                                       author)['name'] for
-                                       author in pauthors]
-                    authorlist = ', '.join(pres['authors'])
-                    pres['authors'] = authorlist
-                    pres['begin_month'] = int(pres['begin_month'])
-                    pres['date'] = datetime.date(pres['begin_year'],
-                                                 pres['begin_month']
-                                                 , pres['begin_day'])
-                    pres['suffix'] = {1: "$^\mathrm{st}$", 2: "$^\mathrm{nd}$",
-                                      3: "$^\mathrm{rd}$"}.get(
-                        pres['begin_day'] % 10, "$^\mathrm{th}$")
-                    if 'institution' in pres:
+                    pres["authors"] = [
+                        author
+                        if fuzzy_retrieval(
+                            self.gtx["people"], ["aka", "name", "_id"], author
+                        )
+                        is None
+                        else fuzzy_retrieval(
+                            self.gtx["people"], ["aka", "name", "_id"], author
+                        )["name"]
+                        for author in pauthors
+                    ]
+                    authorlist = ", ".join(pres["authors"])
+                    pres["authors"] = authorlist
+                    pres["begin_month"] = int(pres["begin_month"])
+                    pres["date"] = datetime.date(
+                        pres["begin_year"],
+                        pres["begin_month"],
+                        pres["begin_day"],
+                    )
+                    pres["suffix"] = {
+                        1: "$^\mathrm{st}$",
+                        2: "$^\mathrm{nd}$",
+                        3: "$^\mathrm{rd}$",
+                    }.get(pres["begin_day"] % 10, "$^\mathrm{th}$")
+                    if "institution" in pres:
                         try:
-                            pres['institution'] = fuzzy_retrieval(
-                                self.gtx['institutions'],
-                                ['aka', 'name', '_id'],
-                                pres['institution'])
+                            pres["institution"] = fuzzy_retrieval(
+                                self.gtx["institutions"],
+                                ["aka", "name", "_id"],
+                                pres["institution"],
+                            )
                         except:
-                            exit('ERROR: institution {} not found in '
-                                 'institutions.yml.  Please add and '
-                                 'rerun'.format(
-                                pres['institution']))
-                        if 'department' in pres:
+                            exit(
+                                "ERROR: institution {} not found in "
+                                "institutions.yml.  Please add and "
+                                "rerun".format(pres["institution"])
+                            )
+                        if "department" in pres:
                             try:
-                                pres['department'] = \
-                                    pres['institution']['departments'][
-                                        pres['department']]
+                                pres["department"] = pres["institution"][
+                                    "departments"
+                                ][pres["department"]]
                             except:
-                                print('WARNING: department {} not found in'
-                                      ' {} in institutions.yml.  Pres list will'
-                                      ' build but please check it carefully and'
-                                      ' please add the dept to the institution!'.format(
-                                    pres['department'],
-                                    pres['institution']['_id']))
+                                print(
+                                    "WARNING: department {} not found in"
+                                    " {} in institutions.yml.  Pres list will"
+                                    " build but please check it carefully and"
+                                    " please add the dept to the institution!".format(
+                                        pres["department"],
+                                        pres["institution"]["_id"],
+                                    )
+                                )
                 if len(presclean) > 0:
-                    presclean = sorted(presclean, key=lambda
-                        k: k.get('date', None), reverse=True)
-                    outfile = 'presentations-' + grp + '-' + member + '.tex'
-                    pi = [person for person in self.gtx['people']
-                          if person['_id'] is member][0]
-                    self.render('preslist.tex', outfile, pi=pi,
-                                presentations=presclean,
-                                sentencecase=sentencecase,
-                                monthstyle=month_fullnames)
+                    presclean = sorted(
+                        presclean,
+                        key=lambda k: k.get("date", None),
+                        reverse=True,
+                    )
+                    outfile = "presentations-" + grp + "-" + member + ".tex"
+                    pi = [
+                        person
+                        for person in self.gtx["people"]
+                        if person["_id"] is member
+                    ][0]
+                    self.render(
+                        "preslist.tex",
+                        outfile,
+                        pi=pi,
+                        presentations=presclean,
+                        sentencecase=sentencecase,
+                        monthstyle=month_fullnames,
+                    )
+
+
 #                    self.pdf('presentations')

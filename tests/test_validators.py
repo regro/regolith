@@ -5,7 +5,8 @@ import pytest
 from regolith.schemas import SCHEMAS, validate, EXEMPLARS
 from pprint import pprint
 
-@pytest.mark.parametrize('key', SCHEMAS.keys())
+
+@pytest.mark.parametrize("key", SCHEMAS.keys())
 def test_validation(key):
     if isinstance(EXEMPLARS[key], Sequence):
         for e in EXEMPLARS[key]:
@@ -14,7 +15,7 @@ def test_validation(key):
         validate(key, EXEMPLARS[key], SCHEMAS)
 
 
-@pytest.mark.parametrize('key', SCHEMAS.keys())
+@pytest.mark.parametrize("key", SCHEMAS.keys())
 def test_exemplars(key):
     if isinstance(EXEMPLARS[key], Sequence):
         for e in EXEMPLARS[key]:
