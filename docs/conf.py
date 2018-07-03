@@ -36,36 +36,39 @@ from regolith.schemas import SCHEMAS, EXEMPLARS
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax',
-              'sphinx.ext.napoleon',
-              'sphinx.ext.viewcode']
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+]
 
 napoleon_google_docstring = False
 napoleon_use_param = False
 napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'regolith'
-copyright = u'2015, Anthony Scopatz'
+project = u"regolith"
+copyright = u"2015, Anthony Scopatz"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = REGOLITH_VERSION.rsplit('.', 1)[0]
+version = REGOLITH_VERSION.rsplit(".", 1)[0]
 
 # The full version, including alpha/beta/rc tags.
 release = REGOLITH_VERSION
@@ -82,7 +85,7 @@ release = REGOLITH_VERSION
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', ]
+exclude_patterns = ["_build"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -100,7 +103,7 @@ exclude_patterns = ['_build', ]
 
 # The name of the Pygments (syntax highlighting) style to use.
 # pygments_style = 'sphinx'
-pygments_style = 'pastie'
+pygments_style = "pastie"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -110,7 +113,7 @@ pygments_style = 'pastie'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'redcloud'
+html_theme = "redcloud"
 # html_theme = 'blackcloud'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -122,7 +125,7 @@ html_theme_options = {"roottarget": "index"}
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
 # html_theme_path = [csp.get_theme_dir()]
-html_theme_path = ['_themes', csp.get_theme_dir()]
+html_theme_path = ["_themes", csp.get_theme_dir()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -133,17 +136,17 @@ html_short_title = "regolith"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = '_static/regolith-logo.svg'
+html_logo = "_static/regolith-logo.svg"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = '_static/regolith-logo.ico'
+html_favicon = "_static/regolith-logo.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -187,17 +190,15 @@ html_show_sphinx = False
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'regolithdoc'
+htmlhelp_basename = "regolithdoc"
 
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
 }
@@ -205,8 +206,13 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'regolith.tex', u'Regolith Documentation',
-     u'Anthony Scopatz', 'manual'),
+    (
+        "index",
+        "regolith.tex",
+        u"Regolith Documentation",
+        u"Anthony Scopatz",
+        "manual",
+    )
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -234,10 +240,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    ('index', 'regolith', u'regolith docs',
-     [u'Anthony Scopatz'], 1)
-]
+man_pages = [("index", "regolith", u"regolith docs", [u"Anthony Scopatz"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -249,9 +252,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'regolith', u'regolith documentation',
-     u'Anthony Scopatz', 'regolith', 'Research group managment software.',
-     'Miscellaneous'),
+    (
+        "index",
+        "regolith",
+        u"regolith documentation",
+        u"Anthony Scopatz",
+        "regolith",
+        "Research group managment software.",
+        "Miscellaneous",
+    )
 ]
 
 
@@ -265,79 +274,84 @@ texinfo_documents = [
 # texinfo_show_urls = 'footnote'
 
 
-def format_key(schema, key, indent_str=''):
-    s = ''
-    if key == 'schema':
+def format_key(schema, key, indent_str=""):
+    s = ""
+    if key == "schema":
         return s
-    line_format = ':{key}: {type}, {description}, required\n'
-    line_format_o = ':{key}: {type}, {description}, optional\n'
-    if not schema.get('required', False):
+    line_format = ":{key}: {type}, {description}, required\n"
+    line_format_o = ":{key}: {type}, {description}, optional\n"
+    if not schema.get("required", False):
         lf = line_format_o
     else:
         lf = line_format
-    if 'type' in schema.get(key, {}) or 'anyof_type' in schema.get(key, {}):
+    if "type" in schema.get(key, {}) or "anyof_type" in schema.get(key, {}):
         schema = schema[key]
-    if 'type' in schema or 'anyof_type' in schema:
+    if "type" in schema or "anyof_type" in schema:
         s += indent(
-            lf.format(key=key,
-                      description=schema.get('description', ''),
-                      type=schema.get('type', schema.get('anyof_type', ''))),
-            indent_str)
-    allowed = (schema.get('allowed', '') or schema.get('eallowed', ''))
+            lf.format(
+                key=key,
+                description=schema.get("description", ""),
+                type=schema.get("type", schema.get("anyof_type", "")),
+            ),
+            indent_str,
+        )
+    allowed = schema.get("allowed", "") or schema.get("eallowed", "")
     if allowed:
-        s += indent('\nAllowed values: \n', indent_str + '\t')
+        s += indent("\nAllowed values: \n", indent_str + "\t")
         for allow in allowed:
             if allow:
-                s += indent('* {}\n'.format(allow), indent_str + '\t' * 2)
+                s += indent("* {}\n".format(allow), indent_str + "\t" * 2)
             else:
-                s += indent("* ``''``\n", indent_str + '\t' * 2)
-    s = s.replace(', , ', ', ')
-    if schema.get('schema', False):
-        s += '\n'
-    for inner_key in schema.get('schema', ()):
-        s += format_key(schema['schema'], inner_key,
-                        indent_str=indent_str + '\t')
+                s += indent("* ``''``\n", indent_str + "\t" * 2)
+    s = s.replace(", , ", ", ")
+    if schema.get("schema", False):
+        s += "\n"
+    for inner_key in schema.get("schema", ()):
+        s += format_key(
+            schema["schema"], inner_key, indent_str=indent_str + "\t"
+        )
 
     return s
 
 
 def build_schema_doc(key):
-    fn = 'collections/' + key + '.rst'
-    with open(fn, 'w') as f:
-        s = ''
-        s += key.title() + '\n'
-        s += '=' * len(key) + '\n'
-        s += SCHEMAS[key]['_description']['description'] + '\n\n'
-        s += 'Schema\n------\nThe following lists key names mapped to its ' \
-             'type and meaning for each entry.\n\n'
+    fn = "collections/" + key + ".rst"
+    with open(fn, "w") as f:
+        s = ""
+        s += key.title() + "\n"
+        s += "=" * len(key) + "\n"
+        s += SCHEMAS[key]["_description"]["description"] + "\n\n"
+        s += "Schema\n------\nThe following lists key names mapped to its " "type and meaning for each entry.\n\n"
         schema = SCHEMAS[key]
         schema_list = list(schema.keys())
         schema_list.sort()
         for k in schema_list:
-            if k not in ['_description']:
+            if k not in ["_description"]:
                 s += format_key(schema[k], key=k)
-        s += '\n\n'
-        s += 'YAML Example\n------------\n\n'
-        s += '.. code-block:: yaml\n\n'
+        s += "\n\n"
+        s += "YAML Example\n------------\n\n"
+        s += ".. code-block:: yaml\n\n"
         temp = tempfile.NamedTemporaryFile()
         temp2 = tempfile.NamedTemporaryFile()
         documents = EXEMPLARS[key]
         if isinstance(documents, MutableMapping):
             documents = [documents]
-        documents = {doc['_id']: doc for doc in documents}
+        documents = {doc["_id"]: doc for doc in documents}
         dump_json(temp.name, documents)
         docs = sorted(documents.values(), key=_id_key)
-        lines = [json.dumps(doc, sort_keys=True,
-                            indent=4, separators=(',', ': ')) for doc in docs]
-        jd = '\n'.join(lines)
+        lines = [
+            json.dumps(doc, sort_keys=True, indent=4, separators=(",", ": "))
+            for doc in docs
+        ]
+        jd = "\n".join(lines)
         json_to_yaml(temp.name, temp2.name)
-        with open(temp2.name, 'r') as ff:
-            s += indent(ff.read(), '\t')
-        s += '\n\n'
-        s += 'JSON/Mongo Example\n------------------\n\n'
-        s += '.. code-block:: json\n\n'
-        s += indent(jd, '\t')
-        s += '\n'
+        with open(temp2.name, "r") as ff:
+            s += indent(ff.read(), "\t")
+        s += "\n\n"
+        s += "JSON/Mongo Example\n------------------\n\n"
+        s += ".. code-block:: json\n\n"
+        s += indent(jd, "\t")
+        s += "\n"
         f.write(s)
 
 
@@ -345,10 +359,10 @@ for k in SCHEMAS:
     build_schema_doc(k)
 
 
-docs_not_in_schemas = ['citations', 'courses', 'jobs', 'news']
+docs_not_in_schemas = ["citations", "courses", "jobs", "news"]
 all_collection_docs = sorted(list(SCHEMAS.keys()) + docs_not_in_schemas)
 
-collections_header = '''.. _regolith_collections:
+collections_header = """.. _regolith_collections:
 
 =================
 Collections
@@ -358,23 +372,22 @@ The following contain the regolith schemas and examples in both YAML and JSON/Mo
 .. toctree::
     :maxdepth: 1
 
-'''
+"""
 
-collections_header += indent('\n'.join(all_collection_docs), '    ')
+collections_header += indent("\n".join(all_collection_docs), "    ")
 
-with open('collections/index.rst', 'w') as f:
+with open("collections/index.rst", "w") as f:
     f.write(collections_header)
 
 
-
 def build_cli_doc(cli):
-    fn = 'commands/' + cli + '.rst'
-    out = check_output(['regolith', cli, '-h']).decode('utf-8')
-    s = '{}\n'.format(cli) + '=' * len(cli) + '\n\n'
-    s += '.. code-block:: bash\n\n'
-    s += indent(out, '\t') + '\n'
-    if cli == 'validate':
-        s += '''Misc
+    fn = "commands/" + cli + ".rst"
+    out = check_output(["regolith", cli, "-h"]).decode("utf-8")
+    s = "{}\n".format(cli) + "=" * len(cli) + "\n\n"
+    s += ".. code-block:: bash\n\n"
+    s += indent(out, "\t") + "\n"
+    if cli == "validate":
+        s += """Misc
 ----
 
 This can also be added as a git hook by adding the following to
@@ -385,18 +398,19 @@ This can also be added as a git hook by adding the following to
     #!/bin/sh
     regolith validate
 
-This can be enabled with ``chmod +x .git/hooks/pre-commit``'''
-    with open(fn, 'w') as f:
+This can be enabled with ``chmod +x .git/hooks/pre-commit``"""
+    with open(fn, "w") as f:
         f.write(s)
 
 
 # build CLI docs
-clis = sorted(set(CONNECTED_COMMANDS.keys()) |
-              set(DISCONNECTED_COMMANDS.keys()))
+clis = sorted(
+    set(CONNECTED_COMMANDS.keys()) | set(DISCONNECTED_COMMANDS.keys())
+)
 for cli in clis:
     build_cli_doc(cli)
 
-cli_index = '''.. _commands:
+cli_index = """.. _commands:
 
 =================
 Regolith Commands
@@ -408,10 +422,10 @@ Shell commands for regolith
 .. toctree::
     :maxdepth: 1
 
-'''
-cli_index += indent('\n'.join(clis), '    ')
-with open('commands/index.rst', 'w') as f:
-    out = check_output(['regolith', '-h']).decode('utf-8')
-    s = '.. code-block:: bash\n\n'
-    s += indent(out, '\t') + '\n'
+"""
+cli_index += indent("\n".join(clis), "    ")
+with open("commands/index.rst", "w") as f:
+    out = check_output(["regolith", "-h"]).decode("utf-8")
+    s = ".. code-block:: bash\n\n"
+    s += indent(out, "\t") + "\n"
     f.write(cli_index.format(s))

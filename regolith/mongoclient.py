@@ -13,6 +13,7 @@ from warnings import warn
 try:
     import pymongo
     from pymongo.errors import AutoReconnect, ConnectionFailure
+
     MONGO_AVAILABLE = True
 except ImportError:
     MONGO_AVAILABLE = False
@@ -22,7 +23,7 @@ from regolith.tools import dbdirname, dbpathname, fallback
 
 if not MONGO_AVAILABLE:
     ON_PYMONGO_V2 = ON_PYMONGO_V3 = False
-elif pymongo.version.split('.')[0] == '2':
+elif pymongo.version.split(".")[0] == "2":
     ON_PYMONGO_V2 = True
     ON_PYMONGO_V3 = False
 else:
@@ -32,7 +33,6 @@ else:
 
 @fallback(ON_PYMONGO_V2, None)
 class InsertOneProxy(object):
-
     def __init__(self, inserted_id, acknowledged):
         self.inserted_id = inserted_id
         self.acknowledged = acknowledged
@@ -42,10 +42,14 @@ class MongoClient:
     """A client backed by MongoDB."""
 
     def __init__(self, rc):
-        warn("Mongo support will be deprecated in the near future please use "
-             "fsclient.FileSystemClient")
+        warn(
+            "Mongo support will be deprecated in the near future please use "
+            "fsclient.FileSystemClient"
+        )
         if not MONGO_AVAILABLE:
-            raise RuntimeError("MongoDB is not available on the current system.")
+            raise RuntimeError(
+                "MongoDB is not available on the current system."
+            )
         self.rc = rc
         self.client = self.proc = None
         # actually startup mongo
@@ -60,9 +64,10 @@ class MongoClient:
         os.makedirs(mongodbpath)
 
     def _startserver(self):
-        self.proc = subprocess.Popen(['mongod', '--dbpath', mongodbpath],
-                                      universal_newlines=True)
-        print('mongod pid: {0}'.format(self.proc.pid), file=sys.stderr)
+        self.proc = subprocess.Popen(
+            ["mongod", "--dbpath", mongodbpath], universal_newlines=True
+        )
+        print("mongod pid: {0}".format(self.proc.pid), file=sys.stderr)
 
     def is_alive(self):
         """Returns whether or not the client is alive and availabe to
@@ -73,7 +78,7 @@ class MongoClient:
         elif ON_PYMONGO_V2:
             return self.client.alive()
         elif ON_PYMONGO_V3:
-            cmd = ['mongostat', '--host', 'localhost', '-n', '1']
+            cmd = ["mongostat", "--host", "localhost", "-n", "1"]
             try:
                 subprocess.check_call(cmd)
                 alive = True
@@ -97,10 +102,17 @@ class MongoClient:
     def load_database(self, db):
         """Loads a database via mongoimport.  Takes a database dict db."""
         dbpath = dbpathname(db, self.rc)
-        for f in iglob(os.path.join(dbpath, '*.json')):
+        for f in iglob(os.path.join(dbpath, "*.json")):
             base, ext = os.path.splitext(os.path.split(f)[-1])
-            cmd = ['mongoimport', '--db',  db['name'], '--collection', base,
-                   '--file', f]
+            cmd = [
+                "mongoimport",
+                "--db",
+                db["name"],
+                "--collection",
+                base,
+                "--file",
+                f,
+            ]
             subprocess.check_call(cmd)
 
     def dump_database(self, db):
@@ -108,14 +120,22 @@ class MongoClient:
         dbpath = dbpathname(db, self.rc)
         os.makedirs(dbpath, exist_ok=True)
         to_add = []
-        colls = self.client[db['name']].collection_names(
-                                            include_system_collections=False)
+        colls = self.client[db["name"]].collection_names(
+            include_system_collections=False
+        )
         for collection in colls:
-            f = os.path.join(dbpath, collection + '.json')
-            cmd = ['mongoexport', '--db',  db['name'],
-                   '--collection', collection, '--out', f]
+            f = os.path.join(dbpath, collection + ".json")
+            cmd = [
+                "mongoexport",
+                "--db",
+                db["name"],
+                "--collection",
+                collection,
+                "--out",
+                f,
+            ]
             subprocess.check_call(cmd)
-            to_add.append(os.path.join(db['path'], collection + '.json'))
+            to_add.append(os.path.join(db["path"], collection + ".json"))
         return to_add
 
     def close(self):
@@ -127,7 +147,7 @@ class MongoClient:
         elif ON_PYMONGO_V3:
             self.client.close()
         else:
-            raise RuntimeError('did not recognize pymongo version')
+            raise RuntimeError("did not recognize pymongo version")
         self.proc.terminate()
         mongodbpath = self.rc.mongodbpath
         if os.path.isdir(mongodbpath):
@@ -178,10 +198,12 @@ class MongoClient:
         if ON_PYMONGO_V2:
             doc = coll.find_one(filter)
             if doc is None:
-                if not kwargs.get('upsert', False):
-                    raise RuntimeError('could not update non-existing document')
+                if not kwargs.get("upsert", False):
+                    raise RuntimeError(
+                        "could not update non-existing document"
+                    )
                 newdoc = dict(filter)
-                newdoc.update(update['$set'])
+                newdoc.update(update["$set"])
                 return self.insert_one(dbname, collname, newdoc)
             return coll.update(doc, update, **kwargs)
         else:

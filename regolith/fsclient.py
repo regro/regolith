@@ -12,17 +12,17 @@ from regolith.tools import dbpathname
 
 
 def _id_key(doc):
-    return doc['_id']
+    return doc["_id"]
 
 
 def load_json(filename):
     """Loads a JSON file and returns a dict of its documents."""
     docs = {}
-    with open(filename, encoding='utf-8') as fh:
+    with open(filename, encoding="utf-8") as fh:
         lines = fh.readlines()
     for line in lines:
         doc = json.loads(line)
-        docs[doc['_id']] = doc
+        docs[doc["_id"]] = doc
     return docs
 
 
@@ -30,18 +30,18 @@ def dump_json(filename, docs):
     """Dumps a dict of documents into a file."""
     docs = sorted(docs.values(), key=_id_key)
     lines = [json.dumps(doc, sort_keys=True) for doc in docs]
-    s = '\n'.join(lines)
-    with open(filename, 'w', encoding='utf-8') as fh:
+    s = "\n".join(lines)
+    with open(filename, "w", encoding="utf-8") as fh:
         fh.write(s)
 
 
 def load_yaml(filename, return_inst=False):
     """Loads a YAML file and returns a dict of its documents."""
     inst = YAML()
-    with open(filename, encoding='utf-8') as fh:
+    with open(filename, encoding="utf-8") as fh:
         docs = inst.load(fh)
     for _id, doc in docs.items():
-        doc['_id'] = _id
+        doc["_id"] = _id
     return (docs, inst) if return_inst else docs
 
 
@@ -51,11 +51,11 @@ def dump_yaml(filename, docs, inst=None):
     inst.indent(mapping=2, sequence=4, offset=2)
     sorted_dict = ruamel.yaml.comments.CommentedMap()
     for k, doc in docs.items():
-        _id = doc.pop('_id')
+        _id = doc.pop("_id")
         sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
         for kk in sorted(doc.keys()):
             sorted_dict[k][kk] = doc[kk]
-    with open(filename, 'w', encoding='utf-8') as fh:
+    with open(filename, "w", encoding="utf-8") as fh:
         inst.dump(sorted_dict, stream=fh)
 
 
@@ -95,26 +95,32 @@ class FileSystemClient:
     def load_json(self, db, dbpath):
         """Loads the JSON part of a database."""
         dbs = self.dbs
-        for f in [file for file in iglob(os.path.join(dbpath, '*.json'))
-                  if file not in db['blacklist']]:
+        for f in [
+            file
+            for file in iglob(os.path.join(dbpath, "*.json"))
+            if file not in db["blacklist"]
+        ]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
-            self._collfiletypes[base] = 'json'
-            print('loading ' + f + '...', file=sys.stderr)
-            dbs[db['name']][base] = load_json(f)
+            self._collfiletypes[base] = "json"
+            print("loading " + f + "...", file=sys.stderr)
+            dbs[db["name"]][base] = load_json(f)
 
     def load_yaml(self, db, dbpath):
         """Loads the YAML part of a database."""
         dbs = self.dbs
-        for f in [file for file in iglob(os.path.join(dbpath, '*.y*ml'))
-                  if file not in db['blacklist']]:
+        for f in [
+            file
+            for file in iglob(os.path.join(dbpath, "*.y*ml"))
+            if file not in db["blacklist"]
+        ]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
             self._collexts[base] = ext
-            self._collfiletypes[base] = 'yaml'
-            print('loading ' + f + '...', file=sys.stderr)
+            self._collfiletypes[base] = "yaml"
+            print("loading " + f + "...", file=sys.stderr)
             coll, inst = load_yaml(f, return_inst=True)
-            dbs[db['name']][base] = coll
+            dbs[db["name"]][base] = coll
             self._yamlinsts[dbpath, base] = inst
 
     def load_database(self, db):
@@ -125,15 +131,16 @@ class FileSystemClient:
 
     def dump_json(self, docs, collname, dbpath):
         """Dumps json docs and returns filename"""
-        f = os.path.join(dbpath, collname + '.json')
+        f = os.path.join(dbpath, collname + ".json")
         dump_json(f, docs)
         filename = os.path.split(f)[-1]
         return filename
 
     def dump_yaml(self, docs, collname, dbpath):
         """Dumps json docs and returns filename"""
-        f = os.path.join(dbpath, collname + self._collexts.get(collname, 
-                                                               '.yaml'))
+        f = os.path.join(
+            dbpath, collname + self._collexts.get(collname, ".yaml")
+        )
         inst = self._yamlinsts.get((dbpath, collname), None)
         dump_yaml(f, docs, inst=inst)
         filename = os.path.split(f)[-1]
@@ -144,16 +151,16 @@ class FileSystemClient:
         dbpath = dbpathname(db, self.rc)
         os.makedirs(dbpath, exist_ok=True)
         to_add = []
-        for collname, collection in self.dbs[db['name']].items():
-            print('dumping ' + collname + '...', file=sys.stderr)
-            filetype = self._collfiletypes.get(collname, 'yaml')
-            if filetype == 'json':
+        for collname, collection in self.dbs[db["name"]].items():
+            print("dumping " + collname + "...", file=sys.stderr)
+            filetype = self._collfiletypes.get(collname, "yaml")
+            if filetype == "json":
                 filename = self.dump_json(collection, collname, dbpath)
-            elif filetype == 'yaml':
+            elif filetype == "yaml":
                 filename = self.dump_yaml(collection, collname, dbpath)
             else:
-                raise ValueError('did not recognize file type for regolith')
-            to_add.append(os.path.join(db['path'], filename))
+                raise ValueError("did not recognize file type for regolith")
+            to_add.append(os.path.join(db["path"], filename))
         return to_add
 
     def close(self):
@@ -177,18 +184,18 @@ class FileSystemClient:
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
         coll = self.dbs[dbname][collname]
-        coll[doc['_id']] = doc
+        coll[doc["_id"]] = doc
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
         coll = self.dbs[dbname][collname]
         for doc in docs:
-            coll[doc['_id']] = doc
+            coll[doc["_id"]] = doc
 
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection"""
         coll = self.dbs[dbname][collname]
-        del coll[doc['_id']]
+        del coll[doc["_id"]]
 
     def find_one(self, dbname, collname, filter):
         """Finds the first document matching filter."""
@@ -208,4 +215,4 @@ class FileSystemClient:
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)
         newdoc.update(update)
-        coll[newdoc['_id']] = newdoc
+        coll[newdoc["_id"]] = newdoc
