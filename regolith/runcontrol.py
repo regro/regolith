@@ -11,14 +11,21 @@ import functools
 import subprocess
 from copy import deepcopy
 from pprint import pformat
-from collections import Mapping, Iterable, Hashable, Sequence, namedtuple, \
-    MutableMapping
+from collections import (
+    Mapping,
+    Iterable,
+    Hashable,
+    Sequence,
+    namedtuple,
+    MutableMapping,
+)
 from hashlib import md5
 from warnings import warn
 
 from regolith.validators import always_true, noop
 
-FORBIDDEN_NAMES = frozenset(['del', 'global'])
+FORBIDDEN_NAMES = frozenset(["del", "global"])
+
 
 def warn_forbidden_name(forname, inname=None, rename=None):
     """Warns the user that a forbidden name has been found."""
@@ -30,39 +37,44 @@ def warn_forbidden_name(forname, inname=None, rename=None):
     warn(msg, RuntimeWarning)
 
 
-
 def ensuredirs(f):
     """For a file path, ensure that its directory path exists."""
     d = os.path.split(f)[0]
     if not os.path.isdir(d):
         os.makedirs(d)
 
+
 def touch(filename):
     """Opens a file and updates the mtime, like the posix command of the same name."""
-    with io.open(filename, 'a') as f:
+    with io.open(filename, "a") as f:
         os.utime(filename, None)
 
 
 def exec_file(filename, glb=None, loc=None):
     """A function equivalent to the Python 2.x execfile statement."""
-    with io.open(filename, 'r') as f:
+    with io.open(filename, "r") as f:
         src = f.read()
     exec(compile(src, filename, "exec"), glb, loc)
+
 
 #
 # Run Control
 #
 
+
 class NotSpecifiedType(object):
     """A helper class singleton for run control meaning that a 'real' value
     has not been given."""
+
     def __repr__(self):
         return "NotSpecified"
+
 
 NotSpecified = NotSpecifiedType()
 """A helper class singleton for run control meaning that a 'real' value
 has not been given.
 """
+
 
 class RunControl(object):
     """A composable configuration class. Unlike argparse.Namespace,
@@ -98,7 +110,7 @@ class RunControl(object):
         return value
 
     def __setattr__(self, key, value):
-        if key.startswith('_'):
+        if key.startswith("_"):
             self.__dict__[key] = value
         else:
             if value is NotSpecified and key in self:
@@ -139,11 +151,14 @@ class RunControl(object):
         return "{0}({1})".format(self.__class__.__name__, s)
 
     def __contains__(self, key):
-        return key in self._dict or key in self.__dict__ or \
-                                    key in self.__class__.__dict__
+        return (
+            key in self._dict
+            or key in self.__dict__
+            or key in self.__class__.__dict__
+        )
 
     def __eq__(self, other):
-        if hasattr(other, '_dict'):
+        if hasattr(other, "_dict"):
             return self._dict == other._dict
         elif isinstance(other, Mapping):
             return self._dict == other
@@ -151,7 +166,7 @@ class RunControl(object):
             return NotImplemented
 
     def __ne__(self, other):
-        if hasattr(other, '_dict'):
+        if hasattr(other, "_dict"):
             return self._dict != other._dict
         elif isinstance(other, Mapping):
             return self._dict != other
@@ -164,9 +179,9 @@ class RunControl(object):
         value is called to perform the update.  This function should return
         a copy to be safe and not update in-place.
         """
-        if hasattr(other, '_dict'):
+        if hasattr(other, "_dict"):
             other = other._dict
-        elif not hasattr(other, 'items'):
+        elif not hasattr(other, "items"):
             other = dict(other)
         for k, v in other.items():
             if v is NotSpecified:
@@ -194,7 +209,6 @@ class RunControl(object):
         return value if validator(value) else convertor(value)
 
 
-
 def flatten(iterable):
     """Generator which returns flattened version of nested sequences."""
     for el in iterable:
@@ -206,9 +220,11 @@ def flatten(iterable):
         else:
             yield el
 
+
 #
 # Memoization
 #
+
 
 def ishashable(x):
     """Tests if a value is hashable."""
@@ -218,7 +234,6 @@ def ishashable(x):
         elif isinstance(x, Iterable):
             return all(map(ishashable, x))
         else:
-         return True
+            return True
     else:
         return False
-

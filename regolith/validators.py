@@ -35,7 +35,7 @@ def is_string(x):
     return isinstance(x, string_types)
 
 
-_FALSES = frozenset(['', '0', 'n', 'f', 'no', 'none', 'false'])
+_FALSES = frozenset(["", "0", "n", "f", "no", "none", "false"])
 
 
 def to_bool(x):
@@ -57,10 +57,10 @@ def ensure_string(x):
 
 
 def ensure_database(db):
-    db['name'] = ensure_string(db['name'])
-    db['url'] = ensure_string(db['url'])
-    db['path'] = ensure_string(db['path'])
-    db['public'] = to_bool(db.get('public', True))
+    db["name"] = ensure_string(db["name"])
+    db["url"] = ensure_string(db["url"])
+    db["path"] = ensure_string(db["path"])
+    db["public"] = to_bool(db.get("public", True))
     return db
 
 
@@ -70,10 +70,10 @@ def ensure_databases(dbs):
 
 
 def ensure_store(store):
-    store['name'] = ensure_string(store['name'])
-    store['url'] = ensure_string(store['url'])
-    store['path'] = ensure_string(store.get('path', None) or '')
-    store['public'] = to_bool(store.get('public', True))
+    store["name"] = ensure_string(store["name"])
+    store["url"] = ensure_string(store["url"])
+    store["path"] = ensure_string(store.get("path", None) or "")
+    store["public"] = to_bool(store.get("public", True))
     return store
 
 
@@ -84,31 +84,31 @@ def ensure_stores(stores):
 
 def ensure_email(email):
     """Ensures the email top-level key is well formed."""
-    email['url'] = ensure_string(email['url'])
-    if 'cred' in email:
-        email['cred'] = ensure_string(email['cred'])
+    email["url"] = ensure_string(email["url"])
+    if "cred" in email:
+        email["cred"] = ensure_string(email["cred"])
     else:
-        email['cred'] = email['url'] + '.cred'
-    if not os.path.isfile(email['cred']):
-        user = input('Email address for ' + email['url'] + ': ')
+        email["cred"] = email["url"] + ".cred"
+    if not os.path.isfile(email["cred"]):
+        user = input("Email address for " + email["url"] + ": ")
         password = getpass()
-        s = user + '\n' + password
-        with open(email['cred'], 'w') as f:
+        s = user + "\n" + password
+        with open(email["cred"], "w") as f:
             f.write(s)
-    with open(email['cred']) as f:
-        email['from'] = f.readline().strip()
-        email['password'] = f.readline().strip()
-    email['user'] = email['from'].partition('@')[0]
-    email['port'] = int(email.get('port', 0))
-    email['verbosity'] = int(email.get('verbosity', 0))
-    email['tls'] = to_bool(email.get('tls', False))
+    with open(email["cred"]) as f:
+        email["from"] = f.readline().strip()
+        email["password"] = f.readline().strip()
+    email["user"] = email["from"].partition("@")[0]
+    email["port"] = int(email.get("port", 0))
+    email["verbosity"] = int(email.get("verbosity", 0))
+    email["tls"] = to_bool(email.get("tls", False))
     return email
 
 
 DEFAULT_VALIDATORS = {
-    'backend': (is_string, ensure_string),
-    'builddir': (is_string, ensure_string),
-    'databases': (always_false, ensure_databases),
-    'stores': (always_false, ensure_stores),
-    'email': (always_false, ensure_email),
+    "backend": (is_string, ensure_string),
+    "builddir": (is_string, ensure_string),
+    "databases": (always_false, ensure_databases),
+    "stores": (always_false, ensure_stores),
+    "email": (always_false, ensure_email),
 }
