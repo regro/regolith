@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import shutil
-import subprocess
+from xonsh.lib import subprocess
 from glob import iglob
 from warnings import warn
 
