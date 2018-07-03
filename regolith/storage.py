@@ -129,6 +129,7 @@ class StorageClient(object):
         if not self.rc.force and os.path.isfile(dst):
             raise RuntimeError(dst + ' already exists!')
         shutil.copy2(doc, dst)
+        return dst
 
     def retrieve(self, file_name):
         return os.path.join(self.path, file_name)
@@ -136,6 +137,17 @@ class StorageClient(object):
 
 @contextmanager
 def store_client(rc):
+    """Context manager for file storage
+    
+    Parameters
+    ----------
+    rc : RunControl
+
+    Yields
+    -------
+    client : StorageClient
+        The StorageClient instance
+    """
     store = find_store(rc)
     path = storage_path(store, rc)
     sync(store, path)
