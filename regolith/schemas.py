@@ -230,7 +230,6 @@ EXEMPLARS = {
                 "name": "Department of Applied Physics"
                 "and Applied Mathematics",
                 "aka": ["APAM"],
-                "bad": "bad",
             },
         },
         "name": "Columbia University",
@@ -1022,11 +1021,11 @@ SCHEMAS = {
             "description": "all the departments and centers and"
             "various units in the institution",
             "required": False,
+            "type": "dict",
             # Allow unkown department names, but check their content
-            "allow_unknown": {
+            "valueschema": {
+                'type': 'dict',
                 "schema": {
-                    "type": "dict",
-                    "schema": {
                         "name": {
                             "description": "The canonical name",
                             "required": True,
@@ -1036,8 +1035,6 @@ SCHEMAS = {
                     },
                 }
             },
-            "type": "dict",
-        },
         "name": {
             "description": "the canonical name of the institutions",
             "required": True,
@@ -1049,15 +1046,17 @@ SCHEMAS = {
             "organizations",
             "required": False,
             "type": "dict",
-            # 'schema': {'type': 'dict',
-            #            'schema': {
-            #                'name': {
-            #                    'description': 'The canonical name',
-            #                    'required': True,
-            #                    'type': 'string'},
-            #                'aka': {
-            #                    'required': False,
-            #                    'type': 'list'}}},
+            "valueschema": {
+                'type': 'dict',
+                "schema": {
+                    "name": {
+                        "description": "The canonical name",
+                        "required": True,
+                        "type": "string",
+                    },
+                    "aka": {"required": False, "type": "list"},
+                },
+            }
         },
         "state": {
             "description": "the state where the institution is",
