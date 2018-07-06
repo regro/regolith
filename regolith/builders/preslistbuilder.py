@@ -169,7 +169,17 @@ class PresListBuilder(LatexBuilderBase):
                         2: "$^\mathrm{nd}$",
                         3: "$^\mathrm{rd}$",
                     }.get(pres["begin_day"] % 10, "$^\mathrm{th}$")
-                    if "institution" in pres:
+                    for day in ['begin_day', 'end_day']:
+                        if pres.get(day,None):
+                            if 10 < pres[day] < 20:
+                                pres['{}_suffix'.format(day)] = "$^\mathrm{th}$"
+                            else:
+                                pres['{}_suffix'.format(day)] = {
+                                    1: "$^\mathrm{st}$",
+                                    2: "$^\mathrm{nd}$",
+                                    3: "$^\mathrm{rd}$"}.get(
+                                    pres[day] % 10, "$^\mathrm{th}$")
+                    if "institution" in pres:                           try:
                         try:
                             pres["institution"] = fuzzy_retrieval(
                                 self.gtx["institutions"],
@@ -191,7 +201,7 @@ class PresListBuilder(LatexBuilderBase):
                                 print(
                                     "WARNING: department {} not found in"
                                     " {} in institutions.yml.  Pres list will"
-                                    " build but please check it carefully and"
+                                    " build but please check this entry carefully and"
                                     " please add the dept to the institution!".format(
                                         pres["department"],
                                         pres["institution"]["_id"],
