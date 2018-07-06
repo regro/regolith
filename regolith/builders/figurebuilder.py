@@ -3,7 +3,7 @@ import os
 
 from jinja2 import Environment, FileSystemLoader
 
-from regolith.api import DB
+from regolith.broker import Broker
 from regolith.builders.basebuilder import LatexBuilderBase
 
 
@@ -24,7 +24,7 @@ class FigureBuilder(LatexBuilderBase):
                 ]
             )
         )
-        self.db = DB(rc)
+        self.db = Broker(rc)
     
     def construct_global_ctx(self):
         super().construct_global_ctx()
