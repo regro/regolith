@@ -11,6 +11,8 @@ except:
 
 
 def find_store(rc):
+    if getattr(rc, 'storename', None) is None and len(rc.stores) != 0:
+        return rc.stores[0]
     for store in rc.stores:
         if store["name"] == rc.storename:
             return store
@@ -64,7 +66,7 @@ def sync(store, path):
         sync_git(store, path)
     elif url.startswith("hg+"):
         sync_hg(store, path)
-    else:
+    elif not os.path.exists(os.path.expanduser(url)):
         raise ValueError("Do not know how to sync this kind of storage.")
 
 
@@ -113,7 +115,7 @@ def push(store, path):
         push_git(store, path)
     elif url.startswith("hg+"):
         push_hg(store, path)
-    else:
+    elif not os.path.exists(os.path.expanduser(url)):
         raise ValueError("Do not know how to push to this kind of storage.")
 
 
