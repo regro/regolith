@@ -1,6 +1,6 @@
 import os
 import shutil
-import subprocess
+from xonsh.lib import subprocess
 
 import pytest
 
