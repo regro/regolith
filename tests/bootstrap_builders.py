@@ -1,7 +1,7 @@
 import json
 import os
 import shutil
-from xonsh.lib from xonsh.lib import subprocess
+from xonsh.lib import subprocess
 import sys
 import tempfile
 from copy import deepcopy
