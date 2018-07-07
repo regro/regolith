@@ -3,7 +3,7 @@ import sys
 from io import StringIO
 
 import pytest
-import subprocess
+from xonsh.lib import subprocess
 
 from regolith.main import main
 
