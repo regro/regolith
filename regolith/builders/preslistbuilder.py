@@ -179,7 +179,7 @@ class PresListBuilder(LatexBuilderBase):
                                     2: "$^\mathrm{nd}$",
                                     3: "$^\mathrm{rd}$"}.get(
                                     pres[day] % 10, "$^\mathrm{th}$")
-                    if "institution" in pres:                           try:
+                    if "institution" in pres:
                         try:
                             pres["institution"] = fuzzy_retrieval(
                                 self.gtx["institutions"],
