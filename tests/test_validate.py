@@ -32,8 +32,6 @@ def test_validate_python_single_col(make_db):
     assert "NO ERRORS IN DBS" in out
 
 
-# @pytest.mark.skipif(os.name == 'nt',
-#                     reason="Windows not working with subprocess run")
 def test_validate_bad_python(make_bad_db):
     repo = make_bad_db
     os.chdir(repo)
@@ -48,23 +46,16 @@ def test_validate_bad_python(make_bad_db):
     assert "NO ERRORS IN DBS" not in out
 
 
-@pytest.mark.skipif(
-    os.name == "nt", reason="Windows not working with subprocess run"
-)
 def test_validate(make_db):
     repo = make_db
     os.chdir(repo)
-    out = subprocess.check_output(["regolith", "validate"]).decode("utf-8")
+    out = subprocess.run(["regolith", "validate"], check=False).out
     assert "NO ERRORS IN DBS" in out
 
 
-@pytest.mark.skipif(
-    os.name == "nt", reason="Windows not working with subprocess run"
-)
 def test_validate_bad(make_bad_db):
     repo = make_bad_db
     os.chdir(repo)
-    with pytest.raises(subprocess.CalledProcessError):
-        out = subprocess.check_output(["regolith", "validate"]).decode("utf-8")
-        assert "Errors found in " in out
-        assert "NO ERRORS IN DBS" not in out
+    out = subprocess.run(["regolith", "validate"], check=False).out
+    assert "Errors found in " in out
+    assert "NO ERRORS IN DBS" not in out
