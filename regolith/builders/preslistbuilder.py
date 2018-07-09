@@ -117,7 +117,8 @@ class PresListBuilder(LatexBuilderBase):
                         pauthors = [pauthors]
                     authors = [
                         fuzzy_retrieval(
-                            self.gtx["people"], ["aka", "name", "_id"], author
+                            self.gtx["people"], ["aka", "name", "_id"], author,
+                            case_sensitive=False
                         )
                         for author in pauthors
                     ]
@@ -145,11 +146,13 @@ class PresListBuilder(LatexBuilderBase):
                     pres["authors"] = [
                         author
                         if fuzzy_retrieval(
-                            self.gtx["people"], ["aka", "name", "_id"], author
+                            self.gtx["people"], ["aka", "name", "_id"], author,
+                            case_sensitive=False
                         )
                         is None
                         else fuzzy_retrieval(
-                            self.gtx["people"], ["aka", "name", "_id"], author
+                            self.gtx["people"], ["aka", "name", "_id"], author,
+                            case_sensitive=False
                         )["name"]
                         for author in pauthors
                     ]
@@ -171,7 +174,7 @@ class PresListBuilder(LatexBuilderBase):
                             pres["institution"] = fuzzy_retrieval(
                                 self.gtx["institutions"],
                                 ["aka", "name", "_id"],
-                                pres["institution"],
+                                pres["institution"], case_sensitive=False
                             )
                         except:
                             exit(
