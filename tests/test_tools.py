@@ -20,5 +20,14 @@ def test_fuzzy_retrieval():
         "name": "Anthony Scopatz",
     }
     assert (
-        fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz") == person
+            fuzzy_retrieval([person], ["aka", "name", "_id"],
+                            "scopatz") == person
+    )
+    assert (
+            fuzzy_retrieval([person], ["aka", "name", "_id"],
+                            "scopatz, a") is None
+    )
+    assert (
+            fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz, a",
+                            case_sensitive=False) == person
     )

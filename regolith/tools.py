@@ -354,7 +354,7 @@ def document_by_value(documents, address, value):
             return g_doc
 
 
-def fuzzy_retrieval(documents, sources, value):
+def fuzzy_retrieval(documents, sources, value, case_sensitive = True):
     """Retrieve a document from the documents where value is compared against
     multiple potential sources
 
@@ -366,6 +366,8 @@ def fuzzy_retrieval(documents, sources, value):
         The potential data sources
     value:
         The value to compare against to find the document of interest
+    case_sensitive: Bool
+        When true will match case (Default = True)
 
     Returns
     -------
@@ -374,9 +376,9 @@ def fuzzy_retrieval(documents, sources, value):
 
     Examples
     --------
-    >>> fuzzy_retrieval(people, ['aka', 'name'], 'pi_name')
+    >>> fuzzy_retrieval(people, ['aka', 'name'], 'pi_name', case_sensitive = False)
 
-    This would get the person entry for where either the alias or the name was
+    This would get the person entry for which either the alias or the name was
     ``pi_name``.
 
     """
@@ -397,5 +399,11 @@ def fuzzy_retrieval(documents, sources, value):
                 returns.append(ret)
             else:
                 returns.extend(ret)
-        if value in frozenset(returns):
-            return doc
+        if not case_sensitive:
+            returns = [ret.lower() for ret in returns if isinstance(ret,str)]
+            if isinstance(value, str):
+                if value.lower() in frozenset(returns):
+                    return doc
+        else:
+            if value in frozenset(returns):
+                return doc
