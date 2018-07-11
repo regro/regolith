@@ -10,28 +10,25 @@ from regolith.tools import fuzzy_retrieval
 
 class FigureBuilder(LatexBuilderBase):
     """Build resume from database entries"""
-    btype = 'figure'
-    
+
+    btype = "figure"
+
     def __init__(self, rc):
-        self.env = Environment(
-            loader=FileSystemLoader(
-                ['.']
-            )
-        )
+        self.env = Environment(loader=FileSystemLoader(["."]))
         self.db = Broker(rc)
         super().__init__(rc)
 
     def construct_global_ctx(self):
         super().construct_global_ctx()
         gtx = self.gtx
-        gtx['db'] = self.db.md
-        gtx['get_file'] = self.db.get_file
-        gtx['fuzzy_retrieval'] = fuzzy_retrieval
-    
+        gtx["db"] = self.db.md
+        gtx["get_file"] = self.db.get_file
+        gtx["fuzzy_retrieval"] = fuzzy_retrieval
+
     def latex(self):
         """Render latex template"""
         rc = self.rc
-        for f in [ff for ff in os.listdir('.') if ff.endswith('.tex')]:
+        for f in [ff for ff in os.listdir(".") if ff.endswith(".tex")]:
             fn, ext = os.path.splitext(f)
-            self.render(f, fn + '_rend' + ext)
-            self.pdf(fn + '_rend' + ext)
+            self.render(f, fn + "_rend" + ext)
+            self.pdf(fn + "_rend" + ext)

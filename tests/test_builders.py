@@ -14,7 +14,7 @@ builder_map = [
     # "publist",
     # "current-pending",
     # "preslist",
-    'figure'
+    "figure"
 ]
 
 
@@ -22,24 +22,24 @@ def prep_figure():
     # Make latex file with some jinja2 in it
     text = """
     {{ get_file(db['groups']['ergs'], 'hello') }}"""
-    with open('figure.tex', 'w') as f:
+    with open("figure.tex", "w") as f:
         f.write(text)
     # make file to be loaded
-    os.makedirs('fig', exist_ok=True)
-    with open('fig/hello.txt', 'w') as f:
-        f.write('hello world')
+    os.makedirs("fig", exist_ok=True)
+    with open("fig/hello.txt", "w") as f:
+        f.write("hello world")
     # load the db and register the file
     db = load_db()
-    print(db.get_file(db['groups']['ergs'], 'hello'))
-    if not db.get_file(db['groups']['ergs'], 'hello'):
-        db.add_file(db['groups']['ergs'], 'hello', 'fig/hello.txt')
+    print(db.get_file(db["groups"]["ergs"], "hello"))
+    if not db.get_file(db["groups"]["ergs"], "hello"):
+        db.add_file(db["groups"]["ergs"], "hello", "fig/hello.txt")
 
 
 @pytest.mark.parametrize("bm", builder_map)
 def test_builder(bm, make_db):
     repo = make_db
     os.chdir(repo)
-    if bm == 'figure':
+    if bm == "figure":
         prep_figure()
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)
@@ -69,7 +69,7 @@ def test_builder(bm, make_db):
 def test_builder_python(bm, make_db):
     repo = make_db
     os.chdir(repo)
-    if bm == 'figure':
+    if bm == "figure":
         prep_figure()
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)

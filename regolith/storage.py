@@ -11,7 +11,7 @@ except:
 
 
 def find_store(rc):
-    if getattr(rc, 'storename', None) is None and len(rc.stores) != 0:
+    if getattr(rc, "storename", None) is None and len(rc.stores) != 0:
         return rc.stores[0]
     for store in rc.stores:
         if store["name"] == rc.storename:
@@ -129,7 +129,7 @@ class StorageClient(object):
         """Copies file to the staging area."""
         dst = os.path.join(self.path, os.path.split(doc)[1])
         if not self.rc.force and os.path.isfile(dst):
-            raise RuntimeError(dst + ' already exists!')
+            raise RuntimeError(dst + " already exists!")
         shutil.copy2(doc, dst)
         return dst
 
