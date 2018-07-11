@@ -19,7 +19,7 @@ the presentations.yml.
 The presentations are output in a ./_build directory."""
 
 from copy import deepcopy, copy
-import datetime
+import datetime, sys
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
@@ -187,16 +187,15 @@ class PresListBuilder(LatexBuilderBase):
                                 pres["institution"], case_sensitive=False
                             )
                         except:
-                            exit(
+                            sys.exit(
                                 "ERROR: institution {} not found in "
                                 "institutions.yml.  Please add and "
                                 "rerun".format(pres["institution"])
                             )
                         if "department" in pres:
                             try:
-                                pres["department"] = pres["institution"][
-                                    "departments"
-                                ][pres["department"]]
+                                pres["department"] = \
+                                    pres["institution"]["departments"][pres["department"]]
                             except:
                                 print(
                                     "WARNING: department {} not found in"
@@ -207,7 +206,7 @@ class PresListBuilder(LatexBuilderBase):
                                         pres["institution"]["_id"],
                                     )
                                 )
-                                pres["department"] = {"name":pres["department"]}
+                                pres["department"] = {"name": pres["department"]}
                 if len(presclean) > 0:
                     presclean = sorted(
                         presclean,
