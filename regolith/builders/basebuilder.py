@@ -35,13 +35,14 @@ class BuilderBase(object):
         self.rc = rc
         self.bldir = os.path.join(rc.builddir, self.btype)
         # allow subclasses to override
-        if not hasattr(self, 'env'):
+        if not hasattr(self, "env"):
             self.env = Environment(
                 loader=FileSystemLoader(
                     [
                         "templates",
                         os.path.join(
-                            os.path.dirname(os.path.dirname(__file__)), "templates"
+                            os.path.dirname(os.path.dirname(__file__)),
+                            "templates",
                         ),
                     ]
                 )

@@ -19,7 +19,7 @@ BUILDERS = {
     "resume": ResumeBuilder,
     "current-pending": CPBuilder,
     "preslist": PresListBuilder,
-    'figure': FigureBuilder
+    "figure": FigureBuilder,
 }
 
 
