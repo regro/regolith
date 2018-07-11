@@ -43,7 +43,7 @@ def make_db():
                     }
                 ],
                 'stores': [{'name': 'store', 'url': repo, 'path': repo,
-                            'public':True}
+                            'public': True}
                            ],
                 # 'storename': 'store',
                 'force': False,

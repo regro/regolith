@@ -3,7 +3,8 @@ import os
 import sys
 from io import StringIO
 
-from regolith.main import main, DEFAULT_RC
+from regolith.main import main
+from regolith.runcontrol import DEFAULT_RC
 
 
 def test_user_rc(make_db):

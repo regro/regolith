@@ -6,6 +6,7 @@ import sys
 import tempfile
 from copy import deepcopy
 
+from regolith.broker import load_db
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
 from regolith.main import main
@@ -18,7 +19,25 @@ builder_map = [
     "publist",
     "current-pending",
     "preslist",
+    'figure',
 ]
+
+
+def prep_figure():
+    # Make latex file with some jinja2 in it
+    text = """
+    {{ get_file(db['groups']['ergs'], 'hello') }}"""
+    with open('figure.tex', 'w') as f:
+        f.write(text)
+    # make file to be loaded
+    os.makedirs('fig', exist_ok=True)
+    with open('fig/hello.txt', 'w') as f:
+        f.write('hello world')
+    # load the db and register the file
+    db = load_db()
+    print(db.get_file(db['groups']['ergs'], 'hello'))
+    if not db.get_file(db['groups']['ergs'], 'hello'):
+        db.add_file(db['groups']['ergs'], 'hello', 'fig/hello.txt')
 
 
 def rmtree(dirname):
@@ -66,7 +85,12 @@ def make_db():
                         "path": "db",
                         "local": True,
                     }
+
                 ],
+                'stores': [{'name': 'store', 'url': repo, 'path': repo,
+                            'public': True}
+                           ],
+                'force': False
             },
             f,
         )
@@ -92,6 +116,8 @@ def bootstrap_builders():
     for bm in builder_map:
         if bm == "html":
             os.makedirs("templates/static")
+        if bm == 'figure':
+            prep_figure()
         main(["build", bm, "--no-pdf"])
         #        subprocess.run(['regolith', 'build', bm, '--no-pdf'], check=True)
         os.chdir(os.path.join(repo, "_build", bm))

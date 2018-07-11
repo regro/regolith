@@ -1,6 +1,6 @@
 """API for accessing the metadata and file storage"""
-from regolith.database import connect, dump_database
-from regolith.main import DEFAULT_RC, load_rcfile, filter_databases
+from regolith.database import dump_database, open_dbs
+from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.storage import store_client, push
 
 
@@ -15,11 +15,12 @@ class Broker:
     def __init__(self, rc=DEFAULT_RC):
         self.rc = rc
         # TODO: Lazy load these
-        with connect(rc) as rc.client, store_client(rc) as sclient:
-            self._dbs = rc.client.dbs
-            self.md = rc.client.chained_db
-            self.db_client = rc.client
+        with store_client(rc) as sclient:
             self.store = sclient
+        rc.client = open_dbs(rc)
+        self._dbs = rc.client.dbs
+        self.md = rc.client.chained_db
+        self.db_client = rc.client
 
     def add_file(self, document, name, filepath):
         """Add a file to a document in a collection.
@@ -50,7 +51,10 @@ class Broker:
         return load_db(rc_file)
 
     def get_file(self, document, name):
-        return self.store.retrieve(document['files'][name])
+        if 'files' in document:
+            return self.store.retrieve(document['files'][name])
+        else:
+            return None
 
     def __getitem__(self, item):
         return self.md[item]

@@ -134,7 +134,11 @@ class StorageClient(object):
         return dst
 
     def retrieve(self, file_name):
-        return os.path.join(self.path, file_name)
+        ret = os.path.join(self.path, file_name)
+        if os.path.exists(ret):
+            return os.path.join(self.path, file_name)
+        else:
+            return None
 
 
 @contextmanager
