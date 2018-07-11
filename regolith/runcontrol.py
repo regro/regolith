@@ -1,6 +1,8 @@
 """Run Control object for regolith
 """
 from __future__ import print_function
+
+import json
 import os
 import io
 import re
@@ -22,7 +24,7 @@ from collections import (
 from hashlib import md5
 from warnings import warn
 
-from regolith.validators import always_true, noop
+from regolith.validators import always_true, noop, DEFAULT_VALIDATORS
 
 FORBIDDEN_NAMES = frozenset(["del", "global"])
 
@@ -237,3 +239,46 @@ def ishashable(x):
             return True
     else:
         return False
+
+
+DEFAULT_RC = RunControl(
+    _validators=DEFAULT_VALIDATORS,
+    backend="filesystem",
+    builddir="_build",
+    mongodbpath=property(lambda self: os.path.join(self.builddir, "_dbpath")),
+    local=False,
+    user_config=os.path.expanduser("~/.config/regolith/user.json"),
+)
+
+
+def load_json_rcfile(fname):
+    """Loads a JSON run control file."""
+    with open(fname, "r") as f:
+        rc = json.load(f)
+    return rc
+
+
+def load_rcfile(fname):
+    """Loads a run control file."""
+    base, ext = os.path.splitext(fname)
+    if ext == ".json":
+        rc = load_json_rcfile(fname)
+    else:
+        raise RuntimeError(
+            "could not detemine run control file type from extension."
+        )
+    return rc
+
+
+def filter_databases(rc):
+    """Filters the databases list down to only the ones we need, in place."""
+    dbs = rc.databases
+    public_only = rc._get("public_only", False)
+    if public_only:
+        dbs = [db for db in dbs if db["public"]]
+    dbname = rc._get("db")
+    if dbname is not None:
+        dbs = [db for db in dbs if db["name"] == dbname]
+    elif len(dbs) == 1:
+        rc.db = dbs[0]["name"]
+    rc.databases = dbs

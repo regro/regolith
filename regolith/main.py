@@ -2,26 +2,15 @@
 from __future__ import print_function
 import copy
 import os
-import json
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from regolith.commands import INGEST_COLL_LU
-from regolith.runcontrol import RunControl, NotSpecified
-from regolith.validators import DEFAULT_VALIDATORS
+from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.database import connect
 from regolith import commands
 from regolith import storage
 from regolith.builder import BUILDERS
 from regolith.schemas import SCHEMAS
-
-DEFAULT_RC = RunControl(
-    _validators=DEFAULT_VALIDATORS,
-    backend="filesystem",
-    builddir="_build",
-    mongodbpath=property(lambda self: os.path.join(self.builddir, "_dbpath")),
-    local=False,
-    user_config=os.path.expanduser("~/.config/regolith/user.json"),
-)
 
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
@@ -44,25 +33,6 @@ CONNECTED_COMMANDS = {
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
-
-
-def load_json_rcfile(fname):
-    """Loads a JSON run control file."""
-    with open(fname, "r") as f:
-        rc = json.load(f)
-    return rc
-
-
-def load_rcfile(fname):
-    """Loads a run control file."""
-    base, ext = os.path.splitext(fname)
-    if ext == ".json":
-        rc = load_json_rcfile(fname)
-    else:
-        raise RuntimeError(
-            "could not detemine run control file type from extension."
-        )
-    return rc
 
 
 def create_parser():
@@ -256,20 +226,6 @@ def create_parser():
         help="If provided only validate that collection",
     )
     return p
-
-
-def filter_databases(rc):
-    """Filters the databases list down to only the ones we need, in place."""
-    dbs = rc.databases
-    public_only = rc._get("public_only", False)
-    if public_only:
-        dbs = [db for db in dbs if db["public"]]
-    dbname = rc._get("db")
-    if dbname is not None:
-        dbs = [db for db in dbs if db["name"] == dbname]
-    elif len(dbs) == 1:
-        rc.db = dbs[0]["name"]
-    rc.databases = dbs
 
 
 def main(args=None):
