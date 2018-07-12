@@ -49,6 +49,13 @@ websites is just one of the many facets of this tool:
 2. `Technical WorkShop on Fuel Cycle Simulation <http://twofcs.ergs.sc.edu>`_
 
 
+Tutorials
+=========
+.. toctree::
+    :maxdepth: 1
+
+    broker
+
 Run Control
 ===========
 

@@ -146,6 +146,18 @@ def dump_database(db, client, rc):
 
 
 def open_dbs(rc):
+    """Open the databases
+
+    Parameters
+    ----------
+    rc : RunControl instance
+        The rc which has links to the dbs
+
+    Returns
+    -------
+    client : {FileSystemClient, MongoClient}
+        The database client
+    """
     client = CLIENTS[rc.backend](rc)
     client.open()
     chained_db = {}
