@@ -186,6 +186,12 @@ class PresListBuilder(LatexBuilderBase):
                                 ["aka", "name", "_id"],
                                 pres["institution"], case_sensitive=False
                             )
+                            if pres["institution"] is None:
+                                sys.exit(
+                                    "ERROR: institution {} not found in "
+                                    "institutions.yml.  Please add and "
+                                    "rerun".format(pres["institution"])
+                                )
                         except:
                             sys.exit(
                                 "ERROR: institution {} not found in "

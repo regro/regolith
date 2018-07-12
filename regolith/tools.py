@@ -132,11 +132,11 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     pubs = []
     for pub in citations:
         if (
-            len(
-                set(pub.get("author", []))
-                | set(pub.get("editor", [])) & authors
-            )
-            == 0
+                len(
+                    set(pub.get("author", []))
+                    | set(pub.get("editor", [])) & authors
+                )
+                == 0
         ):
             continue
         pub = deepcopy(pub)
@@ -285,9 +285,9 @@ def latex_safe(s):
     """
     return (
         s.replace("&", "\&")
-        .replace("$", "\$")
-        .replace("#", "\#")
-        .replace("_", "\_")
+            .replace("$", "\$")
+            .replace("#", "\#")
+            .replace("_", "\_")
     )
 
 
@@ -354,7 +354,7 @@ def document_by_value(documents, address, value):
             return g_doc
 
 
-def fuzzy_retrieval(documents, sources, value, case_sensitive = True):
+def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
     """Retrieve a document from the documents where value is compared against
     multiple potential sources
 
@@ -400,7 +400,7 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive = True):
             else:
                 returns.extend(ret)
         if not case_sensitive:
-            returns = [ret.lower() for ret in returns if isinstance(ret,str)]
+            returns = [ret.lower() for ret in returns if isinstance(ret, str)]
             if isinstance(value, str):
                 if value.lower() in frozenset(returns):
                     return doc
