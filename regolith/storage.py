@@ -120,6 +120,7 @@ def push(store, path):
 
 
 class StorageClient(object):
+    """Interface to the storage system"""
     def __init__(self, rc, store, path):
         self.rc = rc
         self.store = store
@@ -134,6 +135,17 @@ class StorageClient(object):
         return dst
 
     def retrieve(self, file_name):
+        """Get file from the store
+
+        Parameters
+        ----------
+        file_name : name of the file
+
+        Returns
+        -------
+        path : str or None
+            The path, if the file is not in the store None
+        """
         ret = os.path.join(self.path, file_name)
         if os.path.exists(ret):
             return os.path.join(self.path, file_name)
