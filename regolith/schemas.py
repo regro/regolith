@@ -257,6 +257,7 @@ EXEMPLARS = {
             }
         },
         "state": "NY",
+        "street": "500 W 120th St"
         "zip": "10027",
     },
     "jobs": {
@@ -1273,6 +1274,11 @@ SCHEMAS = {
         },
         "street": {
             "description": "the street where the institution is",
+            "required": False,
+            "type": "string",
+        },
+        "street": {
+            "description": "the street address of the institution",
             "required": False,
             "type": "string",
         },
