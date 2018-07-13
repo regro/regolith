@@ -16,9 +16,6 @@ builder_map = [
 ]
 
 
-@pytest.mark.skipif(
-    os.name == "nt", reason="Windows not working with subprocess run"
-)
 @pytest.mark.parametrize("bm", builder_map)
 def test_builder(bm, make_db):
     repo = make_db
