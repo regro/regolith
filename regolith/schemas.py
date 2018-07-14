@@ -257,7 +257,7 @@ EXEMPLARS = {
             }
         },
         "state": "NY",
-        "street": "500 W 120th St"
+        "street": "500 W 120th St",
         "zip": "10027",
     },
     "jobs": {
@@ -679,7 +679,7 @@ EXEMPLARS = {
                 "narrative": "http://some.com/pdf",
                 "year": 1998,
             },
-            "status": "submitted",
+      "status": "submitted",
             "title": "A very fine proposal indeed",
             "year": 1999,
         },
