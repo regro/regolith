@@ -24,7 +24,7 @@ import datetime, sys
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, fuzzy_retrieval
+from regolith.tools import all_docs_from_collection, fuzzy_retrieval, number_suffix
 from regolith.stylers import sentencecase, month_fullnames
 
 
@@ -164,21 +164,10 @@ class PresListBuilder(LatexBuilderBase):
                         pres["begin_month"],
                         pres["begin_day"],
                     )
-                    pres["suffix"] = {
-                        1: "$^\mathrm{st}$",
-                        2: "$^\mathrm{nd}$",
-                        3: "$^\mathrm{rd}$",
-                    }.get(pres["begin_day"] % 10, "$^\mathrm{th}$")
                     for day in ['begin_day', 'end_day']:
-                        if pres.get(day,None):
-                            if 10 < pres[day] < 20:
-                                pres['{}_suffix'.format(day)] = "$^\mathrm{th}$"
-                            else:
-                                pres['{}_suffix'.format(day)] = {
-                                    1: "$^\mathrm{st}$",
-                                    2: "$^\mathrm{nd}$",
-                                    3: "$^\mathrm{rd}$"}.get(
-                                    pres[day] % 10, "$^\mathrm{th}$")
+                        pres['{}_suffix'.format(day)] = \
+                            "$^{{\mathrm{{{}}}}}$".format(
+                                number_suffix(pres.get(day, None)))
                     if "institution" in pres:
                         try:
                             pres["institution"] = fuzzy_retrieval(

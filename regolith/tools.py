@@ -407,3 +407,28 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
         else:
             if value in frozenset(returns):
                 return doc
+
+def number_suffix(number):
+    """returns the suffix that adjectivises a number (st, nd, rd, th)
+
+    Paramters
+    ---------
+    number: integer
+        The number.  If number is not an integer, returns an empty string
+
+    Returns
+    -------
+    suffix: string
+        The suffix (st, nd, rd, th)
+    """
+    if not isinstance(number, (int, float)):
+        return ""
+    if 10 < number < 20:
+        suffix = "th"
+    else:
+        suffix = {
+            1: "st",
+            2: "nd",
+            3: "rd"}.get(number % 10, "th")
+    return suffix
+
