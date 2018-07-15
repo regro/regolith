@@ -1,5 +1,7 @@
+import pytest
+
 from regolith.tools import filter_publications
-from regolith.tools import fuzzy_retrieval
+from regolith.tools import fuzzy_retrieval, number_suffix
 
 
 def test_author_publications():
@@ -31,3 +33,19 @@ def test_fuzzy_retrieval():
             fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz, a",
                             case_sensitive=False) == person
     )
+
+
+@pytest.mark.parametrize("input,expected", [
+    (0, "th"),
+    (1, "st"),
+    (2, "nd"),
+    (3, "rd"),
+    (4, "th"),
+    (10, "th"),
+    (13, "th"),
+    (33, "rd"),
+    (None, ""),
+    ("0", "")
+])
+def test_number_suffix(input, expected):
+    assert (number_suffix(input) == expected)
