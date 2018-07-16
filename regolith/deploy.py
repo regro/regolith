@@ -2,7 +2,7 @@
 import os
 import time
 import shutil
-import subprocess
+from xonsh.lib import subprocess
 from glob import iglob
 from warnings import warn
 from distutils.dir_util import copy_tree

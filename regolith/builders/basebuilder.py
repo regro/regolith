@@ -1,6 +1,6 @@
 """Builder Base Classes"""
 import os
-import subprocess
+from xonsh.lib import subprocess
 from glob import glob
 from itertools import groupby
 

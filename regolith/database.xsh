@@ -1,10 +1,10 @@
 """Helps manage mongodb setup and connections."""
 import os
-import subprocess
+from xonsh.lib import subprocess
 from contextlib import contextmanager
 from warnings import warn
 
-from rever.tools import indir
+from xonsh.lib.os import indir
 
 try:
     import hglib

@@ -3,7 +3,7 @@ All rights reserved."""
 import json
 import os
 import shutil
-import subprocess
+from xonsh.lib import subprocess
 import sys
 import tempfile
 from copy import deepcopy
