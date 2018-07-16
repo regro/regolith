@@ -34,10 +34,10 @@
 {%-if not pres['end_day']%}
 {{ pres['begin_day_suffix']-}}%
 {%-elif pres['end_day'] == pres['begin_day']%}
-{{ pres['begin_day_suffix']-}}%
+$^\mathrm{ {{ pres['begin_day_suffix']-}}}$%
 {%-else %}
 --{{ pres['end_day']-}}
-{{ pres['end_day_suffix']-}}
+$^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {%-endif %}
 ( {{-pres['begin_year']-}} ).
 {% endfor %}
