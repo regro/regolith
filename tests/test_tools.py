@@ -3,7 +3,7 @@ import pytest
 from regolith.tools import (filter_publications, fuzzy_retrieval,
                             number_suffix, latex_safe, is_before,
                             is_since, is_between, has_started, has_finished,
-                            is_current, update_schemas)
+                            is_current, update_schemas, group_member_ids)
 
 
 def test_author_publications():
@@ -115,6 +115,34 @@ def test_is_current():
     assert is_current(y1, y2, sm=m1, sd=d1, em=m2, ed=d1) is False
     assert is_current(y2, y3, sm=m2, sd=d2, em=m5, ed=d2) is True
 
+def test_group_member_ids():
+    grp = [
+        ('_id',"ergs"),("pi_name", "Anthony Scopatz"),
+        ("department", "Mechanical Engineering"),
+        ("name", "ERGS")],
+    people1 = [
+        ("_id","scopatz"),
+        ("education", [
+                {
+                    "begin_year": 2008,
+                    "degree": "Ph.D. Mechanical Engineering, "
+                    "Nuclear and Radiation Engineering "
+                    "Program",
+                    "end_year": 2011,
+                    "group": "ergs",
+                    "institution": "The University of Texas at Austin",
+                    "department": "apam",
+                    "location": "Austin, TX",
+                    "other": [
+                        "Adviser: Erich A. Schneider",
+                        "Dissertation: Essential Physics for Fuel Cycle "
+                        "Modeling & Analysis",
+                    ],
+                }])]
+
+    assert group_member_ids(grp, people1) == ["scopatz"]
+#    assert group_member_ids(grp, people2) == ["scopatz"]
+#    assert group_member_ids(grp, people3) == []
 
 def test_fuzzy_retrieval():
     person = {

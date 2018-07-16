@@ -692,3 +692,38 @@ def update_schemas(default_schema, user_schema):
             updated_schema[key] = user_schema[key]
 
     return updated_schema
+
+def group_member_ids(grp, people):
+    """Get a list of all group member ids
+
+    Parameters
+    ----------
+    grp: string
+        The id of the group in groups.yml
+    people_db
+        The database of people that will be searched for group members
+
+    Returns
+    -------
+    set:
+        The set of ids of the people in the group
+
+    Notes
+    -----
+    - Groups that are being tracked are listed in the groups.yml collection
+    with a name and an id.
+    - People are in a group during an educational or employment period.
+    - To assign a person to a tracked group during one such period, add
+    a "group" key to that education/employment item with a value
+    that is the group id.
+    - This function takes the group id that is passed and searches
+    the people collection for all people that have been
+    assigned to that group in some period of time and returns a list of
+    """
+    grpmembers = set()
+    for person in people:
+        for k in ["education", "employment"]:
+            for position in person.get(k, {}):
+                if position.get("group", None) == grp:
+                    grpmembers.add(person["_id"])
+    return grpmembers

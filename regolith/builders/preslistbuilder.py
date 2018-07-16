@@ -19,7 +19,8 @@ the presentations.yml.
 The presentations are output in a ./_build directory."""
 
 from copy import deepcopy, copy
-import datetime, sys
+import datetime
+import sys
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
@@ -28,6 +29,7 @@ from regolith.tools import (
     all_docs_from_collection,
     fuzzy_retrieval,
     number_suffix,
+    group_member_ids
 )
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.dates import month_to_int
@@ -65,38 +67,6 @@ class PresListBuilder(LatexBuilderBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-    def group_member_ids(self, grp):
-        """Get a list of all group member ids
-
-        Parameters
-        ----------
-        grp: string
-            The id of the group in groups.yml
-
-        Returns
-        -------
-        set:
-            The set of ids of the people in the group
-
-        Notes
-        -----
-        - Groups that are being tracked are listed in the groups.yml collection
-        with a name and an id.
-        - People are in a group during an educational or employment period.
-        - To assign a person to a tracked group during one such period, add
-        a "group" key to that education/employment item with a value
-        that is the group id.
-        - This function takes the group id that is passed and searches
-        the people collection for all people that have been
-        assigned to that group in some period of time and returns a list of
-        """
-        grpmembers = set()
-        for person in self.gtx["people"]:
-            for k in ["education", "employment"]:
-                for position in person.get(k, {}):
-                    if position.get("group", None) == grp:
-                        grpmembers.add(person["_id"])
-        return grpmembers
 
     def latex(self):
         """Render latex template"""
@@ -110,7 +80,7 @@ class PresListBuilder(LatexBuilderBase):
 
         for group in self.gtx["groups"]:
             grp = group["_id"]
-            grpmember_ids = self.group_member_ids(grp)
+            grpmember_ids = group_member_ids(grp, self.gtx["people"])
             for member in grpmember_ids:
                 presentations = deepcopy(self.gtx["presentations"])
                 types = ["all"]
