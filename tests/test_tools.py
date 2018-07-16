@@ -127,14 +127,13 @@ def test_is_current():
     assert is_current(y2, y3, sm=m2, sd=d2, em=m5, ed=d2) is True
 
 def test_group_member_ids():
-    grp = {
-           "_id":"ergs",
-           "pi_name": "Anthony Scopatz",
-           "department": "Mechanical Engineering",
-           "name":"ERGS",}
-    people1 = [{
-           "_id": "scopatz",
-           "education": [
+    grp = [
+        ('_id',"ergs"),("pi_name", "Anthony Scopatz"),
+        ("department", "Mechanical Engineering"),
+        ("name", "ERGS")],
+    people1 = [
+        ("_id","scopatz"),
+        ("education", [
                 {
                     "begin_year": 2008,
                     "degree": "Ph.D. Mechanical Engineering, "
@@ -150,11 +149,9 @@ def test_group_member_ids():
                         "Dissertation: Essential Physics for Fuel Cycle "
                         "Modeling & Analysis",
                     ],
-                }]}]
+                }])]
 
-    assert group_member_ids(grp["_id"], people1) == ["scopatz"]
-#    assert group_member_ids(grp, people2) == ["scopatz"]
-#    assert group_member_ids(grp, people3) == []
+    assert group_member_ids(grp, people1) == ["scopatz"]
 
 def test_fuzzy_retrieval():
     person = {

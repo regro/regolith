@@ -782,9 +782,8 @@ def group_member_ids(grp, people):
     that is the group id.
     - This function takes the group id that is passed and searches
     the people collection for all people that have been
-    assigned to that group in some period of time and returns a list of their
-    ids
-    """
+    assigned to that group in some period of time and returns a list of
+    ids"""
     grpmembers = set()
     for person in people:
         for k in ["education", "employment"]:
