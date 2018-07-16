@@ -19,12 +19,12 @@ the presentations.yml.
 The presentations are output in a ./_build directory."""
 
 from copy import deepcopy, copy
-import datetime
+import datetime, sys
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, fuzzy_retrieval
+from regolith.tools import all_docs_from_collection, fuzzy_retrieval, number_suffix
 from regolith.stylers import sentencecase, month_fullnames
 
 
@@ -164,11 +164,9 @@ class PresListBuilder(LatexBuilderBase):
                         pres["begin_month"],
                         pres["begin_day"],
                     )
-                    pres["suffix"] = {
-                        1: "$^\mathrm{st}$",
-                        2: "$^\mathrm{nd}$",
-                        3: "$^\mathrm{rd}$",
-                    }.get(pres["begin_day"] % 10, "$^\mathrm{th}$")
+                    for day in ['begin_day', 'end_day']:
+                        pres['{}_suffix'.format(day)] = \
+                            number_suffix(pres.get(day, None))
                     if "institution" in pres:
                         try:
                             pres["institution"] = fuzzy_retrieval(
@@ -176,27 +174,33 @@ class PresListBuilder(LatexBuilderBase):
                                 ["aka", "name", "_id"],
                                 pres["institution"], case_sensitive=False
                             )
+                            if pres["institution"] is None:
+                                sys.exit(
+                                    "ERROR: institution {} not found in "
+                                    "institutions.yml.  Please add and "
+                                    "rerun".format(pres["institution"])
+                                )
                         except:
-                            exit(
+                            sys.exit(
                                 "ERROR: institution {} not found in "
                                 "institutions.yml.  Please add and "
                                 "rerun".format(pres["institution"])
                             )
                         if "department" in pres:
                             try:
-                                pres["department"] = pres["institution"][
-                                    "departments"
-                                ][pres["department"]]
+                                pres["department"] = \
+                                    pres["institution"]["departments"][pres["department"]]
                             except:
                                 print(
                                     "WARNING: department {} not found in"
                                     " {} in institutions.yml.  Pres list will"
-                                    " build but please check it carefully and"
+                                    " build but please check this entry carefully and"
                                     " please add the dept to the institution!".format(
                                         pres["department"],
                                         pres["institution"]["_id"],
                                     )
                                 )
+                                pres["department"] = {"name": pres["department"]}
                 if len(presclean) > 0:
                     presclean = sorted(
                         presclean,
