@@ -166,8 +166,7 @@ class PresListBuilder(LatexBuilderBase):
                     )
                     for day in ['begin_day', 'end_day']:
                         pres['{}_suffix'.format(day)] = \
-                            "$^{{\mathrm{{{}}}}}$".format(
-                                number_suffix(pres.get(day, None)))
+                            number_suffix(pres.get(day, None))
                     if "institution" in pres:
                         try:
                             pres["institution"] = fuzzy_retrieval(
