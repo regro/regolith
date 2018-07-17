@@ -7,6 +7,7 @@ from regolith.builders.publistbuilder import PubListBuilder
 from regolith.builders.gradebuilder import GradeReportBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
 from regolith.builders.cpbuilder import CPBuilder
+from regolith.builders.dbsummariesbuilder import DBsummariesBuilder
 
 
 BUILDERS = {
@@ -18,6 +19,7 @@ BUILDERS = {
     "resume": ResumeBuilder,
     "current-pending": CPBuilder,
     "preslist": PresListBuilder,
+    "db-summaries": DBsummariesBuilder,
 }
 
 
