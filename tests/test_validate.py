@@ -49,6 +49,7 @@ def test_validate_bad_python(make_bad_db):
 def test_validate(make_db):
     repo = make_db
     os.chdir(repo)
+    print(sys.path)
     out = subprocess.run(["regolith", "validate"], check=False).out
     assert "NO ERRORS IN DBS" in out
 

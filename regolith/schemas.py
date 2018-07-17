@@ -420,6 +420,7 @@ EXEMPLARS = {
             },
         ],
         "name": "Anthony Scopatz",
+        "orcid_id": "0000-0002-9329-49498",
         "position": "professor",
         "skills": [
             {
@@ -1237,6 +1238,11 @@ SCHEMAS = {
         "name": {
             "description": "Full, canonical name for the person",
             "required": True,
+            "type": "string",
+        },
+        "orcid_id": {
+            "description": "The ORCID ID of the person",
+            "required": False,
             "type": "string",
         },
         "position": {
