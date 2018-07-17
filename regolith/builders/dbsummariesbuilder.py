@@ -1,0 +1,126 @@
+"""Builder for Lists of Presentations.
+
+This builder will build a presentation list for each group-member in each group
+listed in groups.yml.  Group members are indicated in the employment and
+education sections of the individual in people.yml.
+
+There are a number of filtering options, i.e., for presentation-type (invited,
+colloquium, seminar, poster, contributed_oral) and for whether the invitation
+was accepted or declined.  As of now, these filters can only be updated by
+editing this file but may appear as command-line options later.  It will also
+get institution and department information from institutions.yml if they are
+there.
+
+The author list is built from information in people.yml where possible.  The
+does a fuzzy search for the person in people.yml but if the person is absent
+from people, it will still build but using the string name given in
+the presentations.yml.
+
+The presentations are output in a ./_build directory."""
+
+from copy import deepcopy, copy
+import datetime
+
+from regolith.builders.basebuilder import LatexBuilderBase
+from regolith.fsclient import _id_key
+from regolith.sorters import position_key
+from regolith.tools import all_docs_from_collection, fuzzy_retrieval
+from regolith.stylers import sentencecase, month_fullnames
+
+
+class DBsummariesBuilder(LatexBuilderBase):
+    """Build list of talks and posters (presentations) from database entries"""
+
+    btype = "dbsummary"
+
+    def construct_global_ctx(self):
+        """Constructs the global context"""
+        super().construct_global_ctx()
+        gtx = self.gtx
+        rc = self.rc
+        gtx["people"] = sorted(
+            all_docs_from_collection(rc.client, "people"),
+            key=position_key,
+            reverse=True,
+        )
+        gtx["grants"] = sorted(
+            all_docs_from_collection(rc.client, "grants"), key=_id_key
+        )
+        gtx["groups"] = sorted(
+            all_docs_from_collection(rc.client, "groups"), key=_id_key
+        )
+        gtx["presentations"] = sorted(
+            all_docs_from_collection(rc.client, "presentations"), key=_id_key
+        )
+        gtx["institutions"] = sorted(
+            all_docs_from_collection(rc.client, "institutions"), key=_id_key
+        )
+        gtx["all_docs_from_collection"] = all_docs_from_collection
+        gtx["float"] = float
+        gtx["str"] = str
+        gtx["zip"] = zip
+
+    def group_member_ids(self, grp):
+        """Get a list of all group member ids
+
+        Parameters
+        ----------
+        grp: string
+            The id of the group in groups.yml
+
+        Returns
+        -------
+        set:
+            The set of ids of the people in the group
+
+        Notes
+        -----
+        - Groups that are being tracked are listed in the groups.yml collection
+        with a name and an id.
+        - People are in a group during an educational or employment period.
+        - To assign a person to a tracked group during one such period, add
+        a "group" key to that education/employment item with a value
+        that is the group id.
+        - This function takes the group id that is passed and searches
+        the people collection for all people that have been
+        assigned to that group in some period of time and returns a list of
+        """
+        grpmembers = set()
+        for person in self.gtx["people"]:
+            for k in ["education", "employment"]:
+                for position in person.get(k, {}):
+                    if position.get("group", None) == grp:
+                        grpmembers.add(person["_id"])
+        return grpmembers
+
+    def latex(self):
+        """Render text template"""
+        for group in self.gtx["groups"]:
+            grp = group["_id"]
+            grpmember = False
+            grpmember_ids = self.group_member_ids(grp)
+            pplsumm = list()
+            for people in self.gtx["people"]:
+                personid = people["_id"]
+                personname = people["name"]
+    #            personinst = people[""]
+                if personid in grpmember_ids:
+                    grpmember = True
+                person = [personid, personname, grpmember]
+                pplsumm.append(person)
+
+        if len(pplsumm) > 0:
+#            pplsumm = sorted(
+#                pplsumm,
+#                key=lambda k: k.get("name", None),
+#                reverse=True,
+#            )
+            outfile = "people-summary.txt"
+            self.render(
+                "listpeople.tex",
+                outfile,
+                people=pplsumm,
+            )
+
+
+#                    self.pdf('presentations')
