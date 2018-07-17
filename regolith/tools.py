@@ -132,11 +132,11 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     pubs = []
     for pub in citations:
         if (
-                len(
-                    set(pub.get("author", []))
-                    | set(pub.get("editor", [])) & authors
-                )
-                == 0
+            len(
+                set(pub.get("author", []))
+                | set(pub.get("editor", [])) & authors
+            )
+            == 0
         ):
             continue
         pub = deepcopy(pub)
@@ -285,9 +285,9 @@ def latex_safe(s):
     """
     return (
         s.replace("&", "\&")
-            .replace("$", "\$")
-            .replace("#", "\#")
-            .replace("_", "\_")
+        .replace("$", "\$")
+        .replace("#", "\#")
+        .replace("_", "\_")
     )
 
 
@@ -408,6 +408,7 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
             if value in frozenset(returns):
                 return doc
 
+
 def number_suffix(number):
     """returns the suffix that adjectivises a number (st, nd, rd, th)
 
@@ -426,9 +427,5 @@ def number_suffix(number):
     if 10 < number < 20:
         suffix = "th"
     else:
-        suffix = {
-            1: "st",
-            2: "nd",
-            3: "rd"}.get(number % 10, "th")
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(number % 10, "th")
     return suffix
-

@@ -27,6 +27,7 @@ class Broker:
     >>> # Get a file from the store
     >>> path = db.get_file(ergs, 'myfile')
     """
+
     def __init__(self, rc=DEFAULT_RC):
         self.rc = rc
         # TODO: Lazy load these

@@ -121,6 +121,7 @@ def push(store, path):
 
 class StorageClient(object):
     """Interface to the storage system"""
+
     def __init__(self, rc, store, path):
         self.rc = rc
         self.store = store
