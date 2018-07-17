@@ -24,7 +24,11 @@ import datetime, sys
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, fuzzy_retrieval, number_suffix
+from regolith.tools import (
+    all_docs_from_collection,
+    fuzzy_retrieval,
+    number_suffix,
+)
 from regolith.stylers import sentencecase, month_fullnames
 
 
@@ -117,8 +121,10 @@ class PresListBuilder(LatexBuilderBase):
                         pauthors = [pauthors]
                     authors = [
                         fuzzy_retrieval(
-                            self.gtx["people"], ["aka", "name", "_id"], author,
-                            case_sensitive=False
+                            self.gtx["people"],
+                            ["aka", "name", "_id"],
+                            author,
+                            case_sensitive=False,
                         )
                         for author in pauthors
                     ]
@@ -146,13 +152,17 @@ class PresListBuilder(LatexBuilderBase):
                     pres["authors"] = [
                         author
                         if fuzzy_retrieval(
-                            self.gtx["people"], ["aka", "name", "_id"], author,
-                            case_sensitive=False
+                            self.gtx["people"],
+                            ["aka", "name", "_id"],
+                            author,
+                            case_sensitive=False,
                         )
                         is None
                         else fuzzy_retrieval(
-                            self.gtx["people"], ["aka", "name", "_id"], author,
-                            case_sensitive=False
+                            self.gtx["people"],
+                            ["aka", "name", "_id"],
+                            author,
+                            case_sensitive=False,
                         )["name"]
                         for author in pauthors
                     ]
@@ -164,15 +174,17 @@ class PresListBuilder(LatexBuilderBase):
                         pres["begin_month"],
                         pres["begin_day"],
                     )
-                    for day in ['begin_day', 'end_day']:
-                        pres['{}_suffix'.format(day)] = \
-                            number_suffix(pres.get(day, None))
+                    for day in ["begin_day", "end_day"]:
+                        pres["{}_suffix".format(day)] = number_suffix(
+                            pres.get(day, None)
+                        )
                     if "institution" in pres:
                         try:
                             pres["institution"] = fuzzy_retrieval(
                                 self.gtx["institutions"],
                                 ["aka", "name", "_id"],
-                                pres["institution"], case_sensitive=False
+                                pres["institution"],
+                                case_sensitive=False,
                             )
                             if pres["institution"] is None:
                                 sys.exit(
@@ -188,8 +200,9 @@ class PresListBuilder(LatexBuilderBase):
                             )
                         if "department" in pres:
                             try:
-                                pres["department"] = \
-                                    pres["institution"]["departments"][pres["department"]]
+                                pres["department"] = pres["institution"][
+                                    "departments"
+                                ][pres["department"]]
                             except:
                                 print(
                                     "WARNING: department {} not found in"
@@ -200,7 +213,9 @@ class PresListBuilder(LatexBuilderBase):
                                         pres["institution"]["_id"],
                                     )
                                 )
-                                pres["department"] = {"name": pres["department"]}
+                                pres["department"] = {
+                                    "name": pres["department"]
+                                }
                 if len(presclean) > 0:
                     presclean = sorted(
                         presclean,

@@ -14,7 +14,7 @@ builder_map = [
     "publist",
     "current-pending",
     "preslist",
-    "figure"
+    "figure",
 ]
 
 
@@ -43,8 +43,7 @@ def test_builder(bm, make_db):
         prep_figure()
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)
-    subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True,
-                   cwd=repo)
+    subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo)
     os.chdir(os.path.join(repo, "_build", bm))
     expected_base = os.path.join(os.path.dirname(__file__), "outputs")
     for root, dirs, files in os.walk("."):

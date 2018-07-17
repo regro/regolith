@@ -22,30 +22,36 @@ def test_fuzzy_retrieval():
         "name": "Anthony Scopatz",
     }
     assert (
-            fuzzy_retrieval([person], ["aka", "name", "_id"],
-                            "scopatz") == person
+        fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz") == person
     )
     assert (
-            fuzzy_retrieval([person], ["aka", "name", "_id"],
-                            "scopatz, a") is None
+        fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz, a") is None
     )
     assert (
-            fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz, a",
-                            case_sensitive=False) == person
+        fuzzy_retrieval(
+            [person],
+            ["aka", "name", "_id"],
+            "scopatz, a",
+            case_sensitive=False,
+        )
+        == person
     )
 
 
-@pytest.mark.parametrize("input,expected", [
-    (0, "th"),
-    (1, "st"),
-    (2, "nd"),
-    (3, "rd"),
-    (4, "th"),
-    (10, "th"),
-    (13, "th"),
-    (33, "rd"),
-    (None, ""),
-    ("0", "")
-])
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (0, "th"),
+        (1, "st"),
+        (2, "nd"),
+        (3, "rd"),
+        (4, "th"),
+        (10, "th"),
+        (13, "th"),
+        (33, "rd"),
+        (None, ""),
+        ("0", ""),
+    ],
+)
 def test_number_suffix(input, expected):
-    assert (number_suffix(input) == expected)
+    assert number_suffix(input) == expected
