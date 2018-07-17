@@ -51,7 +51,6 @@ def make_db():
                     }
                 ],
                 # 'storename': 'store',
-                "force": False,
             },
             f,
         )
