@@ -1615,6 +1615,54 @@ SCHEMAS = {
             "type": "string",
         },
     },
+    "expenses": {
+        "_description": "This collection records expenses for the "
+        "group. It should most likely be private",
+        "_id": {
+            "description": "short representation, such as this-is-my-name",
+            "required": True,
+            "type": "string",
+        },
+        "project": {
+            "description": "project or list of projects that this "
+            "presentation is associated with.  Should "
+            "be discoverable in projects collection",
+            "required": True,
+            "anyof_type": ["string", "list"],
+        },
+        "payee": {
+            "description": "The name or id of the payee filing" "the expense",
+            "required": True,
+            "type": "string",
+        },
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "date_of_expense": {
+                        "description": "Date of the expense",
+                        "type": "string",
+                    },
+                    'purpose': {'description': "reason for expense",
+                                'type': 'string'},
+                    'unsegregated_expenses': {'description': 'The allowed expenses',
+                                              'type': 'float'},
+                    'segregated_expenses': {'description': 'The unallowed expenses',
+                                            'type': 'float'},
+
+                },
+            },
+        },
+        'overall_purpose': {'description': 'The reason for the expenses',
+                            'type': 'string'},
+        'expense_type': {'description': 'The type of expense',
+                         'oneof': ['travel', 'business']},
+        'first_day_of_expense': {'description': 'the first day of expense',
+                                 'type': 'string'},
+        'end of expense': {'description': 'the last day of expense',
+                           'type': 'string'},
+    },
 }
 
 for s in SCHEMAS:
