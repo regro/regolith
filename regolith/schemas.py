@@ -1631,7 +1631,7 @@ SCHEMAS = {
             "anyof_type": ["string", "list"],
         },
         "payee": {
-            "description": "The name or id of the payee filing" "the expense",
+            "description": "The name or id of the payee filing the expense",
             "required": True,
             "type": "string",
         },
@@ -1640,10 +1640,21 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "date_of_expense": {
-                        "description": "Date of the expense",
-                        "type": "string",
-                    },
+                    "day": {
+            "description": "Expense day",
+            "required": True,
+            "type": "integer",
+        },
+        "month": {
+            "description": "Expense month",
+            "required": True,
+            "type": "string",
+        },
+"year": {
+            "description": "Expense year",
+            "required": True,
+            "type": "integer",
+        },
                     "purpose": {
                         "description": "reason for expense",
                         "type": "string",
@@ -1667,13 +1678,35 @@ SCHEMAS = {
             "description": "The type of expense",
             "oneof": ["travel", "business"],
         },
-        "first_day_of_expense": {
-            "description": "the first day of expense",
+        "begin_day": {
+            "description": "start day of the expense",
+            "required": False,
+            "type": "integer",
+        },
+        "begin_month": {
+            "description": "start month of the expense",
+            "required": True,
             "type": "string",
         },
-        "end of expense": {
-            "description": "the last day of expense",
+        "begin_year": {
+            "description": "start year of the expense",
+            "required": True,
+            "type": "integer",
+        },
+        "end_day": {
+            "description": "end day of the expense",
+            "required": False,
+            "type": ("string", "integer"),
+        },
+        "end_month": {
+            "description": "end month of the expense",
+            "required": False,
             "type": "string",
+        },
+        "end_year": {
+            "description": "end year of the expense",
+            "required": True,
+            "type": "integer",
         },
     },
 }
