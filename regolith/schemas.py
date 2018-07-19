@@ -1644,24 +1644,37 @@ SCHEMAS = {
                         "description": "Date of the expense",
                         "type": "string",
                     },
-                    'purpose': {'description': "reason for expense",
-                                'type': 'string'},
-                    'unsegregated_expenses': {'description': 'The allowed expenses',
-                                              'type': 'float'},
-                    'segregated_expenses': {'description': 'The unallowed expenses',
-                                            'type': 'float'},
-
+                    "purpose": {
+                        "description": "reason for expense",
+                        "type": "string",
+                    },
+                    "unsegregated_expenses": {
+                        "description": "The allowed expenses",
+                        "type": "float",
+                    },
+                    "segregated_expenses": {
+                        "description": "The unallowed expenses",
+                        "type": "float",
+                    },
                 },
             },
         },
-        'overall_purpose': {'description': 'The reason for the expenses',
-                            'type': 'string'},
-        'expense_type': {'description': 'The type of expense',
-                         'oneof': ['travel', 'business']},
-        'first_day_of_expense': {'description': 'the first day of expense',
-                                 'type': 'string'},
-        'end of expense': {'description': 'the last day of expense',
-                           'type': 'string'},
+        "overall_purpose": {
+            "description": "The reason for the expenses",
+            "type": "string",
+        },
+        "expense_type": {
+            "description": "The type of expense",
+            "oneof": ["travel", "business"],
+        },
+        "first_day_of_expense": {
+            "description": "the first day of expense",
+            "type": "string",
+        },
+        "end of expense": {
+            "description": "the last day of expense",
+            "type": "string",
+        },
     },
 }
 
