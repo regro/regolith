@@ -1025,17 +1025,17 @@ SCHEMAS = {
             "type": "dict",
             # Allow unkown department names, but check their content
             "valueschema": {
-                'type': 'dict',
+                "type": "dict",
                 "schema": {
-                        "name": {
-                            "description": "The canonical name",
-                            "required": True,
-                            "type": "string",
-                        },
-                        "aka": {"required": False, "type": "list"},
+                    "name": {
+                        "description": "The canonical name",
+                        "required": True,
+                        "type": "string",
                     },
-                }
+                    "aka": {"required": False, "type": "list"},
+                },
             },
+        },
         "name": {
             "description": "the canonical name of the institutions",
             "required": True,
@@ -1048,7 +1048,7 @@ SCHEMAS = {
             "required": False,
             "type": "dict",
             "valueschema": {
-                'type': 'dict',
+                "type": "dict",
                 "schema": {
                     "name": {
                         "description": "The canonical name",
@@ -1057,7 +1057,7 @@ SCHEMAS = {
                     },
                     "aka": {"required": False, "type": "list"},
                 },
-            }
+            },
         },
         "state": {
             "description": "the state where the institution is",
@@ -1616,6 +1616,15 @@ SCHEMAS = {
         },
     },
 }
+
+for s in SCHEMAS:
+    SCHEMAS[s]["files"] = {
+        "description": "Files associated with the document",
+        # TODO: fix this since this is currently comming out a CommentedMap
+        # "type": "list",
+        # "schema": {"type": "string"},
+        "required": False,
+    }
 
 
 class NoDescriptionValidator(Validator):

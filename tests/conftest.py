@@ -42,6 +42,15 @@ def make_db():
                         "local": True,
                     }
                 ],
+                "stores": [
+                    {
+                        "name": "store",
+                        "url": repo,
+                        "path": repo,
+                        "public": True,
+                    }
+                ],
+                # 'storename': 'store',
             },
             f,
         )

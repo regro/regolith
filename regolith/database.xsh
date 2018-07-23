@@ -145,10 +145,19 @@ def dump_database(db, client, rc):
         raise ValueError('Do not know how to dump this kind of database')
 
 
-@contextmanager
-def connect(rc):
-    """Context manager for ensuring that database is properly setup and torn
-    down"""
+def open_dbs(rc):
+    """Open the databases
+
+    Parameters
+    ----------
+    rc : RunControl instance
+        The rc which has links to the dbs
+
+    Returns
+    -------
+    client : {FileSystemClient, MongoClient}
+        The database client
+    """
     client = CLIENTS[rc.backend](rc)
     client.open()
     chained_db = {}
@@ -165,6 +174,13 @@ def connect(rc):
                 else:
                     chained_db[base][k] = ChainDB(v)
     client.chained_db = chained_db
+    return client
+
+@contextmanager
+def connect(rc):
+    """Context manager for ensuring that database is properly setup and torn
+    down"""
+    client = open_dbs(rc)
     yield client
     for db in rc.databases:
         dump_database(db, client, rc)

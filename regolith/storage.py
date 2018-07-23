@@ -2,6 +2,7 @@
 import os
 import shutil
 from xonsh.lib import subprocess
+from contextlib import contextmanager
 
 try:
     import hglib
@@ -10,6 +11,8 @@ except:
 
 
 def find_store(rc):
+    if getattr(rc, "storename", None) is None and len(rc.stores) != 0:
+        return rc.stores[0]
     for store in rc.stores:
         if store["name"] == rc.storename:
             return store
@@ -63,7 +66,7 @@ def sync(store, path):
         sync_git(store, path)
     elif url.startswith("hg+"):
         sync_hg(store, path)
-    else:
+    elif not os.path.exists(os.path.expanduser(url)):
         raise ValueError("Do not know how to sync this kind of storage.")
 
 
@@ -112,14 +115,67 @@ def push(store, path):
         push_git(store, path)
     elif url.startswith("hg+"):
         push_hg(store, path)
-    else:
+    elif not os.path.exists(os.path.expanduser(url)):
         raise ValueError("Do not know how to push to this kind of storage.")
+
+
+class StorageClient(object):
+    """Interface to the storage system"""
+
+    def __init__(self, rc, store, path):
+        self.rc = rc
+        self.store = store
+        self.path = path
+
+    def copydoc(self, doc):
+        """Copies file to the staging area."""
+        dst = os.path.join(self.path, os.path.split(doc)[1])
+        if not self.rc.force and os.path.isfile(dst):
+            raise RuntimeError(dst + " already exists!")
+        shutil.copy2(doc, dst)
+        return dst
+
+    def retrieve(self, file_name):
+        """Get file from the store
+
+        Parameters
+        ----------
+        file_name : name of the file
+
+        Returns
+        -------
+        path : str or None
+            The path, if the file is not in the store None
+        """
+        ret = os.path.join(self.path, file_name)
+        if os.path.exists(ret):
+            return os.path.join(self.path, file_name)
+        else:
+            return None
+
+
+@contextmanager
+def store_client(rc):
+    """Context manager for file storage
+    
+    Parameters
+    ----------
+    rc : RunControl
+
+    Yields
+    -------
+    client : StorageClient
+        The StorageClient instance
+    """
+    store = find_store(rc)
+    path = storage_path(store, rc)
+    sync(store, path)
+    yield StorageClient(rc, store, path)
+    push(store, path)
 
 
 def main(rc):
     """Copies files into the local storage location and uploads them."""
-    store = find_store(rc)
-    path = storage_path(store, rc)
-    sync(store, path)
-    copydocs(store, path, rc)
-    push(store, path)
+    with store_client(rc) as sclient:
+        for doc in rc.documents:
+            sclient.copydoc(doc)
