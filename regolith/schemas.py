@@ -605,6 +605,29 @@ EXEMPLARS = {
         "email": "haperson@uni.edu",
         "university_id": "HAP42",
     },
+    "expenses": {
+        "_id": "test",
+        "project": "Cyclus",
+        "payee": "scopatz",
+        "itemized_expenses": [
+            {
+                "day": 1,
+                "month": "Jan",
+                "year": 2018,
+                "purpose": "test",
+                "unsegregated_expenses": 10,
+                "segregated_expenses": 0,
+            }
+        ],
+        "overall_purpose": "testing the database",
+        "expense_type": "business",
+        "begin_day": 1,
+        "begin_month": "Jan",
+        "begin_year": 2018,
+        "end_day": 2,
+        "end_month": "Jan",
+        "end_year": 2018,
+    },
 }
 
 SCHEMAS = {
@@ -1616,8 +1639,10 @@ SCHEMAS = {
         },
     },
     "expenses": {
-        "_description": "This collection records expenses for the "
-        "group. It should most likely be private",
+        "_description": {
+            "description": "This collection records expenses for the "
+            "group. It should most likely be private"
+        },
         "_id": {
             "description": "short representation, such as this-is-my-name",
             "required": True,
@@ -1641,20 +1666,20 @@ SCHEMAS = {
                 "type": "dict",
                 "schema": {
                     "day": {
-            "description": "Expense day",
-            "required": True,
-            "type": "integer",
-        },
-        "month": {
-            "description": "Expense month",
-            "required": True,
-            "type": "string",
-        },
-"year": {
-            "description": "Expense year",
-            "required": True,
-            "type": "integer",
-        },
+                        "description": "Expense day",
+                        "required": True,
+                        "type": "integer",
+                    },
+                    "month": {
+                        "description": "Expense month",
+                        "required": True,
+                        "type": "string",
+                    },
+                    "year": {
+                        "description": "Expense year",
+                        "required": True,
+                        "type": "integer",
+                    },
                     "purpose": {
                         "description": "reason for expense",
                         "type": "string",
@@ -1676,7 +1701,7 @@ SCHEMAS = {
         },
         "expense_type": {
             "description": "The type of expense",
-            "oneof": ["travel", "business"],
+            "allowed": ["travel", "business"],
         },
         "begin_day": {
             "description": "start day of the expense",
