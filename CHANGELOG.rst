@@ -4,6 +4,61 @@ Regolith Change Log
 
 .. current developments
 
+v0.3.0
+====================
+
+**Added:**
+
+* option for fuzzy_retrieval to be case insensitive
+* ``regolith.broker.Broker`` for interfacing with dbs and stores from python
+* ``regolith.builders.figurebuilder`` for including files from the store in
+  tex documents
+* ``regolith.database.open_dbs`` to open the databases without closing
+* ``validate`` takes in optional ``--collection`` kwarg to restrict
+  validation to a single collection
+* ORCID ID in people schema
+* Added presentations schema and exemplar
+
+* Added institutions schema and exemplar
+
+* Added presentation list builder
+* number_suffix function to tools, returns the suffice to turn numbers into adjectives
+* Method to find all group members from a given group
+* a stylers.py module
+* a function that puts strings into sentence case but preserving capitalization
+  of text in braces
+* User configuration file handling for adding keys to the ``regolithrc.json``
+  globally
+
+
+**Changed:**
+
+* added aka to groups schema
+* Docs for collections fully auto generate (don't need to edit the index)
+
+* ``zip`` and ``state`` only apply to ``USA`` institutions
+* added group item in people schema
+* ``KeyError`` for ``ChainDB`` now prints the offending key
+None
+
+* preslist now includes end-dates when meeting is longer than one day
+* Builder for making presentation lists now builds lists for all group members
+* Departments and schools in institutions are now dictionaries
+* Preslist builder now puts titles in sentence case
+* Use ``xonsh`` standard lib subprocess and os
+
+
+**Fixed:**
+
+* ``validate`` exits with error code 1 if there are bad records
+* Preslist crash when institution had no department
+
+* Departments and schools in institutions now use valueschema so they can have
+  unknown keys but validated values
+
+
+
+
 v0.2.0
 ====================
 
