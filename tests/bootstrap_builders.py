@@ -20,6 +20,7 @@ builder_map = [
     "current-pending",
     "preslist",
     "figure",
+    'reimb',
 ]
 
 
@@ -123,7 +124,7 @@ def bootstrap_builders():
         if bm == "figure":
             prep_figure()
         main(["build", bm, "--no-pdf"])
-        #        subprocess.run(['regolith', 'build', bm, '--no-pdf'], check=True)
+        subprocess.run(['regolith', 'build', bm, '--no-pdf'], check=True)
         os.chdir(os.path.join(repo, "_build", bm))
         expected_base = os.path.join(os.path.dirname(__file__), "outputs")
         for root, dirs, files in os.walk("."):
