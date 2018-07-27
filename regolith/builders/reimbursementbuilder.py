@@ -96,15 +96,25 @@ class ReimbursementBuilder(BuilderBase):
             ws["B36"] = ex["overall_purpose"]
             j = 42
             total_amount = 0
+            item_ws = wb['T&B']
+            purpose_column = 4
+            ue_column = 13
+            se_column = 16
             for i, item in enumerate(ex["itemized_expenses"]):
                 r = j + i
-                ws.cell(row=r, column=2, value=i)
-
-                ws.cell(row=r, column=3, value=mdy(**item))
-                ws.cell(row=r, column=4, value=item["purpose"])
-                ws.cell(row=r, column=13, value=item["unsegregated_expenses"])
-                total_amount += item["unsegregated_expenses"]
-                ws.cell(row=r, column=16, value=item["segregated_expenses"])
+                if r > 49:
+                    item_ws = wb['Extra_Page']
+                    j = 0
+                    r = j + i
+                    purpose_column = 5
+                    ue_column = 12
+                    se_column = 14
+                item_ws.cell(row=r, column=2, value=i)
+                item_ws.cell(row=r, column=3, value=mdy(**item))
+                item_ws.cell(row=r, column=purpose_column, value=item["purpose"])
+                item_ws.cell(row=r, column=ue_column, value=item.get("unsegregated_expenses", 0))
+                total_amount += item.get("unsegregated_expenses", 0)
+                item_ws.cell(row=r, column=se_column, value=item.get("segregated_expenses", 0))
 
             ws["C55"] = grant["account"]
             ws["K55"] = total_amount
