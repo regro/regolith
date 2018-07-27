@@ -625,7 +625,7 @@ EXEMPLARS = {
                 "unsegregated_expenses": 10,
                 "segregated_expenses": 0,
             }
-        ],
+        ]*10,
         "overall_purpose": "testing the database",
         "expense_type": "business",
         "begin_day": 1,
