@@ -406,6 +406,12 @@ EXEMPLARS = {
                 "year": 2013,
             },
         ],
+        "home_address": {
+            "street": "123 Wallabe Ln",
+            "city": "The big apple",
+            "state": "plasma",
+            "zip": "007",
+        },
         "initials": "AMS",
         "membership": [
             {
@@ -527,6 +533,7 @@ EXEMPLARS = {
             }
         ],
         "website": "http://fuelcycle.org/",
+        "grant": "dmref15",
     },
     "proposals": [
         {
@@ -1217,6 +1224,19 @@ SCHEMAS = {
                 },
             },
             "type": "list",
+        },
+        "home_address": {
+            "description": "The person's home address",
+            "type": "dict",
+            "schema": {
+                "street": {"type": "string", "description": "street address"},
+                "city": {"type": "string", "description": "name of home city"},
+                "state": {
+                    "type": "string",
+                    "description": "name o home state",
+                },
+                "zip": {"type": "string", "description": "zip code"},
+            },
         },
         "honors": {
             "description": "Honors that have been awarded to this "
