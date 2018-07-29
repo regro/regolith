@@ -17,12 +17,12 @@ EXEMPLARS = {
         "institution": "University of Wisconsin-Madison",
         "lastname": "Mouginot",
         "references": "[1] B. MOUGINOT, “cyCLASS: CLASS "
-        "models for Cyclus,”, Figshare, "
-        "https://dx.doi.org/10.6084/"
-        "m9.figshare.3468671.v2 (2016).",
+                      "models for Cyclus,”, Figshare, "
+                      "https://dx.doi.org/10.6084/"
+                      "m9.figshare.3468671.v2 (2016).",
         "text": "The CLASS team has developed high "
-        "quality predictors based on pre-trained "
-        "neural network...",
+                "quality predictors based on pre-trained "
+                "neural network...",
         "timestamp": "5/5/2017 13:15:59",
         "title": "Model Performance Analysis",
     },
@@ -121,14 +121,14 @@ EXEMPLARS = {
             "begin_month": "May",
             "begin_year": 2030,
             "call_for_proposals": "https://groups.google.com/d/msg"
-            "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
+                                  "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
             "end_day": 31,
             "end_month": "December",
             "end_year": 2030,
             "funder": "NumFOCUS",
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
-            "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
-            "=sharing",
+                         "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
+                         "=sharing",
             "program": "Small Development Grants",
             "team": [
                 {
@@ -159,14 +159,14 @@ EXEMPLARS = {
             "grant_id": "DMREF-1534910",
             "institution": "Columbia University",
             "notes": " Designing Materials to Revolutionize and Engineer our "
-            "Future (DMREF)",
+                     "Future (DMREF)",
             "person_months_academic": 0.0,
             "person_months_summer": 0.25,
             "program": "DMREF",
             "scope": "This grant is to develop complex modeling methods for regularizing "
-            "ill-posed nanostructure inverse problems using data analytic and "
-            "machine learning based approaches. This does not overlap with any "
-            "other grant.",
+                     "ill-posed nanostructure inverse problems using data analytic and "
+                     "machine learning based approaches. This does not overlap with any "
+                     "other grant.",
             "team": [
                 {
                     "institution": "Columbia Unviersity",
@@ -186,7 +186,7 @@ EXEMPLARS = {
                 },
             ],
             "title": "DMREF: Novel, data validated, nanostructure determination "
-            "methods for accelerating materials discovery",
+                     "methods for accelerating materials discovery",
         },
     ],
     "groups": {
@@ -228,7 +228,7 @@ EXEMPLARS = {
             },
             "apam": {
                 "name": "Department of Applied Physics"
-                "and Applied Mathematics",
+                        "and Applied Mathematics",
                 "aka": ["APAM"],
             },
         },
@@ -265,10 +265,10 @@ EXEMPLARS = {
             "experience."
         ],
         "contact": "Please send CV or resume to Prof. Scopatz at "
-        "scopatzATcec.sc.edu.",
+                   "scopatzATcec.sc.edu.",
         "day": 1,
         "description": "<p>We are seeking a dedicated individual to "
-        "help to aid in ...",
+                       "help to aid in ...",
         "month": "July",
         "open": False,
         "positions": ["Scientific Software Developer", "Programmer"],
@@ -280,7 +280,7 @@ EXEMPLARS = {
         "_id": "56b4eb6d421aa921504ef2a9",
         "author": "Anthony Scopatz",
         "body": "Dr. Robert Flanagan joined ERGS as a post-doctoral "
-        "scholar.",
+                "scholar.",
         "day": 1,
         "month": "February",
         "year": 2016,
@@ -295,14 +295,14 @@ EXEMPLARS = {
             "Anthony Michael Scopatz",
         ],
         "avatar": "https://avatars1.githubusercontent.com/u/320553?v"
-        "=3&s=200",
+                  "=3&s=200",
         "bio": "Anthony Scopatz is currently an Assistant Professor",
         "education": [
             {
                 "begin_year": 2008,
                 "degree": "Ph.D. Mechanical Engineering, "
-                "Nuclear and Radiation Engineering "
-                "Program",
+                          "Nuclear and Radiation Engineering "
+                          "Program",
                 "end_year": 2011,
                 "group": "ergs",
                 "institution": "The University of Texas at Austin",
@@ -317,7 +317,7 @@ EXEMPLARS = {
             {
                 "begin_year": 2006,
                 "degree": "M.S.E. Mechanical Engineering, Nuclear and "
-                "Radiation Engineering Program",
+                          "Radiation Engineering Program",
                 "end_year": 2007,
                 "institution": "The University of Texas at Austin",
                 "location": "Austin, TX",
@@ -353,14 +353,14 @@ EXEMPLARS = {
                     "Website: http://www.ergs.sc.edu/",
                 ],
                 "position": "Assistant Professor, Mechanical Engineering "
-                "Department",
+                            "Department",
             },
             {
                 "begin_year": 2013,
                 "end_year": 2015,
                 "location": "Madison, WI",
                 "organization": "CNERG, The University of "
-                "Wisconsin-Madison",
+                                "Wisconsin-Madison",
                 "other": [
                     "Cyclus: An agent-based, discrete time nuclear fuel "
                     "cycle simulator.",
@@ -368,7 +368,7 @@ EXEMPLARS = {
                     "Website: https://cnerg.github.io/",
                 ],
                 "position": "Associate Scientist, Engineering Physics "
-                "Department",
+                            "Department",
             },
             {
                 "begin_month": "Nov",
@@ -377,7 +377,7 @@ EXEMPLARS = {
                 "end_year": 2013,
                 "location": "Chicago, IL",
                 "organization": "The FLASH Center, The University of "
-                "Chicago",
+                                "Chicago",
                 "other": [
                     "NIF: Simulation of magnetic field generation from "
                     "neutral plasmas using FLASH.",
@@ -444,12 +444,12 @@ EXEMPLARS = {
             {
                 "course": "EMCH 552: Intro to Nuclear Engineering",
                 "description": "This course is an introduction to nuclear "
-                "physics.",
+                               "physics.",
                 "month": "August",
                 "organization": "University of South Carolina",
                 "position": "Professor",
                 "syllabus": "https://drive.google.com/open?id"
-                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                 "year": 2017,
             },
             {
@@ -459,8 +459,8 @@ EXEMPLARS = {
                 "organization": "University of South Carolina",
                 "position": "Professor",
                 "syllabus": "https://docs.google.com/document/d"
-                "/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8"
-                "-PxiboYdM/edit?usp=sharing",
+                            "/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8"
+                            "-PxiboYdM/edit?usp=sharing",
                 "year": 2017,
             },
         ],
@@ -488,8 +488,8 @@ EXEMPLARS = {
             "project": "18sob_clustermining",
             "status": "accepted",
             "title": "ClusterMining: extracting core structures of "
-            "metallic nanoparticles from the atomic pair "
-            "distribution function",
+                     "metallic nanoparticles from the atomic pair "
+                     "distribution function",
             "type": "poster",
         },
         {
@@ -508,7 +508,7 @@ EXEMPLARS = {
             "project": "18kj_conservation",
             "status": "accepted",
             "title": "Nanostructure challenges and successes from "
-            "16th Century warships to 21st Century energy",
+                     "16th Century warships to 21st Century energy",
             "type": "colloquium",
         },
     ],
@@ -545,7 +545,7 @@ EXEMPLARS = {
             "duration": 3,
             "full": {
                 "benefit_of_collaboration": "http://pdf.com"
-                "/benefit_of_collaboration",
+                                            "/benefit_of_collaboration",
                 "cv": [
                     "http://pdf.com/scopatz-cv",
                     "http://pdf.com/flanagan-cv",
@@ -556,7 +556,7 @@ EXEMPLARS = {
             "pi": "Anthony Scopatz",
             "pre": {
                 "benefit_of_collaboration": "http://pdf.com"
-                "/benefit_of_collaboration",
+                                            "/benefit_of_collaboration",
                 "cv": [
                     "http://pdf.com/scopatz-cv",
                     "http://pdf.com/flanagan-cv",
@@ -575,7 +575,7 @@ EXEMPLARS = {
             "amount": 982785.0,
             "authors": ["qdu", "dhsu", "sbillinge"],
             "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/"
-            "nsf14591.htm",
+                                  "nsf14591.htm",
             "currency": "$",
             "day": 2,
             "duration": 3,
@@ -602,7 +602,7 @@ EXEMPLARS = {
                 },
             ],
             "title": "DMREF: Novel, data validated, nanostructure determination methods "
-            "for accelerating materials discovery",
+                     "for accelerating materials discovery",
             "year": 2015,
         },
     ],
@@ -618,22 +618,16 @@ EXEMPLARS = {
         "payee": "scopatz",
         "itemized_expenses": [
             {
-                "day": 1,
+                "day": i,
                 "month": "Jan",
                 "year": 2018,
                 "purpose": "test",
-                "unsegregated_expenses": 10,
-                "segregated_expenses": 0,
+                "unsegregated_expense": 10 * i,
+                "segregated_expense": 0,
             }
-        ]*10,
+            for i in range(1, 11)],
         "overall_purpose": "testing the database",
         "expense_type": "business",
-        "begin_day": 1,
-        "begin_month": "Jan",
-        "begin_year": 2018,
-        "end_day": 2,
-        "end_month": "Jan",
-        "end_year": 2018,
     },
 }
 
@@ -641,11 +635,11 @@ SCHEMAS = {
     "abstracts": {
         "_description": {
             "description": "Abstracts for a conference or workshop. This is "
-            "generally public information"
+                           "generally public information"
         },
         "_id": {
             "description": "Unique identifier for submission. This generally "
-            "includes the author name and part of the title.",
+                           "includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
@@ -701,7 +695,7 @@ SCHEMAS = {
         },
         "_id": {
             "description": "A unique id for the assignment, such as "
-            "HW01-EMCH-558-2016-S",
+                           "HW01-EMCH-558-2016-S",
             "required": True,
             "type": "string",
         },
@@ -722,7 +716,7 @@ SCHEMAS = {
         },
         "points": {
             "description": "list of number of points possible for each "
-            "question. Length is the number of questions",
+                           "question. Length is the number of questions",
             "required": True,
             "type": "list",
             "schema": {"anyof_type": ["integer", "float"]},
@@ -741,7 +735,7 @@ SCHEMAS = {
     "blog": {
         "_description": {
             "description": "This collection represents blog posts written by "
-            "the members of the research group."
+                           "the members of the research group."
         },
         "_id": {
             "description": "short representation, such as this-is-my-title",
@@ -787,11 +781,11 @@ SCHEMAS = {
     "grades": {
         "_description": {
             "description": "The grade for a student on an assignment. This "
-            "information should be private."
+                           "information should be private."
         },
         "_id": {
             "description": "unique id, typically the "
-            "student-assignment-course",
+                           "student-assignment-course",
             "required": True,
             "type": "string",
         },
@@ -825,7 +819,7 @@ SCHEMAS = {
     "grants": {
         "_description": {
             "description": "This collection represents grants that have been "
-            "awarded to the group."
+                           "awarded to the group."
         },
         "_id": {
             "description": "short representation, such as this-is-my-name",
@@ -916,7 +910,7 @@ SCHEMAS = {
         },
         "person_months_academic": {
             "description": "Number of months of funding during the academic"
-            "year",
+                           "year",
             "required": False,
             "anyof_type": ["integer", "float"],
         },
@@ -939,15 +933,15 @@ SCHEMAS = {
         },
         "scope": {
             "description": "The scope of the grant, answers the prompt: "
-            '"Describe Research Including Synergies and '
-            'Delineation with Respect to this Proposal/Award:"',
+                           '"Describe Research Including Synergies and '
+                           'Delineation with Respect to this Proposal/Award:"',
             "required": False,
             "type": "string",
         },
         # TODO: maybe this should be duplicated in proposals?
         "team": {
             "description": "information about the team members participating "
-            "in the grant.",
+                           "in the grant.",
             "required": True,
             "schema": {
                 "schema": {
@@ -973,11 +967,11 @@ SCHEMAS = {
     "groups": {
         "_description": {
             "description": "Information about the research group"
-            "this is generally public information"
+                           "this is generally public information"
         },
         "_id": {
             "description": "Unique identifier for submission. This generally "
-            "includes the author name and part of the title.",
+                           "includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
@@ -1025,7 +1019,7 @@ SCHEMAS = {
     "institutions": {
         "_description": {
             "description": "This collection will contain all the institutions"
-            "in the world and their departments and addresses"
+                           "in the world and their departments and addresses"
         },
         "_id": {
             "description": "unique identifier for the institution.",
@@ -1034,7 +1028,7 @@ SCHEMAS = {
         },
         "aka": {
             "description": "list of all the different names this "
-            "the institution is known by",
+                           "the institution is known by",
             "required": False,
             "type": "list",
         },
@@ -1050,7 +1044,7 @@ SCHEMAS = {
         },
         "departments": {
             "description": "all the departments and centers and"
-            "various units in the institution",
+                           "various units in the institution",
             "required": False,
             "type": "dict",
             # Allow unkown department names, but check their content
@@ -1073,8 +1067,8 @@ SCHEMAS = {
         },
         "schools": {
             "description": "this is more for universities, but it "
-            "be used for larger divisions in big "
-            "organizations",
+                           "be used for larger divisions in big "
+                           "organizations",
             "required": False,
             "type": "dict",
             "valueschema": {
@@ -1105,7 +1099,7 @@ SCHEMAS = {
     "people": {
         "_description": {
             "description": "This collection describes the members of the "
-            "research group.  This is normally public data."
+                           "research group.  This is normally public data."
         },
         "_id": {
             "description": "unique identifier for the group member",
@@ -1119,8 +1113,8 @@ SCHEMAS = {
         },
         "aka": {
             "description": "list of aliases (also-known-as), useful for "
-            "identifying the group member in citations or "
-            "elsewhere.",
+                           "identifying the group member in citations or "
+                           "elsewhere.",
             "required": True,
             "type": ["string", "list"],
         },
@@ -1141,7 +1135,7 @@ SCHEMAS = {
         },
         "education": {
             "description": "This contains the educational information for "
-            "the group member.",
+                           "the group member.",
             "required": True,
             "schema": {
                 "type": "dict",
@@ -1158,7 +1152,7 @@ SCHEMAS = {
                         "required": False,
                         "type": "string",
                         "description": "this employment is/was in"
-                        "a group in groups coll",
+                                       "a group in groups coll",
                     },
                     "end_month": {"required": False, "type": "string"},
                     "end_year": {"required": True, "type": "integer"},
@@ -1180,7 +1174,7 @@ SCHEMAS = {
         },
         "employment": {
             "description": "Employment information, similar to educational "
-            "information.",
+                           "information.",
             "required": True,
             "schema": {
                 "type": "dict",
@@ -1193,7 +1187,7 @@ SCHEMAS = {
                         "required": False,
                         "type": "string",
                         "description": "this employment is/was in"
-                        "a group in groups coll",
+                                       "a group in groups coll",
                     },
                     "location": {"required": False, "type": "string"},
                     "organization": {"required": True, "type": "string"},
@@ -1208,9 +1202,9 @@ SCHEMAS = {
         },
         "funding": {
             "description": "Funding and scholarship that the group member "
-            "has individually obtained in the past. "
-            "**WARNING:** this is not to be confused with the "
-            "**grants** collection",
+                           "has individually obtained in the past. "
+                           "**WARNING:** this is not to be confused with the "
+                           "**grants** collection",
             "required": False,
             "schema": {
                 "type": "dict",
@@ -1240,7 +1234,7 @@ SCHEMAS = {
         },
         "honors": {
             "description": "Honors that have been awarded to this "
-            "group member",
+                           "group member",
             "required": False,
             "schema": {
                 "type": "dict",
@@ -1261,7 +1255,7 @@ SCHEMAS = {
         # TODO: include `link`
         "membership": {
             "description": "Professional organizations this member is "
-            "a part of",
+                           "a part of",
             "required": False,
             "schema": {
                 "type": "dict",
@@ -1358,8 +1352,8 @@ SCHEMAS = {
     "presentations": {
         "_description": {
             "description": "This collection describes presentations that group"
-            "members make at conferences, symposia, seminars and"
-            "so on."
+                           "members make at conferences, symposia, seminars and"
+                           "so on."
         },
         "_id": {
             "description": "unique id for the presentation",
@@ -1385,9 +1379,9 @@ SCHEMAS = {
         "begin_day": {"required": False, "type": "integer"},
         "department": {
             "description": "department of the institution where the"
-            "presentation will be made, if "
-            "applicable.  should be discoverable in "
-            "institutions.",
+                           "presentation will be made, if "
+                           "applicable.  should be discoverable in "
+                           "institutions.",
             "required": False,
             "type": "string",
         },
@@ -1400,17 +1394,17 @@ SCHEMAS = {
         "end_day": {"required": False, "type": "integer"},
         "institution": {
             "description": "institution where the"
-            "presentation will be made, if "
-            "applicable.",
+                           "presentation will be made, if "
+                           "applicable.",
             "required": False,
             "type": "string",
         },
         "meeting_name": {
             "description": "full name of the conference or "
-            "meeting.  If it is a departmental "
-            "seminar or colloquium, write Seminar"
-            "or Colloquium and fill in department "
-            "and institution fields",
+                           "meeting.  If it is a departmental "
+                           "seminar or colloquium, write Seminar"
+                           "or Colloquium and fill in department "
+                           "and institution fields",
             "required": False,
             "type": "string",
         },
@@ -1428,15 +1422,15 @@ SCHEMAS = {
         },
         "project": {
             "description": "project or list of projects that this "
-            "presentation is associated with.  Should "
-            "be discoverable in projects collection",
+                           "presentation is associated with.  Should "
+                           "be discoverable in projects collection",
             "required": False,
             "anyof_type": ["string", "list"],
         },
         "status": {
             "description": "Is the application in prep or submitted, "
-            "was the invitation accepted or declined, was "
-            "the trip cancelled?",
+                           "was the invitation accepted or declined, was "
+                           "the trip cancelled?",
             "required": True,
             "type": "string",
             "eallowed": [
@@ -1471,7 +1465,7 @@ SCHEMAS = {
     "projects": {
         "_description": {
             "description": "This collection describes the research group "
-            "projects. This is normally public data."
+                           "projects. This is normally public data."
         },
         "_id": {
             "description": "Unique project identifier.",
@@ -1485,7 +1479,7 @@ SCHEMAS = {
         },
         "grant": {
             "description": "Grant id if there is a grant supporting this "
-            "project",
+                           "project",
             "type": "string",
         },
         "logo": {
@@ -1533,7 +1527,7 @@ SCHEMAS = {
     "proposals": {
         "_description": {
             "description": "This collection represents proposals that have "
-            "been submitted by the group."
+                           "been submitted by the group."
         },
         "_id": {
             "description": "short representation, such as this-is-my-name",
@@ -1603,7 +1597,7 @@ SCHEMAS = {
         },
         "team": {
             "description": "information about the team members participating "
-            "in the grant.",
+                           "in the grant.",
             "required": False,
             "schema": {
                 "schema": {
@@ -1634,7 +1628,7 @@ SCHEMAS = {
     "students": {
         "_description": {
             "description": "This is a collection of student names and "
-            "metadata. This should probably be private."
+                           "metadata. This should probably be private."
         },
         "_id": {
             "description": "short representation, such as this-is-my-name",
@@ -1661,7 +1655,7 @@ SCHEMAS = {
     "expenses": {
         "_description": {
             "description": "This collection records expenses for the "
-            "group. It should most likely be private"
+                           "group. It should most likely be private"
         },
         "_id": {
             "description": "short representation, such as this-is-my-name",
@@ -1670,8 +1664,8 @@ SCHEMAS = {
         },
         "project": {
             "description": "project or list of projects that this "
-            "presentation is associated with.  Should "
-            "be discoverable in projects collection",
+                           "presentation is associated with.  Should "
+                           "be discoverable in projects collection",
             "required": True,
             "anyof_type": ["string", "list"],
         },
@@ -1693,7 +1687,7 @@ SCHEMAS = {
                     "month": {
                         "description": "Expense month",
                         "required": True,
-                        "type": "string",
+                        "anyof_type": ["string", 'integer'],
                     },
                     "year": {
                         "description": "Expense year",
@@ -1703,12 +1697,13 @@ SCHEMAS = {
                     "purpose": {
                         "description": "reason for expense",
                         "type": "string",
+                        'required': True
                     },
-                    "unsegregated_expenses": {
+                    "unsegregated_expense": {
                         "description": "The allowed expenses",
                         "type": "float",
                     },
-                    "segregated_expenses": {
+                    "segregated_expense": {
                         "description": "The unallowed expenses",
                         "type": "float",
                     },
@@ -1718,40 +1713,12 @@ SCHEMAS = {
         "overall_purpose": {
             "description": "The reason for the expenses",
             "type": "string",
+            'required': True
         },
         "expense_type": {
             "description": "The type of expense",
             "allowed": ["travel", "business"],
-        },
-        "begin_day": {
-            "description": "start day of the expense",
-            "required": False,
-            "type": "integer",
-        },
-        "begin_month": {
-            "description": "start month of the expense",
-            "required": True,
-            "type": "string",
-        },
-        "begin_year": {
-            "description": "start year of the expense",
-            "required": True,
-            "type": "integer",
-        },
-        "end_day": {
-            "description": "end day of the expense",
-            "required": False,
-            "type": ("string", "integer"),
-        },
-        "end_month": {
-            "description": "end month of the expense",
-            "required": False,
-            "type": "string",
-        },
-        "end_year": {
-            "description": "end year of the expense",
-            "required": True,
-            "type": "integer",
+            'required': True
         },
     },
 }
