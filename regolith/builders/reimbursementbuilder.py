@@ -1,5 +1,6 @@
 """Builder for Resumes."""
 
+import datetime
 import os
 
 import openpyxl
@@ -14,6 +15,12 @@ from regolith.tools import (
 )
 
 
+def mdy_date(month, day, year, **kwargs):
+    if isinstance(month, str):
+        month = month_to_int(month)
+    return datetime.date(year, month, day)
+
+
 def mdy(month, day, year, **kwargs):
     return "{}/{}/{}".format(
         str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
@@ -21,12 +28,13 @@ def mdy(month, day, year, **kwargs):
 
 
 class ReimbursementBuilder(BuilderBase):
-    """Build resume from database entries"""
+    """Build reimbursement from database entries"""
 
     btype = "reimb"
 
     def __init__(self, rc):
         super().__init__(rc)
+        # TODO: templates for other universities?
         self.template = os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
             "templates",
@@ -55,28 +63,7 @@ class ReimbursementBuilder(BuilderBase):
             # open the template
             wb = openpyxl.load_workbook(self.template)
             ws = wb["T&B"]
-            if ex.get("expense_type", "business") == "business":
-                ws["G10"] = "X"
-                ws["L11"] = mdy(
-                    **{
-                        k: ex.get("begin_" + k)
-                        for k in ["month", "day", "year"]
-                    }
-                )
-                ws["O11"] = mdy(
-                    **{k: ex.get("end_" + k) for k in ["month", "day", "year"]}
-                )
-            else:
-                ws["G7"] = "X"
-                ws["L8"] = mdy(
-                    **{
-                        k: ex.get("begin_" + k)
-                        for k in ["month", "day", "year"]
-                    }
-                )
-                ws["O8"] = mdy(
-                    **{k: ex.get("end_" + k) for k in ["month", "day", "year"]}
-                )
+
             payee = fuzzy_retrieval(
                 gtx["people"], ["name", "aka", "_id"], ex["payee"]
             )
@@ -100,6 +87,7 @@ class ReimbursementBuilder(BuilderBase):
             purpose_column = 4
             ue_column = 13
             se_column = 16
+            dates = []
             for i, item in enumerate(ex["itemized_expenses"]):
                 r = j + i
                 if r > 49:
@@ -109,14 +97,35 @@ class ReimbursementBuilder(BuilderBase):
                     purpose_column = 5
                     ue_column = 12
                     se_column = 14
+                dates.append(mdy_date(**item))
                 item_ws.cell(row=r, column=2, value=i)
                 item_ws.cell(row=r, column=3, value=mdy(**item))
-                item_ws.cell(row=r, column=purpose_column, value=item["purpose"])
-                item_ws.cell(row=r, column=ue_column, value=item.get("unsegregated_expenses", 0))
+                item_ws.cell(row=r, column=purpose_column,
+                             value=item["purpose"])
+                item_ws.cell(row=r, column=ue_column, value=item.get("unsegregated_expense", 0))
                 total_amount += item.get("unsegregated_expenses", 0)
-                item_ws.cell(row=r, column=se_column, value=item.get("segregated_expenses", 0))
+                item_ws.cell(row=r, column=se_column, value=item.get("segregated_expense", 0))
 
             ws["C55"] = grant["account"]
             ws["K55"] = total_amount
+
+            if ex.get("expense_type", "business") == "business":
+                spots = ("G10", "L11", "O11")
+            else:
+                spots = ("G7", "L8", "O8")
+
+            ws[spots[0]] = 'X'
+            ws[spots[1]] = mdy(
+                **{
+                    k: getattr(min(dates), k)
+                    for k in ["month", "day", "year"]
+                }
+            )
+            ws[spots[2]] = mdy(
+                **{
+                    k: getattr(max(dates), k)
+                    for k in ["month", "day", "year"]
+                }
+            )
 
             wb.save(os.path.join(self.bldir, ex["_id"] + ".xlsx"))
