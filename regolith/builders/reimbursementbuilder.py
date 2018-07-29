@@ -83,7 +83,7 @@ class ReimbursementBuilder(BuilderBase):
             ws["B36"] = ex["overall_purpose"]
             j = 42
             total_amount = 0
-            item_ws = wb['T&B']
+            item_ws = wb["T&B"]
             purpose_column = 4
             ue_column = 13
             se_column = 16
@@ -91,7 +91,7 @@ class ReimbursementBuilder(BuilderBase):
             for i, item in enumerate(ex["itemized_expenses"]):
                 r = j + i
                 if r > 49:
-                    item_ws = wb['Extra_Page']
+                    item_ws = wb["Extra_Page"]
                     j = 0
                     r = j + i
                     purpose_column = 5
@@ -100,11 +100,20 @@ class ReimbursementBuilder(BuilderBase):
                 dates.append(mdy_date(**item))
                 item_ws.cell(row=r, column=2, value=i)
                 item_ws.cell(row=r, column=3, value=mdy(**item))
-                item_ws.cell(row=r, column=purpose_column,
-                             value=item["purpose"])
-                item_ws.cell(row=r, column=ue_column, value=item.get("unsegregated_expense", 0))
+                item_ws.cell(
+                    row=r, column=purpose_column, value=item["purpose"]
+                )
+                item_ws.cell(
+                    row=r,
+                    column=ue_column,
+                    value=item.get("unsegregated_expense", 0),
+                )
                 total_amount += item.get("unsegregated_expenses", 0)
-                item_ws.cell(row=r, column=se_column, value=item.get("segregated_expense", 0))
+                item_ws.cell(
+                    row=r,
+                    column=se_column,
+                    value=item.get("segregated_expense", 0),
+                )
 
             ws["C55"] = grant["account"]
             ws["K55"] = total_amount
@@ -114,18 +123,12 @@ class ReimbursementBuilder(BuilderBase):
             else:
                 spots = ("G7", "L8", "O8")
 
-            ws[spots[0]] = 'X'
+            ws[spots[0]] = "X"
             ws[spots[1]] = mdy(
-                **{
-                    k: getattr(min(dates), k)
-                    for k in ["month", "day", "year"]
-                }
+                **{k: getattr(min(dates), k) for k in ["month", "day", "year"]}
             )
             ws[spots[2]] = mdy(
-                **{
-                    k: getattr(max(dates), k)
-                    for k in ["month", "day", "year"]
-                }
+                **{k: getattr(max(dates), k) for k in ["month", "day", "year"]}
             )
 
             wb.save(os.path.join(self.bldir, ex["_id"] + ".xlsx"))
