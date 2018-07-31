@@ -475,13 +475,17 @@ EXEMPLARS = {
         "title": "Dr.",
         "service": [
             {
-                "name": 'Master of Ceremonies and Organizer Brown University "Chemistry: Believe it or Not" public chemistry demonstration',
+                "name": 'Master of Ceremonies and Organizer Brown University '
+                        '"Chemistry: Believe it or Not" public chemistry '
+                        'demonstration',
                 "year": 2013,
             },
             {
                 "begin_year": 2012,
                 "end_year": 2014,
-                "name": 'Renewable Energy Presenter and Facility Tour Guide at the NSLS "Science Sunday" laboratory open house at Brookhaven National Laboratory',
+                "name": 'Renewable Energy Presenter and Facility Tour Guide '
+                        'at the NSLS "Science Sunday" laboratory open house '
+                        'at Brookhaven National Laboratory',
             },
         ],
     },
