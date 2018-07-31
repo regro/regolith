@@ -5,6 +5,7 @@ from regolith.builders.htmlbuilder import HtmlBuilder
 from regolith.builders.preslistbuilder import PresListBuilder
 from regolith.builders.publistbuilder import PubListBuilder
 from regolith.builders.gradebuilder import GradeReportBuilder
+from regolith.builders.reimbursementbuilder import ReimbursementBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
 from regolith.builders.cpbuilder import CPBuilder
 from regolith.builders.figurebuilder import FigureBuilder
@@ -19,6 +20,7 @@ BUILDERS = {
     "resume": ResumeBuilder,
     "current-pending": CPBuilder,
     "preslist": PresListBuilder,
+    "reimb": ReimbursementBuilder,
     "figure": FigureBuilder,
 }
 

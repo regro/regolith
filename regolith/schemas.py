@@ -406,6 +406,12 @@ EXEMPLARS = {
                 "year": 2013,
             },
         ],
+        "home_address": {
+            "street": "123 Wallabe Ln",
+            "city": "The big apple",
+            "state": "plasma",
+            "zip": "007",
+        },
         "initials": "AMS",
         "membership": [
             {
@@ -527,6 +533,7 @@ EXEMPLARS = {
             }
         ],
         "website": "http://fuelcycle.org/",
+        "grant": "dmref15",
     },
     "proposals": [
         {
@@ -604,6 +611,24 @@ EXEMPLARS = {
         "aka": ["H. A. Person"],
         "email": "haperson@uni.edu",
         "university_id": "HAP42",
+    },
+    "expenses": {
+        "_id": "test",
+        "project": "Cyclus",
+        "payee": "scopatz",
+        "itemized_expenses": [
+            {
+                "day": i,
+                "month": "Jan",
+                "year": 2018,
+                "purpose": "test",
+                "unsegregated_expense": 10 * i,
+                "segregated_expense": 0,
+            }
+            for i in range(1, 11)
+        ],
+        "overall_purpose": "testing the database",
+        "expense_type": "business",
     },
 }
 
@@ -1195,6 +1220,19 @@ SCHEMAS = {
             },
             "type": "list",
         },
+        "home_address": {
+            "description": "The person's home address",
+            "type": "dict",
+            "schema": {
+                "street": {"type": "string", "description": "street address"},
+                "city": {"type": "string", "description": "name of home city"},
+                "state": {
+                    "type": "string",
+                    "description": "name o home state",
+                },
+                "zip": {"type": "string", "description": "zip code"},
+            },
+        },
         "honors": {
             "description": "Honors that have been awarded to this "
             "group member",
@@ -1613,6 +1651,75 @@ SCHEMAS = {
             "description": "The university identifier for the student",
             "required": False,
             "type": "string",
+        },
+    },
+    "expenses": {
+        "_description": {
+            "description": "This collection records expenses for the "
+            "group. It should most likely be private"
+        },
+        "_id": {
+            "description": "short representation, such as this-is-my-name",
+            "required": True,
+            "type": "string",
+        },
+        "project": {
+            "description": "project or list of projects that this "
+            "presentation is associated with.  Should "
+            "be discoverable in projects collection",
+            "required": True,
+            "anyof_type": ["string", "list"],
+        },
+        "payee": {
+            "description": "The name or id of the payee filing the expense",
+            "required": True,
+            "type": "string",
+        },
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": True,
+                        "type": "integer",
+                    },
+                    "month": {
+                        "description": "Expense month",
+                        "required": True,
+                        "anyof_type": ["string", "integer"],
+                    },
+                    "year": {
+                        "description": "Expense year",
+                        "required": True,
+                        "type": "integer",
+                    },
+                    "purpose": {
+                        "description": "reason for expense",
+                        "type": "string",
+                        "required": True,
+                    },
+                    "unsegregated_expense": {
+                        "description": "The allowed expenses",
+                        "type": "float",
+                    },
+                    "segregated_expense": {
+                        "description": "The unallowed expenses",
+                        "type": "float",
+                    },
+                },
+            },
+        },
+        "overall_purpose": {
+            "description": "The reason for the expenses",
+            "type": "string",
+            "required": True,
+        },
+        "expense_type": {
+            "description": "The type of expense",
+            "allowed": ["travel", "business"],
+            "required": True,
         },
     },
 }
