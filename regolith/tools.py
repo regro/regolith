@@ -348,8 +348,8 @@ def document_by_value(documents, address, value):
         address = (address,)
     for g_doc in documents:
         doc = deepcopy(g_doc)
-        for address in address:
-            doc = doc[address]
+        for add in address:
+            doc = doc[add]
         if doc == value:
             return g_doc
 

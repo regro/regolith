@@ -39,7 +39,7 @@ def load_git_database(db, client, rc):
     else:
         git clone @(db['url']) dbdir
     with indir(dbdir):
-        if getattr(rc, 'branch'):
+        if getattr(rc, 'branch', None):
             branch = rc.branch
             git checkout @(branch) or git checkout -b @(branch) master
 
