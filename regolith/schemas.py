@@ -338,6 +338,14 @@ EXEMPLARS = {
                     "Mathematics"
                 ],
             },
+            {
+                "begin_year": 2008,
+                "degree": "ongoing",
+                "group": "life",
+                "institution": "solar system",
+                "department": "earth",
+                "location": "land, mostly",
+            },
         ],
         "email": "scopatz@cec.sc.edu",
         "employment": [
@@ -465,6 +473,21 @@ EXEMPLARS = {
             },
         ],
         "title": "Dr.",
+        "service": [
+            {
+                "name": 'Master of Ceremonies and Organizer Brown University '
+                        '"Chemistry: Believe it or Not" public chemistry '
+                        'demonstration',
+                "year": 2013,
+            },
+            {
+                "begin_year": 2012,
+                "end_year": 2014,
+                "name": 'Renewable Energy Presenter and Facility Tour Guide '
+                        'at the NSLS "Science Sunday" laboratory open house '
+                        'at Brookhaven National Laboratory',
+            },
+        ],
     },
     "presentations": [
         {
@@ -1156,7 +1179,8 @@ SCHEMAS = {
                         "a group in groups coll",
                     },
                     "end_month": {"required": False, "type": "string"},
-                    "end_year": {"required": True, "type": "integer"},
+                    # Could be ongoing with undefined end
+                    "end_year": {"required": False, "type": "integer"},
                     "gpa": {"required": False, "type": ("float", "string")},
                     "institution": {"required": True, "type": "string"},
                     "location": {"required": False, "type": "string"},
@@ -1176,7 +1200,7 @@ SCHEMAS = {
         "employment": {
             "description": "Employment information, similar to educational "
             "information.",
-            "required": True,
+            "required": False,
             "schema": {
                 "type": "dict",
                 "schema": {
@@ -1300,7 +1324,9 @@ SCHEMAS = {
                     "duration": {"required": False, "type": "string"},
                     "month": {"required": False, "type": "string"},
                     "name": {"required": True, "type": "string"},
-                    "year": {"required": True, "type": "integer"},
+                    "year": {"required": False, "type": "integer"},
+                    "begin_year": {"required": False, "type": "integer"},
+                    "end_year": {"required": False, "type": "integer"},
                     "other": {
                         "required": False,
                         "anyof_type": ["string", "list"],
