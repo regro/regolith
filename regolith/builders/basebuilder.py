@@ -21,11 +21,7 @@ from regolith.tools import (
     gets,
     LATEX_OPTS,
     month_and_year,
-)
-
-
-def latex_safe(s):
-    return s.replace("&", "\&").replace("$", "\$").replace("#", "\#")
+    latex_safe)
 
 
 class BuilderBase(object):
