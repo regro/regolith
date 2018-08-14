@@ -397,7 +397,7 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
             ret = doc.get(k, [])
             if isinstance(ret, str):
                 returns.append(ret)
-            else:
+            elif ret:
                 returns.extend(ret)
         if not case_sensitive:
             returns = [ret.lower() for ret in returns if isinstance(ret, str)]
