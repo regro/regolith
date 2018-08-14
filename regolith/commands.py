@@ -47,7 +47,7 @@ def _ingest_citations(rc):
         return record
 
     parser.customization = customizations
-    with open(rc.filename, "r") as f:
+    with open(rc.filename, "r", encoding='utf-8') as f:
         bibs = bibtexparser.load(f, parser=parser)
     coll = rc.client[rc.db][rc.coll]
     for bib in bibs.entries:

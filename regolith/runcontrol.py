@@ -254,7 +254,7 @@ DEFAULT_RC = RunControl(
 
 def load_json_rcfile(fname):
     """Loads a JSON run control file."""
-    with open(fname, "r") as f:
+    with open(fname, "r", encoding='utf-8') as f:
         rc = json.load(f)
     return rc
 

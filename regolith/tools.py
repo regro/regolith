@@ -322,7 +322,7 @@ def make_bibtex_file(pubs, pid, person_dir="."):
             ent[key] = latex_safe(ent[key])
         ents.append(ent)
     fname = os.path.join(person_dir, pid) + ".bib"
-    with open(fname, "w") as f:
+    with open(fname, "w", encoding='utf-8') as f:
         f.write(bibwriter.write(bibdb))
     return fname
 
