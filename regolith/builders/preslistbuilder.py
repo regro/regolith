@@ -222,7 +222,7 @@ class PresListBuilder(LatexBuilderBase):
                         key=lambda k: k.get("date", None),
                         reverse=True,
                     )
-                    outfile = "presentations-" + grp + "-" + member + ".tex"
+                    outfile = "presentations-" + grp + "-" + member
                     pi = [
                         person
                         for person in self.gtx["people"]
@@ -230,12 +230,10 @@ class PresListBuilder(LatexBuilderBase):
                     ][0]
                     self.render(
                         "preslist.tex",
-                        outfile,
+                        outfile + ".tex",
                         pi=pi,
                         presentations=presclean,
                         sentencecase=sentencecase,
                         monthstyle=month_fullnames,
                     )
-
-
-#                    self.pdf('presentations')
+                    self.pdf(outfile)
