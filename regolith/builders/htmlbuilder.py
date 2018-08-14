@@ -179,5 +179,6 @@ class HtmlBuilder(BuilderBase):
         rc = self.rc
         if not hasattr(rc, "cname"):
             return
-        with open(os.path.join(self.bldir, "CNAME"), "w") as f:
+        with open(os.path.join(self.bldir, "CNAME"), "w", encoding='utf-8'
+                  ) as f:
             f.write(rc.cname)

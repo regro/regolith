@@ -16,14 +16,14 @@ from regolith.tools import all_docs_from_collection
 
 
 def attach_txt(filename):
-    with open(filename, "r") as f:
+    with open(filename, "r", encoding='utf-8') as f:
         txt = f.read()
     msg = MIMEText(txt, _subtype="text")
     return msg
 
 
 def attach_pdf(filename):
-    with open(filename, "rb") as f:
+    with open(filename, "rb", encoding='utf-8') as f:
         pdf = f.read()
     msg = MIMEApplication(pdf, _subtype="pdf")
     return msg

@@ -91,7 +91,8 @@ class BuilderBase(object):
             "root", os.path.relpath("/", os.path.dirname(fname))
         )
         result = template.render(ctx)
-        with open(os.path.join(self.bldir, fname), "wt") as f:
+        with open(os.path.join(self.bldir, fname), "wt", encoding='utf-8'
+                  ) as f:
             f.write(result)
 
     def build(self):
