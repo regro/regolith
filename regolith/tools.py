@@ -3,6 +3,7 @@
 import email.utils
 import os
 import platform
+import re
 import sys
 from copy import deepcopy
 
@@ -132,11 +133,11 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     pubs = []
     for pub in citations:
         if (
-            len(
-                set(pub.get("author", []))
-                | set(pub.get("editor", [])) & authors
-            )
-            == 0
+                len(
+                    set(pub.get("author", []))
+                    | set(pub.get("editor", [])) & authors
+                )
+                == 0
         ):
             continue
         pub = deepcopy(pub)
@@ -276,6 +277,10 @@ def awards_grants_honors(p):
     return aghs
 
 
+HTTP_RE = re.compile(
+    r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)')
+
+
 def latex_safe(s):
     """Make string latex safe
 
@@ -283,11 +288,19 @@ def latex_safe(s):
     ----------
     s : str
     """
+    # If it looks like a URL make it a latex URL
+    url_search = HTTP_RE.search(s)
+    if url_search:
+        print(s)
+        start = latex_safe(s[:url_search.start()])
+        end = latex_safe(s[url_search.end():])
+        url = r'\url{' + s[url_search.start():url_search.end()] + '}'
+        return start + url + end
     return (
         s.replace("&", "\&")
-        .replace("$", "\$")
-        .replace("#", "\#")
-        .replace("_", "\_")
+            .replace("$", "\$")
+            .replace("#", "\#")
+            .replace("_", "\_")
     )
 
 
