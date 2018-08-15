@@ -12,14 +12,14 @@ from ruamel.yaml.comments import CommentedMap, CommentedSeq
 from regolith.tools import dbpathname
 
 
-yaml_base_map = {CommentedMap: dict,
+YAML_BASE_MAP = {CommentedMap: dict,
                  CommentedSeq: list}
 
 
 def _rec_re_type(i):
     """Destroy this when ruamel.yaml supports basetypes again"""
-    if type(i) in yaml_base_map:
-        base = yaml_base_map[type(i)]()
+    if type(i) in YAML_BASE_MAP:
+        base = YAML_BASE_MAP[type(i)]()
         if isinstance(base, dict):
             for k, v in i.items():
                 base[_rec_re_type(k)] = _rec_re_type(v)
