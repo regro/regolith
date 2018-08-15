@@ -71,9 +71,15 @@ class CVBuilder(LatexBuilderBase):
                     if db_inst:
                         e['institution'] = db_inst['name']
                         e['organization'] = db_inst['name']
+                        if db_inst.get('country') == 'USA':
+                            state_country = db_inst.get('state')
+                        else:
+                            state_country = db_inst.get('country')
                         e['location'] = '{}, {}'.format(db_inst['city'],
-                                                        db_inst['state'])
-
+                                                        state_country)
+                        if 'department' in e:
+                            e['department'] = db_inst[
+                                'departments'][e['department']]['name']
             self.render(
                 "cv.tex",
                 p["_id"] + ".tex",
