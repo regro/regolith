@@ -6,6 +6,7 @@
   for employers and education
 * ``regolith.builders.CVBuilder`` deepcopies each person so we don't modify
   the records during dereference
+* ``regolith.tools.latex_safe`` wraps URLs in ``\url{}``
 
 **Deprecated:** None
 
