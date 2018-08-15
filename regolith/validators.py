@@ -95,7 +95,7 @@ def ensure_email(email):
         s = user + "\n" + password
         with open(email["cred"], "w") as f:
             f.write(s)
-    with open(email["cred"]) as f:
+    with open(email["cred"], encoding='utf-8') as f:
         email["from"] = f.readline().strip()
         email["password"] = f.readline().strip()
     email["user"] = email["from"].partition("@")[0]

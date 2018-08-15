@@ -8,7 +8,7 @@ from pprint import pprint, pformat
 
 def load_json(filename):
     """Returns students as a list of dicts from JSON file."""
-    with open(filename) as f:
+    with open(filename, encoding='utf-8') as f:
         students = json.load(f)
     return students
 
@@ -89,7 +89,7 @@ def load_usc(filename):
     """Returns students as a list of dicts from an HTML file obtainted from the University of
     South Carolina.
     """
-    with open(filename) as f:
+    with open(filename, encoding='utf-8') as f:
         html = f.read()
     parser = UscHtmlParser()
     parser.feed(html)

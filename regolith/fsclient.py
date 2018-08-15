@@ -7,8 +7,28 @@ from glob import iglob
 
 import ruamel.yaml
 from ruamel.yaml import YAML
+from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from regolith.tools import dbpathname
+
+
+YAML_BASE_MAP = {CommentedMap: dict,
+                 CommentedSeq: list}
+
+
+def _rec_re_type(i):
+    """Destroy this when ruamel.yaml supports basetypes again"""
+    if type(i) in YAML_BASE_MAP:
+        base = YAML_BASE_MAP[type(i)]()
+        if isinstance(base, dict):
+            for k, v in i.items():
+                base[_rec_re_type(k)] = _rec_re_type(v)
+        elif isinstance(base, list):
+            for j in i:
+                base.append(_rec_re_type(j))
+    else:
+        base = i
+    return base
 
 
 def _id_key(doc):
@@ -40,6 +60,7 @@ def load_yaml(filename, return_inst=False):
     inst = YAML()
     with open(filename, encoding="utf-8") as fh:
         docs = inst.load(fh)
+        docs = _rec_re_type(docs)
     for _id, doc in docs.items():
         doc["_id"] = _id
     return (docs, inst) if return_inst else docs

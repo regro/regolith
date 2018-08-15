@@ -61,7 +61,7 @@ def collection_page(dbname, collname):
                     "Error in json parsing writing text file to {}. "
                     "Please try again.".format(n)
                 )
-                with open(n, "w") as f:
+                with open(n, "w", encoding='utf-8') as f:
                     f.write(form["body"])
                 traceback.print_exc()
                 raise
@@ -69,7 +69,7 @@ def collection_page(dbname, collname):
             if not tv:
                 td = tempfile.TemporaryDirectory()
                 n = os.path.join(td.name, "regolith.txt")
-                with open(n, "w") as f:
+                with open(n, "w", encoding='utf-8') as f:
                     f.write(form["body"])
                 raise ValueError(
                     "Error while validating the record,"
@@ -94,7 +94,7 @@ def collection_page(dbname, collname):
                     "Error in json parsing writing text file to {}. "
                     "Please try again.".format(n)
                 )
-                with open(n) as f:
+                with open(n, encoding='utf-8') as f:
                     f.write(form["body"])
                 traceback.print_exc()
                 raise
@@ -102,7 +102,7 @@ def collection_page(dbname, collname):
             if not tv:
                 td = tempfile.TemporaryDirectory()
                 n = os.path.join(td.name, "regolith.txt")
-                with open(n) as f:
+                with open(n, encoding='utf-8') as f:
                     f.write(form["body"])
                 raise ValueError(
                     "Error while validating the record,"
