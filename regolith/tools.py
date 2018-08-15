@@ -281,27 +281,33 @@ HTTP_RE = re.compile(
     r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)')
 
 
-def latex_safe(s):
+def latex_safe(s, url_check=True, wrapper='url'):
     """Make string latex safe
 
     Parameters
     ----------
     s : str
+    url_check : bool, optional
+        If True check for URLs and wrap them, if False check for URL but don't
+        wrap, defaults to True
+    wrapper : str, optional
+        The wrapper for wrapping urls defaults to url
     """
-    # If it looks like a URL make it a latex URL
-    url_search = HTTP_RE.search(s)
-    if url_search:
-        print(s)
-        start = latex_safe(s[:url_search.start()])
-        end = latex_safe(s[url_search.end():])
-        url = r'\url{' + s[url_search.start():url_search.end()] + '}'
-        return start + url + end
-    return (
-        s.replace("&", "\&")
+    if url_check:
+        # If it looks like a URL make it a latex URL
+        url_search = HTTP_RE.search(s)
+        if url_search:
+            url = r'{start}\{wrapper}{{{s}}}{end}'.format(
+                start=(latex_safe(s[:url_search.start()])),
+                end=(latex_safe(s[url_search.end():])),
+                wrapper=wrapper,
+                s=s[url_search.start():url_search.end()])
+            return url
+    return (s.replace("&", "\&")
             .replace("$", "\$")
             .replace("#", "\#")
             .replace("_", "\_")
-    )
+            )
 
 
 def make_bibtex_file(pubs, pid, person_dir="."):
