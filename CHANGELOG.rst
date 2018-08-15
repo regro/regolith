@@ -4,6 +4,32 @@ Regolith Change Log
 
 .. current developments
 
+v0.3.1
+====================
+
+**Added:**
+
+* Schema for expenses tracking
+* builder for Columbia reimbursement forms
+
+
+**Changed:**
+
+* ``open`` uses explict 'utf-8' bindings (for windows users)
+* Allow education to be ongoing
+* Allow begin and end years for service
+* Make employment optional
+
+
+**Fixed:**
+
+* Build presentation PDFs when running in normal operation
+* ``regolith.database.load_git_database`` checks branch gracefully
+* ``regolith.tools.document_by_value`` doesn't splay address incorrectly
+
+
+
+
 v0.3.0
 ====================
 
