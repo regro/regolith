@@ -125,8 +125,11 @@ class LatexBuilderBase(BuilderBase):
             self.run(["latex"] + LATEX_OPTS + [base + ".tex"])
             self.run(["bibtex"] + [base + ".aux"])
             self.run(["latex"] + LATEX_OPTS + [base + ".tex"])
-            self.run(["latex"] + LATEX_OPTS + [base + ".tex"])
-            self.run(["dvipdf", base])
+            if os.name == 'nt':
+                self.run(["pdflatex"] + LATEX_OPTS + [base + ".tex"])
+            else:
+                self.run(["latex"] + LATEX_OPTS + [base + ".tex"])
+                self.run(["dvipdf", base])
 
     def clean(self):
         """Remove files created by latex"""
