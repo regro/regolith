@@ -173,13 +173,13 @@
       {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
         \resitem{
           {%- if 'narrative' in grant %}
-            \href{ {{-latex_safe(grant['narrative'], url_check=False)-}} }{Narrative}.
+            \href{ {{-grant['narrative']-}} }{Narrative}.
           {%- endif %}
           {%- if 'benefit_of_collaboration' in grant %}
-            \href{ {{-latex_safe(grant['benefit_of_collaboration'], url_check=False)-}} }{Benefit of Collaboration}.
+            \href{ {{-grant['benefit_of_collaboration']-}} }{Benefit of Collaboration}.
           {%- endif %}
           {%- if 'call_for_proposals' in grant %}
-            \href{ {{-latex_safe(grant['call_for_proposals'], url_check=False)-}} }{Call for Proposals}.
+            \href{ {{-grant['call_for_proposals']-}} }{Call for Proposals}.
           {%- endif %}
         }
       {% endif %}
@@ -208,13 +208,13 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
       {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
         \resitem{
           {%- if 'narrative' in grant %}
-            \href{ {{-latex_safe(grant['narrative'], url_check=False)-}} }{Narrative}.
+            \href{ {{-grant['narrative']-}} }{Narrative}.
           {%- endif %}
           {%- if 'benefit_of_collaboration' in grant %}
-            \href{ {{-latex_safe(grant['benefit_of_collaboration'], url_check=False)-}} }{Benefit of Collaboration}.
+            \href{ {{-grant['benefit_of_collaboration']-}} }{Benefit of Collaboration}.
           {%- endif %}
           {%- if 'call_for_proposals' in grant %}
-            \href{ {{-latex_safe(grant['call_for_proposals'], url_check=False)-}} }{Call for Proposals}.
+            \href{ {{-grant['call_for_proposals']-}} }{Call for Proposals}.
           {%- endif %}
         }
       {% endif %}
@@ -288,16 +288,16 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
       {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
         \resitem{
           {%- if 'website' in t %}
-            \href{ {{-latex_safe(t['website'], url_check=False)-}} }{Website}.
+            \href{ {{-t['website']-}} }{Website}.
           {%- endif %}
           {%- if 'syllabus' in t %}
-            \href{ {{-latex_safe(t['syllabus'], url_check=False)-}} }{Syllabus}.
+            \href{ {{-t['syllabus']-}} }{Syllabus}.
           {%- endif %}
           {%- if 'video' in t %}
-            \href{ {{-latex_safe(t['video'], url_check=False)-}} }{Video}.
+            \href{ {{-t['video']-}} }{Video}.
           {%- endif %}
           {%- if 'materials' in t %}
-            \href{ {{-latex_safe(t['materials'], url_check=False)-}} }{Source Materials}.
+            \href{ {{-t['materials']-}} }{Source Materials}.
           {%- endif %}
         }
       {% endif %}
