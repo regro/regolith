@@ -1186,7 +1186,7 @@ SCHEMAS = {
                     "location": {"required": False, "type": "string"},
                     "other": {
                         "required": False,
-                        "anyof_type": ["string", "list"],
+                        "type": "list",
                     },
                 },
             },
@@ -1218,7 +1218,7 @@ SCHEMAS = {
                     "organization": {"required": True, "type": "string"},
                     "other": {
                         "required": False,
-                        "anyof_type": ["string", "list"],
+                        "type": "list",
                     },
                     "position": {"required": True, "type": "string"},
                 },

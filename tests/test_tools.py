@@ -1,7 +1,7 @@
 import pytest
 
-from regolith.tools import filter_publications
-from regolith.tools import fuzzy_retrieval, number_suffix
+from regolith.tools import (filter_publications, fuzzy_retrieval,
+                            number_suffix, latex_safe)
 
 
 def test_author_publications():
@@ -55,3 +55,26 @@ def test_fuzzy_retrieval():
 )
 def test_number_suffix(input, expected):
     assert number_suffix(input) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected,kwargs",
+    [
+        ('$hi', r'\$hi', {}),
+        (r'Website: https://github.com/CJ-Wright/'
+         r'Masters_Thesis/raw/master/thesis.pdf hi',
+         r'Website: \url{https://github.com/CJ-Wright/'
+         r'Masters_Thesis/raw/master/thesis.pdf} hi', {}),
+        (r'Website: https://github.com/CJ-Wright/'
+         r'Masters_Thesis/raw/master/thesis.pdf hi',
+         r'Website: \href{https://github.com/CJ-Wright/'
+         r'Masters_Thesis/raw/master/thesis.pdf} hi', {'wrapper': 'href'}),
+        (r'Website: https://github.com/CJ-Wright/'
+         r'Masters_Thesis/raw/master/thesis.pdf hi',
+         r'Website: https://github.com/CJ-Wright/'
+         r'Masters\_Thesis/raw/master/thesis.pdf hi', {'url_check': False})
+    ],
+)
+def test_latex_safe(input, expected, kwargs):
+    output = latex_safe(input, **kwargs)
+    assert output == expected

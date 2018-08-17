@@ -1,6 +1,8 @@
 """Builder for CVs."""
+import copy
 
 from regolith.builders.basebuilder import LatexBuilderBase
+from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
     all_docs_from_collection,
@@ -9,7 +11,7 @@ from regolith.tools import (
     filter_grants,
     awards_grants_honors,
     make_bibtex_file,
-)
+    fuzzy_retrieval)
 
 
 class CVBuilder(LatexBuilderBase):
@@ -27,12 +29,18 @@ class CVBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         )
+        gtx['institutions'] = sorted(
+            all_docs_from_collection(rc.client, "institutions"),
+            key=_id_key,
+        )
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def latex(self):
         """Render latex template"""
         rc = self.rc
         for p in self.gtx["people"]:
+            # so we don't modify the dbs when de-referencing
+            p = copy.deepcopy(p)
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
                 all_docs_from_collection(rc.client, "citations"),
@@ -55,6 +63,23 @@ class CVBuilder(LatexBuilderBase):
                 grants, names, pi=False
             )
             aghs = awards_grants_honors(p)
+            for ee in [emp, edu]:
+                for e in ee:
+                    inst = e.get('institution')
+                    db_inst = fuzzy_retrieval(self.gtx['institutions'],
+                                              ['name', '_id', 'aka'], inst)
+                    if db_inst:
+                        e['institution'] = db_inst['name']
+                        e['organization'] = db_inst['name']
+                        if db_inst.get('country') == 'USA':
+                            state_country = db_inst.get('state')
+                        else:
+                            state_country = db_inst.get('country')
+                        e['location'] = '{}, {}'.format(db_inst['city'],
+                                                        state_country)
+                        if 'department' in e:
+                            e['department'] = db_inst[
+                                'departments'][e['department']]['name']
             self.render(
                 "cv.tex",
                 p["_id"] + ".tex",
