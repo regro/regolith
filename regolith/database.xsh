@@ -37,7 +37,7 @@ def load_git_database(db, client, rc):
              or ![git pull @(rc.remote) @(rc.branch)]
              or ![git pull])
     else:
-        git clone @(db['url']) dbdir
+        git clone @(db['url']) @(dbdir)
     with indir(dbdir):
         if getattr(rc, 'branch', None):
             branch = rc.branch
