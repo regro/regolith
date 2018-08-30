@@ -62,7 +62,8 @@ class HtmlBuilder(BuilderBase):
         """Move files over to their destination and remove them from the
         source"""
         # static
-        stsrc = os.path.join("templates", "static")
+        stsrc = os.path.join(getattr(self.rc, 'static_source', "templates"),
+                             "static")
         stdst = os.path.join(self.bldir, "static")
         if os.path.isdir(stdst):
             shutil.rmtree(stdst)

@@ -153,6 +153,12 @@ would allow the names of people to also be
 
 See the collections for a complete list of the schemas.
 
+``static_source``
+=================
+File path to the static source for ``regolith build html``. If none provided it defaults to "templates"
+
+This is useful for local website builds where the ``regolithrc.json`` may be in another folder.
+
 
 ------------------
 User Configuration
