@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block header %}
-<img src="{{static}}/logo-banner-text-upper.png" style="max-width:100%;"/><br/><br/>
+<img src="{{static}}/{{ group.get('banner', 'logo-banner-text-upper.png') }}" style="max-width:100%;"/><br/><br/>
 {% endblock header %}
 {% block content %}
 

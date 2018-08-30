@@ -11,7 +11,9 @@ from regolith.tools import (
     filter_grants,
     awards_grants_honors,
     make_bibtex_file,
-    fuzzy_retrieval)
+    fuzzy_retrieval,
+    dereference_institution,
+)
 
 
 class CVBuilder(LatexBuilderBase):
@@ -29,9 +31,8 @@ class CVBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         )
-        gtx['institutions'] = sorted(
-            all_docs_from_collection(rc.client, "institutions"),
-            key=_id_key,
+        gtx["institutions"] = sorted(
+            all_docs_from_collection(rc.client, "institutions"), key=_id_key
         )
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
@@ -63,23 +64,10 @@ class CVBuilder(LatexBuilderBase):
                 grants, names, pi=False
             )
             aghs = awards_grants_honors(p)
+            # TODO: pull this out so we can use it everywhere
             for ee in [emp, edu]:
                 for e in ee:
-                    inst = e.get('institution')
-                    db_inst = fuzzy_retrieval(self.gtx['institutions'],
-                                              ['name', '_id', 'aka'], inst)
-                    if db_inst:
-                        e['institution'] = db_inst['name']
-                        e['organization'] = db_inst['name']
-                        if db_inst.get('country') == 'USA':
-                            state_country = db_inst.get('state')
-                        else:
-                            state_country = db_inst.get('country')
-                        e['location'] = '{}, {}'.format(db_inst['city'],
-                                                        state_country)
-                        if 'department' in e:
-                            e['department'] = db_inst[
-                                'departments'][e['department']]['name']
+                    dereference_institution(e, self.gtx)
             self.render(
                 "cv.tex",
                 p["_id"] + ".tex",
