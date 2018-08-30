@@ -67,7 +67,7 @@ class CVBuilder(LatexBuilderBase):
             # TODO: pull this out so we can use it everywhere
             for ee in [emp, edu]:
                 for e in ee:
-                    dereference_institution(e, self.gtx)
+                    dereference_institution(e, self.gtx["institutions"])
             self.render(
                 "cv.tex",
                 p["_id"] + ".tex",
