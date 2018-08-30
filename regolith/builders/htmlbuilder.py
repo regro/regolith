@@ -62,8 +62,9 @@ class HtmlBuilder(BuilderBase):
         """Move files over to their destination and remove them from the
         source"""
         # static
-        stsrc = os.path.join(getattr(self.rc, 'static_source', "templates"),
-                             "static")
+        stsrc = os.path.join(
+            getattr(self.rc, "static_source", "templates"), "static"
+        )
         stdst = os.path.join(self.bldir, "static")
         if os.path.isdir(stdst):
             shutil.rmtree(stdst)
@@ -80,7 +81,7 @@ class HtmlBuilder(BuilderBase):
         former_peeps_dir = os.path.join(self.bldir, "former")
         os.makedirs(peeps_dir, exist_ok=True)
         os.makedirs(former_peeps_dir, exist_ok=True)
-        peeps = copy.deepcopy(self.gtx['people'])
+        peeps = copy.deepcopy(self.gtx["people"])
         for p in peeps:
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
@@ -96,7 +97,7 @@ class HtmlBuilder(BuilderBase):
             ene = p.get("employment", []) + p.get("education", [])
             ene.sort(key=ene_date_key, reverse=True)
             for e in ene:
-                dereference_institution(e, self.gtx)
+                dereference_institution(e, self.gtx["institutions"])
             projs = filter_projects(
                 all_docs_from_collection(rc.client, "projects"), names
             )

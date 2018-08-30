@@ -453,12 +453,19 @@ def number_suffix(number):
     return suffix
 
 
-def dereference_institution(input_record, gtx):
-    """Tool for dereferencing institutions"""
+def dereference_institution(input_record, institutions):
+    """Tool for replacing placeholders for institutions with the actual
+    institution data. Note that the replacement is done inplace
+
+    Parameters
+    ----------
+    input_record : dict
+        The record to dereference
+    institutions : iterable of dicts
+        The institutions
+    """
     inst = input_record.get("institution")
-    db_inst = fuzzy_retrieval(
-        gtx["institutions"], ["name", "_id", "aka"], inst
-    )
+    db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if db_inst:
         input_record["institution"] = db_inst["name"]
         input_record["organization"] = db_inst["name"]
