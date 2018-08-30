@@ -1,8 +1,10 @@
 """Builder for websites."""
+import copy
 import os
 import shutil
 
 from regolith.builders.basebuilder import BuilderBase
+from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
     all_docs_from_collection,
@@ -10,6 +12,7 @@ from regolith.tools import (
     filter_projects,
     make_bibtex_file,
     document_by_value,
+    dereference_institution,
 )
 
 
@@ -51,6 +54,9 @@ class HtmlBuilder(BuilderBase):
             all_docs_from_collection(rc.client, "groups"), "name", rc.groupname
         )
         gtx["all_docs_from_collection"] = all_docs_from_collection
+        gtx["institutions"] = sorted(
+            all_docs_from_collection(rc.client, "institutions"), key=_id_key
+        )
 
     def finish(self):
         """Move files over to their destination and remove them from the
@@ -73,7 +79,8 @@ class HtmlBuilder(BuilderBase):
         former_peeps_dir = os.path.join(self.bldir, "former")
         os.makedirs(peeps_dir, exist_ok=True)
         os.makedirs(former_peeps_dir, exist_ok=True)
-        for p in self.gtx["people"]:
+        peeps = copy.deepcopy(self.gtx['people'])
+        for p in peeps:
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
                 all_docs_from_collection(rc.client, "citations"),
@@ -81,11 +88,14 @@ class HtmlBuilder(BuilderBase):
                 reverse=True,
                 bold=False,
             )
+
             bibfile = make_bibtex_file(
                 pubs, pid=p["_id"], person_dir=peeps_dir
             )
             ene = p.get("employment", []) + p.get("education", [])
             ene.sort(key=ene_date_key, reverse=True)
+            for e in ene:
+                dereference_institution(e, self.gtx)
             projs = filter_projects(
                 all_docs_from_collection(rc.client, "projects"), names
             )
@@ -179,6 +189,7 @@ class HtmlBuilder(BuilderBase):
         rc = self.rc
         if not hasattr(rc, "cname"):
             return
-        with open(os.path.join(self.bldir, "CNAME"), "w", encoding='utf-8'
-                  ) as f:
+        with open(
+            os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
+        ) as f:
             f.write(rc.cname)
