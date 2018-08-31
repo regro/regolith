@@ -93,12 +93,13 @@ def dump_git_database(db, client, rc):
     # update the repo
     cmd = ['git', 'add'] + to_add
     subprocess.check_call(cmd, cwd=dbdir)
-    cmd = ['git', 'commit', '-m', 'regolith auto-commit']
-    try:
-        subprocess.check_call(cmd, cwd=dbdir)
-    except subprocess.CalledProcessError:
-        warn('Could not git commit to ' + dbdir, RuntimeWarning)
-        return
+    if $(git diff):
+        cmd = ['git', 'commit', '-m', 'regolith auto-commit']
+        try:
+            subprocess.check_call(cmd, cwd=dbdir)
+        except subprocess.CalledProcessError:
+            warn('Could not git commit to ' + dbdir, RuntimeWarning)
+            return
     cmd = ['git', 'push']
     if hasattr(rc, 'remote') and hasattr(rc, 'branch'):
         cmd += [rc.remote, rc.branch]
