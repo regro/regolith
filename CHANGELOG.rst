@@ -4,6 +4,41 @@ Regolith Change Log
 
 .. current developments
 
+v0.4.0
+====================
+
+**Added:**
+
+* Optional ``static_source`` key in the rc for the html build.
+
+
+**Changed:**
+
+* institution dereference is done by ``regolith.tools.dereference_institution`` function
+* HTML pages dereference institutions
+* ``person.html`` allows for authors or editors and hides publications in details
+* ``root_index.html`` allows for banner to be speced in ``groups`` collection
+* ``regolith.builders.CVBuilder`` now dereferences institutions/organizations
+  for employers and education
+* ``regolith.builders.CVBuilder`` deepcopies each person so we don't modify
+  the records during dereference
+* ``regolith.tools.latex_safe`` wraps URLs in ``\url{}``
+* ``regolith.builders.basebuilder.LatexBuilderBase`` runs ``pdflatex`` last
+  if running on windows, rather than ``latex`` then ``dvipdf``
+* Order yaml collections by key before dump for deterministic changes in collection order (make git more sane)
+
+
+**Fixed:**
+
+* Properly handle authors and editors set in ``regolith.tools.filter_publications``
+* ``regolith.tools.fuzzy_retrieval`` properly handles null values
+* education and employment subschemas for people are now just lists
+* ``regolith.builders.BuilderBase`` uses ``latex_safe`` from ``regolith.tools``
+* wrap `dbdir` in `@()` so xonsh does the right thing
+
+
+
+
 v0.3.1
 ====================
 
