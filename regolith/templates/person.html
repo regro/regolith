@@ -88,23 +88,25 @@
 <hr/><a name="pubs" />
 <h1><a href="#pubs">Publications</a></h1>
 {%if bibfile%}<h3><a href="{{p['_id']}}.bib">[Download bibtex]</a></h3>{%endif%}
+<details>
 <ol>
 {% for pub in pubs %}
   <li>
-  {% for a in pub['author'][:-1] %}
+  {%  set ae = pub.get('author', pub.get('editor', [])) %}
+  {% for a in ae[:-1] %}
     {% if a in names %}<b>{% endif %}{{a}}{% if a in names %}</b>{% endif %},
   {% endfor %}
-  {% if len(pub['author']) > 1 %}
+  {% if len(ae) > 1 %}
     and
   {% endif %}
-  {% set a = pub['author'][-1] %}
+  {% set a = ae[-1] %}
   {% if a in names %}<b>{% endif %}{{a}}{% if a in names %}</b>{% endif %}.
-  <i>"{{pub.get('title', '')}}".</i> 
+  <i>"{{pub.get('title', '')}}".</i>
   {{pub.get('version', '')}}
   {{pub.get('journal', '')}}
   {{pub.get('booktitle', '')}}.
-  {{pub.get('volume', '')}} 
-  {{'p. ' + pub['pages'] if 'pages' in pub else ''}} 
+  {{pub.get('volume', '')}}
+  {{'p. ' + pub['pages'] if 'pages' in pub else ''}}
   {{pub.get('address', '')}}
   {% if 'month' in pub and 'year' in pub %}
     {{pub['month'].capitalize()}} {{pub['year']}}
@@ -117,6 +119,7 @@
   </li>
 {% endfor %}
 </ol>
+</details>
 
 {%if 'teaching' in p and len(p['teaching']) > 0%}
 <hr/><a name="teaching" />

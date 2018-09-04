@@ -133,11 +133,11 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     pubs = []
     for pub in citations:
         if (
-                len(
-                    set(pub.get("author", []))
-                    | set(pub.get("editor", [])) & authors
-                )
-                == 0
+            len(
+                (set(pub.get("author", [])) | set(pub.get("editor", [])))
+                & authors
+            )
+            == 0
         ):
             continue
         pub = deepcopy(pub)
@@ -278,10 +278,11 @@ def awards_grants_honors(p):
 
 
 HTTP_RE = re.compile(
-    r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)')
+    r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"
+)
 
 
-def latex_safe(s, url_check=True, wrapper='url'):
+def latex_safe(s, url_check=True, wrapper="url"):
     """Make string latex safe
 
     Parameters
@@ -297,17 +298,19 @@ def latex_safe(s, url_check=True, wrapper='url'):
         # If it looks like a URL make it a latex URL
         url_search = HTTP_RE.search(s)
         if url_search:
-            url = r'{start}\{wrapper}{{{s}}}{end}'.format(
-                start=(latex_safe(s[:url_search.start()])),
-                end=(latex_safe(s[url_search.end():])),
+            url = r"{start}\{wrapper}{{{s}}}{end}".format(
+                start=(latex_safe(s[: url_search.start()])),
+                end=(latex_safe(s[url_search.end() :])),
                 wrapper=wrapper,
-                s=s[url_search.start():url_search.end()])
-            return url
-    return (s.replace("&", "\&")
-            .replace("$", "\$")
-            .replace("#", "\#")
-            .replace("_", "\_")
+                s=s[url_search.start() : url_search.end()],
             )
+            return url
+    return (
+        s.replace("&", "\&")
+        .replace("$", "\$")
+        .replace("#", "\#")
+        .replace("_", "\_")
+    )
 
 
 def make_bibtex_file(pubs, pid, person_dir="."):
@@ -341,7 +344,7 @@ def make_bibtex_file(pubs, pid, person_dir="."):
             ent[key] = latex_safe(ent[key])
         ents.append(ent)
     fname = os.path.join(person_dir, pid) + ".bib"
-    with open(fname, "w", encoding='utf-8') as f:
+    with open(fname, "w", encoding="utf-8") as f:
         f.write(bibwriter.write(bibdb))
     return fname
 
@@ -448,3 +451,34 @@ def number_suffix(number):
     else:
         suffix = {1: "st", 2: "nd", 3: "rd"}.get(number % 10, "th")
     return suffix
+
+
+def dereference_institution(input_record, institutions):
+    """Tool for replacing placeholders for institutions with the actual
+    institution data. Note that the replacement is done inplace
+
+    Parameters
+    ----------
+    input_record : dict
+        The record to dereference
+    institutions : iterable of dicts
+        The institutions
+    """
+    inst = input_record.get("institution")
+    db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
+    if db_inst:
+        input_record["institution"] = db_inst["name"]
+        input_record["organization"] = db_inst["name"]
+        if db_inst.get("country") == "USA":
+            state_country = db_inst.get("state")
+        else:
+            state_country = db_inst.get("country")
+        input_record["location"] = "{}, {}".format(
+            db_inst["city"], state_country
+        )
+        if "department" in input_record:
+            input_record["department"] = fuzzy_retrieval(
+                [db_inst["departments"]],
+                ["name", "aka"],
+                input_record["department"],
+            )
