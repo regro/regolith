@@ -1,6 +1,6 @@
 **Added:**
 
-* Optional ``static_source`` key in the rc for the html build.k
+* Optional ``static_source`` key in the rc for the html build.
 
 **Changed:**
 
