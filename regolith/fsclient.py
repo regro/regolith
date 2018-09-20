@@ -71,7 +71,8 @@ def dump_yaml(filename, docs, inst=None):
     inst = YAML() if inst is None else inst
     inst.indent(mapping=2, sequence=4, offset=2)
     sorted_dict = ruamel.yaml.comments.CommentedMap()
-    for k, doc in docs.items():
+    for k in sorted(docs):
+        doc = docs[k]
         _id = doc.pop("_id")
         sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
         for kk in sorted(doc.keys()):
