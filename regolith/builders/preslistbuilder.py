@@ -106,8 +106,8 @@ class PresListBuilder(LatexBuilderBase):
                 presentations = deepcopy(self.gtx["presentations"])
                 types = ["all"]
                 #                types = ['invited']
-                statuses = ["all"]
-                #                statuses = ['accepted']
+                #statuses = ["all"]
+                statuses = ['accepted']
 
                 firstclean = list()
                 secondclean = list()
