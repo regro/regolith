@@ -17,7 +17,7 @@
 \begin{enumerate}
 {% for pres in presentations %}
 \item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
-          sentencecase(pres['title']))-}} },
+sentencecase(pres['title']))-}} },
 {%-set inst = pres['institution'] %}
 {%-if pres['type'] in ['colloquium', 'seminar']%}
 {\it {{ latex_safe(pres['type']).title()-}} },
@@ -31,10 +31,8 @@
 {%-endif %}
 { {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
 {{-pres['begin_day']-}}%
-{%-if not pres['end_day']%}
-{{ pres['begin_day_suffix']-}}%
-{%-elif pres['end_day'] == pres['begin_day']%}
-$^\mathrm{ {{ pres['begin_day_suffix']-}} }$%
+{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']%}
+$^\mathrm{ {{ pres['begin_day_suffix']}} }$
 {%-else %}
 --{{ pres['end_day']-}}
 $^\mathrm{ {{ pres['end_day_suffix']-}} }$
