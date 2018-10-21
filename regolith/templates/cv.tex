@@ -15,7 +15,7 @@
 \raggedbottom
 \raggedright
 \usepackage[svgnames]{xcolor}
-\usepackage{framed}
+\usepackage{framed, array}
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
@@ -226,11 +226,9 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 \resheading{Awards \& Honours}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{-2pt}
-\begin{center}\begin{tabular*}{6.6in}{l@{\extracolsep{\fill}}r}
+\begin{center}\begin{tabular*}{6.6in}{p{6in} c r}
 {% for agh in aghs %}
-    \multicolumn{2}{c}{ {{-agh['description']-}}
-                        \cftdotfill{\cftdotsep}
-                        {{-agh['year']-}} }\\
+    {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
 {% endfor %}
     \vphantom{E}
 \end{tabular*}
