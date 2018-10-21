@@ -294,6 +294,8 @@ def latex_safe(s, url_check=True, wrapper="url"):
     wrapper : str, optional
         The wrapper for wrapping urls defaults to url
     """
+    if not s:
+        return s
     if url_check:
         # If it looks like a URL make it a latex URL
         url_search = HTTP_RE.search(s)
