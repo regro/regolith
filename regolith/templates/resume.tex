@@ -120,6 +120,7 @@
 \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
 \textbf{\Large {{p['title']}} {{p['name']}}} & \textbf{\today} \\
 {{employment[0]['organization']}} & {{p['email']}} \\
+{{p.get('address', '')}} & {{p.get('phone', '')}} \\
 \end{tabular*}
 \\
 
