@@ -65,10 +65,10 @@ def fallback(cond, backup):
     return dec
 
 
-def all_docs_from_collection(client, collname):
+def all_docs_from_collection(client, collname, copy=True):
     """Yield all entries in for all collections of a given name in a given
     database. """
-    yield from client.all_documents(collname)
+    yield from client.all_documents(collname, copy=copy)
 
 
 SHORT_MONTH_NAMES = (

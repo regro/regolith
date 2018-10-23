@@ -3,6 +3,7 @@ import json
 import os
 import sys
 from collections import defaultdict
+from copy import deepcopy
 from glob import iglob
 
 import ruamel.yaml
@@ -199,8 +200,10 @@ class FileSystemClient:
         """Returns the collaction names for a database."""
         return set(self.dbs[dbname].keys())
 
-    def all_documents(self, collname):
+    def all_documents(self, collname, copy=True):
         """Returns an iteratable over all documents in a collection."""
+        if copy:
+            return deepcopy(self.chained_db.get(collname, {})).values()
         return self.chained_db.get(collname, {}).values()
 
     def insert_one(self, dbname, collname, doc):
