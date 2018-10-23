@@ -1,6 +1,5 @@
 """Builder for publication lists."""
 import os
-from copy import deepcopy
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -61,7 +60,6 @@ class PubListBuilder(LatexBuilderBase):
         for pub in all_docs_from_collection(rc.client, "citations"):
             if len(set(pub["author"]) & authors) == 0:
                 continue
-            pub = deepcopy(pub)
             bold_self = []
             for a in pub["author"]:
                 if a in authors:

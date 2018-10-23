@@ -1,5 +1,4 @@
 """Builder for websites."""
-import copy
 import os
 import shutil
 
@@ -81,7 +80,7 @@ class HtmlBuilder(BuilderBase):
         former_peeps_dir = os.path.join(self.bldir, "former")
         os.makedirs(peeps_dir, exist_ok=True)
         os.makedirs(former_peeps_dir, exist_ok=True)
-        peeps = copy.deepcopy(self.gtx["people"])
+        peeps = self.gtx["people"]
         for p in peeps:
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
