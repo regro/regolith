@@ -154,7 +154,7 @@ EXEMPLARS = {
             "begin_year": 2015,
             "end_day": 30,
             "end_month": "september",
-            "end_year": 2018,
+            "end_year": 2025,
             "funder": "NSF",
             "grant_id": "DMREF-1534910",
             "institution": "Columbia University",
