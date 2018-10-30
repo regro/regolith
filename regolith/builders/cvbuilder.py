@@ -1,6 +1,4 @@
 """Builder for CVs."""
-import copy
-
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
@@ -41,7 +39,6 @@ class CVBuilder(LatexBuilderBase):
         rc = self.rc
         for p in self.gtx["people"]:
             # so we don't modify the dbs when de-referencing
-            p = copy.deepcopy(p)
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
                 all_docs_from_collection(rc.client, "citations"),
