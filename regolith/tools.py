@@ -133,10 +133,7 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     pubs = []
     for pub in citations:
         if (
-            len(
-                (set(pub.get("author", [])) | set(pub.get("editor", [])))
-                & authors
-            )
+            len((set(pub.get("author", [])) | set(pub.get("editor", []))) & authors)
             == 0
         ):
             continue
@@ -253,10 +250,7 @@ def awards_grants_honors(p):
         d = {"description": latex_safe(x["name"])}
         if "year" in x:
             d.update(
-                {
-                    "year": x["year"],
-                    "_key": date_to_float(x["year"], x.get("month", 0)),
-                }
+                {"year": x["year"], "_key": date_to_float(x["year"], x.get("month", 0))}
             )
         elif "begin_year" in x and "end_year" in x:
             d.update(
@@ -304,14 +298,14 @@ def latex_safe(s, url_check=True, wrapper="url"):
                 start=(latex_safe(s[: url_search.start()])),
                 end=(latex_safe(s[url_search.end() :])),
                 wrapper=wrapper,
-                s=s[url_search.start() : url_search.end()],
+                s=latex_safe(s[url_search.start() : url_search.end()], url_check=False),
             )
             return url
     return (
-        s.replace("&", "\&")
-        .replace("$", "\$")
-        .replace("#", "\#")
-        .replace("_", "\_")
+        s.replace("&", r"\&")
+        .replace("$", r"\$")
+        .replace("#", r"\#")
+        .replace("_", r"\_")
     )
 
 
@@ -475,12 +469,8 @@ def dereference_institution(input_record, institutions):
             state_country = db_inst.get("state")
         else:
             state_country = db_inst.get("country")
-        input_record["location"] = "{}, {}".format(
-            db_inst["city"], state_country
-        )
+        input_record["location"] = "{}, {}".format(db_inst["city"], state_country)
         if "department" in input_record:
             input_record["department"] = fuzzy_retrieval(
-                [db_inst["departments"]],
-                ["name", "aka"],
-                input_record["department"],
+                [db_inst["departments"]], ["name", "aka"], input_record["department"]
             )
