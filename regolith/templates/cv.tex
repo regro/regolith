@@ -120,6 +120,7 @@
 \begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
 \textbf{\Large {{p['title']}} {{p['name']}}} & \textbf{\today} \\
 {{employment[0]['organization'] if employment else ''}} & {{p['email']}} \\
+{{p.get('address', '')}} & {{p.get('phone', '')}} \\
 \end{tabular*}
 \\
 
@@ -262,7 +263,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
       {% for o in proj['other'] %}
         \resitem{ {{-latex_safe(o)-}} }
       {% endfor %}
-      \resitem{Website: \url{ {{-proj['website']-}} } }
+      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
     }
 \vspace{0.5em}
 {% endfor %}
@@ -286,16 +287,16 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
       {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
         \resitem{
           {%- if 'website' in t %}
-            \href{ {{-t['website']-}} }{Website}.
+            \href{ {{-latex_safe_url(t['website'])-}} }{Website}.
           {%- endif %}
           {%- if 'syllabus' in t %}
-            \href{ {{-t['syllabus']-}} }{Syllabus}.
+            \href{ {{-latex_safe_url(t['syllabus'])-}} }{Syllabus}.
           {%- endif %}
           {%- if 'video' in t %}
-            \href{ {{-t['video']-}} }{Video}.
+            \href{ {{-latex_safe_url(t['video'])-}} }{Video}.
           {%- endif %}
           {%- if 'materials' in t %}
-            \href{ {{-t['materials']-}} }{Source Materials}.
+            \href{ {{-latex_safe_url(t['materials'])-}} }{Source Materials}.
           {%- endif %}
         }
       {% endif %}

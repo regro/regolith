@@ -26,8 +26,8 @@ builder_map = [
 
 def prep_figure():
     # Make latex file with some jinja2 in it
-    text = """
-    {{ get_file(db['groups']['ergs'], 'hello') }}"""
+    text = r"""
+    \include{ {{-get_file(db['groups']['ergs'], 'hello')-}}}"""
     with open("figure.tex", "w") as f:
         f.write(text)
     # make file to be loaded
@@ -114,6 +114,9 @@ def make_db():
     rmtree(repo)
 
 
+expected_base = os.path.join(os.path.abspath(os.path.dirname(__file__)), "outputs")
+
+
 def bootstrap_builders():
     g = make_db()
     repo = next(g)
@@ -125,16 +128,11 @@ def bootstrap_builders():
             prep_figure()
         main(["build", bm, "--no-pdf"])
         os.chdir(os.path.join(repo, "_build", bm))
-        expected_base = os.path.join(os.path.dirname(__file__), "outputs")
+        os.makedirs(expected_base, exist_ok=True)
         for root, dirs, files in os.walk("."):
             for file in files:
-
                 # Use this for bootstrapping the tests,
                 # confirm by hand that files look correct
-                if root != ".":
-                    os.makedirs(
-                        os.path.join(expected_base, bm, root), exist_ok=True
-                    )
                 if root == ".":
                     os.makedirs(os.path.join(expected_base, bm), exist_ok=True)
                     shutil.copyfile(
@@ -142,6 +140,9 @@ def bootstrap_builders():
                         os.path.join(expected_base, bm, file),
                     )
                 else:
+                    os.makedirs(
+                        os.path.join(expected_base, bm, root), exist_ok=True
+                    )
                     shutil.copyfile(
                         os.path.join(root, file),
                         os.path.join(expected_base, bm, root, file),
