@@ -21,7 +21,8 @@ from regolith.tools import (
     gets,
     LATEX_OPTS,
     month_and_year,
-    latex_safe)
+    latex_safe,
+    latex_safe_url)
 
 
 class BuilderBase(object):
@@ -114,6 +115,7 @@ class LatexBuilderBase(BuilderBase):
         gtx = self.gtx
         gtx["month_and_year"] = month_and_year
         gtx["latex_safe"] = latex_safe
+        gtx["latex_safe_url"] = latex_safe_url
 
     def run(self, cmd):
         """Run command in build dir"""
