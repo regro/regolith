@@ -64,11 +64,11 @@ def test_number_suffix(input, expected):
         (r'Website: https://github.com/CJ-Wright/'
          r'Masters_Thesis/raw/master/thesis.pdf hi',
          r'Website: \url{https://github.com/CJ-Wright/'
-         r'Masters\_Thesis/raw/master/thesis.pdf} hi', {}),
+         r'Masters_Thesis/raw/master/thesis.pdf} hi', {}),
         (r'Website: https://github.com/CJ-Wright/'
          r'Masters_Thesis/raw/master/thesis.pdf hi',
          r'Website: \href{https://github.com/CJ-Wright/'
-         r'Masters\_Thesis/raw/master/thesis.pdf} hi', {'wrapper': 'href'}),
+         r'Masters_Thesis/raw/master/thesis.pdf} hi', {'wrapper': 'href'}),
         (r'Website: https://github.com/CJ-Wright/'
          r'Masters_Thesis/raw/master/thesis.pdf hi',
          r'Website: https://github.com/CJ-Wright/'
