@@ -289,16 +289,16 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
       {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
         \resitem{
           {%- if 'website' in t %}
-            \href{ {{-latex_safe(t['website'], url_check=False)-}} }{Website}.
+            \href{ {{-latex_safe_url(t['website'])-}} }{Website}.
           {%- endif %}
           {%- if 'syllabus' in t %}
-            \href{ {{-latex_safe(t['syllabus'], url_check=False)-}} }{Syllabus}.
+            \href{ {{-latex_safe_url(t['syllabus'])-}} }{Syllabus}.
           {%- endif %}
           {%- if 'video' in t %}
-            \href{ {{-latex_safe(t['video'], url_check=False)-}} }{Video}.
+            \href{ {{-latex_safe_url(t['video'])-}} }{Video}.
           {%- endif %}
           {%- if 'materials' in t %}
-            \href{ {{-latex_safe(t['materials'], url_check=False)-}} }{Source Materials}.
+            \href{ {{-latex_safe_url(t['materials'])-}} }{Source Materials}.
           {%- endif %}
         }
       {% endif %}

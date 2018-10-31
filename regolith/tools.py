@@ -276,6 +276,11 @@ HTTP_RE = re.compile(
 )
 
 
+def latex_safe_url(s):
+    """Makes a string that is a URL latex safe."""
+    return s.replace("#", r"\#")
+
+
 def latex_safe(s, url_check=True, wrapper="url"):
     """Make string latex safe
 
@@ -296,7 +301,7 @@ def latex_safe(s, url_check=True, wrapper="url"):
                 start=(latex_safe(s[: url_search.start()])),
                 end=(latex_safe(s[url_search.end() :])),
                 wrapper=wrapper,
-                s=s[url_search.start() : url_search.end()].replace("#", r"\#"),
+                s=latex_safe_url(s[url_search.start() : url_search.end()]),
             )
             return url
     return (
