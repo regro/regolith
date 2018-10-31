@@ -298,7 +298,7 @@ def latex_safe(s, url_check=True, wrapper="url"):
                 start=(latex_safe(s[: url_search.start()])),
                 end=(latex_safe(s[url_search.end() :])),
                 wrapper=wrapper,
-                s=latex_safe(s[url_search.start() : url_search.end()], url_check=False),
+                s=s[url_search.start() : url_search.end()].replace("#", r"\#"),
             )
             return url
     return (

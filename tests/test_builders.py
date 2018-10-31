@@ -25,7 +25,7 @@ xls_check = ("B17", "B20", "B36")
 
 def prep_figure():
     # Make latex file with some jinja2 in it
-    text = """
+    text = r"""
     \include{ {{-get_file(db['groups']['ergs'], 'hello')-}}}"""
     with open("figure.tex", "w") as f:
         f.write(text)
