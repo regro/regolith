@@ -293,6 +293,8 @@ def latex_safe(s, url_check=True, wrapper="url"):
     wrapper : str, optional
         The wrapper for wrapping urls defaults to url
     """
+    if not s:
+        return s
     if url_check:
         # If it looks like a URL make it a latex URL
         url_search = HTTP_RE.search(s)
@@ -463,7 +465,7 @@ def dereference_institution(input_record, institutions):
     institutions : iterable of dicts
         The institutions
     """
-    inst = input_record.get("institution")
+    inst = input_record.get("institution") or input_record.get('organization')
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if db_inst:
         input_record["institution"] = db_inst["name"]
