@@ -70,9 +70,12 @@ class ReimbursementBuilder(BuilderBase):
             project = fuzzy_retrieval(
                 gtx["projects"], ["name", "_id"], ex["project"]
             )
-            grant = fuzzy_retrieval(
-                gtx["grants"], ["name", "_id"], project["grant"]
-            )
+            #            grant = fuzzy_retrieval(
+            #                gtx["grants"], ["alias", "name", "_id"], project["grant"]
+            #            )
+            grants = [doc for doc in gtx["grants"] if
+                     doc.get("alias") == project["grant"]]
+            grant = grants[0]
 
             ha = payee["home_address"]
             ws["B17"] = payee["name"]
@@ -115,7 +118,7 @@ class ReimbursementBuilder(BuilderBase):
                     value=item.get("segregated_expense", 0),
                 )
 
-            ws["C55"] = grant["account"]
+            ws["C55"] = grant.get("columbia_accountnr", "")
             ws["K55"] = total_amount
 
             if ex.get("expense_type", "business") == "business":
