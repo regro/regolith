@@ -1734,6 +1734,10 @@ SCHEMAS = {
                         "description": "The unallowed expenses",
                         "type": "float",
                     },
+                    "original_currency": {
+                        "description": "The currency the payment was made in",
+                        "type": "float",
+                    },
                 },
             },
         },
