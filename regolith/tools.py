@@ -406,24 +406,17 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
 
     """
     for doc in documents:
-        fs = []
-        for source in sources:
-            # TODO: This needs to be nested get
-            # (so source can be a tuple of keys)
-            v = doc.get(source, [])
-            if isinstance(v, list):
-                fs.extend(v)
-            else:
-                fs.append(v)
         returns = []
         for k in sources:
             ret = doc.get(k, [])
             if isinstance(ret, str):
                 returns.append(ret)
+            elif isinstance(ret, int):
+                returns.append(ret)
             elif ret:
                 returns.extend(ret)
         if not case_sensitive:
-            returns = [ret.lower() for ret in returns if isinstance(ret, str)]
+            returns = [reti.lower() for reti in returns if isinstance(reti, str)]
             if isinstance(value, str):
                 if value.lower() in frozenset(returns):
                     return doc
