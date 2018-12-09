@@ -53,13 +53,12 @@ class ReimbursementBuilder(BuilderBase):
             key=position_key,
             reverse=True,
         )
-        for n in ["expenses", "grants"]:
+        for n in ["expenses", "projects", "grants"]:
             gtx[n] = all_docs_from_collection(rc.client, n)
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def excel(self):
         gtx = self.gtx
-        #TODO: don't build all expense reports from all time
         for ex in gtx["expenses"]:
             # open the template
             wb = openpyxl.load_workbook(self.template)
@@ -68,13 +67,16 @@ class ReimbursementBuilder(BuilderBase):
             payee = fuzzy_retrieval(
                 gtx["people"], ["name", "aka", "_id"], ex["payee"]
             )
-            grants = {}
-            print(type(ex["grants"]))
-            for t in dict(ex["grants"]).keys():
-                print(t)
-                grants.update(fuzzy_retrieval(
-                    gtx["grants"], ["alias", "name", "_id"], t
-                ))
+            project = fuzzy_retrieval(
+                gtx["projects"], ["name", "_id"], ex["project"]
+            )
+            #            grant = fuzzy_retrieval(
+            #                gtx["grants"], ["alias", "name", "_id"], project["grant"]
+            #            )
+            grants = [doc for doc in gtx["grants"] if
+                     doc.get("alias") == project["grant"]]
+            grant = grants[0]
+
             ha = payee["home_address"]
             ws["B17"] = payee["name"]
             ws["B20"] = ha["street"]
@@ -116,7 +118,7 @@ class ReimbursementBuilder(BuilderBase):
                     value=item.get("segregated_expense", 0),
                 )
 
-            ws["C55"] = grants.get("columbia_accountnr", "")
+            ws["C55"] = grant.get("columbia_accountnr", "")
             ws["K55"] = total_amount
 
             if ex.get("expense_type", "business") == "business":
