@@ -6,6 +6,7 @@
 
 **Removed:** None
  - MTN: removed unused block from fuzzy_logic
+ - MTN: nicer handling of non-list objects in fuzzy_logic
 
 **Fixed:**
  - BUG: ints now handled the same as strings (appended) in fuzzy_logic
