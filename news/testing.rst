@@ -1,9 +1,6 @@
 **Added:** None
 
-**Changed:**
- - Removed projects from reimbursement builder.  Just asks for grants now
- - Grants is now a dict with a percentage so expense can be charged to mulitple
-   grants, as per spreadsheet
+**Changed:** None
 
 **Deprecated:** None
 
@@ -12,5 +9,6 @@
 
 **Fixed:**
  - BUG: ints now handled the same as strings (appended) in fuzzy_logic
+ - BUG: now passes gtx as a list to fuzzy_logic not as a generator
 
 **Security:** None
