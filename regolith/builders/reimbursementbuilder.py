@@ -2,6 +2,7 @@
 
 import datetime
 import os
+from pprint import pprint
 
 import openpyxl
 
@@ -54,7 +55,7 @@ class ReimbursementBuilder(BuilderBase):
             reverse=True,
         )
         for n in ["expenses", "projects", "grants"]:
-            gtx[n] = all_docs_from_collection(rc.client, n)
+            gtx[n] = list(all_docs_from_collection(rc.client, n))
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def excel(self):
