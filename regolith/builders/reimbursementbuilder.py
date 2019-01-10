@@ -2,7 +2,6 @@
 
 import datetime
 import os
-from pprint import pprint
 
 import openpyxl
 
@@ -71,12 +70,12 @@ class ReimbursementBuilder(BuilderBase):
             project = fuzzy_retrieval(
                 gtx["projects"], ["name", "_id"], ex["project"]
             )
-            #            grant = fuzzy_retrieval(
-            #                gtx["grants"], ["alias", "name", "_id"], project["grant"]
-            #            )
-            grants = [doc for doc in gtx["grants"] if
-                     doc.get("alias") == project["grant"]]
-            grant = grants[0]
+            grant = fuzzy_retrieval(
+                gtx["grants"], ["alias", "name", "_id"], project["grant"]
+            )
+#            grants = [doc for doc in gtx["grants"] if
+#                     doc.get("alias") == project["grant"]]
+#            grant = grants[0]
 
             ha = payee["home_address"]
             ws["B17"] = payee["name"]
