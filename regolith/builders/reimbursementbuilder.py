@@ -111,7 +111,7 @@ class ReimbursementBuilder(BuilderBase):
                     column=ue_column,
                     value=item.get("unsegregated_expense", 0),
                 )
-                total_amount += item.get("unsegregated_expenses", 0)
+                total_amount += item.get("unsegregated_expense", 0)
                 item_ws.cell(
                     row=r,
                     column=se_column,
