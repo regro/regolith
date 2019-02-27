@@ -6,6 +6,7 @@ from regolith.builders.postdocadbuilder import PostdocadBuilder
 from regolith.builders.preslistbuilder import PresListBuilder
 from regolith.builders.publistbuilder import PubListBuilder
 from regolith.builders.gradebuilder import GradeReportBuilder
+from regolith.builders.manuscriptreviewbuilder import ManRevBuilder
 from regolith.builders.reimbursementbuilder import ReimbursementBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
 from regolith.builders.cpbuilder import CPBuilder
@@ -21,6 +22,7 @@ BUILDERS = {
     "resume": ResumeBuilder,
     "current-pending": CPBuilder,
     "postdocad": PostdocadBuilder,
+    "review-man": ManRevBuilder,
     "preslist": PresListBuilder,
     "reimb": ReimbursementBuilder,
     "figure": FigureBuilder,
