@@ -629,6 +629,26 @@ EXEMPLARS = {
             "year": 2015,
         },
     ],
+    "refereeReports":{
+        "_id": "1902nature",
+        "claims": {
+            "foundWhat": ["gravity waves"],
+            "whyImportant": ["more money for ice cream"],
+        },
+        "didHow": ["measured with a ruler"],
+        "didWhat": ["found a much cheaper way to measure gravity waves"],
+        "editorEyesOnly": "to be honest, I don't believe a word of it",
+        "finalAssessment": ["The authors should really start over"],
+        "firstAuthorLastName": "Wingit",
+        "freewrite": "this comment didn't fit anywhere above",
+        "journal": "nature",
+        "month": "02",
+        "recommendation": "reject",
+        "reviewer": "sbillinge",
+        "status": "submitted",
+        "title": "a ruler approach to measuring gravity waves",
+        "year": "2019"
+    },
     "students": {
         "_id": "Human A. Person",
         "aka": ["H. A. Person"],
@@ -1651,6 +1671,139 @@ SCHEMAS = {
             "required": True,
             "type": "integer",
         },
+    },
+    "refereeReports": {
+        "_description": {
+            "description": "This is a collection of information that will be "
+            "be used to build a referee report. This should probably be private."
+        },
+        "_id": {
+            "description": "short representation, such as date and journal",
+            "required": True,
+            "type": "string",
+        },
+        "claims": {
+            "description": "Claims the authors are making",
+            "required": True,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "foundWhat": {
+                        "description": "What the authors claim to have found",
+                        "required": True,
+                        "schema": {
+                            "type": "string",
+                            "required": True,
+                        },
+                        "type": "list",
+                    },
+                    "whyImportant": {
+                        "description": "What importance the authors claim",
+                        "required": True,
+                        "schema": {
+                            "type": "string",
+                            "required": True,
+                        },
+                        "type": "list",
+                    },
+                            },
+            },
+            "type": "dict",
+        },
+        "didHow": {
+            "description": "How the study was done",
+            "required": True,
+            "schema": {
+                "type": "string",
+                "required": True,
+            },
+            "type": "list",
+        },
+        "didWhat": {
+            "description": "What the study was",
+            "required": True,
+            "schema": {
+                "type": "string",
+                "required": True,
+            },
+            "type": "list",
+        },
+        "editorEyesOnly": {
+            "description": "Comments you don't want passed to the author",
+            "required": False,
+            "type": "string",
+        },
+        "finalAssessment": {
+            "description": "Summary of impressions of the study",
+            "required": True,
+            "schema": {
+                "type": "string",
+                "required": True,
+            },
+            "type": "list",
+        },
+        "firstAuthorLastName": {
+            "description": "Last name of first author will be referred to "
+                           "with et al.",
+            "required": True,
+            "type": "string",
+        },
+        "freewrite": {
+            "description": "Things that you want to add that don't fit into "
+                           "any category above",
+            "required": False,
+            "type": "string",
+        },
+        "journal": {
+            "description": "name of the journal",
+            "required": True,
+            "type": "string",
+        },
+        "month": {
+            "description": "month when the review is being written",
+            "required": True,
+            "type": "string",
+        },
+        "recommendation": {
+            "description": "Your publication recommendation",
+            "required": True,
+            "type": "string",
+            "eallowed": [
+                "reject",
+                "asis",
+                "smalledits",
+                "diffjournal",
+                "majoredits",
+            ],
+        },
+        "reviewer": {
+            "description": "title of the paper under review",
+            "required": True,
+            "type": "string",
+        },
+        "status": {
+            "description": "Where you are with the review"
+            "the trip cancelled?",
+            "required": True,
+            "type": "string",
+            "eallowed": [
+                "accepted",
+                "declined",
+                "downloaded",
+                "inprogress",
+                "submitted",
+            ],
+        },
+        "title": {
+            "description": "title of the paper under review",
+            "required": True,
+            "type": "string",
+        },
+        "year": {
+            "description": "year when the review is being done",
+            "required": True,
+            "type": "string",
+        }
     },
     "students": {
         "_description": {
