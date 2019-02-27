@@ -1,0 +1,3 @@
+Referee private notes to the editor for {{firstAuthorLastName}} et al., {{title}}.
+
+{{ editorEyesOnly }}
