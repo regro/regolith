@@ -79,24 +79,6 @@ def test_latex_safe(input, expected, kwargs):
     output = latex_safe(input, **kwargs)
     assert output == expected
 
-@pytest.mark.parametrize(
-    "input,expected,kwargs",
-    [
-        ('$hi', r'\$hi', {}),
-        (r'Website: https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf hi',
-         r'Website: \url{https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf} hi', {}),
-        (r'Website: https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf hi',
-         r'Website: \href{https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf} hi', {'wrapper': 'href'}),
-        (r'Website: https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf hi',
-         r'Website: https://github.com/CJ-Wright/'
-         r'Masters\_Thesis/raw/master/thesis.pdf hi', {'url_check': False})
-    ],
-)
 def test_merge_collections(input, expected, kwargs):
     a = {
         "proposal": "just in a",
