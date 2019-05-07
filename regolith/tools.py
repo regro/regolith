@@ -11,6 +11,7 @@ from datetime import datetime
 
 from regolith.dates import month_to_int, date_to_float
 from regolith.sorters import doc_date_key, id_key, ene_date_key
+from regolith.chained_db import ChainDB
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -133,8 +134,9 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     pubs = []
     for pub in citations:
         if (
-            len((set(pub.get("author", [])) | set(pub.get("editor", []))) & authors)
-            == 0
+                len((set(pub.get("author", [])) | set(
+                    pub.get("editor", []))) & authors)
+                == 0
         ):
             continue
         pub = deepcopy(pub)
@@ -250,7 +252,8 @@ def awards_grants_honors(p):
         d = {"description": latex_safe(x["name"])}
         if "year" in x:
             d.update(
-                {"year": x["year"], "_key": date_to_float(x["year"], x.get("month", 0))}
+                {"year": x["year"],
+                 "_key": date_to_float(x["year"], x.get("month", 0))}
             )
         elif "begin_year" in x and "end_year" in x:
             d.update(
@@ -301,16 +304,16 @@ def latex_safe(s, url_check=True, wrapper="url"):
         if url_search:
             url = r"{start}\{wrapper}{{{s}}}{end}".format(
                 start=(latex_safe(s[: url_search.start()])),
-                end=(latex_safe(s[url_search.end() :])),
+                end=(latex_safe(s[url_search.end():])),
                 wrapper=wrapper,
-                s=latex_safe_url(s[url_search.start() : url_search.end()]),
+                s=latex_safe_url(s[url_search.start(): url_search.end()]),
             )
             return url
     return (
         s.replace("&", r"\&")
-        .replace("$", r"\$")
-        .replace("#", r"\#")
-        .replace("_", r"\_")
+            .replace("$", r"\$")
+            .replace("#", r"\#")
+            .replace("_", r"\_")
     )
 
 
@@ -413,7 +416,8 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
                 ret = [ret]
             returns.extend(ret)
         if not case_sensitive:
-            returns = [reti.lower() for reti in returns if isinstance(reti, str)]
+            returns = [reti.lower() for reti in returns if
+                       isinstance(reti, str)]
             if isinstance(value, str):
                 if value.lower() in frozenset(returns):
                     return doc
@@ -464,8 +468,37 @@ def dereference_institution(input_record, institutions):
             state_country = db_inst.get("state")
         else:
             state_country = db_inst.get("country")
-        input_record["location"] = "{}, {}".format(db_inst["city"], state_country)
+        input_record["location"] = "{}, {}".format(db_inst["city"],
+                                                   state_country)
         if "department" in input_record:
             input_record["department"] = fuzzy_retrieval(
-                [db_inst["departments"]], ["name", "aka"], input_record["department"]
+                [db_inst["departments"]], ["name", "aka"],
+                input_record["department"]
             )
+
+
+def merge_collections(a, b):
+    """
+    merge two collections into a single merged collection
+
+    for keys that are in both collections, the value in b will be kept
+
+    Parameters
+    ----------
+    a  the inferior collection (will lose values of shared keys)
+    b  the superior collection (will keep values of shared keys)
+
+    Returns
+    -------
+    the combined collection
+    """
+    b_for_a = {}
+    for k in a:
+        for kk, v in b.items():
+            if v.get('proposal_id', '') == k:
+                b_for_a[k] = kk
+    chained = {}
+    for k, v in b_for_a.items():
+        chained[k] = ChainDB(a[k],
+                             b[v])
+    return chained
