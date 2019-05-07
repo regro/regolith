@@ -79,7 +79,7 @@ def test_latex_safe(input, expected, kwargs):
     output = latex_safe(input, **kwargs)
     assert output == expected
 
-def test_merge_collections(input, expected, kwargs):
+def test_merge_collections():
     a = {
         "proposal": "just in a",
         "value": "value in a"
