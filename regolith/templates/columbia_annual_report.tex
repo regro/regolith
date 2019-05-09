@@ -1,0 +1,575 @@
+% (c) 2002 Matthew Boedicker <mboedick@mboedick.org> (original author)
+%     http://mboedick.org
+% (c) 2003-2007 David J. Grant <davidgrant-at-gmail.com> http://www.davidgrant.ca
+% (c) 2008 Nathaniel Johnston <nathaniel@nathanieljohnston.com>
+%     http://www.nathanieljohnston.com
+%
+% This work is licensed under the Creative Commons Attribution-Noncommercial-Share
+% Alike 2.5 License. To view a copy of this license, visit
+% http://creativecommons.org/licenses/by-nc-sa/2.5/ or send a letter to Creative
+% Commons, 543 Howard Street, 5th Floor, San Francisco, California, 94105, USA.
+{% raw %}
+\documentclass[letterpaper,11pt]{article}
+\newlength{\outerbordwidth}
+\pagestyle{empty}
+\raggedbottom
+\raggedright
+\usepackage[svgnames]{xcolor}
+\usepackage{framed, array}
+\usepackage{tocloft}
+\usepackage[backend=bibtex,maxnames=99]{biblatex}
+\usepackage{hyperref}
+
+%-----------------------------------------------------------
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=red            % color of external links
+}
+
+%-----------------------------------------------------------
+%Edit these values as you see fit
+
+% Width of border outside of title bars
+\setlength{\outerbordwidth}{3pt}
+% Outer background color of title bars (0 = black, 1 = white)
+\definecolor{shadecolor}{gray}{0.75}
+% Inner background color of title bars
+\definecolor{shadecolorB}{gray}{0.93}
+
+
+%-----------------------------------------------------------
+%Margin setup
+
+\setlength{\evensidemargin}{-0.25in}
+\setlength{\headheight}{0in}
+\setlength{\headsep}{0in}
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\paperheight}{11in}
+\setlength{\paperwidth}{8.5in}
+\setlength{\tabcolsep}{0in}
+\setlength{\textheight}{9.5in}
+\setlength{\textwidth}{7in}
+\setlength{\topmargin}{-0.3in}
+\setlength{\topskip}{0in}
+\setlength{\voffset}{0.1in}
+
+
+%-----------------------------------------------------------
+%Custom commands
+\newcommand{\resitem}[1]{\item #1 \vspace{-2pt}}
+\newcommand{\resheading}[1]{\vspace{8pt}
+  \parbox{\textwidth}{\setlength{\fboxsep}{\outerbordwidth}
+    \begin{shaded}
+    \setlength{\fboxsep}{0pt}\framebox[\textwidth][l]{\setlength{\fboxsep}{4pt}\fcolorbox{shadecolorB}{shadecolorB}{\textbf{\sffamily{\mbox{~}\makebox[6.762in][l]{\large #1} \vphantom{p\^{E}}}}}}
+    \end{shaded}
+  }\vspace{-5pt}
+}
+
+\newcommand{\ressubheadingshort}[3]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{c}{\textbf{#1} \cftdotfill{\cftdotsep} #2} \\
+        \textit{#3} & \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{-24pt}
+}
+
+\newcommand{\ressubheading}[4]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{c}{\textbf{#1} \cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{c}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{-24pt}
+}
+
+\newcommand{\ressubheadingitems}[5]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{c}{\textbf{#1} \cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{p{6.5in}}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{-32pt}
+    \begin{itemize}\renewcommand{\labelitemi}{}
+        \item\begin{itemize}
+        #5
+        \end{itemize}
+    \end{itemize}
+}
+
+\newcommand{\wideitem}[1]{\ \ \ \textemdash\ \ \  #1\par}
+%-----------------------------------------------------------
+{% endraw %}
+
+% Bibliography
+%%%\bibliography{ {{-p['_id']-}} }{}
+%\bibliographystyle{plain}
+
+\begin{document}
+
+
+\begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
+\textbf{\Large {{p['title']}} {{p['name']}}} & \textbf{\today} \\
+%{{employment[0]['organization'] if employment else ''}} & {{p['email']}} \\
+%{{p.get('address', '')}} & {{p.get('phone', '')}} \\
+\end{tabular*}
+\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Highlights from the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for pr in projects %}
+\subsection*{Project: {{-latex_safe(pr['name'])-}} }
+%\begin{itemize}
+    {% for h in pr.get('highlights', ()) %}
+        \wideitem{  {{latex_safe(h['description'])-}} }
+    {% endfor%}
+%    \end{itemize}
+{%endfor%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Major research focus area(s) and current projects.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Current and Pending grants}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for grant_block in [pending, current] %}
+{% if len(grant_block) > 0 %}
+{% for g in grant_block %}
+\vskip 12pt\noindent
+\textbf{Investigator:} {{ latex_safe(pi['name']) }}\
+\textbf{Other Agencies to which proposal submitted:}
+{{ latex_safe(g.get("other_funders_submitted", 'None')) }}
+
+\textbf{Support:}\ {{ name }}
+
+\textbf{Project/Proposal Title:}  {{ latex_safe(g['title'])-}}
+{% if g.get('multi_pi') %}
+\ (multi-PI grant.  {{latex_safe(pi['initials'])}}
+amt = \${{"{:,}".format(g['subaward_amount'])}})
+{% endif %}
+
+\textbf{Source of Support:}\
+{{ g.get('funder', 'None') }}
+
+\textbf{Total Award Amount}:
+\${{-"{:,}".format(g.get('amount', 0)) }}\\
+\textbf{ Total Award Period Covered:}
+{{g.get('award_start_date')}} - {{g.get('award_end_date')}}
+
+\textbf{Location of Project:} {{ g.get('institution' ) }}
+
+\textbf{Person Months per Year Committed to Project:}
+\textbf{Academic:} {{ g.get('person_months_academic', 0) }}\
+\textbf{Summer:} {{ g.get('person_months_summer', 0) }}
+
+\textbf{Describe Research Including Synergies and Delineation with
+Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
+{% endfor %}
+{% endif %}
+\vskip 14pt
+{% endfor %}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Invited, key and plenary talks in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Honors and awards in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Publications in journals in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Publications in peer reviewed conferences in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Other published material in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Technology transfer, licensing, startups in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Key metrics or mechanisms to assess impact}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Courses taught in {{ p["pre_begin_period"][-4:] }} - {{ p["begin_period"][-4:] }} }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Fall {{p["pre_begin_period"][-4:]}} }
+\begin{itemize}
+{% for c in p['teaching'] %}
+    {% if c['year']|string in p["pre_begin_period"]  and c['semester'] == 'Fall'%}
+        \item  {\bf {{latex_safe(c['course'])-}} }\\
+                {% if 'none' not in c['courseid'] %}
+                Enrollment: {{ latex_safe(c['enrollment']|string) }} \\
+                {% if c.get('evaluation')%}
+                Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
+                Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
+                Selected student comment:
+                \begin{itemize}\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
+                {% endif%}{%endif%}
+    {% endif %}
+{%endfor%}
+\end{itemize}
+\subsection*{Spring {{p["begin_period"][-4:]}} }
+\begin{itemize}
+{% for c in p['teaching'] %}
+    {% if c['year']|string in p["begin_period"] and c['semester'] == 'Spring' %}
+        \item  {\bf {{latex_safe(c['course'])-}} }\\
+                {% if 'none' not in c['courseid'] %}
+                Enrollment: {{ latex_safe(c['enrollment']|string) }} \\
+                {% if c.get('evaluation')%}
+                Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
+                Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
+                Selected student comment:
+                \begin{itemize}\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
+                {% endif%}{%endif%}
+    {% endif %}
+{%endfor%}
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Courses taught in {{ p["begin_period"][-4:] }} - {{ p["end_period"][-4:]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Fall {{p["begin_period"][-4:]}} }
+\begin{itemize}
+{% for c in p['teaching'] %}
+    {% if c['year']|string in p["begin_period"] and c['semester'] == 'Fall' %}
+        \item  {\bf {{latex_safe(c['course'])-}} }\\
+                {% if 'none' not in c['courseid'] %}
+                Enrollment: {{ latex_safe(c['enrollment']|string) }} \\
+                {% if c.get('evaluation')%}
+                Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
+                Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
+                Selected student comment:
+                \begin{itemize}\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
+                {% endif%}{%endif%}
+    {% endif %}
+{%endfor%}
+\end{itemize}
+\subsection*{Spring {{p["end_period"][-4:]}} }
+\begin{itemize}
+{% for c in p['teaching'] %}
+    {% if c['year']|string in p["end_period"]  and c['semester'] == 'Spring' %}
+        \item  {\bf {{latex_safe(c['course'])-}} }\\
+                {% if 'none' not in c['courseid'] %}
+                Enrollment: {{ latex_safe(c['enrollment']|string) }} \\
+                {% if c.get('evaluation')%}
+                Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
+                Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
+                Selected student comment:
+                \begin{itemize}\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
+                {% endif%}{%endif%}
+    {% endif %}
+{%endfor%}
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Courses expected to teach in {{ p["end_period"][-4:] }} to {{ p["post_end_period"][-4:]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Fall {{p["end_period"][-4:]}} }
+\begin{itemize}
+{% for c in p['teaching'] %}
+    {% if c['year']|string in p["end_period"]  and c['semester'] == 'Fall' %}
+        \item  {\bf {{latex_safe(c['course'])-}} }\\
+    {% endif %}
+{%endfor%}
+\end{itemize}
+\subsection*{Spring {{p["post_end_period"][-4:]}} }
+\begin{itemize}
+{% for c in p['teaching'] %}
+    {% if c['year']|string in p["post_end_period"]  and c['semester'] == 'Spring' %}
+        \item  {\bf {{latex_safe(c['course'])-}} }\\
+    {% endif %}
+{%endfor%}
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Current undergraduate advising }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Current MS advising }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Graduate and Postgraduate advising}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{ Primarily advised Ph.D. students who graduated in the past 5 years }
+\subsection*{ Primarily advised Ph.D. students with dissertations currently in progress }
+\subsection*{ Other (examination committees, GSAS, CUMC advising etc.) }
+\subsection*{ Postdoctoral researchers and research scientists supported on grants}
+\subsection*{ Self-funded visitors contributing to research}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Activities for developing and improving curriculum, teaching materials and methodologies}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Service to the department in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Service to the University in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Service to the profession in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Outreach to communities in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Laboratory space I currently utilize to conduct research}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Shared laboratory space I currently utilize to conduct research}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Other resources utilized in the Department, School and University }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Additional resources and enhancements that would have a large impact on research}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Resources utilized for teaching }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Additional resources and enhancements that would have a large impact on teaching}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Additional activities or Information }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+{% for pr in projects %}
+\ressubheadingitems{Project: {{-latex_safe(pr['name'])-}} }
+    { Columbia University }
+    { PhD }
+    { June 1968 }
+    { {% for h in pr.get('highlights', ()) %}
+        \resitem{ {{-latex_safe(h['description'])-}} }
+      {% endfor%}
+    }
+{%endfor%}
+{% for pr in projects %}
+\ressubheading{Project: {{-latex_safe(pr['name'])-}} }
+    { Columbia University }
+    { PhD }
+    { {% for h in pr.get('highlights', ()) %}
+        { {{-latex_safe(h['description'])-}} }
+      {% endfor%}
+    }
+{%endfor%}
+{% for pr in projects %}
+\ressubheadingshort{Project: {{-latex_safe(pr['name'])-}} }
+    { Columbia University }
+    { {% for h in pr.get('highlights', ()) %}
+        { {{-latex_safe(h['description'])-}} }
+      {% endfor%}
+    }
+{%endfor%}
+
+\end{document}
+
+{% for e in education %}
+\ressubheadingitems{ {{-latex_safe(e['institution'])-}} }
+    { {{-e['location']-}} }
+    { {{-latex_safe(e['degree'])-}} }
+    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} -
+      {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
+    { {% for o in e.get('other', ()) %}
+        \resitem{ {{-latex_safe(o)-}} }
+     {% endfor%}
+     {% if 'gpa' in e %}
+        \resitem{GPA: {{e['gpa']-}} }
+     {% endif %}
+    }
+{% endfor %}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Employment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for e in employment %}
+\ressubheadingitems{ {{-latex_safe(e['organization'])-}} }
+    { {{-e['location']-}} }
+    { {{-latex_safe(e['position'])-}} }
+    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} -
+      {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
+    { {% for o in e.get('other', ()) %}
+        \resitem{ {{-latex_safe(o)-}} }
+     {% endfor%}
+    }
+{% endfor %}
+
+
+{% if len(pi_grants) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Grants as Lead PI}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\Large\underline{Lifetime Total Grant Amount as PI:} \textbf{ \${{"{:,.2f}".format(pi_amount)}} }}
+
+{% for grant in pi_grants %}
+\ressubheadingitems{ {{-grant['title']-}} }
+    { \${{-"{:,.2f}".format(grant['amount'])-}} }
+    { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
+    { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
+      {{month_and_year(grant.get('end_month'), grant.get('end_year'))-}} }
+    {
+      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
+        \resitem{
+          {%- if 'narrative' in grant %}
+            \href{ {{-grant['narrative']-}} }{Narrative}.
+          {%- endif %}
+          {%- if 'benefit_of_collaboration' in grant %}
+            \href{ {{-grant['benefit_of_collaboration']-}} }{Benefit of Collaboration}.
+          {%- endif %}
+          {%- if 'call_for_proposals' in grant %}
+            \href{ {{-grant['call_for_proposals']-}} }{Call for Proposals}.
+          {%- endif %}
+        }
+      {% endif %}
+    }
+{% endfor %}
+{% endif %}
+
+
+{% if len(coi_grants) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Grants as Non-Lead PI}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\Large\underline{Lifetime Subaward Grant Amount:} \textbf{ \${{"{:,.2f}".format(coi_sub_amount)}} }
+subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
+
+{% for grant in coi_grants %}
+\ressubheadingitems{ {{-grant['title']-}} }
+    { \${{-"{:,.2f}".format(grant['subaward_amount'])-}} }
+    { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
+    { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
+      {{month_and_year(grant.get('end_month'), grant.get('end_year'))-}} }
+    {
+      \resitem{Role: {{grant['me']['position']-}} }
+      \resitem{Total award: \${{-"{:,.2f}".format(grant['amount'])-}} }
+      \resitem{PI: {{grant['pi']['name']}} at {{grant['pi']['institution']}} }
+      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
+        \resitem{
+          {%- if 'narrative' in grant %}
+            \href{ {{-grant['narrative']-}} }{Narrative}.
+          {%- endif %}
+          {%- if 'benefit_of_collaboration' in grant %}
+            \href{ {{-grant['benefit_of_collaboration']-}} }{Benefit of Collaboration}.
+          {%- endif %}
+          {%- if 'call_for_proposals' in grant %}
+            \href{ {{-grant['call_for_proposals']-}} }{Call for Proposals}.
+          {%- endif %}
+        }
+      {% endif %}
+    }
+{% endfor %}
+{% endif %}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Awards \& Honours}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{-2pt}
+\begin{center}\begin{tabular*}{6.6in}{p{6in} c r}
+{% for agh in aghs %}
+    {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
+{% endfor %}
+    \vphantom{E}
+\end{tabular*}
+\end{center}\vspace*{-16pt}
+
+
+{%if len(pubs) > 0%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{All Publications}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+{% for pub in pubs %}
+    \item \fullcite{ {{-pub['_id']-}} }
+{% endfor %}
+\end{enumerate}
+{% endif %}
+
+
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Major Software Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for proj in projects %}
+{% set me = proj['team'][0] %}
+\ressubheadingitems{ {{-proj['_id']-}} }
+    { {{-me['position']-}} }
+    { {{-proj['description']-}} }
+    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
+      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
+    {
+      {% for o in proj['other'] %}
+        \resitem{ {{-latex_safe(o)-}} }
+      {% endfor %}
+      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
+    }
+\vspace{0.5em}
+{% endfor %}
+
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Teaching Experience}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for t in p['teaching'] %}
+\ressubheadingitems{ {{-t['course']-}} }
+    { {{-t['organization']-}} }
+    { {{-t['position']-}} }
+    { {{-month_and_year(t.get('month'), t.get('year'))-}}
+      {% if 'end_year' in t %}-
+        {{-month_and_year(t.get('end_month'), t.get('end_year'))-}}
+      {% endif %}
+    }
+    { {% if 'description' in t %}
+        \resitem{ {{-latex_safe(t['description'])-}} }
+      {% endif %}
+      {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
+        \resitem{
+          {%- if 'website' in t %}
+            \href{ {{-latex_safe_url(t['website'])-}} }{Website}.
+          {%- endif %}
+          {%- if 'syllabus' in t %}
+            \href{ {{-latex_safe_url(t['syllabus'])-}} }{Syllabus}.
+          {%- endif %}
+          {%- if 'video' in t %}
+            \href{ {{-latex_safe_url(t['video'])-}} }{Video}.
+          {%- endif %}
+          {%- if 'materials' in t %}
+            \href{ {{-latex_safe_url(t['materials'])-}} }{Source Materials}.
+          {%- endif %}
+        }
+      {% endif %}
+    }
+{% endfor %}
+
+
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Memberships}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for m in p['membership'] %}
+\ressubheadingshort{ {{-latex_safe(m['organization'])-}} }
+    {\em{ {{-month_and_year(m.get('begin_month'), m.get('begin_year'))-}} -
+          {{-month_and_year(m.get('end_month'), m.get('end_year'))-}} } }
+    { {{-latex_safe(m['position'])-}} }
+{% endfor %}
+
+
+{%if 'skills' in p and len(p['skills']) > 0%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Skills}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+{%for cat, cgrp in groupby(p['skills'], key=category_val)%}
+  \item {{cat}}
+  \begin{itemize}{%for lvl, lgrp in groupby(cgrp, key=level_val)%}
+    \resitem{\textbf{ {{-lvl.capitalize()}}:} {{gets(lgrp, 'name', '<nemo>') | join(', ')-}} }
+  {%endfor%}\end{itemize}
+{%endfor%}
+\end{itemize}
+{%endif%}
+\end{document}
