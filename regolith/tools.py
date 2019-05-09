@@ -359,7 +359,7 @@ def filter_projects(projects, authors, reverse=False):
     ----------
     projects : list of dict
         The publication citations
-    authors : set of str
+    authors : set of list of str
         The authors to be filtered against
     reverse : bool, optional
         If True reverse the order, defaults to False
@@ -369,8 +369,9 @@ def filter_projects(projects, authors, reverse=False):
         team_names = set(gets(proj["team"], "name"))
         if len(team_names & authors) == 0:
             continue
-        proj = dict(proj)
-        proj["team"] = [x for x in proj["team"] if x["name"] in authors]
+        # FIXME delete these lines if not required.  I think they are wrong (SJLB)
+        #proj = dict(proj)
+        #proj["team"] = [x for x in proj["team"] if x["name"] in authors]
         projs.append(proj)
     projs.sort(key=id_key, reverse=reverse)
     return projs
