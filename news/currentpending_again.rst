@@ -14,4 +14,5 @@
  - cpbuilder includes initials when it is a multi-pi grant
  - filter_grants in tools.py bug fixed that incorrectly reassigns team members
  - updated docstring on filter_grants to make it clearer
+
 **Security:** None
