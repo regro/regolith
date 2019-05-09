@@ -4,6 +4,7 @@
 **Changed:**
  - current and pending builder extended to build c+p from merged proposal and grants collections
  - added filter for cppflag so you can have current grants that don't appear in the current and pending form by setting cppflag to false in the db
+
 **Deprecated:** None
 
 **Removed:** None
