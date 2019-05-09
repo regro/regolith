@@ -1,8 +1,10 @@
 """Builder for CVs."""
 import datetime as dt
+from copy import copy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
+from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int
 from regolith.sorters import ene_date_key, position_key
 from regolith.builders.cpbuilder import is_current, is_pending, has_finished, has_started
@@ -19,6 +21,51 @@ from regolith.tools import (
 )
 
 BEGIN_YEAR = 2018
+
+def merge_collections(a, b, target_id):
+    """
+    merge two collections into a single merged collection
+
+    for keys that are in both collections, the value in b will be kept
+
+    Parameters
+    ----------
+    a  the inferior collection (will lose values of shared keys)
+    b  the superior collection (will keep values of shared keys)
+    target_id  str  the name of the key used in b to dereference ids in a
+
+    Returns
+    -------
+    the combined collection.  Note that it returns a collection only containing
+    merged items from a and b that are dereferenced in b, i.e., the merged
+    intercept.  If you want the union you can update the returned collection
+    with a.
+
+    Examples
+    --------
+    >>>  grants = merge_collections(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
+
+    This would merge all entries in the proposals collection with entries in the
+    grants collection for which "_id" in proposals has the value of
+    "proposal_id" in grants.
+    """
+    adict = {}
+    for k in a:
+        adict[k.get("_id")] = k
+    bdict = {}
+    for k in b:
+        bdict[k.get("_id")] = k
+
+    b_for_a = {}
+    for k in adict:
+        for kk, v in bdict.items():
+            if v.get(target_id, "") == k:
+                b_for_a[k] = kk
+    chained = {}
+    for k, v in b_for_a.items():
+        chained[k] = ChainDB(adict[k],
+                             bdict[v])
+    return list(chained.values())
 
 class AppraisalBuilder(LatexBuilderBase):
     """Build CV from database entries"""
@@ -74,7 +121,7 @@ class AppraisalBuilder(LatexBuilderBase):
         # current and pending
         #########
         pi = fuzzy_retrieval(
-            self.gtx["people"], ["aka", "name"], "sbillinge"
+            self.gtx["people"], ["aka", "name", "_id"], "sbillinge"
         )
         pi['initials'] = "SJLB"
 
@@ -112,7 +159,7 @@ class AppraisalBuilder(LatexBuilderBase):
         pending_grants = [
             g
             for g in self.gtx["proposals"]
-            if is_pending(g["application_status"])
+            if g["application_status"] == "pending"
         ]
         for g in pending_grants:
             for person in g["team"]:
@@ -150,6 +197,7 @@ class AppraisalBuilder(LatexBuilderBase):
         self.render(
             "columbia_annual_report.tex",
             "billinge-ann-report" + ".tex",
+            pi=pi,
             p=me,
             projects=projs,
             pending = pending_grants,
