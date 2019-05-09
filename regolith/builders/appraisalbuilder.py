@@ -113,7 +113,7 @@ class AppraisalBuilder(LatexBuilderBase):
         me["begin_period"] = dt.date.strftime(begin_period,"%m/%d/%Y")
         me["pre_begin_period"] = dt.date.strftime(pre_begin_period,"%m/%d/%Y")
         me["end_period"] = dt.date.strftime(end_period,"%m/%d/%Y")
-        me["post_end_period"] = dt.date.strftime(end_period,"%m/%d/%Y")
+        me["post_end_period"] = dt.date.strftime(post_end_period,"%m/%d/%Y")
         projs = filter_projects(
             self.gtx["projects"], set(["sbillinge"])
         )
@@ -193,6 +193,11 @@ class AppraisalBuilder(LatexBuilderBase):
         #########
         # current and pending
         #########
+
+        #########
+        # teaching
+        #########
+
 
         self.render(
             "columbia_annual_report.tex",
