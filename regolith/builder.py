@@ -10,6 +10,7 @@ from regolith.builders.reimbursementbuilder import ReimbursementBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
 from regolith.builders.cpbuilder import CPBuilder
 from regolith.builders.figurebuilder import FigureBuilder
+from regolith.builders.appraisalbuilder import AppraisalBuilder
 
 
 BUILDERS = {
@@ -24,6 +25,7 @@ BUILDERS = {
     "preslist": PresListBuilder,
     "reimb": ReimbursementBuilder,
     "figure": FigureBuilder,
+    "annual-appraisal" : AppraisalBuilder
 }
 
 
