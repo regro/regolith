@@ -15,6 +15,7 @@ from regolith.tools import (
     make_bibtex_file,
     fuzzy_retrieval,
     dereference_institution,
+
 )
 
 BEGIN_YEAR = 2018
@@ -75,10 +76,20 @@ class AppraisalBuilder(LatexBuilderBase):
         pi = fuzzy_retrieval(
             self.gtx["people"], ["aka", "name"], "sbillinge"
         )
+        pi['initials'] = "SJLB"
 
-        grants = list(self.gtx["grants"])
+        grants = merge_collections(self.gtx["proposals"], self.gtx["grants"],
+                                   "proposal_id")
+        for g in grants:
+            for person in g["team"]:
+                rperson = fuzzy_retrieval(
+                    self.gtx["people"], ["aka", "name"], person["name"]
+                )
+                if rperson:
+                    person["name"] = rperson["name"]
+
         current_grants = [
-            g
+            dict(g)
             for g in grants
             if is_current(
                 *[
@@ -94,33 +105,44 @@ class AppraisalBuilder(LatexBuilderBase):
                 ]
             )
         ]
-        pending_grants = [
-            g
-            for g in grants
-            if is_pending(
-                *[g[s] for s in ["begin_day", "begin_month", "begin_year"]]
-            )
-        ]
         current_grants, _, _ = filter_grants(
             current_grants, {pi["name"]}, pi=False, multi_pi=True
         )
+
+        pending_grants = [
+            g
+            for g in self.gtx["proposals"]
+            if is_pending(g["application_status"])
+        ]
+        for g in pending_grants:
+            for person in g["team"]:
+                rperson = fuzzy_retrieval(
+                    self.gtx["people"], ["aka", "name"], person["name"]
+                )
+                if rperson:
+                    person["name"] = rperson["name"]
         pending_grants, _, _ = filter_grants(
             pending_grants, {pi["name"]}, pi=False, multi_pi=True
         )
         grants = pending_grants + current_grants
         for grant in grants:
             grant.update(
-                award_start_date="{2}-{1}-{0}".format(
+                award_start_date="{2}/{1}/{0}".format(
                     grant["begin_day"],
                     month_to_int(grant["begin_month"]),
                     grant["begin_year"],
                 ),
-                award_end_date="{2}-{1}-{0}".format(
+                award_end_date="{2}/{1}/{0}".format(
                     grant["end_day"],
                     month_to_int(grant["end_month"]),
                     grant["end_year"],
                 ),
             )
+        badids = [i["_id"] for i in current_grants if not i.get('cppflag', "")]
+        iter = copy(current_grants)
+        for grant in iter:
+            if grant["_id"] in badids:
+                current_grants.remove(grant)
         #########
         # current and pending
         #########
