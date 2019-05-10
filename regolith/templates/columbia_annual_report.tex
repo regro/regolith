@@ -291,14 +291,41 @@ Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Current undergraduate advising }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(undergrads) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in undergrads %}
+        \item   {{latex_safe(ugr['name'])-}} \textemdash {{latex_safe(ugr['role'])}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Current MS advising }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(masters) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in masters %}
+        \item   {{latex_safe(ugr['name'])-}} \textemdash {{latex_safe(ugr['role'])}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Graduate and Postgraduate advising}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{ Primarily advised Ph.D. students who graduated in the past 5 years }
-\subsection*{ Primarily advised Ph.D. students with dissertations currently in progress }
+\section*{ Primarily advised Ph.D. students with dissertations currently in progress }
+{% if len(currentphds) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in currentphds %}
+        \item   {{latex_safe(ugr['name'])-}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 \subsection*{ Other (examination committees, GSAS, CUMC advising etc.) }
 \subsection*{ Postdoctoral researchers and research scientists supported on grants}
 \subsection*{ Self-funded visitors contributing to research}
