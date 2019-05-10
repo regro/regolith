@@ -191,22 +191,55 @@ class AppraisalBuilder(LatexBuilderBase):
             if grant["_id"] in badids:
                 current_grants.remove(grant)
         #########
-        # current and pending
+        # end current and pending
         #########
 
         #########
-        # teaching
+        # advising
         #########
-
-
+        undergrads = []
+        for p in self.gtx["people"]:
+#            print(p.get("name",p["_id"]))
+            for g in p.get("employment"):
+                if g.get("status") == "undergrad":
+                    end_date = dt.date(g.get("end_year"), g.get("end_month", 12), g.get("end_day", 28))
+                    if end_date >= begin_period:
+                        p['role'] = g.get("position")
+                        p['status'] = "ug"
+                        undergrads.append(p)
+        masters = []
+        for p in self.gtx["people"]:
+            for g in p.get("employment"):
+                if g.get("status") == "ms":
+                    end_date = dt.date(g.get("end_year"),
+                                       g.get("end_month", 12),
+                                       g.get("end_day", 28))
+                    if end_date >= begin_period:
+                        p['role'] = g.get("position")
+                        p['status'] = "ms"
+                        masters.append(p)
+        currents = []
+        for p in self.gtx["people"]:
+            for g in p.get("employment"):
+                if g.get("status") == "phd":
+                    end_date = dt.date(g.get("end_year"),
+                                       g.get("end_month", 12),
+                                       g.get("end_day", 28))
+                    if end_date >= begin_period:
+                        p['role'] = g.get("position")
+                        p['status'] = "ms"
+                        currents.append(p)
         self.render(
             "columbia_annual_report.tex",
             "billinge-ann-report" + ".tex",
             pi=pi,
             p=me,
             projects=projs,
-            pending = pending_grants,
-            current = current_grants,
+            pending=pending_grants,
+            current=current_grants,
+            undergrads=undergrads,
+            masters=masters,
+            currentphds=currents
         )
         self.pdf("billinge-ann-report")
 
