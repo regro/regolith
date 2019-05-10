@@ -316,7 +316,16 @@ Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
 \resheading{ Graduate and Postgraduate advising}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{ Primarily advised Ph.D. students who graduated in the past 5 years }
-\section*{ Primarily advised Ph.D. students with dissertations currently in progress }
+{% if len(graduatedphds) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in graduatedphds %}
+        \item   {{latex_safe(ugr['name']) }}\textemdash Graduated {{ugr['end_year']}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+\section*{ Primarily advised Ph.D. students with dissertations in progress }
 {% if len(currentphds) == 0 %}
     {{ None }}
 {% else %}
@@ -326,45 +335,250 @@ Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
     {%endfor%}
     \end{itemize}
 {% endif %}
-\subsection*{ Other (examination committees, GSAS, CUMC advising etc.) }
-\subsection*{ Postdoctoral researchers and research scientists supported on grants}
-\subsection*{ Self-funded visitors contributing to research}
+\section*{ Other (examination committees, GSAS, CUMC advising etc.) }
+
+
+\section*{ Postdoctoral researchers and research scientists supported on grants}
+{% if len(postdocs) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in postdocs %}
+        \item   {{latex_safe(ugr['name'])-}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+\section*{ Self-funded visitors contributing to research}
+{% if len(visitors) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in visitors %}
+        \item   {{latex_safe(ugr['name'])-}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Activities for developing and improving curriculum, teaching materials and methodologies}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(curric_dev) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in curric_dev %}
+        {% for s in ugr['activities'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{ Service to the department in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+\resheading{ Service to the Department in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(dept_service) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in dept_service %}
+        {% for s in ugr['service'] %}
+            \item   {{latex_safe(s['name'])-}}  \\
+        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{ Service to the University in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+\resheading{ Service to the School or University in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(uni_service) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in uni_service %}
+        {% for s in ugr['service'] %}
+            \item   {{latex_safe(s['name'])-}}
+                {% if s['month'] %}
+                \textemdash {{s['month']}}
+                {% endif %}\\
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Service to the profession in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(prof_service) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in prof_service %}
+        {% for s in ugr['service'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Outreach to communities in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(outreach) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in outreach %}
+        {% for s in ugr['service'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Laboratory space I currently utilize to conduct research}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(lab) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in lab %}
+        {% for s in ugr['facilities'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Shared laboratory space I currently utilize to conduct research}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(shared) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in shared %}
+        {% for s in ugr['facilities'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Other resources utilized in the Department, School and University }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(facilities_other) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in facilities_other %}
+        {% for s in ugr['facilities'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Additional resources and enhancements that would have a large impact on research}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(fac_wishlist) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in fac_wishlist %}
+        {% for s in ugr['facilities'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Resources utilized for teaching }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(fac_teaching) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in fac_teaching %}
+        {% for s in ugr['facilities'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Additional resources and enhancements that would have a large impact on teaching}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(tch_wishlist) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in tch_wishlist %}
+        {% for s in ugr['facilities'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Additional activities or Information }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(other_activities) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}
+    {% for ugr in other_activities %}
+        {% for s in ugr['activities'] %}
+            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+                \\ {\it {{s['role']}} }
+                {%endif-%}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
+                        {% endfor%}
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 
 \end{document}
 {% for pr in projects %}

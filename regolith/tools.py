@@ -6,7 +6,7 @@ import platform
 import re
 import sys
 import time
-from copy import deepcopy
+from copy import deepcopy, copy
 from calendar import monthrange
 
 from datetime import datetime, date, timedelta
@@ -229,6 +229,110 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
         grants.append(grant)
     grants.sort(key=ene_date_key, reverse=reverse)
     return grants, total_amount, subaward_amount
+
+
+def filter_employment_for_advisees(people, begin_period, status):
+    advisees = []
+    for p in people:
+        for i in p.get("employment"):
+            if i.get("status") == status:
+                end_date = date(i.get("end_year"),
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    p['role'] = i.get("position")
+                    p['status'] = status
+                    p['end_year'] = i.get("end_year", "n/a")
+                    advisees.append(p)
+    return advisees
+
+
+def filter_service(ppl, begin_period, type):
+    service = []
+    people = copy(ppl)
+    for p in people:
+        myservice = []
+        svc = copy(p.get("service",[]))
+        for i in svc:
+            if i.get("type") == type:
+                if i.get('year'):
+                    end_year = i.get('year')
+                elif i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    if not i.get('month'):
+                        month = i.get("begin_month",0)
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                    else:
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                    myservice.append(i)
+        p['service'] = myservice
+        if len(p['service']) > 0:
+            service.append(p)
+    return service
+
+
+def filter_facilities(people, begin_period, type):
+    facilities = []
+    for p in people:
+        myfacility = []
+        svc = copy(p.get("facilities",[]))
+        for i in svc:
+            if i.get("type") == type:
+                if i.get('year'):
+                    end_year = i.get('year')
+                elif i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    if not i.get('month'):
+                        month = i.get("begin_month",0)
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                    else:
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                    myfacility.append(i)
+        p['facilities'] = myfacility
+        if len(p['facilities']) > 0:
+            facilities.append(p)
+    return facilities
+
+
+def filter_activities(people, begin_period, type):
+    activities = []
+    for p in people:
+        myactivity = []
+        svc = copy(p.get("activities",[]))
+        for i in svc:
+            if i.get("type") == type:
+                if i.get('year'):
+                    end_year = i.get('year')
+                elif i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    if not i.get('month'):
+                        month = i.get("begin_month",0)
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                    else:
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                    myactivity.append(i)
+        p['activities'] = myactivity
+        if len(p['activities']) > 0:
+            activities.append(p)
+    return activities
 
 
 def awards_grants_honors(p):
