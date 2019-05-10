@@ -1537,6 +1537,38 @@ SCHEMAS = {
             "required": False,
             "type": "boolean",
         },
+        "advising": {
+            "description": "students who have been advised in some capacity",
+            "required": False,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "active": {"required": True, "type": "boolean"},
+                    "begin_month": {"required": True, "type": "string"},
+                    "begin_year": {"required": True, "type": "integer"},
+                    "end_month": {"required": False, "type": "string"},
+                    # Could be ongoing with undefined end
+                    "end_year": {"required": False, "type": "integer"},
+                    "institution": {"required": False, "type": "string"},
+                    "location": {"required": False, "type": "string"},
+                    "name": {"required": True, "type": "string"},
+                    "other": {
+                        "required": False,
+                        "type": "list",
+                    },
+                    "position": {"required": True, "type": "string"},
+                    "status": {"required": True, "type": "string", "eallowed": [
+                        "high-school",
+                        "undergrad",
+                        "MS",
+                        "PhD",
+                        "postdoc",
+                        "visitor"]
+                    },
+                },
+            },
+            "type": "list",
+        },
         "aka": {
             "description": "list of aliases (also-known-as), useful for "
                            "identifying the group member in citations or "
@@ -1634,11 +1666,19 @@ SCHEMAS = {
                     "organization": {"required": True, "type": "string"},
                     "other": {"required": False, "type": "list"},
                     "position": {"required": True, "type": "string"},
-                    # TODO this should be select from in the long run
-                    "status": {"required": False, "type": "string"},
+                    "status": {"required": False, "type": "string", "eallowed": [
+                        "pi",
+                        "high-school",
+                        "undergrad",
+                        "MS",
+                        "phd",
+                        "postdoc",
+                        "visitor-supported",
+                        "visitor-unsupported"],
+                    },
+                    "type": "list",
                 },
             },
-            "type": "list",
         },
         "funding": {
             "description": "Funding and scholarship that the group member "
