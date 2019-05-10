@@ -5,9 +5,9 @@ import os
 import platform
 import re
 import sys
-from copy import deepcopy
+from copy import copy, deepcopy
 
-from datetime import datetime
+from datetime import datetime, date
 
 from regolith.dates import month_to_int, date_to_float
 from regolith.sorters import doc_date_key, id_key, ene_date_key
@@ -133,8 +133,9 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     pubs = []
     for pub in citations:
         if (
-            len((set(pub.get("author", [])) | set(pub.get("editor", []))) & authors)
-            == 0
+                len((set(pub.get("author", [])) | set(
+                    pub.get("editor", []))) & authors)
+                == 0
         ):
             continue
         pub = deepcopy(pub)
@@ -226,6 +227,110 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     return grants, total_amount, subaward_amount
 
 
+def filter_employment_for_advisees(people, begin_period, status):
+    advisees = []
+    for p in people:
+        for i in p.get("employment"):
+            if i.get("status") == status:
+                end_date = date(i.get("end_year"),
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    p['role'] = i.get("position")
+                    p['status'] = status
+                    p['end_year'] = i.get("end_year", "n/a")
+                    advisees.append(p)
+    return advisees
+
+
+def filter_service(ppl, begin_period, type):
+    service = []
+    people = copy(ppl)
+    for p in people:
+        myservice = []
+        svc = copy(p.get("service",[]))
+        for i in svc:
+            if i.get("type") == type:
+                if i.get('year'):
+                    end_year = i.get('year')
+                elif i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    if not i.get('month'):
+                        month = i.get("begin_month",0)
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                    else:
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                    myservice.append(i)
+        p['service'] = myservice
+        if len(p['service']) > 0:
+            service.append(p)
+    return service
+
+
+def filter_facilities(people, begin_period, type):
+    facilities = []
+    for p in people:
+        myfacility = []
+        svc = copy(p.get("facilities",[]))
+        for i in svc:
+            if i.get("type") == type:
+                if i.get('year'):
+                    end_year = i.get('year')
+                elif i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    if not i.get('month'):
+                        month = i.get("begin_month",0)
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                    else:
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                    myfacility.append(i)
+        p['facilities'] = myfacility
+        if len(p['facilities']) > 0:
+            facilities.append(p)
+    return facilities
+
+
+def filter_activities(people, begin_period, type):
+    activities = []
+    for p in people:
+        myactivity = []
+        svc = copy(p.get("activities",[]))
+        for i in svc:
+            if i.get("type") == type:
+                if i.get('year'):
+                    end_year = i.get('year')
+                elif i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    if not i.get('month'):
+                        month = i.get("begin_month",0)
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                    else:
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                    myactivity.append(i)
+        p['activities'] = myactivity
+        if len(p['activities']) > 0:
+            activities.append(p)
+    return activities
+
+
 def awards_grants_honors(p):
     """Make sorted awards grants and honors list.
 
@@ -250,7 +355,8 @@ def awards_grants_honors(p):
         d = {"description": latex_safe(x["name"])}
         if "year" in x:
             d.update(
-                {"year": x["year"], "_key": date_to_float(x["year"], x.get("month", 0))}
+                {"year": x["year"],
+                 "_key": date_to_float(x["year"], x.get("month", 0))}
             )
         elif "begin_year" in x and "end_year" in x:
             d.update(
@@ -301,16 +407,16 @@ def latex_safe(s, url_check=True, wrapper="url"):
         if url_search:
             url = r"{start}\{wrapper}{{{s}}}{end}".format(
                 start=(latex_safe(s[: url_search.start()])),
-                end=(latex_safe(s[url_search.end() :])),
+                end=(latex_safe(s[url_search.end():])),
                 wrapper=wrapper,
-                s=latex_safe_url(s[url_search.start() : url_search.end()]),
+                s=latex_safe_url(s[url_search.start(): url_search.end()]),
             )
             return url
     return (
         s.replace("&", r"\&")
-        .replace("$", r"\$")
-        .replace("#", r"\#")
-        .replace("_", r"\_")
+            .replace("$", r"\$")
+            .replace("#", r"\#")
+            .replace("_", r"\_")
     )
 
 
@@ -413,7 +519,8 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
                 ret = [ret]
             returns.extend(ret)
         if not case_sensitive:
-            returns = [reti.lower() for reti in returns if isinstance(reti, str)]
+            returns = [reti.lower() for reti in returns if
+                       isinstance(reti, str)]
             if isinstance(value, str):
                 if value.lower() in frozenset(returns):
                     return doc
@@ -464,8 +571,10 @@ def dereference_institution(input_record, institutions):
             state_country = db_inst.get("state")
         else:
             state_country = db_inst.get("country")
-        input_record["location"] = "{}, {}".format(db_inst["city"], state_country)
+        input_record["location"] = "{}, {}".format(db_inst["city"],
+                                                   state_country)
         if "department" in input_record:
             input_record["department"] = fuzzy_retrieval(
-                [db_inst["departments"]], ["name", "aka"], input_record["department"]
+                [db_inst["departments"]], ["name", "aka"],
+                input_record["department"]
             )
