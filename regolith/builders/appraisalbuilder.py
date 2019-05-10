@@ -1,13 +1,14 @@
 """Builder for CVs."""
 import datetime as dt
-from copy import copy
+from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int
 from regolith.sorters import ene_date_key, position_key
-from regolith.builders.cpbuilder import is_current, is_pending, has_finished, has_started
+from regolith.builders.cpbuilder import is_current, is_pending, has_finished, \
+    has_started
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
@@ -17,10 +18,14 @@ from regolith.tools import (
     make_bibtex_file,
     fuzzy_retrieval,
     dereference_institution,
-
+    filter_employment_for_advisees,
+    filter_service,
+    filter_facilities,
+    filter_activities
 )
 
 BEGIN_YEAR = 2018
+
 
 def merge_collections(a, b, target_id):
     """
@@ -67,6 +72,7 @@ def merge_collections(a, b, target_id):
                              bdict[v])
     return list(chained.values())
 
+
 class AppraisalBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
@@ -102,18 +108,18 @@ class AppraisalBuilder(LatexBuilderBase):
         pre_begin_year = begin_year - 1
         end_year = begin_year + 1
         post_end_year = begin_year + 2
-        begin_period = dt.date(begin_year,4,1)
-        pre_begin_period = dt.date(pre_begin_year,4,1)
-        end_period = dt.date(end_year,3,31)
-        post_end_period = dt.date(post_end_year,3,31)
+        begin_period = dt.date(begin_year, 4, 1)
+        pre_begin_period = dt.date(pre_begin_year, 4, 1)
+        end_period = dt.date(end_year, 3, 31)
+        post_end_period = dt.date(post_end_year, 3, 31)
 
         rc = self.rc
         me = [p for p in self.gtx["people"] if p["_id"] == "sbillinge"][0]
-        me["begin_period"] = dt.date.strftime(begin_period,"%m/%d/%Y")
-        me["begin_period"] = dt.date.strftime(begin_period,"%m/%d/%Y")
-        me["pre_begin_period"] = dt.date.strftime(pre_begin_period,"%m/%d/%Y")
-        me["end_period"] = dt.date.strftime(end_period,"%m/%d/%Y")
-        me["post_end_period"] = dt.date.strftime(post_end_period,"%m/%d/%Y")
+        me["begin_period"] = dt.date.strftime(begin_period, "%m/%d/%Y")
+        me["begin_period"] = dt.date.strftime(begin_period, "%m/%d/%Y")
+        me["pre_begin_period"] = dt.date.strftime(pre_begin_period, "%m/%d/%Y")
+        me["end_period"] = dt.date.strftime(end_period, "%m/%d/%Y")
+        me["post_end_period"] = dt.date.strftime(post_end_period, "%m/%d/%Y")
         projs = filter_projects(
             self.gtx["projects"], set(["sbillinge"])
         )
@@ -123,7 +129,7 @@ class AppraisalBuilder(LatexBuilderBase):
         pi = fuzzy_retrieval(
             self.gtx["people"], ["aka", "name", "_id"], "sbillinge"
         )
-        pi['initials'] = "SJLB"
+#        pi['initials'] = "SJLB"
 
         grants = merge_collections(self.gtx["proposals"], self.gtx["grants"],
                                    "proposal_id")
@@ -197,38 +203,69 @@ class AppraisalBuilder(LatexBuilderBase):
         #########
         # advising
         #########
-        undergrads = []
-        for p in self.gtx["people"]:
-#            print(p.get("name",p["_id"]))
-            for g in p.get("employment"):
-                if g.get("status") == "undergrad":
-                    end_date = dt.date(g.get("end_year"), g.get("end_month", 12), g.get("end_day", 28))
-                    if end_date >= begin_period:
-                        p['role'] = g.get("position")
-                        p['status'] = "ug"
-                        undergrads.append(p)
-        masters = []
-        for p in self.gtx["people"]:
-            for g in p.get("employment"):
-                if g.get("status") == "ms":
-                    end_date = dt.date(g.get("end_year"),
-                                       g.get("end_month", 12),
-                                       g.get("end_day", 28))
-                    if end_date >= begin_period:
-                        p['role'] = g.get("position")
-                        p['status'] = "ms"
-                        masters.append(p)
-        currents = []
-        for p in self.gtx["people"]:
-            for g in p.get("employment"):
-                if g.get("status") == "phd":
-                    end_date = dt.date(g.get("end_year"),
-                                       g.get("end_month", 12),
-                                       g.get("end_day", 28))
-                    if end_date >= begin_period:
-                        p['role'] = g.get("position")
-                        p['status'] = "ms"
-                        currents.append(p)
+        undergrads = filter_employment_for_advisees(self.gtx["people"],
+                                                    begin_period,
+                                                    "undergrad")
+        masters = filter_employment_for_advisees(self.gtx["people"],
+                                                    begin_period,
+                                                    "ms")
+        currents = filter_employment_for_advisees(self.gtx["people"],
+                                                    begin_period,
+                                                    "phd")
+        graduateds = filter_employment_for_advisees(self.gtx["people"],
+                                                    begin_period.replace(year=end_year-5),
+                                                    "phd")
+        postdocs = filter_employment_for_advisees(self.gtx["people"],
+                                                    begin_period,
+                                                    "postdoc")
+        visitors = filter_employment_for_advisees(self.gtx["people"],
+                                                    begin_period,
+                                                    "visitor")
+        iter = deepcopy(graduateds)
+        for g in iter:
+            if g.get("active"):
+                graduateds.remove(g)
+        mego = deepcopy(me)
+        dept_service = filter_service([mego],
+                                      begin_period, "department")
+        mego = deepcopy(me)
+        school_service = filter_service([mego],
+                                      begin_period, "school")
+        mego = deepcopy(me)
+        uni_service = filter_service([mego],
+                                      begin_period, "university")
+        uni_service.extend(school_service)
+        mego = deepcopy(me)
+        prof_service = filter_service([mego],
+                                      begin_period, "profession")
+        mego = deepcopy(me)
+        outreach = filter_service([mego],
+                                      begin_period, "outreach")
+        mego = deepcopy(me)
+        lab = filter_facilities([mego],
+                                      begin_period, "laboratory")
+        mego = deepcopy(me)
+        shared = filter_facilities([mego],
+                                      begin_period, "shared")
+        mego = deepcopy(me)
+        fac_other = filter_facilities([mego],
+                                      begin_period, "other")
+        mego = deepcopy(me)
+        fac_teaching = filter_facilities([mego],
+                                      begin_period, "fac_teaching")
+        mego = deepcopy(me)
+        fac_wishlist = filter_facilities([mego],
+                                      begin_period, "fac_wishlist")
+        mego = deepcopy(me)
+        tch_wishlist = filter_facilities([mego],
+                                      begin_period, "tch_wishlist")
+        mego = deepcopy(me)
+        curric_dev = filter_activities([mego],
+                                      begin_period, "teaching")
+        mego = deepcopy(me)
+        other_activities = filter_activities([mego],
+                                      begin_period, "other")
+
         self.render(
             "columbia_annual_report.tex",
             "billinge-ann-report" + ".tex",
@@ -239,7 +276,22 @@ class AppraisalBuilder(LatexBuilderBase):
             current=current_grants,
             undergrads=undergrads,
             masters=masters,
-            currentphds=currents
+            currentphds=currents,
+            graduatedphds=graduateds,
+            postdocs=postdocs,
+            visitors=visitors,
+            dept_service=dept_service,
+            uni_service=uni_service,
+            prof_service = prof_service,
+            outreach=outreach,
+            lab=lab,
+            shared=shared,
+            facilities_other=fac_other,
+            fac_teaching=fac_teaching,
+            fac_wishlist=fac_wishlist,
+            tch_wishlist=tch_wishlist,
+            curric_dev=curric_dev,
+            other_activities=other_activities
         )
         self.pdf("billinge-ann-report")
 
