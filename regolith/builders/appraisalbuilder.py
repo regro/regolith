@@ -1,5 +1,6 @@
 """Builder for CVs."""
 import datetime as dt
+import sys
 from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
@@ -9,6 +10,7 @@ from regolith.dates import month_to_int
 from regolith.sorters import ene_date_key, position_key
 from regolith.builders.cpbuilder import is_current, is_pending, has_finished, \
     has_started
+from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
@@ -21,8 +23,8 @@ from regolith.tools import (
     filter_employment_for_advisees,
     filter_service,
     filter_facilities,
-    filter_activities
-)
+    filter_activities,
+    number_suffix, filter_presentations, awards)
 
 BEGIN_YEAR = 2018
 
@@ -100,7 +102,13 @@ class AppraisalBuilder(LatexBuilderBase):
         gtx["projects"] = sorted(
             all_docs_from_collection(rc.client, "projects"), key=_id_key
         )
+        gtx["presentations"] = sorted(
+            all_docs_from_collection(rc.client, "presentations"), key=_id_key
+        )
         gtx["all_docs_from_collection"] = all_docs_from_collection
+        gtx["float"] = float
+        gtx["str"] = str
+        gtx["zip"] = zip
 
     def latex(self):
         """Render latex template"""
@@ -225,6 +233,10 @@ class AppraisalBuilder(LatexBuilderBase):
         for g in iter:
             if g.get("active"):
                 graduateds.remove(g)
+
+        ######################
+        # service
+        #####################
         mego = deepcopy(me)
         dept_service = filter_service([mego],
                                       begin_period, "department")
@@ -266,6 +278,38 @@ class AppraisalBuilder(LatexBuilderBase):
         other_activities = filter_activities([mego],
                                       begin_period, "other")
 
+        ##########################
+        # Presentation list
+        ##########################
+        keypres = filter_presentations(self.gtx["people"],
+                                        self.gtx["presentations"],
+                                        self.gtx["institutions"],
+                                        types=["award", "plenary", "keynote"],
+                             since=begin_period, before=end_period, statuses=["accepted"])
+        invpres = filter_presentations(self.gtx["people"],
+                                        self.gtx["presentations"],
+                                        self.gtx["institutions"],
+                                        types=["invited"],
+                             since=begin_period, before=end_period, statuses=["accepted"])
+        sempres = filter_presentations(self.gtx["people"],
+                                        self.gtx["presentations"],
+                                        self.gtx["institutions"],
+                                        types=["colloquium","seminar"],
+                             since=begin_period, before=end_period, statuses=["accepted"])
+        declpres = filter_presentations(self.gtx["people"],
+                                        self.gtx["presentations"],
+                                        self.gtx["institutions"],
+                                        types=["all"],
+                             since=begin_period, before=end_period, statuses=["declined"])
+
+        #########################
+        # Awards
+        #########################
+        ahs = awards(me, since=begin_period)
+
+        #########################
+        # render
+        #########################
         self.render(
             "columbia_annual_report.tex",
             "billinge-ann-report" + ".tex",
@@ -291,7 +335,14 @@ class AppraisalBuilder(LatexBuilderBase):
             fac_wishlist=fac_wishlist,
             tch_wishlist=tch_wishlist,
             curric_dev=curric_dev,
-            other_activities=other_activities
+            other_activities=other_activities,
+            keypres=keypres,
+            invpres=invpres,
+            sempres=sempres,
+            declpres=declpres,
+            sentencecase=sentencecase,
+            monthstyle=month_fullnames,
+            ahs=ahs
         )
         self.pdf("billinge-ann-report")
 
