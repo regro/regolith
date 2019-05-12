@@ -19,6 +19,8 @@
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
+\usepackage{enumitem}
+\setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
 
 %-----------------------------------------------------------
 % Hyperlink setup
@@ -141,7 +143,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Current and Pending grants}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for grant_block in [pending, current] %}
+{% for grant_block, name in zip([pending, current], ['Pending', 'Current']) %}
 {% if len(grant_block) > 0 %}
 {% for g in grant_block %}
 \vskip 12pt\noindent
@@ -162,7 +164,7 @@ amt = \${{"{:,}".format(g['subaward_amount'])}})
 
 \textbf{Total Award Amount}:
 \${{-"{:,}".format(g.get('amount', 0)) }}\\
-\textbf{ Total Award Period Covered:}
+\textbf{Total Award Period Covered:}
 {{g.get('award_start_date')}} - {{g.get('award_end_date')}}
 
 \textbf{Location of Project:} {{ g.get('institution' ) }}
@@ -181,9 +183,131 @@ Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Invited, key and plenary talks in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Key Presentations (Award, Plenary or Keynote)}
+\begin{enumerate}
+{% for pres in keypres %}
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
+sentencecase(pres['title']))-}} },
+{%-set inst = pres['institution'] %}
+{%-if pres['type'] in ['colloquium', 'seminar']%}
+{\it {{ latex_safe(pres['type']).title()-}} },
+{\it {{ latex_safe(pres['department']['name'])-}} },
+{\it {{ latex_safe(inst['name'])-}} },
+{\it {{ latex_safe(inst['city'])-}} }\
+{\it {{ latex_safe(inst['state'])-}}},
+{%-else %}
+{\it {{ latex_safe(pres['meeting_name'])-}} },
+{\it {{ latex_safe(pres['location'])-}} },
+{%-endif %}
+{ {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
+{{-pres['begin_day']-}}%
+{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']%}
+$^\mathrm{ {{ pres['begin_day_suffix']}} }$
+{%-else %}
+--{{ pres['end_day']-}}
+$^\mathrm{ {{ pres['end_day_suffix']-}} }$
+{%-endif %}
+( {{-pres['begin_year']-}} ).
+{% endfor %}
+\end{enumerate}
+
+\subsection*{Invited Talks}
+\begin{enumerate}
+{% for pres in invpres %}
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
+sentencecase(pres['title']))-}} },
+{%-set inst = pres['institution'] %}
+{%-if pres['type'] in ['colloquium', 'seminar']%}
+{\it {{ latex_safe(pres['type']).title()-}} },
+{\it {{ latex_safe(pres['department']['name'])-}} },
+{\it {{ latex_safe(inst['name'])-}} },
+{\it {{ latex_safe(inst['city'])-}} }\
+{\it {{ latex_safe(inst['state'])-}}},
+{%-else %}
+{\it {{ latex_safe(pres['meeting_name'])-}} },
+{\it {{ latex_safe(pres['location'])-}} },
+{%-endif %}
+{ {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
+{{-pres['begin_day']-}}%
+{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']%}
+$^\mathrm{ {{ pres['begin_day_suffix']}} }$
+{%-else %}
+--{{ pres['end_day']-}}
+$^\mathrm{ {{ pres['end_day_suffix']-}} }$
+{%-endif %}
+( {{-pres['begin_year']-}} ).
+{% endfor %}
+\end{enumerate}
+
+\subsection*{Seminars and Colloquia}
+\begin{enumerate}
+{% for pres in sempres %}
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
+sentencecase(pres['title']))-}} },
+{%-set inst = pres['institution'] %}
+{%-if pres['type'] in ['colloquium', 'seminar']%}
+{\it {{ latex_safe(pres['type']).title()-}} },
+{\it {{ latex_safe(pres['department']['name'])-}} },
+{\it {{ latex_safe(inst['name'])-}} },
+{\it {{ latex_safe(inst['city'])-}} }\
+{\it {{ latex_safe(inst['state'])-}}},
+{%-else %}
+{\it {{ latex_safe(pres['meeting_name'])-}} },
+{\it {{ latex_safe(pres['location'])-}} },
+{%-endif %}
+{ {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
+{{-pres['begin_day']-}}%
+{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']%}
+$^\mathrm{ {{ pres['begin_day_suffix']}} }$
+{%-else %}
+--{{ pres['end_day']-}}
+$^\mathrm{ {{ pres['end_day_suffix']-}} }$
+{%-endif %}
+( {{-pres['begin_year']-}} ).
+{% endfor %}
+\end{enumerate}
+
+\subsection*{Declined Invitations}
+\begin{enumerate}
+{% for pres in declpres %}
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
+sentencecase(pres['title']))-}} },
+{%-set inst = pres['institution'] %}
+{%-if pres['type'] in ['colloquium', 'seminar']%}
+{\it {{ latex_safe(pres['type']).title()-}} },
+{\it {{ latex_safe(pres['department']['name'])-}} },
+{\it {{ latex_safe(inst['name'])-}} },
+{\it {{ latex_safe(inst['city'])-}} }\
+{\it {{ latex_safe(inst['state'])-}}},
+{%-else %}
+{\it {{ latex_safe(pres['meeting_name'])-}} },
+{\it {{ latex_safe(pres['location'])-}} },
+{%-endif %}
+{ {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
+{{-pres['begin_day']-}}%
+{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']%}
+$^\mathrm{ {{ pres['begin_day_suffix']}} }$
+{%-else %}
+--{{ pres['end_day']-}}
+$^\mathrm{ {{ pres['end_day_suffix']-}} }$
+{%-endif %}
+( {{-pres['begin_year']-}} ).
+{% endfor %}
+\end{enumerate}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Honors and awards in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(ahs) == 0 %}
+    {{ None }}
+{% else %}
+\begin{itemize}
+{% for ah in ahs %}
+    \item {{ah['description']-}} \textemdash {{-ah['year']-}} \\
+{% endfor %}
+    \vphantom{E}
+\end{itemize}\vspace*{-16pt}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Publications in journals in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,7 +439,7 @@ Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Graduate and Postgraduate advising}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{ Primarily advised Ph.D. students who graduated in the past 5 years }
+\subsection*{ Primarily advised Ph.D. students who graduated in the past 5 years }
 {% if len(graduatedphds) == 0 %}
     {{ None }}
 {% else %}
@@ -325,7 +449,7 @@ Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
     {%endfor%}
     \end{itemize}
 {% endif %}
-\section*{ Primarily advised Ph.D. students with dissertations in progress }
+\subsection*{ Primarily advised Ph.D. students with dissertations in progress }
 {% if len(currentphds) == 0 %}
     {{ None }}
 {% else %}
@@ -335,10 +459,10 @@ Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
     {%endfor%}
     \end{itemize}
 {% endif %}
-\section*{ Other (examination committees, GSAS, CUMC advising etc.) }
+\subsection*{ Other (examination committees, GSAS, CUMC advising etc.) }
 
 
-\section*{ Postdoctoral researchers and research scientists supported on grants}
+\subsection*{ Postdoctoral researchers and research scientists supported on grants}
 {% if len(postdocs) == 0 %}
     {{ None }}
 {% else %}
@@ -348,7 +472,7 @@ Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
     {%endfor%}
     \end{itemize}
 {% endif %}
-\section*{ Self-funded visitors contributing to research}
+\subsection*{ Self-funded visitors contributing to research}
 {% if len(visitors) == 0 %}
     {{ None }}
 {% else %}
