@@ -7,7 +7,7 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int
-from regolith.sorters import ene_date_key, position_key, doc_date_key
+from regolith.sorters import ene_date_key, position_key, doc_date_key, date_key
 from regolith.builders.cpbuilder import is_current, is_pending, has_finished, \
     has_started
 from regolith.stylers import sentencecase, month_fullnames
@@ -272,7 +272,8 @@ class AppraisalBuilder(LatexBuilderBase):
                                          begin_period, "fac_teaching")
         mego = deepcopy(me)
         fac_wishlist = filter_facilities([mego],
-                                         begin_period, "fac_wishlist")
+                                         begin_period, "fac_wishlist",
+                                         verbose=False)
         mego = deepcopy(me)
         tch_wishlist = filter_facilities([mego],
                                          begin_period, "tch_wishlist")
@@ -331,7 +332,7 @@ class AppraisalBuilder(LatexBuilderBase):
             pubs, pid=me["_id"], person_dir=self.bldir
         )
         articles = [prc for prc in pubs if
-                       prc.get("entrytype") in "article"]
+                    prc.get("entrytype") in "article"]
         nonarticletypes = ["book", "inbook", "proceedings", "inproceedings",
                            "incollection", "unpublished", "phdthesis", "misc"]
         nonarticles = [prc for prc in pubs if
@@ -357,8 +358,7 @@ class AppraisalBuilder(LatexBuilderBase):
         #############
         # hindex
         #############
-        hindex = sorted(me["hindex"], key=doc_date_key ).pop()
-        print(hindex)
+        hindex = sorted(me["hindex"], key=doc_date_key).pop()
 
         #########################
         # render

@@ -10,7 +10,7 @@ from copy import copy, deepcopy
 from datetime import datetime, date
 
 from regolith.dates import month_to_int, date_to_float
-from regolith.sorters import doc_date_key, id_key, ene_date_key
+from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -245,9 +245,13 @@ def filter_employment_for_advisees(people, begin_period, status):
     for p in people:
         for i in p.get("employment"):
             if i.get("status") == status:
-                end_date = date(i.get("end_year"),
-                                i.get("end_month", 12),
-                                i.get("end_day", 28))
+                if i.get("end_year"):
+                    end_date = date(i.get("end_year"),
+                                    i.get("end_month", 12),
+                                    i.get("end_day", 28))
+                else:
+                    end_date = date.today()
+                    i["end_year"] = end_date.year
                 if end_date >= begin_period:
                     p['role'] = i.get("position")
                     p['status'] = status
@@ -286,7 +290,7 @@ def filter_service(ppl, begin_period, type):
     return service
 
 
-def filter_facilities(people, begin_period, type):
+def filter_facilities(people, begin_period, type, verbose=False):
     facilities = []
     for p in people:
         myfacility = []
@@ -295,13 +299,18 @@ def filter_facilities(people, begin_period, type):
             if i.get("type") == type:
                 if i.get('year'):
                     end_year = i.get('year')
+                    if verbose: print("end_year from 'year' = {}".format(end_year))
                 elif i.get('end_year'):
                     end_year = i.get('end_year')
+                    if verbose: print("end_year from 'end_year' = {}".format(end_year))
                 else:
                     end_year = date.today().year
+                    if verbose: print("no end_year, using today = {}".format(end_year))
                 end_date = date(end_year,
                                 i.get("end_month", 12),
                                 i.get("end_day", 28))
+                if verbose: print("end_date = {} and begin_period = {}".format(end_date,begin_period))
+                if verbose: print("condition end_date >= begin_period will be used")
                 if end_date >= begin_period:
                     if not i.get('month'):
                         month = i.get("begin_month", 0)
@@ -309,6 +318,7 @@ def filter_facilities(people, begin_period, type):
                     else:
                         i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
                     myfacility.append(i)
+        if verbose: print("p['facilities'] = {}".format(myfacility))
         p['facilities'] = myfacility
         if len(p['facilities']) > 0:
             facilities.append(p)
