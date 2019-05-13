@@ -1323,6 +1323,11 @@ SCHEMAS = {
             "type": "string",
             "eallowed": list(SORTED_POSITION),
         },
+        "research_summary": {
+            "description": "Brief summary of overarching research goals",
+            "required": False,
+            "type": "string",
+        },
         # TODO: need to handle year vs. begin_year stuff
         "service": {
             "description": "Service that this group member has provided",

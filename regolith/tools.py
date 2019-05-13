@@ -116,7 +116,8 @@ def month_and_year(m=None, y=None):
     return "{0} {1}".format(SHORT_MONTH_NAMES[m], y)
 
 
-def filter_publications(citations, authors, reverse=False, bold=True):
+def filter_publications(citations, authors, reverse=False, bold=True,
+                        since=None, before=None, ):
     """Filter publications by the author(s)/editor(s)
 
     Parameters
@@ -149,7 +150,19 @@ def filter_publications(citations, authors, reverse=False, bold=True):
             pub["author"] = bold_self
         else:
             pub = deepcopy(pub)
-        pubs.append(pub)
+        if since:
+            bibdate = date(int(pub.get("year")),
+                           month_to_int(pub.get("month", 12)),
+                           int(pub.get("day", 28)))
+            if bibdate > since:
+                if before:
+                    if bibdate < before:
+                        pubs.append(pub)
+                else:
+                    pubs.append(pub)
+        else:
+            pubs.append(pub)
+
     pubs.sort(key=doc_date_key, reverse=reverse)
     return pubs
 
@@ -302,6 +315,125 @@ def filter_facilities(people, begin_period, type):
     return facilities
 
 
+def filter_patents(patentscoll, people, target, since=None, before=None):
+    patents = []
+    allowed_statuses = ["active", "pending"]
+    for i in patentscoll:
+        if i.get("status") in allowed_statuses and i.get("type") in "patent":
+            inventors = [
+                fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    inv,
+                    case_sensitive=False,
+                )
+                for inv in i['inventors']
+            ]
+            person = fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                target,
+                case_sensitive=False,
+            )
+            if person in inventors:
+                if i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if since:
+                    if end_date >= since:
+                        if not i.get('month'):
+                            month = i.get("begin_month", 0)
+                            i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                        else:
+                            i['month'] = SHORT_MONTH_NAMES[
+                                month_to_int(i['month'])]
+
+                        events = [event for event in i["events"] if
+                                  date(event["year"], event["month"],
+                                       event.get("day", 28)) > since]
+                        events = sorted(events,
+                                        key=lambda event: date(
+                                            event["year"],
+                                            event["month"],
+                                            event.get("day", 28)))
+                        i["events"] = events
+                        patents.append(i)
+                else:
+                    events = [event for event in i["events"]]
+                    events = sorted(events,
+                                    key=lambda event: date(event["year"],
+                                                           event["month"],
+                                                           28))
+                    i["events"] = events
+                    patents.append(i)
+    return patents
+
+
+def filter_licenses(patentscoll, people, target, since=None, before=None):
+    licenses = []
+    allowed_statuses = ["active", "pending"]
+    for i in patentscoll:
+        if i.get("status") in allowed_statuses and i.get("type") in "license":
+            inventors = [
+                fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    inv,
+                    case_sensitive=False,
+                )
+                for inv in i['inventors']
+            ]
+            person = fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                target,
+                case_sensitive=False,
+            )
+            if person in inventors:
+                if i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if since:
+                    if end_date >= since:
+                        if not i.get('month'):
+                            month = i.get("begin_month", 0)
+                            i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                        else:
+                            i['month'] = SHORT_MONTH_NAMES[
+                                month_to_int(i['month'])]
+                        total = sum([event.get("amount") for event in i["events"]])
+                        i["total_amount"] = total
+                        events = [event for event in i["events"] if
+                                  date(event["year"], event["month"],
+                                       event.get("day", 28)) > since]
+                        events = sorted(events,
+                                        key=lambda event: date(event["year"],
+                                                               event["month"],
+                                                               event.get("day", 28)))
+                        i["events"] = events
+                        licenses.append(i)
+                else:
+                    total = sum([event.get("amount") for event in events])
+                    i["total_amount"] = total
+                    events = [event for event in i["events"]]
+                    events = sorted(events,
+                                    key=lambda event: date(event["year"],
+                                                           event["month"],
+                                                           28))
+                    i["events"] = events
+                    licenses.append(i)
+
+    return licenses
+
+
 def filter_activities(people, begin_period, type):
     activities = []
     for p in people:
@@ -414,7 +546,8 @@ def filter_presentations(people, presentations, institutions, types=["all"],
     # if specified, only list presentations in specified date ranges
     if since:
         for pres in thirdclean:
-            presdate = date((pres["begin_year"]), month_to_int(pres["begin_month"]),
+            presdate = date((pres["begin_year"]),
+                            month_to_int(pres["begin_month"]),
                             int(pres["begin_day"]))
             if presdate > since:
                 fourthclean.append(pres)
@@ -422,13 +555,13 @@ def filter_presentations(people, presentations, institutions, types=["all"],
         fourthclean = thirdclean
     if before:
         for pres in fourthclean:
-            presdate = date((pres["begin_year"]), month_to_int(pres["begin_month"]),
+            presdate = date((pres["begin_year"]),
+                            month_to_int(pres["begin_month"]),
                             int(pres["begin_day"]))
             if presdate < before:
                 presclean.append(pres)
     else:
         presclean = fourthclean
-
 
     # build author list
     for pres in presclean:
@@ -557,7 +690,8 @@ def awards_grants_honors(p):
     aghs.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)
     return aghs
 
-def awards(p, since=None, before=None,):
+
+def awards(p, since=None, before=None, ):
     """Make sorted awards and honors
 
     Parameters
@@ -570,30 +704,31 @@ def awards(p, since=None, before=None,):
         The end date to filter for.  None does not apply this filter
 
     """
-    if not since: since = date(1500,1,1)
+    if not since: since = date(1500, 1, 1)
     a = []
     for x in p.get("honors", []):
         if "year" in x:
-            if date(x.get("year"),12,31) > since:
+            if date(x.get("year"), 12, 31) > since:
                 d = {"description": latex_safe(x["name"]), "year": x["year"],
                      "_key": date_to_float(x["year"], x.get("month", 0))}
                 a.append(d)
         elif "begin_year" in x and "end_year" in x:
-            if date(x.get("begin_year",12,31)) > since:
+            if date(x.get("begin_year", 12, 31)) > since:
                 d = {"description": latex_safe(x["name"]),
-                        "year": "{}-{}".format(x["begin_year"], x["end_year"]),
-                        "_key": date_to_float(x["begin_year"], x.get("month", 0)),
-                    }
+                     "year": "{}-{}".format(x["begin_year"], x["end_year"]),
+                     "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                     }
                 a.append(d)
         elif "begin_year" in x:
-            if date(x.get("begin_year"),12,31) > since:
+            if date(x.get("begin_year"), 12, 31) > since:
                 d = {"description": latex_safe(x["name"]),
-                        "year": "{}".format(x["begin_year"]),
-                        "_key": date_to_float(x["begin_year"], x.get("month", 0)),
-                    }
+                     "year": "{}".format(x["begin_year"]),
+                     "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                     }
                 a.append(d)
     a.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)
     return a
+
 
 HTTP_RE = re.compile(
     r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"
@@ -666,7 +801,9 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         for key in ent.keys():
             if key in skip_keys:
                 continue
-            ent[key] = latex_safe(ent[key])
+            # don't think I want the bibfile entries to be latex safe
+            # ent[key] = latex_safe(ent[key])
+            ent[key] = ent[key]
         ents.append(ent)
     fname = os.path.join(person_dir, pid) + ".bib"
     with open(fname, "w", encoding="utf-8") as f:
