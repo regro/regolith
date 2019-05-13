@@ -26,10 +26,10 @@
 % Hyperlink setup
 \hypersetup{
     colorlinks=true,        % false: boxed links; true: colored links
-    linkcolor=red,          % color of internal links
+    linkcolor=gray,          % color of internal links
     citecolor=green,        % color of links to bibliography
     filecolor=magenta,      % color of file links
-    urlcolor=red            % color of external links
+    urlcolor=gray            % color of external links
 }
 
 %-----------------------------------------------------------
@@ -102,8 +102,8 @@
     \end{tabular*}
     \end{center}
     \vspace{-32pt}
-    \begin{itemize}\renewcommand{\labelitemi}{}
-        \item\begin{itemize}
+    \begin{itemize}[label=$-$]\renewcommand{\labelitemi}{}
+        \item\begin{itemize}[label=$-$]
         #5
         \end{itemize}
     \end{itemize}
@@ -114,9 +114,9 @@
 {% endraw %}
 
 % Bibliography
-%%%\bibliography{ {{-p['_id']-}} }{}
-%\bibliographystyle{plain}
-
+%\bibliography{ {{-p['_id']-}} }{}
+%\bibliographystyle{nsf_simon}
+\addbibresource{ {{-p['_id']-}} }
 \begin{document}
 
 
@@ -131,7 +131,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for pr in projects %}
 \subsection*{Project: {{-latex_safe(pr['name'])-}} }
-%\begin{itemize}
+%\begin{itemize}[label=$-$]
     {% for h in pr.get('highlights', ()) %}
         \wideitem{  {{latex_safe(h['description'])-}} }
     {% endfor%}
@@ -140,6 +140,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Major research focus area(s) and current projects.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Research Focus Areas}
+\begin{itemize}[label=$-$]
+{% for areas in p["research_focus_areas"]%}
+\item {{ latex_safe(areas["description"]) }}
+{% endfor%}
+\end{itemize}
+
+%\subsection*{Current Projects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Current and Pending grants}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,7 +309,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(ahs) == 0 %}
     {{ None }}
 {% else %}
-\begin{itemize}
+\begin{itemize}[label=$-$]
 {% for ah in ahs %}
     \item {{ah['description']-}} \textemdash {{-ah['year']-}} \\
 {% endfor %}
@@ -311,23 +319,126 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Publications in journals in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(pubs) == 0 %}
+    {{ None }}
+{% else %}
+\begin{enumerate}
+{% for pub in pubs %}
+    \item \fullcite{ {{-pub['_id']-}} }
+{% endfor %}
+\end{enumerate}
+{% endif %}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Publications in peer reviewed conferences in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(peer_rev_conf_pubs) == 0 %}
+    {{ None }}
+{% else %}
+\begin{enumerate}
+{% for pub in peer_rev_conf_pubs %}
+    \item \fullcite{ {{-pub['_id']-}} }
+{% endfor %}
+\end{enumerate}
+{% endif %}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Other published material in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(nonarticles) == 0 %}
+    {{ None }}
+{% else %}
+\begin{enumerate}
+{% for pub in nonarticles %}
+    \item \fullcite{ {{-pub['_id']-}} }
+{% endfor %}
+\end{enumerate}
+{% endif %}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Patents (appeared, granted, submitted) in the period from
+             {{ p["begin_period"] }} to {{ p["end_period"] }} }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\textbf{Active Patents}
+{% if len(patents) == 0 %}
+    {{ None }}
+{% else %}
+\begin{itemize}[label=$-$]
+{% for patent in patents %}
+    \item \textbf{ {{-latex_safe(patent['title']) }} }, Inventors:
+    {% for inventor in patent["inventors"] %}
+    {{-inventor-}},\,\,
+    {% endfor %}\\
+    Status: {{ patent['status'].capitalize() }}\\
+    Events in this period:\\
+    {% if not patent.get('events') %}
+    {{ None }}
+    {% else %}
+    {% for event in patent["events"] %}
+    {{ event["description"] }} \textemdash {{ event["year"] }}/{{ event["month"] }}/{{ event["day"] }}
+    {% endfor %}
+    {% endif %}
+    \vphantom{E}
+{% endfor %}
+\end{itemize}\vspace*{-16pt}
+{% endif %}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Open source tools in the period from {{ p["begin_period"] }} to {{ p["end_period"]}} }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Technology transfer, licensing, startups in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\textbf{License Distributions}
+{% if len(licenses) == 0 %}
+    {{ None }}
+{% else %}
+\begin{itemize}[label=$-$]
+{% for license in licenses %}
+    \item \textbf{ {{-latex_safe(license['title']) }} }\\ Developers:
+    {% for inventor in license["inventors"] %}
+    {{-inventor-}},\,\,
+    {% endfor %}\\
+    \textit{Proceeds:}\\
+    Total Amount to date: \${{license["total_amount"]}}\\
+    Amount this period:
+    \begin{itemize}[label=$-$]
+    {% for event in license["events"] %}
+    \item {{ event["year"] }}/{{ event["month"] }}: \${{ event["amount"] }}
+    {% endfor %}
+    \end{itemize}
+    \vphantom{E}
+{% endfor %}
+\end{itemize}\vspace*{-16pt}
+{% endif %}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Key metrics or mechanisms to assess impact}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\textbf{ Metrics:}
+{% if len(p["miscellaneous"]["metrics_for_success"]) == 0 %}
+    {{ None }}
+{% else %}
+    \begin{itemize}[label=$-$]
+       {% for metric in p["miscellaneous"]["metrics_for_success"] %}
+            \item   {{latex_safe(metric)-}}
+       {% endfor%}
+    \end{itemize}
+\textbf{ h-index:}
+    \begin{itemize}[label=$-$]
+            \item   h = {{ str(hindex['h']) }}
+(since = {{hindex['since']}}, total citations = {{ hindex["citations"]-}} )\\
+h-last five years = {{ str(hindex['h_last_five']) }}
+(since = {{ hindex['year']-5 }}, total citations = {{ hindex["citations_last_five"]-}} )\\
+pulled: {{ hindex["month"] }}/{{ hindex["day"] }}/{{ hindex["year"] }}\\
+Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"])) }}\\
+    \end{itemize}{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Courses taught in {{ p["pre_begin_period"][-4:] }} - {{ p["begin_period"][-4:] }} }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Fall {{p["pre_begin_period"][-4:]}} }
-\begin{itemize}
+\begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
     {% if c['year']|string in p["pre_begin_period"]  and c['semester'] == 'Fall'%}
         \item  {\bf {{latex_safe(c['course'])-}} }\\
@@ -337,13 +448,13 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
                 Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
                 Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
                 Selected student comment:
-                \begin{itemize}\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
+                \begin{itemize}[label=$-$]\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
                 {% endif%}{%endif%}
     {% endif %}
 {%endfor%}
 \end{itemize}
 \subsection*{Spring {{p["begin_period"][-4:]}} }
-\begin{itemize}
+\begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
     {% if c['year']|string in p["begin_period"] and c['semester'] == 'Spring' %}
         \item  {\bf {{latex_safe(c['course'])-}} }\\
@@ -353,7 +464,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
                 Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
                 Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
                 Selected student comment:
-                \begin{itemize}\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
+                \begin{itemize}[label=$-$]\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
                 {% endif%}{%endif%}
     {% endif %}
 {%endfor%}
@@ -362,7 +473,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 \resheading{ Courses taught in {{ p["begin_period"][-4:] }} - {{ p["end_period"][-4:]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Fall {{p["begin_period"][-4:]}} }
-\begin{itemize}
+\begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
     {% if c['year']|string in p["begin_period"] and c['semester'] == 'Fall' %}
         \item  {\bf {{latex_safe(c['course'])-}} }\\
@@ -372,13 +483,13 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
                 Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
                 Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
                 Selected student comment:
-                \begin{itemize}\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
+                \begin{itemize}[label=$-$]\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
                 {% endif%}{%endif%}
     {% endif %}
 {%endfor%}
 \end{itemize}
 \subsection*{Spring {{p["end_period"][-4:]}} }
-\begin{itemize}
+\begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
     {% if c['year']|string in p["end_period"]  and c['semester'] == 'Spring' %}
         \item  {\bf {{latex_safe(c['course'])-}} }\\
@@ -388,7 +499,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
                 Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
                 Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
                 Selected student comment:
-                \begin{itemize}\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
+                \begin{itemize}[label=$-$]\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
                 {% endif%}{%endif%}
     {% endif %}
 {%endfor%}
@@ -397,7 +508,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 \resheading{ Courses expected to teach in {{ p["end_period"][-4:] }} to {{ p["post_end_period"][-4:]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Fall {{p["end_period"][-4:]}} }
-\begin{itemize}
+\begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
     {% if c['year']|string in p["end_period"]  and c['semester'] == 'Fall' %}
         \item  {\bf {{latex_safe(c['course'])-}} }\\
@@ -405,7 +516,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {%endfor%}
 \end{itemize}
 \subsection*{Spring {{p["post_end_period"][-4:]}} }
-\begin{itemize}
+\begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
     {% if c['year']|string in p["post_end_period"]  and c['semester'] == 'Spring' %}
         \item  {\bf {{latex_safe(c['course'])-}} }\\
@@ -418,7 +529,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(undergrads) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in undergrads %}
         \item   {{latex_safe(ugr['name'])-}} \textemdash {{latex_safe(ugr['role'])}}  \\
     {%endfor%}
@@ -430,7 +541,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(masters) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in masters %}
         \item   {{latex_safe(ugr['name'])-}} \textemdash {{latex_safe(ugr['role'])}}  \\
     {%endfor%}
@@ -443,7 +554,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(graduatedphds) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in graduatedphds %}
         \item   {{latex_safe(ugr['name']) }}\textemdash Graduated {{ugr['end_year']}}  \\
     {%endfor%}
@@ -453,7 +564,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(currentphds) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in currentphds %}
         \item   {{latex_safe(ugr['name'])-}}  \\
     {%endfor%}
@@ -466,7 +577,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(postdocs) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in postdocs %}
         \item   {{latex_safe(ugr['name'])-}}  \\
     {%endfor%}
@@ -476,7 +587,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(visitors) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in visitors %}
         \item   {{latex_safe(ugr['name'])-}}  \\
     {%endfor%}
@@ -488,7 +599,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(curric_dev) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in curric_dev %}
         {% for s in ugr['activities'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -507,7 +618,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(dept_service) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in dept_service %}
         {% for s in ugr['service'] %}
             \item   {{latex_safe(s['name'])-}}  \\
@@ -521,7 +632,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(uni_service) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in uni_service %}
         {% for s in ugr['service'] %}
             \item   {{latex_safe(s['name'])-}}
@@ -538,7 +649,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(prof_service) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in prof_service %}
         {% for s in ugr['service'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -557,7 +668,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(outreach) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in outreach %}
         {% for s in ugr['service'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -576,7 +687,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(lab) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in lab %}
         {% for s in ugr['facilities'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -595,7 +706,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(shared) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in shared %}
         {% for s in ugr['facilities'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -614,7 +725,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(facilities_other) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in facilities_other %}
         {% for s in ugr['facilities'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -633,7 +744,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(fac_wishlist) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in fac_wishlist %}
         {% for s in ugr['facilities'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -652,7 +763,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(fac_teaching) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in fac_teaching %}
         {% for s in ugr['facilities'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -671,7 +782,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(tch_wishlist) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in tch_wishlist %}
         {% for s in ugr['facilities'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -690,7 +801,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% if len(other_activities) == 0 %}
     {{ None }}
 {% else %}
-    \begin{itemize}
+    \begin{itemize}[label=$-$]
     {% for ugr in other_activities %}
         {% for s in ugr['activities'] %}
             \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
@@ -928,13 +1039,14 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Skills}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{itemize}
+\begin{itemize}[label=$-$]
 {%for cat, cgrp in groupby(p['skills'], key=category_val)%}
   \item {{cat}}
-  \begin{itemize}{%for lvl, lgrp in groupby(cgrp, key=level_val)%}
+  \begin{itemize}[label=$-$]{%for lvl, lgrp in groupby(cgrp, key=level_val)%}
     \resitem{\textbf{ {{-lvl.capitalize()}}:} {{gets(lgrp, 'name', '<nemo>') | join(', ')-}} }
   {%endfor%}\end{itemize}
 {%endfor%}
 \end{itemize}
 {%endif%}
+
 \end{document}
