@@ -19,6 +19,7 @@
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
+\usepackage{times}
 \usepackage{enumitem}
 \setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
 
@@ -130,13 +131,13 @@
 \resheading{Highlights from the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for pr in projects %}
-\subsection*{Project: {{-latex_safe(pr['name'])-}} }
-%\begin{itemize}[label=$-$]
+{% if pr["type"] != "ossoftware" %}
+\subsection*{Project: {{latex_safe(pr['name'])-}} }
     {% for h in pr.get('highlights', ()) %}
         \wideitem{  {{latex_safe(h['description'])-}} }
     {% endfor%}
-%    \end{itemize}
-{%endfor%}
+{% endif %}
+{% endfor %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Major research focus area(s) and current projects.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -369,7 +370,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
     {% for inventor in patent["inventors"] %}
     {{-inventor-}},\,\,
     {% endfor %}\\
-    Status: {{ patent['status'].capitalize() }}\\
+    Status: {{ patent['status'] }}\\
     Events in this period:\\
     {% if not patent.get('events') %}
     {{ None }}
@@ -387,6 +388,15 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Open source tools in the period from {{ p["begin_period"] }} to {{ p["end_period"]}} }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for pr in projects %}
+{% if pr['type'] == "ossoftware" %}
+    \textbf{ {{ pr['name'] }} }\\
+    {{ pr['description'] }}
+    {% for h in pr.get('highlights', ()) %}
+        \wideitem{  {{latex_safe(h['description'])-}} }
+    {% endfor%}
+{% endif %}
+{%endfor%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Technology transfer, licensing, startups in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -602,7 +612,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in curric_dev %}
         {% for s in ugr['activities'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -621,7 +631,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in dept_service %}
         {% for s in ugr['service'] %}
-            \item   {{latex_safe(s['name'])-}}  \\
+            \item   {{ s['name']-}}  \\
         {% endfor%}
     {%endfor%}
     \end{itemize}
@@ -635,10 +645,13 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in uni_service %}
         {% for s in ugr['service'] %}
-            \item   {{latex_safe(s['name'])-}}
-                {% if s['month'] %}
-                \textemdash {{s['month']}}
-                {% endif %}\\
+            \item   {{ s['name']-}}
+                {% if s['month'] and s['year'] %}
+                \textemdash {{s['month']}}/{{s['year']}}
+                {% endif %}
+                {%-if s['other']-%}
+                \\ {{s['other']}}
+                {%-endif-%}
                         {% endfor%}
     {%endfor%}
     \end{itemize}
@@ -652,7 +665,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in prof_service %}
         {% for s in ugr['service'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -671,7 +684,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in outreach %}
         {% for s in ugr['service'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -690,7 +703,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in lab %}
         {% for s in ugr['facilities'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -709,7 +722,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in shared %}
         {% for s in ugr['facilities'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -728,13 +741,14 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in facilities_other %}
         {% for s in ugr['facilities'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
-                \\ {\it {{s['role']}} }
+              \item   {{ s['name']-}}
+               {%-if s['role']-%}
+              \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
                 \\ {{s['other']}}
                 {%-endif-%}
-                        {% endfor%}
+           {% endfor%}
     {%endfor%}
     \end{itemize}
 {% endif %}
@@ -747,7 +761,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in fac_wishlist %}
         {% for s in ugr['facilities'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -766,7 +780,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in fac_teaching %}
         {% for s in ugr['facilities'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -785,7 +799,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in tch_wishlist %}
         {% for s in ugr['facilities'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -804,7 +818,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \begin{itemize}[label=$-$]
     {% for ugr in other_activities %}
         {% for s in ugr['activities'] %}
-            \item   {{latex_safe(s['name'])-}}{%-if s['role']-%}
+            \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
@@ -846,207 +860,3 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
 
 \end{document}
 
-{% for e in education %}
-\ressubheadingitems{ {{-latex_safe(e['institution'])-}} }
-    { {{-e['location']-}} }
-    { {{-latex_safe(e['degree'])-}} }
-    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} -
-      {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
-    { {% for o in e.get('other', ()) %}
-        \resitem{ {{-latex_safe(o)-}} }
-     {% endfor%}
-     {% if 'gpa' in e %}
-        \resitem{GPA: {{e['gpa']-}} }
-     {% endif %}
-    }
-{% endfor %}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Employment}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for e in employment %}
-\ressubheadingitems{ {{-latex_safe(e['organization'])-}} }
-    { {{-e['location']-}} }
-    { {{-latex_safe(e['position'])-}} }
-    { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} -
-      {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
-    { {% for o in e.get('other', ()) %}
-        \resitem{ {{-latex_safe(o)-}} }
-     {% endfor%}
-    }
-{% endfor %}
-
-
-{% if len(pi_grants) > 0 %}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Grants as Lead PI}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{\Large\underline{Lifetime Total Grant Amount as PI:} \textbf{ \${{"{:,.2f}".format(pi_amount)}} }}
-
-{% for grant in pi_grants %}
-\ressubheadingitems{ {{-grant['title']-}} }
-    { \${{-"{:,.2f}".format(grant['amount'])-}} }
-    { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
-    { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
-      {{month_and_year(grant.get('end_month'), grant.get('end_year'))-}} }
-    {
-      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
-        \resitem{
-          {%- if 'narrative' in grant %}
-            \href{ {{-grant['narrative']-}} }{Narrative}.
-          {%- endif %}
-          {%- if 'benefit_of_collaboration' in grant %}
-            \href{ {{-grant['benefit_of_collaboration']-}} }{Benefit of Collaboration}.
-          {%- endif %}
-          {%- if 'call_for_proposals' in grant %}
-            \href{ {{-grant['call_for_proposals']-}} }{Call for Proposals}.
-          {%- endif %}
-        }
-      {% endif %}
-    }
-{% endfor %}
-{% endif %}
-
-
-{% if len(coi_grants) > 0 %}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Grants as Non-Lead PI}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{\Large\underline{Lifetime Subaward Grant Amount:} \textbf{ \${{"{:,.2f}".format(coi_sub_amount)}} }
-subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
-
-{% for grant in coi_grants %}
-\ressubheadingitems{ {{-grant['title']-}} }
-    { \${{-"{:,.2f}".format(grant['subaward_amount'])-}} }
-    { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
-    { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
-      {{month_and_year(grant.get('end_month'), grant.get('end_year'))-}} }
-    {
-      \resitem{Role: {{grant['me']['position']-}} }
-      \resitem{Total award: \${{-"{:,.2f}".format(grant['amount'])-}} }
-      \resitem{PI: {{grant['pi']['name']}} at {{grant['pi']['institution']}} }
-      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
-        \resitem{
-          {%- if 'narrative' in grant %}
-            \href{ {{-grant['narrative']-}} }{Narrative}.
-          {%- endif %}
-          {%- if 'benefit_of_collaboration' in grant %}
-            \href{ {{-grant['benefit_of_collaboration']-}} }{Benefit of Collaboration}.
-          {%- endif %}
-          {%- if 'call_for_proposals' in grant %}
-            \href{ {{-grant['call_for_proposals']-}} }{Call for Proposals}.
-          {%- endif %}
-        }
-      {% endif %}
-    }
-{% endfor %}
-{% endif %}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Awards \& Honours}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{-2pt}
-\begin{center}\begin{tabular*}{6.6in}{p{6in} c r}
-{% for agh in aghs %}
-    {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
-{% endfor %}
-    \vphantom{E}
-\end{tabular*}
-\end{center}\vspace*{-16pt}
-
-
-{%if len(pubs) > 0%}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{All Publications}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{enumerate}
-{% for pub in pubs %}
-    \item \fullcite{ {{-pub['_id']-}} }
-{% endfor %}
-\end{enumerate}
-{% endif %}
-
-
-%\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Software Projects}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for proj in projects %}
-{% set me = proj['team'][0] %}
-\ressubheadingitems{ {{-proj['_id']-}} }
-    { {{-me['position']-}} }
-    { {{-proj['description']-}} }
-    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
-      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
-    {
-      {% for o in proj['other'] %}
-        \resitem{ {{-latex_safe(o)-}} }
-      {% endfor %}
-      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
-    }
-\vspace{0.5em}
-{% endfor %}
-
-%\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Teaching Experience}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for t in p['teaching'] %}
-\ressubheadingitems{ {{-t['course']-}} }
-    { {{-t['organization']-}} }
-    { {{-t['position']-}} }
-    { {{-month_and_year(t.get('month'), t.get('year'))-}}
-      {% if 'end_year' in t %}-
-        {{-month_and_year(t.get('end_month'), t.get('end_year'))-}}
-      {% endif %}
-    }
-    { {% if 'description' in t %}
-        \resitem{ {{-latex_safe(t['description'])-}} }
-      {% endif %}
-      {% if 'website' in t or 'syllabus' in t or 'video' in t or 'materials' in t %}
-        \resitem{
-          {%- if 'website' in t %}
-            \href{ {{-latex_safe_url(t['website'])-}} }{Website}.
-          {%- endif %}
-          {%- if 'syllabus' in t %}
-            \href{ {{-latex_safe_url(t['syllabus'])-}} }{Syllabus}.
-          {%- endif %}
-          {%- if 'video' in t %}
-            \href{ {{-latex_safe_url(t['video'])-}} }{Video}.
-          {%- endif %}
-          {%- if 'materials' in t %}
-            \href{ {{-latex_safe_url(t['materials'])-}} }{Source Materials}.
-          {%- endif %}
-        }
-      {% endif %}
-    }
-{% endfor %}
-
-
-%\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Memberships}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for m in p['membership'] %}
-\ressubheadingshort{ {{-latex_safe(m['organization'])-}} }
-    {\em{ {{-month_and_year(m.get('begin_month'), m.get('begin_year'))-}} -
-          {{-month_and_year(m.get('end_month'), m.get('end_year'))-}} } }
-    { {{-latex_safe(m['position'])-}} }
-{% endfor %}
-
-
-{%if 'skills' in p and len(p['skills']) > 0%}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Skills}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{itemize}[label=$-$]
-{%for cat, cgrp in groupby(p['skills'], key=category_val)%}
-  \item {{cat}}
-  \begin{itemize}[label=$-$]{%for lvl, lgrp in groupby(cgrp, key=level_val)%}
-    \resitem{\textbf{ {{-lvl.capitalize()}}:} {{gets(lgrp, 'name', '<nemo>') | join(', ')-}} }
-  {%endfor%}\end{itemize}
-{%endfor%}
-\end{itemize}
-{%endif%}
-
-\end{document}
