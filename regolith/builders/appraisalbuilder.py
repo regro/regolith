@@ -7,7 +7,7 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int
-from regolith.sorters import ene_date_key, position_key
+from regolith.sorters import ene_date_key, position_key, doc_date_key
 from regolith.builders.cpbuilder import is_current, is_pending, has_finished, \
     has_started
 from regolith.stylers import sentencecase, month_fullnames
@@ -24,7 +24,8 @@ from regolith.tools import (
     filter_service,
     filter_facilities,
     filter_activities,
-    number_suffix, filter_presentations, awards)
+    number_suffix, filter_presentations, awards, filter_patents,
+    filter_licenses)
 
 BEGIN_YEAR = 2018
 
@@ -105,6 +106,9 @@ class AppraisalBuilder(LatexBuilderBase):
         gtx["presentations"] = sorted(
             all_docs_from_collection(rc.client, "presentations"), key=_id_key
         )
+        gtx["patents"] = sorted(
+            all_docs_from_collection(rc.client, "patents"), key=_id_key
+        )
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -137,7 +141,7 @@ class AppraisalBuilder(LatexBuilderBase):
         pi = fuzzy_retrieval(
             self.gtx["people"], ["aka", "name", "_id"], "sbillinge"
         )
-#        pi['initials'] = "SJLB"
+        #        pi['initials'] = "SJLB"
 
         grants = merge_collections(self.gtx["proposals"], self.gtx["grants"],
                                    "proposal_id")
@@ -215,20 +219,21 @@ class AppraisalBuilder(LatexBuilderBase):
                                                     begin_period,
                                                     "undergrad")
         masters = filter_employment_for_advisees(self.gtx["people"],
-                                                    begin_period,
-                                                    "ms")
+                                                 begin_period,
+                                                 "ms")
         currents = filter_employment_for_advisees(self.gtx["people"],
-                                                    begin_period,
-                                                    "phd")
+                                                  begin_period,
+                                                  "phd")
         graduateds = filter_employment_for_advisees(self.gtx["people"],
-                                                    begin_period.replace(year=end_year-5),
+                                                    begin_period.replace(
+                                                        year=end_year - 5),
                                                     "phd")
         postdocs = filter_employment_for_advisees(self.gtx["people"],
-                                                    begin_period,
-                                                    "postdoc")
+                                                  begin_period,
+                                                  "postdoc")
         visitors = filter_employment_for_advisees(self.gtx["people"],
-                                                    begin_period,
-                                                    "visitor")
+                                                  begin_period,
+                                                  "visitor")
         iter = deepcopy(graduateds)
         for g in iter:
             if g.get("active"):
@@ -242,70 +247,118 @@ class AppraisalBuilder(LatexBuilderBase):
                                       begin_period, "department")
         mego = deepcopy(me)
         school_service = filter_service([mego],
-                                      begin_period, "school")
+                                        begin_period, "school")
         mego = deepcopy(me)
         uni_service = filter_service([mego],
-                                      begin_period, "university")
+                                     begin_period, "university")
         uni_service.extend(school_service)
         mego = deepcopy(me)
         prof_service = filter_service([mego],
                                       begin_period, "profession")
         mego = deepcopy(me)
         outreach = filter_service([mego],
-                                      begin_period, "outreach")
+                                  begin_period, "outreach")
         mego = deepcopy(me)
         lab = filter_facilities([mego],
-                                      begin_period, "laboratory")
+                                begin_period, "laboratory")
         mego = deepcopy(me)
         shared = filter_facilities([mego],
-                                      begin_period, "shared")
+                                   begin_period, "shared")
         mego = deepcopy(me)
         fac_other = filter_facilities([mego],
                                       begin_period, "other")
         mego = deepcopy(me)
         fac_teaching = filter_facilities([mego],
-                                      begin_period, "fac_teaching")
+                                         begin_period, "fac_teaching")
         mego = deepcopy(me)
         fac_wishlist = filter_facilities([mego],
-                                      begin_period, "fac_wishlist")
+                                         begin_period, "fac_wishlist")
         mego = deepcopy(me)
         tch_wishlist = filter_facilities([mego],
-                                      begin_period, "tch_wishlist")
+                                         begin_period, "tch_wishlist")
         mego = deepcopy(me)
         curric_dev = filter_activities([mego],
-                                      begin_period, "teaching")
+                                       begin_period, "teaching")
         mego = deepcopy(me)
         other_activities = filter_activities([mego],
-                                      begin_period, "other")
+                                             begin_period, "other")
 
         ##########################
         # Presentation list
         ##########################
         keypres = filter_presentations(self.gtx["people"],
-                                        self.gtx["presentations"],
-                                        self.gtx["institutions"],
-                                        types=["award", "plenary", "keynote"],
-                             since=begin_period, before=end_period, statuses=["accepted"])
+                                       self.gtx["presentations"],
+                                       self.gtx["institutions"],
+                                       types=["award", "plenary", "keynote"],
+                                       since=begin_period, before=end_period,
+                                       statuses=["accepted"])
         invpres = filter_presentations(self.gtx["people"],
-                                        self.gtx["presentations"],
-                                        self.gtx["institutions"],
-                                        types=["invited"],
-                             since=begin_period, before=end_period, statuses=["accepted"])
+                                       self.gtx["presentations"],
+                                       self.gtx["institutions"],
+                                       types=["invited"],
+                                       since=begin_period, before=end_period,
+                                       statuses=["accepted"])
         sempres = filter_presentations(self.gtx["people"],
-                                        self.gtx["presentations"],
-                                        self.gtx["institutions"],
-                                        types=["colloquium","seminar"],
-                             since=begin_period, before=end_period, statuses=["accepted"])
+                                       self.gtx["presentations"],
+                                       self.gtx["institutions"],
+                                       types=["colloquium", "seminar"],
+                                       since=begin_period, before=end_period,
+                                       statuses=["accepted"])
         declpres = filter_presentations(self.gtx["people"],
                                         self.gtx["presentations"],
                                         self.gtx["institutions"],
                                         types=["all"],
-                             since=begin_period, before=end_period, statuses=["declined"])
+                                        since=begin_period, before=end_period,
+                                        statuses=["declined"])
 
         #########################
         # Awards
         #########################
         ahs = awards(me, since=begin_period)
+
+        ########################
+        # Publications
+        ########################
+        names = frozenset(me.get("aka", []) + [me["name"]])
+        pubs = filter_publications(
+            all_docs_from_collection(rc.client, "citations"),
+            names,
+            reverse=True,
+            bold=False,
+            since=begin_period
+        )
+        bibfile = make_bibtex_file(
+            pubs, pid=me["_id"], person_dir=self.bldir
+        )
+        articles = [prc for prc in pubs if
+                       prc.get("entrytype") in "article"]
+        nonarticletypes = ["book", "inbook", "proceedings", "inproceedings",
+                           "incollection", "unpublished", "phdthesis", "misc"]
+        nonarticles = [prc for prc in pubs if
+                       prc.get("entrytype") in nonarticletypes]
+        peer_rev_conf_pubs = [prc for prc in pubs if prc.get("peer_rev_conf")]
+        pubiter = deepcopy(pubs)
+        for prc in pubiter:
+            if prc.get("peer_rev_conf"):
+                peer_rev_conf_pubs = prc
+                pubs.pop(prc)
+
+        ##############
+        # TODO: add Current Projects to Research summary section
+        ##############
+
+        #############
+        # IP
+        #############
+        patents = filter_patents(self.gtx["patents"], self.gtx["people"],
+                                 "sbillinge", since=begin_period)
+        licenses = filter_licenses(self.gtx["patents"], self.gtx["people"],
+                                   "sbillinge", since=begin_period)
+        #############
+        # hindex
+        #############
+        hindex = sorted(me["hindex"], key=doc_date_key ).pop()
+        print(hindex)
 
         #########################
         # render
@@ -326,7 +379,7 @@ class AppraisalBuilder(LatexBuilderBase):
             visitors=visitors,
             dept_service=dept_service,
             uni_service=uni_service,
-            prof_service = prof_service,
+            prof_service=prof_service,
             outreach=outreach,
             lab=lab,
             shared=shared,
@@ -342,51 +395,13 @@ class AppraisalBuilder(LatexBuilderBase):
             declpres=declpres,
             sentencecase=sentencecase,
             monthstyle=month_fullnames,
-            ahs=ahs
+            ahs=ahs,
+            pubs=articles,
+            nonarticles=nonarticles,
+            peer_rev_conf_pubs=peer_rev_conf_pubs,
+            bibfile=bibfile,
+            patents=patents,
+            licenses=licenses,
+            hindex=hindex,
         )
         self.pdf("billinge-ann-report")
-
-        """
-        for p in self.gtx["people"]:
-            # so we don't modify the dbs when de-referencing
-            names = frozenset(p.get("aka", []) + [p["name"]])
-            pubs = filter_publications(
-                all_docs_from_collection(rc.client, "citations"),
-                names,
-                reverse=True,
-            )
-            bibfile = make_bibtex_file(
-                pubs, pid=p["_id"], person_dir=self.bldir
-            )
-            emp = p.get("employment", [])
-            emp.sort(key=ene_date_key, reverse=True)
-            edu = p.get("education", [])
-            edu.sort(key=ene_date_key, reverse=True)
-
-            grants = list(all_docs_from_collection(rc.client, "grants"))
-            pi_grants, pi_amount, _ = filter_grants(grants, names, pi=True)
-            coi_grants, coi_amount, coi_sub_amount = filter_grants(
-                grants, names, pi=False
-            )
-            aghs = awards_grants_honors(p)
-            # TODO: pull this out so we can use it everywhere
-            for ee in [emp, edu]:
-                for e in ee:
-                    dereference_institution(e, self.gtx["institutions"])
-        """
-
-        """
-                title=p.get("name", ""),
-                aghs=aghs,
-                pubs=pubs,
-                names=names,
-                bibfile=bibfile,
-                education=edu,
-                employment=emp,
-                projects=projs,
-                pi_grants=pi_grants,
-                pi_amount=pi_amount,
-                coi_grants=coi_grants,
-                coi_amount=coi_amount,
-                coi_sub_amount=coi_sub_amount,
-        """
