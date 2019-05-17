@@ -72,6 +72,12 @@ class HtmlBuilder(BuilderBase):
     def root_index(self):
         """Render root index"""
         self.render("root_index.html", "index.html", title="Home")
+        make_bibtex_file(list(all_docs_from_collection(self.rc.client,
+                                                       "citations")),
+                         pid='group',
+                         person_dir=self.bldir,
+                         )
+
 
     def people(self):
         """Render people, former members, and each person"""
