@@ -342,7 +342,7 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         for key in ent.keys():
             if key in skip_keys:
                 continue
-            ent[key] = latex_safe(ent[key])
+            ent[key] = latex_safe(str(ent[key]))
         ents.append(ent)
     fname = os.path.join(person_dir, pid) + ".bib"
     with open(fname, "w", encoding="utf-8") as f:
