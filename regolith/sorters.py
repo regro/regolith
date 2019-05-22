@@ -43,6 +43,8 @@ POSITION_LEVELS = {
     "ajunct professor": 5,
     "programer": 5,
     "programmer": 5,
+    "scientist": 10,
+    "engineer": 10,
     "visiting scientist": 6,
     "research assistant professor": 7,
     "assistant professor": 8,

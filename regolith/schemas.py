@@ -630,9 +630,16 @@ EXEMPLARS = {
             "_id": "mypropsal",
             "amount": 1000000.0,
             "authors": ["Anthony Scopatz", "Robert Flanagan"],
+            "application_status": "approved",
+            "begin_day": 1,
+            "begin_month": "May",
+            "begin_year": 2030,
             "currency": "USD",
             "day": 18,
             "duration": 3,
+            "end_day": 31,
+            "end_month": "December",
+            "end_year": 2030,
             "full": {
                 "benefit_of_collaboration": "http://pdf.com"
                 "/benefit_of_collaboration",
@@ -1170,15 +1177,18 @@ SCHEMAS = {
         },
         "state": {
             "description": "the state where the institution is",
-            "required": True,
+            "required": False,
             "type": "string",
-            "dependencies": {"country": "USA"},
+        },
+        "street": {
+            "description": "the street where the institution is",
+            "required": False,
+            "type": "string",
         },
         "zip": {
             "description": "the zip or postal code of the institution",
-            "required": True,
-            "type": "string",
-            "dependencies": {"country": "USA"},
+            "required": False,
+            "anyof_type": ["integer", "string"],
         },
     },
     "people": {
@@ -1353,9 +1363,11 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
+        # TODO: Can this be required only if status = active?
         "position": {
             "description": "such as professor, graduate student, or scientist",
             "required": True,
+            "dependencies": {"status": "active"},
             "type": "string",
             "eallowed": list(SORTED_POSITION),
         },
@@ -1757,21 +1769,80 @@ SCHEMAS = {
             "required": True,
             "anyof_type": ["list", "string"],
         },
-        "call_for_proposals": {"description": "", "required": False, "type": "string"},
+        "begin_day": {
+            "description": "start day of the proposed grant",
+            "required": False,
+            "type": "integer",
+        },
+        "begin_month": {
+            "description": "start month of the proposed grant",
+            "required": False,
+            "type": "string",
+        },
+        "begin_year": {
+            "description": "start year of the proposed grant",
+            "required": False,
+            "type": "integer",
+        },
+        "call_for_proposals": {
+            "description": "",
+            "required": False,
+            "type": "string",
+        },
+        "cpp_info": {
+            "description": "extra information needed for building current and "
+                           "pending form ",
+            "required": False,
+            "schema": {
+                "cppflag": {"required": False, "type": "boolean"},
+                "other_agencies_submitted": {"required": False, "type": "string"},
+                "institution": {"required": False, "type": "string","description": "place where the proposed grant will be located"},
+                "person_months_academic": {"required": False, "anyof_type": ["float","integer"]},
+                "person_months_summer": {"required": False, "anyof_type": ["float","integer"]},
+                "project_scope": {"required": False, "type": "string"},
+            },
+            "type": "dict",
+        },
         "currency": {
             "description": "typically '$' or 'USD'",
             "required": True,
             "type": "string",
         },
         "day": {
-            "description": "day that the proposal is due",
+            "description": "day that the proposal was submitted",
             "required": True,
             "type": "integer",
+        },
+        "due_date": {
+            "description": "day that the proposal is due",
+            "required": False,
+            "type": "string",
         },
         "duration": {
             "description": "number of years",
             "required": True,
             "type": ("integer", "float"),
+        },
+        "end_day": {
+            "description": "end day of the proposed grant",
+            "required": False,
+            "type": ("string", "integer"),
+        },
+        "end_month": {
+            "description": "end month of the proposed grant",
+            "required": False,
+            "type": "string",
+        },
+        "end_year": {
+            "description": "end year of the proposed grant",
+            "required": False,
+            "type": "integer",
+        },
+        "funder": {
+            "description": "who will fund the proposal"
+            "as funder in grants",
+            "required": False,
+            "type": "string",
         },
         "full": {
             "description": "full body of the proposal",
@@ -1779,14 +1850,14 @@ SCHEMAS = {
             "type": "dict",
         },
         "month": {
-            "description": "month that the proposal is due",
+            "description": "month that the proposal was submitted",
             "required": True,
             "type": "string",
         },
-        "other_agencies_submitted": {
-            "description": "Other agencies the proposal has been sent to",
-            "anyof_type": ["list", "string"],
-            "required": False,
+        "notes": {
+            "description": "anything you want to note",
+            "required": True,
+            "anyof_type": ["string","list"],
         },
         "pi": {
             "description": "principal investigator name",
@@ -1811,6 +1882,7 @@ SCHEMAS = {
             "schema": {
                 "schema": {
                     "cv": {"required": False, "type": "string"},
+                    "email": {"required": False, "type": "string"},
                     "institution": {"required": True, "type": "string"},
                     "name": {"required": True, "type": "string"},
                     "position": {"required": True, "type": "string"},
@@ -1828,8 +1900,13 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "title_short": {
+            "description": "short title of proposal",
+            "required": False,
+            "type": "string",
+        },
         "year": {
-            "description": "Year that the proposal is due",
+            "description": "Year that the proposal was submitted",
             "required": True,
             "type": "integer",
         },
