@@ -641,7 +641,7 @@ EXEMPLARS = {
         "finalAssessment": ["The authors should really start over"],
         "firstAuthorLastName": "Wingit",
         "freewrite": "this comment didn't fit anywhere above",
-        "journal": "nature",
+        "journal": "Nature",
         "month": "02",
         "recommendation": "reject",
         "reviewer": "sbillinge",
@@ -1678,7 +1678,7 @@ SCHEMAS = {
             "be used to build a referee report. This should probably be private."
         },
         "_id": {
-            "description": "short representation, such as date and journal",
+            "description": "the ID",
             "required": True,
             "type": "string",
         },
@@ -1777,13 +1777,12 @@ SCHEMAS = {
             ],
         },
         "reviewer": {
-            "description": "title of the paper under review",
+            "description": "name of person reviewing the paper",
             "required": True,
             "type": "string",
         },
         "status": {
-            "description": "Where you are with the review"
-            "the trip cancelled?",
+            "description": "Where you are with the review",
             "required": True,
             "type": "string",
             "eallowed": [
