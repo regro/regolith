@@ -82,13 +82,14 @@ EXEMPLARS = {
     },
     "contacts": {
         "_id": "afriend",
-        "name": "Anthony B Friend",
         "aka": [
           "A. B. Friend"
           "AB Friend"
           "Tony Friend"
         ],
+        "email": "friend@deed.com",
         "institution": "columbiau",
+        "name": "Anthony B Friend",
         "notes": "The guy I meet for cofee sometimes",
         "title": "Mr.",
     },
@@ -905,15 +906,15 @@ SCHEMAS = {
                            "plus last name, but unique",
             "required": True,
         },
-        "name": {
-            "description": "the person canonical name",
-            "required": True,
-            "type": "string",
-        },
         "aka": {
             "required": True,
             "type": "list",
             "description": "other names for the person",
+        },
+        "email": {
+            "description": "Contact email for the contact",
+            "type": "string",
+            "required": False,
         },
         "institution": {
             "description": "the institution where they are located.  This is"
@@ -922,6 +923,11 @@ SCHEMAS = {
                            "in the aka or name",
             "required": False,
             "type": "string"
+        },
+        "name": {
+            "description": "the person canonical name",
+            "required": True,
+            "type": "string",
         },
         "notes": {
             "description": "notes about the person",
