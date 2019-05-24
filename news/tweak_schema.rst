@@ -1,6 +1,9 @@
-**Added:** None
+**Added:**
+ - contacts to schema.py, a lighter type of person
 
-**Changed:** None
+**Changed:**
+ - proposals schema in schema.py to include fields for building current and
+   pending report forms
 
 **Deprecated:** None
 
