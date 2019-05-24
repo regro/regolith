@@ -907,7 +907,7 @@ SCHEMAS = {
             "required": True,
         },
         "aka": {
-            "required": True,
+            "required": False,
             "type": "list",
             "description": "other names for the person",
         },
