@@ -80,6 +80,18 @@ EXEMPLARS = {
         "volume": "4",
         "year": "2017",
     },
+    "contacts": {
+        "_id": "afriend",
+        "name": "Anthony B Friend",
+        "aka": [
+          "A. B. Friend"
+          "AB Friend"
+          "Tony Friend"
+        ],
+        "institution": "columbiau",
+        "notes": "The guy I meet for cofee sometimes",
+        "title": "Mr.",
+    },
     "courses": {
         "_id": "EMCH-552-2016-F",
         "active": False,
@@ -883,6 +895,46 @@ SCHEMAS = {
             "required": True,
             "type": "integer",
         },
+    },
+    "contacts": {
+        "_description": {"a lighter version of people.  Fewer required fields"
+                         "for capturing people who are less tightly coupled"
+        },
+        "_id": {
+            "description": "id of the person, e.g., first letter first name "
+                           "plus last name, but unique",
+            "required": True,
+        },
+        "name": {
+            "description": "the person canonical name",
+            "required": True,
+            "type": "string",
+        },
+        "aka": {
+            "required": True,
+            "type": "list",
+            "description": "other names for the person",
+        },
+        "institution": {
+            "description": "the institution where they are located.  This is"
+                           "required for building a COI list of coauthors, but"
+                           "not in general.  It can be institute id or anything"
+                           "in the aka or name",
+            "required": False,
+            "type": "string"
+        },
+        "notes": {
+            "description": "notes about the person",
+            "required": False,
+            "anyof_type": ["list", "string"]
+        },
+        "title": {
+            "description": "how the person is addressed",
+            "required": False,
+            "type": "string",
+        },
+        "required": False,
+        "type": "dict",
     },
     "grades": {
         "_description": {
@@ -1777,7 +1829,7 @@ SCHEMAS = {
         "begin_month": {
             "description": "start month of the proposed grant",
             "required": False,
-            "type": "string",
+            "anyof_type": ["string","integer"]
         },
         "begin_year": {
             "description": "start year of the proposed grant",
@@ -1831,7 +1883,7 @@ SCHEMAS = {
         "end_month": {
             "description": "end month of the proposed grant",
             "required": False,
-            "type": "string",
+            "anyof_type": ["string","integer"]
         },
         "end_year": {
             "description": "end year of the proposed grant",
@@ -1852,7 +1904,7 @@ SCHEMAS = {
         "month": {
             "description": "month that the proposal was submitted",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string","integer"]
         },
         "notes": {
             "description": "anything you want to note",
