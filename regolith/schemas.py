@@ -87,6 +87,7 @@ EXEMPLARS = {
           "AB Friend"
           "Tony Friend"
         ],
+        "department": "physics",
         "email": "friend@deed.com",
         "institution": "columbiau",
         "name": "Anthony B Friend",
@@ -910,6 +911,11 @@ SCHEMAS = {
             "required": False,
             "type": "list",
             "description": "other names for the person",
+        },
+        "department": {
+            "description": "Department at the institution",
+            "type": "string",
+            "required": False,
         },
         "email": {
             "description": "Contact email for the contact",
