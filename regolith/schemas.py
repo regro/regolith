@@ -644,7 +644,6 @@ EXEMPLARS = {
             "_id": "mypropsal",
             "amount": 1000000.0,
             "authors": ["Anthony Scopatz", "Robert Flanagan"],
-            "application_status": "approved",
             "begin_day": 1,
             "begin_month": "May",
             "begin_year": 2030,
@@ -680,14 +679,29 @@ EXEMPLARS = {
             "amount": 982785.0,
             "authors": ["qdu", "dhsu", "sbillinge"],
             "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/"
-            "nsf14591.htm",
-            "currency": "$",
+                                  "nsf14591.htm",
+            "begin_day": 1,
+            "begin_month": "May",
+            "begin_year": 2018,
+            "cpp_info": {
+                "cppflag": True,
+                "other_agencies_submitted": None,
+                "institution": "Columbia University",
+                "person_months_academic": 0,
+                "person_months_summer": 1,
+                "project_scope": "lots to do but it doesn't overlap with any "
+                                 "other of my grants"
+            },
+            "currency": "USD",
             "day": 2,
             "duration": 3,
+            "end_day": 1,
+            "end_month": "May",
+            "end_year": 2019,
             "month": "february",
-            "other_agencies_submitted": "None",
+            "funder": "NSF",
             "pi": "Simon Billinge",
-            "status": "approved",
+            "status": "accepted",
             "team": [
                 {
                     "institution": "Columbia Unviersity",
@@ -706,8 +720,9 @@ EXEMPLARS = {
                     "subaward_amount": 330000.0,
                 },
             ],
-            "title": "DMREF: Novel, data validated, nanostructure determination methods "
-            "for accelerating materials discovery",
+            "title": "DMREF: Novel, data validated, nanostructure determination "
+                     "methods for accelerating materials discovery",
+            "title_short": "DMREF nanostructure",
             "year": 2015,
         },
     ],
@@ -1937,7 +1952,8 @@ SCHEMAS = {
             "description": "e.g. 'pending', 'accepted', 'rejected'",
             "required": True,
             "type": "string",
-            "eallowed": ["pending", "declined", "accepted", "in-prep"],
+            "eallowed": ["pending", "declined", "accepted", "in-prep",
+                         "submitted"],
         },
         "team": {
             "description": "information about the team members participating "
