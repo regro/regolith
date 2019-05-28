@@ -631,15 +631,13 @@ EXEMPLARS = {
     ],
     "refereeReports":{
         "_id": "1902nature",
-        "claims": {
-            "foundWhat": ["gravity waves"],
-            "whyImportant": ["more money for ice cream"],
-        },
-        "didHow": ["measured with a ruler"],
-        "didWhat": ["found a much cheaper way to measure gravity waves"],
-        "editorEyesOnly": "to be honest, I don't believe a word of it",
-        "finalAssessment": ["The authors should really start over"],
-        "firstAuthorLastName": "Wingit",
+        "claimed_found_what": ["gravity waves"],
+        "claimed_why_important": ["more money for ice cream"],
+        "did_how": ["measured with a ruler"],
+        "did_what": ["found a much cheaper way to measure gravity waves"],
+        "editor_eyes_only": "to be honest, I don't believe a word of it",
+        "final_assessment": ["The authors should really start over"],
+        "first_author_last_name": "Wingit",
         "freewrite": "this comment didn't fit anywhere above",
         "journal": "Nature",
         "month": "02",
@@ -1686,9 +1684,7 @@ SCHEMAS = {
             "description": "Claims the authors are making",
             "required": True,
             "schema": {
-                "type": "dict",
-                "schema": {
-                    "foundWhat": {
+                    "claimed_found_what": {
                         "description": "What the authors claim to have found",
                         "required": True,
                         "schema": {
@@ -1697,7 +1693,7 @@ SCHEMAS = {
                         },
                         "type": "list",
                     },
-                    "whyImportant": {
+                    "claimed_why_important": {
                         "description": "What importance the authors claim",
                         "required": True,
                         "schema": {
@@ -1706,11 +1702,10 @@ SCHEMAS = {
                         },
                         "type": "list",
                     },
-                            },
             },
             "type": "dict",
         },
-        "didHow": {
+        "did_how": {
             "description": "How the study was done",
             "required": True,
             "schema": {
@@ -1719,7 +1714,7 @@ SCHEMAS = {
             },
             "type": "list",
         },
-        "didWhat": {
+        "did_what": {
             "description": "What the study was",
             "required": True,
             "schema": {
@@ -1728,12 +1723,12 @@ SCHEMAS = {
             },
             "type": "list",
         },
-        "editorEyesOnly": {
+        "editor_eyes_only": {
             "description": "Comments you don't want passed to the author",
             "required": False,
             "type": "string",
         },
-        "finalAssessment": {
+        "final_assessment": {
             "description": "Summary of impressions of the study",
             "required": True,
             "schema": {
@@ -1742,7 +1737,7 @@ SCHEMAS = {
             },
             "type": "list",
         },
-        "firstAuthorLastName": {
+        "first_author_last_name": {
             "description": "Last name of first author will be referred to "
                            "with et al.",
             "required": True,

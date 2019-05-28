@@ -39,22 +39,22 @@ class ManRevBuilder(LatexBuilderBase):
                 outname + "_author.txt",
                 trim_blocks=True,
                 title=rev["title"],
-                firstAuthorLastName=rev["firstAuthorLastName"],
+                firstAuthorLastName=rev["first_author_last_name"],
                 journal=rev["journal"],
-                didWhat=rev["didWhat"],
-                didHow=rev["didHow"],
-                foundWhat=rev["claims"]["foundWhat"],
-                whyImportant=rev["claims"]["whyImportant"],
-                validityAssessment=rev["validityAssessment"],
-                finalAssessment=rev["finalAssessment"],
+                didWhat=rev["did_what"],
+                didHow=rev["did_how"],
+                foundWhat=rev["claimsed_found_what"],
+                whyImportant=rev["claimed_why_important"],
+                validityAssessment=rev["validity_assessment"],
+                finalAssessment=rev["final_assessment"],
                 recommendation=rev["recommendation"],
                 freewrite=rev["freewrite"]
             )
-        if len(rev["editorEyesOnly"]) > 0:
+        if len(rev["editor_eyes_only"]) > 0:
             self.render(
                 "refreport_editor.txt",
                 outname + "_editor.txt",
                 title=title,
                 firstAuthorLastName=firstAuthorLastName,
-                editorEyesOnly=rev["editorEyesOnly"],
+                editorEyesOnly=rev["editor_eyes_only"],
             )
