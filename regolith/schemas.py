@@ -1680,30 +1680,23 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
-        "claims": {
-            "description": "Claims the authors are making",
+        "claimed_found_what": {
+            "description": "What the authors claim to have found",
             "required": True,
             "schema": {
-                    "claimed_found_what": {
-                        "description": "What the authors claim to have found",
-                        "required": True,
-                        "schema": {
-                            "type": "string",
-                            "required": True,
-                        },
-                        "type": "list",
-                    },
-                    "claimed_why_important": {
-                        "description": "What importance the authors claim",
-                        "required": True,
-                        "schema": {
-                            "type": "string",
-                            "required": True,
-                        },
-                        "type": "list",
-                    },
+                "type": "string",
+                "required": True,
             },
-            "type": "dict",
+            "type": "list",
+        },
+        "claimed_why_important": {
+            "description": "What importance the authors claim",
+            "required": True,
+            "schema": {
+                "type": "string",
+                "required": True,
+            },
+            "type": "list",
         },
         "did_how": {
             "description": "How the study was done",
