@@ -177,7 +177,7 @@ class AppraisalBuilder(LatexBuilderBase):
         pending_grants = [
             g
             for g in self.gtx["proposals"]
-            if g["application_status"] == "pending"
+            if g["status"] == "pending"
         ]
         for g in pending_grants:
             for person in g["team"]:
