@@ -43,7 +43,7 @@ class ManRevBuilder(LatexBuilderBase):
                 journal=rev["journal"],
                 didWhat=rev["did_what"],
                 didHow=rev["did_how"],
-                foundWhat=rev["claimsed_found_what"],
+                foundWhat=rev["claimed_found_what"],
                 whyImportant=rev["claimed_why_important"],
                 validityAssessment=rev["validity_assessment"],
                 finalAssessment=rev["final_assessment"],
