@@ -1,0 +1,53 @@
+Referee report for {{firstAuthorLastName}} et al., {{title -}}.
+
+In this manuscript the authors report a study that {{ didWhat -}}.
+
+{% if len(foundWhat) > 0 -%}
+The main findings of the study are:
+{%- for found in foundWhat %}
+  - {{ found -}}
+{% endfor -%}
+{% endif %}
+
+{% if len(foundWhat) > 0 -%}
+The authors claim the importance is that this study:
+{%- for why in whyImportant %}
+  - {{ why -}}
+{% endfor -%}
+{% endif %}
+
+{% if len(didHow) > 0 -%}
+Briefly, the approach was to carry out:
+{%- for how in didHow %}
+  - {{ how -}}
+{% endfor -%}
+{% endif %}
+
+The approach taken is summarized and discussed below.
+{%- for thing in validityAssessment %}
+  - {{ thing -}}
+{% endfor %}
+
+To summarize my assessment of this manuscript:
+{%- for opinion in finalAssessment %}
+  - {{ opinion -}}
+{% endfor %}
+
+I recommend that this manuscript
+{%- if recommendation == "reject" -%} be rejected
+{%- elif recommendation == "asis" -%}
+be published without revision
+{%- elif recommendation == "smalledits" -%}
+be published with minor revisions
+{%- elif recommendation == "majoredits" -%}
+be published only after major revision
+{%- elif recommendation == "asis" -%}
+will need major revisions to be worthy of publication
+{%- elif recommendation == "diffjournal" -%}
+is not appropriate for {{ journal }} and should be submitted to a more
+appropriate journal
+
+{{ freewrite }}
+
+
+{% endif -%}

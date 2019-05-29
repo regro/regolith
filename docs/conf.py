@@ -276,7 +276,7 @@ texinfo_documents = [
 
 def format_key(schema, key, indent_str=""):
     s = ""
-    if key == "schema":
+    if key == "schema" or key == "required":
         return s
     line_format = ":{key}: {type}, {description}, required\n"
     line_format_o = ":{key}: {type}, {description}, optional\n"
