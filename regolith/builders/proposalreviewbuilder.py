@@ -1,4 +1,4 @@
-"""Builder for Current and Pending Reports."""
+"""Builder for Proposal Reivews."""
 import datetime
 import time
 from nameparser import HumanName
@@ -15,7 +15,7 @@ from regolith.tools import (
 
 
 class PropRevBuilder(LatexBuilderBase):
-    """Build a manuscript review from database entries"""
+    """Build a proposal review from database entries"""
     btype = "propreview"
 
     def construct_global_ctx(self):
