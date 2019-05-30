@@ -1,32 +1,53 @@
-Referee report for {{firstAuthorLastName}} et al., {{title -}}.
+Referee report for {{firstAuthorLastName}}
+{% if multiauthor %}
+et al.
+{% endif %}
+, {{title -}}.
+
+{% if agency.lower() == "doe"%}
+Scientific and Technical merit:
+{% elif agency.lower() == "nsf"%}
+Intellectual Merit:
+{% else %}
+Scientific and Technical merit:
+{% endif %}
 
 In this proposal the author proposes a study that {{ does_what -}}.
 
-{% if len(foundWhat) > 0 -%}
-The main findings of the study are:
-{%- for found in foundWhat %}
-  - {{ found -}}
+{% if len(goals) > 0 -%}
+The main goals of the proposed study are:
+{%- for goal in goals %}
+  - {{ goal -}}
 {% endfor -%}
 {% endif %}
 
-{% if len(foundWhat) > 0 -%}
-The authors claim the importance is that this study:
+{% if len(whyImportant) > 0 -%}
+The authors claim the importance of this study is:
 {%- for why in whyImportant %}
   - {{ why -}}
 {% endfor -%}
 {% endif %}
 
 {% if len(didHow) > 0 -%}
-Briefly, the approach was to carry out:
+Briefly, the approach will be to carry out:
 {%- for how in didHow %}
   - {{ how -}}
 {% endfor -%}
 {% endif %}
 
-The approach taken is summarized and discussed below.
-{%- for thing in validityAssessment %}
+{% if agency.lower() == "doe"%}
+Appropriateness of the approach:
+{% endif %}
+
+The appropriateness of the approach taken is summarized and discussed below.
+{%- for thing in appropriateness %}
   - {{ thing -}}
 {% endfor %}
+
+{% if agency.lower() == "doe"%}
+Appropriateness of the approach:
+{% endif %}
+
 
 To summarize my assessment of this manuscript:
 {%- for opinion in finalAssessment %}

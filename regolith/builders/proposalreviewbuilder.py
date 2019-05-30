@@ -35,21 +35,27 @@ class PropRevBuilder(LatexBuilderBase):
         """Render latex template"""
         for rev in self.gtx["proposalReviews"]:
             outname = "{}_{}".format(_id_key(rev),rev["reviewer"])
+            multiauth = False
             if isinstance(rev["name"],str):
                 rev["name"] = [rev["name"]]
+            if len(rev["name"]) > 1:
+                multiauth = True
             firstauthor = HumanName(rev["name"][0])
             firstauthorlastname = firstauthor.last
             self.render(
                 "propreport_author.txt",
-                outname + "_author.txt",
+                outname + ".txt",
                 trim_blocks=True,
+                agency=agency,
+                appropriateness=rev["appropriateness_of_approach"],
                 title=rev["title"],
+                multiauthor=multiauth,
                 firstAuthorLastName=firstauthorlastname,
                 journal=rev["journal"],
                 didWhat=rev["did_what"],
                 didHow=rev["did_how"],
-                foundWhat=rev["claimed_found_what"],
-                whyImportant=rev["claimed_why_important"],
+                goals=rev["goals"],
+                whyImportant=rev["why_important"],
                 validityAssessment=rev["validity_assessment"],
                 finalAssessment=rev["final_assessment"],
                 recommendation=rev["recommendation"],
