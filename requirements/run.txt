@@ -6,3 +6,4 @@ cerberus
 xonsh
 rever
 openpyxl
+nameparser
