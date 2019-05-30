@@ -1,4 +1,4 @@
-"""Builder for Current and Pending Reports."""
+"""Builder for Proposal Reivews."""
 import datetime
 import time
 from nameparser import HumanName
