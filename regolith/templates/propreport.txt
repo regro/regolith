@@ -1,4 +1,4 @@
-Referee report for proposal {title -}} by
+Referee report for proposal {{ title }} by
 {{firstAuthorLastName}}, ({{ institution }})
 {% if multiauthor %}
 et al.
@@ -11,60 +11,49 @@ Intellectual Merit:
 {% else %}
 Scientific and Technical merit:
 {% endif %}
-
-In this proposal the author proposes a study that {{ does_what -}}.
-
-{% if len(goals) > 0 -%}
-The main goals of the proposed study are:
+  In this proposal the author proposes a study that {{ does_what -}}.
+{% if len(goals) > 0 %}
+  The main goals of the proposed study are:
 {%- for goal in goals %}
-  - {{ goal -}}
+    - {{ goal -}}
 {% endfor -%}
 {% endif %}
-
-{% if len(does_how) > 0 -%}
-Briefly, the approach will be:
+{% if len(does_how) > 0 %}
+  Briefly, the approach will be:
 {%- for how in does_how %}
-  - {{ how -}}
+    - {{ how -}}
 {% endfor -%}
 {% endif %}
-
-{% if len(importance) > 0 -%}
-The impotance of the work:
+{% if len(importance) > 0 %}
+  The importance of the work:
 {%- for thing in importance %}
-  - {{ thing -}}
+    - {{ thing -}}
 {% endfor -%}
 {% endif %}
-
 
 {% if agency.lower() == "doe"%}
 Appropriateness of the approach:
-
-The appropriateness of the approach:
 {%- for thing in appropriateness %}
   - {{ thing -}}
 {% endfor %}
 {% endif %}
-
 {% if agency.lower() == "doe"%}
 Competency of the team and adequacy of resources:
-{% endif %}
-
+{%- endif %}
 {% if agency.lower() == "nsf"%}
 Qualification of the team:
-{% endif %}
-
-The competency of the team:
+{%- endif %}
+  The competency of the team:
 {%- for thing in competency %}
-  - {{ thing -}}
+    - {{ thing -}}
 {% endfor %}
-
 {% if agency.lower() == "nsf"%}
 Adequacy of the resources available to the team:
 {% endif %}
-The adequacy of the resources available to the team:
+  The adequacy of the resources available to the team:
 {%- for thing in adequacy %}
-  - {{ thing -}}
-{% endfor %}
+    - {{ thing -}}
+{% endfor%}
 
 {% if agency.lower() == "doe"%}
 Relevance to Program Mission:
@@ -72,13 +61,13 @@ Relevance to Program Mission:
   - {{ thing -}}
 {% endfor %}
 {% endif %}
+
 {% if agency.lower() == "doe"%}
 Reasonableness of the Budget:
 {%- for thing in budget %}
   - {{ thing -}}
 {% endfor %}
 {% endif %}
-
 
 {{ freewrite }}
 
