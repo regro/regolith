@@ -43,29 +43,23 @@ class PropRevBuilder(LatexBuilderBase):
             firstauthor = HumanName(rev["name"][0])
             firstauthorlastname = firstauthor.last
             self.render(
-                "propreport_author.txt",
-                outname + ".txt",
+                "propreport.txt",
+                "{}.txt".format(outname),
                 trim_blocks=True,
-                agency=agency,
-                appropriateness=rev["appropriateness_of_approach"],
+                agency=rev["agency"],
+                appropriateness=rev["doe_appropriateness_of_approach"],
                 title=rev["title"],
+                institution=rev["institution"],
                 multiauthor=multiauth,
                 firstAuthorLastName=firstauthorlastname,
-                journal=rev["journal"],
-                didWhat=rev["did_what"],
-                didHow=rev["did_how"],
+                competency=rev["competency_of_team"],
+                adequacy=rev["adequacy_of_resources"],
+                does_what=rev["does_what"],
+                relevance=rev["doe_relevance_to_program_mission"],
+                budget=rev["doe_reasonableness_of_budget"],
+                does_how=rev["does_how"],
                 goals=rev["goals"],
-                whyImportant=rev["why_important"],
-                validityAssessment=rev["validity_assessment"],
-                finalAssessment=rev["final_assessment"],
-                recommendation=rev["recommendation"],
+                importance=rev["importance"],
+                summary=rev["summary"],
                 freewrite=rev["freewrite"]
-            )
-        if len(rev["editor_eyes_only"]) > 0:
-            self.render(
-                "refreport_editor.txt",
-                outname + "_editor.txt",
-                title=title,
-                firstAuthorLastName=firstAuthorLastName,
-                editorEyesOnly=rev["editor_eyes_only"],
             )
