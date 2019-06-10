@@ -32,5 +32,5 @@ BUILDERS = {
 
 
 def builder(btype, rc):
-    """Returns builder of the approriate type."""
+    """Returns builder of the appropriate type."""
     return BUILDERS[btype](rc)
