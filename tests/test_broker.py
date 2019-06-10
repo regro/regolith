@@ -3,6 +3,9 @@ import subprocess
 
 from regolith.broker import Broker, load_db
 
+import tempfile
+
+tmpdir = tempfile.gettempdir()
 
 def test_round_trip(make_db, tmpdir):
     repo = make_db
@@ -13,4 +16,4 @@ def test_round_trip(make_db, tmpdir):
         db["projects"]["Cyclus"], "myfile", os.path.join(tmpdir, "myfile.tex")
     )
     ret = db.get_file(db["projects"]["Cyclus"], "myfile")
-    assert ret == "/tmp/regolith_fake/myfile.tex"
+    assert ret == os.path.join(repo, 'myfile.tex')
