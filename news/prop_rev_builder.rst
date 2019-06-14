@@ -1,5 +1,5 @@
 **Added:**
- - builder for proposal reviews
+ - a builder for proposal reviews.  Currently tuned for doe-bes and nsf-dmr
 
 **Changed:** None
 
