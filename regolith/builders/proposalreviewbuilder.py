@@ -26,6 +26,9 @@ class PropRevBuilder(LatexBuilderBase):
         gtx["proposalReviews"] = sorted(
             all_docs_from_collection(rc.client, "proposalReviews"), key=_id_key
         )
+        gtx["institutions"] = sorted(
+            all_docs_from_collection(rc.client, "institutions"), key=_id_key
+        )
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -42,6 +45,14 @@ class PropRevBuilder(LatexBuilderBase):
                 multiauth = True
             firstauthor = HumanName(rev["name"][0])
             firstauthorlastname = firstauthor.last
+            instn = fuzzy_retrieval(
+                self.gtx["institutions"], ["aka", "name", "_id"], rev["institution"]
+            )
+            if instn:
+                institution = instn["name"]
+            else:
+                institution = rev["institution"]
+
             self.render(
                 "propreport.txt",
                 "{}.txt".format(outname),
@@ -49,7 +60,7 @@ class PropRevBuilder(LatexBuilderBase):
                 agency=rev["agency"],
                 appropriateness=rev["doe_appropriateness_of_approach"],
                 title=rev["title"],
-                institution=rev["institution"],
+                institution=institution,
                 multiauthor=multiauth,
                 firstAuthorLastName=firstauthorlastname,
                 competency=rev["competency_of_team"],
