@@ -56,15 +56,15 @@ Adequacy of the resources available to the team:
 {% endfor%}
 
 {% if agency.lower() == "doe"%}
-Relevance to Program Mission:
-{%- for thing in relevance %}
+Reasonableness of the Budget:
+{%- for thing in budget %}
   - {{ thing -}}
 {% endfor %}
 {% endif %}
 
 {% if agency.lower() == "doe"%}
-Reasonableness of the Budget:
-{%- for thing in budget %}
+Relevance to Program Mission:
+{%- for thing in relevance %}
   - {{ thing -}}
 {% endfor %}
 {% endif %}
