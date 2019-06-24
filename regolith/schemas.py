@@ -568,7 +568,7 @@ EXEMPLARS = {
             "super competent!"
             ],
         "doe_appropriateness_of_approach": [
-            "The proposed apprach is highly innovative"
+            "The proposed approach is highly innovative"
         ],
         "doe_reasonableness_of_budget": [
             "They could do it with half the money"
@@ -591,7 +591,7 @@ EXEMPLARS = {
         "importance": ["save lives", "lift people from poverty"],
         "institution": "columbiau",
         "month": "May",
-        "name": ["B. Cause", "A.N. Effect"],
+        "names": ["B. Cause", "A.N. Effect"],
         "nsf_broader_impacts": [],
         "nsf_create_original_transformative": [],
         "nsf_plan_good": [],
@@ -631,7 +631,7 @@ EXEMPLARS = {
         "importance": ["save lives", "lift people from poverty"],
         "institution": "upenn",
         "month": "May",
-        "name": ["A Genius"],
+        "names": ["A Genius"],
         "nsf_broader_impacts": ["Poor people will be made unpoor"],
         "nsf_create_original_transformative": [
             "transformative because lives will be transformed"],
@@ -1677,7 +1677,7 @@ SCHEMAS = {
         "adequacy_of_resources": {
             "description": "Are the resources of the PI adequate",
             "required": True,
-            "type": "string",
+            "type": "list",
         },
         "agency": {
             "description": "currently nsf or doe",
@@ -1742,7 +1742,7 @@ SCHEMAS = {
         "month": {
             "description": "The month the review was submitted",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string","integer"]
         },
         "names": {
             "description": "The names of the PIs",
