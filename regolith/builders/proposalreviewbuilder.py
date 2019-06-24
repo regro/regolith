@@ -39,11 +39,11 @@ class PropRevBuilder(LatexBuilderBase):
         for rev in self.gtx["proposalReviews"]:
             outname = "{}_{}".format(_id_key(rev),rev["reviewer"])
             multiauth = False
-            if isinstance(rev["name"],str):
-                rev["name"] = [rev["name"]]
-            if len(rev["name"]) > 1:
+            if isinstance(rev["names"],str):
+                rev["names"] = [rev["names"]]
+            if len(rev["names"]) > 1:
                 multiauth = True
-            firstauthor = HumanName(rev["name"][0])
+            firstauthor = HumanName(rev["names"][0])
             firstauthorlastname = firstauthor.last
             instn = fuzzy_retrieval(
                 self.gtx["institutions"], ["aka", "name", "_id"], rev["institution"]
