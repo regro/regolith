@@ -558,6 +558,102 @@ EXEMPLARS = {
         "website": "http://fuelcycle.org/",
         "grant": "dmref15",
     },
+    "proposalReviews": [{
+        "_id": "1906doeExample",
+        "adequacy_of_resources": [
+            "The resources available to the PI seem adequate"
+        ],
+        "agency": "doe",
+        "competency_of_team": [
+            "super competent!"
+            ],
+        "doe_appropriateness_of_approach": [
+            "The proposed approach is highly innovative"
+        ],
+        "doe_reasonableness_of_budget": [
+            "They could do it with half the money"
+        ],
+        "doe_relevance_to_program_mission": [
+            "super relevant"
+        ],
+        "does_how": [
+            "they will find the cause of Malaria",
+            "when they find it they will determine a cure"
+        ],
+        "does_what": 'Find a cure for Malaria',
+        "freewrite": [
+            "I can put extra things here, such as special instructions from the",
+            "program officer"],
+        "goals":  [
+            "The goals of the proposal are to put together a team to find a cure"
+            "for Malaria, and then to find it"
+        ],
+        "importance": ["save lives", "lift people from poverty"],
+        "institution": "columbiau",
+        "month": "May",
+        "names": ["B. Cause", "A.N. Effect"],
+        "nsf_broader_impacts": [],
+        "nsf_create_original_transformative": [],
+        "nsf_plan_good": [],
+        "nsf_pot_to_Advance_knowledge": [],
+        "nsf_pot_to_benefit_society": [],
+        "requester": "Lane Wilson",
+        "reviewer": "sbillinge",
+        "status": "invited,accepted,declined,downloaded,inprogress,submitted",
+        "summary": "dynamite proposal",
+        "title": "A stunning new way to cure Malaria",
+        "year": 2019,
+    },
+    {
+        "_id": "1906nsfExample",
+        "adequacy_of_resources": [
+            "The resources available to the PI seem adequate"
+        ],
+        "agency": "nsf",
+        "competency_of_team": [
+            "super competent!"
+            ],
+        "doe_appropriateness_of_approach": [],
+        "doe_reasonableness_of_budget": [],
+        "doe_relevance_to_program_mission": [],
+        "does_how": [
+            "they will find the cause of Poverty",
+            "when they find it they will determine a cure"
+        ],
+        "does_what": 'Find a cure for Poverty',
+        "freewrite": [
+            "I can put extra things here, such as special instructions from the",
+            "program officer"],
+        "goals":  [
+            "The goals of the proposal are to put together a team to find a cure"
+            "for Poverty, and then to find it"
+        ],
+        "importance": ["save lives", "lift people from poverty"],
+        "institution": "upenn",
+        "month": "May",
+        "names": ["A Genius"],
+        "nsf_broader_impacts": ["Poor people will be made unpoor"],
+        "nsf_create_original_transformative": [
+            "transformative because lives will be transformed"],
+        "nsf_plan_good": [
+            "I don't see any issues with the plan",
+            "it should be very straightforward"
+        ],
+        "nsf_pot_to_Advance_knowledge": [
+            "This won't advance knowledge at all"
+        ],
+        "nsf_pot_to_benefit_society": [
+            "Society will benefit by poor people being made unpoor if they want "
+            "to be"
+        ],
+        "requester": "Tessemer Guebre",
+        "reviewer": "sbillinge",
+        "status": "invited,accepted,declined,downloaded,inprogress,submitted",
+        "summary": "dynamite proposal",
+        "title": "A stunning new way to cure Poverty",
+        "year": 2019,
+    }
+    ],
     "proposals": [
         {
             "_id": "mypropsal",
@@ -640,25 +736,6 @@ EXEMPLARS = {
         "first_author_last_name": "Wingit",
         "freewrite": "this comment didn't fit anywhere above",
         "journal": "Nature",
-        "month": "02",
-        "recommendation": "reject",
-        "reviewer": "sbillinge",
-        "status": "submitted",
-        "title": "a ruler approach to measuring gravity waves",
-        "year": "2019"
-    },
-    "refereeProposals":{
-        "_id": "1902nature",
-        "goals": ["will produce a better ruler for gravity wavves",
-                  "will apply it to gravity waves"],
-        "why_important": ["measured gravity waves are better than unmeasured "
-                        "gravity waves"],
-        "does_how": ["measured with a ruler"],
-        "does_what": ["found a much cheaper way to measure gravity waves"],
-        "editor_eyes_only": "to be honest, I don't believe a word of it",
-        "final_assessment": ["The authors should really start over"],
-        "first_author_last_name": "Wingit",
-        "freewrite": "this comment didn't fit anywhere above",
         "month": "02",
         "recommendation": "reject",
         "reviewer": "sbillinge",
@@ -1586,6 +1663,159 @@ SCHEMAS = {
             "description": "URL of the website.",
             "required": True,
             "type": "string",
+        },
+    },
+    "proposalReviews": {
+        "_description": {
+            "description": "This collection contains reviews of funding proposals"
+        },
+        "_id": {
+            "description": "ID, e.g. 1906_doe_example",
+            "required": True,
+            "type": ("string", "integer", "float"),
+        },
+        "adequacy_of_resources": {
+            "description": "Are the resources of the PI adequate",
+            "required": True,
+            "type": "list",
+        },
+        "agency": {
+            "description": "currently nsf or doe",
+            "type": "string",
+            "eallowed": [
+                "nsf",
+                "doe"
+            ],
+        },
+        "competency_of_team": {
+            "description": "Is the team competent",
+            "required": True,
+            "type": "list",
+        },
+        "doe_appropriateness_of_approach": {
+            "description": "Appropriateness of Research. only used if agency is doe.",
+            "required": False,
+            "type": "list",
+        },
+        "doe_reasonableness_of_budget": {
+            "description": "Reasonableness of budget. only used if agency is doe.",
+            "required": False,
+            "type": "list",
+        },
+        "doe_relevance_to_program_mission": {
+            "description": "Relevance to program mission. only used if agency is doe.",
+            "required": False,
+            "type": "list",
+        },
+        "does_how": {
+            "description": "How will the research be done",
+            "required": True,
+            "type": "list",
+        },
+        "does_what": {
+            "description": "What will the team do",
+            "required": True,
+            "type": "string",
+        },
+        "freewrite": {
+            "description": "Anything and this will appear in the built document"
+                           "right before the summary.  This section often used "
+                           "for extra review criteria for the particular proposal",
+            "required": False,
+            "type": "list",
+        },
+        "goals": {
+            "description": "What are the main goals of the proposed research",
+            "required": True,
+            "type": "list",
+        },
+        "importance": {
+            "description": "The importance of the Research",
+            "required": True,
+            "type": "list",
+        },
+        "institution": {
+            "description": "The institution of the lead PI",
+            "required": True,
+            "type": "string",
+        },
+        "month": {
+            "description": "The month the review was submitted",
+            "required": True,
+            "anyof_type": ["string","integer"]
+        },
+        "names": {
+            "description": "The names of the PIs",
+            "required": True,
+            "anyof_type": ["list", "string"],
+        },
+        "nsf_broader_impacts": {
+            "description": "The broader impacts of the research.  Only used if "
+                           "agency is nsf",
+            "required": False,
+            "type": "list",
+        },
+        "nsf_create_original_transformative": {
+            "description": "Answer to the question how the work is creative, "
+                           "original or transformative.  Only used if agency is "
+                           "nsf",
+            "required": False,
+            "type": "list",
+        },
+        "nsf_plan_good": {
+            "description": "Is the plan good? Only used if agency is nsf",
+            "required": False,
+            "type": "list",
+        },
+        "nsf_pot_to_Advance_knowledge": {
+            "description": "Answer to the question how the work will advance"
+                           "knowledge.  Only used if agency is nsf",
+            "required": False,
+            "type": "list",
+        },
+        "nsf_pot_to_benefit_society": {
+            "description": "Answer to the question how the work has the potential"
+                           "to benefit society.  Only used if agency is nsf",
+            "required": False,
+            "type": "list",
+        },
+        "requester": {
+            "description": "Name of the program officer who requested the review",
+            "required": True,
+            "type": "string",
+        },
+        "reviewer": {
+            "description": "short name of the reviewer.  Will be used in the "
+                           "filename of the resulting text file",
+            "required": True,
+            "type": "string",
+        },
+        "status": {
+            "description": "the status of the review",
+            "type": "string",
+            "eallowed": [
+                "invited",
+                "accepted",
+                "declined",
+                "downloaded",
+                "inprogress",
+                "submitted"
+            ],
+        },
+        "summary": {
+            "description": "Summary statement",
+            "required": True,
+            "type": "string",
+        },
+        "title": {
+            "description": "The title of the proposal",
+            "required": True,
+            "type": "string",
+        },
+        "year": {
+            "description": "The year the review was submitted",
+            "required": True,
+            "type": "integer",
         },
     },
     "proposals": {
