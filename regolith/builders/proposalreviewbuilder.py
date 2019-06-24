@@ -72,5 +72,10 @@ class PropRevBuilder(LatexBuilderBase):
                 goals=rev["goals"],
                 importance=rev["importance"],
                 summary=rev["summary"],
-                freewrite=rev["freewrite"]
+                freewrite=rev["freewrite"],
+                broader_impacts=rev["nsf_broader_impacts"],
+                creativity_originality=rev["nsf_create_original_transformative"],
+                benefit_to_society=rev["nsf_pot_to_benefit_society"],
+                plan_good=rev["nsf_plan_good"],
+                advance_knowledge=rev["nsf_pot_to_Advance_knowledge"]
             )
