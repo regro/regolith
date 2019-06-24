@@ -1,0 +1,110 @@
+Referee report for proposal {{ title }} by
+{{firstAuthorLastName}}, ({{ institution }})
+{% if multiauthor %}
+et al.
+{% endif %}.
+
+{% if agency.lower() == "doe"%}
+Scientific and Technical merit:
+{% elif agency.lower() == "nsf"%}
+Intellectual Merit:
+{% else %}
+Scientific and Technical merit:
+{% endif %}
+  In this proposal the author proposes a study that {{ does_what -}}.
+{% if len(goals) > 0 %}
+  The main goals of the proposed study are:
+{%- for goal in goals %}
+    - {{ goal -}}
+{% endfor -%}
+{% endif %}
+{% if len(does_how) > 0 %}
+  Briefly, the approach will be:
+{%- for how in does_how %}
+    - {{ how -}}
+{% endfor -%}
+{% endif %}
+{% if len(importance) > 0 %}
+  The importance of the work:
+{%- for thing in importance %}
+    - {{ thing -}}
+{% endfor -%}
+{% endif %}
+{% if agency.lower() == "nsf"%}
+{% if len(creativity_originality) > 0 %}
+Creativity and Originality:
+{%- for thing in creativity_originality %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% if agency.lower() == "doe"%}
+
+Appropriateness of the approach:
+{%- for thing in appropriateness %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
+{%- if agency.lower() == "nsf"%}
+  Appropriateness of the plan:
+{%- for thing in plan_good %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
+{% if agency.lower() == "doe"%}
+Competency of the team and adequacy of resources:
+  The competency of the team:
+{%- endif %}
+{% if agency.lower() == "nsf"%}
+  Qualification of the team:
+{%- endif %}
+{%- for thing in competency %}
+    - {{ thing -}}
+{% endfor %}
+  The adequacy of the resources available to the team:
+{%- for thing in adequacy %}
+    - {{ thing -}}
+{% endfor%}
+{% if agency.lower() == "nsf"%}
+{% if len(advance_knowledge) > 0 %}
+  Potential to Advance Knowledge:
+{%- for thing in advance_knowledge %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% if agency.lower() == "doe"%}
+Reasonableness of the Budget:
+{%- for thing in budget %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
+
+{% if agency.lower() == "doe"%}
+Relevance to Program Mission:
+{%- for thing in relevance %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
+
+{% if agency.lower() == "nsf"%}
+Broader Impacts:
+{%- for thing in broader_impacts %}
+  - {{ thing -}}
+{% endfor -%}
+{% endif %}
+{% if agency.lower() == "nsf"%}
+{% if len(benefit_to_society) > 0 %}
+  Benefit to Society:
+{%- for thing in benefit_to_society %}
+  - {{ thing -}}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{{ freewrite }}
+
+In Summary:
+{{ summary }}
+

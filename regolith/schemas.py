@@ -647,6 +647,25 @@ EXEMPLARS = {
         "title": "a ruler approach to measuring gravity waves",
         "year": "2019"
     },
+    "refereeProposals":{
+        "_id": "1902nature",
+        "goals": ["will produce a better ruler for gravity wavves",
+                  "will apply it to gravity waves"],
+        "why_important": ["measured gravity waves are better than unmeasured "
+                        "gravity waves"],
+        "does_how": ["measured with a ruler"],
+        "does_what": ["found a much cheaper way to measure gravity waves"],
+        "editor_eyes_only": "to be honest, I don't believe a word of it",
+        "final_assessment": ["The authors should really start over"],
+        "first_author_last_name": "Wingit",
+        "freewrite": "this comment didn't fit anywhere above",
+        "month": "02",
+        "recommendation": "reject",
+        "reviewer": "sbillinge",
+        "status": "submitted",
+        "title": "a ruler approach to measuring gravity waves",
+        "year": "2019"
+    },
     "students": {
         "_id": "Human A. Person",
         "aka": ["H. A. Person"],
