@@ -158,7 +158,7 @@
 \vskip 12pt\noindent
 \textbf{Investigator:} {{ latex_safe(pi['name']) }}\
 \textbf{Other Agencies to which proposal submitted:}
-{{ latex_safe(g.get("other_funders_submitted", 'None')) }}
+{{ latex_safe(g['cpp_info'].get("other_funders_submitted", 'None')) }}
 
 \textbf{Support:}\ {{ name }}
 
@@ -176,14 +176,14 @@ amt = \${{"{:,}".format(g['subaward_amount'])}})
 \textbf{Total Award Period Covered:}
 {{g.get('award_start_date')}} - {{g.get('award_end_date')}}
 
-\textbf{Location of Project:} {{ g.get('institution' ) }}
+\textbf{Location of Project:} {{ g['cpp_info'].get('institution' ) }}
 
 \textbf{Person Months per Year Committed to Project:}
-\textbf{Academic:} {{ g.get('person_months_academic', 0) }}\
-\textbf{Summer:} {{ g.get('person_months_summer', 0) }}
+\textbf{Academic:} {{ g['cpp_info'].get('person_months_academic', 0) }}\
+\textbf{Summer:} {{ g['cpp_info'].get('person_months_summer', 0) }}
 
 \textbf{Describe Research Including Synergies and Delineation with
-Respect to this Proposal/Award:} {{ g.get('scope', 'N/A')-}}
+Respect to this Proposal/Award:} {{ g['cpp_info'].get('scope', 'N/A')-}}
 {% endfor %}
 {% endif %}
 \vskip 14pt
