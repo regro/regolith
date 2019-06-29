@@ -170,15 +170,18 @@ class AppraisalBuilder(LatexBuilderBase):
                 ]
             )
         ]
+
         current_grants, _, _ = filter_grants(
             current_grants, {pi["name"]}, pi=False, multi_pi=True
         )
+#        print("current: {}".format(current_grants))
 
         pending_grants = [
             g
             for g in self.gtx["proposals"]
             if g["status"] == "pending"
         ]
+#        print("pending: {}".format(pending_grants))
         for g in pending_grants:
             for person in g["team"]:
                 rperson = fuzzy_retrieval(
@@ -203,7 +206,7 @@ class AppraisalBuilder(LatexBuilderBase):
                     grant["end_year"],
                 ),
             )
-        badids = [i["_id"] for i in current_grants if not i.get('cppflag', "")]
+        badids = [i["_id"] for i in current_grants if not i['cpp_info'].get('cppflag', "")]
         iter = copy(current_grants)
         for grant in iter:
             if grant["_id"] in badids:
