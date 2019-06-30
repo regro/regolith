@@ -138,9 +138,24 @@ def create_parser():
         action="store_false",
         default=True,
     )
+    bldp.add_argument(
+        "--from",
+        dest="from_date",
+        help="date in form YYYY-MM-DD.  Items will only be built"
+        "if their date or end_date is equal or after this date",
+        default=None,
+    )
+    bldp.add_argument(
+        "--to",
+        dest="to_date",
+        help="date in form YYYY-MM-DD.  Items will only be built"
+        "if their date or begin_date is equal or before this date",
+        default=None,
+    )
 
     # deploy subparser
-    depp = subp.add_parser("deploy", help="deploys what was built by regolith")
+    depp = subp.add_parser(
+        "deploy", help="deploys what was built by regolith")
 
     # email subparser
     emlp = subp.add_parser("email", help="automates emailing")
