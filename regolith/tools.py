@@ -133,7 +133,7 @@ def is_before(y, by, m=12, d=28, bm=12, bd=28):
     return before >= date
 
 
-def is_between(y, sy, by, m=1, d=1, sm=1, sd=1, bm=12, bd=31):
+def is_between(y, sy, by, m=1, d=1, sm=1, sd=1, bm=12, bd=28):
     return is_since(y, sy, m=m, d=d, sm=sm, sd=sd) and \
            is_before(y, by, m=m, d=d, bm=bm, bd=bd)
 
