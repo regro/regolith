@@ -5,6 +5,7 @@ import os
 import platform
 import re
 import sys
+import time
 from copy import deepcopy
 
 from datetime import datetime
@@ -114,6 +115,28 @@ def month_and_year(m=None, y=None):
         return str(y)
     m = month_to_int(m)
     return "{0} {1}".format(SHORT_MONTH_NAMES[m], y)
+
+
+def is_since(y, sy, m=1, d=1, sm=1, sd=1):
+    s = "{}/{}/{}".format(sd, month_to_int(sm), sy)
+    d = "{}/{}/{}".format(d, month_to_int(m), y)
+    since = time.mktime(datetime.strptime(s, "%d/%m/%Y").timetuple())
+    date = time.mktime(datetime.strptime(d, "%d/%m/%Y").timetuple())
+    return since <= date
+
+
+def is_before(y, by, m=12, d=28, bm=12, bd=28):
+    b = "{}/{}/{}".format(bd, month_to_int(bm), by)
+    d = "{}/{}/{}".format(d, month_to_int(m), y)
+    before = time.mktime(datetime.strptime(b, "%d/%m/%Y").timetuple())
+    date = time.mktime(datetime.strptime(d, "%d/%m/%Y").timetuple())
+    return before >= date
+
+
+def is_between(y, sy, by, m=1, d=1, sm=1, sd=1, bm=12, bd=31):
+    return is_since(y, sy, m=m, d=d, sm=sm, sd=sd) and \
+           is_before(y, by, m=m, d=d, bm=bm, bd=bd)
+
 
 
 def filter_publications(citations, authors, reverse=False, bold=True):
