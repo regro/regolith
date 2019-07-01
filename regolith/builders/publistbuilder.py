@@ -63,8 +63,6 @@ class PubListBuilder(LatexBuilderBase):
         keys = []
         for pub in all_docs_from_collection(rc.client, "citations"):
             keys.append(pub.get("_id"))
-            if pub.get("_id") == "konst;prb19":
-                print(pub)
             if len(set(pub["author"]) & authors) == 0:
                 continue
             bold_self = []
@@ -74,28 +72,17 @@ class PubListBuilder(LatexBuilderBase):
                 else:
                     bold_self.append(a)
             pub["author"] = bold_self
-#            if "Konstantinova" in pub["author"][0]:
-            if pub["_id"] == "konst;prb19":
-                print(pub["author"][0])
-                print(" {}-{}-{}".format(pub["year"],pub.get("month"," month missing")
-                                         ,pub.get("day","day missing")))
-                print(pub.get("grant","grant missing"))
-                print(is_since(pub["year"], sy))
-            is_valid = is_since(pub["year"], sy) and grant in pub.get(
-            #            is_valid = is_since(pub["year"], sy, sm=sm, sd=sd,
-            #                                m=pub.get("month", 1),
-            #                                d=pub.get("day", 1)) and grant in pub.get(
-            "grant",
-                "").lower()
+            #            is_valid = is_since(pub["year"], sy) and grant in pub.get(
+            is_valid = is_since(pub["year"],
+                                sy,
+                                sm=sm,
+                                sd=sd,
+                                m=pub.get("month", 1),
+                                d=pub.get("day", 1)
+                                ) \
+                       and grant in pub.get("grant", "").lower()
             if is_valid:
-                # Fixme: remove in general case
-                if not pub.get("note"):
-                    pub["note"] = ""
-                #                print(pub.get("ackno","ackno missing"))
-                # pub["note"]=pub["note"].join("\\ Ackno: {}".format(pub.get("ackno","ackno missing")))
-                pub["note"] = pub["note"]+r" {{\\bf {}}}".format(pub.get("nb", ""))
                 pubs.append(pub)
-#        print(keys)
         pubs.sort(key=doc_date_key, reverse=reverse)
         return pubs
 
