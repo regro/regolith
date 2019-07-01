@@ -152,6 +152,20 @@ def create_parser():
         "if their date or begin_date is equal or before this date",
         default=None,
     )
+    bldp.add_argument(
+        "--grants",
+        dest="grants",
+        help="specify a grant or a list of grants so items are built only "
+             "if associated with this(these) grant(s)",
+        default=None,
+    )
+    bldp.add_argument(
+        "--people",
+        dest="people",
+        help="specify a person or a list of people such that the build"
+             "will be for only those people",
+        default=None,
+    )
 
     # deploy subparser
     depp = subp.add_parser(
