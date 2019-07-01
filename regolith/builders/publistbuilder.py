@@ -9,7 +9,7 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection
+from regolith.tools import all_docs_from_collection, is_since
 from regolith.sorters import doc_date_key, ene_date_key, position_key
 from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
 
@@ -17,7 +17,6 @@ LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
 
 class PubListBuilder(LatexBuilderBase):
-
     btype = "publist"
 
     def construct_global_ctx(self):
@@ -35,7 +34,7 @@ class PubListBuilder(LatexBuilderBase):
     def latex(self):
         rc = self.rc
         for p in self.gtx["people"]:
-            names = frozenset(p.get("aka", []) + [p["name"]])
+            names = frozenset(p.get("aka", []) + [p["name"]] + [p["_id"]])
             pubs = self.filter_publications(names, reverse=True)
             bibfile = self.make_bibtex_file(
                 pubs, pid=p["_id"], person_dir=self.bldir
@@ -55,9 +54,17 @@ class PubListBuilder(LatexBuilderBase):
             self.pdf(p["_id"])
 
     def filter_publications(self, authors, reverse=False):
+        # Fixme: these will go when the arg parsing merges and they can be
+        # obtained from the command line
+        sy, sm, sd = 2018, 1, 1
+        grant = "fwp17"
         rc = self.rc
         pubs = []
+        keys = []
         for pub in all_docs_from_collection(rc.client, "citations"):
+            keys.append(pub.get("_id"))
+            if pub.get("_id") == "konst;prb19":
+                print(pub)
             if len(set(pub["author"]) & authors) == 0:
                 continue
             bold_self = []
@@ -67,7 +74,28 @@ class PubListBuilder(LatexBuilderBase):
                 else:
                     bold_self.append(a)
             pub["author"] = bold_self
-            pubs.append(pub)
+#            if "Konstantinova" in pub["author"][0]:
+            if pub["_id"] == "konst;prb19":
+                print(pub["author"][0])
+                print(" {}-{}-{}".format(pub["year"],pub.get("month"," month missing")
+                                         ,pub.get("day","day missing")))
+                print(pub.get("grant","grant missing"))
+                print(is_since(pub["year"], sy))
+            is_valid = is_since(pub["year"], sy) and grant in pub.get(
+            #            is_valid = is_since(pub["year"], sy, sm=sm, sd=sd,
+            #                                m=pub.get("month", 1),
+            #                                d=pub.get("day", 1)) and grant in pub.get(
+            "grant",
+                "").lower()
+            if is_valid:
+                # Fixme: remove in general case
+                if not pub.get("note"):
+                    pub["note"] = ""
+                #                print(pub.get("ackno","ackno missing"))
+                # pub["note"]=pub["note"].join("\\ Ackno: {}".format(pub.get("ackno","ackno missing")))
+                pub["note"] = pub["note"]+r" {{\\bf {}}}".format(pub.get("nb", ""))
+                pubs.append(pub)
+#        print(keys)
         pubs.sort(key=doc_date_key, reverse=reverse)
         return pubs
 
@@ -84,7 +112,7 @@ class PubListBuilder(LatexBuilderBase):
             for key in ent.keys():
                 if key in skip_keys:
                     continue
-                ent[key] = latex_safe(ent[key])
+                ent[key] = str(ent[key])
             ents.append(ent)
         fname = os.path.join(person_dir, pid) + ".bib"
         with open(fname, "w", encoding='utf-8') as f:
