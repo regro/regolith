@@ -99,6 +99,13 @@ class PresListBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
+        # just a reminder placeholder how to access these.  These
+        # print statements will be removed when the builder is updated
+        # to use them!
+        print(self.rc.from_date)
+        print(self.rc.to_date)
+        print(self.rc.people)
+        print(self.rc.grants)
 
         for group in self.gtx["groups"]:
             grp = group["_id"]
