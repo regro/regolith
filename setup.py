@@ -31,7 +31,7 @@ def main():
         description="A research group content management system",
         long_description=readme,
         license="CC0",
-        version='0.4.0',
+        version="0.4.0",
         author="Anthony Scopatz",
         maintainer="Anthony Scopatz",
         author_email="scopatz@gmail.com",
@@ -48,7 +48,7 @@ def main():
                 "*.xsh",
             ]
         },
-        scripts=["scripts/regolith"],
+        entry_points={"console_scripts": "regolith = regolith.main:main"},
         zip_safe=False,
     )
     if HAVE_SETUPTOOLS:
