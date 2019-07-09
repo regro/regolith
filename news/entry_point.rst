@@ -2,7 +2,7 @@
 
 **Changed:**
 
-* Use ``entry_points`` rather than scripts, which should help on windows
+* Make a ``.bat`` file in scripts, which should help on windows
 
 **Deprecated:** None
 
