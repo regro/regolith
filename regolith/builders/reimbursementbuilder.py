@@ -62,26 +62,25 @@ class ReimbursementBuilder(BuilderBase):
         for ex in gtx["expenses"]:
             if ex["payee"] != "direct_billed":
                 # open the template
-                if isinstance(ex["grants"],str):
+                if isinstance(ex["grants"], str):
                     ex["grants"] = [ex["grants"]]
-                    grant_fractions = [1]
+                    grant_fractions = [1.]
                 else:
-                    grant_fractions = [float(percent)/100. for percent in ex["grant_percentages"]]
+                    grant_fractions = [float(percent) / 100. for percent in
+                                       ex["grant_percentages"]]
+
                 wb = openpyxl.load_workbook(self.template)
                 ws = wb["T&B"]
 
                 payee = fuzzy_retrieval(
                     gtx["people"], ["name", "aka", "_id"], ex["payee"]
                 )
-                project = fuzzy_retrieval(
-                    gtx["projects"], ["name", "_id"], ex["project"]
-                )
                 grants = [fuzzy_retrieval(
                     gtx["grants"], ["alias", "name", "_id"], grant) for grant
                     in ex["grants"]]
-    #            grants = [doc for doc in gtx["grants"] if
-    #                     doc.get("alias") == project["grant"]]
-    #            grant = grants[0]
+                #            grants = [doc for doc in gtx["grants"] if
+                #                     doc.get("alias") == project["grant"]]
+                #            grant = grants[0]
 
                 ha = payee["home_address"]
                 ws["B17"] = payee["name"]
@@ -125,19 +124,16 @@ class ReimbursementBuilder(BuilderBase):
                     )
 
                 i = 0
-                print(ex["_id"])
-                print(grants)
-                print(grant_fractions)
-                for grant,fraction in zip(grants,grant_fractions):
-                    print(grant.get("_id"),fraction)
+                if abs(sum([fraction * total_amount for fraction in
+                        grant_fractions]) - total_amount) >= 0.01:
+                    raise RuntimeError("grant percentages do not sum to 100")
+                for grant, fraction in zip(grants, grant_fractions):
                     nr = grant.get("account", "")
-                    row = 55+i
+                    row = 55 + i
                     location = "C{}".format(row)
                     location2 = "K{}".format(row)
-                    print(location)
-                    print(i)
                     ws[location] = nr
-                    ws[location2] = total_amount*float(fraction)
+                    ws[location2] = total_amount * float(fraction)
                     i += 1
 
                 if ex.get("expense_type", "business") == "business":
@@ -147,10 +143,12 @@ class ReimbursementBuilder(BuilderBase):
 
                 ws[spots[0]] = "X"
                 ws[spots[1]] = mdy(
-                    **{k: getattr(min(dates), k) for k in ["month", "day", "year"]}
+                    **{k: getattr(min(dates), k) for k in
+                       ["month", "day", "year"]}
                 )
                 ws[spots[2]] = mdy(
-                    **{k: getattr(max(dates), k) for k in ["month", "day", "year"]}
+                    **{k: getattr(max(dates), k) for k in
+                       ["month", "day", "year"]}
                 )
 
                 wb.save(os.path.join(self.bldir, ex["_id"] + ".xlsx"))
