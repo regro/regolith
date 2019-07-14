@@ -1964,7 +1964,7 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
-        "grant_percentage": {
+        "grant_percentages": {
             "description": "the percentage of the reimbursement amount to put "
             "on each grant. This list must be the same length as"
             "the grants list and the percentages placed in the "
