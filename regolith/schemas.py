@@ -227,8 +227,7 @@ EXEMPLARS = {
                 "aka": ["Chemistry", "Dept. of Chemistry"],
             },
             "apam": {
-                "name": "Department of Applied Physics"
-                "and Applied Mathematics",
+                "name": "Department of Applied Physics" "and Applied Mathematics",
                 "aka": ["APAM"],
             },
         },
@@ -239,8 +238,7 @@ EXEMPLARS = {
                 "aka": [
                     "SEAS",
                     "Columbia Engineering",
-                    "Fu Foundation School of Engineering "
-                    "and Applied Science",
+                    "Fu Foundation School of Engineering " "and Applied Science",
                 ],
             }
         },
@@ -261,8 +259,7 @@ EXEMPLARS = {
             "Or similar",
         ],
         "compensation": [
-            "Salary and compensation will be based on prior work "
-            "experience."
+            "Salary and compensation will be based on prior work " "experience."
         ],
         "contact": "Please send CV or resume to Prof. Scopatz at "
         "scopatzATcec.sc.edu.",
@@ -279,8 +276,7 @@ EXEMPLARS = {
     "news": {
         "_id": "56b4eb6d421aa921504ef2a9",
         "author": "Anthony Scopatz",
-        "body": "Dr. Robert Flanagan joined ERGS as a post-doctoral "
-        "scholar.",
+        "body": "Dr. Robert Flanagan joined ERGS as a post-doctoral " "scholar.",
         "day": 1,
         "month": "February",
         "year": 2016,
@@ -294,8 +290,7 @@ EXEMPLARS = {
             "Scopatz, A M",
             "Anthony Michael Scopatz",
         ],
-        "avatar": "https://avatars1.githubusercontent.com/u/320553?v"
-        "=3&s=200",
+        "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
         "bio": "Anthony Scopatz is currently an Assistant Professor",
         "education": [
             {
@@ -334,8 +329,7 @@ EXEMPLARS = {
                 "institution": "University of California, Santa Barbara",
                 "location": "Santa Barbara, CA",
                 "other": [
-                    "Graduated with a Major in Physics and a Minor in "
-                    "Mathematics"
+                    "Graduated with a Major in Physics and a Minor in " "Mathematics"
                 ],
             },
             {
@@ -360,23 +354,20 @@ EXEMPLARS = {
                     "PyNE: The Nuclear Engineering Toolkit.",
                     "Website: http://www.ergs.sc.edu/",
                 ],
-                "position": "Assistant Professor, Mechanical Engineering "
-                "Department",
+                "position": "Assistant Professor, Mechanical Engineering " "Department",
             },
             {
                 "begin_year": 2013,
                 "end_year": 2015,
                 "location": "Madison, WI",
-                "organization": "CNERG, The University of "
-                "Wisconsin-Madison",
+                "organization": "CNERG, The University of " "Wisconsin-Madison",
                 "other": [
                     "Cyclus: An agent-based, discrete time nuclear fuel "
                     "cycle simulator.",
                     "PyNE: The Nuclear Engineering Toolkit.",
                     "Website: https://cnerg.github.io/",
                 ],
-                "position": "Associate Scientist, Engineering Physics "
-                "Department",
+                "position": "Associate Scientist, Engineering Physics " "Department",
             },
             {
                 "begin_month": "Nov",
@@ -384,8 +375,7 @@ EXEMPLARS = {
                 "end_month": "May",
                 "end_year": 2013,
                 "location": "Chicago, IL",
-                "organization": "The FLASH Center, The University of "
-                "Chicago",
+                "organization": "The FLASH Center, The University of " "Chicago",
                 "other": [
                     "NIF: Simulation of magnetic field generation from "
                     "neutral plasmas using FLASH.",
@@ -408,11 +398,7 @@ EXEMPLARS = {
                 "value": 1100,
                 "year": 2013,
             },
-            {
-                "name": "NIF User's Group Travel Award",
-                "value": 1150,
-                "year": 2013,
-            },
+            {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
         ],
         "home_address": {
             "street": "123 Wallabe Ln",
@@ -437,22 +423,13 @@ EXEMPLARS = {
         "orcid_id": "0000-0002-9432-4248",
         "position": "professor",
         "skills": [
-            {
-                "category": "Programming Languages",
-                "level": "expert",
-                "name": "Python",
-            },
-            {
-                "category": "Programming Languages",
-                "level": "expert",
-                "name": "Cython",
-            },
+            {"category": "Programming Languages", "level": "expert", "name": "Python"},
+            {"category": "Programming Languages", "level": "expert", "name": "Cython"},
         ],
         "teaching": [
             {
                 "course": "EMCH 552: Intro to Nuclear Engineering",
-                "description": "This course is an introduction to nuclear "
-                "physics.",
+                "description": "This course is an introduction to nuclear " "physics.",
                 "month": "August",
                 "organization": "University of South Carolina",
                 "position": "Professor",
@@ -475,17 +452,17 @@ EXEMPLARS = {
         "title": "Dr.",
         "service": [
             {
-                "name": 'Master of Ceremonies and Organizer Brown University '
-                        '"Chemistry: Believe it or Not" public chemistry '
-                        'demonstration',
+                "name": "Master of Ceremonies and Organizer Brown University "
+                '"Chemistry: Believe it or Not" public chemistry '
+                "demonstration",
                 "year": 2013,
             },
             {
                 "begin_year": 2012,
                 "end_year": 2014,
-                "name": 'Renewable Energy Presenter and Facility Tour Guide '
-                        'at the NSLS "Science Sunday" laboratory open house '
-                        'at Brookhaven National Laboratory',
+                "name": "Renewable Energy Presenter and Facility Tour Guide "
+                'at the NSLS "Science Sunday" laboratory open house '
+                "at Brookhaven National Laboratory",
             },
         ],
     },
@@ -558,101 +535,95 @@ EXEMPLARS = {
         "website": "http://fuelcycle.org/",
         "grant": "dmref15",
     },
-    "proposalReviews": [{
-        "_id": "1906doeExample",
-        "adequacy_of_resources": [
-            "The resources available to the PI seem adequate"
-        ],
-        "agency": "doe",
-        "competency_of_team": [
-            "super competent!"
+    "proposalReviews": [
+        {
+            "_id": "1906doeExample",
+            "adequacy_of_resources": [
+                "The resources available to the PI seem adequate"
             ],
-        "doe_appropriateness_of_approach": [
-            "The proposed approach is highly innovative"
-        ],
-        "doe_reasonableness_of_budget": [
-            "They could do it with half the money"
-        ],
-        "doe_relevance_to_program_mission": [
-            "super relevant"
-        ],
-        "does_how": [
-            "they will find the cause of Malaria",
-            "when they find it they will determine a cure"
-        ],
-        "does_what": 'Find a cure for Malaria',
-        "freewrite": [
-            "I can put extra things here, such as special instructions from the",
-            "program officer"],
-        "goals":  [
-            "The goals of the proposal are to put together a team to find a cure"
-            "for Malaria, and then to find it"
-        ],
-        "importance": ["save lives", "lift people from poverty"],
-        "institution": "columbiau",
-        "month": "May",
-        "names": ["B. Cause", "A.N. Effect"],
-        "nsf_broader_impacts": [],
-        "nsf_create_original_transformative": [],
-        "nsf_plan_good": [],
-        "nsf_pot_to_Advance_knowledge": [],
-        "nsf_pot_to_benefit_society": [],
-        "requester": "Lane Wilson",
-        "reviewer": "sbillinge",
-        "status": "invited,accepted,declined,downloaded,inprogress,submitted",
-        "summary": "dynamite proposal",
-        "title": "A stunning new way to cure Malaria",
-        "year": 2019,
-    },
-    {
-        "_id": "1906nsfExample",
-        "adequacy_of_resources": [
-            "The resources available to the PI seem adequate"
-        ],
-        "agency": "nsf",
-        "competency_of_team": [
-            "super competent!"
+            "agency": "doe",
+            "competency_of_team": ["super competent!"],
+            "doe_appropriateness_of_approach": [
+                "The proposed approach is highly innovative"
             ],
-        "doe_appropriateness_of_approach": [],
-        "doe_reasonableness_of_budget": [],
-        "doe_relevance_to_program_mission": [],
-        "does_how": [
-            "they will find the cause of Poverty",
-            "when they find it they will determine a cure"
-        ],
-        "does_what": 'Find a cure for Poverty',
-        "freewrite": [
-            "I can put extra things here, such as special instructions from the",
-            "program officer"],
-        "goals":  [
-            "The goals of the proposal are to put together a team to find a cure"
-            "for Poverty, and then to find it"
-        ],
-        "importance": ["save lives", "lift people from poverty"],
-        "institution": "upenn",
-        "month": "May",
-        "names": ["A Genius"],
-        "nsf_broader_impacts": ["Poor people will be made unpoor"],
-        "nsf_create_original_transformative": [
-            "transformative because lives will be transformed"],
-        "nsf_plan_good": [
-            "I don't see any issues with the plan",
-            "it should be very straightforward"
-        ],
-        "nsf_pot_to_Advance_knowledge": [
-            "This won't advance knowledge at all"
-        ],
-        "nsf_pot_to_benefit_society": [
-            "Society will benefit by poor people being made unpoor if they want "
-            "to be"
-        ],
-        "requester": "Tessemer Guebre",
-        "reviewer": "sbillinge",
-        "status": "invited,accepted,declined,downloaded,inprogress,submitted",
-        "summary": "dynamite proposal",
-        "title": "A stunning new way to cure Poverty",
-        "year": 2019,
-    }
+            "doe_reasonableness_of_budget": ["They could do it with half the money"],
+            "doe_relevance_to_program_mission": ["super relevant"],
+            "does_how": [
+                "they will find the cause of Malaria",
+                "when they find it they will determine a cure",
+            ],
+            "does_what": "Find a cure for Malaria",
+            "freewrite": [
+                "I can put extra things here, such as special instructions from the",
+                "program officer",
+            ],
+            "goals": [
+                "The goals of the proposal are to put together a team to find a cure"
+                "for Malaria, and then to find it"
+            ],
+            "importance": ["save lives", "lift people from poverty"],
+            "institution": "columbiau",
+            "month": "May",
+            "names": ["B. Cause", "A.N. Effect"],
+            "nsf_broader_impacts": [],
+            "nsf_create_original_transformative": [],
+            "nsf_plan_good": [],
+            "nsf_pot_to_Advance_knowledge": [],
+            "nsf_pot_to_benefit_society": [],
+            "requester": "Lane Wilson",
+            "reviewer": "sbillinge",
+            "status": "invited,accepted,declined,downloaded,inprogress,submitted",
+            "summary": "dynamite proposal",
+            "title": "A stunning new way to cure Malaria",
+            "year": 2019,
+        },
+        {
+            "_id": "1906nsfExample",
+            "adequacy_of_resources": [
+                "The resources available to the PI seem adequate"
+            ],
+            "agency": "nsf",
+            "competency_of_team": ["super competent!"],
+            "doe_appropriateness_of_approach": [],
+            "doe_reasonableness_of_budget": [],
+            "doe_relevance_to_program_mission": [],
+            "does_how": [
+                "they will find the cause of Poverty",
+                "when they find it they will determine a cure",
+            ],
+            "does_what": "Find a cure for Poverty",
+            "freewrite": [
+                "I can put extra things here, such as special instructions from the",
+                "program officer",
+            ],
+            "goals": [
+                "The goals of the proposal are to put together a team to find a cure"
+                "for Poverty, and then to find it"
+            ],
+            "importance": ["save lives", "lift people from poverty"],
+            "institution": "upenn",
+            "month": "May",
+            "names": ["A Genius"],
+            "nsf_broader_impacts": ["Poor people will be made unpoor"],
+            "nsf_create_original_transformative": [
+                "transformative because lives will be transformed"
+            ],
+            "nsf_plan_good": [
+                "I don't see any issues with the plan",
+                "it should be very straightforward",
+            ],
+            "nsf_pot_to_Advance_knowledge": ["This won't advance knowledge at all"],
+            "nsf_pot_to_benefit_society": [
+                "Society will benefit by poor people being made unpoor if they want "
+                "to be"
+            ],
+            "requester": "Tessemer Guebre",
+            "reviewer": "sbillinge",
+            "status": "invited,accepted,declined,downloaded,inprogress,submitted",
+            "summary": "dynamite proposal",
+            "title": "A stunning new way to cure Poverty",
+            "year": 2019,
+        },
     ],
     "proposals": [
         {
@@ -665,10 +636,7 @@ EXEMPLARS = {
             "full": {
                 "benefit_of_collaboration": "http://pdf.com"
                 "/benefit_of_collaboration",
-                "cv": [
-                    "http://pdf.com/scopatz-cv",
-                    "http://pdf.com/flanagan-cv",
-                ],
+                "cv": ["http://pdf.com/scopatz-cv", "http://pdf.com/flanagan-cv"],
                 "narrative": "http://some.com/pdf",
             },
             "month": "Aug",
@@ -676,10 +644,7 @@ EXEMPLARS = {
             "pre": {
                 "benefit_of_collaboration": "http://pdf.com"
                 "/benefit_of_collaboration",
-                "cv": [
-                    "http://pdf.com/scopatz-cv",
-                    "http://pdf.com/flanagan-cv",
-                ],
+                "cv": ["http://pdf.com/scopatz-cv", "http://pdf.com/flanagan-cv"],
                 "day": 2,
                 "month": "Aug",
                 "narrative": "http://some.com/pdf",
@@ -725,7 +690,7 @@ EXEMPLARS = {
             "year": 2015,
         },
     ],
-    "refereeReports":{
+    "refereeReports": {
         "_id": "1902nature",
         "claimed_found_what": ["gravity waves"],
         "claimed_why_important": ["more money for ice cream"],
@@ -741,7 +706,7 @@ EXEMPLARS = {
         "reviewer": "sbillinge",
         "status": "submitted",
         "title": "a ruler approach to measuring gravity waves",
-        "year": "2019"
+        "year": "2019",
     },
     "students": {
         "_id": "Human A. Person",
@@ -752,14 +717,8 @@ EXEMPLARS = {
     "expenses": {
         "_id": "test",
         "expense_type": "business",
-        "grant_percentage": [
-            "0.5",
-            "0.5"
-        ],
-        "grants": [
-            "dmref15",
-            "SymPy-1.1"
-        ],
+        "grant_percentage": ["50", "50"],
+        "grants": ["dmref15", "SymPy-1.1"],
         "itemized_expenses": [
             {
                 "day": i,
@@ -836,9 +795,7 @@ SCHEMAS = {
         },
     },
     "assignments": {
-        "_description": {
-            "description": "Information about assignments for classes."
-        },
+        "_description": {"description": "Information about assignments for classes."},
         "_id": {
             "description": "A unique id for the assignment, such as "
             "HW01-EMCH-558-2016-S",
@@ -893,11 +850,7 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
-        "day": {
-            "description": "Publication day",
-            "required": True,
-            "type": "integer",
-        },
+        "day": {"description": "Publication day", "required": True, "type": "integer"},
         "month": {
             "description": "Publication month",
             "required": True,
@@ -930,8 +883,7 @@ SCHEMAS = {
             "information should be private."
         },
         "_id": {
-            "description": "unique id, typically the "
-            "student-assignment-course",
+            "description": "unique id, typically the " "student-assignment-course",
             "required": True,
             "type": "string",
         },
@@ -940,11 +892,7 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
-        "course": {
-            "description": "course id",
-            "required": True,
-            "type": "string",
-        },
+        "course": {"description": "course id", "required": True, "type": "string"},
         "filename": {
             "description": "path to file in store",
             "required": False,
@@ -956,11 +904,7 @@ SCHEMAS = {
             "type": "list",
             "schema": {"anyof_type": ["integer", "float"]},
         },
-        "student": {
-            "description": "student id",
-            "required": True,
-            "type": "string",
-        },
+        "student": {"description": "student id", "required": True, "type": "string"},
     },
     "grants": {
         "_description": {
@@ -1008,11 +952,7 @@ SCHEMAS = {
             "type": "string",
         },
         # TODO: maybe this should move to proposals?
-        "call_for_proposals": {
-            "description": "",
-            "required": False,
-            "type": "string",
-        },
+        "call_for_proposals": {"description": "", "required": False, "type": "string"},
         "currency": {
             "description": "typically '$' or 'USD'",
             "required": False,
@@ -1055,8 +995,7 @@ SCHEMAS = {
             "type": "string",
         },
         "person_months_academic": {
-            "description": "Number of months of funding during the academic"
-            "year",
+            "description": "Number of months of funding during the academic" "year",
             "required": False,
             "anyof_type": ["integer", "float"],
         },
@@ -1264,11 +1203,7 @@ SCHEMAS = {
             "required": True,
             "type": ["string", "list"],
         },
-        "avatar": {
-            "description": "URL to avatar",
-            "required": True,
-            "type": "string",
-        },
+        "avatar": {"description": "URL to avatar", "required": True, "type": "string"},
         "bio": {
             "description": "short biographical text",
             "required": True,
@@ -1306,10 +1241,7 @@ SCHEMAS = {
                     "gpa": {"required": False, "type": ("float", "string")},
                     "institution": {"required": True, "type": "string"},
                     "location": {"required": False, "type": "string"},
-                    "other": {
-                        "required": False,
-                        "type": "list",
-                    },
+                    "other": {"required": False, "type": "list"},
                 },
             },
             "type": "list",
@@ -1338,10 +1270,7 @@ SCHEMAS = {
                     },
                     "location": {"required": False, "type": "string"},
                     "organization": {"required": True, "type": "string"},
-                    "other": {
-                        "required": False,
-                        "type": "list",
-                    },
+                    "other": {"required": False, "type": "list"},
                     "position": {"required": True, "type": "string"},
                 },
             },
@@ -1372,16 +1301,12 @@ SCHEMAS = {
             "schema": {
                 "street": {"type": "string", "description": "street address"},
                 "city": {"type": "string", "description": "name of home city"},
-                "state": {
-                    "type": "string",
-                    "description": "name o home state",
-                },
+                "state": {"type": "string", "description": "name o home state"},
                 "zip": {"type": "string", "description": "zip code"},
             },
         },
         "honors": {
-            "description": "Honors that have been awarded to this "
-            "group member",
+            "description": "Honors that have been awarded to this " "group member",
             "required": False,
             "schema": {
                 "type": "dict",
@@ -1401,8 +1326,7 @@ SCHEMAS = {
         },
         # TODO: include `link`
         "membership": {
-            "description": "Professional organizations this member is "
-            "a part of",
+            "description": "Professional organizations this member is " "a part of",
             "required": False,
             "schema": {
                 "type": "dict",
@@ -1449,10 +1373,7 @@ SCHEMAS = {
                     "year": {"required": False, "type": "integer"},
                     "begin_year": {"required": False, "type": "integer"},
                     "end_year": {"required": False, "type": "integer"},
-                    "other": {
-                        "required": False,
-                        "anyof_type": ["string", "list"],
-                    },
+                    "other": {"required": False, "anyof_type": ["string", "list"]},
                 },
             },
             "type": "list",
@@ -1582,13 +1503,7 @@ SCHEMAS = {
             "the trip cancelled?",
             "required": True,
             "type": "string",
-            "eallowed": [
-                "in-prep",
-                "submitted",
-                "accepted",
-                "declined",
-                "cancelled",
-            ],
+            "eallowed": ["in-prep", "submitted", "accepted", "declined", "cancelled"],
         },
         "title": {
             "description": "title of the presentation",
@@ -1627,8 +1542,7 @@ SCHEMAS = {
             "type": "string",
         },
         "grant": {
-            "description": "Grant id if there is a grant supporting this "
-            "project",
+            "description": "Grant id if there is a grant supporting this " "project",
             "type": "string",
         },
         "logo": {
@@ -1690,10 +1604,7 @@ SCHEMAS = {
         "agency": {
             "description": "currently nsf or doe",
             "type": "string",
-            "eallowed": [
-                "nsf",
-                "doe"
-            ],
+            "eallowed": ["nsf", "doe"],
         },
         "competency_of_team": {
             "description": "Is the team competent",
@@ -1727,8 +1638,8 @@ SCHEMAS = {
         },
         "freewrite": {
             "description": "Anything and this will appear in the built document"
-                           "right before the summary.  This section often used "
-                           "for extra review criteria for the particular proposal",
+            "right before the summary.  This section often used "
+            "for extra review criteria for the particular proposal",
             "required": False,
             "type": "list",
         },
@@ -1750,7 +1661,7 @@ SCHEMAS = {
         "month": {
             "description": "The month the review was submitted",
             "required": True,
-            "anyof_type": ["string","integer"]
+            "anyof_type": ["string", "integer"],
         },
         "names": {
             "description": "The names of the PIs",
@@ -1759,14 +1670,14 @@ SCHEMAS = {
         },
         "nsf_broader_impacts": {
             "description": "The broader impacts of the research.  Only used if "
-                           "agency is nsf",
+            "agency is nsf",
             "required": False,
             "type": "list",
         },
         "nsf_create_original_transformative": {
             "description": "Answer to the question how the work is creative, "
-                           "original or transformative.  Only used if agency is "
-                           "nsf",
+            "original or transformative.  Only used if agency is "
+            "nsf",
             "required": False,
             "type": "list",
         },
@@ -1777,13 +1688,13 @@ SCHEMAS = {
         },
         "nsf_pot_to_Advance_knowledge": {
             "description": "Answer to the question how the work will advance"
-                           "knowledge.  Only used if agency is nsf",
+            "knowledge.  Only used if agency is nsf",
             "required": False,
             "type": "list",
         },
         "nsf_pot_to_benefit_society": {
             "description": "Answer to the question how the work has the potential"
-                           "to benefit society.  Only used if agency is nsf",
+            "to benefit society.  Only used if agency is nsf",
             "required": False,
             "type": "list",
         },
@@ -1794,7 +1705,7 @@ SCHEMAS = {
         },
         "reviewer": {
             "description": "short name of the reviewer.  Will be used in the "
-                           "filename of the resulting text file",
+            "filename of the resulting text file",
             "required": True,
             "type": "string",
         },
@@ -1807,7 +1718,7 @@ SCHEMAS = {
                 "declined",
                 "downloaded",
                 "inprogress",
-                "submitted"
+                "submitted",
             ],
         },
         "summary": {
@@ -1846,11 +1757,7 @@ SCHEMAS = {
             "required": True,
             "anyof_type": ["list", "string"],
         },
-        "call_for_proposals": {
-            "description": "",
-            "required": False,
-            "type": "string",
-        },
+        "call_for_proposals": {"description": "", "required": False, "type": "string"},
         "currency": {
             "description": "typically '$' or 'USD'",
             "required": True,
@@ -1932,45 +1839,29 @@ SCHEMAS = {
             "description": "This is a collection of information that will be "
             "be used to build a referee report. This should probably be private."
         },
-        "_id": {
-            "description": "the ID",
-            "required": True,
-            "type": "string",
-        },
+        "_id": {"description": "the ID", "required": True, "type": "string"},
         "claimed_found_what": {
             "description": "What the authors claim to have found",
             "required": True,
-            "schema": {
-                "type": "string",
-                "required": True,
-            },
+            "schema": {"type": "string", "required": True},
             "type": "list",
         },
         "claimed_why_important": {
             "description": "What importance the authors claim",
             "required": True,
-            "schema": {
-                "type": "string",
-                "required": True,
-            },
+            "schema": {"type": "string", "required": True},
             "type": "list",
         },
         "did_how": {
             "description": "How the study was done",
             "required": True,
-            "schema": {
-                "type": "string",
-                "required": True,
-            },
+            "schema": {"type": "string", "required": True},
             "type": "list",
         },
         "did_what": {
             "description": "What the study was",
             "required": True,
-            "schema": {
-                "type": "string",
-                "required": True,
-            },
+            "schema": {"type": "string", "required": True},
             "type": "list",
         },
         "editor_eyes_only": {
@@ -1981,21 +1872,18 @@ SCHEMAS = {
         "final_assessment": {
             "description": "Summary of impressions of the study",
             "required": True,
-            "schema": {
-                "type": "string",
-                "required": True,
-            },
+            "schema": {"type": "string", "required": True},
             "type": "list",
         },
         "first_author_last_name": {
             "description": "Last name of first author will be referred to "
-                           "with et al.",
+            "with et al.",
             "required": True,
             "type": "string",
         },
         "freewrite": {
             "description": "Things that you want to add that don't fit into "
-                           "any category above",
+            "any category above",
             "required": False,
             "type": "string",
         },
@@ -2013,13 +1901,7 @@ SCHEMAS = {
             "description": "Your publication recommendation",
             "required": True,
             "type": "string",
-            "eallowed": [
-                "reject",
-                "asis",
-                "smalledits",
-                "diffjournal",
-                "majoredits",
-            ],
+            "eallowed": ["reject", "asis", "smalledits", "diffjournal", "majoredits"],
         },
         "reviewer": {
             "description": "name of person reviewing the paper",
@@ -2047,7 +1929,7 @@ SCHEMAS = {
             "description": "year when the review is being done",
             "required": True,
             "type": "string",
-        }
+        },
     },
     "students": {
         "_description": {
@@ -2065,11 +1947,7 @@ SCHEMAS = {
             "schema": {"type": "string"},
             "type": ("list", "string"),
         },
-        "email": {
-            "description": "email address",
-            "required": False,
-            "type": "string",
-        },
+        "email": {"description": "email address", "required": False, "type": "string"},
         "university_id": {
             "description": "The university identifier for the student",
             "required": False,
@@ -2088,9 +1966,9 @@ SCHEMAS = {
         },
         "grant_percentage": {
             "description": "the percentage of the reimbursement amount to put "
-                           "on each grant. This list must be the same length as"
-                           "the grants list and the percentages placed in the "
-                           "order that the grants appear in that list",
+            "on each grant. This list must be the same length as"
+            "the grants list and the percentages placed in the "
+            "order that the grants appear in that list",
             "required": False,
             "type": "list",
         },
