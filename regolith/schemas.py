@@ -717,7 +717,7 @@ EXEMPLARS = {
     "expenses": {
         "_id": "test",
         "expense_type": "business",
-        "grant_percentage": ["50", "50"],
+        "grant_percentages": ["50", "50"],
         "grants": ["dmref15", "SymPy-1.1"],
         "itemized_expenses": [
             {
