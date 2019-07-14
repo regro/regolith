@@ -60,78 +60,97 @@ class ReimbursementBuilder(BuilderBase):
     def excel(self):
         gtx = self.gtx
         for ex in gtx["expenses"]:
-            # open the template
-            wb = openpyxl.load_workbook(self.template)
-            ws = wb["T&B"]
+            if ex["payee"] != "direct_billed":
+                # open the template
+                if isinstance(ex["grants"],str):
+                    ex["grants"] = [ex["grants"]]
+                    grant_fractions = [1]
+                else:
+                    grant_fractions = [float(percent)/100. for percent in ex["grant_percentages"]]
+                wb = openpyxl.load_workbook(self.template)
+                ws = wb["T&B"]
 
-            payee = fuzzy_retrieval(
-                gtx["people"], ["name", "aka", "_id"], ex["payee"]
-            )
-            project = fuzzy_retrieval(
-                gtx["projects"], ["name", "_id"], ex["project"]
-            )
-            grant = fuzzy_retrieval(
-                gtx["grants"], ["alias", "name", "_id"], project["grant"]
-            )
-#            grants = [doc for doc in gtx["grants"] if
-#                     doc.get("alias") == project["grant"]]
-#            grant = grants[0]
+                payee = fuzzy_retrieval(
+                    gtx["people"], ["name", "aka", "_id"], ex["payee"]
+                )
+                project = fuzzy_retrieval(
+                    gtx["projects"], ["name", "_id"], ex["project"]
+                )
+                grants = [fuzzy_retrieval(
+                    gtx["grants"], ["alias", "name", "_id"], grant) for grant
+                    in ex["grants"]]
+    #            grants = [doc for doc in gtx["grants"] if
+    #                     doc.get("alias") == project["grant"]]
+    #            grant = grants[0]
 
-            ha = payee["home_address"]
-            ws["B17"] = payee["name"]
-            ws["B20"] = ha["street"]
-            ws["B23"] = ha["city"]
-            ws["G23"] = ha["state"]
-            ws["L23"] = ha["zip"]
-            ws["B36"] = ex["overall_purpose"]
-            j = 42
-            total_amount = 0
-            item_ws = wb["T&B"]
-            purpose_column = 4
-            ue_column = 13
-            se_column = 16
-            dates = []
-            for i, item in enumerate(ex["itemized_expenses"]):
-                r = j + i
-                if r > 49:
-                    item_ws = wb["Extra_Page"]
-                    j = 0
+                ha = payee["home_address"]
+                ws["B17"] = payee["name"]
+                ws["B20"] = ha["street"]
+                ws["B23"] = ha["city"]
+                ws["G23"] = ha["state"]
+                ws["L23"] = ha["zip"]
+                ws["B36"] = ex["overall_purpose"]
+                j = 42
+                total_amount = 0
+                item_ws = wb["T&B"]
+                purpose_column = 4
+                ue_column = 13
+                se_column = 16
+                dates = []
+                for i, item in enumerate(ex["itemized_expenses"]):
                     r = j + i
-                    purpose_column = 5
-                    ue_column = 12
-                    se_column = 14
-                dates.append(mdy_date(**item))
-                item_ws.cell(row=r, column=2, value=i)
-                item_ws.cell(row=r, column=3, value=mdy(**item))
-                item_ws.cell(
-                    row=r, column=purpose_column, value=item["purpose"]
+                    if r > 49:
+                        item_ws = wb["Extra_Page"]
+                        j = 0
+                        r = j + i
+                        purpose_column = 5
+                        ue_column = 12
+                        se_column = 14
+                    dates.append(mdy_date(**item))
+                    item_ws.cell(row=r, column=2, value=i)
+                    item_ws.cell(row=r, column=3, value=mdy(**item))
+                    item_ws.cell(
+                        row=r, column=purpose_column, value=item["purpose"]
+                    )
+                    item_ws.cell(
+                        row=r,
+                        column=ue_column,
+                        value=item.get("unsegregated_expense", 0),
+                    )
+                    total_amount += item.get("unsegregated_expense", 0)
+                    item_ws.cell(
+                        row=r,
+                        column=se_column,
+                        value=item.get("segregated_expense", 0),
+                    )
+
+                i = 0
+                print(ex["_id"])
+                print(grants)
+                print(grant_fractions)
+                for grant,fraction in zip(grants,grant_fractions):
+                    print(grant.get("_id"),fraction)
+                    nr = grant.get("account", "")
+                    row = 55+i
+                    location = "C{}".format(row)
+                    location2 = "K{}".format(row)
+                    print(location)
+                    print(i)
+                    ws[location] = nr
+                    ws[location2] = total_amount*float(fraction)
+                    i += 1
+
+                if ex.get("expense_type", "business") == "business":
+                    spots = ("G10", "L11", "O11")
+                else:
+                    spots = ("G7", "L8", "O8")
+
+                ws[spots[0]] = "X"
+                ws[spots[1]] = mdy(
+                    **{k: getattr(min(dates), k) for k in ["month", "day", "year"]}
                 )
-                item_ws.cell(
-                    row=r,
-                    column=ue_column,
-                    value=item.get("unsegregated_expense", 0),
-                )
-                total_amount += item.get("unsegregated_expense", 0)
-                item_ws.cell(
-                    row=r,
-                    column=se_column,
-                    value=item.get("segregated_expense", 0),
+                ws[spots[2]] = mdy(
+                    **{k: getattr(max(dates), k) for k in ["month", "day", "year"]}
                 )
 
-            ws["C55"] = grant.get("columbia_accountnr", "")
-            ws["K55"] = total_amount
-
-            if ex.get("expense_type", "business") == "business":
-                spots = ("G10", "L11", "O11")
-            else:
-                spots = ("G7", "L8", "O8")
-
-            ws[spots[0]] = "X"
-            ws[spots[1]] = mdy(
-                **{k: getattr(min(dates), k) for k in ["month", "day", "year"]}
-            )
-            ws[spots[2]] = mdy(
-                **{k: getattr(max(dates), k) for k in ["month", "day", "year"]}
-            )
-
-            wb.save(os.path.join(self.bldir, ex["_id"] + ".xlsx"))
+                wb.save(os.path.join(self.bldir, ex["_id"] + ".xlsx"))

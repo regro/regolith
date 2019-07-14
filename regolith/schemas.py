@@ -751,8 +751,15 @@ EXEMPLARS = {
     },
     "expenses": {
         "_id": "test",
-        "project": "Cyclus",
-        "payee": "scopatz",
+        "expense_type": "business",
+        "grant_percentage": [
+            "0.5",
+            "0.5"
+        ],
+        "grants": [
+            "dmref15",
+            "SymPy-1.1"
+        ],
         "itemized_expenses": [
             {
                 "day": i,
@@ -764,8 +771,9 @@ EXEMPLARS = {
             }
             for i in range(1, 11)
         ],
+        "payee": "scopatz",
+        "project": "Cyclus",
         "overall_purpose": "testing the database",
-        "expense_type": "business",
     },
 }
 
@@ -2077,6 +2085,19 @@ SCHEMAS = {
             "description": "short representation, such as this-is-my-name",
             "required": True,
             "type": "string",
+        },
+        "grant_percentage": {
+            "description": "the percentage of the reimbursement amount to put "
+                           "on each grant. This list must be the same length as"
+                           "the grants list and the percentages placed in the "
+                           "order that the grants appear in that list",
+            "required": False,
+            "type": "list",
+        },
+        "grants": {
+            "description": "the grants in a list, or a string if only one grant",
+            "required": True,
+            "anyof_type": ["string", "list"],
         },
         "project": {
             "description": "project or list of projects that this "
