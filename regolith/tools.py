@@ -174,9 +174,9 @@ def is_before(y, by, m=12, d=None, bm=12, bd=None):
 
     """
     if not d:
-        d = monthrange(y,m)[1]
+        d = monthrange(y, m)[1]
     if not bd:
-        bd = monthrange(by,bm)[1]
+        bd = monthrange(by, bm)[1]
     b = "{}/{}/{}".format(bd, month_to_int(bm), by)
     d = "{}/{}/{}".format(d, month_to_int(m), y)
     before = time.mktime(datetime.strptime(b, "%d/%m/%Y").timetuple())
@@ -221,9 +221,10 @@ def is_between(y, sy, by, m=1, d=1, sm=1, sd=1, bm=12, bd=None):
     """
 
     if not bd:
-        bd = monthrange(by,bm)[1]
-    return is_since(y, sy, m=m, d=d, sm=sm, sd=sd) and \
-           is_before(y, by, m=m, d=d, bm=bm, bd=bd)
+        bd = monthrange(by, bm)[1]
+    return is_since(y, sy, m=m, d=d, sm=sm, sd=sd) and is_before(
+        y, by, m=m, d=d, bm=bm, bd=bd
+    )
 
 
 def filter_publications(citations, authors, reverse=False, bold=True):
@@ -565,7 +566,7 @@ def dereference_institution(input_record, institutions):
     institutions : iterable of dicts
         The institutions
     """
-    inst = input_record.get("institution") or input_record.get('organization')
+    inst = input_record.get("institution") or input_record.get("organization")
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if db_inst:
         input_record["institution"] = db_inst["name"]
@@ -579,4 +580,3 @@ def dereference_institution(input_record, institutions):
             input_record["department"] = fuzzy_retrieval(
                 [db_inst["departments"]], ["name", "aka"], input_record["department"]
             )
-
