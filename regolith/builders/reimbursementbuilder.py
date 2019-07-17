@@ -74,10 +74,6 @@ class ReimbursementBuilder(BuilderBase):
                     fuzzy_retrieval(gtx["grants"], ["alias", "name", "_id"], grant)
                     for grant in ex["grants"]
                 ]
-                #            grants = [doc for doc in gtx["grants"] if
-                #                     doc.get("alias") == project["grant"]]
-                #            grant = grants[0]
-
                 ha = payee["home_address"]
                 ws["B17"] = payee["name"]
                 ws["B20"] = ha["street"]
