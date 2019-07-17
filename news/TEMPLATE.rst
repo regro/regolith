@@ -6,8 +6,6 @@
 
 **Removed:** None
 
-**Fixed:**
- - FIX: tests to run on windows OS by removing
-   removed directory paths
+**Fixed:** None
 
 **Security:** None
