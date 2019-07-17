@@ -5,7 +5,9 @@ import os
 import platform
 import re
 import sys
+import time
 from copy import deepcopy
+from calendar import monthrange
 
 from datetime import datetime
 
@@ -114,6 +116,115 @@ def month_and_year(m=None, y=None):
         return str(y)
     m = month_to_int(m)
     return "{0} {1}".format(SHORT_MONTH_NAMES[m], y)
+
+
+def is_since(y, sy, m=1, d=1, sm=1, sd=1):
+    """
+    tests whether a date is on or since another date
+
+    Parameters
+    ----------
+    y : int
+      the year to be tested
+    sy : int
+      the since year
+    m : int or str
+      the month to be tested. Optional, defaults to Jan
+    d : int
+      the day to be tested.  Defaults to 1
+    sm : int or str
+      the since month.  Optional, defaults to Jan
+    sd: int
+      the since day.  Optional, defaults to 1
+
+    Returns
+    -------
+    True if the target date is the same as, or more recent than, the since date
+
+    """
+    s = "{}/{}/{}".format(sd, month_to_int(sm), sy)
+    d = "{}/{}/{}".format(d, month_to_int(m), y)
+    since = time.mktime(datetime.strptime(s, "%d/%m/%Y").timetuple())
+    date = time.mktime(datetime.strptime(d, "%d/%m/%Y").timetuple())
+    return since <= date
+
+
+def is_before(y, by, m=12, d=None, bm=12, bd=None):
+    """
+    tests whether a date is on or before another date
+
+    Parameters
+    ----------
+    y : int
+      the year to be tested
+    by : int
+      the before year
+    m : int or str
+      the month to be tested. Optional, defaults to Dec
+    d : int
+      the day to be tested.  Defaults to 28
+    bm : int or str
+      the before month.  Optional, defaults to Dec
+    bd: int
+      the before day.  Optional, defaults to 28
+
+    Returns
+    -------
+    True if the target date is the same as, or earlier than, the before date
+
+    """
+    if not d:
+        d = monthrange(y, month_to_int(m))[1]
+    if not bd:
+        bd = monthrange(by, month_to_int(bm))[1]
+    b = "{}/{}/{}".format(bd, month_to_int(bm), by)
+    d = "{}/{}/{}".format(d, month_to_int(m), y)
+    before = time.mktime(datetime.strptime(b, "%d/%m/%Y").timetuple())
+    date = time.mktime(datetime.strptime(d, "%d/%m/%Y").timetuple())
+    return before >= date
+
+
+def is_between(y, sy, by, m=1, d=1, sm=1, sd=1, bm=12, bd=None):
+    """
+    tests whether a date is on or between two other dates
+
+    returns true if the target date is between the since date and the before
+    date, inclusive.
+
+    Parameters
+    ----------
+    y : int
+      the year to be tested
+    sy : int
+      the since year
+    by : int
+      the before year
+    m : int or str
+      the month to be tested. Optional, defaults to Jan
+    d : int
+      the day to be tested.  Defaults to 1
+    sm : int or str
+      the since month.  Optional, defaults to Jan
+    bm : int or str
+      the before month.  Optional, defaults to Dec
+    sd: int
+      the since day.  Optional, defaults to 1
+    bd: int
+      the before day.  Optional, defaults to 28
+
+    Returns
+    -------
+    True if the target date is between the since date and the before date,
+    inclusive (i.e., returns true if the target date is the same as either the
+    since date or the before date)
+
+    """
+
+    if not bd:
+        bd = monthrange(by, month_to_int(bm))[1]
+    return is_since(y, sy, m=m, d=d, sm=sm, sd=sd) and is_before(
+        y, by, m=m, d=d, bm=bm, bd=bd
+    )
 
 
 def filter_publications(citations, authors, reverse=False, bold=True):
@@ -455,7 +566,7 @@ def dereference_institution(input_record, institutions):
     institutions : iterable of dicts
         The institutions
     """
-    inst = input_record.get("institution") or input_record.get('organization')
+    inst = input_record.get("institution") or input_record.get("organization")
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if db_inst:
         input_record["institution"] = db_inst["name"]
