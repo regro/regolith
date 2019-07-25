@@ -172,7 +172,7 @@ EXEMPLARS = {
             "funder": "NSF",
             "grant_id": "DMREF-1534910",
             "institution": "Columbia University",
-            "notes": " Designing Materials to Revolutionize and Engineer our "
+            "notes": "Designing Materials to Revolutionize and Engineer our "
                      "Future (DMREF)",
             "person_months_academic": 0.0,
             "person_months_summer": 0.25,
@@ -183,17 +183,17 @@ EXEMPLARS = {
                      "other grant.",
             "team": [
                 {
-                    "institution": "Columbia Unviersity",
+                    "institution": "Columbia University",
                     "name": "qdu",
                     "position": "Co-PI",
                 },
                 {
-                    "institution": "Columbia Unviersity",
+                    "institution": "Columbia University",
                     "name": "dhsu",
                     "position": "Co-PI",
                 },
                 {
-                    "institution": "Columbia Unviersity",
+                    "institution": "Columbia University",
                     "name": "Anthony Scopatz",
                     "position": "PI",
                     "subaward_amount": 330000.0,
@@ -666,6 +666,7 @@ EXEMPLARS = {
                 "narrative": "http://some.com/pdf",
             },
             "month": "Aug",
+            "notes": "Quite an idea",
             "pi": "Anthony Scopatz",
             "pre": {
                 "benefit_of_collaboration": "http://pdf.com"
@@ -705,8 +706,9 @@ EXEMPLARS = {
             "end_day": 1,
             "end_month": "May",
             "end_year": 2019,
-            "month": "february",
             "funder": "NSF",
+            "month": "february",
+            "notes": "Quite an idea",
             "pi": "Simon Billinge",
             "status": "accepted",
             "team": [
@@ -1456,8 +1458,7 @@ SCHEMAS = {
         # TODO: Can this be required only if status = active?
         "position": {
             "description": "such as professor, graduate student, or scientist",
-            "required": True,
-            "dependencies": {"status": "active"},
+            "required": False,
             "type": "string",
             "eallowed": list(SORTED_POSITION),
         },
@@ -1888,7 +1889,7 @@ SCHEMAS = {
             "schema": {
                 "cppflag": {"required": False, "type": "boolean"},
                 "other_agencies_submitted": {"required": False,
-                                             "type": "string"},
+                                             "anyof_type": ["string","boolean"]},
                 "institution": {"required": False, "type": "string",
                                 "description": "place where the proposed grant will be located"},
                 "person_months_academic": {"required": False,
