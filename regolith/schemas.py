@@ -590,7 +590,7 @@ EXEMPLARS = {
             "nsf_pot_to_benefit_society": [],
             "requester": "Lane Wilson",
             "reviewer": "sbillinge",
-            "status": "invited,accepted,declined,downloaded,inprogress,submitted",
+            "status": "submitted",
             "summary": "dynamite proposal",
             "title": "A stunning new way to cure Malaria",
             "year": 2019,
@@ -923,7 +923,7 @@ SCHEMAS = {
         },
     },
     "contacts": {
-        "_description": {"a lighter version of people.  Fewer required fields"
+        "_description": {"description": "a lighter version of people.  Fewer required fields"
                          "for capturing people who are less tightly coupled"
                          },
         "_id": {
