@@ -692,7 +692,7 @@ EXEMPLARS = {
             "begin_year": 2018,
             "cpp_info": {
                 "cppflag": True,
-                "other_agencies_submitted": None,
+                "other_agencies_submitted": "None",
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
@@ -1952,7 +1952,7 @@ SCHEMAS = {
         },
         "notes": {
             "description": "anything you want to note",
-            "required": True,
+            "required": False,
             "anyof_type": ["string", "list"],
         },
         "pi": {
