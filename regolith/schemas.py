@@ -969,8 +969,6 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
-        "required": False,
-        "type": "dict",
     },
     "grades": {
         "_description": {
