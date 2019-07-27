@@ -375,6 +375,7 @@ EXEMPLARS = {
                 "end_year": 2015,
                 "location": "Madison, WI",
                 "organization": "CNERG, The University of " "Wisconsin-Madison",
+                "department": "Physics",
                 "other": [
                     "Cyclus: An agent-based, discrete time nuclear fuel "
                     "cycle simulator.",
@@ -404,6 +405,7 @@ EXEMPLARS = {
                     "Website: http://flash.uchicago.edu/site/",
                 ],
                 "position": "Research Scientist, Postdoctoral Scholar",
+                "status": "PI"
             },
         ],
         "funding": [
@@ -415,6 +417,7 @@ EXEMPLARS = {
             {"name": "NIF User's Group Travel Award", "value": 1150,
              "year": 2013},
         ],
+        "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
         "home_address": {
             "street": "123 Wallabe Ln",
             "city": "The big apple",
@@ -437,6 +440,10 @@ EXEMPLARS = {
         "name": "Anthony Scopatz",
         "orcid_id": "0000-0002-9432-4248",
         "position": "professor",
+        "research_focus_areas": [
+            {"begin_year": 2010, "description": "software applied to nuclear "
+                                                "engineering and life" }
+        ],
         "skills": [
             {"category": "Programming Languages", "level": "expert",
              "name": "Python"},
@@ -1368,6 +1375,7 @@ SCHEMAS = {
                                     "anyof_type": ["string", "integer"],
                                     },
                     "begin_year": {"required": True, "type": "integer"},
+                    "department": {"required": False, "type": "string"},
                     "end_month": {"required": False,
                                   "anyof_type": ["string", "integer"],
                                   },
@@ -1382,6 +1390,8 @@ SCHEMAS = {
                     "organization": {"required": True, "type": "string"},
                     "other": {"required": False, "type": "list"},
                     "position": {"required": True, "type": "string"},
+                    # TODO this should be select from in the long run
+                    "status": {"required": False, "type": "string"},
                 },
             },
             "type": "list",
@@ -1407,6 +1417,9 @@ SCHEMAS = {
             },
             "type": "list",
         },
+        "google_scholar_url": {"required": False, "type": "string",
+                               "description": "URL of your Google Scholar "
+                                              "rofile"},
         "home_address": {
             "description": "The person's home address",
             "type": "dict",
@@ -1478,6 +1491,20 @@ SCHEMAS = {
             "type": "string",
             "eallowed": list(SORTED_POSITION),
         },
+        "research_focus_areas": {
+            "description": "summary of research projects that are ongoing. Used"
+                           "in Annual appraisal for example",
+            "required": False,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "begin_year": {"required": False, "type": "integer"},
+                    "end_year": {"required": False, "type": "integer"},
+                    "description": {"required": False, "type": "string"}
+                },
+            },
+            "type": "list"
+        },
         # TODO: need to handle year vs. begin_year stuff
         "service": {
             "description": "Service that this group member has provided",
@@ -1487,8 +1514,11 @@ SCHEMAS = {
                 "schema": {
                     "description": {"required": False, "type": "string"},
                     "duration": {"required": False, "type": "string"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
+                    "month": {"description": "Use month and year if the service"
+                                             "doesn't extend more than one year."
+                                             "Otherwise use begin_year and end_year",
+                              "required": False,
+                              "anyof_type": ["string", "integer"]
                               },
                     "name": {"required": True, "type": "string"},
                     "year": {"required": False, "type": "integer"},
@@ -1701,11 +1731,11 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "begin_month": {"required": False,                         "anyof_type": ["string", "integer"],
+                    "begin_month": {"required": False,
                                     "anyof_type": ["string", "integer"],
                                     },
                     "begin_year": {"required": True, "type": "integer"},
-                    "end_month": {"required": False,                         "anyof_type": ["string", "integer"],
+                    "end_month": {"required": False,
                                   "anyof_type": ["string", "integer"],
                                   },
                     "end_year": {"required": False, "type": "integer"},
