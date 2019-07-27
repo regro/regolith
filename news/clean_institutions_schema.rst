@@ -1,4 +1,6 @@
-**Added:** None
+**Added:**
+
+* added banner to groups schema, which is an image for website banner
 
 **Changed:**
 
