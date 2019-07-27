@@ -1164,6 +1164,11 @@ SCHEMAS = {
             "type": "list",
             "description": "other names for the group",
         },
+        "banner": {
+            "required": False,
+            "type": "string",
+            "description": "name of image file with the group banner",
+        },
         "pi_name": {
             "description": "The name of the Principle Investigator",
             "required": True,
