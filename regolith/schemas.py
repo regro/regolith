@@ -257,6 +257,7 @@ EXEMPLARS = {
             }
         },
         "state": "NY",
+        "street": "500 W 120th St",
         "zip": "10027",
     },
     "jobs": {
@@ -685,7 +686,7 @@ EXEMPLARS = {
                 "narrative": "http://some.com/pdf",
                 "year": 1998,
             },
-            "status": "submitted",
+      "status": "submitted",
             "title": "A very fine proposal indeed",
             "year": 1999,
         },
@@ -1170,6 +1171,11 @@ SCHEMAS = {
             "type": "list",
             "description": "other names for the group",
         },
+        "banner": {
+            "required": False,
+            "type": "string",
+            "description": "name of image file with the group banner",
+        },
         "pi_name": {
             "description": "The name of the Principle Investigator",
             "required": True,
@@ -1280,6 +1286,11 @@ SCHEMAS = {
         },
         "street": {
             "description": "the street where the institution is",
+            "required": False,
+            "type": "string",
+        },
+        "street": {
+            "description": "the street address of the institution",
             "required": False,
             "type": "string",
         },
