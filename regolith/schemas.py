@@ -375,6 +375,7 @@ EXEMPLARS = {
                 "end_year": 2015,
                 "location": "Madison, WI",
                 "organization": "CNERG, The University of " "Wisconsin-Madison",
+                "department": "Physics",
                 "other": [
                     "Cyclus: An agent-based, discrete time nuclear fuel "
                     "cycle simulator.",
@@ -404,6 +405,7 @@ EXEMPLARS = {
                     "Website: http://flash.uchicago.edu/site/",
                 ],
                 "position": "Research Scientist, Postdoctoral Scholar",
+                "status": "PI"
             },
         ],
         "funding": [
@@ -415,6 +417,7 @@ EXEMPLARS = {
             {"name": "NIF User's Group Travel Award", "value": 1150,
              "year": 2013},
         ],
+        "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
         "home_address": {
             "street": "123 Wallabe Ln",
             "city": "The big apple",
@@ -437,6 +440,10 @@ EXEMPLARS = {
         "name": "Anthony Scopatz",
         "orcid_id": "0000-0002-9432-4248",
         "position": "professor",
+        "research_focus_areas": [
+            {"begin_year": 2010, "description": "software applied to nuclear "
+                                                "engineering and life" }
+        ],
         "skills": [
             {"category": "Programming Languages", "level": "expert",
              "name": "Python"},
@@ -746,7 +753,7 @@ EXEMPLARS = {
         "first_author_last_name": "Wingit",
         "freewrite": "this comment didn't fit anywhere above",
         "journal": "Nature",
-        "month": "02",
+        "month": 2,
         "recommendation": "reject",
         "reviewer": "sbillinge",
         "status": "submitted",
@@ -901,7 +908,7 @@ SCHEMAS = {
         "month": {
             "description": "Publication month",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "integer"],
         },
         "original": {
             "description": "URL of original post, if this is a repost",
@@ -1036,7 +1043,7 @@ SCHEMAS = {
         "begin_month": {
             "description": "start month of the grant",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "integer"],
         },
         "begin_year": {
             "description": "start year of the grant",
@@ -1064,7 +1071,7 @@ SCHEMAS = {
         "end_month": {
             "description": "end month of the grant",
             "required": False,
-            "type": "string",
+            "anyof_type": ["string", "integer"],
         },
         "end_year": {
             "description": "end year of the grant",
@@ -1323,7 +1330,9 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "begin_month": {"required": False, "type": "string"},
+                    "begin_month": {"required": False,
+                                    "anyof_type": ["string", "integer"],
+                                    },
                     "begin_year": {"required": True, "type": "integer"},
                     "degree": {"required": True, "type": "string"},
                     "department": {
@@ -1337,7 +1346,9 @@ SCHEMAS = {
                         "description": "this employment is/was in"
                                        "a group in groups coll",
                     },
-                    "end_month": {"required": False, "type": "string"},
+                    "end_month": {"required": False,
+                                  "anyof_type": ["string", "integer"],
+                                  },
                     # Could be ongoing with undefined end
                     "end_year": {"required": False, "type": "integer"},
                     "gpa": {"required": False, "type": ("float", "string")},
@@ -1360,9 +1371,14 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "begin_month": {"required": False, "type": "string"},
+                    "begin_month": {"required": False,
+                                    "anyof_type": ["string", "integer"],
+                                    },
                     "begin_year": {"required": True, "type": "integer"},
-                    "end_month": {"required": False, "type": "string"},
+                    "department": {"required": False, "type": "string"},
+                    "end_month": {"required": False,
+                                  "anyof_type": ["string", "integer"],
+                                  },
                     "end_year": {"required": False, "type": "integer"},
                     "group": {
                         "required": False,
@@ -1374,6 +1390,8 @@ SCHEMAS = {
                     "organization": {"required": True, "type": "string"},
                     "other": {"required": False, "type": "list"},
                     "position": {"required": True, "type": "string"},
+                    # TODO this should be select from in the long run
+                    "status": {"required": False, "type": "string"},
                 },
             },
             "type": "list",
@@ -1389,7 +1407,9 @@ SCHEMAS = {
                 "schema": {
                     "currency": {"required": False, "type": "string"},
                     "duration": {"required": False, "type": "string"},
-                    "month": {"required": False, "type": "string"},
+                    "month": {"required": False,
+                              "anyof_type": ["string", "integer"],
+                              },
                     "name": {"required": True, "type": "string"},
                     "value": {"required": True, "type": ("float", "integer")},
                     "year": {"required": True, "type": "integer"},
@@ -1397,6 +1417,9 @@ SCHEMAS = {
             },
             "type": "list",
         },
+        "google_scholar_url": {"required": False, "type": "string",
+                               "description": "URL of your Google Scholar "
+                                              "rofile"},
         "home_address": {
             "description": "The person's home address",
             "type": "dict",
@@ -1414,7 +1437,9 @@ SCHEMAS = {
                 "type": "dict",
                 "schema": {
                     "description": {"required": False, "type": "string"},
-                    "month": {"required": False, "type": "string"},
+                    "month": {"required": False,
+                              "anyof_type": ["string", "integer"],
+                              },
                     "name": {"required": True, "type": "string"},
                     "year": {"required": True, "type": "integer"},
                 },
@@ -1433,10 +1458,14 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "begin_month": {"required": False, "type": "string"},
+                    "begin_month": {"required": False,
+                                    "anyof_type": ["string", "integer"],
+                                    },
                     "begin_year": {"required": True, "type": "integer"},
                     "description": {"required": False, "type": "string"},
-                    "end_month": {"required": False, "type": "string"},
+                    "end_month": {"required": False,
+                                  "anyof_type": ["string", "integer"],
+                                  },
                     "end_year": {"required": False, "type": "integer"},
                     "organization": {"required": True, "type": "string"},
                     "position": {"required": True, "type": "string"},
@@ -1462,6 +1491,20 @@ SCHEMAS = {
             "type": "string",
             "eallowed": list(SORTED_POSITION),
         },
+        "research_focus_areas": {
+            "description": "summary of research projects that are ongoing. Used"
+                           "in Annual appraisal for example",
+            "required": False,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "begin_year": {"required": False, "type": "integer"},
+                    "end_year": {"required": False, "type": "integer"},
+                    "description": {"required": False, "type": "string"}
+                },
+            },
+            "type": "list"
+        },
         # TODO: need to handle year vs. begin_year stuff
         "service": {
             "description": "Service that this group member has provided",
@@ -1471,7 +1514,12 @@ SCHEMAS = {
                 "schema": {
                     "description": {"required": False, "type": "string"},
                     "duration": {"required": False, "type": "string"},
-                    "month": {"required": False, "type": "string"},
+                    "month": {"description": "Use month and year if the service"
+                                             "doesn't extend more than one year."
+                                             "Otherwise use begin_year and end_year",
+                              "required": False,
+                              "anyof_type": ["string", "integer"]
+                              },
                     "name": {"required": True, "type": "string"},
                     "year": {"required": False, "type": "integer"},
                     "begin_year": {"required": False, "type": "integer"},
@@ -1503,10 +1551,13 @@ SCHEMAS = {
                 "schema": {
                     "course": {"required": True, "type": "string"},
                     "description": {"required": False, "type": "string"},
-                    "end_month": {"required": False, "type": "string"},
+                    "end_month": {"required": False,
+                                  "anyof_type": ["string", "integer"]},
                     "end_year": {"required": False, "type": "integer"},
                     "materials": {"required": False, "type": "string"},
-                    "month": {"required": False, "type": "string"},
+                    "month": {"required": False,
+                              "anyof_type": ["string", "integer"],
+                              },
                     "organization": {"required": True, "type": "string"},
                     "position": {"required": True, "type": "string"},
                     "syllabus": {"required": False, "type": "string"},
@@ -1549,7 +1600,9 @@ SCHEMAS = {
             "required": True,
             "type": "integer",
         },
-        "begin_month": {"required": True, "type": "integer"},
+        "begin_month": {"required": True,
+                        "anyof_type": ["string", "integer"],
+                        },
         "begin_day": {"required": False, "type": "integer"},
         "department": {
             "description": "department of the institution where the"
@@ -1564,7 +1617,9 @@ SCHEMAS = {
             "required": False,
             "type": "integer",
         },
-        "end_month": {"required": False, "type": "integer"},
+        "end_month": {"required": False,
+                      "anyof_type": ["string", "integer"],
+                      },
         "end_day": {"required": False, "type": "integer"},
         "institution": {
             "description": "institution where the"
@@ -1676,9 +1731,13 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "begin_month": {"required": False, "type": "string"},
+                    "begin_month": {"required": False,
+                                    "anyof_type": ["string", "integer"],
+                                    },
                     "begin_year": {"required": True, "type": "integer"},
-                    "end_month": {"required": False, "type": "string"},
+                    "end_month": {"required": False,
+                                  "anyof_type": ["string", "integer"],
+                                  },
                     "end_year": {"required": False, "type": "integer"},
                     "name": {"required": True, "type": "string"},
                     "position": {"required": True, "type": "string"},
@@ -2070,7 +2129,7 @@ SCHEMAS = {
         "month": {
             "description": "month when the review is being written",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "integer"],
         },
         "recommendation": {
             "description": "Your publication recommendation",
