@@ -84,7 +84,6 @@ class PubListBuilder(LatexBuilderBase):
             for key in ent.keys():
                 if key in skip_keys:
                     continue
-                ent[key] = latex_safe(ent[key])
             ents.append(ent)
         fname = os.path.join(person_dir, pid) + ".bib"
         with open(fname, "w", encoding='utf-8') as f:
