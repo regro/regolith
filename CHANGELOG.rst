@@ -4,6 +4,65 @@ Regolith Change Log
 
 .. current developments
 
+v0.5.0
+====================
+
+**Added:**
+
+* builders can now take --from and --to command-line args to specify date range
+* added banner to groups schema, which is an image for website banner
+None
+
+* Google profile URL to people schema
+* Research Focus Areas to people schema
+* status to employment which will be selected from a list for sorting on the
+  website
+* filters in ``regolith.tools`` that return true if a given date is since or before or
+   between other dates
+* Add phone and address to CV and Resume if available
+- builder for post-doc ad
+- a builder for proposal reviews.  Currently tuned for doe-bes and nsf-dmr
+- builder for writing referee reports on manuscripts
+* Make bib for entire group
+- contacts to schema.py, a lighter type of person
+
+**Changed:**
+
+- builder now takes grant from grant field in expense and not by recursing
+   into project
+ - if payee is direct_billed, builder will not build a reimbursement form
+* ``all_documents`` now defaults to a deepcopy to prevent unintended mutation
+* institutions schema to add street and make conditionals work better
+* All months can now be integers or strings in the schemas
+* Make a ``.bat`` file in scripts, which should help on windows
+* now builds just accepted talks by default, not declined or pending
+- proposals schema in schema.py to include fields for building current and
+   pending report forms
+* Use ``xonsh.lib.os.rmtree`` in ``conftest.py`` rather that building our own.
+  The xonsh version is expected to do a better job on windows.
+
+**Removed:**
+
+None
+ - MTN: removed unused block from fuzzy_logic
+ - MTN: nicer handling of non-list objects in fuzzy_logic
+
+**Fixed:**
+
+- BUG: total amount now reproduces correctly in grants section
+ - BUG: account numbers not showing up in built reimbursement form
+* Made the example current grant go to 2025 rather than 2018
+* FIX: tests to run on windows OS by removing
+   removed directory paths
+* Makes sure some URLs in CV builder are also latex safe.
+* correct spacing after date when it is a single day event
+* Don't want to use latex_safe when we need the latex formatting
+* Cast to string on way into ``latex_safe``
+- BUG: ints now handled the same as strings (appended) in fuzzy_logic
+ - BUG: now passes gtx as a list to fuzzy_logic not as a generator
+
+
+
 v0.4.0
 ====================
 
