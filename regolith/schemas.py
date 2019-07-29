@@ -1289,11 +1289,6 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
-        "street": {
-            "description": "the street address of the institution",
-            "required": False,
-            "type": "string",
-        },
         "zip": {
             "description": "the zip or postal code of the institution",
             "required": False,
