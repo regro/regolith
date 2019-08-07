@@ -249,7 +249,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
 def filter_employment_for_advisees(people, begin_period, status):
     advisees = []
     for p in people:
-        for i in p.get("employment"):
+        for i in p.get("employment", []):
             if i.get("status") == status:
                 if i.get("end_year"):
                     end_date = date(i.get("end_year"),
