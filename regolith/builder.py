@@ -32,8 +32,8 @@ BUILDERS = {
     "reimb": ReimbursementBuilder,
     "figure": FigureBuilder,
     "recent-collabs": RecentCollaboratorsBuilder,
+    "annual-appraisal": AppraisalBuilder,
     "beamplan": BeamPlanBuilder
-    "annual-appraisal" : AppraisalBuilder
 }
 
 

@@ -21,6 +21,7 @@
 \usepackage{hyperref}
 \usepackage{times}
 \usepackage{enumitem}
+\usepackage[utf8]{inputenc}
 \setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
 
 %-----------------------------------------------------------
@@ -193,6 +194,7 @@ Respect to this Proposal/Award:} {{ g['cpp_info'].get('scope', 'N/A')-}}
 \resheading{ Invited, key and plenary talks in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Key Presentations (Award, Plenary or Keynote)}
+{% if len(keypres) > 0 %}
 \begin{enumerate}
 {% for pres in keypres %}
 \item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
@@ -219,8 +221,12 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 ( {{-pres['begin_year']-}} ).
 {% endfor %}
 \end{enumerate}
+{% else %}
+None
+{%-endif %}
 
 \subsection*{Invited Talks}
+{% if len(invpres) > 0 %}
 \begin{enumerate}
 {% for pres in invpres %}
 \item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
@@ -247,8 +253,13 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 ( {{-pres['begin_year']-}} ).
 {% endfor %}
 \end{enumerate}
+{% else %}
+None
+{%-endif %}
+
 
 \subsection*{Seminars and Colloquia}
+{% if len(sempres) > 0 %}
 \begin{enumerate}
 {% for pres in sempres %}
 \item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
@@ -275,8 +286,13 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 ( {{-pres['begin_year']-}} ).
 {% endfor %}
 \end{enumerate}
+{% else %}
+None
+{%-endif %}
+
 
 \subsection*{Declined Invitations}
+{% if len(declpres) > 0 %}
 \begin{enumerate}
 {% for pres in declpres %}
 \item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
@@ -303,6 +319,9 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 ( {{-pres['begin_year']-}} ).
 {% endfor %}
 \end{enumerate}
+{% else %}
+None
+{%-endif %}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Honors and awards in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
@@ -448,9 +467,9 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
 \resheading{ Courses taught in {{ p["pre_begin_period"][-4:] }} - {{ p["begin_period"][-4:] }} }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Fall {{p["pre_begin_period"][-4:]}} }
-\begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
-    {% if c['year']|string in p["pre_begin_period"]  and c['semester'] == 'Fall'%}
+{% if c['year']|string in p["pre_begin_period"]  and c['semester'] == 'Fall'%}
+\begin{itemize}[label=$-$]
         \item  {\bf {{latex_safe(c['course'])-}} }\\
                 {% if 'none' not in c['courseid'] %}
                 Enrollment: {{ latex_safe(c['enrollment']|string) }} \\
@@ -460,13 +479,13 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
                 Selected student comment:
                 \begin{itemize}[label=$-$]\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
                 {% endif%}{%endif%}
-    {% endif %}
-{%endfor%}
 \end{itemize}
+{% endif %}
+{%endfor%}
 \subsection*{Spring {{p["begin_period"][-4:]}} }
-\begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
-    {% if c['year']|string in p["begin_period"] and c['semester'] == 'Spring' %}
+{% if c['year']|string in p["begin_period"] and c['semester'] == 'Spring' %}
+\begin{itemize}[label=$-$]
         \item  {\bf {{latex_safe(c['course'])-}} }\\
                 {% if 'none' not in c['courseid'] %}
                 Enrollment: {{ latex_safe(c['enrollment']|string) }} \\
@@ -476,9 +495,9 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
                 Selected student comment:
                 \begin{itemize}[label=$-$]\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
                 {% endif%}{%endif%}
-    {% endif %}
-{%endfor%}
 \end{itemize}
+{% endif %}
+{%endfor%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Courses taught in {{ p["begin_period"][-4:] }} - {{ p["end_period"][-4:]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
