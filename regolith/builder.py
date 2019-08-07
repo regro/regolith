@@ -31,6 +31,7 @@ BUILDERS = {
     "preslist": PresListBuilder,
     "reimb": ReimbursementBuilder,
     "figure": FigureBuilder,
+    "annual-appraisal": AppraisalBuilder
     "annual-appraisal": AppraisalBuilder,
     "recent-collabs": RecentCollaboratorsBuilder,
     "beamplan": BeamPlanBuilder
