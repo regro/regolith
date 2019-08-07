@@ -1987,7 +1987,6 @@ SCHEMAS = {
                         "visitor-supported",
                         "visitor-unsupported"],
                     },
-                    "type": "list",
                 },
             },
         },
