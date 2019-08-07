@@ -7,27 +7,27 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int
-from regolith.sorters import ene_date_key, position_key, doc_date_key, date_key
-from regolith.builders.cpbuilder import is_current, is_pending, has_finished, \
-    has_started
+from regolith.sorters import position_key, doc_date_key
+from regolith.builders.cpbuilder import is_current
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
     filter_projects,
     filter_grants,
-    awards_grants_honors,
     make_bibtex_file,
     fuzzy_retrieval,
-    dereference_institution,
     filter_employment_for_advisees,
     filter_service,
     filter_facilities,
     filter_activities,
-    number_suffix, filter_presentations, awards, filter_patents,
+    filter_presentations,
+    awards,
+    filter_patents,
     filter_licenses)
 
-BEGIN_YEAR = 2018
+BEGIN_YEAR = 2017
+PERSON = "sbillinge"
 
 
 def merge_collections(a, b, target_id):
@@ -126,20 +126,20 @@ class AppraisalBuilder(LatexBuilderBase):
         post_end_period = dt.date(post_end_year, 3, 31)
 
         rc = self.rc
-        me = [p for p in self.gtx["people"] if p["_id"] == "sbillinge"][0]
+        me = [p for p in self.gtx["people"] if p["_id"] == PERSON][0]
         me["begin_period"] = dt.date.strftime(begin_period, "%m/%d/%Y")
         me["begin_period"] = dt.date.strftime(begin_period, "%m/%d/%Y")
         me["pre_begin_period"] = dt.date.strftime(pre_begin_period, "%m/%d/%Y")
         me["end_period"] = dt.date.strftime(end_period, "%m/%d/%Y")
         me["post_end_period"] = dt.date.strftime(post_end_period, "%m/%d/%Y")
         projs = filter_projects(
-            self.gtx["projects"], set(["sbillinge"])
+            self.gtx["projects"], set([PERSON])
         )
         #########
         # current and pending
         #########
         pi = fuzzy_retrieval(
-            self.gtx["people"], ["aka", "name", "_id"], "sbillinge"
+            self.gtx["people"], ["aka", "name", "_id"], PERSON
         )
         #        pi['initials'] = "SJLB"
 
@@ -355,9 +355,9 @@ class AppraisalBuilder(LatexBuilderBase):
         # IP
         #############
         patents = filter_patents(self.gtx["patents"], self.gtx["people"],
-                                 "sbillinge", since=begin_period)
+                                 PERSON, since=begin_period)
         licenses = filter_licenses(self.gtx["patents"], self.gtx["people"],
-                                   "sbillinge", since=begin_period)
+                                   PERSON, since=begin_period)
         #############
         # hindex
         #############

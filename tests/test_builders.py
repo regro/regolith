@@ -20,6 +20,7 @@ builder_map = [
     "reimb",
     "figure",
     "beamplan"
+    "annual-appraisal"
 ]
 
 xls_check = ("B17", "B20", "B36")

@@ -30,8 +30,8 @@ BUILDERS = {
     "preslist": PresListBuilder,
     "reimb": ReimbursementBuilder,
     "figure": FigureBuilder,
+    "annual-appraisal": AppraisalBuilder,
     "beamplan": BeamPlanBuilder
-    "annual-appraisal" : AppraisalBuilder
 }
 
 
