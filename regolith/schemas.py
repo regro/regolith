@@ -1775,7 +1775,7 @@ SCHEMAS = {
                         "pi",
                         "high-school",
                         "undergrad",
-                        "MS",
+                        "ms",
                         "phd",
                         "postdoc",
                         "visitor-supported",
