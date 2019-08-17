@@ -340,7 +340,7 @@ EXEMPLARS = {
         "month": "February",
         "year": 2016,
     },
-    "people": {
+    "people": [{
         "_id": "scopatz",
         "aka": [
             "Scopatz",
@@ -545,6 +545,135 @@ EXEMPLARS = {
             },
         ],
     },
+    {
+        "_id": "sbillinge",
+        "aka": [
+            "Billinge",
+        ],
+        "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
+        "bio": "Simon teaches and does research",
+        "education": [
+            {
+                "begin_year": 2008,
+                "degree": "Ph.D. Mechanical Engineering, "
+                          "Nuclear and Radiation Engineering "
+                          "Program",
+                "end_year": 2011,
+                "group": "ergs",
+                "institution": "The University of Texas at Austin",
+                "department": "apam",
+                "location": "Austin, TX",
+                "other": [
+                    "Adviser: Erich A. Schneider",
+                    "Dissertation: Essential Physics for Fuel Cycle "
+                    "Modeling & Analysis",
+                ],
+            },
+        ],
+        "email": "sb2896@columbia.edu",
+        "employment": [
+            {
+                "begin_year": 2015,
+                "group": "ergs",
+                "location": "Columbia, SC",
+                "organization": "The University of South Carolina",
+                "other": [
+                    "Cyclus: An agent-based, discrete time nuclear fuel "
+                    "cycle simulator.",
+                    "PyNE: The Nuclear Engineering Toolkit.",
+                    "Website: http://www.ergs.sc.edu/",
+                ],
+                "position": "Assistant Professor, Mechanical Engineering " "Department",
+            },
+        ],
+        "funding": [
+            {
+                "name": "Omega Laser User's Group Travel Award",
+                "value": 1100,
+                "year": 2013,
+            },
+            {"name": "NIF User's Group Travel Award", "value": 1150,
+             "year": 2013},
+        ],
+        "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
+        "hindex": [{
+             "h": 65,
+             "h_last_five": 43,
+             "citations": 17890,
+             "citations_last_five": 8817,
+             "origin": "Google Scholar",
+             "since": 1991,
+             "year": 2019,
+             "month": "May",
+             "day": 12,
+    }],
+        "home_address": {
+            "street": "123 Wallabe Ln",
+            "city": "The big apple",
+            "state": "plasma",
+            "zip": "007",
+        },
+        "initials": "SJLB",
+        "membership": [
+            {
+                "begin_year": 2006,
+                "organization": "American Nuclear Society",
+                "position": "Member",
+            },
+        ],
+        "miscellaneous": {
+            "metrics_for_success": [
+                "publications(quality, quantity)",
+                "invite talks",
+                "funding",
+                "citations",
+                ],
+        },
+        "name": "Simon J. L. Billinge",
+        "orcid_id": "0000-0002-9432-4248",
+        "position": "professor",
+        "publicity": [{
+            "type": "online",
+            "publication": "Brookhaven National Laboratory Web Story",
+            "topic": "LDRD Provenance project",
+            "title": "An awesome project and well worth the money",
+            "day": 24,
+            "month": "Jul",
+            "year": 2019,
+            "grant": "bnlldrd18",
+            },
+        ],
+        "research_focus_areas": [
+            {"begin_year": 2010, "description": "software applied to materials "
+                                                "engineering and life" }
+        ],
+        "skills": [
+            {"category": "Programming Languages", "level": "expert",
+             "name": "Python"},
+        ],
+        "teaching": [
+            {
+                "course": "EMCH 552: Intro to Nuclear Engineering",
+                "description": "This course is an introduction to nuclear " "physics.",
+                "month": "August",
+                "organization": "University of South Carolina",
+                "position": "Professor",
+                "syllabus": "https://drive.google.com/open?id"
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                "year": 2017,
+            },
+        ],
+        "title": "Dr.",
+        "service": [
+            {
+                "name": "Master of Ceremonies and Organizer Brown University "
+                        '"Chemistry: Believe it or Not" public chemistry '
+                        "demonstration",
+                "year": 2013,
+            },
+        ],
+    },
+    ],
     "presentations": [
         {
             "_id": "18sb_this_and_that",
@@ -1811,6 +1940,32 @@ SCHEMAS = {
         "google_scholar_url": {"required": False, "type": "string",
                                "description": "URL of your Google Scholar "
                                               "rofile"},
+        "hindex": {
+            "description": "details of hindex pulled on a certain date",
+            "required": False,
+            "schema": {
+                "h": {"description": "the value of the h index",
+                      "required": True, "type": "integer"},
+                "h_last_five": {"description": "h index over past 5 years",
+                      "required": False, "type": "integer"},
+                "citations": {"description": "total number of citations",
+                      "required": False, "type": "integer"},
+                "citations_last_five": {"description": "number of citations"
+                              "in the past 5 years",
+                              "required": False, "type": "integer"},
+                "origin": {"description": "where the numbers came from",
+                              "required": False, "type": "string"},
+                "since": {"description": "year of first citation",
+                              "required": False, "type": "integer"},
+                "year": {"description": "year when the data were pulled",
+                              "required": False, "type": "integer"},
+                "month": {"description": "month when the data were pulled",
+                           "required": False, "anyof_type": ["string","integer"]},
+                "day": {"description": "day when the data were pulled",
+                              "required": False, "type": "integer"},
+            },
+            "type": "list",
+        },
         "home_address": {
             "description": "The person's home address",
             "type": "dict",
