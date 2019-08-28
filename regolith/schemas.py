@@ -522,7 +522,7 @@ EXEMPLARS = {
             "abstract": "We made the case for local structure",
             "authors": ["scopatz"],
             "begin_year": 2018,
-            "begin_month": 5,
+            "begin_month": "May",
             "begin_day": 22,
             "department": "physics",
             "end_year": 2018,
