@@ -30,6 +30,7 @@ from regolith.tools import (
     number_suffix,
 )
 from regolith.stylers import sentencecase, month_fullnames
+from regolith.dates import month_to_int
 
 
 class PresListBuilder(LatexBuilderBase):
@@ -176,7 +177,7 @@ class PresListBuilder(LatexBuilderBase):
                     ]
                     authorlist = ", ".join(pres["authors"])
                     pres["authors"] = authorlist
-                    pres["begin_month"] = int(pres["begin_month"])
+                    pres["begin_month"] = month_to_int(pres["begin_month"])
                     pres["date"] = datetime.date(
                         pres["begin_year"],
                         pres["begin_month"],
