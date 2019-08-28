@@ -6,7 +6,6 @@ from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
-from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int
 from regolith.sorters import position_key, doc_date_key
 from regolith.builders.cpbuilder import is_current
