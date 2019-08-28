@@ -1,5 +1,6 @@
 """Builder for CVs."""
 import datetime as dt
+import os
 import sys
 from copy import copy, deepcopy
 
@@ -366,9 +367,10 @@ class AppraisalBuilder(LatexBuilderBase):
         #########################
         # render
         #########################
+        #            "C:/Users/simon/scratch/billinge-ann-report.tex",
         self.render(
             "columbia_annual_report.tex",
-            "billinge-ann-report" + ".tex",
+            "billinge-ann-report.tex",
             pi=pi,
             p=me,
             projects=projs,
