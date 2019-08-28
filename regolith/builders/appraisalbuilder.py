@@ -25,56 +25,13 @@ from regolith.tools import (
     filter_presentations,
     awards,
     filter_patents,
-    filter_licenses)
+    filter_licenses,
+    merge_collections)
 
 BEGIN_YEAR = 2017
 PERSON = "sbillinge"
 
 
-def merge_collections(a, b, target_id):
-    """
-    merge two collections into a single merged collection
-
-    for keys that are in both collections, the value in b will be kept
-
-    Parameters
-    ----------
-    a  the inferior collection (will lose values of shared keys)
-    b  the superior collection (will keep values of shared keys)
-    target_id  str  the name of the key used in b to dereference ids in a
-
-    Returns
-    -------
-    the combined collection.  Note that it returns a collection only containing
-    merged items from a and b that are dereferenced in b, i.e., the merged
-    intercept.  If you want the union you can update the returned collection
-    with a.
-
-    Examples
-    --------
-    >>>  grants = merge_collections(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
-
-    This would merge all entries in the proposals collection with entries in the
-    grants collection for which "_id" in proposals has the value of
-    "proposal_id" in grants.
-    """
-    adict = {}
-    for k in a:
-        adict[k.get("_id")] = k
-    bdict = {}
-    for k in b:
-        bdict[k.get("_id")] = k
-
-    b_for_a = {}
-    for k in adict:
-        for kk, v in bdict.items():
-            if v.get(target_id, "") == k:
-                b_for_a[k] = kk
-    chained = {}
-    for k, v in b_for_a.items():
-        chained[k] = ChainDB(adict[k],
-                             bdict[v])
-    return list(chained.values())
 
 
 class AppraisalBuilder(LatexBuilderBase):
