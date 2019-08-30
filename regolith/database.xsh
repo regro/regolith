@@ -160,12 +160,14 @@ def open_dbs(rc, dbs=None):
     client : {FileSystemClient, MongoClient}
         The database client
     """
+    if dbs is None:
+        dbs = []
     client = CLIENTS[rc.backend](rc)
     client.open()
     chained_db = {}
     for db in rc.databases:
         # if we only want to access some dbs and this db is not in that some
-        if dbs and db not in dbs:
+        if dbs and db['name'] not in dbs:
             continue
         if 'blacklist' not in db:
             db['blacklist'] = ['.travis.yml', '.travis.yaml']
