@@ -106,6 +106,20 @@ def grade(rc):
     _run_app(app, rc)
 
 
+def build_db_check(rc):
+    """Checks which DBs a builder needs"""
+    dbs = set()
+    for t in rc.build_targets:
+        bldr = builder(t, rc)
+        needed_dbs = getattr(bldr, 'needed_dbs')
+        # If the requested builder doesn't state DB deps then it requires
+        # all dbs!
+        if not needed_dbs:
+            return None
+        dbs.update(needed_dbs)
+    return dbs
+
+
 def build(rc):
     """Builds all of the build targets"""
     for t in rc.build_targets:
