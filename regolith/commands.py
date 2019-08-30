@@ -111,7 +111,7 @@ def build_db_check(rc):
     dbs = set()
     for t in rc.build_targets:
         bldr = builder(t, rc)
-        needed_dbs = getattr(bldr, 'needed_dbs')
+        needed_dbs = getattr(bldr, 'needed_dbs', None)
         # If the requested builder doesn't state DB deps then it requires
         # all dbs!
         if not needed_dbs:
