@@ -16,6 +16,7 @@ from regolith.tools import (
 class ManRevBuilder(LatexBuilderBase):
     """Build a manuscript review from database entries"""
     btype = "manreview"
+    needed_dbs = ['refereeReports']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -50,11 +51,11 @@ class ManRevBuilder(LatexBuilderBase):
                 recommendation=rev["recommendation"],
                 freewrite=rev["freewrite"]
             )
-        if len(rev["editor_eyes_only"]) > 0:
-            self.render(
-                "refreport_editor.txt",
-                outname + "_editor.txt",
-                title=title,
-                firstAuthorLastName=firstAuthorLastName,
-                editorEyesOnly=rev["editor_eyes_only"],
-            )
+            if len(rev["editor_eyes_only"]) > 0:
+                self.render(
+                    "refreport_editor.txt",
+                    outname + "_editor.txt",
+                    title=rev["title"],
+                    firstAuthorLastName=rev["first_author_last_name"],
+                    editorEyesOnly=rev["editor_eyes_only"],
+                )
