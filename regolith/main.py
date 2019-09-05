@@ -279,7 +279,10 @@ def main(args=None):
     if rc.cmd in DISCONNECTED_COMMANDS:
         DISCONNECTED_COMMANDS[rc.cmd](rc)
     else:
-        with connect(rc) as rc.client:
+        dbs = None
+        if rc.cmd == 'build':
+            dbs = commands.build_db_check(rc)
+        with connect(rc, dbs=dbs) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)
 
 

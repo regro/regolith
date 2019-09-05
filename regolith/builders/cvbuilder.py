@@ -18,6 +18,7 @@ class CVBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
     btype = "cv"
+    needed_dbs = ['institutions', 'people']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

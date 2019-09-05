@@ -6,7 +6,7 @@ import json
 import sys
 
 from regolith.tools import string_types
-from regolith.builder import builder
+from regolith.builder import builder, BUILDERS
 from regolith.emailer import emailer as email
 from regolith.deploy import deploy as dploy
 
@@ -104,6 +104,20 @@ def grade(rc):
     from regolith.grader import app
 
     _run_app(app, rc)
+
+
+def build_db_check(rc):
+    """Checks which DBs a builder needs"""
+    dbs = set()
+    for t in rc.build_targets:
+        bldr = BUILDERS[t]
+        needed_dbs = getattr(bldr, 'needed_dbs', None)
+        # If the requested builder doesn't state DB deps then it requires
+        # all dbs!
+        if not needed_dbs:
+            return None
+        dbs.update(needed_dbs)
+    return dbs
 
 
 def build(rc):

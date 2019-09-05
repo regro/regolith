@@ -16,6 +16,7 @@ from regolith.tools import (
 class ManRevBuilder(LatexBuilderBase):
     """Build a manuscript review from database entries"""
     btype = "manreview"
+    needed_dbs = ['refereeReports']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
