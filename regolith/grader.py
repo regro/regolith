@@ -90,7 +90,8 @@ def form_to_grade_row(form):
 
 def insert_grade(grade, form, rc):
     """Inserts a grade into the database."""
-    dbname = form["dbname"]
+    # dbname = form["dbname"]
+    dbname = next(iter(rc.databases))['name']
     collname = "grades"
     try:
         coll = rc.client[dbname][collname]
