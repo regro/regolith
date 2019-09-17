@@ -1,4 +1,5 @@
 """Classlist implementation"""
+import csv
 import os
 import re
 import json
@@ -10,6 +11,32 @@ def load_json(filename):
     """Returns students as a list of dicts from JSON file."""
     with open(filename, encoding='utf-8') as f:
         students = json.load(f)
+    return students
+
+
+def load_csv(filename, format="columbia"):
+    """Returns students as a list of dicts from a csv from Columbia Courseworks
+    """
+    if format == "columbia":
+        first_name = "First Name"
+        last_name = "Last name"
+        email = "Email"
+        university_id = "UNI"
+
+    with open(filename, encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        students = []
+        for row in reader:
+            students.append(row)
+
+    for student in students:
+        student[first_name] = student[first_name].strip()
+        student[last_name] = student[last_name].strip()
+        student["_id"] = "{} {}".format(student.get(first_name),
+                                        student.get(last_name)).strip()
+        student["email"] = student.get(email).strip()
+        student["university_id"] = student[university_id]
+
     return students
 
 
@@ -96,7 +123,7 @@ def load_usc(filename):
     return parser.students
 
 
-LOADERS = {"usc": load_usc, "json": load_json}
+LOADERS = {"usc": load_usc, "json": load_json, "csv": load_csv}
 
 
 def add_students_to_db(students, rc):
