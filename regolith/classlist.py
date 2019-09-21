@@ -3,6 +3,7 @@ import csv
 import os
 import re
 import json
+import sys
 from html.parser import HTMLParser
 from pprint import pprint, pformat
 
@@ -152,6 +153,9 @@ def add_students_to_course(students, rc):
 
 def register(rc):
     """Entry point for registering classes."""
+    if not os.path.exists(rc.filename):
+        sys.exit("classlist file {} can't be found\nPlease check the filename "
+                 "and try again".format(rc.filename))
     if rc.format is None:
         rc.format = os.path.splitext(rc.filename)[1][1:]
     loader = LOADERS[rc.format]
