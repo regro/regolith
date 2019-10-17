@@ -34,6 +34,10 @@ class PubListBuilder(LatexBuilderBase):
 
     def latex(self):
         rc = self.rc
+        from_date = self.rc.from_date
+        to_date = self.rc.to_date
+        for_whom = self.rc.people
+        which_grants = self.rc.grants
         for p in self.gtx["people"]:
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = self.filter_publications(names, reverse=True)
