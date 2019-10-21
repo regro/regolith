@@ -1,7 +1,4 @@
 """Builder for Current and Pending Reports."""
-import datetime
-import time
-
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.dates import month_to_int
 from regolith.fsclient import _id_key
