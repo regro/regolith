@@ -27,7 +27,8 @@ from regolith.tools import (
     filter_licenses,
     merge_collections)
 
-BEGIN_YEAR = 2017
+BEGIN_YEAR = 2018
+BEGIN_MONTH = 4
 PERSON = "sbillinge"
 
 
@@ -74,13 +75,15 @@ class AppraisalBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         begin_year = BEGIN_YEAR
+        begin_month = BEGIN_MONTH
         pre_begin_year = begin_year - 1
         end_year = begin_year + 1
+        end_month = begin_month-1
         post_end_year = begin_year + 2
-        begin_period = dt.date(begin_year, 4, 1)
-        pre_begin_period = dt.date(pre_begin_year, 4, 1)
-        end_period = dt.date(end_year, 3, 31)
-        post_end_period = dt.date(post_end_year, 3, 31)
+        begin_period = dt.date(begin_year, begin_month, 1)
+        pre_begin_period = dt.date(pre_begin_year, begin_month, 1)
+        end_period = dt.date(end_year, end_month, 31)
+        post_end_period = dt.date(post_end_year, end_month, 31)
 
         rc = self.rc
         me = [p for p in self.gtx["people"] if p["_id"] == PERSON][0]
