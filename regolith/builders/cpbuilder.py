@@ -7,10 +7,14 @@ from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
     fuzzy_retrieval,
-    has_started, is_current)
+    has_started,
+    is_current,
+)
+
 
 def is_pending(sy, sm, sd):
     return not has_started(sy, sm, sd)
+
 
 class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
@@ -41,9 +45,7 @@ class CPBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         for group in self.gtx["groups"]:
-            pi = fuzzy_retrieval(
-                self.gtx["people"], ["aka", "name"], group["pi_name"]
-            )
+            pi = fuzzy_retrieval(self.gtx["people"], ["aka", "name"], group["pi_name"])
 
             grants = list(self.gtx["grants"])
             current_grants = [
