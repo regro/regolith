@@ -13,7 +13,7 @@ from regolith.tools import (
     has_started, is_current)
 
 def is_pending(sy, sm, sd):
-    return not has_started(sd, sm, sy)
+    return not has_started(sy, sm, sd)
 
 class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
