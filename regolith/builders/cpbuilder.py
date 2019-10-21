@@ -10,28 +10,10 @@ from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
     fuzzy_retrieval,
-)
+    has_started, is_current)
 
-
-def has_started(sd, sm, sy):
-    s = "{}/{}/{}".format(sd, month_to_int(sm), sy)
-    start = time.mktime(datetime.datetime.strptime(s, "%d/%m/%Y").timetuple())
-    return start < time.time()
-
-
-def has_finished(ed, em, ey):
-    e = "{}/{}/{}".format(ed, month_to_int(em), ey)
-    end = time.mktime(datetime.datetime.strptime(e, "%d/%m/%Y").timetuple())
-    return end < time.time()
-
-
-def is_current(sd, sm, sy, ed, em, ey):
-    return has_started(sd, sm, sy) and not has_finished(ed, em, ey)
-
-
-def is_pending(sd, sm, sy):
+def is_pending(sy, sm, sd):
     return not has_started(sd, sm, sy)
-
 
 class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
@@ -74,12 +56,12 @@ class CPBuilder(LatexBuilderBase):
                     *[
                         g.get(s, 1)
                         for s in [
-                            "begin_day",
-                            "begin_month",
                             "begin_year",
-                            "end_day",
-                            "end_month",
                             "end_year",
+                            "begin_month",
+                            "begin_day",
+                            "end_month",
+                            "end_day",
                         ]
                     ]
                 )

@@ -2,13 +2,13 @@ import pytest
 
 from regolith.tools import (filter_publications, fuzzy_retrieval,
                             number_suffix, latex_safe, is_before,
-                            is_since, is_between)
+                            is_since, is_between, has_started, has_finished,
+                            is_current)
 
 
 def test_author_publications():
     citations = [{"author": ["CJ", "SJLB"]}, {"editor": "SJLB"}]
     filter_publications(citations, {"SJLB"})
-
 
 def test_is_since():
     y1, y2, y3 = 2000, 2010, 2020
@@ -65,6 +65,52 @@ def test_is_between():
     assert is_between(y1, y1, y1) is True
     assert is_between(y1, y2, y3) is False
     assert is_between(y1, y3, y2) is False
+
+
+def test_has_started():
+    y1, y2 = 2000, 2900
+    m1, m2 = 1, 12
+    m4, m5 = "Jan", "Dec"
+    d1, d2 = 1, 28
+    assert has_started(y1) is True
+    assert has_started(y2) is False
+    assert has_started(y1, m=m1) is True
+    assert has_started(y2, m=m2) is False
+    assert has_started(y1, m=m4) is True
+    assert has_started(y2, m=m5) is False
+    assert has_started(y1, m=m1, sd=d1) is True
+    assert has_started(y2, m=m2, sd=d2) is False
+
+
+def test_has_finished():
+    y1, y2 = 2000, 2900
+    m1, m2 = 1, 12
+    m4, m5 = "Jan", "Dec"
+    d1, d2 = 1, 28
+    assert has_finished(y1) is True
+    assert has_finished(y2) is False
+    assert has_finished(y1, m=m1) is True
+    assert has_finished(y2, m=m2) is False
+    assert has_finished(y1, m=m4) is True
+    assert has_finished(y2, m=m5) is False
+    assert has_finished(y1, m=m1, sd=d1) is True
+    assert has_finished(y2, m=m2, sd=d2) is False
+
+
+def test_is_current():
+    y1, y2, y3 = 2000, 2010, 2900
+    m1, m2 = 1, 12
+    m4, m5 = "Jan", "Dec"
+    d1, d2 = 1, 28
+    assert is_current(y1, y2) is False
+    assert is_current(y2, y3) is True
+    assert is_current(y1, y2, m=m1) is False
+    assert is_current(y2, y3, m=m2) is True
+    assert is_current(y2, y3, m=m4) is True
+    assert is_current(y1, y2, m=m5) is False
+    assert is_current(y1, y2, m=m1, sd=d1) is False
+    assert is_current(y2, y3, m=m2, sd=d2) is True
+
 
 def test_fuzzy_retrieval():
     person = {
