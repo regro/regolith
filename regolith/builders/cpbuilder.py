@@ -69,7 +69,7 @@ class CPBuilder(LatexBuilderBase):
                 g
                 for g in grants
                 if is_pending(
-                    *[g[s] for s in ["begin_day", "begin_month", "begin_year"]]
+                    *[g[s] for s in ["begin_year", "begin_month", "begin_day"]]
                 )
             ]
             current_grants, _, _ = filter_grants(
