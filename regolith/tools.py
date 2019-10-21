@@ -250,7 +250,7 @@ def has_started(sy, sm=None, sd=None):
     if not sd:
         sd = 1
     s = "{}/{}/{}".format(sd, month_to_int(sm), sy)
-    start = time.mktime(datetime.datetime.strptime(s, "%d/%m/%Y").timetuple())
+    start = time.mktime(datetime.strptime(s, "%d/%m/%Y").timetuple())
     return start <= time.time()
 
 
@@ -278,7 +278,7 @@ def has_finished(ey, em=None, ed=None):
     if not ed:
         ed = monthrange(ey, month_to_int(em))[1]
     e = "{}/{}/{}".format(ed, month_to_int(em), ey)
-    end = time.mktime(datetime.datetime.strptime(e, "%d/%m/%Y").timetuple())
+    end = time.mktime(datetime.strptime(e, "%d/%m/%Y").timetuple())
     return end <= time.time()
 
 

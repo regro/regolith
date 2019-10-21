@@ -74,12 +74,12 @@ def test_has_started():
     d1, d2 = 1, 28
     assert has_started(y1) is True
     assert has_started(y2) is False
-    assert has_started(y1, m=m1) is True
-    assert has_started(y2, m=m2) is False
-    assert has_started(y1, m=m4) is True
-    assert has_started(y2, m=m5) is False
-    assert has_started(y1, m=m1, sd=d1) is True
-    assert has_started(y2, m=m2, sd=d2) is False
+    assert has_started(y1, sm=m1) is True
+    assert has_started(y2, sm=m2) is False
+    assert has_started(y1, sm=m4) is True
+    assert has_started(y2, sm=m5) is False
+    assert has_started(y1, sm=m1, sd=d1) is True
+    assert has_started(y2, sm=m2, sd=d2) is False
 
 
 def test_has_finished():
@@ -89,12 +89,12 @@ def test_has_finished():
     d1, d2 = 1, 28
     assert has_finished(y1) is True
     assert has_finished(y2) is False
-    assert has_finished(y1, m=m1) is True
-    assert has_finished(y2, m=m2) is False
-    assert has_finished(y1, m=m4) is True
-    assert has_finished(y2, m=m5) is False
-    assert has_finished(y1, m=m1, sd=d1) is True
-    assert has_finished(y2, m=m2, sd=d2) is False
+    assert has_finished(y1, em=m1) is True
+    assert has_finished(y2, em=m2) is False
+    assert has_finished(y1, em=m4) is True
+    assert has_finished(y2, em=m5) is False
+    assert has_finished(y1, em=m1, ed=d1) is True
+    assert has_finished(y2, em=m2, ed=d2) is False
 
 
 def test_is_current():
@@ -104,12 +104,16 @@ def test_is_current():
     d1, d2 = 1, 28
     assert is_current(y1, y2) is False
     assert is_current(y2, y3) is True
-    assert is_current(y1, y2, m=m1) is False
-    assert is_current(y2, y3, m=m2) is True
-    assert is_current(y2, y3, m=m4) is True
-    assert is_current(y1, y2, m=m5) is False
-    assert is_current(y1, y2, m=m1, sd=d1) is False
-    assert is_current(y2, y3, m=m2, sd=d2) is True
+    assert is_current(y1, y2, sm=m1) is False
+    assert is_current(y2, y3, sm=m2) is True
+    assert is_current(y2, y3, sm=m4) is True
+    assert is_current(y1, y2, sm=m5) is False
+    assert is_current(y1, y2, sm=m1, sd=d1) is False
+    assert is_current(y2, y3, sm=m2, sd=d2) is True
+    assert is_current(y1, y2, sm=m1, sd=d1, em=m2) is False
+    assert is_current(y2, y3, sm=m2, sd=d2, em=m5) is True
+    assert is_current(y1, y2, sm=m1, sd=d1, em=m2, ed=d1) is False
+    assert is_current(y2, y3, sm=m2, sd=d2, em=m5, ed=d2) is True
 
 
 def test_fuzzy_retrieval():
