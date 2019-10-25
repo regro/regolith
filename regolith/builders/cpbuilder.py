@@ -1,7 +1,4 @@
 """Builder for Current and Pending Reports."""
-import datetime
-import time
-
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.dates import month_to_int
 from regolith.fsclient import _id_key
@@ -10,27 +7,13 @@ from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
     fuzzy_retrieval,
+    has_started,
+    is_current,
 )
 
 
-def has_started(sd, sm, sy):
-    s = "{}/{}/{}".format(sd, month_to_int(sm), sy)
-    start = time.mktime(datetime.datetime.strptime(s, "%d/%m/%Y").timetuple())
-    return start < time.time()
-
-
-def has_finished(ed, em, ey):
-    e = "{}/{}/{}".format(ed, month_to_int(em), ey)
-    end = time.mktime(datetime.datetime.strptime(e, "%d/%m/%Y").timetuple())
-    return end < time.time()
-
-
-def is_current(sd, sm, sy, ed, em, ey):
-    return has_started(sd, sm, sy) and not has_finished(ed, em, ey)
-
-
-def is_pending(sd, sm, sy):
-    return not has_started(sd, sm, sy)
+def is_pending(sy, sm, sd):
+    return not has_started(sy, sm, sd)
 
 
 class CPBuilder(LatexBuilderBase):
@@ -62,9 +45,7 @@ class CPBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         for group in self.gtx["groups"]:
-            pi = fuzzy_retrieval(
-                self.gtx["people"], ["aka", "name"], group["pi_name"]
-            )
+            pi = fuzzy_retrieval(self.gtx["people"], ["aka", "name"], group["pi_name"])
 
             grants = list(self.gtx["grants"])
             current_grants = [
@@ -74,12 +55,12 @@ class CPBuilder(LatexBuilderBase):
                     *[
                         g.get(s, 1)
                         for s in [
-                            "begin_day",
-                            "begin_month",
                             "begin_year",
-                            "end_day",
-                            "end_month",
                             "end_year",
+                            "begin_month",
+                            "begin_day",
+                            "end_month",
+                            "end_day",
                         ]
                     ]
                 )
@@ -88,7 +69,7 @@ class CPBuilder(LatexBuilderBase):
                 g
                 for g in grants
                 if is_pending(
-                    *[g[s] for s in ["begin_day", "begin_month", "begin_year"]]
+                    *[g[s] for s in ["begin_year", "begin_month", "begin_day"]]
                 )
             ]
             current_grants, _, _ = filter_grants(
