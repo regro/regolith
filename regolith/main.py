@@ -2,7 +2,6 @@
 from __future__ import print_function
 import copy
 import os
-import collections
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from regolith.commands import INGEST_COLL_LU
