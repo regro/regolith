@@ -2,6 +2,7 @@
 from __future__ import print_function
 import copy
 import os
+import collections
 from argparse import ArgumentParser, RawTextHelpFormatter
 
 from regolith.commands import INGEST_COLL_LU
@@ -268,10 +269,8 @@ def main(args=None):
     rc._update(ns.__dict__)
     if "schemas" in rc._dict:
         user_schema = copy.deepcopy(rc.schemas)
-        rc.schemas = copy.deepcopy(SCHEMAS)
-        for k in user_schema:
-            for k2, v in user_schema[k].items():
-                rc.schemas[k][k2].update(v)
+        default_schema = copy.deepcopy(SCHEMAS)
+        rc.schemas = dict(collections.ChainMap(user_schema, default_schema))
     else:
         rc.schemas = SCHEMAS
     if ns.cmd in NEED_RC:
