@@ -258,6 +258,20 @@ def create_parser():
     return p
 
 
+def merge_nested_dicts(dict0: dict, dict1: dict):
+    """Merge dict1 into dict0 recursively."""
+    for key in dict1.keys():  # iterate keys in dict1
+        if (key in dict0) and isinstance(dict0[key], dict) and isinstance(dict1[key], dict):
+            # if the key is also in dict0 and both values are dictionary,
+            # recursively merge the sub-dictionary
+            merge_nested_dicts(dict0[key], dict1[key])
+        else:
+            # if the key is not in dict0 or either of the values is not dictionary,
+            # use value in dict1 to update the dict0
+            dict0[key] = dict1[key]
+    return
+
+
 def main(args=None):
     rc = DEFAULT_RC
     parser = create_parser()
@@ -269,8 +283,8 @@ def main(args=None):
     rc._update(ns.__dict__)
     if "schemas" in rc._dict:
         user_schema = copy.deepcopy(rc.schemas)
-        default_schema = copy.deepcopy(SCHEMAS)
-        rc.schemas = dict(collections.ChainMap(user_schema, default_schema))
+        rc.schemas = copy.deepcopy(SCHEMAS)
+        merge_nested_dicts(rc.schemas, user_schema)  # merge user schemas into the default schemas
     else:
         rc.schemas = SCHEMAS
     if ns.cmd in NEED_RC:
