@@ -11,6 +11,7 @@ from regolith import commands
 from regolith import storage
 from regolith.builder import BUILDERS
 from regolith.schemas import SCHEMAS
+from regolith.tools import merge_nested_dicts
 
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
@@ -255,20 +256,6 @@ def create_parser():
         help="If provided only validate that collection",
     )
     return p
-
-
-def merge_nested_dicts(dict0: dict, dict1: dict):
-    """Merge dict1 into dict0 recursively."""
-    for key in dict1.keys():  # iterate keys in dict1
-        if (key in dict0) and isinstance(dict0[key], dict) and isinstance(dict1[key], dict):
-            # if the key is also in dict0 and both values are dictionary,
-            # recursively merge the sub-dictionary
-            merge_nested_dicts(dict0[key], dict1[key])
-        else:
-            # if the key is not in dict0 or either of the values is not dictionary,
-            # use value in dict1 to update the dict0
-            dict0[key] = dict1[key]
-    return
 
 
 def main(args=None):

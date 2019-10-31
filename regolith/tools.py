@@ -665,3 +665,13 @@ def dereference_institution(input_record, institutions):
             input_record["department"] = fuzzy_retrieval(
                 [db_inst["departments"]], ["name", "aka"], input_record["department"]
             )
+
+
+def merge_nested_dicts(dict0, dict1):
+    """Merge the dict1 into dict0 recursively."""
+    for key in dict1.keys():
+        if (key in dict0) and isinstance(dict0[key], dict) and isinstance(dict1[key], dict):
+            merge_nested_dicts(dict0[key], dict1[key])
+        else:
+            dict0[key] = dict1[key]
+    return
