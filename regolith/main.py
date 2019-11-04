@@ -11,7 +11,7 @@ from regolith import commands
 from regolith import storage
 from regolith.builder import BUILDERS
 from regolith.schemas import SCHEMAS
-from regolith.tools import merge_nested_dicts
+from regolith.tools import update_schemas
 
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
@@ -269,8 +269,8 @@ def main(args=None):
     rc._update(ns.__dict__)
     if "schemas" in rc._dict:
         user_schema = copy.deepcopy(rc.schemas)
-        rc.schemas = copy.deepcopy(SCHEMAS)
-        merge_nested_dicts(rc.schemas, user_schema)  # merge user schemas into the default schemas
+        default_schema = copy.deepcopy(SCHEMAS)
+        rc.schemas = update_schemas(default_schema, user_schema)
     else:
         rc.schemas = SCHEMAS
     if ns.cmd in NEED_RC:
