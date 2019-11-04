@@ -667,11 +667,35 @@ def dereference_institution(input_record, institutions):
             )
 
 
-def merge_nested_dicts(dict0, dict1):
-    """Merge the dict1 into dict0 recursively."""
-    for key in dict1.keys():
-        if (key in dict0) and isinstance(dict0[key], dict) and isinstance(dict1[key], dict):
-            merge_nested_dicts(dict0[key], dict1[key])
+def update_schemas(default_schema, user_schema):
+    """
+    Update schemas into schemas0 recursively and return the result.
+
+    Parameters
+    ----------
+    default_schema : dict
+        A schema to be updated according to schema1.
+    user_schema : dict
+        A schema to update schema0.
+
+    Returns
+    -------
+    updated_schema : dict
+        A new schema as a result of updating the default schema according to the user_schema.
+
+    """
+    if not isinstance(default_schema, dict):
+        raise TypeError(f"The schema0 must be a dictionary. This is {type(default_schema)}")
+    elif not isinstance(user_schema, dict):
+        raise TypeError(f"The schema1 must be a dictionary. This is {type(user_schema)}")
+    else:
+        pass
+
+    updated_schema = deepcopy(default_schema)
+    for key in user_schema.keys():
+        if (key in updated_schema) and isinstance(updated_schema[key], dict) and isinstance(user_schema[key], dict):
+            updated_schema[key] = update_schemas(updated_schema[key], user_schema[key])
         else:
-            dict0[key] = dict1[key]
-    return
+            updated_schema[key] = user_schema[key]
+
+    return updated_schema
