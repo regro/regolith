@@ -316,7 +316,7 @@ USER_SCHEMA3 = {
                 "type": "dict",
                 "schema": {
                     "day": {
-                        "anyof_type": ["integer", "string"]
+                        "description": "The date on the receipt"
                     },
                 },
             },
@@ -332,9 +332,9 @@ EXPECTED_SCHEMA3 = {
                 "type": "dict",
                 "schema": {
                     "day": {
-                        "description": "Expense day",
+                        "description": "The date on the receipt",
                         "required": True,
-                        "anyof_type": ["integer", "string"]
+                        "type": "integer",
                     },
                 },
             },
