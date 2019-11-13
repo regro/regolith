@@ -683,13 +683,6 @@ def update_schemas(default_schema, user_schema):
     updated_schema : dict
         A new schema as a result of updating the default schema according to the user_schema.
     """
-    if not isinstance(default_schema, dict):
-        raise TypeError(f"The default schema must be a dictionary. This is a {type(default_schema)}")
-    elif not isinstance(user_schema, dict):
-        raise TypeError(f"The user schema must be a dictionary. This is a {type(user_schema)}")
-    else:
-        pass
-
     updated_schema = deepcopy(default_schema)
     for key in user_schema.keys():
         if (key in updated_schema) and isinstance(updated_schema[key], dict) and isinstance(user_schema[key], dict):
