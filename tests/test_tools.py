@@ -345,9 +345,7 @@ EXPECTED_SCHEMA3 = {
 USER_SCHEMA4 = {
     "expenses": {
         "itemized_expenses": {
-            "type": "list",
             "schema": {
-                "type": "dict",
                 "schema": {
                     "prepaid_expense": {
                         "description": "Expense paid by the direct billing",

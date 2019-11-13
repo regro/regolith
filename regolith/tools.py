@@ -682,12 +682,11 @@ def update_schemas(default_schema, user_schema):
     -------
     updated_schema : dict
         A new schema as a result of updating the default schema according to the user_schema.
-
     """
     if not isinstance(default_schema, dict):
-        raise TypeError(f"The schema0 must be a dictionary. This is {type(default_schema)}")
+        raise TypeError(f"The default schema must be a dictionary. This is a {type(default_schema)}")
     elif not isinstance(user_schema, dict):
-        raise TypeError(f"The schema1 must be a dictionary. This is {type(user_schema)}")
+        raise TypeError(f"The user schema must be a dictionary. This is a {type(user_schema)}")
     else:
         pass
 
