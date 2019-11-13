@@ -269,7 +269,6 @@ def main(args=None):
     rc._update(ns.__dict__)
     if "schemas" in rc._dict:
         user_schema = copy.deepcopy(rc.schemas)
-        print(user_schema)
         default_schema = copy.deepcopy(SCHEMAS)
         rc.schemas = update_schemas(default_schema, user_schema)
     else:
