@@ -50,6 +50,22 @@ def month_to_int(m):
         m = MONTHS[m.lower()]
     return m
 
+def month_to_str_int(m):
+    """Converts a month to a string in int form with a leading zero where required"""
+    mi = month_to_int(m)
+    if mi < 10:
+        ms = "0{}".format(mi)
+    else:
+        ms = str(mi)
+    return ms
+
+def day_to_str_int(d):
+    """Converts a day to a string in integer form with a leading zero where required"""
+    if d < 10:
+        ds = "0{}".format(d)
+    else:
+        ds = str(d)
+    return ds
 
 def date_to_float(y, m, d=0):
     """Converts years / months / days to a float, eg 2015.0818 is August
