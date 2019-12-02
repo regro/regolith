@@ -51,6 +51,25 @@ def month_to_int(m):
     return m
 
 
+def month_to_str_int(m):
+    """Converts a month to an int form, str type, with a leading zero"""
+    mi = month_to_int(m)
+    if mi < 10:
+        ms = "0{}".format(mi)
+    else:
+        ms = str(mi)
+    return ms
+
+
+def day_to_str_int(d):
+    """Converts a day to an int form, str type, with a leading zero"""
+    if d < 10:
+        ds = "0{}".format(d)
+    else:
+        ds = str(d)
+    return ds
+
+
 def date_to_float(y, m, d=0):
     """Converts years / months / days to a float, eg 2015.0818 is August
     18th 2015. """
