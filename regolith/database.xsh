@@ -187,6 +187,6 @@ def connect(rc, dbs=None):
     down"""
     client = open_dbs(rc, dbs=dbs)
     yield client
-    for db in  rc.databases:
+    for db in rc.databases:
         dump_database(db, client, rc)
     client.close()
