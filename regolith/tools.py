@@ -669,19 +669,20 @@ def dereference_institution(input_record, institutions):
 
 def update_schemas(default_schema, user_schema):
     """
-    Update schemas into schemas0 recursively and return the result.
+    Merging the user schema into the default schema recursively and return the merged schema. The default schema and
+    user schema will not be modified during the merging.
 
     Parameters
     ----------
     default_schema : dict
-        A schema to be updated according to schema1.
+        The default schema.
     user_schema : dict
-        A schema to update schema0.
+        The user defined schema.
 
     Returns
     -------
     updated_schema : dict
-        A new schema as a result of updating the default schema according to the user_schema.
+        The merged schema.
     """
     updated_schema = deepcopy(default_schema)
     for key in user_schema.keys():
