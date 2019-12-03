@@ -11,6 +11,7 @@ from regolith import commands
 from regolith import storage
 from regolith.builder import BUILDERS
 from regolith.schemas import SCHEMAS
+from regolith.tools import update_schemas
 
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
@@ -268,10 +269,8 @@ def main(args=None):
     rc._update(ns.__dict__)
     if "schemas" in rc._dict:
         user_schema = copy.deepcopy(rc.schemas)
-        rc.schemas = copy.deepcopy(SCHEMAS)
-        for k in user_schema:
-            for k2, v in user_schema[k].items():
-                rc.schemas[k][k2].update(v)
+        default_schema = copy.deepcopy(SCHEMAS)
+        rc.schemas = update_schemas(default_schema, user_schema)
     else:
         rc.schemas = SCHEMAS
     if ns.cmd in NEED_RC:

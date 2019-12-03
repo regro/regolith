@@ -3,7 +3,7 @@ import pytest
 from regolith.tools import (filter_publications, fuzzy_retrieval,
                             number_suffix, latex_safe, is_before,
                             is_since, is_between, has_started, has_finished,
-                            is_current)
+                            is_current, update_schemas)
 
 
 def test_author_publications():
@@ -187,3 +187,255 @@ def test_number_suffix(input, expected):
 def test_latex_safe(input, expected, kwargs):
     output = latex_safe(input, **kwargs)
     assert output == expected
+
+
+DEFAULT_SCHEMA = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": True,
+                        "type": "integer",
+                    },
+                },
+            },
+        },
+    },
+}
+
+USER_SCHEMA0 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "required": False,
+                    },
+                },
+            },
+        },
+    },
+}
+
+EXPECTED_SCHEMA0 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": False,
+                        "type": "integer",
+                    },
+                },
+            },
+        },
+    },
+}
+
+USER_SCHEMA1 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "type": "string",
+                    },
+                },
+            },
+        },
+    },
+}
+
+EXPECTED_SCHEMA1 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": True,
+                        "type": "string",
+                    },
+                },
+            },
+        },
+    },
+}
+
+USER_SCHEMA2 = {
+    "expenses": {
+        "begin_day": {
+            "description": "The first day of expense",
+            "required": True,
+            "type": "string",
+        }
+    },
+}
+
+EXPECTED_SCHEMA2 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": True,
+                        "type": "integer",
+                    },
+                },
+            },
+        },
+        "begin_day": {
+            "description": "The first day of expense",
+            "required": True,
+            "type": "string",
+        }
+    },
+}
+
+USER_SCHEMA3 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "The date on the receipt"
+                    },
+                },
+            },
+        },
+    },
+}
+
+EXPECTED_SCHEMA3 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "The date on the receipt",
+                        "required": True,
+                        "type": "integer",
+                    },
+                },
+            },
+        },
+    },
+}
+
+USER_SCHEMA4 = {
+    "expenses": {
+        "itemized_expenses": {
+            "schema": {
+                "schema": {
+                    "prepaid_expense": {
+                        "description": "Expense paid by the direct billing",
+                        "required": True,
+                        "type": "float",
+                    },
+                },
+            },
+        },
+    },
+}
+
+EXPECTED_SCHEMA4 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": True,
+                        "type": "integer",
+                    },
+                    "prepaid_expense": {
+                        "description": "Expense paid by the direct billing",
+                        "required": True,
+                        "type": "float",
+                    },
+                },
+            },
+        },
+    },
+}
+
+USER_SCHEMA5 = {}
+
+EXPECTED_SCHEMA5 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": True,
+                        "type": "integer",
+                    },
+                },
+            },
+        },
+    },
+}
+
+USER_SCHEMA6 = {
+    "expenses": {}
+}
+
+EXPECTED_SCHEMA6 = {
+    "expenses": {
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": True,
+                        "type": "integer",
+                    },
+                },
+            },
+        },
+    },
+}
+
+
+@pytest.mark.parametrize(
+    "default_schema, user_schema, expected_schema",
+    [
+        (DEFAULT_SCHEMA, USER_SCHEMA0, EXPECTED_SCHEMA0),
+        (DEFAULT_SCHEMA, USER_SCHEMA1, EXPECTED_SCHEMA1),
+        (DEFAULT_SCHEMA, USER_SCHEMA2, EXPECTED_SCHEMA2),
+        (DEFAULT_SCHEMA, USER_SCHEMA3, EXPECTED_SCHEMA3),
+        (DEFAULT_SCHEMA, USER_SCHEMA4, EXPECTED_SCHEMA4),
+        (DEFAULT_SCHEMA, USER_SCHEMA5, EXPECTED_SCHEMA5),
+        (DEFAULT_SCHEMA, USER_SCHEMA6, EXPECTED_SCHEMA6),
+    ],
+)
+def test_update_schemas(default_schema, user_schema, expected_schema):
+    updated_schema = update_schemas(default_schema, user_schema)
+    assert updated_schema == expected_schema
