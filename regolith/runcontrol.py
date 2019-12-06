@@ -5,23 +5,12 @@ from __future__ import print_function
 import json
 import os
 import io
-import re
-import sys
-import glob
-import tempfile
-import functools
-import subprocess
-from copy import deepcopy
 from pprint import pformat
-from collections import (
+from collections.abc import (
     Mapping,
     Iterable,
     Hashable,
-    Sequence,
-    namedtuple,
-    MutableMapping,
 )
-from hashlib import md5
 from warnings import warn
 
 from regolith.validators import always_true, noop, DEFAULT_VALIDATORS
