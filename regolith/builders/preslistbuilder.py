@@ -147,7 +147,24 @@ class PresListBuilder(LatexBuilderBase):
                     ]
                     authorlist = ", ".join(pres["authors"])
                     pres["authors"] = authorlist
-                    pres["begin_month"] = month_to_int(pres["begin_month"])
+                    if pres.get("begin_month"):
+                        pres["begin_month"] = month_to_int(pres["begin_month"])
+                    elif pres.get("month"):
+                        pres["begin_month"] = month_to_int(pres["month"])
+                    else:
+                        sys.exit("no month or begin_month in {}".format(pres["_id"]))
+                    if pres.get("begin_year"):
+                        pres["begin_year"] = month_to_int(pres["begin_year"])
+                    elif pres.get("year"):
+                        pres["begin_year"] = month_to_int(pres["year"])
+                    else:
+                        sys.exit("no year or begin_year in {}".format(pres["_id"]))
+                    if pres.get("begin_day"):
+                        pres["begin_day"] = month_to_int(pres["begin_day"])
+                    elif pres.get("day"):
+                        pres["begin_day"] = month_to_int(pres["day"])
+                    else:
+                        sys.exit("no day or begin_day in {}".format(pres["_id"]))
                     pres["date"] = datetime.date(
                         pres["begin_year"],
                         pres["begin_month"],
@@ -158,6 +175,7 @@ class PresListBuilder(LatexBuilderBase):
                             pres.get(day, None)
                         )
                     if "institution" in pres:
+                        inst = pres["institution"]
                         try:
                             pres["institution"] = fuzzy_retrieval(
                                 self.gtx["institutions"],
@@ -166,17 +184,22 @@ class PresListBuilder(LatexBuilderBase):
                                 case_sensitive=False,
                             )
                             if pres["institution"] is None:
-                                sys.exit(
-                                    "ERROR: institution {} not found in "
+                                print(
+                                    "WARNING: institution {} not found in "
                                     "institutions.yml.  Please add and "
-                                    "rerun".format(pres["institution"])
+                                    "rerun".format(inst)
                                 )
+                                pres["institution"] = {"_id": inst,
+                                                       "department": {
+                                                           "name": ""}}
                         except:
-                            sys.exit(
-                                "ERROR: institution {} not found in "
-                                "institutions.yml.  Please add and "
-                                "rerun".format(pres["institution"])
-                            )
+                             print("no institute {} in institutions collection".format(inst))
+                             pres["institution"] = {"_id": inst, "department": {"name": ""}}
+#                            sys.exit(
+#                                "ERROR: institution {} not found in "
+#                                "institutions.yml.  Please add and "
+#                                "rerun".format(pres["institution"])
+#                            )
                         if "department" in pres:
                             try:
                                 pres["department"] = pres["institution"][
@@ -192,9 +215,8 @@ class PresListBuilder(LatexBuilderBase):
                                         pres["institution"]["_id"],
                                     )
                                 )
-                                pres["department"] = {
-                                    "name": pres["department"]
-                                }
+                        else:
+                            pres["department"] = {"name": ""}
                 if len(presclean) > 0:
                     presclean = sorted(
                         presclean,
