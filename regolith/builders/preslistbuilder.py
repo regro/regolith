@@ -183,16 +183,14 @@ class PresListBuilder(LatexBuilderBase):
                         pres["begin_month"] = month_to_int(pres["month"])
                     else:
                         sys.exit("no month or begin_month in {}".format(pres["_id"]))
-                    if pres.get("begin_year"):
-                        pres["begin_year"] = month_to_int(pres["begin_year"])
-                    elif pres.get("year"):
-                        pres["begin_year"] = month_to_int(pres["year"])
-                    else:
+                    if pres.get("year"):
+                        pres["begin_year"] = pres["year"]
+                    elif not pres.get("begin_year"):
                         sys.exit("no year or begin_year in {}".format(pres["_id"]))
                     if pres.get("begin_day"):
-                        pres["begin_day"] = month_to_int(pres["begin_day"])
+                        pres["begin_day"] = pres["begin_day"]
                     elif pres.get("day"):
-                        pres["begin_day"] = month_to_int(pres["day"])
+                        pres["begin_day"] = pres["day"]
                     else:
                         sys.exit("no day or begin_day in {}".format(pres["_id"]))
                     pres["date"] = datetime.date(
