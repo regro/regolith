@@ -493,6 +493,26 @@ EXEMPLARS = {
     },
     "presentations": [
         {
+            "_id": "18sb_this_and_that",
+            "abstract": "We pulled apart graphite with tape",
+            "authors": ["scopatz"],
+            "year": 2018,
+            "month": 5,
+            "day": 22,
+            "department": "apam",
+            "institution": "columbiau",
+            "location": "Upton NY",
+            "meeting_name": "Meeting to check flexibility on dates",
+            "notes": [
+                "We hope the weather will be sunny",
+                "if the weather is nice we will go to the " "beach",
+            ],
+            "project": "18sob_clustermining",
+            "status": "accepted",
+            "title": "Graphitic Dephenestration",
+            "type": "award",
+        },
+        {
             "_id": "18sb_nslsii",
             "abstract": "We pulled apart graphite with tape",
             "authors": ["scopatz"],
