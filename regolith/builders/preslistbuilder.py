@@ -147,22 +147,17 @@ class PresListBuilder(LatexBuilderBase):
                     ]
                     authorlist = ", ".join(pres["authors"])
                     pres["authors"] = authorlist
+                    # fixme: make this a more generic date loading function?
                     if pres.get("begin_month"):
                         pres["begin_month"] = month_to_int(pres["begin_month"])
-                    elif pres.get("month"):
-                        pres["begin_month"] = month_to_int(pres["month"])
                     else:
-                        sys.exit("no month or begin_month in {}".format(pres["_id"]))
-                    if pres.get("year"):
-                        pres["begin_year"] = pres["year"]
-                    elif not pres.get("begin_year"):
-                        sys.exit("no year or begin_year in {}".format(pres["_id"]))
+                        sys.exit("no begin_month in {}".format(pres["_id"]))
+                    if not pres.get("begin_year"):
+                        sys.exit("no begin_year in {}".format(pres["_id"]))
                     if pres.get("begin_day"):
                         pres["begin_day"] = pres["begin_day"]
-                    elif pres.get("day"):
-                        pres["begin_day"] = pres["day"]
                     else:
-                        sys.exit("no day or begin_day in {}".format(pres["_id"]))
+                        sys.exit("no begin_day in {}".format(pres["_id"]))
                     pres["date"] = datetime.date(
                         pres["begin_year"],
                         pres["begin_month"],
