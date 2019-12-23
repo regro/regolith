@@ -386,6 +386,7 @@ EXEMPLARS = {
                 "position": "Associate Scientist, Engineering Physics " "Department",
             },
             {
+                "begin_day": 1,
                 "begin_month": "Nov",
                 "begin_year": 2011,
                 "end_month": "May",
@@ -1397,11 +1398,13 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
+                    "begin_day": {"required": False, "type": "integer"},
                     "begin_month": {"required": False,
                                     "anyof_type": ["string", "integer"],
                                     },
                     "begin_year": {"required": True, "type": "integer"},
                     "department": {"required": False, "type": "string"},
+                    "end_day": {"required": False, "type": "integer"},
                     "end_month": {"required": False,
                                   "anyof_type": ["string", "integer"],
                                   },
