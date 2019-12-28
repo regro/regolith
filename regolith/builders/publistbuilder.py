@@ -40,7 +40,9 @@ class PubListBuilder(LatexBuilderBase):
             bibfile = self.make_bibtex_file(
                 pubs, pid=p["_id"], person_dir=self.bldir
             )
-            emp = p.get("employment", [])
+            if not p.get('email'):
+              p['email'] = ""
+            emp = p.get("employment", [{'organization': ""}])
             emp.sort(key=ene_date_key, reverse=True)
             self.render(
                 "publist.tex",
