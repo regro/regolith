@@ -143,28 +143,30 @@ def create_parser():
         "--from",
         dest="from_date",
         help="date in form YYYY-MM-DD.  Items will only be built"
-        "if their date or end_date is equal or after this date",
+        " if their date or end_date is equal or after this date",
         default=None,
     )
     bldp.add_argument(
         "--to",
         dest="to_date",
         help="date in form YYYY-MM-DD.  Items will only be built"
-        "if their date or begin_date is equal or before this date",
+        " if their date or begin_date is equal or before this date",
         default=None,
     )
     bldp.add_argument(
         "--grants",
+        nargs='+',
         dest="grants",
-        help="specify a grant or a list of grants so items are built only "
-             "if associated with this(these) grant(s)",
+        help="specify a grant or a space-separated list of grants so items are "
+             "built only if associated with this(these) grant(s)",
         default=None,
     )
     bldp.add_argument(
         "--people",
+        nargs='+',
         dest="people",
-        help="specify a person or a list of people such that the build"
-             "will be for only those people",
+        help="specify a person or a space-separated list of people such that "
+             "the build will be for only those people",
         default=None,
     )
 
