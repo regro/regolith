@@ -55,11 +55,22 @@ class PubListBuilder(LatexBuilderBase):
         if self.rc.grants:
             gr = True
             grants = self.rc.grants
-            filestub = filestub + "_{}".format(grants)
-            qualifiers = qualifiers + " from grant {}".format(grants)
+            if isinstance(grants, str):
+                grants = [grants]
+            if len(grants) > 2:
+                text_grants = ", and ".join([",".join(grants[:-1]), grants[-1]])
+            elif len(grants) == 2:
+                text_grants = "and ".join([",".join(grants[0]), grants[1]])
+            elif len(grants) == 1:
+                text_grants = grants[0]
+            cat_grants, all_grants = "", ""
+            for g in grants:
+                cat_grants = cat_grants + "_" + g
+            filestub = filestub + "".format(cat_grants)
+            qualifiers = qualifiers + " from grants {}".format(text_grants)
 
         for p in self.gtx["people"]:
-            outfile = p["_id"]+filestub
+            outfile = p["_id"] + filestub
             p['qualifiers'] = qualifiers
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = self.filter_publications(names, reverse=True)
@@ -125,7 +136,7 @@ class PubListBuilder(LatexBuilderBase):
         filtered_pubs = []
         for pub in pubs:
             for grant in grants:
-                if grant in pub["grant"]:
+                if grant in pub.get("grant",""):
                     filtered_pubs.append(pub)
         return filtered_pubs
 
