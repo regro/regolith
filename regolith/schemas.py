@@ -759,6 +759,7 @@ EXEMPLARS = {
         "reviewer": "sbillinge",
         "status": "submitted",
         "title": "a ruler approach to measuring gravity waves",
+        "validity_assessment": "complete rubbish"
         "year": "2019",
     },
     "students": {
