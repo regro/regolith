@@ -700,13 +700,14 @@ def group_member_ids(grp, people):
     ----------
     grp: string
         The id of the group in groups.yml
-    people_db
-        The database of people that will be searched for group members
+    people
+        The people collection (list of dicts) that will be searched for group
+        members
 
     Returns
     -------
     set:
-        The set of ids of the people in the group
+        The set of ids of all the people that have ever been in the group
 
     Notes
     -----
@@ -727,4 +728,4 @@ def group_member_ids(grp, people):
             for position in person.get(k, {}):
                 if position.get("group", None) == grp:
                     grpmembers.add(person["_id"])
-    return grpmembers
+    return list(grpmembers)
