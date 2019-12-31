@@ -165,8 +165,7 @@ def open_dbs(rc, dbs=None):
     chained_db = {}
     for db in rc.databases:
         # if we only want to access some dbs and this db is not in that some
-        if dbs and db['name'] not in dbs:
-            continue
+        db['whitelist'] = dbs
         if 'blacklist' not in db:
             db['blacklist'] = ['.travis.yml', '.travis.yaml']
         load_database(db, client, rc)
