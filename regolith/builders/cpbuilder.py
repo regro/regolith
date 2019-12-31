@@ -73,6 +73,9 @@ class CPBuilder(LatexBuilderBase):
                     )
                     if rperson:
                         person["name"] = rperson["name"]
+                if g.get('budget'):
+                    amounts = [i.get('amount') for i in g.get('budget')]
+                    g['subaward_amount'] = sum(amounts)
 
             current_grants = [
                 dict(g)
@@ -94,6 +97,10 @@ class CPBuilder(LatexBuilderBase):
             current_grants, _, _ = filter_grants(
                 current_grants, {pi["name"]}, pi=False, multi_pi=True
             )
+            for g in current_grants:
+                if g.get('budget'):
+                    amounts = [i.get('amount') for i in g.get('budget')]
+                    g['subaward_amount'] = sum(amounts)
 
             pending_grants = [
                 g
