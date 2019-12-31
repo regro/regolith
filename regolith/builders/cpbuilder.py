@@ -17,10 +17,9 @@ from regolith.tools import (
     is_current,
 )
 
+
 def is_pending(status):
     return status in "pending"
-
-
 
 
 class CPBuilder(LatexBuilderBase):
@@ -64,8 +63,9 @@ class CPBuilder(LatexBuilderBase):
             piinitialslist = [i[0] for i in pinames]
             pi['initials'] = "".join(piinitialslist).upper()
 
-            grants = merge_collections(self.gtx["proposals"], self.gtx["grants"],
-                                  "proposal_id")
+            grants = merge_collections(self.gtx["proposals"],
+                                       self.gtx["grants"],
+                                       "proposal_id")
             for g in grants:
                 for person in g["team"]:
                     rperson = fuzzy_retrieval(
@@ -98,7 +98,7 @@ class CPBuilder(LatexBuilderBase):
             pending_grants = [
                 g
                 for g in self.gtx["proposals"]
-                if is_pending(g["application_status"])
+                if is_pending(g["status"])
             ]
             for g in pending_grants:
                 for person in g["team"]:
@@ -124,17 +124,18 @@ class CPBuilder(LatexBuilderBase):
                         grant["end_year"],
                     ),
                 )
-            badids = [i["_id"] for i in current_grants if not i.get('cppflag', "")]
+            badids = [i["_id"] for i in current_grants if
+                      not i.get('cpp_info').get('cppflag', "")]
             iter = copy(current_grants)
             for grant in iter:
                 if grant["_id"] in badids:
                     current_grants.remove(grant)
             piname = HumanName(pi["name"])
-            outfile = "current-pending-{}-{}".format(grp,piname.last.lower())
+            outfile = "current-pending-{}-{}".format(grp, piname.last.lower())
 
             self.render(
                 "current_pending.tex",
-                outfile+".tex",
+                outfile + ".tex",
                 pi=pi,
                 pending=pending_grants,
                 current=current_grants,
