@@ -780,7 +780,7 @@ EXEMPLARS = {
         "reviewer": "sbillinge",
         "status": "submitted",
         "title": "a ruler approach to measuring gravity waves",
-        "validity_assessment": "complete rubbish"
+        "validity_assessment": ["complete rubbish"],
         "year": "2019",
     },
     "students": {
@@ -2189,6 +2189,12 @@ SCHEMAS = {
             "description": "title of the paper under review",
             "required": True,
             "type": "string",
+        },
+        "validity_assessment": {
+            "description": "List of impressions of the validity of the claims",
+            "required": True,
+            "schema": {"type": "string", "required": True},
+            "type": "list",
         },
         "year": {
             "description": "year when the review is being done",
