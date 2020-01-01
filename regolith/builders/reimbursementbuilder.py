@@ -27,6 +27,7 @@ class ReimbursementBuilder(BuilderBase):
     """Build reimbursement from database entries"""
 
     btype = "reimb"
+    needed_dbs = ['expenses', 'people', 'grants', 'projects']
 
     def __init__(self, rc):
         super().__init__(rc)

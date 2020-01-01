@@ -37,6 +37,8 @@ class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""
 
     btype = "preslist"
+    needed_dbs = ['groups', 'institutions', 'people', 'grants', 'presentations']
+
 
     def construct_global_ctx(self):
         """Constructs the global context"""

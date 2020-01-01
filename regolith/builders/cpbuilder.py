@@ -20,6 +20,7 @@ class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
 
     btype = "current-pending"
+    needed_dbs = ['groups', 'people', 'grants', 'proposals']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

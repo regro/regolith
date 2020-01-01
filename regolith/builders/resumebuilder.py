@@ -18,6 +18,7 @@ class ResumeBuilder(LatexBuilderBase):
     """Build resume from database entries"""
 
     btype = "resume"
+    needed_dbs = ['institutions', 'people', 'grants', 'citations', 'projects']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
