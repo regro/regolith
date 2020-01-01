@@ -25,6 +25,8 @@ def latex_safe(s):
 
 class GradeReportBuilder(LatexBuilderBase):
     btype = "grades"
+    needed_dbs = ['grades', 'courses', 'assignments']
+
 
     def construct_global_ctx(self):
         super().construct_global_ctx()
