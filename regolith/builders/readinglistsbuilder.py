@@ -21,6 +21,7 @@ class ReadingListsBuilder(LatexBuilderBase):
     """Build reading lists from database entries"""
 
     btype = "readinglists"
+    needed_dbs = ['people', 'reading_lists']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
