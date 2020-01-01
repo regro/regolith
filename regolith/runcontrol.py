@@ -14,6 +14,7 @@ from collections.abc import (
 from warnings import warn
 
 from regolith.validators import always_true, noop, DEFAULT_VALIDATORS
+from regolith.database import connect
 
 FORBIDDEN_NAMES = frozenset(["del", "global"])
 
@@ -272,3 +273,27 @@ def filter_databases(rc):
     elif len(dbs) == 1:
         rc.db = dbs[0]["name"]
     rc.databases = dbs
+
+def connect_db(rc, colls=None):
+    '''
+    Load up the db's
+
+    Parameters
+    ----------
+    rc:
+        The runcontrol instance
+    colls
+        The list of collections that should be loaded
+
+    Returns
+    -------
+    chained_db:
+      The chained databases in the form of a document
+    dbs:
+       The databases in the form of a runcontrol client
+    '''
+    with connect(rc, dbs=colls) as rc.client:
+        dbs = rc.client.dbs
+        chained_db = rc.client.chained_db
+    return chained_db, dbs
+
