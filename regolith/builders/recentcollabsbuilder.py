@@ -127,9 +127,29 @@ class RecentCollabsBuilder(LatexBuilderBase):
                 p=p,
                 title=p.get("name", ""),
                 pubs=pubs,
+                names=names,
+                bibfile=bibfile,
                 employment=emp,
                 collabs=my_collabs
             )
+            self.pdf(p["_id"])
+
+    def filter_publications(self, authors, reverse=False):
+        rc = self.rc
+        pubs = []
+        for pub in all_docs_from_collection(rc.client, "citations"):
+            if len(set(pub["author"]) & authors) == 0:
+                continue
+            bold_self = []
+            for a in pub["author"]:
+                if a in authors:
+                    bold_self.append("\\textbf{" + a + "}")
+                else:
+                    bold_self.append(a)
+            pub["author"] = bold_self
+            pubs.append(pub)
+        pubs.sort(key=doc_date_key, reverse=reverse)
+        return pubs
 
     def make_bibtex_file(self, pubs, pid, person_dir="."):
         if not HAVE_BIBTEX_PARSER:
