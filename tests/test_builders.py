@@ -19,6 +19,7 @@ builder_map = [
     "preslist",
     "reimb",
     "figure",
+    "recent-collabs",
     "beamplan"
 ]
 
