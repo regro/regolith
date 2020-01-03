@@ -56,7 +56,11 @@ class RecentCollabsBuilder(LatexBuilderBase):
                 for collab in my_collabs:
                     people.append(fuzzy_retrieval(self.gtx["people"],
                                   ["name", "aka", "_id"], collab))
-                print(set([person["name"] for person in people if person]))
+                institutions = [places[0]["institution"] for places in
+                                [person["education"] for person in people if person]]
+                ppl_names = [person["name"] for person in people if person]
+#                print(set([person["name"] for person in people if person]))
+                print(set([(person,institution) for person, institution in zip(ppl_names, institutions)]))
             emp = p.get("employment", [])
             emp.sort(key=ene_date_key, reverse=True)
             self.render(
