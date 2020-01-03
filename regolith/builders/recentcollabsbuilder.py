@@ -1,5 +1,7 @@
 """Builder for publication lists."""
 import os
+import datetime as dt
+from dateutil.relativedelta import relativedelta
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -9,7 +11,8 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection
+from regolith.tools import all_docs_from_collection, filter_publications, \
+    is_since, fuzzy_retrieval
 from regolith.sorters import doc_date_key, ene_date_key, position_key
 from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
 
@@ -17,7 +20,6 @@ LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
 
 class RecentCollabsBuilder(LatexBuilderBase):
-
     btype = "recent-collabs"
 
     def construct_global_ctx(self):
@@ -30,46 +32,42 @@ class RecentCollabsBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         )
+        gtx["citations"] = all_docs_from_collection(rc.client, "citations")
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def latex(self):
         rc = self.rc
+        since_date = dt.date.today() - relativedelta(months=48)
         for p in self.gtx["people"]:
-            names = frozenset(p.get("aka", []) + [p["name"]])
-            pubs = self.filter_publications(names, reverse=True)
-            bibfile = self.make_bibtex_file(
-                pubs, pid=p["_id"], person_dir=self.bldir
-            )
+            if p["_id"] == "sbillinge":
+                my_names = frozenset(p.get("aka", []) + [p["name"]])
+                pubs = filter_publications(self.gtx["citations"], my_names,
+                                           reverse=True, bold=False)
+                my_collabs = []
+                for pub in pubs:
+                    if is_since(pub.get("year"), since_date.year, pub.get("month", 1), since_date.month):
+                        if not pub.get("month"):
+                            print("WARNING: {} is missing month".format(
+                                pub["_id"]))
+                        my_collabs.extend([collabs for collabs in
+                                           [names for names in
+                                            pub.get('author', [])]])
+                people = []
+                for collab in my_collabs:
+                    people.append(fuzzy_retrieval(self.gtx["people"],
+                                  ["name", "aka", "_id"], collab))
+                print(set([person["name"] for person in people if person]))
             emp = p.get("employment", [])
             emp.sort(key=ene_date_key, reverse=True)
             self.render(
-                "recentcollabslist.tex",
-                p["_id"] + ".tex",
+                "recentcollabs.csv",
+                p["_id"] + ".csv",
                 p=p,
                 title=p.get("name", ""),
                 pubs=pubs,
-                names=names,
-                bibfile=bibfile,
                 employment=emp,
+                collabs=my_collabs
             )
-            self.pdf(p["_id"])
-
-    def filter_publications(self, authors, reverse=False):
-        rc = self.rc
-        pubs = []
-        for pub in all_docs_from_collection(rc.client, "citations"):
-            if len(set(pub["author"]) & authors) == 0:
-                continue
-            bold_self = []
-            for a in pub["author"]:
-                if a in authors:
-                    bold_self.append("\\textbf{" + a + "}")
-                else:
-                    bold_self.append(a)
-            pub["author"] = bold_self
-            pubs.append(pub)
-        pubs.sort(key=doc_date_key, reverse=reverse)
-        return pubs
 
     def make_bibtex_file(self, pubs, pid, person_dir="."):
         if not HAVE_BIBTEX_PARSER:
