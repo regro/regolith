@@ -9,6 +9,3 @@ rc._update(load_rcfile("regolithrc.json"))
 filter_databases(rc)
 
 chained_db, dbs = connect_db(rc)
-
-
-
