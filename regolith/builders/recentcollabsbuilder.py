@@ -1,6 +1,7 @@
 """Builder for publication lists."""
 import os
 import datetime as dt
+from copy import copy
 from dateutil.relativedelta import relativedelta
 
 try:
@@ -32,6 +33,13 @@ class RecentCollabsBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         )
+        gtx["contacts"] = sorted(
+            all_docs_from_collection(rc.client, "contacts"),
+            key=position_key,
+            reverse=True,
+        )
+        gtx["institutions"] = all_docs_from_collection(rc.client,
+                                                       "institutions")
         gtx["citations"] = all_docs_from_collection(rc.client, "citations")
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
@@ -45,22 +53,62 @@ class RecentCollabsBuilder(LatexBuilderBase):
                                            reverse=True, bold=False)
                 my_collabs = []
                 for pub in pubs:
-                    if is_since(pub.get("year"), since_date.year, pub.get("month", 1), since_date.month):
+                    if is_since(pub.get("year"), since_date.year,
+                                pub.get("month", 1), since_date.month):
                         if not pub.get("month"):
                             print("WARNING: {} is missing month".format(
                                 pub["_id"]))
                         my_collabs.extend([collabs for collabs in
                                            [names for names in
                                             pub.get('author', [])]])
-                people = []
+                people, institutions = [], []
                 for collab in my_collabs:
-                    people.append(fuzzy_retrieval(self.gtx["people"],
-                                  ["name", "aka", "_id"], collab))
-                institutions = [places[0]["institution"] for places in
-                                [person["education"] for person in people if person]]
-                ppl_names = [person["name"] for person in people if person]
-#                print(set([person["name"] for person in people if person]))
-                print(set([(person,institution) for person, institution in zip(ppl_names, institutions)]))
+                    person = fuzzy_retrieval(all_docs_from_collection(
+                            rc.client, "people"),
+                                             ["name", "aka", "_id"],
+                                             collab)
+                    if not person:
+                        person = fuzzy_retrieval(all_docs_from_collection(
+                            rc.client, "contacts"),
+                                                 ["name", "aka", "_id"], collab)
+                        if not person:
+                            print(
+                                "WARNING: {} not found in contacts. Check aka".format(
+                                    collab))
+                        else:
+                            people.append(person)
+                            inst = fuzzy_retrieval(all_docs_from_collection(
+                            rc.client, "institutions"),
+                                                   ["name", "aka", "_id"],
+                                                   person["institution"])
+                            if inst:
+                                institutions.append(inst["name"])
+                            else:
+                                institutions.append(
+                                    person.get("institution", "missing"))
+                                print(
+                                    "WARNING: {} missing from institutions".format(
+                                        person["institution"]))
+                    else:
+                        people.append(person)
+                        pinst = person.get("employment",
+                                                [{"organization": "missing"}])[
+                                                   0]["organization"]
+                        inst = fuzzy_retrieval(all_docs_from_collection(
+                            rc.client, "institutions"), ["name", "aka", "_id"],
+                                               pinst)
+                        if inst:
+                            institutions.append(inst["name"])
+                        else:
+                            institutions.append(pinst)
+                            print(
+                                "WARNING: {} missing from institutions".format(
+                                    pinst))
+                ppl_names = [(person["name"], i) for
+                             person, i in zip(people, institutions) if
+                             person]
+                #                print(set([person["name"] for person in people if person]))
+                print(set([person for person in ppl_names]))
             emp = p.get("employment", [])
             emp.sort(key=ene_date_key, reverse=True)
             self.render(
