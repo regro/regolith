@@ -386,6 +386,7 @@ EXEMPLARS = {
                 "position": "Associate Scientist, Engineering Physics " "Department",
             },
             {
+                "begin_day": 1,
                 "begin_month": "Nov",
                 "begin_year": 2011,
                 "end_month": "May",
@@ -492,6 +493,26 @@ EXEMPLARS = {
         ],
     },
     "presentations": [
+        {
+            "_id": "18sb_this_and_that",
+            "abstract": "We pulled apart graphite with tape",
+            "authors": ["scopatz"],
+            "begin_year": 2018,
+            "begin_month": 5,
+            "begin_day": 22,
+            "department": "apam",
+            "institution": "columbiau",
+            "location": "Upton NY",
+            "meeting_name": "Meeting to check flexibility on dates",
+            "notes": [
+                "We hope the weather will be sunny",
+                "if the weather is nice we will go to the " "beach",
+            ],
+            "project": "18sob_clustermining",
+            "status": "accepted",
+            "title": "Graphitic Dephenestration",
+            "type": "award",
+        },
         {
             "_id": "18sb_nslsii",
             "abstract": "We pulled apart graphite with tape",
@@ -1377,11 +1398,13 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
+                    "begin_day": {"required": False, "type": "integer"},
                     "begin_month": {"required": False,
                                     "anyof_type": ["string", "integer"],
                                     },
                     "begin_year": {"required": True, "type": "integer"},
                     "department": {"required": False, "type": "string"},
+                    "end_day": {"required": False, "type": "integer"},
                     "end_month": {"required": False,
                                   "anyof_type": ["string", "integer"],
                                   },

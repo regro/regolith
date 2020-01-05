@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import sys
 
 import openpyxl
 
@@ -106,7 +107,17 @@ class ReimbursementBuilder(BuilderBase):
                         column=ue_column,
                         value=item.get("unsegregated_expense", 0),
                     )
-                    total_amount += item.get("unsegregated_expense", 0)
+                    try:
+                        total_amount += item.get("unsegregated_expense", 0)
+                    except TypeError:
+                        if item.get("unsegregated_expense", 0) == 'tbd':
+                            print("WARNING: unsegregated expense in {} is "
+                                  "tbd".format(ex["_id"]))
+                            item["unsegregated_expense"] = 0
+                        else:
+                            sys.exit("ERROR: unsegregated expense in {} is not "
+                                 "a number".format(ex["_id"]))
+
                     item_ws.cell(
                         row=r, column=se_column, value=item.get("segregated_expense", 0)
                     )
