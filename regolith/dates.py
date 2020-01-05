@@ -40,7 +40,7 @@ MONTHS = {
     "dec.": 12,
     "december": 12,
     "": 1,
-    "tbd": 1,
+    "tbd": 1
 }
 
 
