@@ -14,7 +14,6 @@ def test_connect_db(make_db):
     repo = make_db
     os.chdir(repo)
     rc = DEFAULT_RC
-#    print(rc)
     rc._update(load_rcfile("regolithrc.json"))
     filter_databases(rc)
     with connect(rc) as rc.client:
