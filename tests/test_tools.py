@@ -1,9 +1,19 @@
 import pytest
 
-from regolith.tools import (filter_publications, fuzzy_retrieval,
-                            number_suffix, latex_safe, is_before,
-                            is_since, is_between, has_started, has_finished,
-                            is_current, update_schemas, merge_collections)
+from regolith.tools import (
+    filter_publications,
+    fuzzy_retrieval,
+    number_suffix,
+    latex_safe,
+    is_before,
+    is_since,
+    is_between,
+    has_started,
+    has_finished,
+    is_current,
+    update_schemas,
+    merge_collections,
+)
 
 
 def test_author_publications():
@@ -130,22 +140,13 @@ def test_fuzzy_retrieval():
         ],
         "name": "Anthony Scopatz",
     }
+    assert fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz") == person
+    assert fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz, a") is None
     assert (
-            fuzzy_retrieval([person], ["aka", "name", "_id"],
-                            "scopatz") == person
-    )
-    assert (
-            fuzzy_retrieval([person], ["aka", "name", "_id"],
-                            "scopatz, a") is None
-    )
-    assert (
-            fuzzy_retrieval(
-                [person],
-                ["aka", "name", "_id"],
-                "scopatz, a",
-                case_sensitive=False,
-            )
-            == person
+        fuzzy_retrieval(
+            [person], ["aka", "name", "_id"], "scopatz, a", case_sensitive=False,
+        )
+        == person
     )
 
 
@@ -171,35 +172,81 @@ def test_number_suffix(input, expected):
 @pytest.mark.parametrize(
     "input,expected",
     [
-        (([{"_id": "proposal1", "title": "European swallow",
-            "author": "king arthur"}],
-          [{"_id": "grant1", "linked_to": "proposal1",
-            "amount": "100 mph"}]),
-         [{"_id": "grant1", "title": "European swallow",
-           "author": "king arthur",
-           "linked_to": "proposal1", "amount": "100 mph"}]
-         ),
-        (([{"_id": "proposal1", "title": "European swallow",
-            "author": "king arthur"},
-           {"_id": "proposal2", "title": "African swallow",
-            "author": "king arthur"}],
-          [{"_id": "grant1", "linked_to": "proposal1",
-            "amount": "100 mph"}]),
-         [{"_id": "grant1", "title": "European swallow",
-           "author": "king arthur",
-           "linked_to": "proposal1", "amount": "100 mph"}]
-         ),
-        (([{"_id": "proposal1", "title": "European swallow",
-            "author": "king arthur", "amount": "50 mph"},
-           {"_id": "proposal2", "title": "African swallow",
-            "author": "king arthur"}],
-          [{"_id": "grant1", "linked_to": "proposal1",
-            "amount": "100 mph"}]),
-         [{"_id": "grant1", "title": "European swallow",
-           "author": "king arthur",
-           "linked_to": "proposal1", "amount": "100 mph"}]
-         ),
-    ]
+        (
+            (
+                [
+                    {
+                        "_id": "proposal1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                    }
+                ],
+                [{"_id": "grant1", "linked_to": "proposal1", "amount": "100 mph"}],
+            ),
+            [
+                {
+                    "_id": "grant1",
+                    "title": "European swallow",
+                    "author": "king arthur",
+                    "linked_to": "proposal1",
+                    "amount": "100 mph",
+                }
+            ],
+        ),
+        (
+            (
+                [
+                    {
+                        "_id": "proposal1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                    },
+                    {
+                        "_id": "proposal2",
+                        "title": "African swallow",
+                        "author": "king arthur",
+                    },
+                ],
+                [{"_id": "grant1", "linked_to": "proposal1", "amount": "100 mph"}],
+            ),
+            [
+                {
+                    "_id": "grant1",
+                    "title": "European swallow",
+                    "author": "king arthur",
+                    "linked_to": "proposal1",
+                    "amount": "100 mph",
+                }
+            ],
+        ),
+        (
+            (
+                [
+                    {
+                        "_id": "proposal1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "amount": "50 mph",
+                    },
+                    {
+                        "_id": "proposal2",
+                        "title": "African swallow",
+                        "author": "king arthur",
+                    },
+                ],
+                [{"_id": "grant1", "linked_to": "proposal1", "amount": "100 mph"}],
+            ),
+            [
+                {
+                    "_id": "grant1",
+                    "title": "European swallow",
+                    "author": "king arthur",
+                    "linked_to": "proposal1",
+                    "amount": "100 mph",
+                }
+            ],
+        ),
+    ],
 )
 def test_merge_collections(input, expected):
     a = input[0]
@@ -211,19 +258,28 @@ def test_merge_collections(input, expected):
 @pytest.mark.parametrize(
     "input,expected,kwargs",
     [
-        ('$hi', r'\$hi', {}),
-        (r'Website: https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf hi',
-         r'Website: \url{https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf} hi', {}),
-        (r'Website: https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf hi',
-         r'Website: \href{https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf} hi', {'wrapper': 'href'}),
-        (r'Website: https://github.com/CJ-Wright/'
-         r'Masters_Thesis/raw/master/thesis.pdf hi',
-         r'Website: https://github.com/CJ-Wright/'
-         r'Masters\_Thesis/raw/master/thesis.pdf hi', {'url_check': False})
+        ("$hi", r"\$hi", {}),
+        (
+            r"Website: https://github.com/CJ-Wright/"
+            r"Masters_Thesis/raw/master/thesis.pdf hi",
+            r"Website: \url{https://github.com/CJ-Wright/"
+            r"Masters_Thesis/raw/master/thesis.pdf} hi",
+            {},
+        ),
+        (
+            r"Website: https://github.com/CJ-Wright/"
+            r"Masters_Thesis/raw/master/thesis.pdf hi",
+            r"Website: \href{https://github.com/CJ-Wright/"
+            r"Masters_Thesis/raw/master/thesis.pdf} hi",
+            {"wrapper": "href"},
+        ),
+        (
+            r"Website: https://github.com/CJ-Wright/"
+            r"Masters_Thesis/raw/master/thesis.pdf hi",
+            r"Website: https://github.com/CJ-Wright/"
+            r"Masters\_Thesis/raw/master/thesis.pdf hi",
+            {"url_check": False},
+        ),
     ],
 )
 def test_latex_safe(input, expected, kwargs):
@@ -253,14 +309,7 @@ USER_SCHEMA0 = {
     "expenses": {
         "itemized_expenses": {
             "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "day": {
-                        "required": False,
-                    },
-                },
-            },
+            "schema": {"type": "dict", "schema": {"day": {"required": False,},},},
         },
     },
 }
@@ -287,14 +336,7 @@ USER_SCHEMA1 = {
     "expenses": {
         "itemized_expenses": {
             "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "day": {
-                        "type": "string",
-                    },
-                },
-            },
+            "schema": {"type": "dict", "schema": {"day": {"type": "string",},},},
         },
     },
 }
@@ -346,7 +388,7 @@ EXPECTED_SCHEMA2 = {
             "description": "The first day of expense",
             "required": True,
             "type": "string",
-        }
+        },
     },
 }
 
@@ -356,11 +398,7 @@ USER_SCHEMA3 = {
             "type": "list",
             "schema": {
                 "type": "dict",
-                "schema": {
-                    "day": {
-                        "description": "The date on the receipt"
-                    },
-                },
+                "schema": {"day": {"description": "The date on the receipt"},},
             },
         },
     },
@@ -443,9 +481,7 @@ EXPECTED_SCHEMA5 = {
     },
 }
 
-USER_SCHEMA6 = {
-    "expenses": {}
-}
+USER_SCHEMA6 = {"expenses": {}}
 
 EXPECTED_SCHEMA6 = {
     "expenses": {
