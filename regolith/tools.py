@@ -15,7 +15,6 @@ from regolith.dates import month_to_int, date_to_float
 from regolith.sorters import doc_date_key, id_key, ene_date_key
 from regolith.chained_db import ChainDB
 
-
 try:
     from bibtexparser.bwriter import BibTexWriter
     from bibtexparser.bibdatabase import BibDatabase
@@ -370,8 +369,8 @@ def filter_projects(projects, authors, reverse=False):
         if len(team_names & authors) == 0:
             continue
         # FIXME delete these lines if not required.  I think they are wrong (SJLB)
-        #proj = dict(proj)
-        #proj["team"] = [x for x in proj["team"] if x["name"] in authors]
+        # proj = dict(proj)
+        # proj["team"] = [x for x in proj["team"] if x["name"] in authors]
         projs.append(proj)
     projs.sort(key=id_key, reverse=reverse)
     return projs
@@ -682,6 +681,7 @@ def dereference_institution(input_record, institutions):
         else:
             input_record["department"] = inst
 
+
 def merge_collections(a, b, target_id):
     """
     merge two collections into a single merged collection
@@ -715,7 +715,6 @@ def merge_collections(a, b, target_id):
     bdict = {}
     for k in b:
         bdict[k.get("_id")] = k
-
     b_for_a = {}
     for k in adict:
         for kk, v in bdict.items():
@@ -723,17 +722,15 @@ def merge_collections(a, b, target_id):
                 b_for_a[k] = kk
     chained = {}
     for k, v in b_for_a.items():
-        chained[k] = ChainDB(adict[k],
-                             bdict[v])
+        chained[k] = ChainDB(adict[k], bdict[v])
     return list(chained.values())
-
-
 
 
 def update_schemas(default_schema, user_schema):
     """
-    Merging the user schema into the default schema recursively and return the merged schema. The default schema and
-    user schema will not be modified during the merging.
+    Merging the user schema into the default schema recursively and return the
+    merged schema. The default schema and user schema will not be modified
+    during the merging.
 
     Parameters
     ----------
@@ -751,7 +748,7 @@ def update_schemas(default_schema, user_schema):
     for key in user_schema.keys():
         if (key in updated_schema) and isinstance(updated_schema[key],
                                                   dict) and isinstance(
-            user_schema[key], dict):
+              user_schema[key], dict):
             updated_schema[key] = update_schemas(updated_schema[key],
                                                  user_schema[key])
         else:
