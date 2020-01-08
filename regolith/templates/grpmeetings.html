@@ -1,0 +1,37 @@
+{% extends "intbase.html" %}
+{% block header %}
+{% endblock header %}
+{% block content %}
+<h2>Today's Group Meeting ({{ppmeetings[0]['datestr']}})</h2>
+  <li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
+  <li>Agenda:</li>
+  {%if 'agenda' in ppmeetings[0]%}<ul>{%for a in ppmeetings[0]['agenda']%}
+    <li>{{a}}</li>
+  {%endfor%}</ul>{%endif%}
+<h2>Last time ({{ppmeetings[1]['datestr']}})</h2>
+  <li>Scribe: {{ppmeetings[1].get('scribe', '')}}</li>
+  <li>Agenda:</li>
+  {%if 'agenda' in ppmeetings[1]%}<ul>{%for a in ppmeetings[1]['agenda']%}
+    <li>{{a}}</li>
+  {%endfor%}</ul>{%endif%}
+<h2>Upcoming meetings</h2>
+{% for mtg in fmeetings %}
+  <h2><a>{{mtg['datestr']}}</a></h2>
+  <li>Scribe: {{mtg.get('scribe', '')}}</li>
+  <li>Agenda:</li>
+  {%if 'agenda' in mtg%}<ul>{%for a in mtg['agenda']%}
+    <li>{{a}}</li>
+  {%endfor%}</ul>{%endif%}
+{% endfor %}
+<h2>Ancient history</h2>
+{% for mtg in ppmeetings[2:] %}
+  <h2><a>{{mtg['datestr']}}</a></h2>
+  <li>Scribe: {{mtg.get('scribe', '')}}</li>
+  <li>Agenda:</li>
+  {%if 'agenda' in mtg%}<ul>{%for a in mtg['agenda']%}
+    <li>{{a}}</li>
+  {%endfor%}</ul>{%endif%}
+{% endfor %}
+{% endblock content %}
+{% block footer %}
+{% endblock footer %}

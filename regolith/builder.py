@@ -12,11 +12,13 @@ from regolith.builders.reimbursementbuilder import ReimbursementBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
 from regolith.builders.cpbuilder import CPBuilder
 from regolith.builders.figurebuilder import FigureBuilder
+from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
 
 
 BUILDERS = {
     "cv": CVBuilder,
     "html": HtmlBuilder,
+    "internalhtml": InternalHtmlBuilder,
     "publist": PubListBuilder,
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,

@@ -1,0 +1,26 @@
+<head>
+</head>
+<body>
+<h1>Welcome to Regolith!</h1>
+{% for dbname in rc.client.keys() if dbname != 'local' %}
+  <h3>{{ dbname }}</h3>
+  <ul>
+  {% for collname in rc.client.collection_names(dbname, include_system_collections=False) %}
+    <li><a href="/db/{{dbname}}/coll/{{collname}}">{{collname}}</a></li>
+  {% endfor %}
+  </ul>
+
+  <div style="margin-left:1.5em;">
+  <b>Add new collection:</b>
+  <form action="" method="post">
+    <textarea rows="1" cols="16" name="dbname" style="display:none;">{{dbname}}</textarea>
+    <textarea rows="1" cols="16" name="collname" ></textarea>
+    <button name="Create" value="create">Create</button>
+  </form>
+  </div>
+{% endfor %}
+
+<form action="shutdown" method="post">
+  <button name="shutdown" value="shutdown">Shutdown Server</button>
+</form>
+</body>
