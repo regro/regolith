@@ -5,7 +5,7 @@ import datetime as dt
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.fsclient import _id_key
-from regolith.sorters import doc_date_key, position_key, ene_date_key
+from regolith.sorters import doc_date_key, position_key
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
@@ -13,11 +13,7 @@ from regolith.tools import (
     make_bibtex_file,
     document_by_value,
     dereference_institution,
-    fuzzy_retrieval
 )
-
-
-PROJ_URL_BASE = 'https://gitlab.thebillingegroup.com/talks/'
 
 
 class InternalHtmlBuilder(BuilderBase):
@@ -77,37 +73,13 @@ class InternalHtmlBuilder(BuilderBase):
         """Render projects"""
         rc = self.rc
         mtgsi = all_docs_from_collection(rc.client, "meetings")
-        peeps = all_docs_from_collection(rc.client, "people")
         pp_mtgs, f_mtgs = [], []
-
-
         for mtg in mtgsi:
-            prsn = fuzzy_retrieval(
-                all_docs_from_collection(rc.client, "people"),
-                ["_id", "name", "aka"],
-                mtg.get("scribe"))
-            if not prsn:
-                print("{} scribe {} not found in people".format(mtg["_id"],mtg.get("scribe")))
-            mtg["scribe"] = prsn["name"]
-            if mtg.get("presentation"):
-                prsn = fuzzy_retrieval(
-                    all_docs_from_collection(rc.client, "people"),
-                    ["_id", "name", "aka"],
-                    mtg["presentation"].get("presenter"))
-                if mtg["presentation"].get("presenter") == "hold":
-                    prsn = {}
-                    prsn["name"] = "Hold"
-                if not prsn:
-                    print(
-                    "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
-                mtg["presentation"]["presenter"] = prsn["name"]
-                mtg["presentation"]["link"] = PROJ_URL_BASE + \
-                                              mtg["presentation"].get("link","tbd")
-            mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
+            mtg['date'] = dt.date(mtg.get("year"),mtg.get("month"),
                                   mtg.get("day"))
             mtg['datestr'] = mtg['date'].strftime('%m/%d/%Y')
             today = dt.date.today()
-            if mtg['date'] >= today:
+            if mtg['date'] > today:
                 f_mtgs.append(mtg)
             else:
                 pp_mtgs.append(mtg)
@@ -118,6 +90,7 @@ class InternalHtmlBuilder(BuilderBase):
             "grpmeetings.html", "grpmeetings.html", title="Group Meetings",
             ppmeetings=pp_mtgs, fmeetings=f_mtgs
         )
+
 
     def nojekyll(self):
         """Touches a nojekyll file in the build dir"""
@@ -130,7 +103,7 @@ class InternalHtmlBuilder(BuilderBase):
         if not hasattr(rc, "cname"):
             return
         with open(
-                os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
+            os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
         ) as f:
             f.write(rc.cname)
 
