@@ -18,13 +18,13 @@
     to address the challenge (5) what problems he/she is running in to.</li>
   {%if 'buddies' in ppmeetings[0]%}<ul>
   <li>For this meeting the pairings are:</li>{%for a in ppmeetings[0]['buddies']%}
-   {% if len(a) > 1 %} <li>{{a[0]}} is paired with {{a[1]}}</li> {% else %}}
-  <li> and {{a[0]}} is our singleton! </li> {% endif %}}
+   {% if len(a) > 1 %} <li>{{ a[0] }} is paired with {{ a[1] }}</li> {% else %}
+  <li> and {{ a[0] }} is our singleton! </li> {% endif %}
   {%endfor%}</ul>{%endif%}
   <h3>Agenda:</h3>
-  {%if 'agenda' in ppmeetings[0]%}<ul>{%for a in ppmeetings[0]['agenda']%}
+  {%if 'agenda' in ppmeetings[0]%}<ol>{%for a in ppmeetings[0]['agenda']%}
     <li>{{a}}</li>
-  {%endfor%}</ul>{%endif%}
+  {%endfor%}</ol>{%endif%}
 <h1>Last time ({{ppmeetings[1]['datestr']}})</h1>
   <li>Scribe: {{ppmeetings[1].get('scribe', '')}}</li>
   <h3>Action Items:</h3>
@@ -36,31 +36,32 @@
     <li>{{a}}</li>
   {%endfor%}</ul>{%endif%}
   <h3>Agenda:</h3>
-  {%if 'agenda' in ppmeetings[1]%}<ul>{%for a in ppmeetings[1]['agenda']%}
+  {%if 'agenda' in ppmeetings[1]%}<ol>{%for a in ppmeetings[1]['agenda']%}
     <li>{{a}}</li>
-  {%endfor%}</ul>{%endif%}
+  {%endfor%}</ol>{%endif%}
 <h1>Upcoming meetings</h1>
 {% for mtg in fmeetings %}
   <h2><a>{{mtg['datestr']}}</a></h2>
   <li>Scribe: {{mtg.get('scribe', '')}}</li>
+  <li>Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
   <h3>Buddies:</h3>
   {%if 'buddies' in mtg%}<ul>{%for a in mtg['buddies']%}
-   {% if len(a) > 1 %} <li>{{a[0]}} is paired with {{a[1]}}</li> {% else %}}
-  <li> and {{a[0]}} is our singleton! </li> {% endif %}}
+   {% if len(a) > 1 %} <li>{{a[0]}} is paired with {{a[1]}}</li> {% else %}
+  <li> and {{a[0]}} is our singleton! </li> {% endif %}
   {%endfor%}</ul>{%endif%}
   <li>Agenda:</li>
-  {%if 'agenda' in mtg%}<ul>{%for a in mtg['agenda']%}
+  {%if 'agenda' in mtg%}<ol>{%for a in mtg['agenda']%}
     <li>{{a}}</li>
-  {%endfor%}</ul>{%endif%}
+  {%endfor%}</ol>{%endif%}
 {% endfor %}
 <h1>Ancient history</h1>
 {% for mtg in ppmeetings[2:] %}
   <h2><a>{{mtg['datestr']}}</a></h2>
   <li>Scribe: {{mtg.get('scribe', '')}}</li>
   <li>Agenda:</li>
-  {%if 'agenda' in mtg%}<ul>{%for a in mtg['agenda']%}
+  {%if 'agenda' in mtg%}<ol>{%for a in mtg['agenda']%}
     <li>{{a}}</li>
-  {%endfor%}</ul>{%endif%}
+  {%endfor%}</ol>{%endif%}
 {% endfor %}
 {% endblock content %}
 {% block footer %}
