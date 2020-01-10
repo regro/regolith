@@ -13,7 +13,11 @@ from regolith.tools import (
     make_bibtex_file,
     document_by_value,
     dereference_institution,
+    fuzzy_retrieval
 )
+import random
+
+PROJ_URL_BASE = 'https://gitlab.thebillingegroup.com/talks/'
 
 
 class InternalHtmlBuilder(BuilderBase):
@@ -73,9 +77,25 @@ class InternalHtmlBuilder(BuilderBase):
         """Render projects"""
         rc = self.rc
         mtgsi = all_docs_from_collection(rc.client, "meetings")
+        peeps = all_docs_from_collection(rc.client, "people")
         pp_mtgs, f_mtgs = [], []
+
+
         for mtg in mtgsi:
-            mtg['date'] = dt.date(mtg.get("year"),mtg.get("month"),
+            prsn = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "people"),
+                ["_id", "name", "aka"],
+                mtg.get("scribe"))
+            mtg["scribe"] = prsn["name"]
+            if mtg.get("presentation"):
+                prsn = fuzzy_retrieval(
+                    all_docs_from_collection(rc.client, "people"),
+                    ["_id", "name", "aka"],
+                    mtg["presentation"].get("presenter"))
+                mtg["presentation"]["presenter"] = prsn["name"]
+                mtg["presentation"]["link"] = PROJ_URL_BASE + \
+                                              mtg["presentation"]["link"]
+            mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
                                   mtg.get("day"))
             mtg['datestr'] = mtg['date'].strftime('%m/%d/%Y')
             today = dt.date.today()
@@ -91,7 +111,6 @@ class InternalHtmlBuilder(BuilderBase):
             ppmeetings=pp_mtgs, fmeetings=f_mtgs
         )
 
-
     def nojekyll(self):
         """Touches a nojekyll file in the build dir"""
         with open(os.path.join(self.bldir, ".nojekyll"), "a+"):
@@ -103,7 +122,7 @@ class InternalHtmlBuilder(BuilderBase):
         if not hasattr(rc, "cname"):
             return
         with open(
-            os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
+                os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
         ) as f:
             f.write(rc.cname)
 
