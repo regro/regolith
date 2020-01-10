@@ -7,3 +7,4 @@ xonsh
 rever
 openpyxl
 nameparser
+dateutil
