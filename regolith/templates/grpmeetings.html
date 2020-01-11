@@ -2,7 +2,7 @@
 {% block header %}
 {% endblock header %}
 {% block content %}
-<h1>Today's Group Meeting ({{ppmeetings[0]['datestr']}})</h1>
+<h1>Current Group Meeting ({{ppmeetings[0]['datestr']}})</h1>
 <li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
   {% if ppmeetings[0].get('presentation') %}
   <li>Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
@@ -43,7 +43,7 @@
 {% for mtg in fmeetings %}
   <h2><a>{{mtg['datestr']}}</a></h2>
   <li>Scribe: {{mtg.get('scribe', '')}}</li>
-  <li>Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
+  <li>Presentation: {{mtg.get('presentation').get('presenter','')}},
   <h3>Buddies:</h3>
   {%if 'buddies' in mtg%}<ul>{%for a in mtg['buddies']%}
    {% if len(a) > 1 %} <li>{{a[0]}} is paired with {{a[1]}}</li> {% else %}
