@@ -5,7 +5,7 @@ import datetime as dt
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.fsclient import _id_key
-from regolith.sorters import doc_date_key, position_key
+from regolith.sorters import doc_date_key, position_key, ene_date_key
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
@@ -15,7 +15,7 @@ from regolith.tools import (
     dereference_institution,
     fuzzy_retrieval
 )
-import random
+
 
 PROJ_URL_BASE = 'https://gitlab.thebillingegroup.com/talks/'
 
@@ -86,20 +86,28 @@ class InternalHtmlBuilder(BuilderBase):
                 all_docs_from_collection(rc.client, "people"),
                 ["_id", "name", "aka"],
                 mtg.get("scribe"))
+            if not prsn:
+                print("{} scribe {} not found in people".format(mtg["_id"],mtg.get("scribe")))
             mtg["scribe"] = prsn["name"]
             if mtg.get("presentation"):
                 prsn = fuzzy_retrieval(
                     all_docs_from_collection(rc.client, "people"),
                     ["_id", "name", "aka"],
                     mtg["presentation"].get("presenter"))
+                if mtg["presentation"].get("presenter") == "hold":
+                    prsn = {}
+                    prsn["name"] = "Hold"
+                if not prsn:
+                    print(
+                    "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
                 mtg["presentation"]["presenter"] = prsn["name"]
                 mtg["presentation"]["link"] = PROJ_URL_BASE + \
-                                              mtg["presentation"]["link"]
+                                              mtg["presentation"].get("link","tbd")
             mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
                                   mtg.get("day"))
             mtg['datestr'] = mtg['date'].strftime('%m/%d/%Y')
             today = dt.date.today()
-            if mtg['date'] > today:
+            if mtg['date'] >= today:
                 f_mtgs.append(mtg)
             else:
                 pp_mtgs.append(mtg)
