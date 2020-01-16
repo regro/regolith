@@ -17,6 +17,8 @@ class PostdocadBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
 
     btype = "postdocads"
+    needed_dbs = ['postdocads']
+
 
     def construct_global_ctx(self):
         """Constructs the global context"""

@@ -12,7 +12,6 @@ from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from regolith.tools import dbpathname
 
-
 YAML_BASE_MAP = {CommentedMap: dict,
                  CommentedSeq: list}
 
@@ -122,6 +121,8 @@ class FileSystemClient:
             file
             for file in iglob(os.path.join(dbpath, "*.json"))
             if file not in db["blacklist"]
+               and len(db["whitelist"]) == 0
+               or os.path.basename(file).split(".")[0] in db["whitelist"]
         ]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
@@ -136,6 +137,8 @@ class FileSystemClient:
             file
             for file in iglob(os.path.join(dbpath, "*.y*ml"))
             if file not in db["blacklist"]
+            and len(db["whitelist"]) == 0
+            or os.path.basename(file).split(".")[0] in db["whitelist"]
         ]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)

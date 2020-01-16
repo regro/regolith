@@ -1,6 +1,7 @@
 import os
 import shutil
 from xonsh.lib import subprocess
+import sys
 
 import pytest
 
@@ -18,7 +19,6 @@ builder_map = [
     "preslist",
     "reimb",
     "figure",
-    "review-man",
 ]
 
 xls_check = ("B17", "B20", "B36")
@@ -40,7 +40,7 @@ def prep_figure():
     if not db.get_file(db["groups"]["ergs"], "hello"):
         db.add_file(db["groups"]["ergs"], "hello", "fig/hello.txt")
 
-
+@pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 @pytest.mark.parametrize("bm", builder_map)
 def test_builder(bm, make_db):
     repo = make_db
@@ -49,7 +49,7 @@ def test_builder(bm, make_db):
         prep_figure()
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)
-    subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo)
+    subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo )
     os.chdir(os.path.join(repo, "_build", bm))
     expected_base = os.path.join(os.path.dirname(__file__), "outputs")
     for root, dirs, files in os.walk("."):
