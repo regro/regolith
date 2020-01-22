@@ -3,6 +3,7 @@
 {% endblock header %}
 {% block content %}
 <h1>Current Group Meeting ({{fmeetings[0]['datestr']}})</h1>
+<li>Meeting Lead: {{fmeetings[0].get('lead', '')}}</li>
 <li>Scribe: {{fmeetings[0].get('scribe', '')}}</li>
   {% if fmeetings[0].get('presentation') %}
   <li>Presentation: {{fmeetings[0].get('presentation').get('presenter','')}},
@@ -26,6 +27,7 @@
     <li>{{a}}</li>
   {%endfor%}</ol>{%endif%}
 <h1>Last time ({{ppmeetings[0]['datestr']}})</h1>
+  <li>Meeting Lead: {{ppmeetings[0].get('lead', '')}}</li>
   <li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
   {% if fmeetings[0].get('presentation') %}
   <li>Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
@@ -47,14 +49,15 @@
 <h1>Upcoming meetings</h1>
 {% for mtg in fmeetings[1:] %}
   <h2><a>{{mtg['datestr']}}</a></h2>
+  <li>Meeting Lead: {{mtg.get('lead', '')}}</li>
   <li>Scribe: {{mtg.get('scribe', '')}}</li>
   <li>Presentation: {{mtg.get('presentation').get('presenter','')}},
 {% endfor %}
     <h1>Ancient history</h1>
 {% for mtg in ppmeetings[1:] %}
   <h2><a>{{mtg['datestr']}}</a></h2>
-  <li>Scribe: {{mtg.get('scribe', '')}}</li>
   {% if mtg.get('presentation') %}
+  <li>Meeting Lead: {{mtg.get('lead', '')}}</li>
   <li>Presentation: {{mtg.get('presentation').get('presenter','')}},
     {{mtg.get('presentation').get('title','')}}</li>
 <li>Repo: <a href="{{- mtg.get('presentation', '').get('link','tbd')-}}">"Presentation" </a></li>
