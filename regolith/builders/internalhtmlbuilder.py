@@ -24,6 +24,7 @@ class InternalHtmlBuilder(BuilderBase):
     """Build HTML files for website"""
 
     btype = "internalhtml"
+    needed_dbs = ["people", "meetings"]
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -82,13 +83,24 @@ class InternalHtmlBuilder(BuilderBase):
 
 
         for mtg in mtgsi:
-            prsn = fuzzy_retrieval(
+            if not mtg.get('lead'):
+                print("{} missing a meeting lead".format(mtg["_id"]))
+            if not mtg.get('scribe'):
+                print("{} missing a meeting scribe".format(mtg["_id"]))
+            lead = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "people"),
+                ["_id", "name", "aka"],
+                mtg.get("lead"))
+            if not lead:
+                print("{} lead {} not found in people".format(mtg["_id"],mtg.get("lead")))
+            mtg["lead"] = lead["name"]
+            scribe = fuzzy_retrieval(
                 all_docs_from_collection(rc.client, "people"),
                 ["_id", "name", "aka"],
                 mtg.get("scribe"))
-            if not prsn:
+            if not scribe:
                 print("{} scribe {} not found in people".format(mtg["_id"],mtg.get("scribe")))
-            mtg["scribe"] = prsn["name"]
+            mtg["scribe"] = scribe["name"]
             if mtg.get("presentation"):
                 prsn = fuzzy_retrieval(
                     all_docs_from_collection(rc.client, "people"),
