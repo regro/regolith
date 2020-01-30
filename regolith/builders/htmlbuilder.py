@@ -102,7 +102,9 @@ class HtmlBuilder(BuilderBase):
             ene = p.get("employment", []) + p.get("education", [])
             ene.sort(key=ene_date_key, reverse=True)
             for e in ene:
-                dereference_institution(e, self.gtx["institutions"])
+                dereference_institution(e,
+                                        all_docs_from_collection(
+                                            rc.client, "institutions"))
             projs = filter_projects(
                 all_docs_from_collection(rc.client, "projects"), names
             )

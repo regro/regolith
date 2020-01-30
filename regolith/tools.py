@@ -329,8 +329,9 @@ def filter_publications(citations, authors, reverse=False, bold=True):
     pubs = []
     for pub in citations:
         if (
-            len((set(pub.get("author", [])) | set(pub.get("editor", []))) & authors)
-            == 0
+                len((set(pub.get("author", [])) | set(
+                    pub.get("editor", []))) & authors)
+                == 0
         ):
             continue
         pub = deepcopy(pub)
@@ -446,7 +447,8 @@ def awards_grants_honors(p):
         d = {"description": latex_safe(x["name"])}
         if "year" in x:
             d.update(
-                {"year": x["year"], "_key": date_to_float(x["year"], x.get("month", 0))}
+                {"year": x["year"],
+                 "_key": date_to_float(x["year"], x.get("month", 0))}
             )
         elif "begin_year" in x and "end_year" in x:
             d.update(
@@ -497,16 +499,16 @@ def latex_safe(s, url_check=True, wrapper="url"):
         if url_search:
             url = r"{start}\{wrapper}{{{s}}}{end}".format(
                 start=(latex_safe(s[: url_search.start()])),
-                end=(latex_safe(s[url_search.end() :])),
+                end=(latex_safe(s[url_search.end():])),
                 wrapper=wrapper,
-                s=latex_safe_url(s[url_search.start() : url_search.end()]),
+                s=latex_safe_url(s[url_search.start(): url_search.end()]),
             )
             return url
     return (
         s.replace("&", r"\&")
-        .replace("$", r"\$")
-        .replace("#", r"\#")
-        .replace("_", r"\_")
+            .replace("$", r"\$")
+            .replace("#", r"\#")
+            .replace("_", r"\_")
     )
 
 
@@ -609,7 +611,8 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
                 ret = [ret]
             returns.extend(ret)
         if not case_sensitive:
-            returns = [reti.lower() for reti in returns if isinstance(reti, str)]
+            returns = [reti.lower() for reti in returns if
+                       isinstance(reti, str)]
             if isinstance(value, str):
                 if value.lower() in frozenset(returns):
                     return doc
@@ -652,6 +655,9 @@ def dereference_institution(input_record, institutions):
         The institutions
     """
     inst = input_record.get("institution") or input_record.get("organization")
+    if not inst:
+        print("WARNING: no institution or organization found in {}".format(
+            input_record["_id"]))
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if db_inst:
         input_record["institution"] = db_inst["name"]
@@ -660,11 +666,18 @@ def dereference_institution(input_record, institutions):
             state_country = db_inst.get("state")
         else:
             state_country = db_inst.get("country")
-        input_record["location"] = "{}, {}".format(db_inst["city"], state_country)
-        if "department" in input_record:
+        input_record["location"] = "{}, {}".format(db_inst["city"],
+                                                   state_country)
+        if not db_inst.get("departments"):
+            print("WARNING: no departments in {}. {} sought".format(
+                db_inst["_id"], inst))
+        if "department" in input_record and db_inst.get("departments"):
             input_record["department"] = fuzzy_retrieval(
-                [db_inst["departments"]], ["name", "aka"], input_record["department"]
+                [db_inst["departments"]], ["name", "aka"],
+                input_record["department"]
             )
+        else:
+            input_record["department"] = inst
 
 
 def update_schemas(default_schema, user_schema):
@@ -686,8 +699,11 @@ def update_schemas(default_schema, user_schema):
     """
     updated_schema = deepcopy(default_schema)
     for key in user_schema.keys():
-        if (key in updated_schema) and isinstance(updated_schema[key], dict) and isinstance(user_schema[key], dict):
-            updated_schema[key] = update_schemas(updated_schema[key], user_schema[key])
+        if (key in updated_schema) and isinstance(updated_schema[key],
+                                                  dict) and isinstance(
+            user_schema[key], dict):
+            updated_schema[key] = update_schemas(updated_schema[key],
+                                                 user_schema[key])
         else:
             updated_schema[key] = user_schema[key]
 
