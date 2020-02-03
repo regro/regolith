@@ -4,6 +4,6 @@ Reading List
 
 {% for paper in rlist['papers'] -%}
 [{{ paper['n'] }}] {{ paper['text'] }}:
-    {{ paper['reference'] }}
-    DOI: {{ paper['doi'] }}
+    {% if paper.get('reference') %} {{ paper['reference'] }}{% endif -%}
+    {{ paper['label'] }}: {{ paper['doi'] }}
 {% endfor %}
