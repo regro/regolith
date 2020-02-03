@@ -21,7 +21,7 @@ class ReadingListsBuilder(LatexBuilderBase):
     """Build reading lists from database entries"""
 
     btype = "readinglists"
-#    needed_dbs = ['people', 'reading_lists']
+    needed_dbs = ['people', 'reading_lists']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -45,13 +45,6 @@ class ReadingListsBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
-        # just a reminder placeholder how to access these.  These
-        # print statements will be removed when the builder is updated
-        # to use them!
-        print(self.rc.from_date)
-        print(self.rc.to_date)
-        print(self.rc.people)
-        print(self.rc.grants)
 
         for rlist in self.gtx["reading_lists"]:
             listid = rlist["_id"]
@@ -61,18 +54,22 @@ class ReadingListsBuilder(LatexBuilderBase):
             n = 1
             for paper in rlist['papers']:
                 # fixme: code here to get info from crossref
-                doi = paper.get('doi','tbd')
+                doi = paper.get('doi', 'tbd')
+                url = paper.get('url')
                 if doi == 'tbd':
-                    print("  doi needed for paper: {}".format(paper.get('text')))
+                    print(
+                        "  doi needed for paper: {}".format(paper.get('text')))
                 elif doi != "na":
                     article = self.cr.works(ids=doi)
                     authorlist = [
                         "{} {}".format(a['given'].strip(), a['family'].strip())
                         for a in article.get('message').get('author')]
                     try:
-                        journal = article.get('message').get('short-container-title')[0]
+                        journal = \
+                        article.get('message').get('short-container-title')[0]
                     except IndexError:
-                        journal = article.get('message').get('container-title')[0]
+                        journal = article.get('message').get('container-title')[
+                            0]
                     if article.get('message').get('volume'):
                         authorlist[-1] = "and {}".format(authorlist[-1])
                         sauthorlist = ", ".join(authorlist)
@@ -82,7 +79,8 @@ class ReadingListsBuilder(LatexBuilderBase):
                             journal,
                             article.get('message').get('volume'),
                             article.get('message').get('page'),
-                            article.get('message').get('issued').get('date-parts')[
+                            article.get('message').get('issued').get(
+                                'date-parts')[
                                 0][
                                 0],
                         )
@@ -98,9 +96,11 @@ class ReadingListsBuilder(LatexBuilderBase):
                             0][
                             0],
                     )
-                    paper.update({'reference': ref, 'n':n})
-                    print("[{}] {}".format(n, ref))
-                    print("    DOI: {}".format(doi))
+                    paper.update({'reference': ref, 'n': n, 'label': 'DOI'})
+                    n += 1
+                if url:
+                    paper['doi'] = url
+                    paper.update({'n': n, 'label': 'URL'})
                     n += 1
 
             self.render(
@@ -108,6 +108,8 @@ class ReadingListsBuilder(LatexBuilderBase):
                 outfile_bib + ".txt",
                 rlist=rlist,
             )
+
+
 """            self.render(
                 "rlist_word.docx",
                 outfile_bib + ".docx",
