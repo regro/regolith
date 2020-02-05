@@ -22,6 +22,7 @@ LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
 class RecentCollabsBuilder(LatexBuilderBase):
     btype = "recent-collabs"
+    needed_dbs = ['citations','people','contacts','institutions']
 
     def construct_global_ctx(self):
         super().construct_global_ctx()
