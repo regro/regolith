@@ -13,6 +13,7 @@ from datetime import datetime
 
 from regolith.dates import month_to_int, date_to_float
 from regolith.sorters import doc_date_key, id_key, ene_date_key
+from regolith.chained_db import ChainDB
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -357,7 +358,7 @@ def filter_projects(projects, authors, reverse=False):
     ----------
     projects : list of dict
         The publication citations
-    authors : set of str
+    authors : set of list of str
         The authors to be filtered against
     reverse : bool, optional
         If True reverse the order, defaults to False
@@ -367,8 +368,9 @@ def filter_projects(projects, authors, reverse=False):
         team_names = set(gets(proj["team"], "name"))
         if len(team_names & authors) == 0:
             continue
-        proj = dict(proj)
-        proj["team"] = [x for x in proj["team"] if x["name"] in authors]
+        # FIXME delete these lines if not required.  I think they are wrong (SJLB)
+        # proj = dict(proj)
+        # proj["team"] = [x for x in proj["team"] if x["name"] in authors]
         projs.append(proj)
     projs.sort(key=id_key, reverse=reverse)
     return projs
@@ -680,10 +682,55 @@ def dereference_institution(input_record, institutions):
             input_record["department"] = inst
 
 
+def merge_collections(a, b, target_id):
+    """
+    merge two collections into a single merged collection
+
+    for keys that are in both collections, the value in b will be kept
+
+    Parameters
+    ----------
+    a  the inferior collection (will lose values of shared keys)
+    b  the superior collection (will keep values of shared keys)
+    target_id  str  the name of the key used in b to dereference ids in a
+
+    Returns
+    -------
+    the combined collection.  Note that it returns a collection only containing
+    merged items from a and b that are dereferenced in b, i.e., the merged
+    intercept.  If you want the union you can update the returned collection
+    with a.
+
+    Examples
+    --------
+    >>>  grants = merge_collections(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
+
+    This would merge all entries in the proposals collection with entries in the
+    grants collection for which "_id" in proposals has the value of
+    "proposal_id" in grants.
+    """
+    adict = {}
+    for k in a:
+        adict[k.get("_id")] = k
+    bdict = {}
+    for k in b:
+        bdict[k.get("_id")] = k
+    b_for_a = {}
+    for k in adict:
+        for kk, v in bdict.items():
+            if v.get(target_id, "") == k:
+                b_for_a[k] = kk
+    chained = {}
+    for k, v in b_for_a.items():
+        chained[k] = ChainDB(adict[k], bdict[v])
+    return list(chained.values())
+
+
 def update_schemas(default_schema, user_schema):
     """
-    Merging the user schema into the default schema recursively and return the merged schema. The default schema and
-    user schema will not be modified during the merging.
+    Merging the user schema into the default schema recursively and return the
+    merged schema. The default schema and user schema will not be modified
+    during the merging.
 
     Parameters
     ----------
@@ -701,7 +748,7 @@ def update_schemas(default_schema, user_schema):
     for key in user_schema.keys():
         if (key in updated_schema) and isinstance(updated_schema[key],
                                                   dict) and isinstance(
-            user_schema[key], dict):
+              user_schema[key], dict):
             updated_schema[key] = update_schemas(updated_schema[key],
                                                  user_schema[key])
         else:

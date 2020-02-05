@@ -1,4 +1,9 @@
 """Builder for Current and Pending Reports."""
+import datetime
+import time
+from copy import copy
+from nameparser import HumanName
+
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.dates import month_to_int
 from regolith.fsclient import _id_key
@@ -7,13 +12,14 @@ from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
     fuzzy_retrieval,
+    merge_collections,
     has_started,
     is_current,
 )
 
 
-def is_pending(sy, sm, sd):
-    return not has_started(sy, sm, sd)
+def is_pending(status):
+    return status in "pending"
 
 
 class CPBuilder(LatexBuilderBase):
@@ -35,6 +41,9 @@ class CPBuilder(LatexBuilderBase):
         gtx["grants"] = sorted(
             all_docs_from_collection(rc.client, "grants"), key=_id_key
         )
+        gtx["proposals"] = sorted(
+            all_docs_from_collection(rc.client, "proposals"), key=_id_key
+        )
         gtx["groups"] = sorted(
             all_docs_from_collection(rc.client, "groups"), key=_id_key
         )
@@ -46,11 +55,30 @@ class CPBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         for group in self.gtx["groups"]:
-            pi = fuzzy_retrieval(self.gtx["people"], ["aka", "name"], group["pi_name"])
+            grp = group["_id"]
+            pi = fuzzy_retrieval(
+                self.gtx["people"], ["aka", "name"], group["pi_name"]
+            )
+            pinames = pi["name"].split()
+            piinitialslist = [i[0] for i in pinames]
+            pi['initials'] = "".join(piinitialslist).upper()
 
-            grants = list(self.gtx["grants"])
+            grants = merge_collections(self.gtx["proposals"],
+                                       self.gtx["grants"],
+                                       "proposal_id")
+            for g in grants:
+                for person in g["team"]:
+                    rperson = fuzzy_retrieval(
+                        self.gtx["people"], ["aka", "name"], person["name"]
+                    )
+                    if rperson:
+                        person["name"] = rperson["name"]
+                if g.get('budget'):
+                    amounts = [i.get('amount') for i in g.get('budget')]
+                    g['subaward_amount'] = sum(amounts)
+
             current_grants = [
-                g
+                dict(g)
                 for g in grants
                 if is_current(
                     *[
@@ -66,40 +94,59 @@ class CPBuilder(LatexBuilderBase):
                     ]
                 )
             ]
-            pending_grants = [
-                g
-                for g in grants
-                if is_pending(
-                    *[g[s] for s in ["begin_year", "begin_month", "begin_day"]]
-                )
-            ]
             current_grants, _, _ = filter_grants(
                 current_grants, {pi["name"]}, pi=False, multi_pi=True
             )
+            for g in current_grants:
+                if g.get('budget'):
+                    amounts = [i.get('amount') for i in g.get('budget')]
+                    g['subaward_amount'] = sum(amounts)
+
+            pending_grants = [
+                g
+                for g in self.gtx["proposals"]
+                if is_pending(g["status"])
+            ]
+            for g in pending_grants:
+                for person in g["team"]:
+                    rperson = fuzzy_retrieval(
+                        self.gtx["people"], ["aka", "name"], person["name"]
+                    )
+                    if rperson:
+                        person["name"] = rperson["name"]
             pending_grants, _, _ = filter_grants(
                 pending_grants, {pi["name"]}, pi=False, multi_pi=True
             )
             grants = pending_grants + current_grants
             for grant in grants:
                 grant.update(
-                    award_start_date="{2}-{1}-{0}".format(
+                    award_start_date="{2}/{1}/{0}".format(
                         grant["begin_day"],
                         month_to_int(grant["begin_month"]),
                         grant["begin_year"],
                     ),
-                    award_end_date="{2}-{1}-{0}".format(
+                    award_end_date="{2}/{1}/{0}".format(
                         grant["end_day"],
                         month_to_int(grant["end_month"]),
                         grant["end_year"],
                     ),
                 )
+            badids = [i["_id"] for i in current_grants if
+                      not i.get('cpp_info').get('cppflag', "")]
+            iter = copy(current_grants)
+            for grant in iter:
+                if grant["_id"] in badids:
+                    current_grants.remove(grant)
+            piname = HumanName(pi["name"])
+            outfile = "current-pending-{}-{}".format(grp, piname.last.lower())
+
             self.render(
                 "current_pending.tex",
-                "cpp.tex",
+                outfile + ".tex",
                 pi=pi,
                 pending=pending_grants,
                 current=current_grants,
                 pi_upper=pi["name"].upper(),
                 group=group,
             )
-            self.pdf("cpp")
+            self.pdf(outfile)
