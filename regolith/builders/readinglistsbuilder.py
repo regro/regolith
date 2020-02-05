@@ -50,7 +50,8 @@ class ReadingListsBuilder(LatexBuilderBase):
             listid = rlist["_id"]
             outfile_bib = listid
 
-            print("\ngetting papers from {}:".format(listid))
+            print("List {}:".format(listid))
+            print("{}:".format(rlist['purpose']))
             n = 1
             for paper in rlist['papers']:
                 # fixme: code here to get info from crossref
