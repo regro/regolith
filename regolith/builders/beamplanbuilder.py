@@ -2,6 +2,7 @@
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection
+import pandas as pd
 
 
 class BeamPlanBuilder(LatexBuilderBase):
@@ -22,39 +23,51 @@ class BeamPlanBuilder(LatexBuilderBase):
         gtx["float"] = float
         gtx["str"] = str
 
-    def make_table(self):
+    def gather_info(self):
         """
-        Make a table as the summary of the plans. The table header contains: serial id, person name,
-        number of sample, sample container, sample holder, measurement, estimated time (min). The latex string of the
-        table will be returned.
+        Make a table as the summary of the plans and a list of experiment plans. The table header contains: serial
+        id, person name, number of sample, sample container, sample holder, measurement, estimated time (min). The
+        latex string of the table will be returned. The plans contain objective, steps in preparation,
+        steps in shipment, steps in experiment and a to do list. The latex string of the paragraphs will be returned.
 
         Returns
         -------
-        summary : str
+        table : str
             The latex string of table.
-
-        """
-        gtx = self.gtx
-        summary = ""
-        return summary
-
-    def make_plans(self):
-        """
-        Make a list of experiment plans. The plans contain objective, steps in preparation, steps in shipment and
-        steps in experiment. The latex string of the paragraphs will be returned.
-
-        Returns
-        -------
         plans : list
             The list of experiment plans.
 
         """
         gtx = self.gtx
+        rows = []
         plans = []
-        return plans
+        for n, doc in enumerate(gtx["beamplan"]):
+            # gather information of the table
+            row = {
+                "serial_id": str(n + 1),
+                "project leader": doc["project_lead"],
+                "number of samples": str(len(doc["samples"])),
+                "sample container": doc["container"],
+                "sample holder": doc["holder"],
+                "measurement": doc["measurement"],
+                "estimated time (min)": str(doc["time"])
+            }
+            rows.append(row)
+            # gather information of the plan.
+            plan = {
+                "serial_id": str(n + 1),
+                "objective": doc["objective"],
+                "prep_plan": doc["prep_plan"],
+                "ship_plan": doc["ship_plan"],
+                "expr_plan": doc["expr_plan"],
+                "todo_list": doc["todo"]
+            }
+            plans.append(plan)
+        # make a latex tabular
+        table = pd.DataFrame(rows).to_latex(escape=True, index=False)
+        return table, plans
 
     def latex(self):
-        """Render latex template"""
-        table = self.make_table()
-        plans = self.make_plans()
+        """Render latex template."""
+        table, plans = self.gather_info()
         self.render("beamplan.txt", "beamplan_report.tex", table=table, plans=plans)

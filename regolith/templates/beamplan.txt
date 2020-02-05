@@ -1,5 +1,7 @@
 \documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
 
+\usepackage{booktabs}
+
 \begin{document}
 
 \title{Atomic pair distribution function (PDF) analysis of rock and clay system}
@@ -13,11 +15,46 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 \maketitle
 
 \section{Summary}
-{{-table-}}
+\begin{table}[htpb]
+\caption{The summary of experiment plans}
+{{table-}}
+\end{table}
 
 \section{Details}
 {% for plan in plans %}
-    {{-plan-}}
+\subsection{Experiment {{plan["serial_id"]}}}
+
+\textbf{Objective}
+{{plan["objective"]}}
+
+\textbf{Preparation}
+\begin{enumerate}
+{%- for step in plan["prep_plan"]%}
+\item {{step-}}
+{% endfor %}
+\end{enumerate}
+
+\textbf{Shipment}
+\begin{enumerate}
+{%- for step in plan["ship_plan"]%}
+\item {{step-}}
+{% endfor %}
+\end{enumerate}
+
+\textbf{Measurement}
+\begin{enumerate}
+{%- for step in plan["expr_plan"]%}
+\item {{step-}}
+{% endfor %}
+\end{enumerate}
+{% endfor %}
+
+\textbf{To do before the beamtime}
+\begin{enumerate}
+{%- for step in plan["todo_list"]%}
+\item {{step-}}
+{% endfor %}
+\end{enumerate}
 {% endfor %}
 
 \end{document}
