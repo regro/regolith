@@ -22,6 +22,7 @@ LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
 class RecentCollabsBuilder(LatexBuilderBase):
     btype = "recent-collabs"
+    needed_dbs = ['citations','people','contacts','institutions']
 
     def construct_global_ctx(self):
         super().construct_global_ctx()
@@ -46,8 +47,9 @@ class RecentCollabsBuilder(LatexBuilderBase):
     def latex(self):
         rc = self.rc
         since_date = dt.date.today() - relativedelta(months=48)
+        person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"), ['aka', 'name', '_id'], self.rc.people, case_sensitive = False)
         for p in self.gtx["people"]:
-            if p["_id"] == "sbillinge":
+            if p["_id"] == person["_id"]:
                 my_names = frozenset(p.get("aka", []) + [p["name"]])
                 pubs = filter_publications(self.gtx["citations"], my_names,
                                            reverse=True, bold=False)
