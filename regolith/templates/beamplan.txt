@@ -1,0 +1,23 @@
+\documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
+
+\begin{document}
+
+\title{Atomic pair distribution function (PDF) analysis of rock and clay system}
+\author{Songsheng Tao}
+\affiliation{Department of Applied Physics and Applied Mathematics, Columbia University, New York, NY 10027}
+\author{Simon J. L. Billinge}
+\email{sb2896@columbia.edu}
+\affiliation{Department of Applied Physics and Applied Mathematics, Columbia University, New York, NY 10027\\
+Condensed Matter Physics and Materials Science Department, Brookhaven National Laboratory, Upton, NY 11973}
+\date{\today}
+\maketitle
+
+\section{Summary}
+{{-table-}}
+
+\section{Details}
+{% for plan in plans %}
+    {{-plan-}}
+{% endfor %}
+
+\end{document}
