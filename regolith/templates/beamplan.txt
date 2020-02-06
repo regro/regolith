@@ -4,7 +4,7 @@
 
 \begin{document}
 
-\title{Atomic pair distribution function (PDF) analysis of rock and clay system}
+\title{Beamtime report}
 \author{Songsheng Tao}
 \affiliation{Department of Applied Physics and Applied Mathematics, Columbia University, New York, NY 10027}
 \author{Simon J. L. Billinge}
@@ -25,36 +25,44 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 \subsection{Experiment {{plan["serial_id"]}}}
 
 \textbf{Objective}
+
 {{plan["objective"]}}
 
 \textbf{Preparation}
+{% if len(plan["prep_plan"]) > 0 %}
 \begin{enumerate}
 {%- for step in plan["prep_plan"]%}
 \item {{step-}}
 {% endfor %}
 \end{enumerate}
+{% endif %}
 
 \textbf{Shipment}
+{% if len(plan["ship_plan"]) > 0 %}
 \begin{enumerate}
 {%- for step in plan["ship_plan"]%}
 \item {{step-}}
 {% endfor %}
 \end{enumerate}
+{% endif %}
 
 \textbf{Measurement}
+{% if len(plan["exp_plan"]) > 0 %}
 \begin{enumerate}
-{%- for step in plan["expr_plan"]%}
+{%- for step in plan["exp_plan"]%}
 \item {{step-}}
 {% endfor %}
 \end{enumerate}
-{% endfor %}
+{% endif %}
 
 \textbf{To do before the beamtime}
+{% if len(plan["todo_list"]) > 0 %}
 \begin{enumerate}
 {%- for step in plan["todo_list"]%}
 \item {{step-}}
 {% endfor %}
 \end{enumerate}
+{% endif %}
 {% endfor %}
 
 \end{document}
