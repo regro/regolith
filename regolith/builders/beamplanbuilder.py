@@ -32,10 +32,12 @@ class BeamPlanBuilder(LatexBuilderBase):
 
         Returns
         -------
-        table : str
-            The latex string of table.
-        plans : list
-            The list of experiment plans.
+        info : dict
+        The information obtained from the database and formatted. It contains the key value pairs:
+            table : str
+                The latex string of table.
+            plans : list
+                The list of experiment plans. Each experiment plan is a list of strings.
 
         """
         gtx = self.gtx
@@ -59,15 +61,17 @@ class BeamPlanBuilder(LatexBuilderBase):
                 "objective": doc["objective"],
                 "prep_plan": doc["prep_plan"],
                 "ship_plan": doc["ship_plan"],
-                "expr_plan": doc["expr_plan"],
+                "exp_plan": doc["exp_plan"],
                 "todo_list": doc["todo"]
             }
             plans.append(plan)
         # make a latex tabular
         table = pd.DataFrame(rows).to_latex(escape=True, index=False)
-        return table, plans
+
+        info = {"plans": plans, "table": table}
+        return info
 
     def latex(self):
         """Render latex template."""
-        table, plans = self.gather_info()
-        self.render("beamplan.txt", "beamplan_report.tex", table=table, plans=plans)
+        info = self.gather_info()
+        self.render("beamplan.txt", "beamplan_report.tex", **info)
