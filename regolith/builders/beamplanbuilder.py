@@ -42,7 +42,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         Parameters
         ----------
         docs : list
-            A list of documents.
+            A list of documents of the experiment plans in the beamplan database.
 
         Returns
         -------
