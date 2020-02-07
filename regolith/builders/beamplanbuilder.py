@@ -36,10 +36,8 @@ class BeamPlanBuilder(LatexBuilderBase):
     @staticmethod
     def _gather_info(docs):
         """
-        Make a table as the summary of the plans and a list of experiment plans. The table header contains: serial
-        id, person name, number of sample, sample container, sample holder, measurement, estimated time (min). The
-        latex string of the table will be returned. The plans contain objective, steps in preparation,
-        steps in shipment, steps in experiment and a to do list. The latex string of the paragraphs will be returned.
+        Query information from the list of documents. Return a table as the summary of the plans and a list of
+        experiment plans.
 
         Parameters
         ----------
