@@ -801,7 +801,7 @@ def group(db, by):
 
     Parameters
     ----------
-    db : generator
+    db : iterable
         The database of documents.
     by : basestring
         The key to group the documents.
@@ -811,6 +811,14 @@ def group(db, by):
     grouped: dict
         A dictionary mapping the feature value of group to the list of docs. All docs in the same generator have
         the same value of doc[by].
+
+    Examples
+    --------
+    Here, we use a tuple of dict as an example of the database.
+    >>> db = ({"k": "v0"}, {"k": "v1"}, {"k": "v0"})
+    >>> group(db)
+    This will return
+    >>> {"v0": [{"k": "v0"}, {"k": "v0"}], "v1": [{"k": "v1"}]}
     """
     grouped = {}
     doc: dict
@@ -818,8 +826,7 @@ def group(db, by):
         key = doc.get(by)
         if not key:
             print("There is no field {} in {}".format(by, id_key(doc)))
-            continue
-        if key not in grouped:
+        elif key not in grouped:
             grouped[key] = [doc]
         else:
             grouped[key].append(doc)
