@@ -53,23 +53,25 @@ class BeamPlanBuilder(LatexBuilderBase):
         for n, doc in enumerate(docs):
             # gather information of the table
             row = {
-                "serial_id": str(n + 1),
-                "project leader": doc["project_lead"],
-                "number of samples": str(len(doc["samples"])),
-                "sample container": doc["container"],
-                "sample holder": doc["holder"],
-                "measurement": doc["measurement"],
-                "estimated time (min)": str(doc["time"])
+                "serial_id": n + 1,
+                "project leader": doc.get("project_lead", "missing"),
+                "number of samples": len(doc.get("samples", [])),
+                "sample container": doc.get("container", "missing"),
+                "sample holder": doc.get("holder", "missing"),
+                "measurement": doc.get("measurement", "missing"),
+                "devices": ", ".join(doc.get("devices", ["missing"])),
+                "estimated time (min)": doc.get("time", "missing")
             }
             rows.append(row)
             # gather information of the plan.
             plan = {
-                "serial_id": str(n + 1),
-                "objective": doc["objective"],
-                "prep_plan": doc["prep_plan"],
-                "ship_plan": doc["ship_plan"],
-                "exp_plan": doc["exp_plan"],
-                "todo_list": doc["todo"]
+                "serial_id": n + 1,
+                "sample": doc.get("samples", ["missing"]),
+                "objective": doc.get("objective", "]missing"),
+                "prep_plan": doc.get("prep_plan", ["missing"]),
+                "ship_plan": doc.get("ship_plan", ["]missing"]),
+                "exp_plan": doc.get("exp_plan", ["missing"]),
+                "todo_list": doc.get("todo", ["missing"])
             }
             plans.append(plan)
         # make a latex tabular
