@@ -42,10 +42,8 @@ class BeamPlanBuilder(LatexBuilderBase):
         -------
         info : dict
         The information obtained from the database and formatted. It contains the key value pairs:
-            table : str
-                The latex string of table.
-            plans : list
-                The list of experiment plans. Each experiment plan is a list of strings.
+            table The latex string of table.
+            plans The list of experiment plans. Each experiment plan is a list of strings.
 
         """
         rows = []
@@ -92,7 +90,6 @@ class BeamPlanBuilder(LatexBuilderBase):
             if plans:
                 assert plans
                 info = self.gather_info(plans)
-                assert info
                 self.render("beamplan.txt", "{}.tex".format(bt), **info)
             else:
                 raise Warning("There is no beamtime {} in beamplan database".format(bt))
