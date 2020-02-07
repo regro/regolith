@@ -28,6 +28,10 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 
 {{plan["objective"]}}
 
+\textb{Samples}
+
+{{plan["samples"]}}
+
 \textbf{Preparation}
 {% if len(plan["prep_plan"]) > 0 %}
 \begin{enumerate}
