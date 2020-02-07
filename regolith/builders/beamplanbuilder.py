@@ -1,4 +1,5 @@
-"""Builder for Current and Pending Reports."""
+"""Builder for the plan of beamtimes. The plan contains a summary of the information for the experiments in during a
+beamtime and details about how to carry out the experiments. """
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.tools import all_docs_from_collection
 from regolith.tools import group
