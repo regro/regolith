@@ -9,7 +9,7 @@ import pandas as pd
 class BeamPlanBuilder(LatexBuilderBase):
     """
     Build a file of experiment plans for the beamtime from database entries. The report is in .tex file. The template
-    of the file is in the 'templates/beamplan.txt'. The data will be grouped according to beamtime. Each beamtime
+    of the file is in the 'templates/beamplan.tex'. The data will be grouped according to beamtime. Each beamtime
     will generate a file of the plans. If 'beamtime' in 'rc' are not None, only plans for those beamtime will be
     generated.
 
@@ -71,9 +71,9 @@ class BeamPlanBuilder(LatexBuilderBase):
             plan = {
                 "serial_id": n + 1,
                 "samples": ', '.join(doc.get("samples", ["missing"])),
-                "objective": doc.get("objective", "]missing"),
+                "objective": doc.get("objective", "missing"),
                 "prep_plan": doc.get("prep_plan", ["missing"]),
-                "ship_plan": doc.get("ship_plan", ["]missing"]),
+                "ship_plan": doc.get("ship_plan", ["missing"]),
                 "exp_plan": doc.get("exp_plan", ["missing"]),
                 "todo_list": doc.get("todo", ["missing"])
             }
@@ -97,7 +97,7 @@ class BeamPlanBuilder(LatexBuilderBase):
                 assert plans
                 info = self._gather_info(plans)
                 info["bt"] = bt
-                self.render("beamplan.txt", "{}.tex".format(bt), **info)
+                self.render("beamplan.tex", "{}.tex".format(bt), **info)
             else:
                 raise Warning("There is no beamtime {} in beamplan database".format(bt))
         return
