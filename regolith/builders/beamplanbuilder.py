@@ -1,14 +1,16 @@
 """Builder for Current and Pending Reports."""
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection
+from regolith.tools import group
 import pandas as pd
 
 
 class BeamPlanBuilder(LatexBuilderBase):
     """
-    Build a report of experiment plans for the beamtime from database entries. The report is in .tex file. The
-    template of the file is in the 'templates/beamplan.txt'.
+    Build a file of experiment plans for the beamtime from database entries. The report is in .tex file. The template
+    of the file is in the 'templates/beamplan.txt'. The data will be grouped according to beamtime. Each beamtime
+    will generate a file of the plans. If 'beamtime' in 'rc' are not None, only plans for those beamtime will be
+    generated.
     """
     btype = "beamplan"
     needed_dbs = ['beamplan', "people"]
@@ -23,12 +25,18 @@ class BeamPlanBuilder(LatexBuilderBase):
         gtx["float"] = float
         gtx["str"] = str
 
-    def gather_info(self):
+    @staticmethod
+    def gather_info(docs):
         """
         Make a table as the summary of the plans and a list of experiment plans. The table header contains: serial
         id, person name, number of sample, sample container, sample holder, measurement, estimated time (min). The
         latex string of the table will be returned. The plans contain objective, steps in preparation,
         steps in shipment, steps in experiment and a to do list. The latex string of the paragraphs will be returned.
+
+        Parameters
+        ----------
+        docs : list
+            A list of documents.
 
         Returns
         -------
@@ -40,10 +48,9 @@ class BeamPlanBuilder(LatexBuilderBase):
                 The list of experiment plans. Each experiment plan is a list of strings.
 
         """
-        gtx = self.gtx
         rows = []
         plans = []
-        for n, doc in enumerate(gtx["beamplan"]):
+        for n, doc in enumerate(docs):
             # gather information of the table
             row = {
                 "serial_id": str(n + 1),
@@ -67,11 +74,24 @@ class BeamPlanBuilder(LatexBuilderBase):
             plans.append(plan)
         # make a latex tabular
         table = pd.DataFrame(rows).to_latex(escape=True, index=False)
-
         info = {"plans": plans, "table": table}
         return info
 
     def latex(self):
         """Render latex template."""
-        info = self.gather_info()
-        self.render("beamplan.txt", "beamplan_report.tex", **info)
+        gtx = self.gtx
+        rc = self.rc
+        db = gtx["beamplan"]
+        grouped = group(db, "beamtime")
+        bts = rc.beamtime if rc.beamtime else grouped.keys()
+        for bt in bts:
+            assert bt
+            plans = grouped.get(bt)
+            if plans:
+                assert plans
+                info = self.gather_info(plans)
+                assert info
+                self.render("beamplan.txt", "{}.tex".format(bt), **info)
+            else:
+                raise Warning("There is no beamtime {} in beamplan database".format(bt))
+        return
