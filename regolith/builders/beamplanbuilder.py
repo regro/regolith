@@ -50,7 +50,6 @@ class BeamPlanBuilder(LatexBuilderBase):
             The information obtained from the database and formatted. It contains the key value pairs:
             table The latex string of table.
             plans The list of experiment plans. Each experiment plan is a list of strings.
-
         """
         rows = []
         plans = []
