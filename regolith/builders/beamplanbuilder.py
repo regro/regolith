@@ -66,7 +66,7 @@ class BeamPlanBuilder(LatexBuilderBase):
             # gather information of the plan.
             plan = {
                 "serial_id": n + 1,
-                "sample": doc.get("samples", ["missing"]),
+                "samples": ', '.join(doc.get("samples", ["missing"])),
                 "objective": doc.get("objective", "]missing"),
                 "prep_plan": doc.get("prep_plan", ["missing"]),
                 "ship_plan": doc.get("ship_plan", ["]missing"]),
