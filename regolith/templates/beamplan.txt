@@ -1,5 +1,7 @@
 \documentclass[prl,aps,tighten,amsmath,amssymb,floatfix]{revtex4-1}
 
+\usepackage{graphicx}
+
 \newcommand{\midrule}{\hline}
 \newcommand{\bottomrule}{\hline\hline}
 
@@ -18,7 +20,9 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 \section{Summary}
 \begin{table}[htpb]
 \caption{The summary of experiment plans}
+\resizebox{\textwidth}{!}{
 {{table-}}
+}
 \end{table}
 
 \section{Details}
