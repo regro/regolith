@@ -85,11 +85,11 @@ class BeamPlanBuilder(LatexBuilderBase):
         grouped = group(db, "beamtime")
         bts = rc.beamtime if rc.beamtime else grouped.keys()
         for bt in bts:
-            assert bt
             plans = grouped.get(bt)
             if plans:
                 assert plans
                 info = self.gather_info(plans)
+                info["bt"] = bt
                 self.render("beamplan.txt", "{}.tex".format(bt), **info)
             else:
                 raise Warning("There is no beamtime {} in beamplan database".format(bt))
