@@ -12,12 +12,19 @@ class BeamPlanBuilder(LatexBuilderBase):
     of the file is in the 'templates/beamplan.txt'. The data will be grouped according to beamtime. Each beamtime
     will generate a file of the plans. If 'beamtime' in 'rc' are not None, only plans for those beamtime will be
     generated.
+
+    Methods
+    -------
+    construct_global_ctx()
+        Constructs the global context.
+    latex()
+        Render latex template.
     """
     btype = "beamplan"
     needed_dbs = ['beamplan', "people"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
