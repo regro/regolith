@@ -51,14 +51,14 @@ class BeamPlanBuilder(LatexBuilderBase):
         for n, doc in enumerate(docs):
             # gather information of the table
             row = {
-                "serial_id": n + 1,
+                "serial id": str(n + 1),
                 "project leader": doc.get("project_lead", "missing"),
-                "number of samples": len(doc.get("samples", [])),
+                "number of samples": str(len(doc.get("samples", []))),
                 "sample container": doc.get("container", "missing"),
                 "sample holder": doc.get("holder", "missing"),
                 "measurement": doc.get("measurement", "missing"),
                 "devices": ", ".join(doc.get("devices", ["missing"])),
-                "estimated time (min)": doc.get("time", "missing")
+                "estimated time (min)": str(doc.get("time", "missing"))
             }
             rows.append(row)
             # gather information of the plan.
@@ -73,7 +73,8 @@ class BeamPlanBuilder(LatexBuilderBase):
             }
             plans.append(plan)
         # make a latex tabular
-        table = pd.DataFrame(rows).to_latex(escape=True, index=False)
+        df = pd.DataFrame(rows)
+        table = df.to_latex(escape=True, index=False)
         info = {"plans": plans, "table": table}
         return info
 
