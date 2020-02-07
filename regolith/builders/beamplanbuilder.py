@@ -34,7 +34,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         gtx["str"] = str
 
     @staticmethod
-    def gather_info(docs):
+    def _gather_info(docs):
         """
         Make a table as the summary of the plans and a list of experiment plans. The table header contains: serial
         id, person name, number of sample, sample container, sample holder, measurement, estimated time (min). The
@@ -98,7 +98,7 @@ class BeamPlanBuilder(LatexBuilderBase):
             plans = grouped.get(bt)
             if plans:
                 assert plans
-                info = self.gather_info(plans)
+                info = self._gather_info(plans)
                 info["bt"] = bt
                 self.render("beamplan.txt", "{}.tex".format(bt), **info)
             else:
