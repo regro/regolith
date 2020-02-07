@@ -1,10 +1,11 @@
 \documentclass[prl,aps,tighten,amsmath,amssymb,floatfix]{revtex4-1}
 
-\usepackage{booktabs}
+\newcommand{\midrule}{\hline}
+\newcommand{\bottomrule}{\hline\hline}
 
 \begin{document}
 
-\title{Beamtime report}
+\title{The experiment plan for the beamtime {{bt}}}
 \author{Songsheng Tao}
 \affiliation{Department of Applied Physics and Applied Mathematics, Columbia University, New York, NY 10027}
 \author{Simon J. L. Billinge}
