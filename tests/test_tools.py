@@ -653,9 +653,10 @@ def test_is_fully_loaded(appts, expected):
 def test_group():
     doc0 = {"k0": "v00", "k1": "v01"}
     doc1 = {"k0": "v10", "k1": "v11"}
-    db = (doc for doc in (doc0, doc1))
+    doc2 = {"k0": "v00", "k1": "v21"}
+    db = (doc for doc in (doc0, doc1, doc2))
     by = "k0"
-    expect = {"v00": [doc0], "v10": [doc1]}
+    expect = {"v00": [doc0, doc2], "v10": [doc1]}
     assert group(db, by) == expect
 
 ppl_coll = [
