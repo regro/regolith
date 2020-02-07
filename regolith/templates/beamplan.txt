@@ -28,7 +28,7 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 
 {{plan["objective"]}}
 
-\textb{Samples}
+\textbf{Samples}
 
 {{plan["samples"]}}
 
