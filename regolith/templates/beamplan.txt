@@ -32,8 +32,8 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 
 {{plan["samples"]}}
 
-\textbf{Preparation}
 {% if len(plan["prep_plan"]) > 0 %}
+\textbf{Preparation}
 \begin{enumerate}
 {%- for step in plan["prep_plan"]%}
 \item {{step-}}
@@ -41,8 +41,8 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 \end{enumerate}
 {% endif %}
 
-\textbf{Shipment}
 {% if len(plan["ship_plan"]) > 0 %}
+\textbf{Shipment}
 \begin{enumerate}
 {%- for step in plan["ship_plan"]%}
 \item {{step-}}
@@ -50,8 +50,8 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 \end{enumerate}
 {% endif %}
 
-\textbf{Measurement}
 {% if len(plan["exp_plan"]) > 0 %}
+\textbf{Measurement}
 \begin{enumerate}
 {%- for step in plan["exp_plan"]%}
 \item {{step-}}
@@ -59,8 +59,8 @@ Condensed Matter Physics and Materials Science Department, Brookhaven National L
 \end{enumerate}
 {% endif %}
 
-\textbf{To do before the beamtime}
 {% if len(plan["todo_list"]) > 0 %}
+\textbf{To do before the beamtime}
 \begin{enumerate}
 {%- for step in plan["todo_list"]%}
 \item {{step-}}
