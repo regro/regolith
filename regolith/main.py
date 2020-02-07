@@ -169,6 +169,14 @@ def create_parser():
              "the build will be for only those people",
         default=None,
     )
+    bldp.add_argument(
+        "--beamtime",
+        nargs='+',
+        dest="beamtime",
+        help="specify a beamtime or a space-separated list of beamtimes such that "
+             "the build will be for only those beamtimes",
+        default=None,
+    )
 
     # deploy subparser
     depp = subp.add_parser(
