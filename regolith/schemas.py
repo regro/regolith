@@ -452,7 +452,7 @@ EXEMPLARS = {
         "position": "professor",
         "research_focus_areas": [
             {"begin_year": 2010, "description": "software applied to nuclear "
-                                                "engineering and life" }
+                                                "engineering and life"}
         ],
         "skills": [
             {"category": "Programming Languages", "level": "expert",
@@ -717,7 +717,7 @@ EXEMPLARS = {
                 "narrative": "http://some.com/pdf",
                 "year": 1998,
             },
-      "status": "submitted",
+            "status": "submitted",
             "title": "A very fine proposal indeed",
             "year": 1999,
         },
@@ -820,6 +820,30 @@ EXEMPLARS = {
         "project": "Cyclus",
         "overall_purpose": "testing the database",
     },
+    "beamplan": {
+        '_id': "test",
+        'beamtime': 'test',
+        'begin_date': '2020-02-14',
+        'container': '',
+        'devices': ['cryostream'],
+        'end_date': '2020-02-17',
+        'exp_plan': ['load samples on the holder',
+                     'scan the holder to locate the samples',
+                     'take room temperature measurement of sample and the subtrate',
+                     'ramp down temperature to 100K',
+                     'ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure'],
+        'holder': 'film holder (1 cm * 1 cm * 1 mm)',
+        'measurement': 'Tramp',
+        'objective': 'temperature ramping PDF of one WO3 film (100, 300K, 10K)',
+        'pipeline': 'usual',
+        'prep_plan': ['films will be made by kriti'],
+        'project': '20ks_wo3',
+        'project_lead': 'kseth',
+        'samples': ['WO3 film', 'glass subtrate'],
+        'scanplan': 'Tramp',
+        'ship_plan': ['seal and ship to CU', 'carry to the beamline'],
+        'time': 190,
+        'todo': []}
 }
 
 SCHEMAS = {
@@ -967,7 +991,7 @@ SCHEMAS = {
     },
     "contacts": {
         "_description": {"description": "a lighter version of people.  Fewer required fields"
-                         "for capturing people who are less tightly coupled"
+                                        "for capturing people who are less tightly coupled"
                          },
         "_id": {
             "description": "id of the person, e.g., first letter first name "
@@ -1370,7 +1394,7 @@ SCHEMAS = {
                 "type": "dict",
                 "schema": {
                     "begin_day": {"required": False,
-                                    "type": "integer"},
+                                  "type": "integer"},
                     "begin_month": {"required": False,
                                     "anyof_type": ["string", "integer"],
                                     },
@@ -1388,7 +1412,7 @@ SCHEMAS = {
                                        "a group in groups coll",
                     },
                     "end_day": {"required": False,
-                                    "type": "integer"},
+                                "type": "integer"},
                     "end_month": {"required": False,
                                   "anyof_type": ["string", "integer"],
                                   },
@@ -2000,7 +2024,7 @@ SCHEMAS = {
             "schema": {
                 "cppflag": {"required": False, "type": "boolean"},
                 "other_agencies_submitted": {"required": False,
-                                             "anyof_type": ["string","boolean"]},
+                                             "anyof_type": ["string", "boolean"]},
                 "institution": {"required": False, "type": "string",
                                 "description": "place where the proposed grant will be located"},
                 "person_months_academic": {"required": False,
