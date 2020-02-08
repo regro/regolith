@@ -18,7 +18,8 @@ builder_map = [
     "current-pending",
     "preslist",
     "reimb",
-    "figure"
+    "figure",
+    "beamplan"
 ]
 
 xls_check = ("B17", "B20", "B36")
