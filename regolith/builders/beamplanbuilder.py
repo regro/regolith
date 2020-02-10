@@ -80,6 +80,7 @@ class BeamPlanBuilder(LatexBuilderBase):
             plans.append(plan)
         # make a latex tabular
         df = pd.DataFrame(rows)
+        # TODO: convert the unit of time to hour
         table = df.to_latex(escape=True, index=False)
         info = {"plans": plans, "table": table}
         return info
@@ -93,4 +94,5 @@ class BeamPlanBuilder(LatexBuilderBase):
             info = self._gather_info(plans)
             info["bt"] = bt
             self.render("beamplan.tex", "{}.tex".format(bt), **info)
+            # TODO: add a txt file template
         return
