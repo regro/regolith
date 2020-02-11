@@ -108,6 +108,8 @@
   {{pub.get('volume', '')}}
     {% if pub['pages'] %}}
   {{'p. ' + pub['pages'] if 'pages' in pub else ''}}
+    {% else %}
+  {{''}}
     {% endif %}
   {{pub.get('address', '')}}
   {% if 'month' in pub and 'year' in pub %}
