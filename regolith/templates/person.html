@@ -106,7 +106,9 @@
   {{pub.get('journal', '')}}
   {{pub.get('booktitle', '')}}.
   {{pub.get('volume', '')}}
+    {% if pub['pages'] %}}
   {{'p. ' + pub['pages'] if 'pages' in pub else ''}}
+    {% endif %}
   {{pub.get('address', '')}}
   {% if 'month' in pub and 'year' in pub %}
     {{pub['month'].capitalize()}} {{pub['year']}}
