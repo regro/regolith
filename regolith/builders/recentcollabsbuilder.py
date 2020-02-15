@@ -60,6 +60,10 @@ class RecentCollabsBuilder(LatexBuilderBase):
                         if not pub.get("month"):
                             print("WARNING: {} is missing month".format(
                                 pub["_id"]))
+                        if pub.get("month") == "tbd".casefold():
+                            print("WARNING: month in {} is tbd".format(
+                                pub["_id"]))
+
                         my_collabs.extend([collabs for collabs in
                                            [names for names in
                                             pub.get('author', [])]])
