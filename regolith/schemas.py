@@ -1274,7 +1274,7 @@ SCHEMAS = {
             "required": False,
             "type": "dict",
             # Allow unkown department names, but check their content
-            "valueschema": {
+            "valuesrules": {
                 "type": "dict",
                 "schema": {
                     "name": {
@@ -1297,7 +1297,7 @@ SCHEMAS = {
                            "organizations",
             "required": False,
             "type": "dict",
-            "valueschema": {
+            "valuesrules": {
                 "type": "dict",
                 "schema": {
                     "name": {
