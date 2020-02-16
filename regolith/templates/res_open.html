@@ -1,0 +1,9 @@
+<ul>{%for job in jobs%}
+  {%if job['open'] and job['research'] == 'undergrad_masters' %}
+  <l>Und
+  <li><a href="{{root}}/jobs/{{job['_id']}}.html"><b>{{job['title']}}</b>, 
+    opened on <i>{{job['month']}} {{job['day']}}, {{job['year']}}</i>. 
+    (#{{job['_id']}})</a>
+  </li>
+{%endif%}
+{%endfor%}</ul>
