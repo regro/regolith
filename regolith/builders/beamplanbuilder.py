@@ -53,6 +53,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         """
         rows = []
         plans = []
+        # TODO: get the date of beamtime form beamtime.yml
         docs = sorted(docs, key=lambda d: d.get("devices"))
         for n, doc in enumerate(docs):
             # gather information of the table
@@ -93,6 +94,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         for bt, plans in grouped.items():
             info = self._gather_info(plans)
             info["bt"] = bt
+            # TODO: make the a task list and add date of beamtime in title
             self.render("beamplan.tex", "{}.tex".format(bt), **info)
             # TODO: add a txt file template
         return
