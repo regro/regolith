@@ -53,7 +53,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         """
         rows = []
         plans = []
-        docs = sorted(docs, key=lambda d: d.get("project_lead"))
+        docs = sorted(docs, key=lambda d: d.get("devices"))
         for n, doc in enumerate(docs):
             # gather information of the table
             row = {
