@@ -23,7 +23,7 @@ LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
 class RecentCollabsBuilder(LatexBuilderBase):
     btype = "recent-collabs"
-    needed_dbs = ['citations','people','contacts','institutions']
+    needed_dbs = ['citations', 'people', 'contacts', 'institutions']
 
     def construct_global_ctx(self):
         super().construct_global_ctx()
@@ -48,7 +48,11 @@ class RecentCollabsBuilder(LatexBuilderBase):
     def latex(self):
         rc = self.rc
         since_date = dt.date.today() - relativedelta(months=48)
-        person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"), ['aka', 'name', '_id'], self.rc.people, case_sensitive = False)
+        if isinstance(self.rc.people, str):
+            self.rc.people = [self.rc.people]
+        person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"),
+                                 ['aka', 'name', '_id'], self.rc.people[0],
+                                 case_sensitive=False)
         if not person:
             sys.exit("please rerun specifying --people PERSON")
         for p in self.gtx["people"]:
@@ -73,13 +77,13 @@ class RecentCollabsBuilder(LatexBuilderBase):
                 people, institutions = [], []
                 for collab in my_collabs:
                     person = fuzzy_retrieval(all_docs_from_collection(
-                            rc.client, "people"),
-                                             ["name", "aka", "_id"],
-                                             collab)
+                        rc.client, "people"),
+                        ["name", "aka", "_id"],
+                        collab)
                     if not person:
                         person = fuzzy_retrieval(all_docs_from_collection(
                             rc.client, "contacts"),
-                                                 ["name", "aka", "_id"], collab)
+                            ["name", "aka", "_id"], collab)
                         if not person:
                             print(
                                 "WARNING: {} not found in contacts. Check aka".format(
@@ -87,9 +91,9 @@ class RecentCollabsBuilder(LatexBuilderBase):
                         else:
                             people.append(person)
                             inst = fuzzy_retrieval(all_docs_from_collection(
-                            rc.client, "institutions"),
-                                                   ["name", "aka", "_id"],
-                                                   person["institution"])
+                                rc.client, "institutions"),
+                                ["name", "aka", "_id"],
+                                person["institution"])
                             if inst:
                                 institutions.append(inst["name"])
                             else:
@@ -101,11 +105,11 @@ class RecentCollabsBuilder(LatexBuilderBase):
                     else:
                         people.append(person)
                         pinst = person.get("employment",
-                                                [{"organization": "missing"}])[
-                                                   0]["organization"]
+                                           [{"organization": "missing"}])[
+                            0]["organization"]
                         inst = fuzzy_retrieval(all_docs_from_collection(
                             rc.client, "institutions"), ["name", "aka", "_id"],
-                                               pinst)
+                            pinst)
                         if inst:
                             institutions.append(inst["name"])
                         else:
