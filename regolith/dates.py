@@ -106,7 +106,7 @@ def find_gaps_overlaps(dateslist, overlaps_ok=False):
             status = False
     return status
 
-def beg_end_dates(thing):
+def begin_end_dates(thing):
     bd = thing.get('begin_day')
     bm = thing.get('begin_month')
     by = thing.get('begin_year')
@@ -116,4 +116,3 @@ def beg_end_dates(thing):
     begin_date = datetime.date(by, month_to_int(bm), bd)
     end_date = datetime.date(ey, month_to_int(em), ed)
     return begin_date, end_date
-
