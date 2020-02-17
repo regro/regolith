@@ -15,7 +15,7 @@ from regolith.sorters import doc_date_key, ene_date_key, position_key
 from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
-
+BEAMLINE = "aps"
 
 class PubListBuilder(LatexBuilderBase):
     btype = "publist"
@@ -54,21 +54,29 @@ class PubListBuilder(LatexBuilderBase):
             bm = int(to_date.split("-")[1])
             bd = int(to_date.split("-")[2])
         if self.rc.grants:
-            gr = True
-            grants = self.rc.grants
-            if isinstance(grants, str):
-                grants = [grants]
-            if len(grants) > 2:
-                text_grants = ", and ".join([",".join(grants[:-1]), grants[-1]])
-            elif len(grants) == 2:
-                text_grants = "and ".join([",".join(grants[0]), grants[1]])
-            elif len(grants) == 1:
-                text_grants = grants[0]
-            cat_grants, all_grants = "", ""
-            for g in grants:
-                cat_grants = cat_grants + "_" + g
-            filestub = filestub + "".format(cat_grants)
-            qualifiers = qualifiers + " from grants {}".format(text_grants)
+            # fixme
+            if BEAMLINE not in self.rc.grants:
+                gr = True
+                grants = self.rc.grants
+                if isinstance(grants, str):
+                    grants = [grants]
+                if len(grants) > 2:
+                    text_grants = ", and ".join([",".join(grants[:-1]), grants[-1]])
+                elif len(grants) == 2:
+                    text_grants = "and ".join([",".join(grants[0]), grants[1]])
+                elif len(grants) == 1:
+                    text_grants = grants[0]
+                cat_grants, all_grants = "", ""
+                for g in grants:
+                    cat_grants = cat_grants + "_" + g
+                filestub = filestub + "".format(cat_grants)
+                qualifiers = qualifiers + " from grants {}".format(text_grants)
+            # fixme
+        if BEAMLINE in self.rc.grants:
+            fac = True
+            facility = self.rc.grants[0]
+            filestub = filestub + "_{}".format(facility)
+            qualifiers = qualifiers + " from facility {}".format(facility)
 
         for p in self.gtx["people"]:
             outfile = p["_id"] + filestub
@@ -83,6 +91,10 @@ class PubListBuilder(LatexBuilderBase):
             if gr:
                 gpubs = self.filter_pubs_by_grant(pubs, grants)
                 pubs = gpubs
+
+            if fac:
+                fpubs = self.filter_pubs_by_facility(pubs, facility)
+                pubs = fpubs
 
             bibfile = self.make_bibtex_file(
                 pubs, pid=p["_id"], person_dir=self.bldir
@@ -139,6 +151,13 @@ class PubListBuilder(LatexBuilderBase):
             for grant in grants:
                 if grant in pub.get("grant",""):
                     filtered_pubs.append(pub)
+        return filtered_pubs
+
+    def filter_pubs_by_facility(self, pubs, facility):
+        filtered_pubs = []
+        for pub in pubs:
+            if facility in pub.get("facility", ""):
+                filtered_pubs.append(pub)
         return filtered_pubs
 
     def make_bibtex_file(self, pubs, pid, person_dir="."):
