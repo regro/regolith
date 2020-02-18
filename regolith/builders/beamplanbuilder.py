@@ -130,6 +130,5 @@ class BeamPlanBuilder(LatexBuilderBase):
         for bt, plans in grouped.items():
             info = self._gather_info(bt, plans)
             info["bt"] = bt
-            # TODO: make the a task list and add date of beamtime in title
             self.render("beamplan.tex", "{}.tex".format(bt), **info)
         return
