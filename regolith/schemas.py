@@ -822,11 +822,9 @@ EXEMPLARS = {
     },
     "beamplan": {
         '_id': "test",
-        'beamtime': 'test',
-        'begin_date': '2020-02-14',
+        'beamtime': '2020-1-XPD',
         'container': '',
         'devices': ['cryostream'],
-        'end_date': '2020-02-17',
         'exp_plan': ['load samples on the holder',
                      'scan the holder to locate the samples',
                      'take room temperature measurement of sample and the subtrate',
@@ -843,7 +841,12 @@ EXEMPLARS = {
         'scanplan': 'Tramp',
         'ship_plan': ['seal and ship to CU', 'carry to the beamline'],
         'time': 190,
-        'todo': []}
+        'todo': []},
+    "beamtime": {
+        "_id": "test",
+        "begin_date": "2020-02-14",
+        "end_date": "2020-02-17"
+    }
 }
 
 SCHEMAS = {
