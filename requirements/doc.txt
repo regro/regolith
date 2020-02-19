@@ -1,4 +1,4 @@
-sphinx
+sphinx=2.3.1
 cloud_sptheme
 ruamel.yaml
 flask

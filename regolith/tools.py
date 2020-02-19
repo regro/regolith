@@ -658,8 +658,9 @@ def dereference_institution(input_record, institutions):
     """
     inst = input_record.get("institution") or input_record.get("organization")
     if not inst:
-        print("WARNING: no institution or organization found in {}".format(
-            input_record["_id"]))
+        error = input_record.get("position") or input_record.get("degree")
+        print("WARNING: no institution or organization but found {}".format(
+            error))
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if db_inst:
         input_record["institution"] = db_inst["name"]
@@ -672,7 +673,7 @@ def dereference_institution(input_record, institutions):
                                                    state_country)
         if not db_inst.get("departments"):
             print("WARNING: no departments in {}. {} sought".format(
-                db_inst["_id"], inst))
+                db_inst.get("_id"), inst))
         if "department" in input_record and db_inst.get("departments"):
             input_record["department"] = fuzzy_retrieval(
                 [db_inst["departments"]], ["name", "aka"],
