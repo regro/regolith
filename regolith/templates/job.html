@@ -14,7 +14,7 @@ This job is open for the following positions:
 {%endfor-%}</ul>
 {%-if len(job['compensation']) == 1%}
   <p>{{job['compensation'][0]}}</p>
-{-%else%}
+{%else%}
   <ul>{%for comp in job['compensation']%}
     <li>{{comp}}</li>
   {%-endfor%}</ul>
