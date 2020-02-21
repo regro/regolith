@@ -12,7 +12,7 @@ from regolith.builders.reimbursementbuilder import ReimbursementBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
 from regolith.builders.cpbuilder import CPBuilder
 from regolith.builders.figurebuilder import FigureBuilder
-from regolith.builders.recentcollabsbuilder import RecentCollabsBuilder
+from regolith.builders.coabuilder import RecentCollaboratorsBuilder
 
 
 BUILDERS = {
@@ -29,7 +29,7 @@ BUILDERS = {
     "preslist": PresListBuilder,
     "reimb": ReimbursementBuilder,
     "figure": FigureBuilder,
-    "recent-collabs": RecentCollabsBuilder,
+    "recent-collabs": RecentCollaboratorsBuilder,
 }
 
 
