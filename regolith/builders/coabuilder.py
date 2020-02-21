@@ -13,9 +13,9 @@ from regolith.tools import all_docs_from_collection, filter_publications, \
 from copy import copy
 from dateutil.relativedelta import relativedelta
 from operator import itemgetter
-from openpyxl.worksheet.datavalidation import DataValidation
 
 
+NUM_MONTHS = 48
 
 def mdy_date(month, day, year, **kwargs):
     if isinstance(month, str):
@@ -65,7 +65,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
     def excel(self):
         rc = self.rc
         gtx = self.gtx
-        since_date = dt.date.today() - relativedelta(months=48)
+        since_date = dt.date.today() - relativedelta(months=NUM_MONTHS)
         if isinstance(self.rc.people, str):
             self.rc.people = [self.rc.people]
         person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"),
