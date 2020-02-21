@@ -12,6 +12,8 @@ from regolith.tools import all_docs_from_collection, filter_publications, \
     month_and_year, fuzzy_retrieval, is_since
 from copy import copy
 from dateutil.relativedelta import relativedelta
+from operator import itemgetter
+from openpyxl.worksheet.datavalidation import DataValidation
 
 
 
@@ -136,8 +138,19 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 ppl_names = [(person["name"], i) for
                              person, i in zip(people, institutions) if
                              person]
+                ppl = []
+                # reformatting the name in last name, first name
+                for idx in range(len(ppl_names)):
+                    names = ppl_names[idx][0].split()
+                    last_name = names[-1]
+                    first_name = ' '.join(names[:-1])
+                    name_reformatted = ', '.join([last_name, first_name])
+                    ppl.append((name_reformatted, ppl_names[idx][1]))
+                ppl = list(set(ppl))
+                # sorting the ppl list
+                ppl_sorted = sorted(ppl, key=itemgetter(0))
                 #                print(set([person["name"] for person in people if person]))
-                print(set([person for person in ppl_names]))
+                #print(set([person for person in ppl_names]))
             emp = p.get("employment", [{"organization": "missing",
                                         "begin_year": 2019}])
             emp.sort(key=ene_date_key, reverse=True)
@@ -148,9 +161,10 @@ class RecentCollaboratorsBuilder(BuilderBase):
             cell.fill = style["fill"]
             cell.alignment = style["alignment"]
         template = self.template
-        num_rows = len(ppl_names)  # number of rows to add to the excel file
+        num_rows = len(ppl)  # number of rows to add to the excel file
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
+        ws.delete_rows(52, amount=3) # removing the example rows
         ws.move_range("A52:E66", rows=num_rows, cols=0, translate=True)
         style_ref_cell = ws["B51"]
         template_cell_style = {}
@@ -166,8 +180,8 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 pass
             for idx in range(len(col_idx)):
                 apply_cell_style(ws["{}{}".format(col_idx[idx], row + 51)], template_cell_style)
-            ws["A{}".format(row + 51)].value = "A"
-            ws["B{}".format(row + 51)].value = ppl_names[row - 1][0]
-            ws["C{}".format((row + 51))].value = ppl_names[row - 1][1]
+            ws["A{}".format(row + 51)].value = "A:"
+            ws["B{}".format(row + 51)].value = ppl_sorted[row - 1][0]
+            ws["C{}".format((row + 51))].value = ppl_sorted[row - 1][1]
         ws.delete_rows(51)  # deleting the reference row
         wb.save(os.path.join(self.bldir, "coa_table.xlsx"))
