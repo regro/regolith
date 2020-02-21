@@ -49,6 +49,11 @@ def test_builder(bm, make_db):
         prep_figure()
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)
+    if bm == "reimb":
+        cla = ["--people", "scopatz"]
+        main(["build", bm, "--no-pdf", cla[0], cla[1]])
+    else:
+        main(["build", bm, cla])
     subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo )
     os.chdir(os.path.join(repo, "_build", bm))
     expected_base = os.path.join(os.path.dirname(__file__), "outputs")
@@ -85,11 +90,16 @@ def test_builder(bm, make_db):
 def test_builder_python(bm, make_db):
     repo = make_db
     os.chdir(repo)
+    cla = "--no-pdf"
     if bm == "figure":
         prep_figure()
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)
-    main(["build", bm, "--no-pdf"])
+    if bm == "reimb":
+        cla = ["--people", "scopatz"]
+        main(["build", bm, "--no-pdf", cla[0], cla[1]])
+    else:
+        main(["build", bm, cla])
     os.chdir(os.path.join(repo, "_build", bm))
     expected_base = os.path.join(os.path.dirname(__file__), "outputs")
     for root, dirs, files in os.walk("."):

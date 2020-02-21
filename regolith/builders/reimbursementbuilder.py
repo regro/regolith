@@ -9,7 +9,8 @@ import openpyxl
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import month_to_int
 from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, month_and_year, fuzzy_retrieval
+from regolith.tools import all_docs_from_collection, month_and_year, \
+    fuzzy_retrieval
 
 
 def mdy_date(month, day, year, **kwargs):
@@ -34,7 +35,8 @@ class ReimbursementBuilder(BuilderBase):
         super().__init__(rc)
         # TODO: templates for other universities?
         self.template = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), "templates", "reimb.xlsx"
+            os.path.dirname(os.path.dirname(__file__)), "templates",
+            "reimb.xlsx"
         )
         self.cmds = ["excel"]
 
@@ -43,10 +45,11 @@ class ReimbursementBuilder(BuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
+        # openpyxl is soooo slow, so only allow it to be run when a person
+        # (or people list) is specified
         if not rc.people:
             sys.exit("Please rerun specifying --people and a person or list of "
                      "people")
-
         gtx["month_and_year"] = month_and_year
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
@@ -60,7 +63,7 @@ class ReimbursementBuilder(BuilderBase):
     def excel(self):
         gtx = self.gtx
         rc = self.rc
-        if isinstance(rc.people,str):
+        if isinstance(rc.people, str):
             rc.people == [rc.people]
         for ex in gtx["expenses"]:
             payee = fuzzy_retrieval(
@@ -79,14 +82,16 @@ class ReimbursementBuilder(BuilderBase):
                         grant_fractions = [1.0]
                     else:
                         grant_fractions = [
-                            float(percent) / 100.0 for percent in ex["grant_percentages"]
+                            float(percent) / 100.0 for percent in
+                            ex["grant_percentages"]
                         ]
 
                     wb = openpyxl.load_workbook(self.template)
                     ws = wb["T&B"]
 
                     grants = [
-                        fuzzy_retrieval(gtx["grants"], ["alias", "name", "_id"], grant)
+                        fuzzy_retrieval(gtx["grants"], ["alias", "name", "_id"],
+                                        grant)
                         for grant in ex["grants"]
                     ]
                     ha = payee["home_address"]
@@ -115,7 +120,8 @@ class ReimbursementBuilder(BuilderBase):
                         dates.append(mdy_date(**item))
                         item_ws.cell(row=r, column=2, value=i)
                         item_ws.cell(row=r, column=3, value=mdy(**item))
-                        item_ws.cell(row=r, column=purpose_column, value=item["purpose"])
+                        item_ws.cell(row=r, column=purpose_column,
+                                     value=item["purpose"])
                         item_ws.cell(
                             row=r,
                             column=ue_column,
@@ -129,22 +135,26 @@ class ReimbursementBuilder(BuilderBase):
                                       "tbd".format(ex["_id"]))
                                 item["unsegregated_expense"] = 0
                             else:
-                                sys.exit("ERROR: unsegregated expense in {} is not "
-                                     "a number".format(ex["_id"]))
+                                sys.exit(
+                                    "ERROR: unsegregated expense in {} is not "
+                                    "a number".format(ex["_id"]))
 
                         item_ws.cell(
-                            row=r, column=se_column, value=item.get("segregated_expense", 0)
+                            row=r, column=se_column,
+                            value=item.get("segregated_expense", 0)
                         )
 
                     i = 0
                     if (
-                        abs(
-                            sum([fraction * total_amount for fraction in grant_fractions])
-                            - total_amount
-                        )
-                        >= 0.01
+                            abs(
+                                sum([fraction * total_amount for fraction in
+                                     grant_fractions])
+                                - total_amount
+                            )
+                            >= 0.01
                     ):
-                        raise RuntimeError("grant percentages do not sum to 100")
+                        raise RuntimeError(
+                            "grant percentages do not sum to 100")
                     for grant, fraction in zip(grants, grant_fractions):
                         nr = grant.get("account", "")
                         row = 55 + i
@@ -161,10 +171,12 @@ class ReimbursementBuilder(BuilderBase):
 
                     ws[spots[0]] = "X"
                     ws[spots[1]] = mdy(
-                        **{k: getattr(min(dates), k) for k in ["month", "day", "year"]}
+                        **{k: getattr(min(dates), k) for k in
+                           ["month", "day", "year"]}
                     )
                     ws[spots[2]] = mdy(
-                        **{k: getattr(max(dates), k) for k in ["month", "day", "year"]}
+                        **{k: getattr(max(dates), k) for k in
+                           ["month", "day", "year"]}
                     )
 
                     wb.save(os.path.join(self.bldir, ex["_id"] + ".xlsx"))
