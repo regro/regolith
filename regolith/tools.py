@@ -245,7 +245,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     return grants, total_amount, subaward_amount
 
 
-def filter_employment_for_advisees(people, begin_period, status):
+def filter_employment_for_advisees(people, begin_period, status, active=False):
     advisees = []
     for p in people:
         for i in p.get("employment", []):
@@ -261,7 +261,9 @@ def filter_employment_for_advisees(people, begin_period, status):
                     p['role'] = i.get("position")
                     p['status'] = status
                     p['end_year'] = i.get("end_year", "n/a")
+                    p['position'] = i.get("position")
                     advisees.append(p)
+                    advisees.sort(key=lambda x: x['end_year'], reverse=True)
     return advisees
 
 
@@ -275,12 +277,15 @@ def filter_service(ppl, begin_period, type, verbose=False):
             if i.get("type") == type:
                 if i.get('year'):
                     end_year = i.get('year')
+                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]),end_year))
                 elif i.get('end_year'):
                     end_year = i.get('end_year')
+                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]),end_year))
                 else:
                     end_year = date.today().year
-                end_date = date(end_year,
-                                i.get("end_month", 12),
+                    if verbose: print("no end_year, using today = {}".format(end_year))
+                end_date = date(int(end_year),
+                                month_to_int(i.get("end_month", 12)),
                                 i.get("end_day", 28))
                 if end_date >= begin_period:
                     if not i.get('month'):
@@ -602,7 +607,7 @@ def filter_presentations(people, presentations, institutions, types=["all"],
         ]
         authorlist = ", ".join(pres["authors"])
         pres["authors"] = authorlist
-        pres["begin_month"] = int(pres["begin_month"])
+        pres["begin_month"] = month_to_int(pres["begin_month"])
         pres["date"] = date(
             pres["begin_year"],
             pres["begin_month"],
