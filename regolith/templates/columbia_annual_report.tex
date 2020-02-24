@@ -618,7 +618,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
 {% else %}
     \begin{itemize}[label=$-$]
     {% for ugr in visitors %}
-        \item   {{latex_safe(ugr['name'])-}}  \\
+        \item   {{latex_safe(ugr['name'])-}}\textemdash {{ugr['position']}}  \\
     {%endfor%}
     \end{itemize}
 {% endif %}

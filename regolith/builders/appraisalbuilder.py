@@ -8,7 +8,6 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.dates import month_to_int
 from regolith.sorters import position_key, doc_date_key
-from regolith.builders.cpbuilder import is_current
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
     all_docs_from_collection,
@@ -25,9 +24,10 @@ from regolith.tools import (
     awards,
     filter_patents,
     filter_licenses,
-    merge_collections)
+    merge_collections,
+    is_current)
 
-BEGIN_YEAR = 2018
+BEGIN_YEAR = 2019
 BEGIN_MONTH = 4
 PERSON = "sbillinge"
 
@@ -38,6 +38,9 @@ class AppraisalBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
     btype = "ann-appraisal"
+    needed_dbs = ['groups', 'people', 'grants', 'proposals', 'institutions',
+                  'projects', 'presentations', 'patents']
+
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -112,6 +115,9 @@ class AppraisalBuilder(LatexBuilderBase):
                 )
                 if rperson:
                     person["name"] = rperson["name"]
+            if g.get('budget'):
+                amounts = [i.get('amount') for i in g.get('budget')]
+                g['subaward_amount'] = sum(amounts)
 
         current_grants = [
             dict(g)
@@ -120,12 +126,12 @@ class AppraisalBuilder(LatexBuilderBase):
                 *[
                     g.get(s, 1)
                     for s in [
-                        "begin_day",
-                        "begin_month",
                         "begin_year",
-                        "end_day",
-                        "end_month",
                         "end_year",
+                        "begin_month",
+                        "begin_day",
+                        "end_month",
+                        "end_day",
                     ]
                 ]
             )
@@ -189,18 +195,22 @@ class AppraisalBuilder(LatexBuilderBase):
                                                   "phd")
         graduateds = filter_employment_for_advisees(self.gtx["people"],
                                                     begin_period.replace(
-                                                        year=end_year - 5),
+                                                        year=begin_year - 5),
                                                     "phd")
         postdocs = filter_employment_for_advisees(self.gtx["people"],
                                                   begin_period,
                                                   "postdoc")
         visitors = filter_employment_for_advisees(self.gtx["people"],
                                                   begin_period,
-                                                  "visitor")
+                                                  "visitor-unsupported")
         iter = deepcopy(graduateds)
         for g in iter:
             if g.get("active"):
                 graduateds.remove(g)
+        iter = deepcopy(currents)
+        for g in iter:
+            if not g.get("active"):
+                currents.remove(g)
 
         ######################
         # service
