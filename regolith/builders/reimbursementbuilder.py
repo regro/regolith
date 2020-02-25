@@ -135,8 +135,8 @@ class ReimbursementBuilder(BuilderBase):
                                       "tbd".format(ex["_id"]))
                                 item["unsegregated_expense"] = 0
                             else:
-                                sys.exit(
-                                    "ERROR: unsegregated expense in {} is not "
+                                raise TypeError(
+                                    "unsegregated expense in {} is not "
                                     "a number".format(ex["_id"]))
 
                         item_ws.cell(
