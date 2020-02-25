@@ -2,7 +2,6 @@
 
 import datetime
 import os
-import sys
 
 import openpyxl
 
@@ -48,8 +47,9 @@ class ReimbursementBuilder(BuilderBase):
         # openpyxl is soooo slow, so only allow it to be run when a person
         # (or people list) is specified
         if not rc.people:
-            sys.exit("Please rerun specifying --people and a person or list of "
-                     "people")
+            raise ValueError("Missing person for the reimbursement.  Please "
+                             "rerun specifying --people and a person or list "
+                             "of people")
         gtx["month_and_year"] = month_and_year
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
