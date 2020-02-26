@@ -841,11 +841,13 @@ EXEMPLARS = {
         'scanplan': 'Tramp',
         'ship_plan': ['seal and ship to CU', 'carry to the beamline'],
         'time': 190,
-        'todo': []},
+        'todo': ["todo something"]},
     "beamtime": {
         "_id": "test",
         "begin_date": "2020-02-14",
-        "end_date": "2020-02-17"
+        "begin_time": "8:00 am",
+        "end_date": "2020-02-17",
+        "end_time": "8:00 am"
     }
 }
 
