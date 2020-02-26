@@ -841,7 +841,7 @@ EXEMPLARS = {
         'scanplan': 'Tramp',
         'ship_plan': ['seal and ship to CU', 'carry to the beamline'],
         'time': 190,
-        'todo': ["do something"]},
+        'todo': ["todo something"]},
     "beamtime": {
         "_id": "2020-1-XPD",
         "begin_date": "2020-02-14",

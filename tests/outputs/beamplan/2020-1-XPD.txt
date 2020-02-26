@@ -12,7 +12,7 @@ Summary
 0         1          kseth                 2       Tramp  cryostream                3.2
 
 Tasks before the beamtime:
-- (Exp. 1) do something
+- (Exp. 1) todo something
 
 Experiment 1
 ------------
