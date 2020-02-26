@@ -129,6 +129,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         grouped = group(db, "beamtime")
         for bt, plans in grouped.items():
             info = self._gather_info(bt, plans)
-            info["bt"] = bt
-            self.render("beamplan.tex", "{}.tex".format(bt), **info)
+            base_name = info["bt"] = bt
+            self.render("beamplan.tex", "{}.tex".format(base_name), **info)
+            self.pdf(base_name)
         return
