@@ -36,6 +36,8 @@ class BeamPlanBuilder(LatexBuilderBase):
     @staticmethod
     def _to_readable(date):
         """Convert the string date to a human readable form."""
+        if date is None:
+            return "missing"
         date_obj = datetime.strptime(date, "%Y-%m-%d")
         readable_date = date_obj.strftime("%d, %b %Y")
         return readable_date
@@ -64,8 +66,10 @@ class BeamPlanBuilder(LatexBuilderBase):
         -------
         info : dict
             The information obtained from the database and formatted. It contains the key value pairs:
-            table - The latex string of table.
-            plans - The list of experiment plans. Each experiment plan is a list of strings.
+            table - The latex string of table (used in tex file).
+            table_str - The string of the table (used in txt file).
+            tasks - The combination of todos in the plans.
+            plans - The list of experiment plans. Each item in a plan is a list of strings.
             begin_date - The beginning date of the beamtime.
             end_date - The end date of the beamtime.
             caption - caption of the table.
@@ -74,51 +78,59 @@ class BeamPlanBuilder(LatexBuilderBase):
         beamtime = self.gtx["beamtime"]
         bt_doc = self._search(beamtime, bt)
         if bt_doc:
-            begin_date = bt_doc.get("begin_date")
-            end_date = bt_doc.get("end_date")
+            begin_date = self._to_readable(bt_doc.get("begin_date"))
+            end_date = self._to_readable(bt_doc.get("end_date"))
+            begin_time = bt_doc.get("begin_time", "missing")
+            end_time = bt_doc.get("end_time", "missing")
         else:
-            begin_date = end_date = None
-        begin_date, end_date = map(lambda d: self._to_readable(d) if d else "missing", (begin_date, end_date))
+            begin_time = end_time = begin_date = end_date = "no doc"
         # get data from beamplan
         rows, plans, tasks = [], [], []
         docs = sorted(docs, key=lambda d: d.get("devices"))
         for n, doc in enumerate(docs):
             # gather information of the table
+            serial_id = str(n+1)
             row = {
-                "serial id": str(n + 1),
-                "project leader": doc.get("project_lead", "missing"),
+                "serial id": serial_id,
+                "project leader": doc.get("project_lead", ""),
                 "number of samples": str(len(doc.get("samples", []))),
-                "measurement": doc.get("measurement", "missing"),
-                "devices": ", ".join(doc.get("devices", ["missing"])),
+                "measurement": doc.get("measurement", ""),
+                "devices": ", ".join(doc.get("devices", [])),
                 "estimated time (h)": "{:.1f}".format(doc.get("time", 0) / 60)
             }
             rows.append(row)
             # gather information of the plan.
             plan = {
-                "serial_id": n + 1,
-                "samples": ', '.join(doc.get("samples", ["missing"])),
-                "objective": doc.get("objective", "missing"),
-                "prep_plan": doc.get("prep_plan", ["missing"]),
-                "ship_plan": doc.get("ship_plan", ["missing"]),
-                "exp_plan": doc.get("exp_plan", ["missing"])
+                "serial_id": serial_id,
+                "samples": ', '.join(doc.get("samples", [])),
+                "objective": doc.get("objective", ""),
+                "prep_plan": doc.get("prep_plan", []),
+                "ship_plan": doc.get("ship_plan", []),
+                "exp_plan": doc.get("exp_plan", [])
             }
             plans.append(plan)
-            todo_list = doc.get("todo", [])
+            # gather info of the task
+            todo_list = ["(Exp. {}) {}".format(serial_id, todo) for todo in doc.get("todo", [])]
             tasks += todo_list
-        # make a latex tabular
+        # make a pandas dataframe and calculate time and samples
         df = pd.DataFrame(rows)
-        total_time = df["estimated time (h)"].sum()
-        total_sample_num = df["number of samples"].sum()
-        caption = "Measurement of {} samples cost {} h in total.".format(total_sample_num, total_time)
-        table = df.to_latex(escape=True, index=False)
+        total_time = "{:.1f}".format(df["estimated time (h)"].astype(float).sum())
+        total_sample_num = "{:d}".format(df["number of samples"].astype(int).sum())
+        # convert to the string form
+        table_latex = df.to_latex(escape=True, index=False)
+        table_str = df.to_string()
         # make a dict
         info = {
-            "plans": plans,  # List[str]
-            "table": table,  # str
+            "plans": plans,  # List[dict]
+            "table": table_latex,  # str
+            "table_for_txt": table_str,  # str
             "tasks": tasks,  # List[str]
             "begin_date": begin_date,  # str
             "end_date": end_date,  # str
-            "caption": caption  # str
+            "begin_time": begin_time,  # str
+            "end_time": end_time,  # str
+            "total_time": total_time,  # str
+            "total_sample_num": total_sample_num  # str
         }
         return info
 
@@ -131,5 +143,6 @@ class BeamPlanBuilder(LatexBuilderBase):
             info = self._gather_info(bt, plans)
             base_name = info["bt"] = bt
             self.render("beamplan.tex", "{}.tex".format(base_name), **info)
+            self.render("beamplan.txt", "{}.txt".format(base_name), **info)
             self.pdf(base_name)
         return
