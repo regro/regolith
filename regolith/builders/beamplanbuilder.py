@@ -39,7 +39,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         if date is None:
             return "missing"
         date_obj = datetime.strptime(date, "%Y-%m-%d")
-        readable_date = date_obj.strftime("%d, %b %Y")
+        readable_date = date_obj.strftime("%b %d, %Y")
         return readable_date
 
     @staticmethod

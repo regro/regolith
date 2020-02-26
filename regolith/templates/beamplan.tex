@@ -6,19 +6,19 @@
 \newcommand{\bottomrule}{\hline\hline}
 
 \begin{document}
-\title{The experiment plan for the beamtime {{bt}} \\
-{{begin_date}} {{begin_time}} \\
-{{end_date}} {{end_time}}}
+\title{The experiment plan for the beamtime {{bt}}}
 \date{\today}
 \maketitle
 
 \section{Summary}
-\begin{table}[htpb]
-\caption{
-Summary of the experiment plans.
+The beamtime starts at {{begin_time}} on {{begin_date}} and ends at {{end_time}} on {{end_date}}.
 There are {{total_sample_num}} samples in total.
 The estimated experiment time is {{total_time}} hour.
-}
+The TABLE.~\ref{tab:exps} shows the summary of the experiment plans for this beamtime.
+
+\begin{table}[htpb]
+\caption{Summary of the experiment plans.}
+\label{tab:exps}
 \resizebox{\textwidth}{!}{
 {{table-}}
 }
