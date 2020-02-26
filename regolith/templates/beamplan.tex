@@ -6,48 +6,56 @@
 \newcommand{\bottomrule}{\hline\hline}
 
 \begin{document}
-\title{The experiment plan for the beamtime 2020-1-XPD \\ from 14, Feb 2020 to 17, Feb 2020}
+\title{The experiment plan for the beamtime {{bt}}}
 \date{\today}
 \maketitle
 
 \section{Summary}
 \begin{table}[htpb]
-\caption{The summary of experiment plans. Measurement of 2 samples cost 3.2 h in total.}
+\caption{The summary of experiment plans}
 \resizebox{\textwidth}{!}{
-\begin{tabular}{llllll}
-\toprule
-serial id & project leader & number of samples & measurement &     devices & estimated time (h) \\
-\midrule
-        1 &          kseth &                 2 &       Tramp &  cryostream &                3.2 \\
-\bottomrule
-\end{tabular}
+{{table-}}
 }
 \end{table}
 
-\section{Experiment details}
-\subsection{Experiment 1}
+\section{Details}
+{% for plan in plans %}
+\subsection{Experiment {{plan["serial_id"]}}}
 \subsubsection{Objective}
-
-temperature ramping PDF of one WO3 film (100, 300K, 10K)
-
+{{plan["objective"]}}
 \subsubsection{Samples}
-WO3 film, glass subtrate
-
+{{plan["samples"]}}
+{% if len(plan["prep_plan"]) > 0 -%}
 \subsubsection{Preparation}
 \begin{enumerate}
-\item films will be made by kriti
+{% for step in plan["prep_plan"] -%}
+\item {{step}}
+{% endfor -%}
 \end{enumerate}
+{% endif %}
+{% if len(plan["ship_plan"]) > 0 %}
 \subsubsection{Shipment}
 \begin{enumerate}
-\item seal and ship to CU
-\item carry to the beamline
+{% for step in plan["ship_plan"] %}
+\item {{step}}
+{% endfor -%}
 \end{enumerate}
+{% endif -%}
+{% if len(plan["exp_plan"]) > 0 %}
 \subsubsection{Measurement}
 \begin{enumerate}
-\item load samples on the holder
-\item scan the holder to locate the samples
-\item take room temperature measurement of sample and the subtrate
-\item ramp down temperature to 100K
-\item ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure
+{% for step in plan["exp_plan"] %}
+\item {{step}}
+{% endfor %}
 \end{enumerate}
+{% endif %}
+{% if len(plan["todo_list"]) > 0 %}
+\subsubsection{To do before the beamtime}
+\begin{enumerate}
+{% for step in plan["todo_list"] %}
+\item {{step}}
+{% endfor %}
+\end{enumerate}
+{% endif %}
+{% endfor %}
 \end{document}
