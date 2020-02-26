@@ -113,12 +113,12 @@ class BeamPlanBuilder(LatexBuilderBase):
         table = df.to_latex(escape=True, index=False)
         # make a dict
         info = {
-            "plans": plans,
-            "table": table,
-            "tasks": tasks,
-            "begin_date": begin_date,
-            "end_date": end_date,
-            "caption": caption
+            "plans": plans,  # List[str]
+            "table": table,  # str
+            "tasks": tasks,  # List[str]
+            "begin_date": begin_date,  # str
+            "end_date": end_date,  # str
+            "caption": caption  # str
         }
         return info
 
