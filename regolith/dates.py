@@ -78,3 +78,28 @@ def date_to_float(y, m, d=0):
     m = month_to_int(m)
     d = int(d)
     return y + (m / 100.0) + (d / 100000.0)
+
+def find_gaps_overlaps(dateslist):
+    '''
+    Find whether there is a gap or an overlap in a list of date-ranges
+
+    Parameters
+    ----------
+    dateslist: list of tuples of datetime.date objects
+      The list of date-ranges
+
+    Returns
+    -------
+      True if there are no gaps or overlaps else False
+
+    '''
+
+    status = True
+    for i in range(len(dateslist)-1):
+        if dateslist[i+1][0] <= dateslist[i][1]:
+            status = False
+        elif (dateslist[i+1][0] - dateslist[i][1]).days > 1:
+            status = False
+
+
+    return status
