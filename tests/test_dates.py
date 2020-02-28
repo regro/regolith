@@ -32,22 +32,26 @@ def test_day_to_str(input, expected):
 
 
 @pytest.mark.parametrize(
-    "input,expected",
+    "input,flag,expected",
     [
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 2, 1), date(2020, 2, 5))], True),
+         (date(2020, 2, 1), date(2020, 2, 5))], False, True),
+        ([(date(2020, 2, 1), date(2020, 2, 5)),
+         (date(2020, 1, 1), date(2020, 1, 31))], False, True),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 2, 2), date(2020, 2, 5))], False),
+         (date(2020, 2, 2), date(2020, 2, 5))], False, False),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 1, 31), date(2020, 2, 5))], False),
+         (date(2020, 1, 31), date(2020, 2, 5))], False, False),
+        ([(date(2020, 1, 1), date(2020, 1, 31)),
+         (date(2020, 1, 31), date(2020, 2, 5))], True, True),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
          (date(2020, 2, 1), date(2020, 2, 5)),
-         (date(2020, 2, 6), date(2020, 2, 7))], True),
+         (date(2020, 2, 6), date(2020, 2, 7))], False, True),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
          (date(2020, 2, 1), date(2020, 2, 5)),
-         (date(2020, 2, 7), date(2020, 2, 7))], False)
+         (date(2020, 2, 7), date(2020, 2, 7))], False, False)
     ],
 )
-def test_find_gaps_overlaps(input, expected):
-    actual = find_gaps_overlaps(input)
+def test_find_gaps_overlaps(input, flag, expected):
+    actual = find_gaps_overlaps(input, overlaps_ok=flag)
     assert actual == expected

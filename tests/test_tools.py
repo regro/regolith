@@ -13,7 +13,7 @@ from regolith.tools import (
     is_current,
     update_schemas,
     merge_collections,
-)
+    is_fully_loaded)
 
 
 def test_author_publications():
@@ -140,13 +140,16 @@ def test_fuzzy_retrieval():
         ],
         "name": "Anthony Scopatz",
     }
-    assert fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz") == person
-    assert fuzzy_retrieval([person], ["aka", "name", "_id"], "scopatz, a") is None
+    assert fuzzy_retrieval([person], ["aka", "name", "_id"],
+                           "scopatz") == person
+    assert fuzzy_retrieval([person], ["aka", "name", "_id"],
+                           "scopatz, a") is None
     assert (
-        fuzzy_retrieval(
-            [person], ["aka", "name", "_id"], "scopatz, a", case_sensitive=False,
-        )
-        == person
+            fuzzy_retrieval(
+                [person], ["aka", "name", "_id"], "scopatz, a",
+                case_sensitive=False,
+            )
+            == person
     )
 
 
@@ -173,78 +176,81 @@ def test_number_suffix(input, expected):
     "input,expected",
     [
         (
-            (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                            }
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}],
+                ),
                 [
                     {
-                        "_id": "proposal1",
+                        "_id": "grant1",
                         "title": "European swallow",
                         "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
                     }
                 ],
-                [{"_id": "grant1", "linked_to": "proposal1", "amount": "100 mph"}],
-            ),
-            [
-                {
-                    "_id": "grant1",
-                    "title": "European swallow",
-                    "author": "king arthur",
-                    "linked_to": "proposal1",
-                    "amount": "100 mph",
-                }
-            ],
         ),
         (
-            (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}],
+                ),
                 [
                     {
-                        "_id": "proposal1",
+                        "_id": "grant1",
                         "title": "European swallow",
                         "author": "king arthur",
-                    },
-                    {
-                        "_id": "proposal2",
-                        "title": "African swallow",
-                        "author": "king arthur",
-                    },
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    }
                 ],
-                [{"_id": "grant1", "linked_to": "proposal1", "amount": "100 mph"}],
-            ),
-            [
-                {
-                    "_id": "grant1",
-                    "title": "European swallow",
-                    "author": "king arthur",
-                    "linked_to": "proposal1",
-                    "amount": "100 mph",
-                }
-            ],
         ),
         (
-            (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}],
+                ),
                 [
                     {
-                        "_id": "proposal1",
+                        "_id": "grant1",
                         "title": "European swallow",
                         "author": "king arthur",
-                        "amount": "50 mph",
-                    },
-                    {
-                        "_id": "proposal2",
-                        "title": "African swallow",
-                        "author": "king arthur",
-                    },
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    }
                 ],
-                [{"_id": "grant1", "linked_to": "proposal1", "amount": "100 mph"}],
-            ),
-            [
-                {
-                    "_id": "grant1",
-                    "title": "European swallow",
-                    "author": "king arthur",
-                    "linked_to": "proposal1",
-                    "amount": "100 mph",
-                }
-            ],
         ),
     ],
 )
@@ -260,25 +266,25 @@ def test_merge_collections(input, expected):
     [
         ("$hi", r"\$hi", {}),
         (
-            r"Website: https://github.com/CJ-Wright/"
-            r"Masters_Thesis/raw/master/thesis.pdf hi",
-            r"Website: \url{https://github.com/CJ-Wright/"
-            r"Masters_Thesis/raw/master/thesis.pdf} hi",
-            {},
+                r"Website: https://github.com/CJ-Wright/"
+                r"Masters_Thesis/raw/master/thesis.pdf hi",
+                r"Website: \url{https://github.com/CJ-Wright/"
+                r"Masters_Thesis/raw/master/thesis.pdf} hi",
+                {},
         ),
         (
-            r"Website: https://github.com/CJ-Wright/"
-            r"Masters_Thesis/raw/master/thesis.pdf hi",
-            r"Website: \href{https://github.com/CJ-Wright/"
-            r"Masters_Thesis/raw/master/thesis.pdf} hi",
-            {"wrapper": "href"},
+                r"Website: https://github.com/CJ-Wright/"
+                r"Masters_Thesis/raw/master/thesis.pdf hi",
+                r"Website: \href{https://github.com/CJ-Wright/"
+                r"Masters_Thesis/raw/master/thesis.pdf} hi",
+                {"wrapper": "href"},
         ),
         (
-            r"Website: https://github.com/CJ-Wright/"
-            r"Masters_Thesis/raw/master/thesis.pdf hi",
-            r"Website: https://github.com/CJ-Wright/"
-            r"Masters\_Thesis/raw/master/thesis.pdf hi",
-            {"url_check": False},
+                r"Website: https://github.com/CJ-Wright/"
+                r"Masters_Thesis/raw/master/thesis.pdf hi",
+                r"Website: https://github.com/CJ-Wright/"
+                r"Masters\_Thesis/raw/master/thesis.pdf hi",
+                {"url_check": False},
         ),
     ],
 )
@@ -309,7 +315,8 @@ USER_SCHEMA0 = {
     "expenses": {
         "itemized_expenses": {
             "type": "list",
-            "schema": {"type": "dict", "schema": {"day": {"required": False,},},},
+            "schema": {"type": "dict",
+                       "schema": {"day": {"required": False, }, }, },
         },
     },
 }
@@ -336,7 +343,8 @@ USER_SCHEMA1 = {
     "expenses": {
         "itemized_expenses": {
             "type": "list",
-            "schema": {"type": "dict", "schema": {"day": {"type": "string",},},},
+            "schema": {"type": "dict",
+                       "schema": {"day": {"type": "string", }, }, },
         },
     },
 }
@@ -398,7 +406,7 @@ USER_SCHEMA3 = {
             "type": "list",
             "schema": {
                 "type": "dict",
-                "schema": {"day": {"description": "The date on the receipt"},},
+                "schema": {"day": {"description": "The date on the receipt"}, },
             },
         },
     },
@@ -517,3 +525,122 @@ EXPECTED_SCHEMA6 = {
 def test_update_schemas(default_schema, user_schema, expected_schema):
     updated_schema = update_schemas(default_schema, user_schema)
     assert updated_schema == expected_schema
+
+
+@pytest.mark.parametrize(
+    "appts,expected",
+    [
+        ([{"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 1,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant1",
+           "loading": 1.0,
+           "type": "pd",
+           }], True),
+        ([{"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 1,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant1",
+           "loading": 0.5,
+           "type": "pd",
+           },
+          {"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 1,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant2",
+           "loading": 0.5,
+           "type": "pd",
+           }], True),
+        ([{"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 1,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant1",
+           "loading": 0.5,
+           "type": "pd",
+           },
+          {"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 1,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant2",
+           "loading": 0.4,
+           "type": "pd",
+           }], False),
+        ([{"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 1,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant1",
+           "loading": 0.5,
+           "type": "pd",
+           },
+          {"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 2,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant2",
+           "loading": 0.5,
+           "type": "pd",
+           }], False),
+        ([{"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 1,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 15,
+           "grant": "grant1",
+           "loading": 1.0,
+           "type": "pd",
+           },
+          {"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 16,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant2",
+           "loading": 1.0,
+           "type": "pd",
+           }], True),
+        ([{"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 1,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 15,
+           "grant": "grant1",
+           "loading": 1.0,
+           "type": "pd",
+           },
+          {"begin_year": 2017,
+           "begin_month": 6,
+           "begin_day": 17,
+           "end_year": 2017,
+           "end_month": 6,
+           "end_day": 30,
+           "grant": "grant2",
+           "loading": 1.0,
+           "type": "pd",
+           }], False),
+    ],
+)
+def test_is_fully_loaded(appts, expected):
+    assert is_fully_loaded(appts) == expected
