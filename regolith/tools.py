@@ -792,5 +792,4 @@ def is_fully_loaded(appts):
         print("min {} at {}".format(min(loading),
                                     datearray[list(loading).index(min(loading))]
                                     ))
-    print
     return status
