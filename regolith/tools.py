@@ -8,7 +8,6 @@ import sys
 import time
 from copy import deepcopy
 from calendar import monthrange
-from numpy import zeros
 
 from datetime import datetime, date, timedelta
 
@@ -777,7 +776,7 @@ def is_fully_loaded(appts):
     for x in range(0, timespan.days):
         datearray.append(earliest + timedelta(days=x))
 
-    loading = zeros(len(datearray))
+    loading = [0]*len(datearray)
     for day in datearray:
         for appt in appts:
             if appt['begin_date'] <= day <= appt["end_date"]:
