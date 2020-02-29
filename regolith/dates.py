@@ -1,4 +1,5 @@
 """Date based tools"""
+import datetime
 
 MONTHS = {
     "jan": 1,
@@ -78,3 +79,41 @@ def date_to_float(y, m, d=0):
     m = month_to_int(m)
     d = int(d)
     return y + (m / 100.0) + (d / 100000.0)
+
+def find_gaps_overlaps(dateslist, overlaps_ok=False):
+    '''
+    Find whether there is a gap or an overlap in a list of date-ranges
+
+    Parameters
+    ----------
+    dateslist: list of tuples of datetime.date objects
+      The list of date-ranges.
+    overlaps_ok: bool
+      Returns false if there are gaps but true if there are overlaps but no gaps
+
+    Returns
+    -------
+      True if there are no gaps or overlaps else False
+
+    '''
+
+    status = True
+    dateslist.sort(key=lambda x: x[0])
+    for i in range(len(dateslist)-1):
+        if dateslist[i+1][0] <= dateslist[i][1] and not overlaps_ok:
+            status = False
+        elif (dateslist[i+1][0] - dateslist[i][1]).days > 1:
+            status = False
+    return status
+
+def beg_end_dates(thing):
+    bd = thing.get('begin_day')
+    bm = thing.get('begin_month')
+    by = thing.get('begin_year')
+    ed = thing.get('end_day')
+    em = thing.get('end_month')
+    ey = thing.get('end_year')
+    begin_date = datetime.date(by, month_to_int(bm), bd)
+    end_date = datetime.date(ey, month_to_int(em), ed)
+    return begin_date, end_date
+

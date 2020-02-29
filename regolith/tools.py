@@ -9,9 +9,9 @@ import time
 from copy import deepcopy
 from calendar import monthrange
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
-from regolith.dates import month_to_int, date_to_float
+from regolith.dates import month_to_int, date_to_float, beg_end_dates
 from regolith.sorters import doc_date_key, id_key, ene_date_key
 from regolith.chained_db import ChainDB
 
@@ -749,10 +749,47 @@ def update_schemas(default_schema, user_schema):
     for key in user_schema.keys():
         if (key in updated_schema) and isinstance(updated_schema[key],
                                                   dict) and isinstance(
-              user_schema[key], dict):
+            user_schema[key], dict):
             updated_schema[key] = update_schemas(updated_schema[key],
                                                  user_schema[key])
         else:
             updated_schema[key] = user_schema[key]
 
     return updated_schema
+
+
+def is_fully_loaded(appts):
+    status = True
+    earliest, latest = date.today(), date.today()
+    for appt in appts:
+        begin_date, end_date = beg_end_dates(appt)
+        if latest == date.today():
+            latest = end_date
+        appt['begin_date'] = begin_date
+        appt['end_date'] = end_date
+        if begin_date < earliest:
+            earliest = begin_date
+        if end_date > latest:
+            latest = end_date
+    datearray = []
+    timespan = latest - earliest
+    for x in range(0, timespan.days):
+        datearray.append(earliest + timedelta(days=x))
+
+    loading = [0]*len(datearray)
+    for day in datearray:
+        for appt in appts:
+            if appt['begin_date'] <= day <= appt["end_date"]:
+                loading[datearray.index(day)] = loading[datearray.index(day)] + \
+                                                appt.get("loading")
+
+    if max(loading) > 1.0:
+        status = False
+        print("max {} at {}".format(max(loading),
+                datearray[list(loading).index(max(loading))]))
+    elif min(loading) < 1.0:
+        status = False
+        print("min {} at {}".format(min(loading),
+                                    datearray[list(loading).index(min(loading))]
+                                    ))
+    return status
