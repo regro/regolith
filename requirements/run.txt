@@ -10,3 +10,4 @@ nameparser
 pandas
 pymongo
 matplotlib-base
+habanero
