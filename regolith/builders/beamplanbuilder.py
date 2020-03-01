@@ -121,6 +121,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         table_str = df.to_string()
         # make a dict
         info = {
+            "bt": bt,  # str
             "plans": plans,  # List[dict]
             "table": table_latex,  # str
             "table_for_txt": table_str,  # str
@@ -141,8 +142,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         grouped = group(db, "beamtime")
         for bt, plans in grouped.items():
             info = self._gather_info(bt, plans)
-            base_name = info["bt"] = bt
-            self.render("beamplan.tex", "{}.tex".format(base_name), **info)
-            self.render("beamplan.txt", "{}.txt".format(base_name), **info)
-            self.pdf(base_name)
+            self.render("beamplan.tex", "{}.tex".format(bt), **info)
+            self.render("beamplan.txt", "{}.txt".format(bt), **info)
+            self.pdf(bt)
         return
