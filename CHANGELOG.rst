@@ -4,6 +4,56 @@ Regolith Change Log
 
 .. current developments
 
+v0.5.1
+====================
+
+**Added:**
+
+* code to give more feedback to the user when the builder fails due to a database error
+- regolith classlist can now read csv files in Columbia University format
+ - classlist register now checks whether a given file actually exists
+- merge_collections to tools.py.  merges two collections
+- tests for manuscript review builder
+* function for finding gaps and overlaps in lists of date-ranges
+* utf8 support in all current latex builder templates
+- function to dates that returns months as strings with leading zero where required
+ - function to dates that returns days as strings with leading zero where required
+* ability to build publists with specified date ranges and filtered by grant
+ * tbd is now a valid month, returning 1 as an integer
+ * begin and end day now allowed in employment and education
+
+**Changed:**
+
+* unsegregated expense can now tolerate "tbd".  This allows users to put a
+   placeholder entry when the exact amount is not known, and then find it easily
+   later.  Code flags all tbd entries at build time, but doesn't crash.
+- removed remote.rc logic from database.xsh
+- current and pending builder extended to build c+p from merged proposal and grants collections
+ - added filter for cppflag so you can have current grants that don't appear in the current and pending form by setting cppflag to false in the db
+- add needed_dbs statement for quicker building
+- moved has_started, has_finished and is_current to tools.py
+* Load only dbs needed for builder, if builder declares which dbs it needs
+* reimbursement builder requires a person to be specified on the command line
+   to run due to the extreme slowness of openpyxl
+- User supplied schemas now handles new keys in regolith validate.
+
+**Fixed:**
+
+* valueschema -> valuesrules in schema as valueschema deprecated in cerberus
+- cpbuilder does name comparison on fuzzy-searched name for standardization
+ - cpbuilder includes initials when it is a multi-pi grant
+ - filter_grants in tools.py bug fixed that incorrectly reassigns team members
+ - updated docstring on filter_grants to make it clearer
+- fix indenting of the editor eyes only block
+* import from collections.abc not collections
+* months can now be expressed as ints or strings as per the schema
+* fix bug introduced in Jinja2 v2.11 that doesn't recognize conditional text
+   in the import
+* bug so that needed_dbs results in only selected collections to be opened
+* publist will now build even if person email and employment are missing
+
+
+
 v0.5.0
 ====================
 
