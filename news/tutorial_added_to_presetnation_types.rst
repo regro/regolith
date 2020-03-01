@@ -1,6 +1,5 @@
 **Added:**
-
-* tutorial to allowed types in presentation schema
+ * tutorial to allowed types in presentation schema
 
 **Changed:** None
 
