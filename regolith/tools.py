@@ -11,7 +11,7 @@ from calendar import monthrange
 
 from datetime import datetime, date, timedelta
 
-from regolith.dates import month_to_int, date_to_float, beg_end_dates
+from regolith.dates import month_to_int, date_to_float, begin_end_dates
 from regolith.sorters import doc_date_key, id_key, ene_date_key
 from regolith.chained_db import ChainDB
 
@@ -762,7 +762,7 @@ def is_fully_loaded(appts):
     status = True
     earliest, latest = date.today(), date.today()
     for appt in appts:
-        begin_date, end_date = beg_end_dates(appt)
+        begin_date, end_date = begin_end_dates(appt)
         if latest == date.today():
             latest = end_date
         appt['begin_date'] = begin_date
