@@ -795,28 +795,6 @@ def is_fully_loaded(appts):
     return status
 
 
-def get_dates(thing):
-    '''
-    given a dict like thing, return the items
-
-    Parameters
-    ----------
-    thing: dict
-      the dict that contains the dates
-
-    Returns
-    -------
-       dict containing begin day, begin month, begin year, end day, end month, end year
-    '''
-    dateitems = ['begin_day', 'begin_month', 'begin_year', 'end_day',
-                 'end_month',
-                 'end_year', 'day', 'month', 'year']
-    dates = [thing.get(item) for item in dateitems]
-    dateout = {}
-    [dateout.update({item: date}) for item, date in zip(dateitems, dates) if
-     date]
-    print(dateout)
-    return dateout
 def merge_collections(a, b, target_id):
     """
     merge two collections into a single merged collection
