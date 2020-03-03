@@ -4,7 +4,8 @@ import pytest
 
 from regolith.dates import (month_to_str_int,
                             day_to_str_int,
-                            find_gaps_overlaps)
+                            find_gaps_overlaps,
+                            get_dates)
 
 
 @pytest.mark.parametrize(
@@ -55,3 +56,17 @@ def test_day_to_str(input, expected):
 def test_find_gaps_overlaps(input, flag, expected):
     actual = find_gaps_overlaps(input, overlaps_ok=flag)
     assert actual == expected
+
+@pytest.mark.parametrize(
+    "input,flag,expected",
+    [({'year': 2020}, True, {'begin_day': 1, 'begin_month': 1, 'begin_year': 2020,
+                 'end_day': None, 'end_month': 12,
+                 'end_year': None, 'day': 1, 'month': 1,
+                 'year': 2020})
+#        ({"begin_year": 2019, "end_year": 2020}),
+    ],
+)
+def test_get_dates(input, flag, expected):
+    actual = get_dates(input,valid_date=flag)
+    print(actual)
+    assert False

@@ -1,5 +1,6 @@
 """Date based tools"""
 import datetime
+from calendar import monthrange
 
 MONTHS = {
     "jan": 1,
@@ -80,6 +81,7 @@ def date_to_float(y, m, d=0):
     d = int(d)
     return y + (m / 100.0) + (d / 100000.0)
 
+
 def find_gaps_overlaps(dateslist, overlaps_ok=False):
     '''
     Find whether there is a gap or an overlap in a list of date-ranges
@@ -99,20 +101,53 @@ def find_gaps_overlaps(dateslist, overlaps_ok=False):
 
     status = True
     dateslist.sort(key=lambda x: x[0])
-    for i in range(len(dateslist)-1):
-        if dateslist[i+1][0] <= dateslist[i][1] and not overlaps_ok:
+    for i in range(len(dateslist) - 1):
+        if dateslist[i + 1][0] <= dateslist[i][1] and not overlaps_ok:
             status = False
-        elif (dateslist[i+1][0] - dateslist[i][1]).days > 1:
+        elif (dateslist[i + 1][0] - dateslist[i][1]).days > 1:
             status = False
     return status
 
+
 def begin_end_dates(thing):
-    bd = thing.get('begin_day')
-    bm = thing.get('begin_month')
+    bd = thing.get('begin_day', 1)
+    bm = thing.get('begin_month', 1)
     by = thing.get('begin_year')
     ed = thing.get('end_day')
-    em = thing.get('end_month')
+    em = thing.get('end_month', 12)
     ey = thing.get('end_year')
     begin_date = datetime.date(by, month_to_int(bm), bd)
     end_date = datetime.date(ey, month_to_int(em), ed)
     return begin_date, end_date
+
+
+def get_dates(thing, valid_date=True):
+    '''
+    given a dict like thing, return the items
+
+    Parameters
+    ----------
+    thing: dict
+      the dict that contains the dates
+
+    Returns
+    -------
+       dict containing begin day, begin month, begin year, end day, end month,
+       end year
+    '''
+    dateitems = [('begin_day', 1), ('begin_month', 1), ('begin_year', None),
+                 ('end_day', None), ('end_month', 12),
+                 ('end_year', None), ('day', None), ('month', None),
+                 ('year', None)]
+    dates = [thing.get(item[0], item[1]) for item in dateitems]
+#    if not valid_date:
+#    if not dates[datetime.index(('end_day', None))]:
+##        dates[datetime.index(('end_day', None))] = \
+#            monthrange(dates[datetime.index(('end_year', None))],
+#                       month_to_int(dates[datetime.index(('end_month', 12))]))[
+#                1]
+
+    dateout = {}
+    [dateout.update({item: date}) for item, date in zip(dateitems, dates) if
+     date]
+    return dateout
