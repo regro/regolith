@@ -20,6 +20,8 @@ builder_map = [
     "reimb",
     "figure",
     "beamplan"
+#    "review-man",
+    "recent-collabs"
 ]
 
 xls_check = ("B17", "B20", "B36")
