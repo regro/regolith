@@ -1,4 +1,4 @@
-"""Builder for Resumes."""
+"""Builder for Recent Collaborators."""
 
 import datetime as dt
 import os
@@ -65,14 +65,18 @@ class RecentCollaboratorsBuilder(BuilderBase):
     def excel(self):
         rc = self.rc
         gtx = self.gtx
-        since_date = dt.date.today() - relativedelta(months=NUM_MONTHS)
+        if isinstance(self.rc.to_date, str):
+            since_date = dt.datetime.strptime(self.rc.to_date, '%Y-%m-%d').date() - relativedelta(months=NUM_MONTHS)
+        else:
+            since_date = dt.date.today() - relativedelta(months=NUM_MONTHS)
         if isinstance(self.rc.people, str):
-            self.rc.people = [self.rc.people]
+            self.rc.peopythple = [self.rc.people]
         person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"),
                                  ['aka', 'name', '_id'], self.rc.people[0],
                                  case_sensitive=False)
         if not person:
             sys.exit("please rerun specifying --people PERSON")
+
         for p in self.gtx["people"]:
             if p["_id"] == person["_id"]:
                 my_names = frozenset(p.get("aka", []) + [p["name"]])
@@ -94,35 +98,33 @@ class RecentCollaboratorsBuilder(BuilderBase):
                                             pub.get('author', [])]])
                 people, institutions = [], []
                 for collab in my_collabs:
-                    person = fuzzy_retrieval(all_docs_from_collection(
+                    collab_person = fuzzy_retrieval(all_docs_from_collection(
                         rc.client, "people"),
                         ["name", "aka", "_id"],
                         collab)
-                    if not person:
-                        person = fuzzy_retrieval(all_docs_from_collection(
+                    if not collab_person:
+                        collab_person = fuzzy_retrieval(all_docs_from_collection(
                             rc.client, "contacts"),
                             ["name", "aka", "_id"], collab)
-                        if not person:
+                        if not collab_person:
                             print(
                                 "WARNING: {} not found in contacts. Check aka".format(
-                                    collab))
+                                   collab))
                         else:
-                            people.append(person)
+                            people.append(collab_person)
                             inst = fuzzy_retrieval(all_docs_from_collection(
                                 rc.client, "institutions"),
                                 ["name", "aka", "_id"],
-                                person["institution"])
+                                collab_person["institution"])
                             if inst:
                                 institutions.append(inst["name"])
                             else:
-                                institutions.append(
-                                    person.get("institution", "missing"))
-                                print(
-                                    "WARNING: {} missing from institutions".format(
-                                        person["institution"]))
+                                institutions.append(collab_person.get("institution", "missing"))
+                                print("WARNING: {} missing from institutions".format(
+                                       collab_person["institution"]))
                     else:
-                        people.append(person)
-                        pinst = person.get("employment",
+                        people.append(collab_person)
+                        pinst = collab_person.get("employment",
                                            [{"organization": "missing"}])[
                             0]["organization"]
                         inst = fuzzy_retrieval(all_docs_from_collection(
@@ -135,9 +137,9 @@ class RecentCollaboratorsBuilder(BuilderBase):
                             print(
                                 "WARNING: {} missing from institutions".format(
                                     pinst))
-                ppl_names = [(person["name"], i) for
-                             person, i in zip(people, institutions) if
-                             person]
+                ppl_names = [(collab_person["name"], i) for
+                             collab_person, i in zip(people, institutions) if
+                             collab_person]
                 ppl = []
                 # reformatting the name in last name, first name
                 for idx in range(len(ppl_names)):
@@ -149,8 +151,6 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 ppl = list(set(ppl))
                 # sorting the ppl list
                 ppl_sorted = sorted(ppl, key=itemgetter(0))
-                #                print(set([person["name"] for person in people if person]))
-                #print(set([person for person in ppl_names]))
             emp = p.get("employment", [{"organization": "missing",
                                         "begin_year": 2019}])
             emp.sort(key=ene_date_key, reverse=True)
