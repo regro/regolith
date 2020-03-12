@@ -65,12 +65,16 @@ class RecentCollaboratorsBuilder(BuilderBase):
     def excel(self):
         rc = self.rc
         gtx = self.gtx
+        # if --to is provided:
+        # use self.rc.to_date as the endpoint and find every publications within
+        # NUM_MONTHS months of the to_date date
+        # Otherwise: find every publication within NUM_MONTHS months from today.
         if isinstance(self.rc.to_date, str):
             since_date = dt.datetime.strptime(self.rc.to_date, '%Y-%m-%d').date() - relativedelta(months=NUM_MONTHS)
         else:
             since_date = dt.date.today() - relativedelta(months=NUM_MONTHS)
         if isinstance(self.rc.people, str):
-            self.rc.peopythple = [self.rc.people]
+            self.rc.people = [self.rc.people]
         person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"),
                                  ['aka', 'name', '_id'], self.rc.people[0],
                                  case_sensitive=False)
