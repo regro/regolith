@@ -25,6 +25,7 @@ builder_map = [
 ]
 
 xls_check = ("B17", "B20", "B36")
+recent_collabs_xlsx_check = ["A51", "B51", "C51"] 
 
 
 def prep_figure():
@@ -67,6 +68,9 @@ def test_builder(bm, make_db):
                 if bm == "reimb":
                     actual = openpyxl.load_workbook(fn1)["T&B"]
                     actual = [str(actual[b]) for b in xls_check]
+                elif bm == "recent-collabs":
+                    actual = openpyxl.load_workbook(fn1)["NSF COA Template"]
+                    actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
                 else:
                     with open(fn1, "r") as f:
                         actual = f.read()
@@ -74,6 +78,9 @@ def test_builder(bm, make_db):
                 if bm == "reimb":
                     expected = openpyxl.load_workbook(fn2)["T&B"]
                     expected = [str(expected[b]) for b in xls_check]
+                elif bm == "recent-collabs":
+                    expected = openpyxl.load_workbook(fn2)["NSF COA Template"]
+                    expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
                 else:
                     with open(fn2, "r") as f:
                         expected = f.read()
@@ -110,6 +117,9 @@ def test_builder_python(bm, make_db):
                 if bm == "reimb":
                     actual = openpyxl.load_workbook(fn1)["T&B"]
                     actual = [str(actual[b]) for b in xls_check]
+                elif bm == "recent-collabs":
+                    actual = openpyxl.load_workbook(fn1)["NSF COA Template"]
+                    actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
                 else:
                     with open(fn1, "r") as f:
                         actual = f.read()
@@ -117,6 +127,9 @@ def test_builder_python(bm, make_db):
                 if bm == "reimb":
                     expected = openpyxl.load_workbook(fn2)["T&B"]
                     expected = [str(expected[b]) for b in xls_check]
+                elif bm == "recent-collabs":
+                    expected = openpyxl.load_workbook(fn2)["NSF COA Template"]
+                    expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
                 else:
                     with open(fn2, "r") as f:
                         expected = f.read()
