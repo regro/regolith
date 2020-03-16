@@ -38,7 +38,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
     def __init__(self, rc):
         super().__init__(rc)
         self.template = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template.xlsx"
+            os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_nsf.xlsx"
         )
         self.cmds = ["excel"]
 
