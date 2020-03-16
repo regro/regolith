@@ -4,15 +4,16 @@ import datetime as dt
 import os
 import sys
 import openpyxl
+from copy import copy
+from operator import itemgetter
+from dateutil.relativedelta import relativedelta
+from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import month_to_int
 from regolith.sorters import doc_date_key, ene_date_key, position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     month_and_year, fuzzy_retrieval, is_since
-from copy import copy
-from dateutil.relativedelta import relativedelta
-from operator import itemgetter
 
 
 NUM_MONTHS = 48
@@ -39,6 +40,9 @@ class RecentCollaboratorsBuilder(BuilderBase):
         super().__init__(rc)
         self.template = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_nsf.xlsx"
+        )
+        self.template2 = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_doe.xlsx"
         )
         self.cmds = ["excel"]
 
@@ -80,6 +84,11 @@ class RecentCollaboratorsBuilder(BuilderBase):
                                  case_sensitive=False)
         if not person:
             sys.exit("please rerun specifying --people PERSON")
+        person_inst = person.get("employment")[0]["organization"]
+        person_inst = fuzzy_retrieval(all_docs_from_collection(
+            rc.client, "institutions"), ["name", "aka", "_id"],
+            person_inst)
+        person_inst_name = person_inst.get("name")
 
         for p in self.gtx["people"]:
             if p["_id"] == person["_id"]:
@@ -164,6 +173,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
             cell.border = style["border"]
             cell.fill = style["fill"]
             cell.alignment = style["alignment"]
+
         template = self.template
         num_rows = len(ppl)  # number of rows to add to the excel file
         wb = openpyxl.load_workbook(template)
@@ -188,4 +198,30 @@ class RecentCollaboratorsBuilder(BuilderBase):
             ws["B{}".format(row + 51)].value = ppl_sorted[row - 1][0]
             ws["C{}".format((row + 51))].value = ppl_sorted[row - 1][1]
         ws.delete_rows(51)  # deleting the reference row
-        wb.save(os.path.join(self.bldir, "coa_table.xlsx"))
+        wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person["_id"])))
+
+        template2 = self.template2
+        ppl = []
+        for t in ppl_names:
+            inst = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "institutions"),
+                ['aka', 'name', '_id'], t[1],
+                case_sensitive=False)
+            if inst:
+                inst_name = inst.get("name","")
+            else:
+                inst_name = t[1]
+            # remove all people who are in the institution of the person
+            if inst_name != person_inst_name:
+                name = HumanName(t[0])
+                ppl.append((name.last, name.first, t[1]))
+        ppl = list(set(ppl))
+        ppl.sort(key = lambda x: x[0])
+        num_rows = len(ppl)  # number of rows to add to the excel file
+        wb = openpyxl.load_workbook(template2)
+        ws = wb.worksheets[0]
+        for row in range(num_rows):
+            ws["A{}".format(row + 8)].value = ppl[row][0]
+            ws["B{}".format(row + 8)].value = ppl[row][1]
+            ws["C{}".format((row + 8))].value = ppl[row][2]
+        wb.save(os.path.join(self.bldir, "{}_doe.xlsx".format(person["_id"])))
