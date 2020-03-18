@@ -393,6 +393,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
         If True compute sub-awards for multi PI grants, defaults to False
     """
     grants = []
+    co_pis = {}
     total_amount = 0.0
     subaward_amount = 0.0
     for grant in input_grants:
@@ -409,6 +410,11 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
         elif multi_pi:
             grant["subaward_amount"] = person.get("subaward_amount", 0.0)
             grant["multi_pi"] = any(gets(grant["team"], "subaward_amount"))
+            if co_pis.get(person.get("name")):
+                current_amount = co_pis[person.get("name")]
+                co_pis[person.get("name")] = current_amount + person.get("subaward_amount", 0.0)
+            else:
+                co_pis[person.get("name")] = person.get("subaward_amount", 0.0)
         else:
             if person["position"].lower() == "pi":
                 continue
@@ -422,7 +428,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
                 grant["me"] = person
         grants.append(grant)
     grants.sort(key=ene_date_key, reverse=reverse)
-    return grants, total_amount, subaward_amount
+    return grants, total_amount, subaward_amount, co_pis
 
 
 def awards_grants_honors(p):
