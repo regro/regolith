@@ -3,35 +3,38 @@
 import datetime as dt
 import os
 import sys
-import openpyxl
 from copy import copy
 from operator import itemgetter
+
+import openpyxl
 from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import month_to_int
-from regolith.sorters import doc_date_key, ene_date_key, position_key
+from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
-    month_and_year, fuzzy_retrieval, is_since
-import string
+    fuzzy_retrieval, is_since
 
 NUM_MONTHS = 48
 
 
 def mdy_date(month, day, year, **kwargs):
+    """Make a date object."""
     if isinstance(month, str):
         month = month_to_int(month)
     return dt.date(year, month, day)
 
 
 def mdy(month, day, year, **kwargs):
+    """Format the date to a string mm/dd/yy."""
     return "{}/{}/{}".format(
         str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
     )
 
 
 def fitler_since_date(pubs, since_date):
+    """Filter the publications after the since_date."""
     for pub in pubs:
         if is_since(pub.get("year"), since_date.year,
                     pub.get("month", 1), since_date.month):
@@ -45,6 +48,7 @@ def fitler_since_date(pubs, since_date):
 
 
 def get_since_date(rc):
+    """Get the since_date from command."""
     if isinstance(rc, str):
         since_date = dt.datetime.strptime(rc, '%Y-%m-%d').date() - relativedelta(months=NUM_MONTHS)
     else:
@@ -53,6 +57,7 @@ def get_since_date(rc):
 
 
 def get_coauthos_from_pubs(pubs):
+    """Get co-authors' names from the publication."""
     my_collabs = []
     for pub in pubs:
         my_collabs.extend(
@@ -65,6 +70,7 @@ def get_coauthos_from_pubs(pubs):
 
 
 def query_people_and_instituions(rc, names):
+    """Get the people and institutions names."""
     people, institutions = [], []
     for person_name in names:
         person_found = fuzzy_retrieval(all_docs_from_collection(
@@ -94,7 +100,7 @@ def query_people_and_instituions(rc, names):
         else:
             people.append(person_found['name'])
             pinst = person_found.get("employment",
-                                      [{"organization": "missing"}])[
+                                     [{"organization": "missing"}])[
                 0]["organization"]
             inst = fuzzy_retrieval(all_docs_from_collection(
                 rc.client, "institutions"), ["name", "aka", "_id"],
@@ -110,6 +116,7 @@ def query_people_and_instituions(rc, names):
 
 
 def query_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
+    """Get the last name, first name and institution name."""
     ppl = []
     for ppl_tup in ppl_names:
         inst = fuzzy_retrieval(
@@ -130,6 +137,7 @@ def query_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
 
 
 def format_people_name(ppl_names):
+    """Format people name to be first name, last name."""
     ppl = []
     # reformatting the name in last name, first name
     for idx in range(len(ppl_names)):
@@ -142,6 +150,7 @@ def format_people_name(ppl_names):
 
 
 def apply_cell_style(*cells, style):
+    """Apply the format to cells."""
     for cell in cells:
         cell.font = style["font"]
         cell.border = style["border"]
@@ -151,6 +160,7 @@ def apply_cell_style(*cells, style):
 
 
 def copy_cell_style(style_ref_cell):
+    """Copy the cell format to a dictionary."""
     template_cell_style = {
         "font": copy(style_ref_cell.font),
         "border": copy(style_ref_cell.border),
@@ -161,10 +171,12 @@ def copy_cell_style(style_ref_cell):
 
 
 def is_merged(cell):
+    """Whether the cell is merged."""
     return True if type(cell).__name__ == 'MergedCell' else False
 
 
 def find_merged_cell(cells):
+    """Find the index of all merged cells."""
     i, j = 0, 0
     lst = []
     while i < len(cells):
@@ -182,18 +194,20 @@ def find_merged_cell(cells):
 
 
 def unmerge(ws, cells):
-    lst =find_merged_cell(cells)
+    """Unmerge the cells."""
+    lst = find_merged_cell(cells)
     for start, end in lst:
         ws.unmerge_cells("{}:{}").format(cells[start].coordinate, cells[end].coordinate)
     return
 
+
 class RecentCollaboratorsBuilder(BuilderBase):
     """Build recent collaborators from database entries"""
-
     btype = "recent-collabs"
     needed_dbs = ['citations', 'people', 'contacts', 'institutions']
 
     def __init__(self, rc):
+        """Initiate the class instance."""
         super().__init__(rc)
         self.template = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_nsf.xlsx"
@@ -204,10 +218,10 @@ class RecentCollaboratorsBuilder(BuilderBase):
         self.cmds = ["excel"]
 
     def construct_global_ctx(self):
+        """Construct the global ctx including database and methods."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
             key=position_key,
@@ -223,22 +237,22 @@ class RecentCollaboratorsBuilder(BuilderBase):
         gtx["citations"] = all_docs_from_collection(rc.client, "citations")
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
-    def query_ppl(self, rc, target, **filters):
-        person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"),
+    def query_ppl(self, target, **filters):
+        """Query the data base for the target's collaborators' information."""
+        person = fuzzy_retrieval(all_docs_from_collection(self.rc.client, "people"),
                                  ['aka', 'name', '_id'], target,
                                  case_sensitive=False)
         if not person:
             sys.exit("please rerun specifying --people PERSON")
         person_inst_abbr = person.get("employment")[0]["organization"]
         person_inst = fuzzy_retrieval(all_docs_from_collection(
-            rc.client, "institutions"), ["name", "aka", "_id"],
+            self.rc.client, "institutions"), ["name", "aka", "_id"],
             person_inst_abbr)
         if person_inst is not None:
             person_inst_name = person_inst.get("name")
         else:
             person_inst_name = person_inst_abbr
             print(f"WARNING: {person_inst_abbr} is not found in institutions.")
-
         for p in self.gtx["people"]:
             if p["_id"] == person["_id"]:
                 my_names = frozenset(p.get("aka", []) + [p["name"]])
@@ -252,18 +266,17 @@ class RecentCollaboratorsBuilder(BuilderBase):
                     since_date = filters.get('since_date')
                     pubs = fitler_since_date(pubs, since_date)
                 my_collabs = get_coauthos_from_pubs(pubs)
-                people, institutions = query_people_and_instituions(rc, my_collabs)
+                people, institutions = query_people_and_instituions(self.rc, my_collabs)
                 ppl_names = list(zip(people, institutions))
                 ppl = format_people_name(ppl_names)
                 # sorting the ppl list
                 ppl_sorted = sorted(ppl, key=itemgetter(0))
-                ppl_names2 = query_last_first_instutition_names(rc, ppl_names)
+                ppl_names2 = query_last_first_instutition_names(self.rc, ppl_names)
                 break
         else:
             print("Warning: No such person in people: {}".format(person['_id']))
             ppl_sorted = []
             ppl_names2 = []
-
         results = {
             'person_info': person,
             'person_institution_name': person_inst_name,
@@ -274,8 +287,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
 
     @staticmethod
     def add_ppl_2tups(ws, ppl_2tups, start_row=37, row_to_merge=40, format_ref_cell='B37', cols='ABCDE'):
-        # prepare empty and move the following rows behind
-        # fill in rows and apply style
+        """Add the information in person, institution pairs into the table 4 in nsf table."""
         template_cell_style = copy_cell_style(ws[format_ref_cell])
         ws.unmerge_cells("A40:E40")
         more_rows = len(ppl_2tups) - 2
@@ -292,6 +304,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
         return
 
     def render_template1(self, person_info, ppl_2tups, **kwargs):
+        """Render the nsf template."""
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
@@ -300,6 +313,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
 
     def render_template2(self, person_info, ppl_3tups, **kwargs):
+        """Render the doe template."""
         template2 = self.template2
         num_rows = len(ppl_3tups)  # number of rows to add to the excel file
         wb = openpyxl.load_workbook(template2)
@@ -311,16 +325,12 @@ class RecentCollaboratorsBuilder(BuilderBase):
         wb.save(os.path.join(self.bldir, "{}_doe.xlsx".format(person_info["_id"])))
 
     def excel(self):
+        """Query data base and build nsf and doe excels."""
         rc = self.rc
-        gtx = self.gtx
-        # if --to is provided:
-        # use self.rc.to_date as the endpoint and find every publications within
-        # NUM_MONTHS months of the to_date date
-        # Otherwise: find every publication within NUM_MONTHS months from today.
-        if isinstance(self.rc.people, str):
-            self.rc.people = [self.rc.people]
+        if isinstance(rc, str):
+            rc.people = [rc.people]
         since_date = get_since_date(rc)
         target = rc.people[0]
-        query_results = self.query_ppl(rc, target, since_date=since_date)
+        query_results = self.query_ppl(target, since_date=since_date)
         self.render_template1(**query_results)
         self.render_template2(**query_results)
