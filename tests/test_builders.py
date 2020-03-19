@@ -1,14 +1,12 @@
 import os
-import shutil
-from xonsh.lib import subprocess
 import sys
 
+import openpyxl
 import pytest
+from xonsh.lib import subprocess
 
 from regolith.broker import load_db
 from regolith.main import main
-
-import openpyxl
 
 builder_map = [
     "cv",
@@ -68,7 +66,11 @@ def test_builder(bm, make_db):
                     actual = openpyxl.load_workbook(fn1)["T&B"]
                     actual = [str(actual[b]) for b in xls_check]
                 elif bm == "recent-collabs":
-                    actual = openpyxl.load_workbook(fn1)["NSF COA Template"]
+                    if 'nsf' in fn1:
+                        sheet = "NSF COA Template"
+                    else:
+                        sheet = "Collaborator Template"
+                    actual = openpyxl.load_workbook(fn1)[sheet]
                     actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
                 else:
                     with open(fn1, "r") as f:
@@ -78,7 +80,11 @@ def test_builder(bm, make_db):
                     expected = openpyxl.load_workbook(fn2)["T&B"]
                     expected = [str(expected[b]) for b in xls_check]
                 elif bm == "recent-collabs":
-                    expected = openpyxl.load_workbook(fn2)["NSF COA Template"]
+                    if 'nsf' in fn2:
+                        sheet = "NSF COA Template"
+                    else:
+                        sheet = "Collaborator Template"
+                    expected = openpyxl.load_workbook(fn2)[sheet]
                     expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
                 else:
                     with open(fn2, "r") as f:
@@ -117,7 +123,11 @@ def test_builder_python(bm, make_db):
                     actual = openpyxl.load_workbook(fn1)["T&B"]
                     actual = [str(actual[b]) for b in xls_check]
                 elif bm == "recent-collabs":
-                    actual = openpyxl.load_workbook(fn1)["NSF COA Template"]
+                    if 'nsf' in fn1:
+                        sheet = "NSF COA Template"
+                    else:
+                        sheet = "Collaborator Template"
+                    actual = openpyxl.load_workbook(fn1)[sheet]
                     actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
                 else:
                     with open(fn1, "r") as f:
@@ -127,7 +137,11 @@ def test_builder_python(bm, make_db):
                     expected = openpyxl.load_workbook(fn2)["T&B"]
                     expected = [str(expected[b]) for b in xls_check]
                 elif bm == "recent-collabs":
-                    expected = openpyxl.load_workbook(fn2)["NSF COA Template"]
+                    if 'nsf' in fn2:
+                        sheet = "NSF COA Template"
+                    else:
+                        sheet = "Collaborator Template"
+                    expected = openpyxl.load_workbook(fn2)[sheet]
                     expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
                 else:
                     with open(fn2, "r") as f:
