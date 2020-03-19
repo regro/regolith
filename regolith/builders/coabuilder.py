@@ -70,6 +70,7 @@ def get_coauthors_from_pubs(pubs):
 
 
 def get_recent_org(person_info):
+    """Get the person's most recent organization."""
     if "employment" in person_info:
         employment = person_info["employment"]
         # sort by end_year
