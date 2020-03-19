@@ -309,13 +309,12 @@ class RecentCollaboratorsBuilder(BuilderBase):
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
         self.add_ppl_2tups(ws, ppl_2tups)
-        ws.delete_rows(51)  # deleting the reference row
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
 
     def render_template2(self, person_info, ppl_3tups, **kwargs):
         """Render the doe template."""
         template2 = self.template2
-        num_rows = len(ppl_3tups)  # number of rows to add to the excel file
+        num_rows = len(ppl_3tups)
         wb = openpyxl.load_workbook(template2)
         ws = wb.worksheets[0]
         for row in range(num_rows):
