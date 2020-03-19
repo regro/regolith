@@ -273,42 +273,29 @@ class RecentCollaboratorsBuilder(BuilderBase):
         return results
 
     @staticmethod
-    def add_ppl_2tups(ws, ppl_2tups, start_row=37, format_ref_cell='B37', cols='ABCDE', rows_to_move=(38, 45)):
+    def add_ppl_2tups(ws, ppl_2tups, start_row=37, row_to_merge=40, format_ref_cell='B37', cols='ABCDE'):
         # prepare empty and move the following rows behind
-        num_rows_to_move = rows_to_move[1] - rows_to_move[0]
-        ws.insert_rows(start_row+1, amount=len(ppl_2tups)+num_rows_to_move)
-        styles = [
-            copy_cell_style(ws['{}{}'.format(col, row)])
-            for col in 'ABCDE'
-            for row in range(*rows_to_move)
-        ]
-        for row in range(*rows_to_move):
-            ws.delete_rows(rows_to_move[0]+1)
-        moved_merged_row = start_row + 1 + len(ppl_2tups)
-        ws.merge_cells('A{}:E{}'.format(moved_merged_row, moved_merged_row))
-        cells = (
-            ws['{}{}'.format(col, row)]
-            for row in range(rows_to_move[0]+len(ppl_2tups), rows_to_move[1]+len(ppl_2tups))
-            for col in 'ABCDE'
-        )
-        for cell, style in zip(cells, styles):
-            apply_cell_style(cell, style=style)
         # fill in rows and apply style
         template_cell_style = copy_cell_style(ws[format_ref_cell])
+        ws.unmerge_cells("A40:E40")
+        more_rows = len(ppl_2tups) - 2
+        if more_rows > 0:
+            ws.insert_rows(start_row, amount=more_rows)
         for row, tup in enumerate(ppl_2tups, start=start_row):
             cells = [ws['{}{}'.format(col, row)] for col in cols]
-#            unmerge(ws, cells)
             apply_cell_style(*cells, style=template_cell_style)
             cells[0].value = "A:"
             cells[1].value = tup[0]
             cells[2].value = tup[1]
+        header_row = row_to_merge + more_rows - 1
+        ws.merge_cells("A{}:E{}".format(header_row, header_row))
         return
 
     def render_template1(self, person_info, ppl_2tups, **kwargs):
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
-        self.add_ppl_2tups(ws, ppl_2tups, 37, 'B37')
+        self.add_ppl_2tups(ws, ppl_2tups)
         ws.delete_rows(51)  # deleting the reference row
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
 
