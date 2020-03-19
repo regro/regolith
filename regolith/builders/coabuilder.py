@@ -33,7 +33,7 @@ def mdy(month, day, year, **kwargs):
     )
 
 
-def fitler_since_date(pubs, since_date):
+def filter_since_date(pubs, since_date):
     """Filter the publications after the since_date."""
     for pub in pubs:
         if is_since(pub.get("year"), since_date.year,
@@ -56,7 +56,7 @@ def get_since_date(rc):
     return since_date
 
 
-def get_coauthos_from_pubs(pubs):
+def get_coauthors_from_pubs(pubs):
     """Get co-authors' names from the publication."""
     my_collabs = []
     for pub in pubs:
@@ -67,6 +67,17 @@ def get_coauthos_from_pubs(pubs):
             ]
         )
     return my_collabs
+
+
+def get_lastest_org(person_info):
+    if "employment" in person_info:
+        employment = person_info["employment"]
+        # sort by end_year
+        employment = sorted(employment, key=lambda d: d.get("end_year", float('inf')))
+        organization = employment[0].get('organization', 'missing')
+    else:
+        organization = "missing"
+    return organization
 
 
 def query_people_and_instituions(rc, names):
@@ -83,7 +94,7 @@ def query_people_and_instituions(rc, names):
                 ["name", "aka", "_id"], person_name)
             if not person_found:
                 print(
-                    "WARNING: {} not found in contacts. Check aka".format(
+                    "WARNING: {} not found in contacts or people. Check aka".format(
                         person_name))
             else:
                 people.append(person_found['name'])
@@ -99,9 +110,7 @@ def query_people_and_instituions(rc, names):
                         person_found["institution"]))
         else:
             people.append(person_found['name'])
-            pinst = person_found.get("employment",
-                                     [{"organization": "missing"}])[
-                0]["organization"]
+            pinst = get_lastest_org(person_found)
             inst = fuzzy_retrieval(all_docs_from_collection(
                 rc.client, "institutions"), ["name", "aka", "_id"],
                 pinst)
@@ -115,7 +124,7 @@ def query_people_and_instituions(rc, names):
     return people, institutions
 
 
-def query_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
+def format_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
     """Get the last name, first name and institution name."""
     ppl = []
     for ppl_tup in ppl_names:
@@ -264,14 +273,14 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 )
                 if 'since_date' in filters:
                     since_date = filters.get('since_date')
-                    pubs = fitler_since_date(pubs, since_date)
-                my_collabs = get_coauthos_from_pubs(pubs)
+                    pubs = filter_since_date(pubs, since_date)
+                my_collabs = get_coauthors_from_pubs(pubs)
                 people, institutions = query_people_and_instituions(self.rc, my_collabs)
                 ppl_names = list(zip(people, institutions))
                 ppl = format_people_name(ppl_names)
                 # sorting the ppl list
                 ppl_sorted = sorted(ppl, key=itemgetter(0))
-                ppl_names2 = query_last_first_instutition_names(self.rc, ppl_names)
+                ppl_names2 = format_last_first_instutition_names(self.rc, ppl_names)
                 break
         else:
             print("Warning: No such person in people: {}".format(person['_id']))
