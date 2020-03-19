@@ -69,11 +69,14 @@ def get_coauthors_from_pubs(pubs):
     return my_collabs
 
 
-def get_lastest_org(person_info):
+def get_recent_org(person_info):
     if "employment" in person_info:
         employment = person_info["employment"]
         # sort by end_year
-        employment = sorted(employment, key=lambda d: d.get("end_year", float('inf')))
+        employment = sorted(
+            employment,
+            key=lambda d: d.get("end_year", float('inf')),
+            reverse=True)
         organization = employment[0].get('organization', 'missing')
     else:
         organization = "missing"
@@ -110,7 +113,7 @@ def query_people_and_instituions(rc, names):
                         person_found["institution"]))
         else:
             people.append(person_found['name'])
-            pinst = get_lastest_org(person_found)
+            pinst = get_recent_org(person_found)
             inst = fuzzy_retrieval(all_docs_from_collection(
                 rc.client, "institutions"), ["name", "aka", "_id"],
                 pinst)
