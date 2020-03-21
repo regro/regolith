@@ -1,5 +1,4 @@
 """Builder for Recent Collaborators."""
-
 import datetime as dt
 import os
 import sys
@@ -19,49 +18,58 @@ from regolith.tools import all_docs_from_collection, filter_publications, \
 NUM_MONTHS = 48
 
 
-def mdy_date(month, day, year, **kwargs):
+def mdy_date(month, day, year):
     """Make a date object."""
     if isinstance(month, str):
         month = month_to_int(month)
     return dt.date(year, month, day)
 
 
-def mdy(month, day, year, **kwargs):
+def mdy(month, day, year):
     """Format the date to a string mm/dd/yy."""
     return "{}/{}/{}".format(
         str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
     )
 
-def get_advisor_name_inst(self, p, rc):
-    my_eme = p.get("employment") + p.get("education")
-    relevant_emes = [i for i in my_eme if i.get("advisor")]
-    advisors = [(i.get("advisor"), "phd") for i in relevant_emes if
-                'phd'
-                or "dphil" in i.get("degree", "").lower]
-    advisors.append(
-        [(i.get("advisor"), "postdoc") for i in relevant_emes if
-         i.get("organization")])
+
+def get_advisor_name_inst(p, rc):
+    my_eme = p.get("employment", []) + p.get("education", [])
+    relevant_emes = [i for i in my_eme if "advisor" in i]
+    phd_advisors = [
+        (i.get("advisor"), "phd")
+        for i in relevant_emes
+        if 'phd' or "dphil" in i.get("degree", "").lower()
+    ]
+    pdoc_advisors = [
+        (i.get("advisor"), "postdoc")
+        for i in relevant_emes if "organization" in i
+    ]
+    advisors = phd_advisors + pdoc_advisors
     advisors_info = []
-    for i in advisors:
+    for advisor in advisors:
         adv = fuzzy_retrieval(
             all_docs_from_collection(rc.client, "contacts"),
-            ['aka', 'name', '_id'], i[0],
-            case_sensitive=False)
+            ['aka', 'name', '_id'], advisor[0],
+            case_sensitive=False
+        )
         if adv:
             inst = fuzzy_retrieval(
                 all_docs_from_collection(rc.client, "institutions"),
                 ['aka', 'name', '_id'], adv.get("institution"),
-                case_sensitive=False)
+                case_sensitive=False
+            )
             if inst:
                 advisors_info.append(
-                    (adv.get("name"), inst.get("name", "")))
+                    (adv.get("name"), inst.get("name", ""))
+                )
             else:
                 advisors_info.append(
-                    (adv.get("name"), adv.get("institution")))
+                    (adv.get("name"), adv.get("institution"))
+                )
     return advisors_info
 
-def get_advisee_name(self, p, rc, advisor):
-    phd_advisor, postdoc_advisor = False, False
+
+def get_advisee_name(p, rc, advisor):
     advisor_name = fuzzy_retrieval(
         all_docs_from_collection(rc.client, "people"),
         ['aka', 'name', '_id'], advisor,
@@ -93,6 +101,7 @@ def get_advisee_name(self, p, rc, advisor):
                 return_value = (p.get("name"), inst, "postdoc")
     return return_value
 
+
 def filter_since_date(pubs, since_date):
     """Filter the publications after the since_date."""
     for pub in pubs:
@@ -116,7 +125,7 @@ def get_since_date(rc):
     return since_date
 
 
-def get_coauthors_from_pubs(pubs, rc):
+def get_coauthors_from_pubs(pubs):
     """Get co-authors' names from the publication."""
     my_collabs = []
     for pub in pubs:
@@ -187,7 +196,8 @@ def query_people_and_instituions(rc, names):
                         pinst))
     return people, institutions
 
-def format_advisees(advisors_info,advisees,rc):
+
+def format_advisees(advisors_info, advisees, rc):
     ppl = [(HumanName(i[0]).last, HumanName(i[0]).first, i[1]) for i in
            advisors_info]
     for i in advisees:
@@ -335,16 +345,18 @@ class RecentCollaboratorsBuilder(BuilderBase):
         gtx["citations"] = all_docs_from_collection(rc.client, "citations")
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
-    def query_ppl(self, target, rc, **filters):
+    def query_ppl(self, target, **filters):
         """Query the data base for the target's collaborators' information."""
-        person = fuzzy_retrieval(all_docs_from_collection(self.rc.client, "people"),
+        rc = self.rc
+        gtx = self.gtx
+        person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"),
                                  ['aka', 'name', '_id'], target,
                                  case_sensitive=False)
         if not person:
             sys.exit("please rerun specifying --people PERSON")
         person_inst_abbr = person.get("employment")[0]["organization"]
         person_inst = fuzzy_retrieval(all_docs_from_collection(
-            self.rc.client, "institutions"), ["name", "aka", "_id"],
+            rc.client, "institutions"), ["name", "aka", "_id"],
             person_inst_abbr, case_sensitive=False)
         if person_inst is not None:
             person_inst_name = person_inst.get("name")
@@ -352,14 +364,14 @@ class RecentCollaboratorsBuilder(BuilderBase):
             person_inst_name = person_inst_abbr
             print(f"WARNING: {person_inst_abbr} is not found in institutions.")
         advisees = []
-        for p in self.gtx["people"]:
+        for p in gtx["people"]:
             advisee = get_advisee_name(p, rc, person["_id"])
             if advisee:
                 advisees.append(advisee)
             if p["_id"] == person["_id"]:
                 my_names = frozenset(p.get("aka", []) + [p["name"]])
                 pubs = filter_publications(
-                    self.gtx["citations"],
+                    gtx["citations"],
                     my_names,
                     reverse=True,
                     bold=False
@@ -369,18 +381,19 @@ class RecentCollaboratorsBuilder(BuilderBase):
                     since_date = filters.get('since_date')
                     pubs = filter_since_date(pubs, since_date)
                 my_collabs = get_coauthors_from_pubs(pubs)
-                people, institutions = query_people_and_instituions(self.rc, my_collabs)
+                people, institutions = query_people_and_instituions(rc, my_collabs)
                 ppl_names = list(zip(people, institutions))
                 ppl = format_people_name(ppl_names)
                 # sorting the ppl list
                 ppl_sorted = sorted(ppl, key=itemgetter(0))
-                ppl_names2 = format_last_first_instutition_names(self.rc, ppl_names)
-                advisee_names = format_advisees(advisors_info,advisees,rc)
+                ppl_names2 = format_last_first_instutition_names(rc, ppl_names)
+                advisee_names = format_advisees(advisors_info, advisees, rc)
                 break
         else:
             print("Warning: No such person in people: {}".format(person['_id']))
             ppl_sorted = []
             ppl_names2 = []
+            advisee_names = []
         results = {
             'person_info': person,
             'person_institution_name': person_inst_name,
@@ -415,6 +428,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
         ws = wb.worksheets[0]
         self.add_ppl_2tups(ws, ppl_2tups)
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
+        return locals()
 
     def render_template2(self, person_info, ppl_3tups, **kwargs):
         """Render the doe template."""
@@ -427,6 +441,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
             ws["B{}".format(row + 8)].value = ppl_3tups[row][1]
             ws["C{}".format((row + 8))].value = ppl_3tups[row][2]
         wb.save(os.path.join(self.bldir, "{}_doe.xlsx".format(person_info["_id"])))
+        return locals()
 
     def excel(self):
         """Query data base and build nsf and doe excels."""
