@@ -50,17 +50,16 @@ class ReadingListsBuilder(LatexBuilderBase):
             listid = rlist["_id"]
             outfile_bib = listid
 
-            print("List {}:".format(listid))
-            print("{}:".format(rlist['purpose']))
             n = 1
             for paper in rlist['papers']:
                 # fixme: code here to get info from crossref
-                doi = paper.get('doi', 'tbd')
+                doi = paper.get('doi')
                 url = paper.get('url')
-                if doi == 'tbd':
-                    print(
-                        "  doi needed for paper: {}".format(paper.get('text')))
-                elif doi != "na":
+#                if doi == 'tbd':
+#                    pass
+#                    print(
+#                        "  doi needed for paper: {}".format(paper.get('text')))
+                if doi and doi != 'tbd':
                     article = self.cr.works(ids=doi)
                     authorlist = [
                         "{} {}".format(a['given'].strip(), a['family'].strip())
@@ -72,7 +71,8 @@ class ReadingListsBuilder(LatexBuilderBase):
                         journal = article.get('message').get('container-title')[
                             0]
                     if article.get('message').get('volume'):
-                        authorlist[-1] = "and {}".format(authorlist[-1])
+                        if len(authorlist) > 1:
+                            authorlist[-1] = "and {}".format(authorlist[-1])
                         sauthorlist = ", ".join(authorlist)
                         ref = "{}, {}, {}, v.{}, pp.{}, ({}).".format(
                             article.get('message').get('title')[0],
@@ -86,17 +86,18 @@ class ReadingListsBuilder(LatexBuilderBase):
                                 0],
                         )
                     else:
-                        authorlist[-1] = "and {}".format(authorlist[-1])
-                    sauthorlist = ", ".join(authorlist)
-                    ref = "{}, {}, {}, pp.{}, ({}).".format(
-                        article.get('message').get('title')[0],
-                        sauthorlist,
-                        journal,
-                        article.get('message').get('page'),
-                        article.get('message').get('issued').get('date-parts')[
-                            0][
-                            0],
-                    )
+                        if len(authorlist) > 1:
+                            authorlist[-1] = "and {}".format(authorlist[-1])
+                        sauthorlist = ", ".join(authorlist)
+                        ref = "{}, {}, {}, pp.{}, ({}).".format(
+                            article.get('message').get('title')[0],
+                            sauthorlist,
+                            journal,
+                            article.get('message').get('page'),
+                            article.get('message').get('issued').get('date-parts')[
+                                0][
+                                0],
+                        )
                     paper.update({'reference': ref, 'n': n, 'label': 'DOI'})
                     n += 1
                 if url:

@@ -29,7 +29,7 @@ BUILDERS = {
     "preslist": PresListBuilder,
     "reimb": ReimbursementBuilder,
     "figure": FigureBuilder,
-    "reading_lists": ReadingListsBuilder,
+    "reading-lists": ReadingListsBuilder,
 }
 
 
