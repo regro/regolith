@@ -32,6 +32,66 @@ def mdy(month, day, year, **kwargs):
         str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
     )
 
+def get_advisor_name_inst(self, p, rc):
+    my_eme = p.get("employment") + p.get("education")
+    relevant_emes = [i for i in my_eme if i.get("advisor")]
+    advisors = [(i.get("advisor"), "phd") for i in relevant_emes if
+                'phd'
+                or "dphil" in i.get("degree", "").lower]
+    advisors.append(
+        [(i.get("advisor"), "postdoc") for i in relevant_emes if
+         i.get("organization")])
+    advisors_info = []
+    for i in advisors:
+        adv = fuzzy_retrieval(
+            all_docs_from_collection(rc.client, "contacts"),
+            ['aka', 'name', '_id'], i[0],
+            case_sensitive=False)
+        if adv:
+            inst = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "institutions"),
+                ['aka', 'name', '_id'], adv.get("institution"),
+                case_sensitive=False)
+            if inst:
+                advisors_info.append(
+                    (adv.get("name"), inst.get("name", "")))
+            else:
+                advisors_info.append(
+                    (adv.get("name"), adv.get("institution")))
+    return advisors_info
+
+def get_advisee_name(self, p, rc, advisor):
+    phd_advisor, postdoc_advisor = False, False
+    advisor_name = fuzzy_retrieval(
+        all_docs_from_collection(rc.client, "people"),
+        ['aka', 'name', '_id'], advisor,
+        case_sensitive=False).get("name")
+    return_value = None
+    emp = p.get("employment")
+    for i in emp:
+        if i.get("advisor"):
+            advisor_item = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "people"),
+                ['aka', 'name', '_id'], i.get("advisor", ""),
+                case_sensitive=False)
+            inst = i.get("organization")
+        else:
+            continue
+        if i.get("status") == "phd":
+            if advisor_item:
+                advisee_advisor_name = advisor_item.get("name")
+            else:
+                advisee_advisor_name = i.get("advisor", "")
+            if advisor_name.casefold() == advisee_advisor_name.casefold():
+                return_value = (p.get("name"), inst, "phd")
+        elif i.get("status") == "postdoc":
+            if advisor_item:
+                advisee_advisor_name = advisor_item.get("name")
+            else:
+                advisee_advisor_name = i.get("advisor", "")
+            if advisor_name.casefold() == advisee_advisor_name.casefold():
+                return_value = (p.get("name"), inst, "postdoc")
+    return return_value
 
 def filter_since_date(pubs, since_date):
     """Filter the publications after the since_date."""
@@ -56,7 +116,7 @@ def get_since_date(rc):
     return since_date
 
 
-def get_coauthors_from_pubs(pubs):
+def get_coauthors_from_pubs(pubs, rc):
     """Get co-authors' names from the publication."""
     my_collabs = []
     for pub in pubs:
@@ -91,11 +151,11 @@ def query_people_and_instituions(rc, names):
         person_found = fuzzy_retrieval(all_docs_from_collection(
             rc.client, "people"),
             ["name", "aka", "_id"],
-            person_name)
+            person_name, case_sensitive=False)
         if not person_found:
             person_found = fuzzy_retrieval(all_docs_from_collection(
                 rc.client, "contacts"),
-                ["name", "aka", "_id"], person_name)
+                ["name", "aka", "_id"], person_name, case_sensitive=False)
             if not person_found:
                 print(
                     "WARNING: {} not found in contacts or people. Check aka".format(
@@ -105,7 +165,7 @@ def query_people_and_instituions(rc, names):
                 inst = fuzzy_retrieval(all_docs_from_collection(
                     rc.client, "institutions"),
                     ["name", "aka", "_id"],
-                    person_found["institution"])
+                    person_found["institution"], case_sensitive=False)
                 if inst:
                     institutions.append(inst["name"])
                 else:
@@ -117,7 +177,7 @@ def query_people_and_instituions(rc, names):
             pinst = get_recent_org(person_found)
             inst = fuzzy_retrieval(all_docs_from_collection(
                 rc.client, "institutions"), ["name", "aka", "_id"],
-                pinst)
+                pinst, case_sensitive=False)
             if inst:
                 institutions.append(inst["name"])
             else:
@@ -126,6 +186,31 @@ def query_people_and_instituions(rc, names):
                     "WARNING: {} missing from institutions".format(
                         pinst))
     return people, institutions
+
+def format_advisees(advisors_info,advisees,rc):
+    ppl = [(HumanName(i[0]).last, HumanName(i[0]).first, i[1]) for i in
+           advisors_info]
+    for i in advisees:
+        adv = fuzzy_retrieval(
+            all_docs_from_collection(rc.client, "people"),
+            ['aka', 'name', '_id'], i[0],
+            case_sensitive=False)
+        if adv:
+            inst = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "institutions"),
+                ['aka', 'name', '_id'], i[1],
+                case_sensitive=False)
+            if inst:
+                ppl.append(
+                    (HumanName(adv.get("name")).last,
+                     HumanName(adv.get("name")).first,
+                     inst.get("name", "")))
+            else:
+                ppl.append(
+                    (HumanName(adv.get("name")).last,
+                     HumanName(adv.get("name")).first,
+                     i[1]))
+    return ppl
 
 
 def format_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
@@ -250,7 +335,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
         gtx["citations"] = all_docs_from_collection(rc.client, "citations")
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
-    def query_ppl(self, target, **filters):
+    def query_ppl(self, target, rc, **filters):
         """Query the data base for the target's collaborators' information."""
         person = fuzzy_retrieval(all_docs_from_collection(self.rc.client, "people"),
                                  ['aka', 'name', '_id'], target,
@@ -260,13 +345,17 @@ class RecentCollaboratorsBuilder(BuilderBase):
         person_inst_abbr = person.get("employment")[0]["organization"]
         person_inst = fuzzy_retrieval(all_docs_from_collection(
             self.rc.client, "institutions"), ["name", "aka", "_id"],
-            person_inst_abbr)
+            person_inst_abbr, case_sensitive=False)
         if person_inst is not None:
             person_inst_name = person_inst.get("name")
         else:
             person_inst_name = person_inst_abbr
             print(f"WARNING: {person_inst_abbr} is not found in institutions.")
+        advisees = []
         for p in self.gtx["people"]:
+            advisee = get_advisee_name(p, rc, person["_id"])
+            if advisee:
+                advisees.append(advisee)
             if p["_id"] == person["_id"]:
                 my_names = frozenset(p.get("aka", []) + [p["name"]])
                 pubs = filter_publications(
@@ -275,6 +364,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
                     reverse=True,
                     bold=False
                 )
+                advisors_info = get_advisor_name_inst(p, rc)
                 if 'since_date' in filters:
                     since_date = filters.get('since_date')
                     pubs = filter_since_date(pubs, since_date)
@@ -285,6 +375,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 # sorting the ppl list
                 ppl_sorted = sorted(ppl, key=itemgetter(0))
                 ppl_names2 = format_last_first_instutition_names(self.rc, ppl_names)
+                advisee_names = format_advisees(advisors_info,advisees,rc)
                 break
         else:
             print("Warning: No such person in people: {}".format(person['_id']))
@@ -295,6 +386,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
             'person_institution_name': person_inst_name,
             'ppl_2tups': ppl_sorted,
             'ppl_3tups': ppl_names2,
+            'advisees': advisee_names,
         }
         return results
 
