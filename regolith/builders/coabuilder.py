@@ -14,7 +14,11 @@ from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import month_to_int
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
+<<<<<<< HEAD
     fuzzy_retrieval, is_since
+=======
+    month_and_year, fuzzy_retrieval, is_since
+>>>>>>> updates so that the DOE builder builds correctly.  This version built coa form for MIT
 
 NUM_MONTHS = 48
 
@@ -223,10 +227,12 @@ class RecentCollaboratorsBuilder(BuilderBase):
         """Initiate the class instance."""
         super().__init__(rc)
         self.template = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_nsf.xlsx"
+            os.path.dirname(os.path.dirname(__file__)), "templates",
+            "coa_template_nsf.xlsx"
         )
         self.template2 = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_doe.xlsx"
+            os.path.dirname(os.path.dirname(__file__)), "templates",
+            "coa_template_doe.xlsx"
         )
         self.cmds = ["excel"]
 
@@ -250,15 +256,97 @@ class RecentCollaboratorsBuilder(BuilderBase):
         gtx["citations"] = all_docs_from_collection(rc.client, "citations")
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
+<<<<<<< HEAD
     def query_ppl(self, target, **filters):
         """Query the data base for the target's collaborators' information."""
         person = fuzzy_retrieval(all_docs_from_collection(self.rc.client, "people"),
                                  ['aka', 'name', '_id'], target,
+=======
+    def get_advisor_name_inst(self, p, rc):
+        my_eme = p.get("employment") + p.get("education")
+        relevant_emes = [i for i in my_eme if i.get("advisor")]
+        advisors = [(i.get("advisor"), "phd") for i in relevant_emes if
+                    'phd'
+                    or "dphil" in i.get("degree", "").lower]
+        advisors.append(
+            [(i.get("advisor"), "postdoc") for i in relevant_emes if
+             i.get("organization")])
+        advisors_info = []
+        for i in advisors:
+            adv = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "contacts"),
+                ['aka', 'name', '_id'], i[0],
+                case_sensitive=False)
+            if adv:
+                inst = fuzzy_retrieval(
+                    all_docs_from_collection(rc.client, "institutions"),
+                    ['aka', 'name', '_id'], adv.get("institution"),
+                    case_sensitive=False)
+                if inst:
+                    advisors_info.append(
+                        (adv.get("name"), inst.get("name", "")))
+                else:
+                    advisors_info.append(
+                        (adv.get("name"), adv.get("institution")))
+        return advisors_info
+
+    def get_advisee_name(self, p, rc, advisor):
+        phd_advisor, postdoc_advisor = False, False
+        advisor_name = fuzzy_retrieval(
+            all_docs_from_collection(rc.client, "people"),
+            ['aka', 'name', '_id'], advisor,
+            case_sensitive=False).get("name")
+        return_value = None
+        emp = p.get("employment")
+        for i in emp:
+            if i.get("advisor"):
+                advisor_item = fuzzy_retrieval(
+                    all_docs_from_collection(rc.client, "people"),
+                    ['aka', 'name', '_id'], i.get("advisor", ""),
+                    case_sensitive=False)
+                inst = i.get("organization")
+            else:
+                continue
+            if i.get("status") == "phd":
+                if advisor_item:
+                    advisee_advisor_name = advisor_item.get("name")
+                else:
+                    advisee_advisor_name = i.get("advisor", "")
+                if advisor_name.casefold() == advisee_advisor_name.casefold():
+                    return_value = (p.get("name"), inst, "phd")
+            elif i.get("status") == "postdoc":
+                if advisor_item:
+                    advisee_advisor_name = advisor_item.get("name")
+                else:
+                    advisee_advisor_name = i.get("advisor", "")
+                if advisor_name.casefold() == advisee_advisor_name.casefold():
+                    return_value = (p.get("name"), inst, "postdoc")
+        return return_value
+
+    def excel(self):
+        rc = self.rc
+        gtx = self.gtx
+        # if --to is provided:
+        # use self.rc.to_date as the endpoint and find every publications within
+        # NUM_MONTHS months of the to_date date
+        # Otherwise: find every publication within NUM_MONTHS months from today.
+        if isinstance(self.rc.to_date, str):
+            since_date = dt.datetime.strptime(self.rc.to_date,
+                                              '%Y-%m-%d').date() - relativedelta(
+                months=NUM_MONTHS)
+        else:
+            since_date = dt.date.today() - relativedelta(months=NUM_MONTHS)
+        if isinstance(self.rc.people, str):
+            self.rc.people = [self.rc.people]
+        person = fuzzy_retrieval(all_docs_from_collection(rc.client, "people"),
+                                 ['aka', 'name', '_id'], self.rc.people[0],
+>>>>>>> updates so that the DOE builder builds correctly.  This version built coa form for MIT
                                  case_sensitive=False)
         if not person:
             sys.exit("please rerun specifying --people PERSON")
         person_inst_abbr = person.get("employment")[0]["organization"]
         person_inst = fuzzy_retrieval(all_docs_from_collection(
+<<<<<<< HEAD
             self.rc.client, "institutions"), ["name", "aka", "_id"],
             person_inst_abbr)
         if person_inst is not None:
@@ -266,9 +354,20 @@ class RecentCollaboratorsBuilder(BuilderBase):
         else:
             person_inst_name = person_inst_abbr
             print(f"WARNING: {person_inst_abbr} is not found in institutions.")
+=======
+            rc.client, "institutions"), ["name", "aka", "_id"],
+            person_inst, case_sensitive=False)
+        person_inst_name = person_inst.get("name")
+
+        advisees = []
+>>>>>>> updates so that the DOE builder builds correctly.  This version built coa form for MIT
         for p in self.gtx["people"]:
+            advisee = self.get_advisee_name(p, rc, person["_id"])
+            if advisee:
+                advisees.append(advisee)
             if p["_id"] == person["_id"]:
                 my_names = frozenset(p.get("aka", []) + [p["name"]])
+<<<<<<< HEAD
                 pubs = filter_publications(
                     self.gtx["citations"],
                     my_names,
@@ -297,6 +396,88 @@ class RecentCollaboratorsBuilder(BuilderBase):
             'ppl_3tups': ppl_names2,
         }
         return results
+=======
+                pubs = filter_publications(self.gtx["citations"], my_names,
+                                           reverse=True, bold=False)
+                my_collabs = []
+                for pub in pubs:
+                    if is_since(pub.get("year"), since_date.year,
+                                pub.get("month", 1), since_date.month):
+                        if not pub.get("month"):
+                            print("WARNING: {} is missing month".format(
+                                pub["_id"]))
+                        if pub.get("month") == "tbd".casefold():
+                            print("WARNING: month in {} is tbd".format(
+                                pub["_id"]))
+
+                        my_collabs.extend([collabs for collabs in
+                                           [names for names in
+                                            pub.get('author', [])]])
+                advisors_info = self.get_advisor_name_inst(p, rc)
+
+                people, institutions = [], []
+                for collab in my_collabs:
+                    collab_person = fuzzy_retrieval(all_docs_from_collection(
+                        rc.client, "people"),
+                        ["name", "aka", "_id"],
+                        collab,
+                        case_sensitive=False)
+                    if not collab_person:
+                        collab_person = fuzzy_retrieval(
+                            all_docs_from_collection(
+                                rc.client, "contacts"),
+                            ["name", "aka", "_id"], collab,
+                            case_sensitive=False)
+                        if not collab_person:
+                            print(
+                                "WARNING: {} not found in contacts. Check aka".format(
+                                    collab))
+                        else:
+                            people.append(collab_person)
+                            inst = fuzzy_retrieval(all_docs_from_collection(
+                                rc.client, "institutions"),
+                                ["name", "aka", "_id"],
+                                collab_person["institution"],
+                                case_sensitive=False)
+                            if inst:
+                                institutions.append(inst["name"])
+                            else:
+                                institutions.append(
+                                    collab_person.get("institution", "missing"))
+                                print(
+                                    "WARNING: {} missing from institutions".format(
+                                        collab_person["institution"]))
+                    else:
+                        people.append(collab_person)
+                        pinst = collab_person.get("employment",
+                                                  [{
+                                                      "organization": "missing"}])[
+                            0]["organization"]
+                        inst = fuzzy_retrieval(all_docs_from_collection(
+                            rc.client, "institutions"), ["name", "aka", "_id"],
+                            pinst, case_sensitive=False)
+                        if inst:
+                            institutions.append(inst["name"])
+                        else:
+                            institutions.append(pinst)
+                            print(
+                                "WARNING: {} missing from institutions".format(
+                                    pinst))
+                ppl_names = [(collab_person["name"], i) for
+                             collab_person, i in zip(people, institutions) if
+                             collab_person]
+                ppl = []
+                # reformatting the name in last name, first name
+                for name_i in ppl_names:
+                    name = "{}, {}".format(HumanName(name_i[0]).last,
+                                           HumanName(name_i[0]).first)
+                    ppl.append((name, name_i[1]))
+                ppl = list(set(ppl))
+                ppl.sort(key=lambda x: x[0])
+            emp = p.get("employment", [{"organization": "missing",
+                                        "begin_year": 2019}])
+            emp.sort(key=ene_date_key, reverse=True)
+>>>>>>> updates so that the DOE builder builds correctly.  This version built coa form for MIT
 
     @staticmethod
     def add_ppl_2tups(ws, ppl_2tups, start_row=37, row_to_merge=40, format_ref_cell='B37', cols='ABCDE'):
@@ -321,12 +502,38 @@ class RecentCollaboratorsBuilder(BuilderBase):
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
+<<<<<<< HEAD
         self.add_ppl_2tups(ws, ppl_2tups)
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
+=======
+        ws.delete_rows(52, amount=3)  # removing the example rows
+        ws.move_range("A52:E66", rows=num_rows, cols=0, translate=True)
+        style_ref_cell = ws["B51"]
+        template_cell_style = {}
+        template_cell_style["font"] = copy(style_ref_cell.font)
+        template_cell_style["border"] = copy(style_ref_cell.border)
+        template_cell_style["fill"] = copy(style_ref_cell.fill)
+        template_cell_style["alignment"] = copy(style_ref_cell.alignment)
+        col_idx = ["A", "B", "C", "D", "E"]
+        for row in range(1, num_rows + 1):
+            try:
+                ws.unmerge_cells("A{}:E{}".format(row + 51, row + 51))
+            except:
+                pass
+            for idx in range(len(col_idx)):
+                apply_cell_style(ws["{}{}".format(col_idx[idx], row + 51)],
+                                 template_cell_style)
+            ws["A{}".format(row + 51)].value = "A:"
+            ws["B{}".format(row + 51)].value = ppl[row - 1][0]
+            ws["C{}".format((row + 51))].value = ppl[row - 1][1]
+        ws.delete_rows(51)  # deleting the reference row
+        wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person["_id"])))
+>>>>>>> updates so that the DOE builder builds correctly.  This version built coa form for MIT
 
     def render_template2(self, person_info, ppl_3tups, **kwargs):
         """Render the doe template."""
         template2 = self.template2
+<<<<<<< HEAD
         num_rows = len(ppl_3tups)
         wb = openpyxl.load_workbook(template2)
         ws = wb.worksheets[0]
@@ -346,3 +553,50 @@ class RecentCollaboratorsBuilder(BuilderBase):
         query_results = self.query_ppl(target, since_date=since_date)
         self.render_template1(**query_results)
         self.render_template2(**query_results)
+=======
+        ppl = [(HumanName(i[0]).last, HumanName(i[0]).first, i[1]) for i in
+               advisors_info]
+        for i in advisees:
+            adv = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "people"),
+                ['aka', 'name', '_id'], i[0],
+                case_sensitive=False)
+            if adv:
+                inst = fuzzy_retrieval(
+                    all_docs_from_collection(rc.client, "institutions"),
+                    ['aka', 'name', '_id'], i[1],
+                    case_sensitive=False)
+                if inst:
+                    ppl.append(
+                        (HumanName(adv.get("name")).last,
+                         HumanName(adv.get("name")).first,
+                         inst.get("name", "")))
+                else:
+                    ppl.append(
+                        (HumanName(adv.get("name")).last,
+                         HumanName(adv.get("name")).first,
+                         i[1]))
+        for t in ppl_names:
+            inst = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "institutions"),
+                ['aka', 'name', '_id'], t[1],
+                case_sensitive=False)
+            if inst:
+                inst_name = inst.get("name", "")
+            else:
+                inst_name = t[1]
+            # remove all people who are in the institution of the person
+            if inst_name != person_inst_name:
+                name = HumanName(t[0])
+                ppl.append((name.last, name.first, t[1]))
+        ppl = list(set(ppl))
+        ppl.sort(key=lambda x: x[0])
+        num_rows = len(ppl)  # number of rows to add to the excel file
+        wb = openpyxl.load_workbook(template2)
+        ws = wb.worksheets[0]
+        for row in range(num_rows):
+            ws["A{}".format(row + 8)].value = ppl[row][0]
+            ws["B{}".format(row + 8)].value = ppl[row][1]
+            ws["C{}".format((row + 8))].value = ppl[row][2]
+        wb.save(os.path.join(self.bldir, "{}_doe.xlsx".format(person["_id"])))
+>>>>>>> updates so that the DOE builder builds correctly.  This version built coa form for MIT
