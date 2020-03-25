@@ -338,7 +338,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
                                  ['aka', 'name', '_id'], target,
                                  case_sensitive=False)
         if not person:
-            sys.exit("Person {} not found in people.".format(target))
+            raise RuntimeError("Person {} not found in people.".format(target))
         person_inst_name = get_inst_name(person, rc)
         pubs = get_person_pubs(gtx["citations"], person)
         if 'since_date' in filters:
@@ -404,7 +404,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
     def excel(self):
         """Query data base and build nsf and doe excels."""
         rc = self.rc
-        if rc.people is None:
+        if not rc.people:
             sys.exit("please rerun specifying --people PERSON")
         if isinstance(rc.people, str):
             rc.people = [rc.people]
