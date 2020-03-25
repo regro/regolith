@@ -32,6 +32,7 @@ def mdy(month, day, year):
 
 
 def get_advisors_name_inst(advisee, rc):
+    """Get the advisee's advisor. Yield (last name, first name, institution name)."""
     my_eme = advisee.get("employment", []) + advisee.get("education", [])
     relevant_emes = [i for i in my_eme if "advisor" in i]
     phd_advisors = [
@@ -44,7 +45,6 @@ def get_advisors_name_inst(advisee, rc):
         for i in relevant_emes if "organization" in i
     ]
     advisors = phd_advisors + pdoc_advisors
-    advisors_info = []
     for advisor in advisors:
         adv = fuzzy_retrieval(
             all_docs_from_collection(rc.client, "contacts"),
@@ -65,7 +65,7 @@ def get_advisors_name_inst(advisee, rc):
 
 
 def get_advisees_name_inst(coll, advisor, rc):
-    """"""
+    """Get advisor's advisees. Yield (last name, first name, institutions)"""
     advisor_names = advisor.get('aka', []) + [advisor.get('name'), advisor.get('_id')]
     for person in coll:
         edus = person.get("education", [])
@@ -123,7 +123,9 @@ def get_coauthors_from_pubs(pubs):
 def get_recent_org(person_info):
     """Get the person's most recent organization."""
     if "employment" in person_info:
-        employment = person_info["employment"]
+        employment = person_info.get("employment", []) + person_info.get("education", [])
+        if len(employment) == 0:
+            return "missing"
         # sort by end_year
         employment = sorted(
             employment,
@@ -180,6 +182,7 @@ def query_people_and_instituions(rc, names):
 
 
 def get_inst_name(person, rc):
+    """Get the name of instituion of the person's lastest employment."""
     person_inst_abbr = person.get("employment")[0]["organization"]
     person_inst = fuzzy_retrieval(all_docs_from_collection(
         rc.client, "institutions"), ["name", "aka", "_id"],
@@ -193,6 +196,7 @@ def get_inst_name(person, rc):
 
 
 def get_person_pubs(coll, person):
+    """Get the publications from one person."""
     my_names = frozenset(person.get("aka", []) + [person["name"]])
     pubs = filter_publications(
         coll,
@@ -367,7 +371,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
             cells[0].value = "A:"
             cells[1].value = tup[0]
             cells[2].value = tup[1]
-        header_row = row_to_merge + more_rows - 1
+        header_row = row_to_merge + more_rows
         ws.merge_cells("A{}:E{}".format(header_row, header_row))
         return
 
