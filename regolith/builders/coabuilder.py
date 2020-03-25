@@ -61,6 +61,7 @@ def get_advisors_name_inst(advisee, rc):
             if inst:
                 yield advsior_name.last, advsior_name.first, inst.get("name", "")
             else:
+                print("WARNING: {} not in institutions".format(adv.get("institution")))
                 yield advsior_name.last, advsior_name.first, adv.get("institution")
 
 
@@ -77,7 +78,9 @@ def get_advisees_name_inst(coll, advisor, rc):
                     all_docs_from_collection(rc.client, "institutions"),
                     ['aka', 'name', '_id'], inst_name,
                     case_sensitive=False)
-                if inst is None:
+                if not inst:
+                    print("WARNING: {} not in institutions".format(
+                        inst_name))
                     yield person_name.last, person_name.first, inst_name
                 else:
                     yield person_name.last, person_name.first, inst.get('name')
