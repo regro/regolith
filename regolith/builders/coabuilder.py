@@ -140,7 +140,7 @@ def get_recent_org(person_info):
     return organization
 
 
-def query_people_and_instituions(rc, names):
+def query_people_and_institutions(rc, names):
     """Get the people and institutions names."""
     people, institutions = [], []
     for person_name in names:
@@ -345,7 +345,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
             since_date = filters.get('since_date')
             pubs = filter_since_date(pubs, since_date)
         my_collabs = get_coauthors_from_pubs(pubs)
-        people, institutions = query_people_and_instituions(rc, my_collabs)
+        people, institutions = query_people_and_institutions(rc, my_collabs)
         ppl_names = set(zip(people, institutions))
         collab_3tups = set(format_last_first_instutition_names(rc, ppl_names))
         advisors_3tups = set(get_advisors_name_inst(person, rc))
