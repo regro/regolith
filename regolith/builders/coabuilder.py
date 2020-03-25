@@ -78,12 +78,12 @@ def get_advisees_name_inst(coll, advisor, rc):
                     all_docs_from_collection(rc.client, "institutions"),
                     ['aka', 'name', '_id'], inst_name,
                     case_sensitive=False)
-                if not inst:
+                if inst is None:
                     print("WARNING: {} not in institutions".format(
                         inst_name))
                     yield person_name.last, person_name.first, inst_name
                 else:
-                    yield person_name.last, person_name.first, inst.get('name')
+                    yield person_name.last, person_name.first, inst.get('name', "")
                 break
 
 
@@ -190,7 +190,7 @@ def get_inst_name(person, rc):
     person_inst = fuzzy_retrieval(all_docs_from_collection(
         rc.client, "institutions"), ["name", "aka", "_id"],
         person_inst_abbr, case_sensitive=False)
-    if person_inst is None:
+    if person_inst is not None:
         person_inst_name = person_inst.get("name")
     else:
         person_inst_name = person_inst_abbr
@@ -240,6 +240,11 @@ def format_people_name(ppl_names):
         name_reformatted = ', '.join([last_name, first_name])
         ppl.add((name_reformatted, ppl_names[idx][1]))
     return list(ppl)
+
+
+def format_to_nsf(tups, type_str):
+    """Format the 3 tups to 2 tups. ('type_str', 'last, first', 'inst')."""
+    return [(type_str, '{}, {}'.format(last, first), inst) for last, first, inst in tups]
 
 
 def apply_cell_style(*cells, style):
@@ -351,39 +356,44 @@ class RecentCollaboratorsBuilder(BuilderBase):
         advisors_3tups = set(get_advisors_name_inst(person, rc))
         advisees_3tups = set(get_advisees_name_inst(gtx["people"], person, rc))
         ppl_3tups = sorted(list(collab_3tups | advisors_3tups | advisees_3tups))
-        ppl_2tups = [('{}, {}'.format(last, first), inst) for last, first, inst in ppl_3tups]
+        ppl_tab3 = format_to_nsf(advisors_3tups, 'G:') + format_to_nsf(advisees_3tups, 'T:')
+        ppl_tab4 = format_to_nsf(collab_3tups, 'A:')
         results = {
             'person_info': person,
             'person_institution_name': person_inst_name,
-            'ppl_2tups': ppl_2tups,
+            'ppl_tab3': ppl_tab3,
+            'ppl_tab4': ppl_tab4,
             'ppl_3tups': ppl_3tups,
         }
         return results
 
     @staticmethod
-    def add_ppl_2tups(ws, ppl_2tups, start_row=37, row_to_merge=40, format_ref_cell='B37', cols='ABCDE'):
+    def add_ppl_2tups(ws, ppl_2tups, start_row, template_cell_style=None, cols='ABCDE'):
         """Add the information in person, institution pairs into the table 4 in nsf table."""
-        template_cell_style = copy_cell_style(ws[format_ref_cell])
-        ws.unmerge_cells("A40:E40")
-        more_rows = len(ppl_2tups) - 2
+        more_rows = len(ppl_2tups) - 1
         if more_rows > 0:
             ws.insert_rows(start_row, amount=more_rows)
         for row, tup in enumerate(ppl_2tups, start=start_row):
             cells = [ws['{}{}'.format(col, row)] for col in cols]
-            apply_cell_style(*cells, style=template_cell_style)
-            cells[0].value = "A:"
-            cells[1].value = tup[0]
-            cells[2].value = tup[1]
-        header_row = row_to_merge + more_rows
-        ws.merge_cells("A{}:E{}".format(header_row, header_row))
+            if template_cell_style is not None:
+                apply_cell_style(*cells, style=template_cell_style)
+            cells[0].value = tup[0]
+            cells[1].value = tup[1]
+            cells[2].value = tup[2]
         return
 
-    def render_template1(self, person_info, ppl_2tups, **kwargs):
+    def render_template1(self, person_info, ppl_tab3, ppl_tab4, **kwargs):
         """Render the nsf template."""
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
-        self.add_ppl_2tups(ws, ppl_2tups)
+        style = copy_cell_style(ws['A17'])
+        self.add_ppl_2tups(
+            ws, ppl_tab3, start_row=30, template_cell_style=style
+        )
+        self.add_ppl_2tups(
+            ws, ppl_tab4, start_row=37 + len(ppl_tab3) - 1, template_cell_style=style
+        )
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
         return locals()
 
