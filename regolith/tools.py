@@ -793,3 +793,38 @@ def is_fully_loaded(appts):
                                     datearray[list(loading).index(min(loading))]
                                     ))
     return status
+
+def group_member_ids(ppl_coll, grpname):
+    """Get a list of all group member ids
+
+    Parameters
+    ----------
+    ppl_coll: collection (list of dicts)
+        The people collection that should contain the group members
+    grp: string
+        The id of the group in groups.yml
+
+    Returns
+    -------
+    set:
+        The set of ids of the people in the group
+
+    Notes
+    -----
+    - Groups that are being tracked are listed in the groups.yml collection
+    with a name and an id.
+    - People are in a group during an educational or employment period.
+    - To assign a person to a tracked group during one such period, add
+    a "group" key to that education/employment item with a value
+    that is the group id.
+    - This function takes the group id that is passed and searches
+    the people collection for all people that have been
+    assigned to that group in some period of time and returns a list of
+    """
+    grpmembers = set()
+    for person in ppl_coll:
+        for k in ["education", "employment"]:
+            for position in person.get(k, {}):
+                if position.get("group", None) == grpname:
+                    grpmembers.add(person["_id"])
+    return grpmembers

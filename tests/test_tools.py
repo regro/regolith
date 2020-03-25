@@ -13,7 +13,8 @@ from regolith.tools import (
     is_current,
     update_schemas,
     merge_collections,
-    is_fully_loaded)
+    is_fully_loaded,
+    group_member_ids)
 
 
 def test_author_publications():
@@ -644,3 +645,72 @@ def test_update_schemas(default_schema, user_schema, expected_schema):
 )
 def test_is_fully_loaded(appts, expected):
     assert is_fully_loaded(appts) == expected
+
+ppl_coll = [
+    {
+        "_id": "m1",
+        "name": "member1",
+        "education": [{
+            "group": "bg",
+            "institution": "columbiau",
+            "degree": "PhD",
+            "department": "apam",
+            "begin_year": 2016
+        }],
+        "employment": [{
+            "begin_year": 2020,
+            "begin_month": 1,
+            "organization": "columbiau",
+            "position": "Undergraduate Researcher",
+            "advisor": "sbillinge",
+            "status": "undergrad"
+        }]
+    },
+    {
+        "_id": "nm1",
+        "name": "non-member1",
+        "education": [{
+            "institution": "columbiau",
+            "degree": "PhD",
+            "department": "apam",
+            "begin_year": 2016
+        }],
+        "employment": [{
+            "begin_year": 2020,
+            "begin_month": 1,
+            "organization": "columbiau",
+            "position": "Undergraduate Researcher",
+            "advisor": "sbillinge",
+            "status": "undergrad"
+        }]
+    },
+    {
+        "_id": "m2",
+        "name": "member2",
+        "education": [{
+            "institution": "columbiau",
+            "degree": "PhD",
+            "department": "apam",
+            "begin_year": 2016
+        }],
+        "employment": [{
+            "begin_year": 2020,
+            "begin_month": 1,
+            "group": "bg",
+            "organization": "columbiau",
+            "position": "Undergraduate Researcher",
+            "advisor": "sbillinge",
+            "status": "undergrad"
+        }]
+    },
+]
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (ppl_coll, set(["m1", "m2"])),
+    ],
+)
+def test_group_member_ids(input, expected):
+    actual = group_member_ids(input, "bg")
+    assert actual == expected
