@@ -104,6 +104,9 @@ class ReadingListsBuilder(LatexBuilderBase):
                     paper['doi'] = url
                     paper.update({'n': n, 'label': 'URL'})
                     n += 1
+                else:
+                    paper.update({'n': n})
+                    n += 1
 
             self.render(
                 "rlistbibfile.txt",
