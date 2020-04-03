@@ -25,13 +25,7 @@ from regolith.tools import (
     filter_patents,
     filter_licenses,
     merge_collections,
-    is_current)
-
-BEGIN_YEAR = 2019
-BEGIN_MONTH = 4
-PERSON = "sbillinge"
-
-
+    is_current, get_id_from_name)
 
 
 class AppraisalBuilder(LatexBuilderBase):
@@ -39,8 +33,7 @@ class AppraisalBuilder(LatexBuilderBase):
 
     btype = "ann-appraisal"
     needed_dbs = ['groups', 'people', 'grants', 'proposals', 'institutions',
-                  'projects', 'presentations', 'patents']
-
+                  'projects', 'presentations', 'patents', 'citations']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -77,32 +70,55 @@ class AppraisalBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
-        begin_year = BEGIN_YEAR
-        begin_month = BEGIN_MONTH
+        rc = self.rc
+        if not rc.people:
+            raise RuntimeError("ERROR: please rerun specifying --people name")
+        if not rc.from_date:
+            raise RuntimeError("ERROR: please rerun specifying --from")
+        build_target = get_id_from_name(
+            all_docs_from_collection(rc.client, "people"), rc.people[0])
+        begin_year = int(rc.from_date.split("-")[0])
+        begin_month = int(rc.from_date.split("-")[1])
         pre_begin_year = begin_year - 1
         end_year = begin_year + 1
-        end_month = begin_month-1
+        end_month = begin_month - 1
         post_end_year = begin_year + 2
         begin_period = dt.date(begin_year, begin_month, 1)
         pre_begin_period = dt.date(pre_begin_year, begin_month, 1)
         end_period = dt.date(end_year, end_month, 31)
         post_end_period = dt.date(post_end_year, end_month, 31)
 
-        rc = self.rc
-        me = [p for p in self.gtx["people"] if p["_id"] == PERSON][0]
+        me = [p for p in self.gtx["people"] if p["_id"] == build_target][0]
         me["begin_period"] = dt.date.strftime(begin_period, "%m/%d/%Y")
         me["begin_period"] = dt.date.strftime(begin_period, "%m/%d/%Y")
         me["pre_begin_period"] = dt.date.strftime(pre_begin_period, "%m/%d/%Y")
         me["end_period"] = dt.date.strftime(end_period, "%m/%d/%Y")
         me["post_end_period"] = dt.date.strftime(post_end_period, "%m/%d/%Y")
         projs = filter_projects(
-            self.gtx["projects"], set([PERSON])
+            self.gtx["projects"], set([build_target]),
+            group="bg"
         )
+        #########
+        # highlights
+        #########
+        for proj in projs:
+            if proj.get("type") == "ossoftware":
+                continue
+            if proj.get('highlights'):
+                proj["current_highlights"] = False
+                for highlight in proj.get('highlights'):
+                    highlight_date = dt.date(highlight.get("year"),
+                                          month_to_int(highlight.get("month", 1)),
+                                          1)
+                    if highlight_date > begin_period and highlight_date < end_period:
+                                highlight["is_current"] = True
+                                proj["current_highlights"] = True
+
         #########
         # current and pending
         #########
         pi = fuzzy_retrieval(
-            self.gtx["people"], ["aka", "name", "_id"], PERSON
+            self.gtx["people"], ["aka", "name", "_id"], build_target
         )
         #        pi['initials'] = "SJLB"
 
@@ -118,6 +134,7 @@ class AppraisalBuilder(LatexBuilderBase):
             if g.get('budget'):
                 amounts = [i.get('amount') for i in g.get('budget')]
                 g['subaward_amount'] = sum(amounts)
+
 
         current_grants = [
             dict(g)
@@ -140,14 +157,14 @@ class AppraisalBuilder(LatexBuilderBase):
         current_grants, _, _ = filter_grants(
             current_grants, {pi["name"]}, pi=False, multi_pi=True
         )
-#        print("current: {}".format(current_grants))
+        #        print("current: {}".format(current_grants))
 
         pending_grants = [
             g
             for g in self.gtx["proposals"]
             if g["status"] == "pending"
         ]
-#        print("pending: {}".format(pending_grants))
+        #        print("pending: {}".format(pending_grants))
         for g in pending_grants:
             for person in g["team"]:
                 rperson = fuzzy_retrieval(
@@ -172,7 +189,8 @@ class AppraisalBuilder(LatexBuilderBase):
                     grant["end_year"],
                 ),
             )
-        badids = [i["_id"] for i in current_grants if not i['cpp_info'].get('cppflag', "")]
+        badids = [i["_id"] for i in current_grants if
+                  not i['cpp_info'].get('cppflag', "")]
         iter = copy(current_grants)
         for grant in iter:
             if grant["_id"] in badids:
@@ -263,24 +281,28 @@ class AppraisalBuilder(LatexBuilderBase):
         keypres = filter_presentations(self.gtx["people"],
                                        self.gtx["presentations"],
                                        self.gtx["institutions"],
+                                       build_target,
                                        types=["award", "plenary", "keynote"],
                                        since=begin_period, before=end_period,
                                        statuses=["accepted"])
         invpres = filter_presentations(self.gtx["people"],
                                        self.gtx["presentations"],
                                        self.gtx["institutions"],
+                                       build_target,
                                        types=["invited"],
                                        since=begin_period, before=end_period,
                                        statuses=["accepted"])
         sempres = filter_presentations(self.gtx["people"],
                                        self.gtx["presentations"],
                                        self.gtx["institutions"],
+                                       build_target,
                                        types=["colloquium", "seminar"],
                                        since=begin_period, before=end_period,
                                        statuses=["accepted"])
         declpres = filter_presentations(self.gtx["people"],
                                         self.gtx["presentations"],
                                         self.gtx["institutions"],
+                                        build_target,
                                         types=["all"],
                                         since=begin_period, before=end_period,
                                         statuses=["declined"])
@@ -325,9 +347,9 @@ class AppraisalBuilder(LatexBuilderBase):
         # IP
         #############
         patents = filter_patents(self.gtx["patents"], self.gtx["people"],
-                                 PERSON, since=begin_period)
+                                 build_target, since=begin_period)
         licenses = filter_licenses(self.gtx["patents"], self.gtx["people"],
-                                   PERSON, since=begin_period)
+                                   build_target, since=begin_period)
         #############
         # hindex
         #############
