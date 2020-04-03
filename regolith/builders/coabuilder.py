@@ -210,6 +210,14 @@ def get_person_pubs(coll, person):
     return pubs
 
 
+def make_person_3tups(person, rc):
+    if 'name' not in person:
+        print("Warning")
+    name = HumanName(person['name'])
+    inst = get_inst_name(person, rc)
+    return [(name.last, name.first, inst)]
+
+
 def format_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
     """Get the last name, first name and institution name."""
     ppl = []
@@ -344,7 +352,6 @@ class RecentCollaboratorsBuilder(BuilderBase):
                                  case_sensitive=False)
         if not person:
             raise RuntimeError("Person {} not found in people.".format(target))
-        person_inst_name = get_inst_name(person, rc)
         pubs = get_person_pubs(gtx["citations"], person)
         if 'since_date' in filters:
             since_date = filters.get('since_date')
@@ -356,11 +363,13 @@ class RecentCollaboratorsBuilder(BuilderBase):
         advisors_3tups = set(get_advisors_name_inst(person, rc))
         advisees_3tups = set(get_advisees_name_inst(gtx["people"], person, rc))
         ppl_3tups = sorted(list(collab_3tups | advisors_3tups | advisees_3tups))
+        person_3tups = make_person_3tups(person, rc)
+        ppl_tab1 = format_to_nsf(person_3tups, '')
         ppl_tab3 = format_to_nsf(advisors_3tups, 'G:') + format_to_nsf(advisees_3tups, 'T:')
         ppl_tab4 = format_to_nsf(collab_3tups, 'A:')
         results = {
             'person_info': person,
-            'person_institution_name': person_inst_name,
+            'ppl_tab1': ppl_tab1,
             'ppl_tab3': ppl_tab3,
             'ppl_tab4': ppl_tab4,
             'ppl_3tups': ppl_3tups,
@@ -382,12 +391,15 @@ class RecentCollaboratorsBuilder(BuilderBase):
             cells[2].value = tup[2]
         return
 
-    def render_template1(self, person_info, ppl_tab3, ppl_tab4, **kwargs):
+    def render_template1(self, person_info, ppl_tab1, ppl_tab3, ppl_tab4, **kwargs):
         """Render the nsf template."""
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
         style = copy_cell_style(ws['A17'])
+        self.add_ppl_2tups(
+            ws, ppl_tab1, start_row=17, template_cell_style=style
+        )
         self.add_ppl_2tups(
             ws, ppl_tab3, start_row=30, template_cell_style=style
         )
