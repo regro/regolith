@@ -413,11 +413,15 @@ None
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for pr in projects %}
 {% if pr['type'] == "ossoftware" %}
+    {% if pr['current_highlights'] %}
     \textbf{ {{ pr['name'] }} }\\
     {{ pr['description'] }}
     {% for h in pr.get('highlights', ()) %}
+    {% if h["is_current"] %}
         \wideitem{  {{latex_safe(h['description'])-}} }
+{% endif %}
     {% endfor%}
+{% endif %}
 {% endif %}
 {%endfor%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

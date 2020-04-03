@@ -31,7 +31,7 @@ from regolith.tools import (
 class AppraisalBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
-    btype = "ann-appraisal"
+    btype = "annual-appraisal"
     needed_dbs = ['groups', 'people', 'grants', 'proposals', 'institutions',
                   'projects', 'presentations', 'patents', 'citations']
 
@@ -85,8 +85,8 @@ class AppraisalBuilder(LatexBuilderBase):
         post_end_year = begin_year + 2
         begin_period = dt.date(begin_year, begin_month, 1)
         pre_begin_period = dt.date(pre_begin_year, begin_month, 1)
-        end_period = dt.date(end_year, end_month, 31)
-        post_end_period = dt.date(post_end_year, end_month, 31)
+        end_period = dt.date(end_year, end_month, 28)
+        post_end_period = dt.date(post_end_year, end_month, 28)
 
         me = [p for p in self.gtx["people"] if p["_id"] == build_target][0]
         me["begin_period"] = dt.date.strftime(begin_period, "%m/%d/%Y")
@@ -102,8 +102,6 @@ class AppraisalBuilder(LatexBuilderBase):
         # highlights
         #########
         for proj in projs:
-            if proj.get("type") == "ossoftware":
-                continue
             if proj.get('highlights'):
                 proj["current_highlights"] = False
                 for highlight in proj.get('highlights'):
