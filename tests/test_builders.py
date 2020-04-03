@@ -55,6 +55,9 @@ def test_builder(bm, make_db):
     if bm == "reimb":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
                         "scopatz"], check=True, cwd=repo )
+    if bm == "annual-appraisal":
+        subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
+                        "scopatz", "--from", "2018-04-01"], check=True, cwd=repo)
     else:
         subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo )
     os.chdir(os.path.join(repo, "_build", bm))
