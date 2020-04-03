@@ -120,6 +120,9 @@ def month_and_year(m=None, y=None):
     m = month_to_int(m)
     return "{0} {1}".format(SHORT_MONTH_NAMES[m], y)
 
+def get_team_from_grant(grantcol):
+    for grant in grantcol:
+        return gets(grant["team"], "name")
 
 def filter_publications(citations, authors, reverse=False, bold=True,
                         since=None, before=None, ):
@@ -135,6 +138,10 @@ def filter_publications(citations, authors, reverse=False, bold=True,
         If True reverse the order, defaults to False
     bold : bool, optional
         If True put latex bold around the author(s) in question
+    since : date, optional
+        The date after which papers must have been published
+    before : date, optional
+        The date before which papers must have been published
     """
     pubs = []
     for pub in citations:
@@ -143,6 +150,9 @@ def filter_publications(citations, authors, reverse=False, bold=True,
                     pub.get("editor", []))) & authors)
                 == 0
         ):
+            continue
+        if not pub.get("month") or pub.get("month") == "tbd":
+#            print("WARNING: {} missing month will be ignored".format(pub.get("title")))
             continue
         pub = deepcopy(pub)
         if bold:
@@ -172,27 +182,51 @@ def filter_publications(citations, authors, reverse=False, bold=True,
     return pubs
 
 
-def filter_projects(projects, authors, reverse=False):
+def filter_projects(projects, people, reverse=False,
+                    active_only=False, group=None, ptype=None):
     """Filter projects by the author(s)
 
     Parameters
     ----------
     projects : list of dict
         The publication citations
-    authors : set of list of str
-        The authors to be filtered against
+    people : set of list of str
+        The people to be filtered against
     reverse : bool, optional
         If True reverse the order, defaults to False
+    since : date, optional
+        The date after which a highlight must be for a project to be returned,
+        defaults to None
+    before : date, optional
+        The date before which a highlight must be for a project to be returned,
+        defaults to None
+    active_only : bool, optional
+        Only active projects will be returned if True,
+        defaults to False
+    group : str, optional
+        Only projects from this group will be returned if specified, otherwise
+        projects from all groups will be returned, defaults to None
+    ptype : str, optional
+        The type of the project to filter for, such as ossoftware for open source
+        software, defaults to None
     """
     projs = []
+    # Fixme dereference team from grant collection if provided
     for proj in projects:
         team_names = set(gets(proj["team"], "name"))
-        if len(team_names & authors) == 0:
+        if len(team_names & people) == 0:
             continue
-        # FIXME delete these lines if not required.  I think they are wrong (SJLB)
-        # proj = dict(proj)
-        # proj["team"] = [x for x in proj["team"] if x["name"] in authors]
+        if active_only:
+            if not proj.get("active"):
+                continue
+        if group:
+            if proj.get("group") != group:
+                continue
+        if ptype:
+            if proj.get("type") != ptype:
+                continue
         projs.append(proj)
+
     projs.sort(key=id_key, reverse=reverse)
     return projs
 
@@ -253,7 +287,7 @@ def filter_employment_for_advisees(people, begin_period, status, active=False):
             if i.get("status") == status:
                 if i.get("end_year"):
                     end_date = date(i.get("end_year"),
-                                    i.get("end_month", 12),
+                                    month_to_int(i.get("end_month", 12)),
                                     i.get("end_day", 28))
                 else:
                     end_date = date.today()
@@ -484,7 +518,7 @@ def filter_activities(people, begin_period, type):
     return activities
 
 
-def filter_presentations(people, presentations, institutions, types=["all"],
+def filter_presentations(people, presentations, institutions, target, types=["all"],
                          since=None, before=None, statuses=["accepted"]):
     '''
     filters presentations for different types and date ranges
@@ -497,6 +531,8 @@ def filter_presentations(people, presentations, institutions, types=["all"],
       The presentations collection
     institutions: iterable of dicts
       The institutions collection
+    target: str
+      The id of the person you will build the list for
     types: list of strings.  Optional, default = all
       The types to filter for.  Allowed types are
         "all",
@@ -525,7 +561,6 @@ def filter_presentations(people, presentations, institutions, types=["all"],
     list of presentation documents
 
     '''
-    member = "sbillinge"
     presentations = deepcopy(presentations)
 
     firstclean = list()
@@ -554,7 +589,7 @@ def filter_presentations(people, presentations, institutions, types=["all"],
             for author in authors
             if author is not None
         ]
-        if member in authorids:
+        if target in authorids:
             firstclean.append(pres)
     # only list the presentation if it has status in statuses
     for pres in firstclean:
@@ -1248,3 +1283,10 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
                     ret_list.append(doc)
                     break
     return ret_list
+
+def get_id_from_name(coll, name):
+    person = fuzzy_retrieval(coll,["name", "aka", "_id"], name,
+                             case_sensitive=False)
+    if person:
+        return person["_id"]
+    else: return None

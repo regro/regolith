@@ -132,13 +132,17 @@
 \resheading{Highlights from the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for pr in projects %}
-{% if pr["type"] != "ossoftware" %}
+{% if pr['type'] != "ossoftware" %}
+    {% if pr['current_highlights'] %}
 \subsection*{Project: {{latex_safe(pr['name'])-}} }
-    {% for h in pr.get('highlights', ()) %}
-        \wideitem{  {{latex_safe(h['description'])-}} }
+    {% for h in pr['highlights'] %}
+        {% if h["is_current"] %}
+        \wideitem{  {{latex_safe(h["description"])-}} }
+        {% endif %}
     {% endfor%}
+        {% endif %}
 {% endif %}
-{% endfor %}
+{%endfor%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Major research focus area(s) and current projects.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
