@@ -617,7 +617,7 @@ EXEMPLARS = {
                 "for Malaria, and then to find it"
             ],
             "importance": ["save lives", "lift people from poverty"],
-            "institution": "columbiau",
+            "institutions": "columbiau",
             "month": "May",
             "names": ["B. Cause", "A.N. Effect"],
             "nsf_broader_impacts": [],
@@ -1860,10 +1860,10 @@ SCHEMAS = {
             "required": True,
             "type": "list",
         },
-        "institution": {
-            "description": "The institution of the lead PI",
+        "institutions": {
+            "description": "The institutions of the authors in the same order",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "list"]
         },
         "month": {
             "description": "The month the review was submitted",

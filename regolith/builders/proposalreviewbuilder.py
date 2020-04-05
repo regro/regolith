@@ -40,19 +40,19 @@ class PropRevBuilder(LatexBuilderBase):
         for rev in self.gtx["proposalReviews"]:
             outname = "{}_{}".format(_id_key(rev),rev["reviewer"])
             multiauth = False
-            if isinstance(rev["names"],str):
+            if isinstance(rev["names"], str):
                 rev["names"] = [rev["names"]]
             if len(rev["names"]) > 1:
                 multiauth = True
             firstauthor = HumanName(rev["names"][0])
             firstauthorlastname = firstauthor.last
-            instn = fuzzy_retrieval(
-                self.gtx["institutions"], ["aka", "name", "_id"], rev["institution"]
-            )
-            if instn:
-                institution = instn["name"]
-            else:
-                institution = rev["institution"]
+            if isinstance(rev["institutions"], str):
+                rev["institutions"] = [rev["institutions"]]
+            instns = [fuzzy_retrieval(
+                    self.gtx["institutions"], ["aka", "name", "_id"], i
+                ) for i in rev["institutions"]]
+            institution_names = [i["name"] if i else
+                                rev["institutions"] for i in instns]
 
             self.render(
                 "propreport.txt",
@@ -61,7 +61,7 @@ class PropRevBuilder(LatexBuilderBase):
                 agency=rev["agency"],
                 appropriateness=rev["doe_appropriateness_of_approach"],
                 title=rev["title"],
-                institution=institution,
+                institution=institution_names[0],
                 multiauthor=multiauth,
                 firstAuthorLastName=firstauthorlastname,
                 competency=rev["competency_of_team"],
