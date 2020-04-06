@@ -128,15 +128,15 @@ def get_recent_org(person_info):
     if "employment" in person_info:
         employment = person_info.get("employment", []) + person_info.get("education", [])
         if len(employment) == 0:
-            return "missing"
+            return ""
         # sort by end_year
         employment = sorted(
             employment,
             key=lambda d: d.get("end_year", float('inf')),
             reverse=True)
-        organization = employment[0].get('organization', 'missing')
+        organization = employment[0].get('organization', '')
     else:
-        organization = "missing"
+        organization = ""
     return organization
 
 
@@ -186,7 +186,13 @@ def query_people_and_institutions(rc, names):
 
 def get_inst_name(person, rc):
     """Get the name of instituion of the person's lastest employment."""
-    person_inst_abbr = person.get("employment")[0]["organization"]
+    if 'employment' in person:
+        org = get_recent_org(person)
+        person_inst_abbr = org
+    elif 'institution' in person:
+        person_inst_abbr = person.get('institution')
+    else:
+        person_inst_abbr = ''
     person_inst = fuzzy_retrieval(all_docs_from_collection(
         rc.client, "institutions"), ["name", "aka", "_id"],
         person_inst_abbr, case_sensitive=False)
@@ -251,8 +257,10 @@ def format_people_name(ppl_names):
 
 
 def format_to_nsf(tups, type_str):
-    """Format the 3 tups to 2 tups. ('type_str', 'last, first', 'inst')."""
-    return [(type_str, '{}, {}'.format(last, first), inst) for last, first, inst in tups]
+    """Format the 3 tups to 2 tups. ('type_str', 'last, first', 'inst', ...)."""
+    return [
+        (type_str, '{}, {}'.format(tup[0], tup[1])) + tup[2:] for tup in tups
+    ]
 
 
 def apply_cell_style(*cells, style):
@@ -305,6 +313,51 @@ def unmerge(ws, cells):
     for start, end in lst:
         ws.unmerge_cells("{}:{}").format(cells[start].coordinate, cells[end].coordinate)
     return
+
+
+def get_person(person_id, rc):
+    """Get the person's name."""
+    person_found = fuzzy_retrieval(
+        all_docs_from_collection(rc.client, "people"),
+        ["name", "aka", "_id"],
+        person_id,
+        case_sensitive=False
+    )
+    if person_found:
+        return person_found
+    person_found = fuzzy_retrieval(
+        all_docs_from_collection(rc.client, "contacts"),
+        ["name", "aka", "_id"],
+        person_id,
+        case_sensitive=False
+    )
+    if person_found:
+        return person_found
+    print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
+    return None
+
+
+def find_coeditors(person, rc):
+    """Get the coeditors info of the person. Return (last, first, inst, journal)."""
+    emps = person.get('employment')
+    if emps is None:
+        return set()
+
+    def coeditor_id_journals(_emps):
+        for emp in _emps:
+            if emp.get('position') == 'editor':
+                _journal = emp.get('department', '')
+                coeditor_ids = emp.get('coworkers', [])
+                for _coeditor_id in coeditor_ids:
+                    yield _coeditor_id, _journal
+
+    coeditor_inst_journals = set()
+    for coeditor_id, journal in coeditor_id_journals(emps):
+        coeditor = get_person(coeditor_id, rc)
+        coeditor_name = HumanName(coeditor['name'])
+        inst_name = get_inst_name(coeditor, rc)
+        coeditor_inst_journals.add((coeditor_name.last, coeditor_name.first, inst_name, journal))
+    return coeditor_inst_journals
 
 
 class RecentCollaboratorsBuilder(BuilderBase):
@@ -364,47 +417,52 @@ class RecentCollaboratorsBuilder(BuilderBase):
         advisees_3tups = set(get_advisees_name_inst(gtx["people"], person, rc))
         ppl_3tups = sorted(list(collab_3tups | advisors_3tups | advisees_3tups))
         person_3tups = make_person_3tups(person, rc)
+        coeditors_info = find_coeditors(person, rc)
         ppl_tab1 = format_to_nsf(person_3tups, '')
         ppl_tab3 = format_to_nsf(advisors_3tups, 'G:') + format_to_nsf(advisees_3tups, 'T:')
         ppl_tab4 = format_to_nsf(collab_3tups, 'A:')
+        ppl_tab5 = format_to_nsf(coeditors_info, 'E:')
         results = {
             'person_info': person,
             'ppl_tab1': ppl_tab1,
             'ppl_tab3': ppl_tab3,
             'ppl_tab4': ppl_tab4,
-            'ppl_3tups': ppl_3tups,
+            'ppl_tab5': ppl_tab5,
+            'ppl_3tups': ppl_3tups
         }
         return results
 
     @staticmethod
-    def add_ppl_2tups(ws, ppl_2tups, start_row, template_cell_style=None, cols='ABCDE'):
+    def fill_in_tab(ws, ppl_tups, start_row, template_cell_style=None, cols='ABCDE'):
         """Add the information in person, institution pairs into the table 4 in nsf table."""
-        more_rows = len(ppl_2tups) - 1
+        more_rows = len(ppl_tups) - 1
         if more_rows > 0:
             ws.insert_rows(start_row, amount=more_rows)
-        for row, tup in enumerate(ppl_2tups, start=start_row):
+        for row, tup in enumerate(ppl_tups, start=start_row):
             cells = [ws['{}{}'.format(col, row)] for col in cols]
             if template_cell_style is not None:
                 apply_cell_style(*cells, style=template_cell_style)
-            cells[0].value = tup[0]
-            cells[1].value = tup[1]
-            cells[2].value = tup[2]
+            for ind, value in enumerate(tup):
+                cells[ind].value = value
         return
 
-    def render_template1(self, person_info, ppl_tab1, ppl_tab3, ppl_tab4, **kwargs):
+    def render_template1(self, person_info, ppl_tab1, ppl_tab3, ppl_tab4, ppl_tab5, **kwargs):
         """Render the nsf template."""
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
         style = copy_cell_style(ws['A17'])
-        self.add_ppl_2tups(
-            ws, ppl_tab1, start_row=17, template_cell_style=style
+        self.fill_in_tab(
+            ws, ppl_tab5, start_row=44, template_cell_style=style
         )
-        self.add_ppl_2tups(
+        self.fill_in_tab(
+            ws, ppl_tab4, start_row=37, template_cell_style=style
+        )
+        self.fill_in_tab(
             ws, ppl_tab3, start_row=30, template_cell_style=style
         )
-        self.add_ppl_2tups(
-            ws, ppl_tab4, start_row=37 + len(ppl_tab3) - 1, template_cell_style=style
+        self.fill_in_tab(
+            ws, ppl_tab1, start_row=17, template_cell_style=style
         )
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
         return locals()
