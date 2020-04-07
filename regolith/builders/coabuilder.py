@@ -110,9 +110,9 @@ def get_since_date(rc):
     return since_date
 
 
-def get_coauthors_from_pubs(pubs):
-    """Get co-authors' names from the publication."""
-    my_collabs = []
+def get_coauthors_from_pubs(pubs, not_person):
+    """Get co-authors' names from the publication. Not include the person itself."""
+    my_collabs = list()
     for pub in pubs:
         my_collabs.extend(
             [
@@ -120,6 +120,10 @@ def get_coauthors_from_pubs(pubs):
                 (names for names in pub.get('author', []))
             ]
         )
+    my_collabs = set(my_collabs)
+    for name in ([not_person['_id'], not_person['name']] + not_person['aka']):
+        if name in my_collabs:
+            my_collabs.remove(name)
     return my_collabs
 
 
@@ -409,7 +413,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
         if 'since_date' in filters:
             since_date = filters.get('since_date')
             pubs = filter_since_date(pubs, since_date)
-        my_collabs = get_coauthors_from_pubs(pubs)
+        my_collabs = get_coauthors_from_pubs(pubs, person)
         people, institutions = query_people_and_institutions(rc, my_collabs)
         ppl_names = set(zip(people, institutions))
         collab_3tups = set(format_last_first_instutition_names(rc, ppl_names))
