@@ -6,14 +6,13 @@ import platform
 import re
 import sys
 import time
-from copy import deepcopy
 from calendar import monthrange
-
+from copy import deepcopy
 from datetime import datetime, date, timedelta
 
+from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int, date_to_float, beg_end_dates
 from regolith.sorters import doc_date_key, id_key, ene_date_key
-from regolith.chained_db import ChainDB
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -786,7 +785,7 @@ def is_fully_loaded(appts):
     if max(loading) > 1.0:
         status = False
         print("max {} at {}".format(max(loading),
-                datearray[list(loading).index(max(loading))]))
+                                    datearray[list(loading).index(max(loading))]))
     elif min(loading) < 1.0:
         status = False
         print("min {} at {}".format(min(loading),
