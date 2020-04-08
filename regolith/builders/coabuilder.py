@@ -12,7 +12,7 @@ from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import month_to_int
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
-    fuzzy_retrieval, is_since, get_person
+    fuzzy_retrieval, is_since
 
 NUM_MONTHS = 48
 
@@ -317,6 +317,28 @@ def unmerge(ws, cells):
     for start, end in lst:
         ws.unmerge_cells("{}:{}").format(cells[start].coordinate, cells[end].coordinate)
     return
+
+
+def get_person(person_id, rc):
+    """Get the person's name."""
+    person_found = fuzzy_retrieval(
+        all_docs_from_collection(rc.client, "people"),
+        ["name", "aka", "_id"],
+        person_id,
+        case_sensitive=False
+    )
+    if person_found:
+        return person_found
+    person_found = fuzzy_retrieval(
+        all_docs_from_collection(rc.client, "contacts"),
+        ["name", "aka", "_id"],
+        person_id,
+        case_sensitive=False
+    )
+    if person_found:
+        return person_found
+    print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
+    return None
 
 
 def find_coeditors(person, rc):
