@@ -607,6 +607,7 @@ EXEMPLARS = {
                 "they will find the cause of Malaria",
                 "when they find it they will determine a cure",
             ],
+            "due_date": "2020-04-10",
             "does_what": "Find a cure for Malaria",
             "freewrite": [
                 "I can put extra things here, such as special instructions from the",
@@ -647,6 +648,7 @@ EXEMPLARS = {
                 "when they find it they will determine a cure",
             ],
             "does_what": "Find a cure for Poverty",
+            "due_date": "2020-04-10",
             "freewrite": [
                 "I can put extra things here, such as special instructions from the",
                 "program officer",
@@ -1840,6 +1842,11 @@ SCHEMAS = {
         },
         "does_what": {
             "description": "What will the team do",
+            "required": True,
+            "type": "string",
+        },
+        "due_date": {
+            "description": "date the review is due in ISO format",
             "required": True,
             "type": "string",
         },
