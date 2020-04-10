@@ -623,7 +623,7 @@ EXEMPLARS = {
             "nsf_broader_impacts": [],
             "nsf_create_original_transformative": [],
             "nsf_plan_good": [],
-            "nsf_pot_to_Advance_knowledge": [],
+            "nsf_pot_to_advance_knowledge": [],
             "nsf_pot_to_benefit_society": [],
             "requester": "Lane Wilson",
             "reviewer": "sbillinge",
@@ -656,7 +656,7 @@ EXEMPLARS = {
                 "for Poverty, and then to find it"
             ],
             "importance": ["save lives", "lift people from poverty"],
-            "institution": "upenn",
+            "institutions": "upenn",
             "month": "May",
             "names": ["A Genius"],
             "nsf_broader_impacts": ["Poor people will be made unpoor"],
@@ -667,7 +667,7 @@ EXEMPLARS = {
                 "I don't see any issues with the plan",
                 "it should be very straightforward",
             ],
-            "nsf_pot_to_Advance_knowledge": [
+            "nsf_pot_to_advance_knowledge": [
                 "This won't advance knowledge at all"],
             "nsf_pot_to_benefit_society": [
                 "Society will benefit by poor people being made unpoor if they want "
@@ -1893,7 +1893,7 @@ SCHEMAS = {
             "required": False,
             "type": "list",
         },
-        "nsf_pot_to_Advance_knowledge": {
+        "nsf_pot_to_advance_knowledge": {
             "description": "Answer to the question how the work will advance"
                            "knowledge.  Only used if agency is nsf",
             "required": False,
