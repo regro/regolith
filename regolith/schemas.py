@@ -607,6 +607,7 @@ EXEMPLARS = {
                 "they will find the cause of Malaria",
                 "when they find it they will determine a cure",
             ],
+            "due_date": "2020-04-10",
             "does_what": "Find a cure for Malaria",
             "freewrite": [
                 "I can put extra things here, such as special instructions from the",
@@ -617,13 +618,13 @@ EXEMPLARS = {
                 "for Malaria, and then to find it"
             ],
             "importance": ["save lives", "lift people from poverty"],
-            "institution": "columbiau",
+            "institutions": "columbiau",
             "month": "May",
             "names": ["B. Cause", "A.N. Effect"],
             "nsf_broader_impacts": [],
             "nsf_create_original_transformative": [],
             "nsf_plan_good": [],
-            "nsf_pot_to_Advance_knowledge": [],
+            "nsf_pot_to_advance_knowledge": [],
             "nsf_pot_to_benefit_society": [],
             "requester": "Lane Wilson",
             "reviewer": "sbillinge",
@@ -647,6 +648,7 @@ EXEMPLARS = {
                 "when they find it they will determine a cure",
             ],
             "does_what": "Find a cure for Poverty",
+            "due_date": "2020-04-10",
             "freewrite": [
                 "I can put extra things here, such as special instructions from the",
                 "program officer",
@@ -656,7 +658,7 @@ EXEMPLARS = {
                 "for Poverty, and then to find it"
             ],
             "importance": ["save lives", "lift people from poverty"],
-            "institution": "upenn",
+            "institutions": "upenn",
             "month": "May",
             "names": ["A Genius"],
             "nsf_broader_impacts": ["Poor people will be made unpoor"],
@@ -667,7 +669,7 @@ EXEMPLARS = {
                 "I don't see any issues with the plan",
                 "it should be very straightforward",
             ],
-            "nsf_pot_to_Advance_knowledge": [
+            "nsf_pot_to_advance_knowledge": [
                 "This won't advance knowledge at all"],
             "nsf_pot_to_benefit_society": [
                 "Society will benefit by poor people being made unpoor if they want "
@@ -1843,6 +1845,11 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "due_date": {
+            "description": "date the review is due in ISO format",
+            "required": True,
+            "type": "string",
+        },
         "freewrite": {
             "description": "Anything and this will appear in the built document"
                            "right before the summary.  This section often used "
@@ -1860,10 +1867,10 @@ SCHEMAS = {
             "required": True,
             "type": "list",
         },
-        "institution": {
-            "description": "The institution of the lead PI",
+        "institutions": {
+            "description": "The institutions of the authors in the same order",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "list"]
         },
         "month": {
             "description": "The month the review was submitted",
@@ -1893,7 +1900,7 @@ SCHEMAS = {
             "required": False,
             "type": "list",
         },
-        "nsf_pot_to_Advance_knowledge": {
+        "nsf_pot_to_advance_knowledge": {
             "description": "Answer to the question how the work will advance"
                            "knowledge.  Only used if agency is nsf",
             "required": False,
