@@ -780,6 +780,7 @@ EXEMPLARS = {
         "claimed_why_important": ["more money for ice cream"],
         "did_how": ["measured with a ruler"],
         "did_what": ["found a much cheaper way to measure gravity waves"],
+        "due_date": '2020-04-11',
         "editor_eyes_only": "to be honest, I don't believe a word of it",
         "final_assessment": ["The authors should really start over"],
         "first_author_last_name": "Wingit",
@@ -791,7 +792,7 @@ EXEMPLARS = {
         "status": "submitted",
         "title": "a ruler approach to measuring gravity waves",
         "validity_assessment": ["complete rubbish"],
-        "year": "2019",
+        "year": 2019,
     },
     "students": {
         "_id": "Human A. Person",
@@ -1933,6 +1934,7 @@ SCHEMAS = {
                 "downloaded",
                 "inprogress",
                 "submitted",
+                "cancelled"
             ],
         },
         "summary": {
@@ -2148,6 +2150,11 @@ SCHEMAS = {
             "schema": {"type": "string", "required": True},
             "type": "list",
         },
+        "due_date": {
+            "description": "date the review is due in ISO format",
+            "required": True,
+            "type": "string",
+        },
         "editor_eyes_only": {
             "description": "Comments you don't want passed to the author",
             "required": False,
@@ -2198,11 +2205,13 @@ SCHEMAS = {
             "required": True,
             "type": "string",
             "eallowed": [
+                "invited",
                 "accepted",
                 "declined",
                 "downloaded",
                 "inprogress",
                 "submitted",
+                "cancelled"
             ],
         },
         "title": {
@@ -2219,7 +2228,7 @@ SCHEMAS = {
         "year": {
             "description": "year when the review is being done",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "int"],
         },
     },
     "students": {
