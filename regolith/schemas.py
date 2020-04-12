@@ -2228,7 +2228,7 @@ SCHEMAS = {
         "year": {
             "description": "year when the review is being done",
             "required": True,
-            "anyof_type": ["string", "int"],
+            "anyof_type": ["string", "integer"],
         },
     },
     "students": {
