@@ -46,13 +46,18 @@ class PropRevBuilder(LatexBuilderBase):
                 multiauth = True
             firstauthor = HumanName(rev["names"][0])
             firstauthorlastname = firstauthor.last
+
             if isinstance(rev["institutions"], str):
                 rev["institutions"] = [rev["institutions"]]
+            if len(rev['institutions']) == 0:
+                rev['institutions'] = [""]
             instns = [fuzzy_retrieval(
                     self.gtx["institutions"], ["aka", "name", "_id"], i
                 ) for i in rev["institutions"]]
             institution_names = [i["name"] if i else
-                                rev["institutions"] for i in instns]
+                                j for i,j in zip(instns,
+                                                  rev.get("institutions"))]
+
 
             self.render(
                 "propreport.txt",
