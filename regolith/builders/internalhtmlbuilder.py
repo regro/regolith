@@ -101,6 +101,15 @@ class InternalHtmlBuilder(BuilderBase):
             if not scribe:
                 print("{} scribe {} not found in people".format(mtg["_id"],mtg.get("scribe")))
             mtg["scribe"] = scribe["name"]
+            if mtg.get("journal_club"):
+                prsn = fuzzy_retrieval(
+                    all_docs_from_collection(rc.client, "people"),
+                    ["_id", "name", "aka"],
+                    mtg["journal_club"].get("presenter"))
+                if not prsn:
+                    print(
+                    "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
+                mtg["journal_club"]["presenter"] = prsn["name"]
             if mtg.get("presentation"):
                 prsn = fuzzy_retrieval(
                     all_docs_from_collection(rc.client, "people"),

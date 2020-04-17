@@ -5,6 +5,10 @@
 <h1>Current Group Meeting ({{fmeetings[0]['datestr']}})</h1>
 <li>Meeting Lead: {{fmeetings[0].get('lead', '')}}</li>
 <li>Scribe: {{fmeetings[0].get('scribe', '')}}</li>
+  {% if fmeetings[0].get('journal_club') %}
+  <li>Journal club presentation: {{fmeetings[0].get('journal_club').get('presenter','')}},
+    {{fmeetings[0].get('journal_club').get('title','')}}</li>
+  {% endif %}
   {% if fmeetings[0].get('presentation') %}
   <li>Presentation: {{fmeetings[0].get('presentation').get('presenter','')}},
     {{fmeetings[0].get('presentation').get('title','')}}</li>
@@ -29,6 +33,10 @@
 <h1>Last time ({{ppmeetings[0]['datestr']}})</h1>
   <li>Meeting Lead: {{ppmeetings[0].get('lead', '')}}</li>
   <li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
+  {% if fmeetings[0].get('journal_club') %}
+  <li>Journal club presenter: {{ppmeetings[0].get('journal_club').get('presenter','')}},
+    {{ppmeetings[0].get('journal_club').get('title','')}}</li>
+  {% endif %}
   {% if fmeetings[0].get('presentation') %}
   <li>Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
     {{ppmeetings[0].get('presentation').get('title','')}}</li>
@@ -51,13 +59,18 @@
   <h2><a>{{mtg['datestr']}}</a></h2>
   <li>Meeting Lead: {{mtg.get('lead', '')}}</li>
   <li>Scribe: {{mtg.get('scribe', '')}}</li>
+  <li>Journal_club: {{mtg.get('journal_club').get('presenter','')}},
   <li>Presentation: {{mtg.get('presentation').get('presenter','')}},
 {% endfor %}
     <h1>Ancient history</h1>
 {% for mtg in ppmeetings[1:] %}
   <h2><a>{{mtg['datestr']}}</a></h2>
-  {% if mtg.get('presentation') %}
   <li>Meeting Lead: {{mtg.get('lead', '')}}</li>
+  {% if mtg.get('journal_club') %}
+  <li>Presentation: {{mtg.get('journal_club').get('presenter','')}},
+    {{mtg.get('journal_club').get('title','')}}</li>
+  {% endif %}
+  {% if mtg.get('presentation') %}
   <li>Presentation: {{mtg.get('presentation').get('presenter','')}},
     {{mtg.get('presentation').get('title','')}}</li>
 <li>Repo: <a href="{{- mtg.get('presentation', '').get('link','tbd')-}}">"Presentation" </a></li>
