@@ -16,7 +16,7 @@ from regolith.tools import (
 
 class PropRevBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
-    btype = "propreview"
+    btype = "review-prop"
     needed_dbs = ['institutions', 'proposalReviews']
 
     def construct_global_ctx(self):

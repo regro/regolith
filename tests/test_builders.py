@@ -20,8 +20,9 @@ builder_map = [
     "preslist",
     "publist",
     "recent-collabs",
-    # "reimb",
-    "resume"
+    "reimb",
+    "resume",
+    "review-prop"
 ]
 db_srcs = ["mongo", "fs"]
 
