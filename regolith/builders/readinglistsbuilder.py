@@ -100,7 +100,7 @@ class ReadingListsBuilder(LatexBuilderBase):
                         )
                     paper.update({'reference': ref, 'n': n, 'label': 'DOI'})
                     n += 1
-                if url:
+                elif url:
                     paper['doi'] = url
                     paper.update({'n': n, 'label': 'URL'})
                     n += 1
