@@ -2,7 +2,8 @@
 from __future__ import print_function
 import copy
 import os
-from argparse import ArgumentParser, RawTextHelpFormatter
+import sys
+from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
 
 from regolith.commands import INGEST_COLL_LU
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
@@ -10,6 +11,7 @@ from regolith.database import connect
 from regolith import commands
 from regolith import storage
 from regolith.builder import BUILDERS
+from regolith.helper import HELPERS
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
 
@@ -30,6 +32,7 @@ CONNECTED_COMMANDS = {
     "email": commands.email,
     "classlist": commands.classlist,
     "validate": commands.validate,
+    "helper": commands.helper,
 }
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
@@ -117,6 +120,27 @@ def create_parser():
         default=False,
         help="starts server in debug mode",
     )
+
+    # helper subparser
+    hlprp = subp.add_parser(
+        "helper",
+        help="runs an available helper targets",
+        formatter_class=RawTextHelpFormatter,
+    )
+    hlprp.add_argument(
+        "helper_target",
+        help="helper target to run. Currently valid targets are: \n{}".format(
+            [k for k in HELPERS]
+        ),
+    )
+    hlprp.add_argument(
+        "--person",
+        dest="person",
+        help="specify a person such that "
+             "the build will be for only that person",
+        default=None,
+    )
+
 
     # builder subparser
     bldp = subp.add_parser(
@@ -263,6 +287,14 @@ def create_parser():
 def main(args=None):
     rc = DEFAULT_RC
     parser = create_parser()
+#    rest = sys.argv[1:]
+#    print(rest)
+#    args = Namespace()
+#    argslist = []
+#    while rest:
+#        args, rest = parser.parse_known_args(rest, namespace=args)
+#        argslist.append(args)
+#        print(args, rest)
     ns = parser.parse_args(args)
     if ns.cmd in NEED_RC:
         if os.path.exists(rc.user_config):
@@ -283,6 +315,8 @@ def main(args=None):
         dbs = None
         if rc.cmd == 'build':
             dbs = commands.build_db_check(rc)
+        elif rc.cmd == 'helper':
+            dbs = commands.helper_db_check(rc)
         with connect(rc, dbs=dbs) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)
 
