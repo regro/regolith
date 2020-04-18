@@ -31,7 +31,7 @@ class HelloHelper(SoutHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-    def hello(self):
+    def sout(self):
         person = self.rc.person
         print(f"hello {person}")
 

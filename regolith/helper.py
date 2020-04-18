@@ -1,9 +1,9 @@
 """Generic builder."""
 
-from regolith.helpers.testhelper import TestHelper
+from regolith.helpers.hellohelper import HelloHelper
 
 HELPERS = {
-    "test": TestHelper,
+    "hello": HelloHelper,
 #    "helper": HelperBuilder,
 }
 

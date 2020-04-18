@@ -97,7 +97,7 @@ class SoutHelperBase(HelperBase):
 
     def __init__(self, rc):
         super().__init__(rc)
-        self.cmds = ["test"]
+        self.cmds = ["sout"]
 
 class LatexHelperBase(HelperBase):
     """Base class for Latex builders"""

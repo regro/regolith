@@ -136,8 +136,7 @@ def create_parser():
     hlprp.add_argument(
         "--person",
         dest="person",
-        help="specify a person such that "
-             "the build will be for only that person",
+        help="specify a person for the helper",
         default=None,
     )
 
