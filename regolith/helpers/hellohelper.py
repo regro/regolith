@@ -33,7 +33,8 @@ class HelloHelper(SoutHelperBase):
 
     def sout(self):
         person = self.rc.person
-        print(f"hello {person}")
+        return print(f"hello {person}")
+
 
     def latex(self):
         """Render latex template"""
