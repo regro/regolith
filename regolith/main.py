@@ -273,21 +273,25 @@ def main(args=None):
     rc = DEFAULT_RC
     parser = create_parser()
     args0 = Namespace()
+    print(args0)
     args1, rest = parser.parse_known_args(args, namespace=args0)
-    p = ArgumentParser()
-    p.add_argument(
-        "helper_target",
-        help="helper target to run. Currently valid targets are: \n{}".format(
-            [k for k in HELPERS]
-        ),
-    )
-    args2, rest2 = p.parse_known_args(rest, namespace=args0)
-    # it is not apparent from this but the following line calls the suparser in
-    #   in the helper module to get the rest of the args.
-    HELPERS[args2.helper_target][1](p)
-    args3, rest3 = p.parse_known_args(rest, namespace=args0)
-
-    ns = args3
+    print(args1,)
+    if args1.cmd == 'helper':
+        p = ArgumentParser()
+        p.add_argument(
+            "helper_target",
+            help="helper target to run. Currently valid targets are: \n{}".format(
+                [k for k in HELPERS]
+            ),
+        )
+        args2, rest2 = p.parse_known_args(rest, namespace=args0)
+        # it is not apparent from this but the following line calls the suparser in
+        #   in the helper module to get the rest of the args.
+        HELPERS[args2.helper_target][1](p)
+        args3, rest3 = p.parse_known_args(rest, namespace=args0)
+        ns = args3
+    else:
+        ns = args1
     if ns.cmd in NEED_RC:
         if os.path.exists(rc.user_config):
             rc._update(load_rcfile(rc.user_config))
