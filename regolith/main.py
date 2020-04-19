@@ -273,9 +273,7 @@ def main(args=None):
     rc = DEFAULT_RC
     parser = create_parser()
     args0 = Namespace()
-    print(args0)
     args1, rest = parser.parse_known_args(args, namespace=args0)
-    print(args1,)
     if args1.cmd == 'helper':
         p = ArgumentParser()
         p.add_argument(
