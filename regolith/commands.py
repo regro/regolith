@@ -124,7 +124,7 @@ def build_db_check(rc):
 def helper_db_check(rc):
     """Checks which DBs a builder needs"""
     dbs = set()
-    bldr = HELPERS[rc.helper_target]
+    bldr = HELPERS[rc.helper_target][0]
     needed_dbs = getattr(bldr, 'needed_dbs', None)
     # If the requested builder doesn't state DB deps then it requires
     # all dbs!

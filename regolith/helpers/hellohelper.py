@@ -13,6 +13,11 @@ from regolith.tools import (
     fuzzy_retrieval,
 )
 
+def subparser(subpi):
+    subpi.add_argument("--person", help="pi first name space last name in quotes",
+                        default=None)
+    return subpi
+
 class HelloHelper(SoutHelperBase):
     """Build a helper"""
     btype = "hello"

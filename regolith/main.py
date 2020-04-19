@@ -2,7 +2,6 @@
 from __future__ import print_function
 import copy
 import os
-import sys
 from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
 
 from regolith.commands import INGEST_COLL_LU
@@ -43,6 +42,13 @@ def create_parser():
     p = ArgumentParser()
     subp = p.add_subparsers(title="cmd", dest="cmd")
 
+    # helper subparser
+    hlprp = subp.add_parser(
+        "helper",
+        help="runs an available helper target",
+        formatter_class=RawTextHelpFormatter,
+    )
+
     # rc subparser
     rcp = subp.add_parser("rc", help="prints run control")
 
@@ -65,14 +71,14 @@ def create_parser():
     ingp.add_argument(
         "filename",
         help="file to ingest. Currently valid formats are: \n{}"
-        "".format([k for k in INGEST_COLL_LU]),
+             "".format([k for k in INGEST_COLL_LU]),
     )
     ingp.add_argument(
         "--coll",
         dest="coll",
         default=None,
         help="collection name, if this is not given it is infered from the "
-        "file type or file name.",
+             "file type or file name.",
     )
 
     # store subparser
@@ -98,7 +104,7 @@ def create_parser():
     appp = subp.add_parser(
         "app",
         help="starts up a flask app for inspecting and "
-        "modifying regolith data.",
+             "modifying regolith data.",
     )
     appp.add_argument(
         "--debug",
@@ -121,26 +127,6 @@ def create_parser():
         help="starts server in debug mode",
     )
 
-    # helper subparser
-    hlprp = subp.add_parser(
-        "helper",
-        help="runs an available helper targets",
-        formatter_class=RawTextHelpFormatter,
-    )
-    hlprp.add_argument(
-        "helper_target",
-        help="helper target to run. Currently valid targets are: \n{}".format(
-            [k for k in HELPERS]
-        ),
-    )
-    hlprp.add_argument(
-        "--person",
-        dest="person",
-        help="specify a person for the helper",
-        default=None,
-    )
-
-
     # builder subparser
     bldp = subp.add_parser(
         "build",
@@ -158,7 +144,7 @@ def create_parser():
         "--no-pdf",
         dest="pdf",
         help="don't produce PDFs during the build "
-        "(for builds which produce PDFs)",
+             "(for builds which produce PDFs)",
         action="store_false",
         default=True,
     )
@@ -166,14 +152,14 @@ def create_parser():
         "--from",
         dest="from_date",
         help="date in form YYYY-MM-DD.  Items will only be built"
-        " if their date or end_date is equal or after this date",
+             " if their date or end_date is equal or after this date",
         default=None,
     )
     bldp.add_argument(
         "--to",
         dest="to_date",
         help="date in form YYYY-MM-DD.  Items will only be built"
-        " if their date or begin_date is equal or before this date",
+             " if their date or begin_date is equal or before this date",
         default=None,
     )
     bldp.add_argument(
@@ -248,7 +234,7 @@ def create_parser():
         dest="format",
         default=None,
         help="file / school format to read information from. Current values are "
-        '"json" and "usc". Determined from extension if not available.',
+             '"json" and "usc". Determined from extension if not available.',
     )
     clp.add_argument(
         "-d",
@@ -286,15 +272,22 @@ def create_parser():
 def main(args=None):
     rc = DEFAULT_RC
     parser = create_parser()
-#    rest = sys.argv[1:]
-#    print(rest)
-#    args = Namespace()
-#    argslist = []
-#    while rest:
-#        args, rest = parser.parse_known_args(rest, namespace=args)
-#        argslist.append(args)
-#        print(args, rest)
-    ns = parser.parse_args(args)
+    args0 = Namespace()
+    args1, rest = parser.parse_known_args(args, namespace=args0)
+    p = ArgumentParser()
+    p.add_argument(
+        "helper_target",
+        help="helper target to run. Currently valid targets are: \n{}".format(
+            [k for k in HELPERS]
+        ),
+    )
+    args2, rest2 = p.parse_known_args(rest, namespace=args0)
+    # it is not apparent from this but the following line calls the suparser in
+    #   in the helper module to get the rest of the args.
+    HELPERS[args2.helper_target][1](p)
+    args3, rest3 = p.parse_known_args(rest, namespace=args0)
+
+    ns = args3
     if ns.cmd in NEED_RC:
         if os.path.exists(rc.user_config):
             rc._update(load_rcfile(rc.user_config))
