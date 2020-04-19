@@ -1,11 +1,11 @@
 """Generic builder."""
 
-from regolith.helpers.hellohelper import HelloHelper, subparser
 from regolith.helpers import hellohelper as hello
+from regolith.helpers import a_proprevhelper as a_proprev
 
 HELPERS = {
-    "hello": (hello.HelloHelper, hello.subparser)
-#    "helper": HelperBuilder,
+    "hello": (hello.HelloHelper, hello.subparser),
+    "a_proprev": (a_proprev.PropRevAdderHelper, a_proprev.subparser)
 }
 
 

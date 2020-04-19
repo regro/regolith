@@ -99,6 +99,14 @@ class SoutHelperBase(HelperBase):
         super().__init__(rc)
         self.cmds = ["sout"]
 
+
+class DbHelperBase(HelperBase):
+    """Base class for builders that update databases"""
+
+    def __init__(self, rc):
+        super().__init__(rc)
+        self.cmds = ["db_updater"]
+
 class LatexHelperBase(HelperBase):
     """Base class for Latex builders"""
 

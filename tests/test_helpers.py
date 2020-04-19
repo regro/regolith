@@ -11,14 +11,12 @@ from regolith.main import main
 import openpyxl
 
 helper_map = [
-    (["helper", "hello", "--person", "Simon"],"hello Simon\n")
-        #["a_proprev",
-      #"A. Einstein", "nsf", "2020-04-08", "-q", "Tess Guebre",
-      #"-s", "downloaded", "-t", "A flat world theory"],
-     #"proposalReviews"),
+    (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
+    (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
+      "Tess Guebre","-s", "downloaded", "-t", "A flat world theory"],
+      "A. Einstein proposal has been added/updated in proposal reviews\n"),
     #(["a_manrev", "Einstein", "Nature", "2020-04-11"],
      #"refereeReports")
-
 ]
 
 
