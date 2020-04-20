@@ -13,9 +13,7 @@ from regolith.tools import (
     is_current,
     update_schemas,
     merge_collections,
-    is_fully_loaded,
-    group
-)
+    group,
     is_fully_loaded,
     group_member_ids)
 
