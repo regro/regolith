@@ -26,6 +26,10 @@ def subparser(subpi):
                         default=None)
     subpi.add_argument("type", help=f"{ALLOWED_TYPES}", default=None)
     subpi.add_argument("due_date", help="due date in form YYYY-MM-DD")
+    subpi.add_argument("-d", "--database",
+                        help="The database that will be updated.  Defaults to "
+                             "first database in the regolithrc.json file."
+                        )
     subpi.add_argument("-q", "--requester",
                         help="Name of the Program officer requesting"
                         )
@@ -47,7 +51,8 @@ class PropRevAdderHelper(DbHelperBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        rc.db = "test"
+        if not rc.database:
+            rc.database = rc.databases[0]["name"]
         rc.coll = "proposalReviews"
         gtx["proposalReviews"] = sorted(
             all_docs_from_collection(rc.client, "proposalReviews"), key=_id_key
@@ -71,8 +76,8 @@ class PropRevAdderHelper(DbHelperBase):
             str(year)[-2:], month_to_str_int(month), name.last.casefold(),
             name.first.casefold().strip("."))
 
-        coll = self.gtx["proposalReviews"]
-        pdocl = dict(list(filter(lambda doc: doc["_id"] == key, coll)))
+        coll = self.gtx[rc.coll]
+        pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
             sys.exit("This entry appears to already exist in the collection")
         else:
@@ -125,40 +130,10 @@ class PropRevAdderHelper(DbHelperBase):
             pdoc.update({'status': 'accepted'})
 
         pdoc.update({"_id": key})
-        rc.client.insert_one(rc.db, rc.coll, pdoc)
-#        sync_coll(file, fullpdoc)
+        rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print("{} proposal has been added/updated in proposal reviews".format(
             rc.name))
 
         return
 
-
-    def latex(self):
-        """Render latex template"""
-        for rev in self.gtx["refereeReports"]:
-            outname = "{}_{}".format(_id_key(rev),rev["reviewer"])
-            self.render(
-                "mt.txt",
-                outname + ".txt",
-                trim_blocks=True,
-                title=rev["title"],
-                firstAuthorLastName=rev["first_author_last_name"],
-                journal=rev["journal"],
-                didWhat=rev["did_what"],
-                didHow=rev["did_how"],
-                foundWhat=rev["claimed_found_what"],
-                whyImportant=rev["claimed_why_important"],
-                validityAssessment=rev["validity_assessment"],
-                finalAssessment=rev["final_assessment"],
-                recommendation=rev["recommendation"],
-                freewrite=rev["freewrite"]
-            )
-            if len(rev["editor_eyes_only"]) > 0:
-                self.render(
-                    "refreport_editor.txt",
-                    outname + "_editor.txt",
-                    title=rev["title"],
-                    firstAuthorLastName=rev["first_author_last_name"],
-                    editorEyesOnly=rev["editor_eyes_only"],
-                )
