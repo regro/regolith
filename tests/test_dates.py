@@ -1,3 +1,4 @@
+import datetime
 from datetime import date
 
 import pytest
@@ -5,7 +6,7 @@ import pytest
 from regolith.dates import (month_to_str_int,
                             day_to_str_int,
                             find_gaps_overlaps,
-                            get_dates)
+                            get_dates, last_day)
 
 
 @pytest.mark.parametrize(
@@ -58,15 +59,96 @@ def test_find_gaps_overlaps(input, flag, expected):
     assert actual == expected
 
 @pytest.mark.parametrize(
-    "input,flag,expected",
-    [({'year': 2020}, True, {'begin_day': 1, 'begin_month': 1, 'begin_year': 2020,
-                 'end_day': None, 'end_month': 12,
-                 'end_year': None, 'day': 1, 'month': 1,
-                 'year': 2020})
-#        ({"begin_year": 2019, "end_year": 2020}),
+    "input,expected",
+    [
+        ({'year': 2020}, {'begin_date': datetime.date(2020, 1, 1),
+                                'end_date': datetime.date(2020, 12, 31),
+                                'date': None
+                               }
+         ),
+        ({'year': 2020, 'month': 9},
+         {'begin_date': datetime.date(2020, 9, 1),
+          'end_date': datetime.date(2020, 9, 30),
+          'date': None
+          }
+         ),
+        ({'year': 2020, 'month': 'Sep', 'day': 15},
+         {'begin_date': datetime.date(2020, 9, 15),
+          'end_date': datetime.date(2020, 9, 15),
+          'date': datetime.date(2020, 9, 15)
+          }
+         ),
+        ({'begin_year': 2020},
+         {'begin_date': datetime.date(2020, 1, 1),
+          'end_date': None,
+          'date': None
+          }
+         ),
+        ({'begin_year': 2020, 'begin_month': 4},
+         {'begin_date': datetime.date(2020, 4, 1),
+          'end_date': None,
+          'date': None
+          }
+         ),
+        ({'begin_year': 2020, 'begin_month': 4, 'begin_day': 5},
+         {'begin_date': datetime.date(2020, 4, 5),
+          'end_date': None,
+          'date': None
+          }
+         ),
+        ({'begin_year': 2019, 'end_year': 2020},
+         {'begin_date': datetime.date(2019, 1, 1),
+          'end_date': datetime.date(2020, 12, 31),
+          'date': None
+          }
+         ),
+        ({'begin_year': 2019, 'end_year': 2020, 'end_month': 'Feb'},
+         {'begin_date': datetime.date(2019, 1, 1),
+          'end_date': datetime.date(2020, 2, 29),
+          'date': None
+          }
+         ),
+        ({'begin_year': 2019, 'end_year': 2020, 'end_month': 'Feb', 'end_day': 10},
+         {'begin_date': datetime.date(2019, 1, 1),
+          'end_date': datetime.date(2020, 2, 10),
+          'date': None
+          }
+         ),
+        ({'begin_date': '2020-05-09', 'begin_year': 2019, 'end_year': 2020, 'end_month': 'Feb',
+          'end_day': 10},
+         {'begin_date': datetime.date(2020, 5, 9),
+          'end_date': datetime.date(2020, 2, 10),
+          'date': None
+          }
+         ),
+        ({'end_date': '2020-5-20', 'begin_year': 2019, 'end_year': 2020, 'end_month': 'Feb',
+          'end_day': 10},
+         {'begin_date': datetime.date(2019, 1, 1),
+          'end_date': datetime.date(2020, 5, 20),
+          'date': None
+          }
+         ),
+        ({'date': '2020-5-20', 'begin_year': 2019, 'end_year': 2020,
+          'end_month': 'Feb',
+          'end_day': 10},
+         {'begin_date': datetime.date(2019, 1, 1),
+          'end_date': datetime.date(2020, 2, 10),
+          'date': datetime.date(2020, 5, 20)
+          }
+         ),
     ],
 )
-def test_get_dates(input, flag, expected):
-    actual = get_dates(input,valid_date=flag)
-    print(actual)
-    assert False
+def test_get_dates(input, expected):
+    actual = get_dates(input)
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "year,month,expected",
+    [
+        (2020, 2, 29),
+        (2020, 'Feb', 29)
+    ]
+)
+def test_last_day(year,month,expected):
+    assert last_day(year,month) == expected
