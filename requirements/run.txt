@@ -1,6 +1,7 @@
 python
 ruamel.yaml
 docutils
+python-dateutil
 jinja2
 cerberus
 xonsh
