@@ -1859,6 +1859,7 @@ SCHEMAS = {
                              "required": False, "type": "string"},
                 },
             },
+        },
         "grant": {
             "description": "Grant id of the grant supporting this",
             "type": "string",
@@ -1894,7 +1895,6 @@ SCHEMAS = {
             },
             "type": "list",
         },
-    },
     },
     "proposalReviews": {
         "_description": {
