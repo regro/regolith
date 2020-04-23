@@ -589,6 +589,28 @@ EXEMPLARS = {
         "website": "http://fuelcycle.org/",
         "grant": "dmref15",
     },
+    "projecta": {
+        "_id": "20sb_projectahelper",
+        "begin_date": "2020-04-23",
+        "collaborators": [
+            {
+                "name": "afriend",
+            }
+        ],
+        "description": "Building a projecta helper for regolith",
+        "grant": "dmref15",
+        "group_lead": "scopatz",
+        "notes": [
+            "He said this",
+            "She said that",
+        ],
+        "status": "active",
+        "team": [
+            {
+                "name": "scopatz",
+            }
+        ],
+    },
     "proposalReviews": [
         {
             "_id": "1906doeExample",
@@ -1796,6 +1818,83 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+    },
+    "projecta": {
+        "_description": {
+            "description": "These are small, one publication-sized quanta of "
+                           "projects that are generally private but contain "
+                           "information about group lead, other group members "
+                           "involved, collaborators and associated grant. "
+                           "We call them projecta, and the singular is projectum"
+        },
+        "_id": {
+            "description": "Unique project identifier.  Preferred syntax is "
+                           "YYfl_shortdesc where YY are the last two digits of "
+                           "of the year the projectum was started, fl are the "
+                           "first/last initials of the lead student and shortdesc "
+                           "is descriptive enough for the pi to remember what "
+                           "it is, with no spaces.",
+            "required": True,
+            "type": "string",
+        },
+        "description": {
+            "description": "brief description of the projectum.",
+            "required": True,
+            "type": "string",
+        },
+        "begin_date": {
+            "description": "the date the projectum started",
+            "required": True,
+            "type": ["list", "string"],
+        },
+        "collaborators": {
+            "description": "Non group members "
+                           "working on this project.  They should be in the "
+                           "contacts collection.",
+            "required": False,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "name": {"description": "_id or name of collaborator",
+                             "required": False, "type": "string"},
+                },
+            },
+        "grant": {
+            "description": "Grant id of the grant supporting this",
+            "type": "string",
+            "required": True
+        },
+        "group_lead": {
+            "description": "The group member who is the lead/POC",
+            "type": "string",
+            "required": True
+        },
+        "notes": {
+            "description": "other information about the project",
+            "required": False,
+            "type": ["list", "string"],
+        },
+        "status": {
+            "description": "the status",
+            "required": True,
+            "type": "string",
+            "eallowed": ["active", "back_burner", "published", "trashed"],
+        },
+        "team": {
+            "description": "Group members beyond the lead who are/have been "
+                           "working on this project.  They should be in the "
+                           "people collection.",
+            "required": False,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "name": {"description": "_id or name of team member",
+                             "required": False, "type": "string"},
+                },
+            },
+            "type": "list",
+        },
+    },
     },
     "proposalReviews": {
         "_description": {

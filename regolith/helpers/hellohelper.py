@@ -1,16 +1,8 @@
 """Builder for Current and Pending Reports."""
-import datetime
-import time
-from argparse import RawTextHelpFormatter
-
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.dates import month_to_int
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_grants,
-    fuzzy_retrieval,
 )
 
 def subparser(subpi):
