@@ -1,9 +1,6 @@
 """Date based tools"""
 import calendar
 import datetime
-from calendar import monthrange
-
-# dateutil
 from dateutil import parser as date_parser
 
 MONTHS = {
@@ -111,18 +108,6 @@ def find_gaps_overlaps(dateslist, overlaps_ok=False):
         elif (dateslist[i + 1][0] - dateslist[i][1]).days > 1:
             status = False
     return status
-
-
-def begin_end_dates(thing):
-    bd = thing.get('begin_day', 1)
-    bm = thing.get('begin_month', 1)
-    by = thing.get('begin_year')
-    ed = thing.get('end_day')
-    em = thing.get('end_month', 12)
-    ey = thing.get('end_year')
-    begin_date = datetime.date(by, month_to_int(bm), bd)
-    end_date = datetime.date(ey, month_to_int(em), ed)
-    return begin_date, end_date
 
 
 def last_day(year, month):
