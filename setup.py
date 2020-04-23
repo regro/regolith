@@ -38,7 +38,7 @@ def main():
         url="https://github.com/scopatz/regolith",
         platforms="Cross Platform",
         classifiers=["Programming Language :: Python :: 3"],
-        packages=["regolith", "regolith.builders"],
+        packages=["regolith", "regolith.builders", "regolith.helpers"],
         package_dir={"regolith": "regolith"},
         package_data={
             "regolith": [

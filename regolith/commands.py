@@ -7,6 +7,7 @@ import sys
 
 from regolith.tools import string_types
 from regolith.builder import builder, BUILDERS
+from regolith.helper import HELPERS, helpr
 from regolith.emailer import emailer as email
 from regolith.deploy import deploy as dploy
 
@@ -120,12 +121,29 @@ def build_db_check(rc):
     return dbs
 
 
+def helper_db_check(rc):
+    """Checks which DBs a builder needs"""
+    dbs = set()
+    bldr = HELPERS[rc.helper_target][0]
+    needed_dbs = getattr(bldr, 'needed_dbs', None)
+    # If the requested builder doesn't state DB deps then it requires
+    # all dbs!
+    if not needed_dbs:
+        return None
+    dbs.update(needed_dbs)
+    return dbs
+
+
 def build(rc):
     """Builds all of the build targets"""
     for t in rc.build_targets:
         bldr = builder(t, rc)
         bldr.build()
 
+def helper(rc):
+    """Runs the helper targets"""
+    hlpr = helpr(rc.helper_target, rc)
+    hlpr.hlp()
 
 def deploy(rc):
     """Deploys all of the deployment targets."""
