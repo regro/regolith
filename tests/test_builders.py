@@ -19,6 +19,7 @@ builder_map = [
     "preslist",
     "reimb",
     "figure",
+    "beamplan"
 ]
 
 xls_check = ("B17", "B20", "B36")
@@ -39,6 +40,7 @@ def prep_figure():
     print(db.get_file(db["groups"]["ergs"], "hello"))
     if not db.get_file(db["groups"]["ergs"], "hello"):
         db.add_file(db["groups"]["ergs"], "hello", "fig/hello.txt")
+
 
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 @pytest.mark.parametrize("bm", builder_map)

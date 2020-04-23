@@ -794,6 +794,44 @@ def is_fully_loaded(appts):
                                     ))
     return status
 
+
+def group(db, by):
+    """
+    Group the document in the database according to the value of the doc[by] in db.
+
+    Parameters
+    ----------
+    db : iterable
+        The database of documents.
+    by : basestring
+        The key to group the documents.
+
+    Returns
+    -------
+    grouped: dict
+        A dictionary mapping the feature value of group to the list of docs. All docs in the same generator have
+        the same value of doc[by].
+
+    Examples
+    --------
+    Here, we use a tuple of dict as an example of the database.
+    >>> db = ({"k": "v0"}, {"k": "v1"}, {"k": "v0"})
+    >>> group(db)
+    This will return
+    >>> {"v0": [{"k": "v0"}, {"k": "v0"}], "v1": [{"k": "v1"}]}
+    """
+    grouped = {}
+    doc: dict
+    for doc in db:
+        key = doc.get(by)
+        if not key:
+            print("There is no field {} in {}".format(by, id_key(doc)))
+        elif key not in grouped:
+            grouped[key] = [doc]
+        else:
+            grouped[key].append(doc)
+    return grouped
+
 def group_member_ids(ppl_coll, grpname):
     """Get a list of all group member ids
 

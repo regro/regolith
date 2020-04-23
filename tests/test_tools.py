@@ -13,6 +13,7 @@ from regolith.tools import (
     is_current,
     update_schemas,
     merge_collections,
+    group,
     is_fully_loaded,
     group_member_ids)
 
@@ -645,6 +646,17 @@ def test_update_schemas(default_schema, user_schema, expected_schema):
 )
 def test_is_fully_loaded(appts, expected):
     assert is_fully_loaded(appts) == expected
+
+
+def test_group():
+    doc0 = {"k0": "v00", "k1": "v01"}
+    doc1 = {"k0": "v10", "k1": "v11"}
+    doc2 = {"k1": "v21"}
+    doc3 = {"k0": "v00", "k1": "v31"}
+    db = (doc for doc in (doc0, doc1, doc2, doc3))
+    by = "k0"
+    expect = {"v00": [doc0, doc3], "v10": [doc1]}
+    assert group(db, by) == expect
 
 ppl_coll = [
     {
