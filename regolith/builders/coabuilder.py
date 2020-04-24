@@ -225,7 +225,8 @@ def make_person_3tups(person, rc):
         print("Warning")
     name = HumanName(person['name'])
     inst = get_inst_name(person, rc)
-    return [(name.last, name.first, inst)]
+    first_names = " ".join(name.first, name.middle)
+    return [(name.last, first_names, inst)]
 
 
 def format_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
@@ -245,19 +246,6 @@ def format_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
             name = HumanName(ppl_tup[0])
             yield name.last, name.first, ppl_tup[1]
     return ppl
-
-
-def format_people_name(ppl_names):
-    """Format people name to be first name, last name."""
-    ppl = set()
-    # reformatting the name in last name, first name
-    for idx in range(len(ppl_names)):
-        names = ppl_names[idx][0].split()
-        last_name = names[-1]
-        first_name = ' '.join(names[:-1])
-        name_reformatted = ', '.join([last_name, first_name])
-        ppl.add((name_reformatted, ppl_names[idx][1]))
-    return list(ppl)
 
 
 def format_to_nsf(tups, type_str):
