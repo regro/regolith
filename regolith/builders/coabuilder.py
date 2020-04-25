@@ -1,4 +1,10 @@
-"""Builder for Recent Collaborators."""
+"""Builder for Recent Collaborators.
+
+For the specified person it returns the name and institution of all
+graduate student and post-doc advisors,
+all graduate student advisees, all post-doc advisees in the past 60 monts
+and all coauthors in the past 48 months.
+"""
 import datetime as dt
 import os
 import sys
@@ -14,8 +20,8 @@ from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     fuzzy_retrieval, is_since
 
-NUM_MONTHS = 48
-
+NUM_COAUTHOR_MONTHS = 48
+NUM_POSTDOC_MONTHS = 60
 
 def mdy_date(month, day, year):
     """Make a date object."""
@@ -64,6 +70,8 @@ def get_advisors_name_inst(advisee, rc):
                 print("WARNING: {} not in institutions".format(adv.get("institution")))
                 yield advsior_name.last, advsior_name.first, adv.get("institution")
 
+#def active_advisee(item, rc):
+#    active_dates = get_dates()
 
 def get_advisees_name_inst(coll, advisor, rc):
     """Get advisor's advisees. Yield (last name, first name, institutions)"""
@@ -72,18 +80,21 @@ def get_advisees_name_inst(coll, advisor, rc):
         edus = person.get("education", [])
         for edu in edus:
             if 'advisor' in edu and edu['advisor'] in advisor_names:
+
+#                if edu['status'] == 'postdoc'
                 person_name = HumanName(person.get("name"))
                 inst_name = edu.get("institution")
                 inst = fuzzy_retrieval(
                     all_docs_from_collection(rc.client, "institutions"),
                     ['aka', 'name', '_id'], inst_name,
                     case_sensitive=False)
+                first_name = " ".join([person_name.first,  person_name.middle])
                 if inst is None:
                     print("WARNING: {} not in institutions".format(
                         inst_name))
-                    yield person_name.last, person_name.first, inst_name
+                    yield person_name.last, first_name, inst_name
                 else:
-                    yield person_name.last, person_name.first, inst.get('name', "")
+                    yield person_name.last, first_name, inst.get('name', "")
                 break
 
 
@@ -104,9 +115,9 @@ def filter_since_date(pubs, since_date):
 def get_since_date(rc):
     """Get the since_date from command."""
     if isinstance(rc, str):
-        since_date = dt.datetime.strptime(rc, '%Y-%m-%d').date() - relativedelta(months=NUM_MONTHS)
+        since_date = dt.datetime.strptime(rc, '%Y-%m-%d').date() - relativedelta(months=NUM_COAUTHOR_MONTHS)
     else:
-        since_date = dt.date.today() - relativedelta(months=NUM_MONTHS)
+        since_date = dt.date.today() - relativedelta(months=NUM_COAUTHOR_MONTHS)
     return since_date
 
 
@@ -225,7 +236,7 @@ def make_person_3tups(person, rc):
         print("Warning")
     name = HumanName(person['name'])
     inst = get_inst_name(person, rc)
-    first_names = " ".join(name.first, name.middle)
+    first_names = " ".join([name.first, name.middle])
     return [(name.last, first_names, inst)]
 
 
@@ -244,7 +255,7 @@ def format_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
         # remove all people who are in the institution of the person
         if inst_name != excluded_inst_name:
             name = HumanName(ppl_tup[0])
-            yield name.last, name.first, ppl_tup[1]
+            yield name.last, " ".join([name.first, name.middle]), ppl_tup[1]
     return ppl
 
 
@@ -462,7 +473,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
     def render_template2(self, person_info, ppl_3tups, **kwargs):
         """Render the doe template."""
         template2 = self.template2
-        ppl_3tups = ppl_3tups
+        ppl_3tups = set(ppl_3tups)
         num_rows = len(ppl_3tups)
         wb = openpyxl.load_workbook(template2)
         ws = wb.worksheets[0]
