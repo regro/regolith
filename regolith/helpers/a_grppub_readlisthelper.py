@@ -22,43 +22,36 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 
 
 def subparser(subpi):
-    subpi.add_argument("list_name", help="short but unique name for the list",
+    subpi.add_argument("list_name", help="A short but unique name for the list",
                         default=None)
-    subpi.add_argument("type", help=f"{ALLOWED_TYPES}", default=None)
-    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD")
-    subpi.add_argument("-d", "--database",
-                        help="The database that will be updated.  Defaults to "
-                             "first database in the regolithrc.json file."
+    subpi.add_argument("title", help="A title for the list that will be "
+                                     "rendered with the list")
+    subpi.add_argument("tags", help="The tags to use to build the list",
+                       nargs="+")
+    subpi.add_argument("-p", "--purpose",
+                        help="The purpose or intended use for the reading"
                         )
-    subpi.add_argument("-q", "--requester",
-                        help="Name of the Program officer requesting"
-                        )
-    subpi.add_argument("-r", "--reviewer",
-                        help="name of the reviewer.  Defaults to sbillinge")
-    subpi.add_argument("-s", "--status",
-                        help=f"status, from {ALLOWED_STATI}. default is accepted")
-    subpi.add_argument("-t", "--title",
-                        help="the title of the proposal")
     return subpi
 
-class PropRevAdderHelper(DbHelperBase):
+class GrpPubReadListAdderHelper(DbHelperBase):
     """Build a helper"""
     btype = "a_grppub_readlist"
-    needed_dbs = ['citations', 'reading_lists']
+    needed_dbs = ['citations', "reading_lists"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
+        rc.database = None
         if not rc.database:
             rc.database = rc.databases[0]["name"]
-        rc.coll = "proposalReviews"
-        gtx["reading_lists"] = sorted(
-            all_docs_from_collection(rc.client, "reading_lists"), key=_id_key
-        )
+        rc.coll = "reading_lists"
         gtx["citations"] = sorted(
             all_docs_from_collection(rc.client, "citations"), key=_id_key
+        )
+        gtx["reading_lists"] = sorted(
+            all_docs_from_collection(rc.client, "reading_lists"), key=_id_key
         )
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
@@ -75,7 +68,7 @@ class PropRevAdderHelper(DbHelperBase):
         name = nameparser.HumanName(rc.name)
         month = dt.datetime.today().month
         year = dt.datetime.today().year
-        key = "_".join(rc.list_name.split()).strip()
+        key = "{}".format("_".join(rc.list_name.split()).strip())
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
@@ -83,7 +76,11 @@ class PropRevAdderHelper(DbHelperBase):
             sys.exit("This entry appears to already exist in the collection")
         else:
             pdoc = {}
-        pdoc.update({'adequacy_of_resources': [
+        pdoc.update({
+            ''
+            
+            
+            'adequacy_of_resources': [
             'The resources available to the PI seem adequate'],
                 'agency': rc.type,
                 'competency_of_team': [],
