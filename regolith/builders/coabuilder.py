@@ -474,6 +474,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
         """Render the doe template."""
         template2 = self.template2
         ppl_3tups = list(set(ppl_3tups))
+        ppl_3tups.sort(key=lambda x: x[0])
         num_rows = len(ppl_3tups)
         wb = openpyxl.load_workbook(template2)
         ws = wb.worksheets[0]
