@@ -119,7 +119,7 @@ def last_day(year, month):
     year: integer
       the year that the month is in
     month: integer or string
-      the month.  if an integer should be resolvable using regolith month_to_int
+      the month.  if a string should be resolvable using regolith month_to_int
 
     Returns
     -------
