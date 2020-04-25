@@ -1,6 +1,5 @@
 import os
 import shutil
-from xonsh.lib import subprocess
 import sys
 
 import pytest
@@ -12,11 +11,11 @@ import openpyxl
 
 helper_map = [
     (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
+    (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
+    #    (["helper", "a_grppub_readlist", "test the lister", "A list to test the lister", "pdf"], "hello Simon\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
       "Tess Guebre","-s", "downloaded", "-t", "A flat world theory"],
       "A. Einstein proposal has been added/updated in proposal reviews\n"),
-    #(["a_manrev", "Einstein", "Nature", "2020-04-11"],
-     #"refereeReports")
 ]
 
 
