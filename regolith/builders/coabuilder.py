@@ -473,7 +473,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
     def render_template2(self, person_info, ppl_3tups, **kwargs):
         """Render the doe template."""
         template2 = self.template2
-        ppl_3tups = set(ppl_3tups)
+        ppl_3tups = list(set(ppl_3tups))
         num_rows = len(ppl_3tups)
         wb = openpyxl.load_workbook(template2)
         ws = wb.worksheets[0]
