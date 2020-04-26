@@ -43,7 +43,6 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        rc.database = None
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         rc.coll = "reading_lists"
@@ -65,9 +64,6 @@ class GrpPubReadListAdderHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        name = nameparser.HumanName(rc.name)
-        month = dt.datetime.today().month
-        year = dt.datetime.today().year
         key = "{}".format("_".join(rc.list_name.split()).strip())
 
         coll = self.gtx[rc.coll]
@@ -77,61 +73,17 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         else:
             pdoc = {}
         pdoc.update({
-            ''
-            
-            
-            'adequacy_of_resources': [
-            'The resources available to the PI seem adequate'],
-                'agency': rc.type,
-                'competency_of_team': [],
-                'doe_appropriateness_of_approach': [],
-                'doe_reasonableness_of_budget': [],
-                'doe_relevance_to_program_mission': [],
-                'does_how': [],
-                'does_what': '',
-                'due_date': rc.due_date,
-                'freewrite': [],
-                'goals': [],
-                'importance': [],
-                'institutions': [],
-                'month': 'tbd',
-                'names': name.full_name,
-                'nsf_broader_impacts': [],
-                'nsf_create_original_transformative': [],
-                'nsf_plan_good': [],
-                'nsf_pot_to_advance_knowledge': [],
-                'nsf_pot_to_benefit_society': [],
-                'status': 'accepted',
-                'summary': '',
-                'year': 2020
+            'title': rc.title,
                 })
-
-        if rc.title:
-            pdoc.update({'title': rc.title})
+        if rc.purpose:
+            pdoc.update({'purpose': rc.purpose})
         else:
-            pdoc.update({'title': ''})
-        if rc.requester:
-            pdoc.update({'requester': rc.requester})
-        else:
-            pdoc.update({'requester': ''})
-        if rc.reviewer:
-            pdoc.update({'reviewer': rc.reviewer})
-        else:
-            pdoc.update({'reviewer': 'sbillinge'})
-        if rc.status:
-            if rc.status not in ALLOWED_STATI:
-                raise ValueError(
-                    "status should be one of {}".format(ALLOWED_STATI))
-            else:
-                pdoc.update({'status': rc.status})
-        else:
-            pdoc.update({'status': 'accepted'})
-
+            pdoc.update({'purpose': ''})
         pdoc.update({"_id": key})
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
-        print("{} proposal has been added/updated in proposal reviews".format(
-            rc.name))
+        print("{} has been added in reading_lists".format(
+            key))
 
         return
 
