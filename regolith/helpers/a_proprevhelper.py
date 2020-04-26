@@ -22,7 +22,7 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 
 
 def subparser(subpi):
-    subpi.add_argument("list_name", help="short but unique name for the list",
+    subpi.add_argument("name", help="pi first name space last name in quotes",
                         default=None)
     subpi.add_argument("type", help=f"{ALLOWED_TYPES}", default=None)
     subpi.add_argument("due_date", help="due date in form YYYY-MM-DD")
@@ -43,8 +43,8 @@ def subparser(subpi):
 
 class PropRevAdderHelper(DbHelperBase):
     """Build a helper"""
-    btype = "a_grppub_readlist"
-    needed_dbs = ['citations', 'reading_lists']
+    btype = "a_proprev"
+    needed_dbs = ['proposalReviews']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -54,11 +54,8 @@ class PropRevAdderHelper(DbHelperBase):
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         rc.coll = "proposalReviews"
-        gtx["reading_lists"] = sorted(
-            all_docs_from_collection(rc.client, "reading_lists"), key=_id_key
-        )
-        gtx["citations"] = sorted(
-            all_docs_from_collection(rc.client, "citations"), key=_id_key
+        gtx["proposalReviews"] = sorted(
+            all_docs_from_collection(rc.client, "proposalReviews"), key=_id_key
         )
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
@@ -75,7 +72,9 @@ class PropRevAdderHelper(DbHelperBase):
         name = nameparser.HumanName(rc.name)
         month = dt.datetime.today().month
         year = dt.datetime.today().year
-        key = "_".join(rc.list_name.split()).strip()
+        key = "{}{}_{}_{}".format(
+            str(year)[-2:], month_to_str_int(month), name.last.casefold(),
+            name.first.casefold().strip("."))
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))

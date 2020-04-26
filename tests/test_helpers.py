@@ -11,11 +11,11 @@ import openpyxl
 
 helper_map = [
     (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
-    (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
-    #    (["helper", "a_grppub_readlist", "test the lister", "A list to test the lister", "pdf"], "hello Simon\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
       "Tess Guebre","-s", "downloaded", "-t", "A flat world theory"],
       "A. Einstein proposal has been added/updated in proposal reviews\n"),
+#    (["helper", "a_grppub_readlist", "test the lister", "A list to test the lister", "pdf"],
+#     "test_the_lister has been added in reading_lists\n"),
 ]
 
 
@@ -27,27 +27,31 @@ def test_helper_python(hm, make_db, capsys):
     out, err = capsys.readouterr()
     assert out == hm[1]
     output = False
-    if os.path.isdir(os.path.join(repo, "_build", hm[0][1])):
+    print(os.listdir(os.path.join(repo, "_build", hm[0][1])))
+    if len(os.listdir(os.path.join(repo, "_build", hm[0][1])))>0:
         output = True
         os.chdir(os.path.join(repo, "_build", hm[0][1]))
+    else:
+        os.chdir(os.path.join(repo, "db"))
     expected_base = os.path.join(os.path.dirname(__file__), "outputs")
     for root, dirs, files in os.walk("."):
         for file in files:
-            if output:
-                if file in os.listdir(os.path.join(expected_base, hm[0][1], root)):
-                    fn1 = os.path.join(repo, "_build", hm[0][1], root, file)
-                    with open(fn1, "r") as f:
-                        actual = f.read()
-                    fn2 = os.path.join(expected_base, hm[0][1], root, file)
-                    with open(fn2, "r") as f:
-                        expected = f.read()
+            if file in os.listdir(os.path.join(expected_base, hm[0][1], root)):
+                fn1 = os.path.join(repo, "_build", hm[0][1], root, file)
+                with open(fn1, "r") as f:
+                    actual = f.read()
+                    print(actual)
+                fn2 = os.path.join(expected_base, hm[0][1], root, file)
+                with open(fn2, "r") as f:
+                    expected = f.read()
 
-                    # Skip because of a date time in
-                    if file != "rss.xml":
-                        # Fixme proper fix for testing hard coded filepaths on windows
-                        if os.name == "nt":
-                            if "tmp" not in expected:
-                                if "../.." not in expected:
-                                    assert expected == actual
-                        else:
-                            assert expected == actual
+                # Skip because of a date time in
+                if file != "rss.xml":
+                    # Fixme proper fix for testing hard coded filepaths on windows
+                    if os.name == "nt":
+                        if "tmp" not in expected:
+                            if "../.." not in expected:
+                                assert expected == actual
+                    else:
+                        assert expected == actual
+    assert False
