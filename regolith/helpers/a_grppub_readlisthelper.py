@@ -80,6 +80,13 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         else:
             pdoc.update({'purpose': ''})
         pdoc.update({"_id": key})
+        pdoc.update({'papers': {}})
+
+        for cite in self.gtx["citations"]:
+            for tag in rc.tags:
+                if tag in cite.get("tags"):
+                    pdoc["papers"].update({"doi": cite.get("doi"),
+                                           "text": cite.get("synopsis")})
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print("{} has been added in reading_lists".format(

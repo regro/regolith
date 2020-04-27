@@ -1,6 +1,6 @@
 getting_started_with_pdf:
-  day: 15
-  month: 12
+  day: '15'
+  month: '12'
   papers:
     - doi: 10.1107/97809553602060000935
       text: Very basic, but brief, intro to powder diffraction in general
@@ -13,3 +13,9 @@ getting_started_with_pdf:
   title: A step-by-step pathway towards PDF understanding.  It is recommended to read
     the papers in the order they are listed here.
   year: 2019
+test_the_lister:
+  papers:
+    doi: 10.1021/nn501591g
+    text: The description of symbolic computing in Python
+  purpose: Test the lister
+  title: A list to test the lister

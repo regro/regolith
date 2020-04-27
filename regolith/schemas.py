@@ -77,6 +77,7 @@ EXEMPLARS = {
         "month": "Jan",
         "pages": "e103",
         "publisher": "PeerJ Inc. San Francisco, USA",
+        "synopsis": "The description of symbolic computing in Python",
         "tags": "pdf",
         "title": "SymPy: Symbolic computing in Python",
         "volume": "4",
