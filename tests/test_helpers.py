@@ -1,48 +1,63 @@
 import os
-import shutil
-import sys
-
+from pathlib import Path
 import pytest
 
-from regolith.broker import load_db
 from regolith.main import main
 
-import openpyxl
 
 helper_map = [
     (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
       "Tess Guebre","-s", "downloaded", "-t", "A flat world theory"],
       "A. Einstein proposal has been added/updated in proposal reviews\n"),
-#    (["helper", "a_grppub_readlist", "test the lister", "A list to test the lister", "pdf"],
-#     "test_the_lister has been added in reading_lists\n"),
+    (["helper", "a_grppub_readlist", "test the lister",
+      "A list to test the lister", "pdf", "--purpose", "Test the lister"],
+     "test_the_lister has been added in reading_lists\n"),
 ]
 
 
 @pytest.mark.parametrize("hm", helper_map)
 def test_helper_python(hm, make_db, capsys):
-    repo = make_db
+    repo = Path(make_db)
+    testfile = Path(__file__)
     os.chdir(repo)
+
     main(args=hm[0])
     out, err = capsys.readouterr()
     assert out == hm[1]
-    output = False
-    print(os.listdir(os.path.join(repo, "_build", hm[0][1])))
-    if len(os.listdir(os.path.join(repo, "_build", hm[0][1])))>0:
-        output = True
-        os.chdir(os.path.join(repo, "_build", hm[0][1]))
-    else:
-        os.chdir(os.path.join(repo, "db"))
-    expected_base = os.path.join(os.path.dirname(__file__), "outputs")
+
+    builddir = repo / "_build" / hm[0][1]
+    expecteddir = testfile.parent / "outputs" / hm[0][1]
+    are_outfiles = any(builddir.iterdir())
+    if are_outfiles and not expecteddir.is_dir():
+        print("WARNING: there are built outputs that are not being tested")
+    if are_outfiles and expecteddir.is_dir():
+        assert_outputs(builddir,expecteddir)
+
+    builddir = repo / "db"
+    if expecteddir.is_dir():
+        assert_outputs(builddir,expecteddir)
+
+
+def assert_outputs(builddir,expecteddir):
+    """
+
+    Parameters
+    ----------
+    builddir pathlib.Path object
+      the directory where the helper has built the output
+    expecteddir pathlib.Path object
+      the directory where the expected output is found
+    """
+    os.chdir(builddir)
     for root, dirs, files in os.walk("."):
         for file in files:
-            if file in os.listdir(os.path.join(expected_base, hm[0][1], root)):
-                fn1 = os.path.join(repo, "_build", hm[0][1], root, file)
-                with open(fn1, "r") as f:
+            if file in os.listdir(expecteddir / root):
+                fn1 = builddir / root / file
+                with fn1.open(mode="r") as f:
                     actual = f.read()
-                    print(actual)
-                fn2 = os.path.join(expected_base, hm[0][1], root, file)
-                with open(fn2, "r") as f:
+                fn2 = expecteddir / root / file
+                with fn2.open(mode="r") as f:
                     expected = f.read()
 
                 # Skip because of a date time in
@@ -54,4 +69,4 @@ def test_helper_python(hm, make_db, capsys):
                                 assert expected == actual
                     else:
                         assert expected == actual
-    assert False
+
