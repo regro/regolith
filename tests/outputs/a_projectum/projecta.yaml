@@ -1,21 +1,73 @@
-getting_started_with_pdf:
-  day: '15'
-  month: '12'
-  papers:
-    - doi: 10.1107/97809553602060000935
-      text: Very basic, but brief, intro to powder diffraction in general
-    - doi: 10.1039/9781847558237-00464
-      text: Lightest weight overview of PDF analysis around.  Good starting point
-    - url: http://www.diffpy.org
-      text: Download and install PDFgui software and run through the step by step
-        tutorial under the help tab
-  purpose: Beginning reading about PDF
-  title: A step-by-step pathway towards PDF understanding.  It is recommended to read
-    the papers in the order they are listed here.
-  year: 2019
-test_the_lister:
-  papers:
-    doi: 10.1021/nn501591g
-    text: The description of symbolic computing in Python
-  purpose: Test the lister
-  title: A list to test the lister
+20ly_newprojectum:
+  begin_date: '2020-04-29'
+  collaborators:
+    - afriend
+  description: more work
+  group_members:
+    - ascopatz
+  lead: lyang
+  milestones:
+    - due_date: 2020-05-06
+      name: Kick off meeting
+      objective: roll out of project to team
+      audience:
+        - pi
+        - lead
+        - group members
+        - collaborators
+      status: planned
+    - due_date: 2020-05-20
+      name: Project lead presentation
+      objective: lead presents background reading and initial project plan
+      audience:
+        - pi
+        - lead
+        - group members
+      status: planned
+    - due_date: 2020-05-27
+      name: planning meeting
+      objective: develop a detailed plan with dates
+      audience:
+        - pi
+        - lead
+        - group members
+      status: planned
+  name: New projectum
+  pi_id: scopatz
+20sb_firstprojectum:
+  begin_date: '2020-04-28'
+  collaborators:
+    - aeinstein
+    - pdirac
+  description: My first projectum
+  group_members:
+    - ascopatz
+  lead: ascopatz
+  milestones:
+    - due_date: '2020-05-06'
+      name: Kick off meeting
+      objective: roll out of project to team
+      audience:
+        - pi
+        - lead
+        - group members
+        - collaborators
+      status: planned
+    - due_date: '2020-05-20'
+      name: Project lead presentation
+      objective: lead presents background reading and initial project plan
+      audience:
+        - pi
+        - lead
+        - group members
+      status: planned
+    - due_date: '2020-05-27'
+      name: planning meeting
+      objective: develop a detailed plan with dates
+      audience:
+        - pi
+        - lead
+        - group members
+      status: planned
+  name: First Projectum
+  pi_id: scopatz

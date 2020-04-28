@@ -778,7 +778,7 @@ def is_fully_loaded(appts):
     for x in range(0, timespan.days):
         datearray.append(earliest + timedelta(days=x))
 
-    loading = [0]*len(datearray)
+    loading = [0] * len(datearray)
     for day in datearray:
         for appt in appts:
             if appt['begin_date'] <= day <= appt["end_date"]:
@@ -788,7 +788,8 @@ def is_fully_loaded(appts):
     if max(loading) > 1.0:
         status = False
         print("max {} at {}".format(max(loading),
-                datearray[list(loading).index(max(loading))]))
+                                    datearray[
+                                        list(loading).index(max(loading))]))
     elif min(loading) < 1.0:
         status = False
         print("min {} at {}".format(min(loading),
@@ -833,6 +834,30 @@ def group(db, by):
         else:
             grouped[key].append(doc)
     return grouped
+
+
+def get_pi_id(rc):
+    """
+    Gets the database id of the group PI
+
+    Parameters
+    ----------
+    rc: runcontrol object
+      The runcontrol object.  It must contain the 'groups' and 'people'
+      collections in the needed databases
+
+    Returns
+    -------
+    The database '_id' of the group PI
+
+    """
+    groupiter = list(all_docs_from_collection(rc.client, "groups"))
+    peoplecoll = all_docs_from_collection(rc.client, "people")
+    pi_ref = [i.get("pi_name") for i in groupiter if
+              i.get("name").casefold() == rc.groupname.casefold()]
+    pi = fuzzy_retrieval(peoplecoll, ["_id", "aka", "name"], pi_ref[0])
+    return pi.get("_id")
+
 
 def group_member_ids(ppl_coll, grpname):
     """Get a list of all group member ids
