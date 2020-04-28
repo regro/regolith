@@ -43,10 +43,10 @@ def subparser(subpi):
                        help="list of outside collaborators who should  be in contacts"
                             "collection"
                        )
-    subpi.add_argument("-g", "--group_members", nargs="+",
+    subpi.add_argument("-m", "--group_members", nargs="+",
                        help="list of group members other than the lead who are involved"
                        )
-    subpi.add_argument("-r", "--grants", nargs="+",
+    subpi.add_argument("-g", "--grants", nargs="+",
                        help="grant or (occasionally) list of grants that support this work"
                        )
     return subpi
