@@ -46,6 +46,9 @@ def subparser(subpi):
     subpi.add_argument("-g", "--group_members", nargs="+",
                        help="list of group members other than the lead who are involved"
                        )
+    subpi.add_argument("-r", "--grants", nargs="+",
+                       help="grant or (occasionally) list of grants that support this work"
+                       )
     return subpi
 
 
@@ -112,6 +115,12 @@ class ProjectumAdderHelper(DbHelperBase):
             pdoc.update({
                 'description': rc.description,
                     })
+        if rc.grants:
+            if isinstance(rc.grants, str):
+                rc.grants = [rc.grants]
+            pdoc.update({'grants': rc.grants})
+        else:
+            pdoc.update({'grants': ["tbd"]})
         if rc.group_members:
             if isinstance(rc.group_members, str):
                 rc.group_members = [rc.group_members]

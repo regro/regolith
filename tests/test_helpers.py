@@ -15,7 +15,7 @@ helper_map = [
      "test_the_lister has been added in reading_lists\n"),
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "-c", "afriend", "-d", "more work",
-      "-g", "ascopatz"],
+      "-g", "ascopatz", "-r", "SymPy-1.1"],
      "20ly_newprojectum has been added in projecta\n"),
 ]
 

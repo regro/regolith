@@ -3,6 +3,8 @@
   collaborators:
     - afriend
   description: more work
+  grants:
+    - SymPy-1.1
   group_members:
     - ascopatz
   lead: lyang
@@ -40,6 +42,7 @@
     - aeinstein
     - pdirac
   description: My first projectum
+  grants: SymPy-1.1
   group_members:
     - ascopatz
   lead: ascopatz
