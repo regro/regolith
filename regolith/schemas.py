@@ -574,6 +574,7 @@ EXEMPLARS = {
         "begin_date": "2020-04-28",
         "collaborators": ["aeinstein", "pdirac"],
         "description": "My first projectum",
+        "grants": "SymPy-1.1",
         "group_members": ["ascopatz"],
         "lead": "ascopatz",
         "milestones": [{
