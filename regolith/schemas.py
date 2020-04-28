@@ -569,6 +569,37 @@ EXEMPLARS = {
             "type": "colloquium",
         },
     ],
+    "projecta": {
+        "_id": "20sb_firstprojectum",
+        "begin_date": "2020-04-28",
+        "collaborators": ["aeinstein", "pdirac"],
+        "description": "My first projectum",
+        "group_members": ["ascopatz"],
+        "lead": "ascopatz",
+        "milestones": [{
+                  'due_date': '2020-05-06',
+                  'name': 'Kick off meeting',
+                  'objective': 'roll out of project to team',
+                  'audience': ['pi', 'lead', 'group members',
+                               'collaborators'],
+                  'status': 'planned'
+                  },
+                 {'due_date': '2020-05-20',
+                  'name': 'Project lead presentation',
+                  'objective': 'lead presents background reading and '
+                               'initial project plan',
+                  'audience': ['pi', 'lead', 'group members'],
+                  'status': 'planned'
+                  },
+                 {'due_date': '2020-05-27',
+                  'name': 'planning meeting',
+                  'objective': 'develop a detailed plan with dates',
+                  'audience': ['pi', 'lead', 'group members'],
+                  'status': 'planned'
+                  }],
+        "pi_id": "scopatz",
+        "name": "First Projectum",
+    },
     "projects": {
         "_id": "Cyclus",
         "name": "Cyclus",

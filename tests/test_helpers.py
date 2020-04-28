@@ -13,6 +13,10 @@ helper_map = [
     (["helper", "a_grppub_readlist", "test the lister",
       "A list to test the lister", "pdf", "--purpose", "Test the lister"],
      "test_the_lister has been added in reading_lists\n"),
+    (["helper", "a_projectum", "New projectum", "lyang",
+      "--date", "2020-04-29", "-c", "afriend", "-d", "more work",
+      "-g", "ascopatz"],
+     "20ly_newprojectum has been added in projecta\n"),
 ]
 
 
