@@ -3,6 +3,7 @@ import pytest
 from regolith.tools import (
     filter_publications,
     fuzzy_retrieval,
+    get_pi_id,
     number_suffix,
     latex_safe,
     is_before,
@@ -726,3 +727,4 @@ ppl_coll = [
 def test_group_member_ids(input, expected):
     actual = group_member_ids(input, "bg")
     assert actual == expected
+
