@@ -36,6 +36,7 @@
       status: planned
   name: New projectum
   pi_id: scopatz
+  status: started
 20sb_firstprojectum:
   begin_date: '2020-04-28'
   collaborators:
@@ -74,3 +75,4 @@
       status: planned
   name: First Projectum
   pi_id: scopatz
+  status: started

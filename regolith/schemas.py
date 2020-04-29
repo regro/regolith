@@ -600,6 +600,7 @@ EXEMPLARS = {
                   }],
         "pi_id": "scopatz",
         "name": "First Projectum",
+        "status": "started"
     },
     "projects": {
         "_id": "Cyclus",

@@ -1,4 +1,4 @@
-"""Helper for adding a projectum to the projecta collection.
+"""Helper for listing upcoming (and past) projectum milestones.
 
    Projecta are small bite-sized project quanta that typically will result in
    one manuscript.
@@ -8,7 +8,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.helpers.basehelper import DbHelperBase
+from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
@@ -16,50 +16,26 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "projecta"
-ALLOWED_TYPES = ["nsf", "doe", "other"]
-ALLOWED_STATI = ["planned", "started", "finished", "back_burner", "paused", "cancelled"]
-MILESTONES_ALLOWED_STATI = ["planned", "scheduled", "finished", "cancelled"]
+HELPER_TARGET = "l_milestones"
 
 
 def subparser(subpi):
-    subpi.add_argument("name", help="A short but unique name for the projectum",
-                        default=None)
-    subpi.add_argument("lead", help="id of the group lead or tbd",
-                        default=None)
-    # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
-                       )
-    # Do not delete --date arg
-    subpi.add_argument("--date",
-                       help="The begin_date for the projectum  Defaults to "
-                            "today's date."
-                       )
-    subpi.add_argument("-d", "--description",
-                       help="Slightly longer description of the projectum"
-                       )
-    subpi.add_argument("-c", "--collaborators", nargs="+",
-                       help="list of outside collaborators who should  be in contacts"
-                            "collection"
-                       )
-    subpi.add_argument("-m", "--group_members", nargs="+",
-                       help="list of group members other than the lead who are involved"
-                       )
-    subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant or (occasionally) list of grants that support this work"
-                       )
+#    subpi.add_argument("name", help="A short but unique name for the projectum",
+#                        default=None)
+#    subpi.add_argument("-d", "--description",
+#                       help="Slightly longer description of the projectum"
+#                       )
     return subpi
 
 
-class ProjectumAdderHelper(DbHelperBase):
-    """Helper for adding a projectum to the projecta collection.
+class MilestonesListerHelper(SoutHelperBase):
+    """Helper for listing upcoming (and past) projectum milestones.
 
        Projecta are small bite-sized project quanta that typically will result in
        one manuscript.
     """
     # btype must be the same as helper target in helper.py
-    btype = "a_projectum"
+    btype = HELPER_TARGET
     needed_dbs = [f'{TARGET_COLL}','groups', 'people']
 
     def construct_global_ctx(self):
@@ -71,9 +47,14 @@ class ProjectumAdderHelper(DbHelperBase):
         rc.coll = f"{TARGET_COLL}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
-        gtx[rc.coll] = sorted(
-            all_docs_from_collection(rc.client, rc.coll), key=_id_key
-        )
+        colls = [
+            sorted(
+                all_docs_from_collection(rc.client, collname), key=_id_key
+            )
+            for collname in self.needed_dbs
+        ]
+        for db, coll in zip(self.needed_dbs, colls):
+            gtx[db] = coll
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -81,6 +62,8 @@ class ProjectumAdderHelper(DbHelperBase):
 
 
     def sout(self):
+        for projectum in self.gtx["projecta"]:
+            if projectum["status"] is not "finalized":
         person = self.rc.person
         return print(f"hello {person}")
 
@@ -95,25 +78,22 @@ class ProjectumAdderHelper(DbHelperBase):
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
-            raise RuntimeError("This entry appears to already exist in the collection")
+            sys.exit("This entry appears to already exist in the collection")
         else:
             pdoc = {}
 
         pdoc.update({
             'begin_date': now.isoformat(),
+                })
+        pdoc.update({
             'name': rc.name,
+                })
+        pdoc.update({
             'pi_id': rc.pi_id,
+                })
+        pdoc.update({
             'lead': rc.lead,
                 })
-        if rc.name is "tbd":
-            pdoc.update({
-                'status': 'planned'
-            })
-        else:
-            pdoc.update({
-                'status': 'started'
-            })
-
         if rc.description:
             pdoc.update({
                 'description': rc.description,

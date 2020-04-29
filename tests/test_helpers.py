@@ -17,6 +17,8 @@ helper_map = [
       "--date", "2020-04-29", "-c", "afriend", "-d", "more work",
       "-m", "ascopatz", "-g", "SymPy-1.1"],
      "20ly_newprojectum has been added in projecta\n"),
+    (["helper", "l_milestones"],
+     "20ly_newprojectum has been added in projecta\n"),
 ]
 
 
