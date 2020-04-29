@@ -18,10 +18,19 @@ helper_map = [
       "-m", "ascopatz", "-g", "SymPy-1.1"],
      "20ly_newprojectum has been added in projecta\n"),
     (["helper", "l_milestones", "--verbose"],
-     "2021-04-29: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: submission\n    Purpose: submit the paper, release the code, whatever\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n2020-05-27: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: planning meeting\n    Purpose: develop a detailed plan with dates\n    Audience: ['pi', 'lead', 'group members']\n2020-05-27: lead: ascopatz, 20sb_firstprojectum, status: proposed\n    Title: planning meeting\n    Purpose: develop a detailed plan with dates\n    Audience: ['pi', 'lead', 'group members']\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Project lead presentation\n    Purpose: lead presents background reading and initial project plan\n    Audience: ['pi', 'lead', 'group members']\n2020-05-20: lead: ascopatz, 20sb_firstprojectum, status: proposed\n    Title: Project lead presentation\n    Purpose: lead presents background reading and initial project plan\n    Audience: ['pi', 'lead', 'group members']\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Kick off meeting\n    Purpose: roll out of project to team\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n2020-05-06: lead: ascopatz, 20sb_firstprojectum, status: proposed\n    Title: Kick off meeting\n    Purpose: roll out of project to team\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n"
+     "2021-04-29: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: submission\n    Purpose: submit the paper, release the code, whatever\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n2020-05-27: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: planning meeting\n    Purpose: develop a detailed plan with dates\n    Audience: ['pi', 'lead', 'group members']\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Project lead presentation\n    Purpose: lead presents background reading and initial project plan\n    Audience: ['pi', 'lead', 'group members']\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Kick off meeting\n    Purpose: roll out of project to team\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n"
      ),
     (["helper", "l_milestones", "--verbose", "-l", "lyang"],
      "2021-04-29: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: submission\n    Purpose: submit the paper, release the code, whatever\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n2020-05-27: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: planning meeting\n    Purpose: develop a detailed plan with dates\n    Audience: ['pi', 'lead', 'group members']\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Project lead presentation\n    Purpose: lead presents background reading and initial project plan\n    Audience: ['pi', 'lead', 'group members']\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Kick off meeting\n    Purpose: roll out of project to team\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n"
+     ),
+    (["helper", "l_projecta", "--verbose"],
+     "20ly_newprojectum\n20sb_firstprojectum\n"
+     ),
+    (["helper", "l_projecta", "--verbose", "-l", "ascopatz"],
+     "20sb_firstprojectum\n"
+     ),
+    (["helper", "l_projecta", "--verbose", "-p", "ascopatz"],
+     "20ly_newprojectum\n20sb_firstprojectum\n"
      ),
 ]
 
