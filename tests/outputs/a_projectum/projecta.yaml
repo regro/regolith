@@ -17,7 +17,7 @@
         - lead
         - group members
         - collaborators
-      status: planned
+      status: proposed
     - due_date: 2020-05-20
       name: Project lead presentation
       objective: lead presents background reading and initial project plan
@@ -25,7 +25,7 @@
         - pi
         - lead
         - group members
-      status: planned
+      status: proposed
     - due_date: 2020-05-27
       name: planning meeting
       objective: develop a detailed plan with dates
@@ -33,7 +33,16 @@
         - pi
         - lead
         - group members
-      status: planned
+      status: proposed
+    - due_date: 2021-04-29
+      name: submission
+      objective: submit the paper, release the code, whatever
+      audience:
+        - pi
+        - lead
+        - group members
+        - collaborators
+      status: proposed
   name: New projectum
   pi_id: scopatz
   status: started
@@ -56,7 +65,7 @@
         - lead
         - group members
         - collaborators
-      status: planned
+      status: proposed
     - due_date: '2020-05-20'
       name: Project lead presentation
       objective: lead presents background reading and initial project plan
@@ -64,7 +73,7 @@
         - pi
         - lead
         - group members
-      status: planned
+      status: proposed
     - due_date: '2020-05-27'
       name: planning meeting
       objective: develop a detailed plan with dates
@@ -72,7 +81,7 @@
         - pi
         - lead
         - group members
-      status: planned
+      status: proposed
   name: First Projectum
   pi_id: scopatz
   status: started

@@ -153,20 +153,26 @@ class MilestonesListerHelper(SoutHelperBase):
                   'objective': 'roll out of project to team',
                   'audience': ['pi', 'lead', 'group members',
                                'collaborators'],
-                  'status': 'planned'
+                  'status': 'proposed'
                   }
         secondm = {'due_date': now+relativedelta(days=21),
                   'name': 'Project lead presentation',
                   'objective': 'lead presents background reading and '
                                'initial project plan',
                   'audience': ['pi', 'lead', 'group members'],
-                  'status': 'planned'
+                  'status': 'proposed'
                   }
         thirdm = {'due_date': now+relativedelta(days=28),
                   'name': 'planning meeting',
                   'objective': 'develop a detailed plan with dates',
                   'audience': ['pi', 'lead', 'group members'],
-                  'status': 'planned'
+                  'status': 'proposed'
+                  }
+        thirdm = {'due_date': now+relativedelta(years=1),
+                  'name': 'final submission',
+                  'objective': 'submit paper, make release, whatever',
+                  'audience': ['pi', 'lead', 'group members','collaborators'],
+                  'status': 'proposed'
                   }
         pdoc.update({"milestones": [firstm, secondm, thirdm]})
 

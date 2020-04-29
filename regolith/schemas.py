@@ -583,20 +583,20 @@ EXEMPLARS = {
                   'objective': 'roll out of project to team',
                   'audience': ['pi', 'lead', 'group members',
                                'collaborators'],
-                  'status': 'planned'
+                  'status': 'proposed'
                   },
                  {'due_date': '2020-05-20',
                   'name': 'Project lead presentation',
                   'objective': 'lead presents background reading and '
                                'initial project plan',
                   'audience': ['pi', 'lead', 'group members'],
-                  'status': 'planned'
+                  'status': 'proposed'
                   },
                  {'due_date': '2020-05-27',
                   'name': 'planning meeting',
                   'objective': 'develop a detailed plan with dates',
                   'audience': ['pi', 'lead', 'group members'],
-                  'status': 'planned'
+                  'status': 'proposed'
                   }],
         "name": "First Projectum",
         "pi_id": "scopatz",
