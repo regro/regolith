@@ -71,11 +71,10 @@ class MilestonesListerHelper(SoutHelperBase):
         for projectum in self.gtx["projecta"]:
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
-            mss = [ms for ms in projectum["milestones"]]
-            for ms in mss:
+            for ms in projectum["milestones"]:
                 if projectum["status"] == "started" \
-                    and ms.get('status') is not any(
-                        ["finished", "cancelled"]):
+                    and ms.get('status') not in \
+                        ["finished", "cancelled"]:
                     due_date = get_due_date(ms)
                     ms.update({
                         'lead': projectum.get('lead'),
@@ -83,7 +82,7 @@ class MilestonesListerHelper(SoutHelperBase):
                         'due_date': due_date
                     })
                     all_milestones.append(ms)
-        all_milestones.sort(key=lambda x: x['due_date'])
+        all_milestones.sort(key=lambda x: x['due_date'], reverse=True)
         for ms in all_milestones:
             if rc.verbose:
                 print(
@@ -168,13 +167,13 @@ class MilestonesListerHelper(SoutHelperBase):
                   'audience': ['pi', 'lead', 'group members'],
                   'status': 'proposed'
                   }
-        thirdm = {'due_date': now+relativedelta(years=1),
+        fourthm = {'due_date': now+relativedelta(years=1),
                   'name': 'final submission',
                   'objective': 'submit paper, make release, whatever',
                   'audience': ['pi', 'lead', 'group members','collaborators'],
                   'status': 'proposed'
                   }
-        pdoc.update({"milestones": [firstm, secondm, thirdm]})
+        pdoc.update({"milestones": [firstm, secondm, thirdm, fourthm]})
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
