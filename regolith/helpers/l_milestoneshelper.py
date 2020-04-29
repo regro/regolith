@@ -69,6 +69,8 @@ class MilestonesListerHelper(SoutHelperBase):
         rc = self.rc
         all_milestones = []
         for projectum in self.gtx["projecta"]:
+            if rc.lead and projectum.get('lead') != rc.lead:
+                continue
             mss = [ms for ms in projectum["milestones"]]
             for ms in mss:
                 if projectum["status"] == "started" \
