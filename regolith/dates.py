@@ -215,3 +215,27 @@ def get_dates(thing):
         date = date_parser.parse(thing.get('date')).date()
     dates = {'begin_date': begin_date, 'end_date': end_date, 'date': date}
     return dates
+
+
+def get_due_date(thing):
+    """
+
+    Parameters
+    ----------
+    thing: dict
+      gets the field named 'due_date' from doc and ensurese it is a
+      datetime.date object
+
+    Returns
+    -------
+    The due date as a datetime.date object
+
+    """
+    due_date = thing.get('due_date')
+    if isinstance(due_date, str):
+        due_date = date_parser.parse(due_date).date()
+    elif isinstance(due_date, datetime.date):
+        pass
+    else:
+        raise RuntimeError(f'due date not a known type')
+    return due_date

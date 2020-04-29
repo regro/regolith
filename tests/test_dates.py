@@ -6,7 +6,7 @@ import pytest
 from regolith.dates import (month_to_str_int,
                             day_to_str_int,
                             find_gaps_overlaps,
-                            get_dates, last_day)
+                            get_dates, last_day, get_due_date)
 
 
 @pytest.mark.parametrize(
@@ -21,6 +21,17 @@ from regolith.dates import (month_to_str_int,
 def test_month_to_str(input, expected):
     assert month_to_str_int(input) == expected
 
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ('2020-05-01', datetime.date(2020, 5, 1)),
+        (datetime.date(2020, 5, 1), datetime.date(2020, 5, 1)),
+        (2020, True),
+    ],
+)
+def test_get_due_date(input, expected):
+    with pytest.raises(Exception):
+        assert get_due_date(input) == expected
 
 @pytest.mark.parametrize(
     "input,expected",
