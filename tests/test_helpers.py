@@ -17,8 +17,9 @@ helper_map = [
       "--date", "2020-04-29", "-c", "afriend", "-d", "more work",
       "-m", "ascopatz", "-g", "SymPy-1.1"],
      "20ly_newprojectum has been added in projecta\n"),
-    (["helper", "l_milestones"],
-     "20ly_newprojectum has been added in projecta\n"),
+    (["helper", "l_milestones", "--verbose"],
+     "2020-05-06: lead: lyang, 20ly_newprojectum, status: planned\n    Title: Kick off meeting\n    Purpose: roll out of project to team\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n2020-05-06: lead: ascopatz, 20sb_firstprojectum, status: planned\n    Title: Kick off meeting\n    Purpose: roll out of project to team\n    Audience: ['pi', 'lead', 'group members', 'collaborators']\n2020-05-20: lead: lyang, 20ly_newprojectum, status: planned\n    Title: Project lead presentation\n    Purpose: lead presents background reading and initial project plan\n    Audience: ['pi', 'lead', 'group members']\n2020-05-20: lead: ascopatz, 20sb_firstprojectum, status: planned\n    Title: Project lead presentation\n    Purpose: lead presents background reading and initial project plan\n    Audience: ['pi', 'lead', 'group members']\n2020-05-27: lead: lyang, 20ly_newprojectum, status: planned\n    Title: planning meeting\n    Purpose: develop a detailed plan with dates\n    Audience: ['pi', 'lead', 'group members']\n2020-05-27: lead: ascopatz, 20sb_firstprojectum, status: planned\n    Title: planning meeting\n    Purpose: develop a detailed plan with dates\n    Audience: ['pi', 'lead', 'group members']\n"
+     ),
 ]
 
 

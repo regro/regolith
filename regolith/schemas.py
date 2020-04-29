@@ -598,8 +598,8 @@ EXEMPLARS = {
                   'audience': ['pi', 'lead', 'group members'],
                   'status': 'planned'
                   }],
-        "pi_id": "scopatz",
         "name": "First Projectum",
+        "pi_id": "scopatz",
         "status": "started"
     },
     "projects": {

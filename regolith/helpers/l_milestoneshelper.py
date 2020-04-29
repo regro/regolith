@@ -8,6 +8,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
+from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -20,11 +21,10 @@ HELPER_TARGET = "l_milestones"
 
 
 def subparser(subpi):
-#    subpi.add_argument("name", help="A short but unique name for the projectum",
-#                        default=None)
-#    subpi.add_argument("-d", "--description",
-#                       help="Slightly longer description of the projectum"
-#                       )
+    subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
+    subpi.add_argument("-l", "--lead",
+                       help="Filter milestones for this project lead"
+                       )
     return subpi
 
 
@@ -36,17 +36,21 @@ class MilestonesListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}','groups', 'people']
+    needed_dbs = [f'{TARGET_COLL}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        rc.pi_id = get_pi_id(rc)
+        if "groups" in self.needed_dbs:
+            rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
-        if not rc.database:
-            rc.database = rc.databases[0]["name"]
+        try:
+            if not rc.database:
+                rc.database = rc.databases[0]["name"]
+        except:
+            pass
         colls = [
             sorted(
                 all_docs_from_collection(rc.client, collname), key=_id_key
@@ -62,10 +66,34 @@ class MilestonesListerHelper(SoutHelperBase):
 
 
     def sout(self):
+        rc = self.rc
+        all_milestones = []
         for projectum in self.gtx["projecta"]:
-            if projectum["status"] is not "finalized":
-        person = self.rc.person
-        return print(f"hello {person}")
+            mss = [ms for ms in projectum["milestones"]]
+            for ms in mss:
+                if projectum["status"] == "started" \
+                    and ms.get('status') is not any(
+                        ["finished", "cancelled"]):
+                    due_date = get_due_date(ms)
+                    ms.update({
+                        'lead': projectum.get('lead'),
+                        'id': projectum.get('_id'),
+                        'due_date': due_date
+                    })
+                    all_milestones.append(ms)
+        all_milestones.sort(key=lambda x: x['due_date'])
+        for ms in all_milestones:
+            if rc.verbose:
+                print(
+                    f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
+                print(f"    Title: {ms.get('name')}")
+                print(f"    Purpose: {ms.get('objective')}")
+                print(f"    Audience: {ms.get('audience')}")
+            else:
+                print(
+                    f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")
+
+        return
 
     def db_updater(self):
         rc = self.rc
