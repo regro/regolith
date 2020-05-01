@@ -8,6 +8,7 @@
   group_members:
     - ascopatz
   lead: lyang
+  log_url: ''
   milestones:
     - due_date: 2020-05-06
       name: Kick off meeting
@@ -56,6 +57,7 @@
   group_members:
     - ascopatz
   lead: ascopatz
+  log_url: https://path_to_gdrive_document
   milestones:
     - due_date: '2020-05-06'
       name: Kick off meeting

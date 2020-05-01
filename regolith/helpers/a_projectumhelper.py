@@ -101,6 +101,7 @@ class ProjectumAdderHelper(DbHelperBase):
 
         pdoc.update({
             'begin_date': now.isoformat(),
+            'log_url': '',
             'name': rc.name,
             'pi_id': rc.pi_id,
             'lead': rc.lead,

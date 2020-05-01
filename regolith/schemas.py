@@ -598,6 +598,7 @@ EXEMPLARS = {
                   'audience': ['pi', 'lead', 'group members'],
                   'status': 'proposed'
                   }],
+        "log_url": "https://path_to_gdrive_document",
         "name": "First Projectum",
         "pi_id": "scopatz",
         "status": "proposed"
