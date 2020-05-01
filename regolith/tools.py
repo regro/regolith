@@ -661,10 +661,12 @@ def filter_presentations(people, presentations, institutions, target, types=["al
                     case_sensitive=False,
                 )
                 if pres["institution"] is None:
-                    sys.exit(
-                        "ERROR: institution {} not found in "
-                        "institutions.yml.  Please add and "
-                        "rerun".format(pres["institution"])
+                    print(
+                        "WARNING: department {} not found in"
+                        " {} in institutions.yml.  Pres list will"
+                        " build but please check this entry carefully and "
+                            "rerun to remove "
+                        "errors".format(pres["institution"],pres["_id"])
                     )
             except:
                 sys.exit(
@@ -684,7 +686,7 @@ def filter_presentations(people, presentations, institutions, target, types=["al
                         " build but please check this entry carefully and"
                         " please add the dept to the institution!".format(
                             pres["department"],
-                            pres["institution"]["_id"],
+                            pres["institution"],
                         )
                     )
                     pres["department"] = {
