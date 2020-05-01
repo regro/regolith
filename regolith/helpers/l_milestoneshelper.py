@@ -18,12 +18,18 @@ from regolith.tools import (
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
+ALLOWED_STATI = ["all", "proposed", "started", "finished", "back_burner", "paused", "cancelled"]
 
 
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-l", "--lead",
                        help="Filter milestones for this project lead"
+                       )
+    subpi.add_argument("-s", "--stati", nargs="+",
+                       help=f"Filter milestones for these stati from {ALLOWED_STATI}."
+                            f" Default is active projecta, i.e. 'started'",
+                       default=None
                        )
     return subpi
 
@@ -68,11 +74,14 @@ class MilestonesListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         all_milestones = []
+        if not rc.stati:
+            rc.stati = ['started']
         for projectum in self.gtx["projecta"]:
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
             for ms in projectum["milestones"]:
-                if projectum["status"] == "started" \
+                if projectum["status"] in rc.stati or \
+                    'all' in rc.stati \
                     and ms.get('status') not in \
                         ["finished", "cancelled"]:
                     due_date = get_due_date(ms)
