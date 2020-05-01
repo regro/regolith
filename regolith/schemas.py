@@ -71,11 +71,14 @@ EXEMPLARS = {
             "Robert Cimrman",
             "Anthony Scopatz",
         ],
+        "doi": "10.1021/nn501591g",
         "entrytype": "article",
         "journal": "PeerJ Computer Science",
         "month": "Jan",
         "pages": "e103",
         "publisher": "PeerJ Inc. San Francisco, USA",
+        "synopsis": "The description of symbolic computing in Python",
+        "tags": "pdf",
         "title": "SymPy: Symbolic computing in Python",
         "volume": "4",
         "year": "2017",
@@ -566,6 +569,40 @@ EXEMPLARS = {
             "type": "colloquium",
         },
     ],
+    "projecta": {
+        "_id": "20sb_firstprojectum",
+        "begin_date": "2020-04-28",
+        "collaborators": ["aeinstein", "pdirac"],
+        "description": "My first projectum",
+        "grants": "SymPy-1.1",
+        "group_members": ["ascopatz"],
+        "lead": "ascopatz",
+        "milestones": [{
+                  'due_date': '2020-05-06',
+                  'name': 'Kick off meeting',
+                  'objective': 'roll out of project to team',
+                  'audience': ['pi', 'lead', 'group members',
+                               'collaborators'],
+                  'status': 'proposed'
+                  },
+                 {'due_date': '2020-05-20',
+                  'name': 'Project lead presentation',
+                  'objective': 'lead presents background reading and '
+                               'initial project plan',
+                  'audience': ['pi', 'lead', 'group members'],
+                  'status': 'proposed'
+                  },
+                 {'due_date': '2020-05-27',
+                  'name': 'planning meeting',
+                  'objective': 'develop a detailed plan with dates',
+                  'audience': ['pi', 'lead', 'group members'],
+                  'status': 'proposed'
+                  }],
+        "log_url": "https://path_to_gdrive_document",
+        "name": "First Projectum",
+        "pi_id": "scopatz",
+        "status": "proposed"
+    },
     "projects": {
         "_id": "Cyclus",
         "name": "Cyclus",
@@ -774,6 +811,22 @@ EXEMPLARS = {
             "year": 2015,
         },
     ],
+    "reading_lists": {
+        "_id": "getting_started_with_pdf",
+        "day": "15",
+        "month": "12",
+        "papers": [{"doi": "10.1107/97809553602060000935",
+                   "text": "Very basic, but brief, intro to powder diffraction in general"},
+                   {"doi": "10.1039/9781847558237-00464",
+                    "text": "Lightest weight overview of PDF analysis around.  Good starting point"
+                    },
+                   {"url": "http://www.diffpy.org",
+                    "text": "Download and install PDFgui software and run through the step by step tutorial under the help tab"}
+                  ],
+        "purpose": "Beginning reading about PDF",
+        "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
+        "year": 2019,
+    },
     "refereeReports": {
         "_id": "1902nature",
         "claimed_found_what": ["gravity waves"],

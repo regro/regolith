@@ -1,0 +1,89 @@
+20ly_newprojectum:
+  begin_date: '2020-04-29'
+  collaborators:
+    - afriend
+  description: more work
+  grants:
+    - SymPy-1.1
+  group_members:
+    - ascopatz
+  lead: lyang
+  log_url: ''
+  milestones:
+    - due_date: 2020-05-06
+      name: Kick off meeting
+      objective: roll out of project to team
+      audience:
+        - pi
+        - lead
+        - group members
+        - collaborators
+      status: proposed
+    - due_date: 2020-05-20
+      name: Project lead presentation
+      objective: lead presents background reading and initial project plan
+      audience:
+        - pi
+        - lead
+        - group members
+      status: proposed
+    - due_date: 2020-05-27
+      name: planning meeting
+      objective: develop a detailed plan with dates
+      audience:
+        - pi
+        - lead
+        - group members
+      status: proposed
+    - due_date: 2021-04-29
+      name: submission
+      objective: submit the paper, release the code, whatever
+      audience:
+        - pi
+        - lead
+        - group members
+        - collaborators
+      status: proposed
+  name: New projectum
+  pi_id: scopatz
+  status: started
+20sb_firstprojectum:
+  begin_date: '2020-04-28'
+  collaborators:
+    - aeinstein
+    - pdirac
+  description: My first projectum
+  grants: SymPy-1.1
+  group_members:
+    - ascopatz
+  lead: ascopatz
+  log_url: https://path_to_gdrive_document
+  milestones:
+    - due_date: '2020-05-06'
+      name: Kick off meeting
+      objective: roll out of project to team
+      audience:
+        - pi
+        - lead
+        - group members
+        - collaborators
+      status: proposed
+    - due_date: '2020-05-20'
+      name: Project lead presentation
+      objective: lead presents background reading and initial project plan
+      audience:
+        - pi
+        - lead
+        - group members
+      status: proposed
+    - due_date: '2020-05-27'
+      name: planning meeting
+      objective: develop a detailed plan with dates
+      audience:
+        - pi
+        - lead
+        - group members
+      status: proposed
+  name: First Projectum
+  pi_id: scopatz
+  status: proposed
