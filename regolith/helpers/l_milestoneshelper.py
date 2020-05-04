@@ -18,11 +18,13 @@ from regolith.tools import (
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
-ALLOWED_STATI = ["all", "proposed", "started", "finished", "back_burner", "paused", "cancelled"]
+ALLOWED_STATI = ["all", "proposed", "started", "finished", "back_burner",
+                 "paused", "cancelled"]
 
 
 def subparser(subpi):
-    subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
+    subpi.add_argument("-v", "--verbose", action="store_true",
+                       help='increase verbosity of output')
     subpi.add_argument("-l", "--lead",
                        help="Filter milestones for this project lead"
                        )
@@ -70,7 +72,6 @@ class MilestonesListerHelper(SoutHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-
     def sout(self):
         rc = self.rc
         all_milestones = []
@@ -81,16 +82,16 @@ class MilestonesListerHelper(SoutHelperBase):
                 continue
             for ms in projectum["milestones"]:
                 if projectum["status"] in rc.stati or \
-                    'all' in rc.stati \
-                    and ms.get('status') not in \
-                        ["finished", "cancelled"]:
-                    due_date = get_due_date(ms)
-                    ms.update({
-                        'lead': projectum.get('lead'),
-                        'id': projectum.get('_id'),
-                        'due_date': due_date
-                    })
-                    all_milestones.append(ms)
+                        'all' in rc.stati:
+                    if ms.get('status') not in \
+                            ["finished", "cancelled"]:
+                        due_date = get_due_date(ms)
+                        ms.update({
+                            'lead': projectum.get('lead'),
+                            'id': projectum.get('_id'),
+                            'due_date': due_date
+                        })
+                        all_milestones.append(ms)
         all_milestones.sort(key=lambda x: x['due_date'], reverse=True)
         for ms in all_milestones:
             if rc.verbose:
@@ -122,20 +123,20 @@ class MilestonesListerHelper(SoutHelperBase):
 
         pdoc.update({
             'begin_date': now.isoformat(),
-                })
+        })
         pdoc.update({
             'name': rc.name,
-                })
+        })
         pdoc.update({
             'pi_id': rc.pi_id,
-                })
+        })
         pdoc.update({
             'lead': rc.lead,
-                })
+        })
         if rc.description:
             pdoc.update({
                 'description': rc.description,
-                    })
+            })
         if rc.grants:
             if isinstance(rc.grants, str):
                 rc.grants = [rc.grants]
@@ -153,35 +154,35 @@ class MilestonesListerHelper(SoutHelperBase):
                 rc.collaborators = [rc.collaborators]
             pdoc.update({
                 'collaborators': rc.collaborators,
-                    })
+            })
         pdoc.update({"_id": key})
 
-        firstm = {'due_date': now+relativedelta(days=7),
+        firstm = {'due_date': now + relativedelta(days=7),
                   'name': 'Kick off meeting',
                   'objective': 'roll out of project to team',
                   'audience': ['pi', 'lead', 'group members',
                                'collaborators'],
                   'status': 'proposed'
                   }
-        secondm = {'due_date': now+relativedelta(days=21),
-                  'name': 'Project lead presentation',
-                  'objective': 'lead presents background reading and '
-                               'initial project plan',
-                  'audience': ['pi', 'lead', 'group members'],
-                  'status': 'proposed'
-                  }
-        thirdm = {'due_date': now+relativedelta(days=28),
+        secondm = {'due_date': now + relativedelta(days=21),
+                   'name': 'Project lead presentation',
+                   'objective': 'lead presents background reading and '
+                                'initial project plan',
+                   'audience': ['pi', 'lead', 'group members'],
+                   'status': 'proposed'
+                   }
+        thirdm = {'due_date': now + relativedelta(days=28),
                   'name': 'planning meeting',
                   'objective': 'develop a detailed plan with dates',
                   'audience': ['pi', 'lead', 'group members'],
                   'status': 'proposed'
                   }
-        fourthm = {'due_date': now+relativedelta(years=1),
-                  'name': 'final submission',
-                  'objective': 'submit paper, make release, whatever',
-                  'audience': ['pi', 'lead', 'group members','collaborators'],
-                  'status': 'proposed'
-                  }
+        fourthm = {'due_date': now + relativedelta(years=1),
+                   'name': 'final submission',
+                   'objective': 'submit paper, make release, whatever',
+                   'audience': ['pi', 'lead', 'group members', 'collaborators'],
+                   'status': 'proposed'
+                   }
         pdoc.update({"milestones": [firstm, secondm, thirdm, fourthm]})
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
@@ -189,4 +190,3 @@ class MilestonesListerHelper(SoutHelperBase):
         print(f"{key} has been added in {TARGET_COLL}")
 
         return
-
