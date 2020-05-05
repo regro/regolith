@@ -35,6 +35,9 @@ amt = \${{"{:,}".format(float(g['subaward_amount']))}})
 
 \textbf{Source of Support:}\
 {{ g.get('funder', 'None') }}
+    {% if name == 'Current'-%}
+    ({{ g.get('awardnr', 'None') }})
+    {% endif %}
 
 \textbf{Total Award Amount}:
 \${{-"{:,}".format(float(g.get('amount', 0))) }}\\
