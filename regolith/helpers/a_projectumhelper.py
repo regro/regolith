@@ -163,6 +163,15 @@ class ProjectumAdderHelper(DbHelperBase):
                   'name': 'submission',
                   'objective': 'submit the paper, release the code, whatever',
                   'audience': ['pi', 'lead', 'group members','collaborators'],
+                  'release_definition': {
+                      'success_def': 'audience is happy',
+                      'scope': ['UCs that are supported or some other scope '
+                                'description'],
+                      'platform': 'description of how and where the audience '
+                                  'will access the deliverable',
+                      'roll_out': 'steps that the audience will take to access '
+                                  'and interact with the deliverable'
+        },
                   'status': 'proposed'
                   }
         pdoc.update({"milestones": [firstm, secondm, thirdm, fourthm]})

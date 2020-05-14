@@ -596,6 +596,14 @@ EXEMPLARS = {
                   'name': 'planning meeting',
                   'objective': 'develop a detailed plan with dates',
                   'audience': ['pi', 'lead', 'group members'],
+                  'release_definition':{
+                      'success_def': 'audience is happy',
+                      'scope': ['UCs that are supported or some other scope '
+                                'description'],
+                      'platform': 'description of how and where the audience '
+                                  'will access the deliverable',
+                      'roll_out': 'steps that the audience will take to access '
+                                  'and interact with the deliverable'},
                   'status': 'proposed'
                   }],
         "log_url": "https://path_to_gdrive_document",
