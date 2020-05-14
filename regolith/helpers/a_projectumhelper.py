@@ -169,8 +169,8 @@ class ProjectumAdderHelper(DbHelperBase):
                                 'description'],
                       'platform': 'description of how and where the audience '
                                   'will access the deliverable',
-                      'roll_out': 'steps that the audience will take to access '
-                                  'and interact with the deliverable'
+                      'roll_out': ['steps that the audience will take to access '
+                                  'and interact with the deliverable']
         },
                   'status': 'proposed'
                   }
