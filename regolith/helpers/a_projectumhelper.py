@@ -17,15 +17,16 @@ from regolith.tools import (
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = ["nsf", "doe", "other"]
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
+ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused",
+                 "cancelled"]
 MILESTONES_ALLOWED_STATI = ["proposed", "scheduled", "finished", "cancelled"]
 
 
 def subparser(subpi):
     subpi.add_argument("name", help="A short but unique name for the projectum",
-                        default=None)
+                       default=None)
     subpi.add_argument("lead", help="id of the group lead or tbd",
-                        default=None)
+                       default=None)
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -60,7 +61,7 @@ class ProjectumAdderHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "a_projectum"
-    needed_dbs = [f'{TARGET_COLL}','groups', 'people']
+    needed_dbs = [f'{TARGET_COLL}', 'groups', 'people']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -79,7 +80,6 @@ class ProjectumAdderHelper(DbHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-
     def sout(self):
         person = self.rc.person
         return print(f"hello {person}")
@@ -95,17 +95,18 @@ class ProjectumAdderHelper(DbHelperBase):
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
-            raise RuntimeError("This entry appears to already exist in the collection")
+            raise RuntimeError(
+                "This entry appears to already exist in the collection")
         else:
             pdoc = {}
 
         pdoc.update({
-            'begin_date': now.isoformat(),
+            'begin_date': now,
             'log_url': '',
             'name': rc.name,
             'pi_id': rc.pi_id,
             'lead': rc.lead,
-                })
+        })
         if rc.lead is "tbd":
             pdoc.update({
                 'status': 'proposed'
@@ -118,7 +119,7 @@ class ProjectumAdderHelper(DbHelperBase):
         if rc.description:
             pdoc.update({
                 'description': rc.description,
-                    })
+            })
         if rc.grants:
             if isinstance(rc.grants, str):
                 rc.grants = [rc.grants]
@@ -136,40 +137,39 @@ class ProjectumAdderHelper(DbHelperBase):
                 rc.collaborators = [rc.collaborators]
             pdoc.update({
                 'collaborators': rc.collaborators,
-                    })
+            })
         pdoc.update({"_id": key})
+        pdoc.update({"deliverable": {
+            "due_date": now + relativedelta(years=1),
+            "audience": ["beginning grad in chemistry"],
+            "success_def": "audience is happy",
+            "scope": [
+                "UCs that are supported or some other scope description if it software",
+                "sketch of science story if it is paper"],
+            "platform": "description of how and where the audience will access the deliverable.  journal if it is a paper",
+            "roll_out": [
+                "steps that the audience will take to access and interact with the deliverable",
+                "not needed for paper submissions"],
+            "status": "proposed"}
+        })
+        pdoc.update({"kickoff": {
+            "due_date": now + relativedelta(days=7),
+            "audience": ["pi", "lead", "group members"],
+            "name": "Kick off meeting",
+            "objective": "introduce project to the lead",
+            "status": "proposed"
+        }})
 
-        firstm = {'due_date': now+relativedelta(days=7),
-                  'name': 'Kick off meeting',
-                  'objective': 'roll out of project to team',
-                  'audience': ['pi', 'lead', 'group members',
-                               'collaborators'],
-                  'status': 'proposed'
-                  }
-        secondm = {'due_date': now+relativedelta(days=21),
-                  'name': 'Project lead presentation',
-                  'objective': 'lead presents background reading and '
-                               'initial project plan',
-                  'audience': ['pi', 'lead', 'group members'],
-                  'status': 'proposed'
-                  }
-        thirdm = {'due_date': now+relativedelta(days=28),
-                  'name': 'planning meeting',
-                  'objective': 'develop a detailed plan with dates',
-                  'audience': ['pi', 'lead', 'group members'],
-                  'status': 'proposed'
-                  }
-        fourthm = {'due_date': now+relativedelta(years=1),
-                  'name': 'submission',
-                  'objective': 'submit the paper, release the code, whatever',
-                  'audience': ['pi', 'lead', 'group members','collaborators'],
-                  'status': 'proposed'
-                  }
-        pdoc.update({"milestones": [firstm, secondm, thirdm, fourthm]})
+        secondm = {'due_date': now + relativedelta(days=21),
+                   'name': 'Project lead presentation',
+                   'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
+                   'audience': ['pi', 'lead', 'group members'],
+                   'status': 'proposed'
+                   }
+        pdoc.update({"milestones": [secondm]})
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print(f"{key} has been added in {TARGET_COLL}")
 
         return
-

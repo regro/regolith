@@ -573,17 +573,40 @@ EXEMPLARS = {
         "_id": "20sb_firstprojectum",
         "begin_date": "2020-04-28",
         "collaborators": ["aeinstein", "pdirac"],
+        "deliverable": {
+            "audience": ["beginning grad in chemistry"],
+            "due_date": "2021-05-05",
+            "success_def": "audience is happy",
+            "scope": ["UCs that are supported or some other scope description "
+                      "if it is software", "sketch of science story if it is paper"
+                                                ],
+            "platform": "description of how and where the audience will access "
+                        "the deliverable.  Journal if it is a paper",
+            "roll_out": [
+                "steps that the audience will take to access and interact with "
+                "the deliverable", "not needed for paper submissions"],
+            "status": "finalized"
+        },
         "description": "My first projectum",
         "grants": "SymPy-1.1",
         "group_members": ["ascopatz"],
+        "kickoff": {
+            "date": "2020-05-05",
+            "due_date": "2020-05-06",
+            "name": "Kick off meeting",
+            "objective": "introduce project to the lead",
+            "audience": ["pi", "lead", "group members"],
+            "status": "finished"
+        },
         "lead": "ascopatz",
         "milestones": [{
+                  'date': '2020-05-05',
                   'due_date': '2020-05-06',
                   'name': 'Kick off meeting',
                   'objective': 'roll out of project to team',
                   'audience': ['pi', 'lead', 'group members',
                                'collaborators'],
-                  'status': 'proposed'
+                  'status': 'finished'
                   },
                  {'due_date': '2020-05-20',
                   'name': 'Project lead presentation',

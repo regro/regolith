@@ -80,7 +80,11 @@ class MilestonesListerHelper(SoutHelperBase):
         for projectum in self.gtx["projecta"]:
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
-            for ms in projectum["milestones"]:
+            projectum["deliverable"].update({"name": "deliverable",
+                                             "objective": "deliver"})
+            gather_miles = [projectum["kickoff"], projectum["deliverable"]]
+            gather_miles.extend(projectum["milestones"])
+            for ms in gather_miles:
                 if projectum["status"] in rc.stati or \
                         'all' in rc.stati:
                     if ms.get('status') not in \

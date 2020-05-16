@@ -1,48 +1,47 @@
 20ly_newprojectum:
-  begin_date: '2020-04-29'
+  begin_date: 2020-04-29
   collaborators:
     - afriend
+  deliverable:
+    due_date: 2021-04-29
+    audience:
+      - beginning grad in chemistry
+    success_def: audience is happy
+    scope:
+      - UCs that are supported or some other scope description if it software
+      - sketch of science story if it is paper
+    platform: description of how and where the audience will access the deliverable.  journal
+      if it is a paper
+    roll_out:
+      - steps that the audience will take to access and interact with the deliverable
+      - not needed for paper submissions
+    status: proposed
   description: more work
   grants:
     - SymPy-1.1
   group_members:
     - ascopatz
+  kickoff:
+    due_date: 2020-05-06
+    audience:
+      - pi
+      - lead
+      - group members
+    name: Kick off meeting
+    objective: introduce project to the lead
+    status: proposed
   lead: lyang
   log_url: ''
   milestones:
-    - due_date: 2020-05-06
-      name: Kick off meeting
-      objective: roll out of project to team
-      audience:
-        - pi
-        - lead
-        - group members
-        - collaborators
-      status: proposed
     - due_date: 2020-05-20
       name: Project lead presentation
-      objective: lead presents background reading and initial project plan
+      objective: to act as an example milestone.  The date is the date it was finished.  delete
+        the field until it is finished.  In this case, the lead will present what
+        they think is the project after their reading. Add more milestones as needed.
       audience:
         - pi
         - lead
         - group members
-      status: proposed
-    - due_date: 2020-05-27
-      name: planning meeting
-      objective: develop a detailed plan with dates
-      audience:
-        - pi
-        - lead
-        - group members
-      status: proposed
-    - due_date: 2021-04-29
-      name: submission
-      objective: submit the paper, release the code, whatever
-      audience:
-        - pi
-        - lead
-        - group members
-        - collaborators
       status: proposed
   name: New projectum
   pi_id: scopatz
@@ -52,14 +51,39 @@
   collaborators:
     - aeinstein
     - pdirac
+  deliverable:
+    audience:
+      - beginning grad in chemistry
+    due_date: '2021-05-05'
+    success_def: audience is happy
+    scope:
+      - UCs that are supported or some other scope description if it is software
+      - sketch of science story if it is paper
+    platform: description of how and where the audience will access the deliverable.  Journal
+      if it is a paper
+    roll_out:
+      - steps that the audience will take to access and interact with the deliverable
+      - not needed for paper submissions
+    status: finalized
   description: My first projectum
   grants: SymPy-1.1
   group_members:
     - ascopatz
+  kickoff:
+    date: '2020-05-05'
+    due_date: '2020-05-06'
+    name: Kick off meeting
+    objective: introduce project to the lead
+    audience:
+      - pi
+      - lead
+      - group members
+    status: finished
   lead: ascopatz
   log_url: https://path_to_gdrive_document
   milestones:
-    - due_date: '2020-05-06'
+    - date: '2020-05-05'
+      due_date: '2020-05-06'
       name: Kick off meeting
       objective: roll out of project to team
       audience:
@@ -67,7 +91,7 @@
         - lead
         - group members
         - collaborators
-      status: proposed
+      status: finished
     - due_date: '2020-05-20'
       name: Project lead presentation
       objective: lead presents background reading and initial project plan
