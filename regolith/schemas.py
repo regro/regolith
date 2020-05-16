@@ -599,6 +599,7 @@ EXEMPLARS = {
             "status": "finished"
         },
         "lead": "ascopatz",
+        "log_url": "https://docs.google.com/document/d/1YC_wtW5Q",
         "milestones": [{
                   'date': '2020-05-05',
                   'due_date': '2020-05-06',
