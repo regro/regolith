@@ -20,6 +20,7 @@ TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
 ALLOWED_STATI = ["all", "proposed", "started", "finished", "back_burner",
                  "paused", "cancelled"]
+ROLES = ['pi',  'lead', 'group_members', 'collaborators']
 
 
 def subparser(subpi):
@@ -110,8 +111,8 @@ class MilestonesListerHelper(SoutHelperBase):
                 print(f"    Purpose: {ms.get('objective')}")
                 audience = []
                 for i in ms.get('audience'):
-                    if isinstance(ms.get(i), str):
-                        audience.append(ms.get(i))
+                    if isinstance(ms.get(i,i), str):
+                        audience.append(ms.get(i,i))
                     else:
                         if ms.get(i):
                             audience.extend(ms.get(i))
