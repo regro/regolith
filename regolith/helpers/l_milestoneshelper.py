@@ -92,9 +92,12 @@ class MilestonesListerHelper(SoutHelperBase):
                         due_date = get_due_date(ms)
                         ms.update({
                             'lead': projectum.get('lead'),
+                            'group_members': projectum.get('group_members'),
+                            'collaborators': projectum.get('collaborators'),
                             'id': projectum.get('_id'),
                             'due_date': due_date,
-                            'log_url': projectum.get('log_url')
+                            'log_url': projectum.get('log_url'),
+                            'pi': projectum.get('pi_id')
                         })
                         all_milestones.append(ms)
         all_milestones.sort(key=lambda x: x['due_date'], reverse=True)
@@ -105,7 +108,15 @@ class MilestonesListerHelper(SoutHelperBase):
                 print(f"    Title: {ms.get('name')}")
                 print(f"    log url: {ms.get('log_url')}")
                 print(f"    Purpose: {ms.get('objective')}")
-                print(f"    Audience: {ms.get('audience')}")
+                audience = []
+                for i in ms.get('audience'):
+                    if isinstance(ms.get(i), str):
+                        audience.append(ms.get(i))
+                    else:
+                        if ms.get(i):
+                            audience.extend(ms.get(i))
+                out = ", ".join(audience)
+                print(f"    Audience: {out}")
             else:
                 print(
                     f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")

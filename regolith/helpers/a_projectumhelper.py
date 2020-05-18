@@ -154,7 +154,7 @@ class ProjectumAdderHelper(DbHelperBase):
         })
         pdoc.update({"kickoff": {
             "due_date": now + relativedelta(days=7),
-            "audience": ["pi", "lead", "group members"],
+            "audience": ["lead", "pi", "group_members"],
             "name": "Kick off meeting",
             "objective": "introduce project to the lead",
             "status": "proposed"
@@ -163,7 +163,7 @@ class ProjectumAdderHelper(DbHelperBase):
         secondm = {'due_date': now + relativedelta(days=21),
                    'name': 'Project lead presentation',
                    'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
-                   'audience': ['pi', 'lead', 'group members'],
+                   'audience': ['lead', 'pi', 'group_members'],
                    'status': 'proposed'
                    }
         pdoc.update({"milestones": [secondm]})
