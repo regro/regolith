@@ -26,7 +26,7 @@
     audience:
       - lead
       - pi
-      - group members
+      - group_members
     name: Kick off meeting
     objective: introduce project to the lead
     status: proposed
@@ -41,7 +41,7 @@
       audience:
         - lead
         - pi
-        - group members
+        - group_members
       status: proposed
   name: New projectum
   pi_id: scopatz
@@ -75,9 +75,9 @@
     name: Kick off meeting
     objective: introduce project to the lead
     audience:
-      - pi
       - lead
-      - group members
+      - pi
+      - group_members
     status: finished
   lead: ascopatz
   log_url: https://path_to_gdrive_document
@@ -87,26 +87,26 @@
       name: Kick off meeting
       objective: roll out of project to team
       audience:
-        - pi
         - lead
-        - group members
+        - pi
+        - group_members
         - collaborators
       status: finished
     - due_date: '2020-05-20'
       name: Project lead presentation
       objective: lead presents background reading and initial project plan
       audience:
-        - pi
         - lead
-        - group members
+        - pi
+        - group_members
       status: proposed
     - due_date: '2020-05-27'
       name: planning meeting
       objective: develop a detailed plan with dates
       audience:
-        - pi
         - lead
-        - group members
+        - pi
+        - group_members
       status: proposed
   name: First Projectum
   pi_id: scopatz

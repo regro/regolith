@@ -595,7 +595,7 @@ EXEMPLARS = {
             "due_date": "2020-05-06",
             "name": "Kick off meeting",
             "objective": "introduce project to the lead",
-            "audience": ["lead", "pi", "group members"],
+            "audience": ["lead", "pi", "group_members"],
             "status": "finished"
         },
         "lead": "ascopatz",
@@ -605,7 +605,7 @@ EXEMPLARS = {
                   'due_date': '2020-05-06',
                   'name': 'Kick off meeting',
                   'objective': 'roll out of project to team',
-                  'audience': ['lead', 'pi', 'group members',
+                  'audience': ['lead', 'pi', 'group_members',
                                'collaborators'],
                   'status': 'finished'
                   },
@@ -613,13 +613,13 @@ EXEMPLARS = {
                   'name': 'Project lead presentation',
                   'objective': 'lead presents background reading and '
                                'initial project plan',
-                  'audience': ['lead', 'pi', 'group members'],
+                  'audience': ['lead', 'pi', 'group_members'],
                   'status': 'proposed'
                   },
                  {'due_date': '2020-05-27',
                   'name': 'planning meeting',
                   'objective': 'develop a detailed plan with dates',
-                  'audience': ['lead', 'pi', 'group members'],
+                  'audience': ['lead', 'pi', 'group_members'],
                   'status': 'proposed'
                   }],
         "log_url": "https://path_to_gdrive_document",
