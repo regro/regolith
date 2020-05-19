@@ -63,10 +63,6 @@ class PropRevAdderHelper(DbHelperBase):
         gtx["zip"] = zip
 
 
-    def sout(self):
-        person = self.rc.person
-        return print(f"hello {person}")
-
     def db_updater(self):
         rc = self.rc
         name = nameparser.HumanName(rc.name)

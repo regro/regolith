@@ -58,10 +58,6 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         gtx["zip"] = zip
 
 
-    def sout(self):
-        person = self.rc.person
-        return print(f"hello {person}")
-
     def db_updater(self):
         rc = self.rc
         key = "{}".format("_".join(rc.list_name.split()).strip())
