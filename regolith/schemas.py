@@ -1463,6 +1463,11 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "bio_long": {
+            "description": "longer biographical text if needed",
+            "required": False,
+            "type": "string",
+        },
         "collab": {
             "description": "If the person is a collaborator, default False.",
             "required": False,
