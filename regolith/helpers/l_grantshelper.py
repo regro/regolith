@@ -1,7 +1,5 @@
-"""Helper for listing upcoming (and past) projectum milestones.
+"""Helper for listing upcoming (and past) grants.
 
-   Projecta are small bite-sized project quanta that typically will result in
-   one manuscript.
 """
 import datetime as dt
 import dateutil.parser as date_parser
@@ -16,32 +14,23 @@ from regolith.tools import (
     get_pi_id,
 )
 
-TARGET_COLL = "projecta"
-HELPER_TARGET = "l_projecta"
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
-
-
+TARGET_COLL = "grants"
+HELPER_TARGET = "l_grants"
 
 def subparser(subpi):
-    subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
-    subpi.add_argument("-l", "--lead",
-                       help="Filter milestones for this project lead"
+    subpi.add_argument("-v", "--verbose", action="store_true", help='outputs the grants with more information')
+    subpi.add_argument("-l", "--list",
+                       help="Lists all current grants by alias"
                        )
-    subpi.add_argument("-p", "--person",
-                       help="Filter milestones for this person whether lead or not"
-                       )
-    subpi.add_argument("-s", "--stati", nargs="+",
-                       help=f"List of stati for the project that you want returned,"
-                            f"from {ALLOWED_STATI}.  Default is proposed and started"
+    subpi.add_argument("-a", "--admin",
+                       help="Filter grants by admin"
                        )
     return subpi
 
 
-class ProjectaListerHelper(SoutHelperBase):
-    """Helper for listing upcoming (and past) projectum milestones.
+class GrantsListerHelper(SoutHelperBase):
+    """Helper for listing upcoming (and past) grants.
 
-       Projecta are small bite-sized project quanta that typically will result in
-       one manuscript.
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
@@ -73,37 +62,26 @@ class ProjectaListerHelper(SoutHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-
     def sout(self):
         rc = self.rc
-        bad_stati = ["finished", "cancelled", "paused", "back_burner"]
-        projecta = []
-        if rc.lead and rc.person:
-            raise RuntimeError(f"please specify either lead or person, not both")
-        for projectum in self.gtx["projecta"]:
-            if rc.lead and projectum.get('lead') != rc.lead:
+        # print('rc: {}'.format(rc))
+        # print('rc.lead: {}'.format(rc.list))
+        # print('rc.admin: {}'.format(rc.admin))
+        grants = []
+        if rc.list and rc.admin:
+            raise RuntimeError(f"please specify either alias or admin, not both")
+        for grant in self.gtx["grants"]:
+            if rc.list and rc.list != grant.get('alias'):
                 continue
-            if rc.person:
-                if isinstance(rc.person, str):
-                    rc.person = [rc.person]
-                good_p = []
-                for i in rc.person:
-                    if not projectum.get('group_members'):
-                        continue
-                    if projectum.get('group_members') and i not in projectum.get('group_members'):
-                        continue
-                    else:
-                        good_p.append(i)
-                if len(good_p) == 0:
-                    continue
-            if not rc.stati and projectum.get('status') in bad_stati:
+            if rc.admin and rc.admin != grant.get('admin'):
                 continue
-            if rc.stati and projectum.get('status') not in rc.stati:
-                continue
-            projecta.append(projectum["_id"])
+            grants.append(grant)
 
-        projecta.sort()
-        for i in projecta:
-            print(i)
+        # grants.sort()
+        for i in grants:
+            if rc.verbose:
+                print("{:20}{:20}{:15}{:15}{:10}".format(i.get('_id'), i.get('alias'), i.get('awardnr'), str(i.get('amount')), i.get('ledger_end_date')))
+            else:
+                print("{:20}{:15}".format(i.get('alias'), i.get('awardnr')))
         return
 
