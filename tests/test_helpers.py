@@ -32,6 +32,9 @@ helper_map = [
     (["helper", "l_projecta", "--verbose", "-p", "ascopatz"],
      "20ly_newprojectum\n20sb_firstprojectum\n"
      ),
+    (["helper", "l_projecta", "--verbose", "-g", "SymPy-1.1"],
+     "20ly_newprojectum\n20sb_firstprojectum\n"
+     ),
 ]
 
 
