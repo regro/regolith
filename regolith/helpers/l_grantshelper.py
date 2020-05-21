@@ -6,7 +6,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_due_date
+from regolith.dates import get_dates
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -17,14 +17,12 @@ from regolith.tools import (
 TARGET_COLL = "grants"
 HELPER_TARGET = "l_grants"
 
+
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true", help='outputs the grants with more information')
-    subpi.add_argument("-l", "--list",
-                       help="Lists all current grants by alias"
-                       )
-    subpi.add_argument("-a", "--admin",
-                       help="Filter grants by admin"
-                       )
+    subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')
+    subpi.add_argument("-a", "--adm", help="Filter grants by admin")
+    subpi.add_argument("-l", "--list", help="Lists all current grants by alias")
     return subpi
 
 
@@ -68,20 +66,39 @@ class GrantsListerHelper(SoutHelperBase):
         # print('rc.lead: {}'.format(rc.list))
         # print('rc.admin: {}'.format(rc.admin))
         grants = []
-        if rc.list and rc.admin:
+        if rc.list and rc.adm:
             raise RuntimeError(f"please specify either alias or admin, not both")
         for grant in self.gtx["grants"]:
             if rc.list and rc.list != grant.get('alias'):
                 continue
-            if rc.admin and rc.admin != grant.get('admin'):
+            if rc.adm and rc.adm != grant.get('admin'):
                 continue
             grants.append(grant)
 
-        # grants.sort()
+        grants_time_info = []
         for i in grants:
-            if rc.verbose:
-                print("{:20}{:20}{:15}{:15}{:10}".format(i.get('_id'), i.get('alias'), i.get('awardnr'), str(i.get('amount')), i.get('ledger_end_date')))
+            start = 'EMPTY'
+            end = 'EMPTY'
+            had_dates = False
+            if i.get('begin_year') and i.get('end_year'):
+                times = get_dates(i)
+                start = times['begin_date']
+                end = times['end_date']
+                had_dates = True
+            if had_dates:
+                grants_time_info.append([i, start, end, start, end])
             else:
-                print("{:20}{:15}".format(i.get('alias'), i.get('awardnr')))
+                # Creating fake dates with extreme values for grants that do not have a date for sorting
+                grants_time_info.append([i, start, end, dt.date(3000, 1, 1), dt.date(3000, 1, 1)])
+        grants_time_info.sort(key=lambda x: x[4], reverse=True)
+        print("{:15}{:15}{:15}{:15}{:15}".format('ALIAS', 'AWARDNR', 'ACCOUNT', 'BEGIN', 'END'))
+        for g in grants_time_info:
+            if rc.current:
+                today = dt.date.today()
+                if g[3] < today < g[4]:
+                    print("{:15}{:15}{:15}{:15}{:15}".format(g[0].get('alias', 'EMPTY'), g[0].get('awardnr', 'EMPTY'),
+                                                             str(g[0].get('account', 'EMPTY')), str(g[1]), str(g[2])))
+            else:
+                print("{:15}{:15}{:15}{:15}{:15}".format(g[0].get('alias', 'EMPTY'), g[0].get('awardnr', 'EMPTY'),
+                                                         str(g[0].get('account', 'EMPTY')), str(g[1]), str(g[2])))
         return
-

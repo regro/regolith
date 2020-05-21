@@ -32,6 +32,15 @@ helper_map = [
     (["helper", "l_projecta", "--verbose", "-p", "ascopatz"],
      "20ly_newprojectum\n20sb_firstprojectum\n"
      ),
+    (["helper", "l_grants", "-c"],
+     "ALIAS          AWARDNR        ACCOUNT        BEGIN          END            \n"
+     "EMPTY          EMPTY          GG012345       2015-10-01     2025-09-30     \n"
+     ),
+    (["helper", "l_grants", "-l", "sym"],
+     "ALIAS          AWARDNR        ACCOUNT        BEGIN          END            \n"
+     "sym            EMPTY          EMPTY          2030-05-01     2030-12-31     \n"
+     ),
+
 ]
 
 

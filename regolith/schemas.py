@@ -134,6 +134,7 @@ EXEMPLARS = {
         {
             "_id": "SymPy-1.1",
             "amount": 3000.0,
+            "alias": "sym",
             "begin_day": 1,
             "begin_month": "May",
             "begin_year": 2030,
@@ -1167,6 +1168,11 @@ SCHEMAS = {
         },
         "admin": {
             "description": "the group administering the grant",
+            "type": "string",
+            "required": False,
+        },
+        "alias": {
+            "description": "the alias of the grant",
             "type": "string",
             "required": False,
         },

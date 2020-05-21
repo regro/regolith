@@ -173,7 +173,6 @@ def get_dates(thing):
             thing['begin_month'] = 1
         if not thing.get('begin_day'):
             thing['begin_day'] = 1
-        print(thing['begin_month'])
         begin_date = datetime.date(thing['begin_year'],month_to_int(thing['begin_month']),
                                    thing['begin_day'])
     if thing.get('end_year'):
