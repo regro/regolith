@@ -27,6 +27,9 @@ def subparser(subpi):
     subpi.add_argument("-l", "--lead",
                        help="Filter milestones for this project lead"
                        )
+    subpi.add_argument("-g", "--grant",
+                       help="Filter milestones for projecta with this grant"
+                       )
     subpi.add_argument("-p", "--person",
                        help="Filter milestones for this person whether lead or not"
                        )
@@ -82,6 +85,8 @@ class ProjectaListerHelper(SoutHelperBase):
             raise RuntimeError(f"please specify either lead or person, not both")
         for projectum in self.gtx["projecta"]:
             if rc.lead and projectum.get('lead') != rc.lead:
+                continue
+            if rc.grant and rc.grant not in projectum.get('grants'):
                 continue
             if rc.person:
                 if isinstance(rc.person, str):
