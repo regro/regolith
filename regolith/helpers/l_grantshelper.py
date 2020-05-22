@@ -67,22 +67,19 @@ class GrantsListerHelper(SoutHelperBase):
 
         grants_time_info = []
         for i in grants:
-            start = 'EMPTY'
-            end = 'EMPTY'
-            had_dates = False
+            start, end = 'EMPTY', 'EMPTY'
             if i.get('begin_year') and i.get('end_year'):
                 times = get_dates(i)
                 start = times['begin_date']
                 end = times['end_date']
-                had_dates = True
-            if had_dates:
-                grants_time_info.append([i, start, end, start, end])
+                grants_time_info.append([i, start, end, end])
             else:
-                # Creating fake dates with extreme values for grants that do not have a date for sorting
-                grants_time_info.append([i, start, end, dt.date(3000, 1, 1), dt.date(3000, 1, 1)])
-        grants_time_info.sort(key=lambda x: x[4], reverse=True)
-        # print("{:15}{:15}{:15}{:15}{:15}".format('ALIAS', 'AWARDNR', 'ACCOUNT', 'BEGIN', 'END'))
+                # Creating fake dates with extreme values for grants that do not have an end date for sorting
+                grants_time_info.append([i, start, end, dt.date(3000, 1, 1)])
+
+        # Sort the grants by end date in reverse chronological order
+        grants_time_info.sort(key=lambda x: x[3], reverse=True)
         for g in grants_time_info:
-            print("{:15}{:15}{:15}{:15}{:15}".format(g[0].get('alias', 'EMPTY'), g[0].get('awardnr', 'EMPTY'),
+            print("{:15}{:18}{:15}{:15}{:15}".format(g[0].get('alias', 'EMPTY'), str(g[0].get('awardnr', 'EMPTY')),
                                                      str(g[0].get('account', 'EMPTY')), str(g[1]), str(g[2])))
         return
