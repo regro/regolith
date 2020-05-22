@@ -6,7 +6,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_dates
+from regolith.dates import get_dates, is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -19,10 +19,7 @@ HELPER_TARGET = "l_grants"
 
 
 def subparser(subpi):
-    subpi.add_argument("-v", "--verbose", action="store_true", help='outputs the grants with more information')
     subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')
-    subpi.add_argument("-a", "--adm", help="Filter grants by admin")
-    subpi.add_argument("-l", "--list", help="Lists all current grants by alias")
     return subpi
 
 
@@ -62,16 +59,9 @@ class GrantsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        # print('rc: {}'.format(rc))
-        # print('rc.lead: {}'.format(rc.list))
-        # print('rc.admin: {}'.format(rc.admin))
         grants = []
-        if rc.list and rc.adm:
-            raise RuntimeError(f"please specify either alias or admin, not both")
         for grant in self.gtx["grants"]:
-            if rc.list and rc.list != grant.get('alias'):
-                continue
-            if rc.adm and rc.adm != grant.get('admin'):
+            if rc.current and not is_current(grant):
                 continue
             grants.append(grant)
 
@@ -91,14 +81,8 @@ class GrantsListerHelper(SoutHelperBase):
                 # Creating fake dates with extreme values for grants that do not have a date for sorting
                 grants_time_info.append([i, start, end, dt.date(3000, 1, 1), dt.date(3000, 1, 1)])
         grants_time_info.sort(key=lambda x: x[4], reverse=True)
-        print("{:15}{:15}{:15}{:15}{:15}".format('ALIAS', 'AWARDNR', 'ACCOUNT', 'BEGIN', 'END'))
+        # print("{:15}{:15}{:15}{:15}{:15}".format('ALIAS', 'AWARDNR', 'ACCOUNT', 'BEGIN', 'END'))
         for g in grants_time_info:
-            if rc.current:
-                today = dt.date.today()
-                if g[3] < today < g[4]:
-                    print("{:15}{:15}{:15}{:15}{:15}".format(g[0].get('alias', 'EMPTY'), g[0].get('awardnr', 'EMPTY'),
-                                                             str(g[0].get('account', 'EMPTY')), str(g[1]), str(g[2])))
-            else:
-                print("{:15}{:15}{:15}{:15}{:15}".format(g[0].get('alias', 'EMPTY'), g[0].get('awardnr', 'EMPTY'),
-                                                         str(g[0].get('account', 'EMPTY')), str(g[1]), str(g[2])))
+            print("{:15}{:15}{:15}{:15}{:15}".format(g[0].get('alias', 'EMPTY'), g[0].get('awardnr', 'EMPTY'),
+                                                     str(g[0].get('account', 'EMPTY')), str(g[1]), str(g[2])))
         return
