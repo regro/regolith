@@ -6,7 +6,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_dates, is_current
+from regolith.dates import get_dates, is_current, get_datetime
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -19,6 +19,9 @@ HELPER_TARGET = "l_grants"
 
 
 def subparser(subpi):
+    subpi.add_argument("-d", "--date",
+                       help="Filter grants by a date in ISO format (YYYY-MM-DD)"
+                       )
     subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')
     return subpi
 
@@ -60,14 +63,35 @@ class GrantsListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         grants = []
+        desired_date = None
+        both = False
+        if not rc.date and not rc.current:
+            both = True
+        if rc.date:
+            desired_date = get_datetime(rc.date)
         for grant in self.gtx["grants"]:
-            if rc.current and not is_current(grant):
+            if both:
+                grants.append(grant)
                 continue
-            grants.append(grant)
+            if rc.current:
+                try:
+                    if is_current(grant):
+                        grants.append(grant)
+                        continue
+                except RuntimeError:
+                    if not rc.date:
+                        continue
+            if rc.date:
+                try:
+                    if is_current(grant, desired_date):
+                        grants.append(grant)
+                        continue
+                except RuntimeError:
+                    continue
 
         grants_time_info = []
         for i in grants:
-            start, end = 'EMPTY', 'EMPTY'
+            start, end = '', ''
             if i.get('begin_year') and i.get('end_year'):
                 times = get_dates(i)
                 start = times['begin_date']
@@ -80,6 +104,8 @@ class GrantsListerHelper(SoutHelperBase):
         # Sort the grants by end date in reverse chronological order
         grants_time_info.sort(key=lambda x: x[3], reverse=True)
         for g in grants_time_info:
-            print("{:15}{:18}{:15}{:15}{:15}".format(g[0].get('alias', 'EMPTY'), str(g[0].get('awardnr', 'EMPTY')),
-                                                     str(g[0].get('account', 'EMPTY')), str(g[1]), str(g[2])))
+            print("{}, awardnr: {}, acctn: {}, {} to {}".format(g[0].get('alias', ''),
+                                                                (g[0].get('awardnr', '')),
+                                                                (g[0].get('account', '')), (g[1]),
+                                                                (g[2])))
         return

@@ -258,10 +258,37 @@ def is_current(thing, now=None):
         now = datetime.date.today()
     dates = get_dates(thing)
     current = False
-    if not dates['begin_date']:
-        return current
-    if not dates['end_date']:
-        dates['end_date'] = datetime.date(5000, 12, 31)
-    if dates.get("begin_date") <= now <= dates.get("end_date"):
-        current = True
+    try:
+        if dates.get("begin_date") <= now <= dates.get("end_date", datetime.date(5000, 12, 31)):
+            current = True
+    except:
+        raise RuntimeError("Element that was passed did not have valid dates")
     return current
+
+def get_datetime(str_date):
+    """
+    Given a string in ISO format (YYYY-MM-DD), returns a datetime.date object
+    with that date
+
+    Parameters
+    ----------
+    str_date: str
+      the string representing the date
+
+    Returns
+    -------
+    The datetime.date object of the input date
+    """
+    date_list = str_date.split('-')
+    year = int(date_list[0])
+    if date_list[1][0] == '0':
+        month = int(date_list[1][1])
+    else:
+        month = int(date_list[1])
+
+    if date_list[2][0] == '0':
+        day = int(date_list[2][1])
+    else:
+        day = int(date_list[2])
+
+    return datetime.date(year, month, day)
