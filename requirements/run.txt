@@ -1,4 +1,3 @@
-python
 ruamel.yaml
 docutils
 python-dateutil
