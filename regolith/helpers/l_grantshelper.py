@@ -63,20 +63,17 @@ class GrantsListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         grants = []
-        desired_date = None
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
-        elif rc.current:
+        else:
             desired_date = dt.date.today()
         for grant in self.gtx["grants"]:
-            if desired_date:
-                try:
-                    if is_current(grant, desired_date):
-                        grants.append(grant)
-                except RuntimeError:
+            try:
+                if rc.current and not is_current(grant, now=desired_date):
                     continue
-            else:
-                grants.append(grant)
+            except RuntimeError:
+                continue
+            grants.append(grant)
 
         grants_time_info = []
         for i in grants:
