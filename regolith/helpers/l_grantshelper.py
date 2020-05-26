@@ -6,7 +6,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_dates, is_current, get_datetime
+from regolith.dates import get_dates, is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -64,30 +64,19 @@ class GrantsListerHelper(SoutHelperBase):
         rc = self.rc
         grants = []
         desired_date = None
-        both = False
-        if not rc.date and not rc.current:
-            both = True
         if rc.date:
-            desired_date = get_datetime(rc.date)
+            desired_date = date_parser.parse(rc.date).date()
+        elif rc.current:
+            desired_date = dt.date.today()
         for grant in self.gtx["grants"]:
-            if both:
-                grants.append(grant)
-                continue
-            if rc.current:
-                try:
-                    if is_current(grant):
-                        grants.append(grant)
-                        continue
-                except RuntimeError:
-                    if not rc.date:
-                        continue
-            if rc.date:
+            if desired_date:
                 try:
                     if is_current(grant, desired_date):
                         grants.append(grant)
-                        continue
                 except RuntimeError:
                     continue
+            else:
+                grants.append(grant)
 
         grants_time_info = []
         for i in grants:
