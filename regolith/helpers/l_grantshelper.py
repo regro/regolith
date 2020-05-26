@@ -68,10 +68,7 @@ class GrantsListerHelper(SoutHelperBase):
         else:
             desired_date = dt.date.today()
         for grant in self.gtx["grants"]:
-            try:
-                if rc.current and not is_current(grant, now=desired_date):
-                    continue
-            except RuntimeError:
+            if rc.current and not is_current(grant, now=desired_date):
                 continue
             grants.append(grant)
 
