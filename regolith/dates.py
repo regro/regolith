@@ -173,7 +173,6 @@ def get_dates(thing):
             thing['begin_month'] = 1
         if not thing.get('begin_day'):
             thing['begin_day'] = 1
-        print(thing['begin_month'])
         begin_date = datetime.date(thing['begin_year'],month_to_int(thing['begin_month']),
                                    thing['begin_day'])
     if thing.get('end_year'):
@@ -239,3 +238,32 @@ def get_due_date(thing):
     else:
         raise RuntimeError(f'due date not a known type')
     return due_date
+
+def is_current(thing, now=None):
+    """
+    given a thing with dates, returns true if the thing is current
+    looks for begin_ and end_ daty things (date, year, month, day), or just
+    the daty things themselves. e.g., begin_date, end_month, month, and so on.
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not it is current
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing is current and false otherwise
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    current = False
+    try:
+        if dates.get("begin_date") <= now <= dates.get("end_date", datetime.date(5000, 12, 31)):
+            current = True
+    except:
+        raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
+    return current

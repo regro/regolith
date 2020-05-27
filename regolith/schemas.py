@@ -134,9 +134,42 @@ EXEMPLARS = {
         {
             "_id": "SymPy-1.1",
             "amount": 3000.0,
+            "alias": "sym",
             "begin_day": 1,
             "begin_month": "May",
             "begin_year": 2030,
+            "call_for_proposals": "https://groups.google.com/d/msg"
+                                  "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
+            "end_day": 31,
+            "end_month": "December",
+            "end_year": 2030,
+            "funder": "NumFOCUS",
+            "narrative": "https://docs.google.com/document/d/1nZxqoL"
+                         "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
+                         "=sharing",
+            "program": "Small Development Grants",
+            "team": [
+                {
+                    "institution": "University of South Carolina",
+                    "name": "Anthony Scopatz",
+                    "position": "PI",
+                },
+                {
+                    "institution": "University of South Carolina",
+                    "name": "Aaron Meurer",
+                    "position": "researcher",
+                },
+            ],
+            "status": "pending",
+            "title": "SymPy 1.1 Release Support",
+        },
+        {
+            "_id": "SymPy-2.0",
+            "amount": 3000.0,
+            "alias": "sym2.0",
+            "begin_day": 1,
+            "begin_month": "June",
+            "begin_year": 2019,
             "call_for_proposals": "https://groups.google.com/d/msg"
                                   "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
             "end_day": 31,
@@ -1167,6 +1200,11 @@ SCHEMAS = {
         },
         "admin": {
             "description": "the group administering the grant",
+            "type": "string",
+            "required": False,
+        },
+        "alias": {
+            "description": "the alias of the grant",
             "type": "string",
             "required": False,
         },
