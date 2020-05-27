@@ -27,16 +27,6 @@ def subparser(subpi):
                        default=None)
     subpi.add_argument("lead", help="id of the group lead or tbd",
                        default=None)
-    # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
-                       )
-    # Do not delete --date arg
-    subpi.add_argument("--date",
-                       help="The begin_date for the projectum  Defaults to "
-                            "today's date."
-                       )
     subpi.add_argument("-d", "--description",
                        help="Slightly longer description of the projectum"
                        )
@@ -49,6 +39,19 @@ def subparser(subpi):
                        )
     subpi.add_argument("-g", "--grants", nargs="+",
                        help="grant or (occasionally) list of grants that support this work"
+                       )
+    subpi.add_argument("-u", "--due_date",
+                       help="due date of the prum.  Default is one year after start date"
+                       )
+    # Do not delete --database arg
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file."
+                       )
+    # Do not delete --date arg
+    subpi.add_argument("--date",
+                       help="The begin_date for the projectum  Defaults to "
+                            "today's date."
                        )
     return subpi
 
@@ -134,9 +137,13 @@ class ProjectumAdderHelper(DbHelperBase):
             pdoc.update({
                 'collaborators': rc.collaborators,
             })
+        if rc.due_date:
+            pdoc.update({'due_date': rc.due_date})
+        else:
+            pdoc.update({'due_date': now + relativedelta(years=1)})
+
         pdoc.update({"_id": key})
         pdoc.update({"deliverable": {
-            "due_date": now + relativedelta(years=1),
             "audience": ["beginning grad in chemistry"],
             "success_def": "audience is happy",
             "scope": [
