@@ -6,7 +6,7 @@ import pytest
 from regolith.dates import (month_to_str_int,
                             day_to_str_int,
                             find_gaps_overlaps,
-                            get_dates, last_day, get_due_date)
+                            get_dates, last_day, is_current, get_due_date)
 
 
 @pytest.mark.parametrize(
@@ -163,3 +163,14 @@ def test_get_dates(input, expected):
 )
 def test_last_day(year,month,expected):
     assert last_day(year,month) == expected
+
+@pytest.mark.parametrize(
+    "thing,date,expected",
+    [
+        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 1950, 'end_day': 2, 'end_month': 5, 'end_year': 3000}, None, True),
+        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 3000, 'end_day': 2, 'end_month': 5, 'end_year': 3100}, None, False),
+        ({'begin_day': 12, 'begin_month': 6, 'begin_year': 2025, 'end_day': 2, 'end_month': 5, 'end_year': 2030}, date(2026, 3, 3), True),
+    ]
+)
+def test_is_current(thing, date, expected):
+    assert is_current(thing, date) == expected
