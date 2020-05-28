@@ -284,35 +284,6 @@ def has_finished(ey, em=None, ed=None):
     return end <= time.time()
 
 
-def is_current(sy, ey, sm=None, sd=None, em=None, ed=None):
-    """
-    true if today is between the dates given, inclusive
-
-    Parameters
-    ----------
-    sy : int
-       start year, the year to check today is after
-    ey : int
-       end year, the year to check today is before
-    sm : int or str
-       start month, the month to check today is after. Should be integer or in
-       regolith MONTHS. Default is 1
-    sd : int
-       start day, the day to check today after. Default is 1
-    em : int or str.
-       end month, the month to check today against. Should be integer or in
-       regolith MONTHS. Default is 12
-    ed : int.
-       end-day, the day to check today against. Default is last day of the month
-
-    Returns
-    -------
-    bool
-    true if today is before dates given
-    """
-    return has_started(sy, sm, sd) and not has_finished(ey, em, ed)
-
-
 def filter_publications(citations, authors, reverse=False, bold=True):
     """Filter publications by the author(s)/editor(s)
 

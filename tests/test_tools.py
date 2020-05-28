@@ -11,7 +11,6 @@ from regolith.tools import (
     is_between,
     has_started,
     has_finished,
-    is_current,
     update_schemas,
     merge_collections,
     group,
@@ -110,25 +109,6 @@ def test_has_finished():
     assert has_finished(y2, em=m5) is False
     assert has_finished(y1, em=m1, ed=d1) is True
     assert has_finished(y2, em=m2, ed=d2) is False
-
-
-def test_is_current():
-    y1, y2, y3 = 2000, 2010, 2900
-    m1, m2 = 1, 12
-    m4, m5 = "Jan", "Dec"
-    d1, d2 = 1, 28
-    assert is_current(y1, y2) is False
-    assert is_current(y2, y3) is True
-    assert is_current(y1, y2, sm=m1) is False
-    assert is_current(y2, y3, sm=m2) is True
-    assert is_current(y2, y3, sm=m4) is True
-    assert is_current(y1, y2, sm=m5) is False
-    assert is_current(y1, y2, sm=m1, sd=d1) is False
-    assert is_current(y2, y3, sm=m2, sd=d2) is True
-    assert is_current(y1, y2, sm=m1, sd=d1, em=m2) is False
-    assert is_current(y2, y3, sm=m2, sd=d2, em=m5) is True
-    assert is_current(y1, y2, sm=m1, sd=d1, em=m2, ed=d1) is False
-    assert is_current(y2, y3, sm=m2, sd=d2, em=m5, ed=d2) is True
 
 
 def test_fuzzy_retrieval():
