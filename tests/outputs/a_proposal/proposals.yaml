@@ -1,0 +1,78 @@
+mypropsal:
+  amount: 1000000.0,
+  authors:
+    - Anthony Scopatz
+    - Robert Flanagan
+  begin_day: 1
+  begin_month: May
+  begin_year: 2030
+  currency: USD
+  day: 18
+  duration: 3
+  end_day: 31
+  end_month: December
+  end_year: 2030
+  full:
+    benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
+    cv:
+      - http://pdf.com/scopatz-cv
+      - http://pdf.com/flanagan-cv
+    narrative: http://some.com/pdf
+  month: Aug
+  notes: Quite an idea
+  pi: Anthony Scopatz
+  pre:
+    benefit_of_collaboration: http://pdf.com/benefit_of_collaboration
+    cv:
+      - http://pdf.com/scopatz-cv
+      - http://pdf.com/flanagan-cv
+    day: 2
+    month: Aug
+    narrative: http://some.com/pdf
+    year: 1998
+  status: submitted
+  title: A very fine proposal indeed
+  year: 1999
+dmref15:
+  amount: 982785.0,
+  authors:
+    - qdu
+    - dhsu
+    - sbillinge
+  call_for_proposals: http://www.nsf.gov/pubs/2014/nsf14591/nsf14591.htm
+  begin_day: 1
+  begin_month: May
+  begin_year: 2018
+  cpp_info:
+    cppflag: True
+    other_agencies_submitted: None
+    institution: Columbia University
+    person_months_academic: 0
+    person_months_summer: 1
+    project_scope: lots to do but it doesn't overlap with any other of my grants
+  currency: USD
+  day: 2
+  duration: 3
+  end_day: 1
+  end_month: May
+  end_year: 2019
+  funder: NSF
+  month: february
+  notes: Quite an idea
+  pi: Simon Billinge
+  status: accepted
+  team:
+    - institution: Columbia University
+      name: qdu
+      position: Co-PI
+    - institution: Columbia University
+      name: dhsu
+      position: Co-PI
+    - institution: Columbia University
+      name: sbillinge
+      position: PI
+      subaward_amount: 330000.0
+  title: DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery
+  title_short: DMREF nanostructure
+  year: 2015
+

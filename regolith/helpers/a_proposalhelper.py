@@ -20,35 +20,72 @@ MILESTONES_ALLOWED_STATI = ["proposed", "scheduled", "finished", "cancelled"]
 
 
 def subparser(subpi):
-    subpi.add_argument("name", help="A short but unique name for the proposal",
-                       default=None)
-    subpi.add_argument("-amt", "--amount", help="value of award",
-                       default=None)
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file."
                        )
-    # Do not delete --date arg
-    subpi.add_argument("--date",
-                       help="The begin_date for the projectum  Defaults to "
-                            "today's date."
+    subpi.add_argument("name", help="A short but unique name for the proposal",
+                       default=None
+                       )
+    subpi.add_argument("-amt", "--amount", help="value of award",
+                       default=None
                        )
     subpi.add_argument("-a", "--authors",
                        help="Other investigator names"
                        )
-    subpi.add_argument("-d", "--description",
-                       help="Slightly longer description of the projectum"
+    subpi.add_argument("--begin_date", nargs="+",
+                       help="The start date for the proposed grant in format YYYY-MM-DD."
                        )
-    subpi.add_argument("-c", "--collaborators", nargs="+",
-                       help="list of outside collaborators who should  be in contacts"
-                            "collection"
+    subpi.add_argument("--end_date", nargs="+",
+                       help="The end date for the proposed grant in format YYYY-MM-DD."
                        )
-    subpi.add_argument("-m", "--group_members", nargs="+",
-                       help="list of group members other than the lead who are involved"
+    subpi.add_argument("--call", "--call_for_proposals", nargs="+",
+                       help="Url for call for proposals"
                        )
-    subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant or (occasionally) list of grants that support this work"
+    subpi.add_argument("-cpp", "--cpp_info", nargs="+",
+                       help="Extra information needed for building current and"
+                            "pending form"
+                       )
+    subpi.add_argument("-c", "--currency"
+                       help="Currency in which amount is specified."
+                            " Typically $ or USD"
+                       )
+    subpi.add_argument("--submitted_date"
+                       help="Day on which the proposal is submitted in format YYYY-MM-DD"
+                       )
+    subpi.add_argument("--due_date", nargs="+",
+                       help="The due date for the proposal in format YYYY-MM-DD."
+                       )
+    subpi.add_argument("-d", "--duration"
+                       help="Duration of proposal in years"
+                       )
+    subpi.add_argument("--funder", nargs="+"
+                       help="Who funds the proposal. As funder in grants"
+                       )
+    subpi.add_argument("--full", nargs="+"
+                       help="Full body of the proposal"
+                       )
+    subpi.add_argument("-n", "--notes", nargs="+"
+                       help="Anything to note"
+                       )
+    subpi.add_argument("--pi", "--principal_investigator", nargs="+"
+                       help="Name of principal investigator"
+                       )
+    subpi.add_argument("--pre", nargs="+"
+                       help="Information about pre-posal"
+                       )
+    subpi.add_argument("-s", "--status",
+                        help=f"status, from {ALLOWED_STATI}. default is accepted")
+    subpi.add_argument("-m", "--team_members", nargs="+",
+                       help="Information about the team members participating"
+                            "in the grant"
+                       )
+    subpi.add_argument("-t", "--title",
+                        help="Actual title of the proposal"
+                       )
+    subpi.add_argument("--title_short", nargs="+"
+                        help="Short title of the proposal"
                        )
     return subpi
 
