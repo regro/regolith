@@ -38,7 +38,9 @@ helper_map = [
     (["helper", "l_members", "-v"],
      "Anthony Scopatz, professor | group_id: scopatz | orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
      ),
-
+     (["helper", "l_contacts", "-n", "ny"],
+      "name: Anthony B Friend, institution: columbiau\n"
+     ),
 ]
 
 
