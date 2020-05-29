@@ -21,6 +21,8 @@ HELPER_TARGET = "l_contacts"
 
 
 def subparser(subpi):
+    subpi.add_argument("-n", "--name", help='match contacts to a name fragment')
+    '''
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-l", "--lead",
                        help="Filter milestones for this project lead"
@@ -31,7 +33,7 @@ def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs="+",
                        help=f"List of stati for the project that you want returned,"
                             f"from {ALLOWED_STATI}.  Default is proposed and started"
-                       )
+                       )'''
     return subpi
 
 
@@ -74,10 +76,13 @@ class ContactsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        projecta = []
+        contacts = []
+        '''
         if rc.lead and rc.person:
-            raise RuntimeError(f"please specify either lead or person, not both")
-        for projectum in self.gtx["contacts"]:
+            raise RuntimeError(f"please specify either lead or person, not both")'''
+        for contact in self.gtx["contacts"]:
+            if rc.name and contact.get('name').find(rc.name) != -1:
+                    contacts.append(contact)
             '''
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
@@ -85,7 +90,7 @@ class ContactsListerHelper(SoutHelperBase):
                 if isinstance(rc.person, str):
                     rc.person = [rc.person]
                 good_p = []
-                for i in rc.person:
+                for i in rc.prson:
                     if not projectum.get('group_members'):
                         continue
                     if projectum.get('group_members') and i not in projectum.get('group_members'):
@@ -99,10 +104,10 @@ class ContactsListerHelper(SoutHelperBase):
             if rc.stati and projectum.get('status') not in rc.stati:
                 continue
             projecta.append(projectum["_id"]) '''
-            projecta.append(projectum)
 
         #projecta.sort()
-        for i in projecta:
-            print(i.get("name"))
+        for con in contacts:
+                print(
+                    f"name: {con.get('name')}, institution: {con.get('institution')}")
         return
 
