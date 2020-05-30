@@ -1,4 +1,4 @@
-"""Helper for listing upcoming (and past) projectum milestones.
+"""Helper for finding and listing contacts.
 
    Projecta are small bite-sized project quanta that typically will result in
    one manuscript.
@@ -8,6 +8,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
+from pathlib import Path
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
@@ -19,9 +20,16 @@ from regolith.tools import (
 TARGET_COLL = "contacts"
 HELPER_TARGET = "l_contacts"
 
+THIS_DIR = Path('.')
+inst_file = THIS_DIR / ".." / ".." / ".." / ".." / "dbs" / "rg-db-public" / "db" / "institutions.yml"
 
 def subparser(subpi):
     subpi.add_argument("-n", "--name", help='match contacts to a name fragment')
+    subpi.add_argument("-i", "--inst", help='match people to institutions')
+    subpi.add_argument("-d", "--day", help='match people to days')
+    subpi.add_argument("-m", "--month", help='match people to months')
+    subpi.add_argument("-y", "--year", help='match people to years')
+    subpi.add_argument("-r", "--misc", help='match people to miscellaneous notes')
     '''
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-l", "--lead",
@@ -81,8 +89,68 @@ class ContactsListerHelper(SoutHelperBase):
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")'''
         for contact in self.gtx["contacts"]:
-            if rc.name and contact.get('name').find(rc.name) != -1:
+            
+            #Handling names
+            if rc.name:
+                list_add = False
+                for nam in rc.name.split(","):
+                    if (contact.get('name').lower()).find(nam.lower()) != -1:
+                        contacts.append(contact)
+                        list_add = True
+                if list_add:
+                    continue
+                
+            #Handling institutions
+            if rc.inst and (contact.get('institution').lower()).find(rc.inst.lower()) != -1:
+                contacts.append(contact)
+                continue
+            
+            #Handling days/months/years
+            if rc.month and rc.year and rc.day:
+                rc.month = int(rc.month)
+                rc.year = int(rc.year)
+                rc.day = int(rc.day)
+                if contact.get('month') == rc.month and contact.get('day') == rc.day and contact.get('year') == rc.year:
                     contacts.append(contact)
+                    continue
+            elif rc.day and rc.month:
+                rc.month = int(rc.month)
+                rc.day = int(rc.day)               
+                if contact.get('month') == rc.month and contact.get('day') == rc.day:
+                    contacts.append(contact)
+                    continue                    
+            elif rc.day and rc.year:
+                rc.year = int(rc.year)
+                rc.day = int(rc.day)                
+                if contact.get('day') == rc.day and contact.get('year') == rc.year:
+                    contacts.append(contact)
+                    continue                    
+            elif rc.month and rc.year:
+                rc.month = int(rc.month)
+                rc.year = int(rc.year)               
+                if contact.get('month') == rc.month and contact.get('year') == rc.year:
+                    contacts.append(contact) 
+                    continue                    
+            elif rc.day:
+                rc.day = int(rc.day)                  
+                if contact.get('day') == rc.day:
+                    contacts.append(contact)  
+                    continue                    
+            elif rc.month:
+                rc.month = int(rc.month)                
+                if contact.get('month') == rc.month:
+                    contacts.append(contact) 
+                    continue                    
+            elif rc.year:
+                rc.year = int(rc.year)
+                if contact.get('year') == rc.year:
+                    contacts.append(contact)     
+                    continue                    
+            
+            #Handling miscellaneous notes-UC 6
+            if rc.misc and contact.get('notes').find(rc.misc) != -1:
+                contacts.append(contact)
+                continue                
             '''
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
@@ -107,7 +175,9 @@ class ContactsListerHelper(SoutHelperBase):
 
         #projecta.sort()
         for con in contacts:
-                print(
-                    f"name: {con.get('name')}, institution: {con.get('institution')}")
+            if con.get('email'):
+                print(f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email')}")
+            else:
+                print(f"name: {con.get('name')}, institution: {con.get('institution')}")                
         return
 
