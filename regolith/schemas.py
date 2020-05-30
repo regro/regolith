@@ -267,6 +267,7 @@ EXEMPLARS = {
         "aka": ["Columbia University", "Columbia"],
         "city": "New York",
         "country": "USA",
+        "day": "30",
         "departments": {
             "physics": {
                 "name": "Department of Physics",
@@ -281,6 +282,7 @@ EXEMPLARS = {
                 "aka": ["APAM"],
             },
         },
+        "month": "May",
         "name": "Columbia University",
         "schools": {
             "seas": {
@@ -294,6 +296,9 @@ EXEMPLARS = {
         },
         "state": "NY",
         "street": "500 W 120th St",
+        "updated": "2020-05-30",
+        "uuid": "avacazdraca345rfsvwre",
+        "year": "2020",
         "zip": "10027",
     },
     "jobs": {
@@ -1406,6 +1411,11 @@ SCHEMAS = {
             "required": False,
             "type": "list",
         },
+        "day": {
+            "description": "the day the entry was created",
+            "required": False,
+            "type": "integer",
+        },
         "city": {
             "description": "the city where the institution is",
             "required": True,
@@ -1433,6 +1443,11 @@ SCHEMAS = {
                     "aka": {"required": False, "type": "list"},
                 },
             },
+        },
+        "month": {
+            "description": "the month the entry was created",
+            "required": False,
+            "anyof_type": ["string", "integer"]
         },
         "name": {
             "description": "the canonical name of the institutions",
@@ -1466,6 +1481,21 @@ SCHEMAS = {
             "description": "the street where the institution is",
             "required": False,
             "type": "string",
+        },
+        "updated": {
+            "description": "a datetime when the entry was updated",
+            "required": False,
+            "anyof_type": ["string", "datetime", "date"]
+        },
+        "uuid": {
+            "description": "a uuid for the entry",
+            "required": False,
+            "type": "string",
+        },
+        "year": {
+            "description": "the year the entry was created",
+            "required": False,
+            "type": "integer",
         },
         "zip": {
             "description": "the zip or postal code of the institution",
@@ -1894,6 +1924,11 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "active": {
+            "description": "true if the project is active",
+            "required": False,
+            "anyof_type": ["string","boolean"],
+        },
         "description": {
             "description": "brief project description.",
             "required": True,
@@ -1901,7 +1936,32 @@ SCHEMAS = {
         },
         "grant": {
             "description": "Grant id if there is a grant supporting this " "project",
+            "required": False,
             "type": "string",
+        },
+        "group": {
+            "description": "id for the group in the groups collection whose project this is",
+            "required": False,
+            "type": "string",
+        },
+        "highlights": {
+            "description": "list of things to highlight in a report or website, such as releases for  for software or high profile publications",
+            "required": False,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "year": {"description": "the year of the highlight",
+                             "required": True,
+                             "type": "integer"},
+                    "month": {"description": "the month of the highlight",
+                             "required": True,
+                             "anyof_type": ["string", "integer"]},
+                    "description": {"description": "the highlight",
+                             "required": True,
+                             "type": "string"},
+                }
+            }
         },
         "logo": {
             "description": "URL to the project logo",
@@ -1943,9 +2003,15 @@ SCHEMAS = {
             },
             "type": "list",
         },
+        "type": {
+            "description": "The type of project",
+            "required": False,
+            "anyof_type": ["string"],
+            "eallowed": ["ossoftware","funded"]
+        },
         "website": {
             "description": "URL of the website.",
-            "required": True,
+            "required": False,
             "type": "string",
         },
     },
