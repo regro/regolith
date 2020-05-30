@@ -17,22 +17,21 @@ from regolith.builders.appraisalbuilder import AppraisalBuilder
 
 
 BUILDERS = {
+    "annual-appraisal": AppraisalBuilder,
+    "beamplan": BeamPlanBuilder,
+    "current-pending": CPBuilder,
     "cv": CVBuilder,
-    "html": HtmlBuilder,
-    "publist": PubListBuilder,
+    "figure": FigureBuilder,
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,
-    "resume": ResumeBuilder,
-    "current-pending": CPBuilder,
+    "html": HtmlBuilder,
     "postdocad": PostdocadBuilder,
+    "preslist": PresListBuilder,
+    "publist": PubListBuilder,
+    "reimb": ReimbursementBuilder,
+    "resume": ResumeBuilder,
     "review-man": ManRevBuilder,
     "review-prop": PropRevBuilder,
-    "preslist": PresListBuilder,
-    "reimb": ReimbursementBuilder,
-    "figure": FigureBuilder,
-    "annual-appraisal": AppraisalBuilder
-    "annual-appraisal": AppraisalBuilder,
-    "beamplan": BeamPlanBuilder
 }
 
 
