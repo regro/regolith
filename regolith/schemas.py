@@ -670,6 +670,11 @@ EXEMPLARS = {
         "_id": "Cyclus",
         "name": "Cyclus",
         "description": "Agent-Based Nuclear Fuel Cycle Simulator",
+        "group": "ergs",
+        "highlights": [
+            {"year": 2020, "month": 5,
+             "description": "high profile pub in Nature"}
+        ],
         "logo": "http://fuelcycle.org/_static/big_c.png",
         "other": [
             "Discrete facilities with discrete material transactions",
@@ -686,6 +691,7 @@ EXEMPLARS = {
                 "position": "Project Lead",
             }
         ],
+        "type": "funded",
         "website": "http://fuelcycle.org/",
         "grant": "dmref15",
     },
