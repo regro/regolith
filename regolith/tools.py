@@ -13,7 +13,7 @@ from datetime import datetime, date, timedelta
 from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int, date_to_float, get_dates
 from regolith.sorters import doc_date_key, id_key, ene_date_key
-from regolith.dates import month_to_int, date_to_float, beg_end_dates
+from regolith.dates import month_to_int, date_to_float
 from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
 from regolith.chained_db import ChainDB
 
