@@ -18,6 +18,9 @@ from regolith.builders.appraisalbuilder import AppraisalBuilder
 
 
 BUILDERS = {
+    "annual-appraisal": AppraisalBuilder,
+    "beamplan": BeamPlanBuilder,
+    "current-pending": CPBuilder,
     "cv": CVBuilder,
     "html": HtmlBuilder,
     "publist": PubListBuilder,
