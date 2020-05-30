@@ -464,6 +464,7 @@ EXEMPLARS = {
              "year": 2013},
         ],
         "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
+        "github_id": "ascopatz",
         "home_address": {
             "street": "123 Wallabe Ln",
             "city": "The big apple",
@@ -1611,6 +1612,8 @@ SCHEMAS = {
             },
             "type": "list",
         },
+        "github_id": {"required": False, "type": "string",
+                       "description": "Your GitHub ID"},
         "google_scholar_url": {"required": False, "type": "string",
                                "description": "URL of your Google Scholar "
                                               "rofile"},
