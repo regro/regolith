@@ -267,7 +267,7 @@ EXEMPLARS = {
         "aka": ["Columbia University", "Columbia"],
         "city": "New York",
         "country": "USA",
-        "day": "30",
+        "day": 30,
         "departments": {
             "physics": {
                 "name": "Department of Physics",
@@ -298,7 +298,7 @@ EXEMPLARS = {
         "street": "500 W 120th St",
         "updated": "2020-05-30",
         "uuid": "avacazdraca345rfsvwre",
-        "year": "2020",
+        "year": 2020,
         "zip": "10027",
     },
     "jobs": {
