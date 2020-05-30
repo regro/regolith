@@ -1,0 +1,11 @@
+aeinstein:
+  aka:
+    - A. Einstein
+    - Einstein
+  avatar: https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y
+  bio: Theoretical physicist who developed the theory of relativity
+  education:
+    - begin_year: '1905'
+    - degree: PhD
+    - institution: uzurich
+  name: Albert Einstein
