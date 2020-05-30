@@ -39,8 +39,14 @@ helper_map = [
      "Anthony Scopatz, professor | group_id: scopatz | orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
      ),
      (["helper", "l_contacts", "-n", "ny"],
-      "name: Anthony B Friend, institution: columbiau\n"
+      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
+     (["helper", "l_contacts", "-i", "col"],
+      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
+     ),
+     (["helper", "l_contacts", "-r", "coffee"],
+      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
+     ),      
 ]
 
 
