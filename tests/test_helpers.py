@@ -44,7 +44,10 @@ helper_map = [
      (["helper", "l_contacts", "-i", "col"],
       "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
-     (["helper", "l_contacts", "-r", "coffee"],
+     (["helper", "l_contacts", "-no", "coffee"],
+      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
+     ),      
+     (["helper", "l_contacts", "-d", "2020-01-15", "-r", "2"],
       "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),      
 ]
