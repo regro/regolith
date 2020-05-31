@@ -1166,6 +1166,16 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
+        "month": {
+            "description": "what month the person was met",
+            "required": False,
+            "type": "integer",
+        },
+        "year": {
+            "description": "how year the person was met",
+            "required": False,
+            "type": "integer",
+        },                
     },
     "grades": {
         "_description": {
