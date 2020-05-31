@@ -347,9 +347,59 @@ EXEMPLARS = {
             "Anthony Michael Scopatz",
         ],
         "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
+        "appointments": {
+            "f19": {
+                "begin_year": 2019,
+                "begin_month": 9,
+                "begin_day": 1,
+                "end_year": 2019,
+                "end_month": 10,
+                "end_day": 31,
+                "grant": "mrsec14",
+                "loading": 0.75,
+                "status": "finalized",
+                "notes": ["forgetmenot"]
+            }
+        },
         "bio": "Anthony Scopatz is currently an Assistant Professor",
+        "bios": ["Anthony Scopatz is currently an Assistant Professor but will go on to do great things"],
+        "committees": [{
+            "name": "Heather Stanford",
+            "type": "phdoral",
+            "year": 2020,
+            "month": 3,
+            "day": 1,
+            "level": "department",
+            "unit": "apam"
+            },
+            {"name": "Heather Stanford",
+             "type": "tenureadhoc",
+             "year": 2020,
+             "month": 3,
+             "day": 1,
+             "level": "school",
+             "unit": "seas"
+             },
+            {"name": "Heather Stanford",
+             "type": "phddefense",
+             "year": 2020,
+             "month": 3,
+             "day": 1,
+             "notes": "something else to remember about it, not published",
+             "level": "external",
+             "unit": "U Denmark"
+             },
+            {"name": "Heather Stanford",
+             "type": "university",
+             "year": 2020,
+             "month": 3,
+             "day": 1,
+             "unit": "columbiau",
+             "level": "university",
+        }],
         "education": [
             {
+                "advisor": "ascopatz",
                 "begin_year": 2008,
                 "degree": "Ph.D. Mechanical Engineering, "
                           "Nuclear and Radiation Engineering "
@@ -404,7 +454,9 @@ EXEMPLARS = {
         "email": "scopatz@cec.sc.edu",
         "employment": [
             {
+                "advisor": "ascopatz",
                 "begin_year": 2015,
+                "coworkers": ["afriend"],
                 "group": "ergs",
                 "location": "Columbia, SC",
                 "organization": "The University of South Carolina",
@@ -414,7 +466,8 @@ EXEMPLARS = {
                     "PyNE: The Nuclear Engineering Toolkit.",
                     "Website: http://www.ergs.sc.edu/",
                 ],
-                "position": "Assistant Professor, Mechanical Engineering " "Department",
+                "position": "Assistant Professor",
+                "position_full": "Assistant Professor, Mechanical Engineering " "Department",
             },
             {
                 "begin_year": 2013,
@@ -496,6 +549,21 @@ EXEMPLARS = {
             {"begin_year": 2010, "description": "software applied to nuclear "
                                                 "engineering and life"}
         ],
+        "service": [{
+            "name": "International Steering Committee",
+            "role": "chair",
+            "type": "professional]",
+            "year": 2020,
+            "month": 3,
+            "notes": ["something"],
+            },{
+            "name": "National Steering Committee",
+            "type": "professional]",
+            "begin_year": 2018,
+            "end_year": 2021,
+            "notes": "something",
+            },
+            ],
         "skills": [
             {"category": "Programming Languages", "level": "expert",
              "name": "Python"},
@@ -505,10 +573,13 @@ EXEMPLARS = {
         "teaching": [
             {
                 "course": "EMCH 552: Intro to Nuclear Engineering",
+                "courseid": "EMCH 552",
                 "description": "This course is an introduction to nuclear " "physics.",
+                "enrollment": "tbd",
                 "month": "August",
                 "organization": "University of South Carolina",
                 "position": "Professor",
+                "semester": "Spring",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                 "year": 2017,
@@ -516,6 +587,19 @@ EXEMPLARS = {
             {
                 "course": "EMCH 558/758: Reactor Power Systems",
                 "description": "This course covers conventional " "reactors.",
+                "enrollment": 28,
+                "evaluation": {
+                    "response_rate": 66.76,
+                    "amount_learned": 3.5,
+                    "appropriateness_workload": 3.15,
+                    "course_overall": 3.67,
+                    "fairness_grading": 3.54,
+                    "organization": 3.25,
+                    "classroom_delivery": 4,
+                    "approachability": 4.3,
+                    "instructor_overall": 3.5,
+                    "comments": ["super duper", "dandy"]
+                },
                 "month": "January",
                 "organization": "University of South Carolina",
                 "position": "Professor",
@@ -524,202 +608,6 @@ EXEMPLARS = {
                             "-PxiboYdM/edit?usp=sharing",
                 "year": 2017,
             },
-        ],
-        "title": "Dr.",
-        "service": [
-            {
-                "name": "Master of Ceremonies and Organizer Brown University "
-                        '"Chemistry: Believe it or Not" public chemistry '
-                        "demonstration",
-                "year": 2013,
-            },
-            {
-                "begin_year": 2012,
-                "end_year": 2014,
-                "name": "Renewable Energy Presenter and Facility Tour Guide "
-                        'at the NSLS "Science Sunday" laboratory open house '
-                        "at Brookhaven National Laboratory",
-            },
-        ],
-    },
-    {
-        "_id": "sbillinge",
-        "activities": [{
-            "type": "teaching",
-            "name": "course development",
-            "year": 2018,
-            "other": "Developed a new course for Materials Science"
-        }],
-        "aka": [
-            "Billinge",
-        ],
-        "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
-        "bio": "Simon teaches and does research",
-        "committees": {
-            "department": [{
-                "name": "Same Old",
-                "type": "thesis",
-                "year": 2018,
-                "department": "Materials Science",
-            }]
-        },
-        "education": [
-            {
-                "begin_year": 2008,
-                "degree": "Ph.D. Mechanical Engineering, "
-                          "Nuclear and Radiation Engineering "
-                          "Program",
-                "end_year": 2011,
-                "group": "ergs",
-                "institution": "The University of Texas at Austin",
-                "department": "apam",
-                "location": "Austin, TX",
-                "other": [
-                    "Adviser: Erich A. Schneider",
-                    "Dissertation: Essential Physics for Fuel Cycle "
-                    "Modeling & Analysis",
-                ],
-            },
-        ],
-        "email": "sb2896@columbia.edu",
-        "employment": [
-            {
-                "begin_year": 2015,
-                "group": "ergs",
-                "location": "Columbia, SC",
-                "organization": "The University of South Carolina",
-                "other": [
-                    "Cyclus: An agent-based, discrete time nuclear fuel "
-                    "cycle simulator.",
-                    "PyNE: The Nuclear Engineering Toolkit.",
-                    "Website: http://www.ergs.sc.edu/",
-                ],
-                "position": "Assistant Professor, Mechanical Engineering " "Department",
-            },
-        ],
-        "facilities": [{
-            "type": "other",
-            "name": "Shared {Habanero} compute cluster",
-            "begin_year": 2015
-        },
-        {
-            "type": "fac_wishlist",
-            "name": "Shared access to wet lab",
-            "begin_year": 2015
-        },
-        {
-            "type": "fac_teaching",
-            "name": "Courseworks2",
-            "begin_year": 2017
-            },
-        {
-            "type": "tch_wishlist",
-            "name": "nothing right now",
-            "begin_year": 2019
-            },
-        {
-            "type": "laboratory",
-            "name": "I don't have one",
-            "begin_year": 2008
-            },
-        ],
-        "funding": [
-            {
-                "name": "Omega Laser User's Group Travel Award",
-                "value": 1100,
-                "year": 2013,
-            },
-            {"name": "NIF User's Group Travel Award", "value": 1150,
-             "year": 2013},
-        ],
-        "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
-        "hindex": [{
-             "h": 65,
-             "h_last_five": 43,
-             "citations": 17890,
-             "citations_last_five": 8817,
-             "origin": "Google Scholar",
-             "since": 1991,
-             "year": 2019,
-             "month": "May",
-             "day": 12,
-    }],
-        "home_address": {
-            "street": "123 Wallabe Ln",
-            "city": "The big apple",
-            "state": "plasma",
-            "zip": "007",
-        },
-        "initials": "SJLB",
-        "membership": [
-            {
-                "begin_year": 2006,
-                "organization": "American Nuclear Society",
-                "position": "Member",
-            },
-        ],
-        "miscellaneous": {
-            "metrics_for_success": [
-                "publications(quality, quantity)",
-                "invite talks",
-                "funding",
-                "citations",
-                ],
-        },
-        "name": "Simon J. L. Billinge",
-        "orcid_id": "0000-0002-9432-4248",
-        "position": "professor",
-        "publicity": [{
-            "type": "online",
-            "publication": "Brookhaven National Laboratory Web Story",
-            "topic": "LDRD Provenance project",
-            "title": "An awesome project and well worth the money",
-            "day": 24,
-            "month": "Jul",
-            "year": 2019,
-            "grant": "bnlldrd18",
-            },
-        ],
-        "research_focus_areas": [
-            {"begin_year": 2010, "description": "software applied to materials "
-                                                "engineering and life" }
-        ],
-        "service": [
-            {
-                "type": "profession",
-                "name": "Master of Ceremonies and Organizer Brown University "
-                        '"Chemistry: Believe it or Not" public chemistry '
-                        "demonstration",
-                "year": 2017,
-                "month": "August"
-            },
-            {
-                "type": "department",
-                "name": "Applied Physics program committee",
-                "year": 2018,
-                "month": 1
-            },
-            {
-                "type": "school",
-                "name": "Ad hoc tenure committee",
-                "year": 2017,
-                "month": 6,
-                "notes": "Albert Einstein"
-            },
-            {
-                "type": "outreach",
-                "name": "Co-organizer JUAMI",
-                "year": 2017,
-                "month": 12,
-                "role": "co-organizer",
-                "other": "great way to meet people",
-            },
-        ],
-        "skills": [
-            {"category": "Programming Languages", "level": "expert",
-             "name": "Python"},
-        ],
-        "teaching": [
             {
                 "course": 'MSAE-3010: Introduction to Materials Science',
                 "courseid": "f17-3010",
@@ -880,6 +768,208 @@ EXEMPLARS = {
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                 "year": 2019,
             },
+        ],
+        "title": "Dr.",
+        "service": [
+            {
+                "name": "Master of Ceremonies and Organizer Brown University "
+                        '"Chemistry: Believe it or Not" public chemistry '
+                        "demonstration",
+                "year": 2013,
+            },
+            {
+                "begin_year": 2012,
+                "end_year": 2014,
+                "name": "Renewable Energy Presenter and Facility Tour Guide "
+                        'at the NSLS "Science Sunday" laboratory open house '
+                        "at Brookhaven National Laboratory",
+            },
+        ],
+    },
+    {
+        "_id": "sbillinge",
+        "activities": [{
+            "type": "teaching",
+            "name": "course development",
+            "year": 2018,
+            "other": "Developed a new course for Materials Science"
+        }],
+        "facilities": [{
+            "type": "teaching",
+            "name": "classroom",
+            "begin_year": 2018,
+            "end_year": 2019,
+        }],
+        "aka": [
+            "Billinge",
+        ],
+        "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
+        "bio": "Simon teaches and does research",
+        "committees": [{
+            "name": "Same Old",
+            "type": "phddefense",
+            "year": 2018,
+            "unit": "Materials Science",
+            "level": "department",
+            "notes": "something"
+            }],
+        "education": [
+            {
+                "begin_year": 2008,
+                "degree": "Ph.D. Mechanical Engineering, "
+                          "Nuclear and Radiation Engineering "
+                          "Program",
+                "end_year": 2011,
+                "group": "ergs",
+                "institution": "The University of Texas at Austin",
+                "department": "apam",
+                "location": "Austin, TX",
+                "other": [
+                    "Adviser: Erich A. Schneider",
+                    "Dissertation: Essential Physics for Fuel Cycle "
+                    "Modeling & Analysis",
+                ],
+            },
+        ],
+        "email": "sb2896@columbia.edu",
+        "employment": [
+            {
+                "begin_year": 2015,
+                "group": "ergs",
+                "location": "Columbia, SC",
+                "organization": "The University of South Carolina",
+                "other": [
+                    "Cyclus: An agent-based, discrete time nuclear fuel "
+                    "cycle simulator.",
+                    "PyNE: The Nuclear Engineering Toolkit.",
+                    "Website: http://www.ergs.sc.edu/",
+                ],
+                "position": "Assistant Professor, Mechanical Engineering " "Department",
+            },
+        ],
+        "facilities": [{
+            "type": "other",
+            "name": "Shared {Habanero} compute cluster",
+            "begin_year": 2015
+        },
+        {
+            "type": "fac_wishlist",
+            "name": "Shared access to wet lab",
+            "begin_year": 2015
+        },
+        {
+            "type": "fac_teaching",
+            "name": "Courseworks2",
+            "begin_year": 2017
+            },
+        {
+            "type": "tch_wishlist",
+            "name": "nothing right now",
+            "begin_year": 2019
+            },
+        {
+            "type": "laboratory",
+            "name": "I don't have one",
+            "begin_year": 2008
+            },
+        ],
+        "funding": [
+            {
+                "name": "Omega Laser User's Group Travel Award",
+                "value": 1100,
+                "year": 2013,
+            },
+            {"name": "NIF User's Group Travel Award", "value": 1150,
+             "year": 2013},
+        ],
+        "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
+        "hindex": [{
+             "h": 65,
+             "h_last_five": 43,
+             "citations": 17890,
+             "citations_last_five": 8817,
+             "origin": "Google Scholar",
+             "since": 1991,
+             "year": 2019,
+             "month": "May",
+             "day": 12,
+    }],
+        "office": {"1105 Seely W. Mudd Building (inner office)"},
+        "home_address": {
+            "street": "123 Wallabe Ln",
+            "city": "The big apple",
+            "state": "plasma",
+            "zip": "007",
+        },
+        "initials": "SJLB",
+        "membership": [
+            {
+                "begin_year": 2006,
+                "organization": "American Nuclear Society",
+                "position": "Member",
+            },
+        ],
+        "miscellaneous": {
+            "metrics_for_success": [
+                "publications(quality, quantity)",
+                "invite talks",
+                "funding",
+                "citations",
+                ],
+        },
+        "name": "Simon J. L. Billinge",
+        "orcid_id": "0000-0002-9432-4248",
+        "position": "professor",
+        "publicity": [{
+            "type": "online",
+            "publication": "Brookhaven National Laboratory Web Story",
+            "topic": "LDRD Provenance project",
+            "title": "An awesome project and well worth the money",
+            "day": 24,
+            "month": "Jul",
+            "year": 2019,
+            "grant": "bnlldrd18",
+            "url": "http://www.google.com"
+            },
+        ],
+        "research_focus_areas": [
+            {"begin_year": 2010, "description": "software applied to materials "
+                                                "engineering and life" }
+        ],
+        "service": [
+            {
+                "type": "profession",
+                "name": "Master of Ceremonies and Organizer Brown University "
+                        '"Chemistry: Believe it or Not" public chemistry '
+                        "demonstration",
+                "year": 2017,
+                "month": "August"
+            },
+            {
+                "type": "department",
+                "name": "Applied Physics program committee",
+                "year": 2018,
+                "month": 1
+            },
+            {
+                "type": "school",
+                "name": "Ad hoc tenure committee",
+                "year": 2017,
+                "month": 6,
+                "notes": "Albert Einstein"
+            },
+            {
+                "type": "outreach",
+                "name": "Co-organizer JUAMI",
+                "year": 2017,
+                "month": 12,
+                "role": "co-organizer",
+                "other": "great way to meet people",
+            },
+        ],
+        "skills": [
+            {"category": "Programming Languages", "level": "expert",
+             "name": "Python"},
         ],
         "title": "Dr.",
     },
@@ -1872,6 +1962,53 @@ SCHEMAS = {
             "required": True,
             "type": ["string", "list"],
         },
+        "appointments": {
+            "type": "dict",
+            "required": False,
+            "description": "begin and end date, grant loading status and notes about appointments"
+        },
+        "activities": {
+            "type": "list",
+            "required": False,
+            "description": "activities may be teaching or research things",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "required": False,
+                        "description": "the day the activity took place",
+                        "type": "integer",
+                    },
+
+                    "type": {
+                        "required": True,
+                        "description": "the type of the acitivity",
+                        "type": "string",
+                        "eallowed": ["teaching", "research"]
+                    },
+                    "month": {
+                        "required": False,
+                        "description": "the month the activity took place",
+                        "anyof_type": ["integer","string"],
+                    },
+                    "name": {
+                        "required": True,
+                        "description": "brief statement of the activity",
+                        "type": "string",
+                    },
+                    "other": {
+                        "required": False,
+                        "description": "longer statement of the activity",
+                        "type": "string",
+                    },
+                    "year": {
+                        "required": True,
+                        "description": "the year the activity took place",
+                        "type": "integer",
+                    },
+                }
+            }
+        },
         "avatar": {"description": "URL to avatar", "required": True,
                    "type": "string"},
         "bio": {
@@ -1879,15 +2016,54 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
-        "bio_long": {
+        "bios": {
             "description": "longer biographical text if needed",
             "required": False,
-            "type": "string",
+            "anyof_type": ["string","list"]
         },
         "collab": {
             "description": "If the person is a collaborator, default False.",
             "required": False,
             "type": "boolean",
+        },
+        "committees": {
+            "description": "Committees that are served on",
+            "required": False,
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "name": {"required": True, "type": "string",
+                             "description": "name of committee, or person if it "
+                                            "is a phd committee"},
+                    "day": {"required": False, "type": "integer"},
+                    "month": {"required": False,
+                              "anyof_type": ["string", "integer"],
+                                    },
+                    "notes": {"required": False,
+                              "description": "extra things you want to record about the thing",
+                              "anyof_type": ["string", "list"],
+                                    },
+                    "year": {"required": True, "type": "integer"},
+                    "unit": {"required": False, "type": "string",
+                             "description": "name of department or school etc."},
+                    "type": {"required": False, "type": "string",
+                             "description": "type of committee, department, school, university, external",
+                             "eallowed": ["department", "school", "university", "external"]},
+                    "level": {
+                        "required": True,
+                        "type": "string",
+                        "description": "department or school or university, or external",
+                        "eallowed": ["department", "school", "university", "external"]
+                    },
+                    "group": {
+                        "required": False,
+                        "type": "string",
+                        "description": "this employment is/was in"
+                                       "a group in groups coll",
+                    },
+                },
+            },
+            "type": "list",
         },
         "education": {
             "description": "This contains the educational information for "
@@ -1896,6 +2072,7 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
+                    "advisor": {"required": False, "type": "string"},
                     "begin_day": {"required": False,
                                   "type": "integer"},
                     "begin_month": {"required": False,
@@ -1942,11 +2119,17 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
+                    "advisor": {"required": False, "type": "string"},
                     "begin_day": {"required": False, "type": "integer"},
                     "begin_month": {"required": False,
                                     "anyof_type": ["string", "integer"],
                                     },
                     "begin_year": {"required": True, "type": "integer"},
+                    "coworkers": {"required": False, "type": "list",
+                                  "description": "list of coworkers.  If"
+                                                 "position is editor, these are "
+                                                 "assumed to be coeditors in"
+                                                 "conflict of interest builder"},
                     "department": {"required": False, "type": "string"},
                     "end_day": {"required": False, "type": "integer"},
                     "end_month": {"required": False,
@@ -1962,7 +2145,16 @@ SCHEMAS = {
                     "location": {"required": False, "type": "string"},
                     "organization": {"required": True, "type": "string"},
                     "other": {"required": False, "type": "list"},
-                    "position": {"required": True, "type": "string"},
+                    "position": {"required": True, "type": "string",
+                                 "eallowed": list(SORTED_POSITION)},
+                    "position_full": {
+                        "description": "The full on title of the position.  This will be "
+                                       "typeset if it is here, or if not Position will be "
+                                       "used.  Position will be used for sorting and must "
+                                       "come from a fixed list of positions",
+                        "required": False,
+                        "type": "string",
+                    },
                     "status": {"required": False, "type": "string", "eallowed": [
                         "pi",
                         "high-school",
@@ -1975,6 +2167,66 @@ SCHEMAS = {
                     },
                 },
             },
+        },
+        "facilities": {
+            "type": "list",
+            "required": False,
+            "description": "facilities may be teaching or research things",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "begin_day": {
+                        "required": False,
+                        "description": "the day facility, or the wish for the "
+                                       "facility, started",
+                        "type": "integer",
+                    },
+                    "end_day": {
+                        "required": False,
+                        "description": "the day facility started",
+                        "type": "integer",
+                    },
+                    "type": {
+                        "required": True,
+                        "description": "the type of the facility. Columbia asks"
+                                       "for wished-for facilities, so there are "
+                                       "teaching-wish and research-wish fields.",
+                        "type": "string",
+                        "eallowed": ["teaching", "research", "shared", "other", "teaching_wish",
+                                     "research_wish"]
+                    },
+                    "begin_month": {
+                        "required": False,
+                        "description": "the month the facility (or wish) started",
+                        "anyof_type": ["integer","string"],
+                    },
+                    "end_month": {
+                        "required": False,
+                        "description": "the month the faclity went away",
+                        "anyof_type": ["integer","string"],
+                    },
+                    "name": {
+                        "required": True,
+                        "description": "description of the facility",
+                        "type": "string",
+                    },
+                    "notes": {
+                        "required": False,
+                        "description": "anything else you want to jot down",
+                        "anyof_type": ["string", "list"]
+                    },
+                    "begin_year": {
+                        "required": True,
+                        "description": "the year the facility (or wish) started",
+                        "type": "integer",
+                    },
+                    "end_year": {
+                        "required": False,
+                        "description": "the year the facility (or wish) went away",
+                        "type": "integer",
+                    },
+                }
+            }
         },
         "funding": {
             "description": "Funding and scholarship that the group member "
@@ -2006,25 +2258,28 @@ SCHEMAS = {
             "description": "details of hindex pulled on a certain date",
             "required": False,
             "schema": {
-                "h": {"description": "the value of the h index",
-                      "required": True, "type": "integer"},
-                "h_last_five": {"description": "h index over past 5 years",
-                      "required": False, "type": "integer"},
-                "citations": {"description": "total number of citations",
-                      "required": False, "type": "integer"},
-                "citations_last_five": {"description": "number of citations"
-                              "in the past 5 years",
-                              "required": False, "type": "integer"},
-                "origin": {"description": "where the numbers came from",
-                              "required": False, "type": "string"},
-                "since": {"description": "year of first citation",
-                              "required": False, "type": "integer"},
-                "year": {"description": "year when the data were pulled",
-                              "required": False, "type": "integer"},
-                "month": {"description": "month when the data were pulled",
-                           "required": False, "anyof_type": ["string","integer"]},
-                "day": {"description": "day when the data were pulled",
-                              "required": False, "type": "integer"},
+                "type": "dict",
+                "schema": {
+                    "h": {"description": "the value of the h index",
+                          "required": True, "type": "integer"},
+                    "h_last_five": {"description": "h index over past 5 years",
+                          "required": False, "type": "integer"},
+                    "citations": {"description": "total number of citations",
+                          "required": False, "type": "integer"},
+                    "citations_last_five": {"description": "number of citations"
+                                  "in the past 5 years",
+                                  "required": False, "type": "integer"},
+                    "origin": {"description": "where the numbers came from",
+                                  "required": False, "type": "string"},
+                    "since": {"description": "year of first citation",
+                                  "required": False, "type": "integer"},
+                    "year": {"description": "year when the data were pulled",
+                                  "required": False, "type": "integer"},
+                    "month": {"description": "month when the data were pulled",
+                               "required": False, "anyof_type": ["string","integer"]},
+                    "day": {"description": "day when the data were pulled",
+                                  "required": False, "type": "integer"},
+                }
             },
             "type": "list",
         },
@@ -2099,17 +2354,29 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "office": {
+            "description": "The person's office",
+            "type": "string",
+            "required": False
+        },
         "orcid_id": {
             "description": "The ORCID ID of the person",
             "required": False,
             "type": "string",
         },
-        # TODO: Can this be required only if status = active?
         "position": {
             "description": "such as professor, graduate student, or scientist",
             "required": False,
             "type": "string",
             "eallowed": list(SORTED_POSITION),
+        },
+        "position_full": {
+            "description": "The full on title of the position.  This will be "
+                           "typeset if it is here, or if not Position will be "
+                           "used.  Position will be used for sorting and must "
+                           "come from a fixed list of positions",
+            "required": False,
+            "type": "string",
         },
         "publicity": {
             "description": "summary of publicity that person has received",
@@ -2117,16 +2384,19 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "type": {"required": False, "type": "string"},
+                    "type": {"required": True, "type": "string",
+                             "eallowed": ["online", "article"]},
                     "topic": {"required": False, "type": "string",
                               "description": "short blurb about what it was"},
-                    "title": {"required": False, "type": "string"},
+                    "title": {"required": True, "type": "string"},
                     "day": {"required": False, "type": "integer"},
                     "month": {"required": False, "anyof_type": ["string",
                                                                 "integer"]},
-                    "publication": {"required": False, "type": "integer"},
-                    "year": {"required": False, "type": "integer"},
-                    "grant": {"required": False, "type": "string"},
+                    "publication": {"required": False, "type": "string"},
+                    "text": {"required": False, "type": "string"},
+                    "url": {"required": False, "type": "string"},
+                    "year": {"required": True, "type": "integer"},
+                    "grant": {"required": True, "type": "string"},
                 },
             },
             "type": "list"
@@ -2150,7 +2420,6 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
-        # TODO: need to handle year vs. begin_year stuff
         "service": {
             "description": "Service that this group member has provided",
             "required": False,
@@ -2166,11 +2435,32 @@ SCHEMAS = {
                               "anyof_type": ["string", "integer"]
                               },
                     "name": {"required": True, "type": "string"},
+                    "role": {"required": False, "type": "string",
+                             "description": "the role played in the activity, e.g., co-chair"},
+                    "notes": {"required": False, "anyof_type": ["string", "list"]},
                     "year": {"required": False, "type": "integer"},
                     "begin_year": {"required": False, "type": "integer"},
+                    "begin_day": {"required": False, "type": "integer"},
+                    "begin_month": {"description": "Use month and year if the service"
+                                             "doesn't extend more than one year."
+                                             "Otherwise use begin_year/month and end_year/month",
+                              "required": False,
+                              "anyof_type": ["string", "integer"]
+                              },
                     "end_year": {"required": False, "type": "integer"},
+                    "end_month": {"description": "Use month and year if the service"
+                                             "doesn't extend more than one year."
+                                             "Otherwise use begin_year and end_year",
+                              "required": False,
+                              "anyof_type": ["string", "integer"]
+                              },
+                    "end_day": {"required": False, "type": "integer"},
                     "other": {"required": False,
                               "anyof_type": ["string", "list"]},
+                    "type": {"required": True, "type": "string",
+                             "description": "profession, department, school, university",
+                             "eallowed": ["profession", "university",
+                                          "school", "department"]},
                 },
             },
             "type": "list",
@@ -2191,27 +2481,47 @@ SCHEMAS = {
         "teaching": {
             "description": "Courses that this group member has taught, if any",
             "required": False,
+            "type": "list",
             "schema": {
                 "type": "dict",
                 "schema": {
                     "course": {"required": True, "type": "string"},
+                    "courseid": {"required": True, "type": "string"},
                     "description": {"required": False, "type": "string"},
                     "end_month": {"required": False,
                                   "anyof_type": ["string", "integer"]},
                     "end_year": {"required": False, "type": "integer"},
+                    "enrollment": {"required": False, "anyof_type": ["integer","string"]},
+                    "evaluation": {
+                        "type": "dict",
+                        "required": False,
+                        "schema": {
+                            "response_rate": {"type": "number", "required": True},
+                            "amount_learned": {"type": "number", "required": True},
+                            "appropriateness_workload": {"type": "number", "required": True},
+                            "course_overall": {"type": "number", "required": True},
+                            "fairness_grading": {"type": "number", "required": True},
+                            "organization": {"type": "number", "required": True},
+                            "classroom_delivery": {"type": "number", "required": True},
+                            "approachability": {"type": "number", "required": True},
+                            "instructor_overall": {"type": "number", "required": True},
+                            "comments": {"type": "list","required": False,
+                                         "description": "student comments"},
+                            },
+                        },
                     "materials": {"required": False, "type": "string"},
                     "month": {"required": False,
                               "anyof_type": ["string", "integer"],
                               },
                     "organization": {"required": True, "type": "string"},
                     "position": {"required": True, "type": "string"},
+                    "semester": {"required": False, "type": "string"},
                     "syllabus": {"required": False, "type": "string"},
                     "video": {"required": False, "type": "string"},
                     "website": {"required": False, "type": "string"},
                     "year": {"required": True, "type": "integer"},
                 },
             },
-            "type": "list",
         },
         "title": {
             "description": "for example, Dr., etc.",
