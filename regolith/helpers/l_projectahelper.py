@@ -81,6 +81,8 @@ class ProjectaListerHelper(SoutHelperBase):
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")
         for projectum in self.gtx["projecta"]:
+            if isinstance(projectum.get('group_members'),str):
+                projectum['group_members'] = [projectum.get('group_members')]
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
             if rc.person:
@@ -88,11 +90,9 @@ class ProjectaListerHelper(SoutHelperBase):
                     rc.person = [rc.person]
                 good_p = []
                 for i in rc.person:
-                    if not projectum.get('group_members'):
-                        continue
-                    if projectum.get('group_members') and i not in projectum.get('group_members'):
-                        continue
-                    else:
+                    if projectum.get('lead') == rc.person:
+                        good_p.append(i)
+                    if projectum.get('group_members') and i in projectum.get('group_members'):
                         good_p.append(i)
                 if len(good_p) == 0:
                     continue
