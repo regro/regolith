@@ -249,7 +249,7 @@ class AppraisalBuilder(LatexBuilderBase):
                                   begin_period, "outreach")
         mego = deepcopy(me)
         lab = filter_facilities([mego],
-                                begin_period, "laboratory")
+                                begin_period, "research")
         mego = deepcopy(me)
         shared = filter_facilities([mego],
                                    begin_period, "shared")
@@ -258,14 +258,14 @@ class AppraisalBuilder(LatexBuilderBase):
                                       begin_period, "other")
         mego = deepcopy(me)
         fac_teaching = filter_facilities([mego],
-                                         begin_period, "fac_teaching")
+                                         begin_period, "teaching")
         mego = deepcopy(me)
         fac_wishlist = filter_facilities([mego],
-                                         begin_period, "fac_wishlist",
+                                         begin_period, "research_wish",
                                          verbose=False)
         mego = deepcopy(me)
         tch_wishlist = filter_facilities([mego],
-                                         begin_period, "tch_wishlist")
+                                         begin_period, "teaching_wish")
         mego = deepcopy(me)
         curric_dev = filter_activities([mego],
                                        begin_period, "teaching")
