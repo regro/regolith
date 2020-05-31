@@ -9,8 +9,6 @@ from regolith.tools import (
     is_before,
     is_since,
     is_between,
-    has_started,
-    has_finished,
     update_schemas,
     merge_collections,
     group,
