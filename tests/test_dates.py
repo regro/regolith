@@ -6,7 +6,9 @@ import pytest
 from regolith.dates import (month_to_str_int,
                             day_to_str_int,
                             find_gaps_overlaps,
-                            get_dates, last_day, is_current, get_due_date)
+                            get_dates, last_day,
+                            is_current, get_due_date,
+                            has_started, has_finished)
 
 
 @pytest.mark.parametrize(
@@ -170,7 +172,34 @@ def test_last_day(year,month,expected):
         ({'begin_day': 1, 'begin_month': 5, 'begin_year': 1950, 'end_day': 2, 'end_month': 5, 'end_year': 3000}, None, True),
         ({'begin_day': 1, 'begin_month': 5, 'begin_year': 3000, 'end_day': 2, 'end_month': 5, 'end_year': 3100}, None, False),
         ({'begin_day': 12, 'begin_month': 6, 'begin_year': 2025, 'end_day': 2, 'end_month': 5, 'end_year': 2030}, date(2026, 3, 3), True),
+        ({'begin_year': 2000, 'end_year': 2010}, None, False)
     ]
 )
 def test_is_current(thing, date, expected):
     assert is_current(thing, date) == expected
+
+
+@pytest.mark.parametrize(
+    "thing,date,expected",
+    [
+        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 1950, 'end_day': 2, 'end_month': 5, 'end_year': 3000}, None, True),
+        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 3000, 'end_day': 2, 'end_month': 5, 'end_year': 3100}, None, False),
+        ({'begin_day': 12, 'begin_month': 6, 'begin_year': 2025, 'end_day': 2, 'end_month': 5, 'end_year': 2030}, date(2026, 3, 3), True),
+        ({'begin_year': 2026}, date(2027, 3, 3), True),
+    ]
+)
+def test_has_started(thing, date, expected):
+    assert has_started(thing, date) == expected
+
+
+@pytest.mark.parametrize(
+    "thing,date,expected",
+    [
+        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 1950, 'end_day': 2, 'end_month': 5, 'end_year': 3000}, None, False),
+        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 3000, 'end_day': 2, 'end_month': 5, 'end_year': 3100}, None, False),
+        ({'begin_day': 12, 'begin_month': 6, 'begin_year': 2020, 'end_day': 2, 'end_month': 5, 'end_year': 2021}, date(2026, 3, 3), True),
+        ({'begin_year': 2026, 'end_year': 2026}, date(2027, 3, 3), True),
+    ]
+)
+def test_has_finished(thing, date, expected):
+    assert has_finished(thing, date) == expected

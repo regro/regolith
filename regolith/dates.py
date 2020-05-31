@@ -267,3 +267,59 @@ def is_current(thing, now=None):
     except:
         raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
     return current
+
+
+def has_started(thing, now=None):
+    """
+    given a thing with dates, returns true if the thing has started
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not it is has started
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing has started and false otherwise
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    started = False
+    try:
+        if dates.get("begin_date") <= now:
+            started = True
+    except:
+        raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
+    return started
+
+
+def has_finished(thing, now=None):
+    """
+    given a thing with dates, returns true if the thing has finished
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not it has finished
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing has finished and false otherwise
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    finished = False
+    try:
+        if dates.get("end_date") < now:
+            finished = True
+    except:
+        raise RuntimeError(f"Cannot find end_date in document:\n {thing}")
+    return finished

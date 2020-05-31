@@ -81,36 +81,6 @@ def test_is_between():
     assert is_between(y1, y3, y2) is False
 
 
-def test_has_started():
-    y1, y2 = 2000, 2900
-    m1, m2 = 1, 12
-    m4, m5 = "Jan", "Dec"
-    d1, d2 = 1, 28
-    assert has_started(y1) is True
-    assert has_started(y2) is False
-    assert has_started(y1, sm=m1) is True
-    assert has_started(y2, sm=m2) is False
-    assert has_started(y1, sm=m4) is True
-    assert has_started(y2, sm=m5) is False
-    assert has_started(y1, sm=m1, sd=d1) is True
-    assert has_started(y2, sm=m2, sd=d2) is False
-
-
-def test_has_finished():
-    y1, y2 = 2000, 2900
-    m1, m2 = 1, 12
-    m4, m5 = "Jan", "Dec"
-    d1, d2 = 1, 28
-    assert has_finished(y1) is True
-    assert has_finished(y2) is False
-    assert has_finished(y1, em=m1) is True
-    assert has_finished(y2, em=m2) is False
-    assert has_finished(y1, em=m4) is True
-    assert has_finished(y2, em=m5) is False
-    assert has_finished(y1, em=m1, ed=d1) is True
-    assert has_finished(y2, em=m2, ed=d2) is False
-
-
 def test_fuzzy_retrieval():
     person = {
         "_id": "scopatz",

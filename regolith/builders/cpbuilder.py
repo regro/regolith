@@ -13,7 +13,6 @@ from regolith.tools import (
     filter_grants,
     fuzzy_retrieval,
     merge_collections,
-    has_started,
 )
 
 

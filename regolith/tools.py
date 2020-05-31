@@ -228,62 +228,6 @@ def is_between(y, sy, by, m=1, d=1, sm=1, sd=1, bm=12, bd=None):
     )
 
 
-def has_started(sy, sm=None, sd=None):
-    """
-    true if today is after the dates given, inclusive
-
-    Parameters
-    ----------
-    sy : int
-       the year to check today against
-    sm : int or str.
-       the month to check today against. Should be integer or in regolith MONTHS.
-       default is 1
-    sd : int.
-       the day to check today against. Default is 1
-
-    Returns
-    -------
-    bool
-    true if today is after dates given
-    """
-    if not sm:
-        sm = 1
-    if not sd:
-        sd = 1
-    s = "{}/{}/{}".format(sd, month_to_int(sm), sy)
-    start = time.mktime(datetime.strptime(s, "%d/%m/%Y").timetuple())
-    return start <= time.time()
-
-
-def has_finished(ey, em=None, ed=None):
-    """
-    true if today is before the dates given, inclusive
-
-    Parameters
-    ----------
-    ey : int
-       end year, the year to check today against
-    em : int or str.
-       end month, the month to check today against. Should be integer or in regolith MONTHS.
-       default is 1
-    ed : int.
-       end-day, the day to check today against. Default is last day of the month
-
-    Returns
-    -------
-    bool
-    true if today is before dates given
-    """
-    if not em:
-        em = 12
-    if not ed:
-        ed = monthrange(ey, month_to_int(em))[1]
-    e = "{}/{}/{}".format(ed, month_to_int(em), ey)
-    end = time.mktime(datetime.strptime(e, "%d/%m/%Y").timetuple())
-    return end <= time.time()
-
-
 def filter_publications(citations, authors, reverse=False, bold=True):
     """Filter publications by the author(s)/editor(s)
 
