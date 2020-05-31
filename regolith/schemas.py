@@ -154,7 +154,7 @@ EXEMPLARS = {
                 {
                     "institution": "University of South Carolina",
                     "name": "Anthony Scopatz",
-                    "position": "PI",
+                    "position": "pi",
                 },
                 {
                     "institution": "University of South Carolina",
@@ -186,7 +186,7 @@ EXEMPLARS = {
                 {
                     "institution": "University of South Carolina",
                     "name": "Anthony Scopatz",
-                    "position": "PI",
+                    "position": "pi",
                 },
                 {
                     "institution": "University of South Carolina",
@@ -223,17 +223,17 @@ EXEMPLARS = {
                 {
                     "institution": "Columbia University",
                     "name": "qdu",
-                    "position": "Co-PI",
+                    "position": "co-pi",
                 },
                 {
                     "institution": "Columbia University",
                     "name": "dhsu",
-                    "position": "Co-PI",
+                    "position": "co-pi",
                 },
                 {
                     "institution": "Columbia University",
                     "name": "Anthony Scopatz",
-                    "position": "PI",
+                    "position": "pi",
                     "subaward_amount": 330000.0,
                 },
             ],
@@ -375,7 +375,7 @@ EXEMPLARS = {
             "unit": "apam"
             },
             {"name": "Heather Stanford",
-             "type": "tenureadhoc",
+             "type": "promotion",
              "year": 2020,
              "month": 3,
              "day": 1,
@@ -392,7 +392,7 @@ EXEMPLARS = {
              "unit": "U Denmark"
              },
             {"name": "Heather Stanford",
-             "type": "university",
+             "type": "promotion",
              "year": 2020,
              "month": 3,
              "day": 1,
@@ -468,7 +468,7 @@ EXEMPLARS = {
                     "PyNE: The Nuclear Engineering Toolkit.",
                     "Website: http://www.ergs.sc.edu/",
                 ],
-                "position": "Assistant Professor",
+                "position": "assistant professor",
                 "position_full": "Assistant Professor, Mechanical Engineering " "Department",
             },
             {
@@ -487,7 +487,8 @@ EXEMPLARS = {
                     "PyNE: The Nuclear Engineering Toolkit.",
                     "Website: https://cnerg.github.io/",
                 ],
-                "position": "Associate Scientist, Engineering Physics " "Department",
+                "position": "associate scientist",
+                "position_full": "Associate Scientist, Engineering Physics " "Department",
             },
             {
                 "begin_day": 1,
@@ -510,8 +511,9 @@ EXEMPLARS = {
                     "file format.",
                     "Website: http://flash.uchicago.edu/site/",
                 ],
-                "position": "Research Scientist, Postdoctoral Scholar",
-                "status": "PI"
+                "position": "post-doctoral scholar",
+                "position_full": "Research Scientist, Postdoctoral Scholar",
+                "status": "pi"
             },
         ],
         "funding": [
@@ -580,7 +582,7 @@ EXEMPLARS = {
                 "enrollment": "tbd",
                 "month": "August",
                 "organization": "University of South Carolina",
-                "position": "Professor",
+                "position": "professor",
                 "semester": "Spring",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
@@ -604,7 +606,7 @@ EXEMPLARS = {
                 },
                 "month": "January",
                 "organization": "University of South Carolina",
-                "position": "Professor",
+                "position": "professor",
                 "syllabus": "https://docs.google.com/document/d"
                             "/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8"
                             "-PxiboYdM/edit?usp=sharing",
@@ -631,7 +633,7 @@ EXEMPLARS = {
                     ]},
                 "month": "August",
                 "organization": "Columbia University",
-                "position": "Professor",
+                "position": "professor",
                 "semester": "Fall",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
@@ -658,7 +660,7 @@ EXEMPLARS = {
                     ]},
                 "month": "August",
                 "organization": "Columbia University",
-                "position": "Professor",
+                "position": "professor",
                 "semester": "Fall",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
@@ -685,7 +687,7 @@ EXEMPLARS = {
                     ]},
                 "month": "Jan",
                 "organization": "Columbia University",
-                "position": "Professor",
+                "position": "professor",
                 "semester": "Spring",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
@@ -712,7 +714,7 @@ EXEMPLARS = {
                     ]},
                 "month": "Jan",
                 "organization": "Columbia University",
-                "position": "Professor",
+                "position": "professor",
                 "semester": "Spring",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
@@ -725,7 +727,7 @@ EXEMPLARS = {
                 "enrollment": 18,
                 "month": "Jan",
                 "organization": "Columbia University",
-                "position": "Professor",
+                "position": "professor",
                 "semester": "Spring",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
@@ -752,7 +754,7 @@ EXEMPLARS = {
                     ]},
                 "month": "August",
                 "organization": "Columbia University",
-                "position": "Professor",
+                "position": "professor",
                 "semester": "Fall",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
@@ -764,7 +766,7 @@ EXEMPLARS = {
                 "description": "This course is an introduction to nuclear " "physics.",
                 "month": "August",
                 "organization": "Columbia University",
-                "position": "Professor",
+                "position": "professor",
                 "semester": "Fall",
                 "syllabus": "https://drive.google.com/open?id"
                             "=0BxUpd34yizZreDBCMEJNY2FUbnc",
@@ -846,7 +848,7 @@ EXEMPLARS = {
                     "PyNE: The Nuclear Engineering Toolkit.",
                     "Website: http://www.ergs.sc.edu/",
                 ],
-                "position": "Assistant Professor, Mechanical Engineering " "Department",
+                "position": "assistant professor",
             },
         ],
         "facilities": [{
@@ -855,22 +857,22 @@ EXEMPLARS = {
             "begin_year": 2015
         },
         {
-            "type": "fac_wishlist",
+            "type": "research_wish",
             "name": "Shared access to wet lab",
             "begin_year": 2015
         },
         {
-            "type": "fac_teaching",
+            "type": "teaching",
             "name": "Courseworks2",
             "begin_year": 2017
             },
         {
-            "type": "tch_wishlist",
+            "type": "teaching_wish",
             "name": "nothing right now",
             "begin_year": 2019
             },
         {
-            "type": "laboratory",
+            "type": "research",
             "name": "I don't have one",
             "begin_year": 2008
             },
@@ -961,7 +963,7 @@ EXEMPLARS = {
                 "notes": "Albert Einstein"
             },
             {
-                "type": "outreach",
+                "type": "profession",
                 "name": "Co-organizer JUAMI",
                 "year": 2017,
                 "month": 12,
@@ -1218,7 +1220,7 @@ EXEMPLARS = {
             ],
             "requester": "Tessemer Guebre",
             "reviewer": "sbillinge",
-            "status": "invited,accepted,declined,downloaded,inprogress,submitted",
+            "status": "submitted",
             "summary": "dynamite proposal",
             "title": "A stunning new way to cure Poverty",
             "year": 2019,
@@ -1295,17 +1297,17 @@ EXEMPLARS = {
                 {
                     "institution": "Columbia Unviersity",
                     "name": "qdu",
-                    "position": "Co-PI",
+                    "position": "co-pi",
                 },
                 {
-                    "institution": "Columbia Unviersity",
+                    "institution": "Columbia University",
                     "name": "dhsu",
-                    "position": "Co-PI",
+                    "position": "co-pi",
                 },
                 {
-                    "institution": "Columbia Unviersity",
+                    "institution": "Columbia University",
                     "name": "sbillinge",
-                    "position": "PI",
+                    "position": "pi",
                     "subaward_amount": 330000.0,
                 },
             ],
@@ -2062,7 +2064,7 @@ SCHEMAS = {
                              "description": "name of department or school etc."},
                     "type": {"required": False, "type": "string",
                              "description": "type of committee, department, school, university, external",
-                             "eallowed": ["department", "school", "university", "external"]},
+                             "eallowed": ["phdoral", "phddefense", "phdproposal","promotion"]},
                     "level": {
                         "required": True,
                         "type": "string",
@@ -2171,6 +2173,7 @@ SCHEMAS = {
                     },
                     "status": {"required": False, "type": "string", "eallowed": [
                         "pi",
+                        "adjunct",
                         "high-school",
                         "undergrad",
                         "ms",
