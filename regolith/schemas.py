@@ -96,6 +96,8 @@ EXEMPLARS = {
         "name": "Anthony B Friend",
         "notes": "The guy I meet for coffee sometimes",
         "title": "Mr.",
+        "month": 1,
+        "year": 2020,
     },
     "courses": {
         "_id": "EMCH-552-2016-F",
