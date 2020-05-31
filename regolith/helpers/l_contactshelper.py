@@ -7,7 +7,6 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from pathlib import Path
 #from regolith.dates import is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
