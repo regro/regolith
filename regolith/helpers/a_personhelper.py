@@ -21,17 +21,22 @@ def subparser(subpi):
                        default=None)
     subpi.add_argument("name", help="Full, canonical name for the person",
                        default=None)
-    subpi.add_argument("bio", help="short biographical text",
-                       default=None)
     subpi.add_argument("degree",
                        default=None)
     subpi.add_argument("institution",
                        default=None)
-    subpi.add_argument("begin_year_education", help="Begin year of education degree",
+    subpi.add_argument("begin_year_ed", help="Begin year of education degree",
                        default=None)
-    subpi.add_argument("aka", help="list of aliases (also-known-as)", nargs="+",
+    subpi.add_argument("--active", help="If the person is an active member, default True.",
                        default=None)
-    # subpi.add_argument("n")
+    subpi.add_argument("--bio", help="short biographical text",
+                       default=None)
+    subpi.add_argument("--aka", help="list of aliases (also-known-as)", nargs="+",
+                       default=[])
+    subpi.add_argument("--date",
+                       help="The begin_date for the member of the group Defaults to "
+                            "today's date."
+                       )
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -64,10 +69,10 @@ class PersonAdderHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        # if not rc.date:
-        #     now = dt.date.today()
-        # else:
-        #     now = date_parser.parse(rc.date).date()
+        if not rc.date:
+            now = dt.date.today()
+        else:
+            now = date_parser.parse(rc.date).date()
         key = rc.id
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
@@ -77,10 +82,24 @@ class PersonAdderHelper(DbHelperBase):
         else:
             pdoc = {}
         pdoc.update({"_id": key})
-        pdoc.update({"aka": rc.aka})
-        pdoc.update({"bio": rc.bio})
+
+        if not rc.active:
+            pdoc.update({"active": "True"})
+        else:
+            pdoc.update({"active": rc.active})
+
+        if not rc.aka:
+            pdoc.update({"aka":[]})
+        else:
+            pdoc.update({"aka": rc.aka})
+
+        if not rc.bio:
+            pdoc.update({"bio": ''})
+        else:
+            pdoc.update({"bio": rc.bio})
+
         pdoc.update({"avatar": "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" })
-        pdoc.update({"education":[{"begin_year": rc.begin_year_education},
+        pdoc.update({"education":[{"begin_year": rc.begin_year_ed},
                                   {"degree": rc.degree},
                                   {"institution": rc.institution}
                                 ]})
