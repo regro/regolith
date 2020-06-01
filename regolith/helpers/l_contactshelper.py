@@ -20,11 +20,11 @@ TARGET_COLL = "contacts"
 HELPER_TARGET = "l_contacts"
 
 def subparser(subpi):
-    subpi.add_argument("-n", "--name", help='finds contacts based off a list of names or name fragments', nargs = '+')
-    subpi.add_argument("-i", "--inst", help='finds contacts based off an institution or an institution fragment')
-    subpi.add_argument("-d", "--date", help='finds contacts based off a date in ISO format (YYYY-MM-DD) with a default range of 4 months centered around the date (d +/- 2 month)')
-    subpi.add_argument("-r", "--range", help='optional argument that sets range (in months) centered around date d (d +/- r/2)')
-    subpi.add_argument("-no", "--notes", help='finds contacts based off notes or miscellaneous information about the contact', nargs = '+')
+    subpi.add_argument("-n", "--name", help='list of names or name fragments (multiple arguments allowed) to use to find contacts', nargs = '+')
+    subpi.add_argument("-i", "--inst", help='institution or an institution fragment (single argument only) to use to find contacts')
+    subpi.add_argument("-d", "--date", help='approximate date in ISO format (YYYY-MM-DD) corresponding to when the contact was entered in the database. Comes with a default range of 4 months centered around the date; change range using --range argument')
+    subpi.add_argument("-r", "--range", help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2)')
+    subpi.add_argument("-o", "--notes", help='use list of notes or miscellaneous information to use (multiple arguments allowed) to find contacts', nargs = '+')
     return subpi
 
 def is_current(thing, now=None):
@@ -54,10 +54,7 @@ def is_current(thing, now=None):
     return current
 
 class ContactsListerHelper(SoutHelperBase):
-    """Helper for listing upcoming (and past) projectum milestones.
-
-       Projecta are small bite-sized project quanta that typically will result in
-       one manuscript.
+    """Helper for finding and listing contacts from the contacts.yml file
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
@@ -100,37 +97,35 @@ class ContactsListerHelper(SoutHelperBase):
                 list_add = False
                 for nam in rc.name:
                      if nam.casefold() in contact.get('name').casefold():
-                        contacts.append(contact)
                         list_add = True
-                if list_add:
+                        break
+                if not list_add:
                     continue
-            if rc.inst and (rc.inst.casefold() in contact.get('institution').casefold()):
-                contacts.append(contact)
-                continue
+            if rc.inst:
+                if not (rc.inst.casefold() in contact.get('institution').casefold()):
+                    continue
             if rc.date:
                 if rc.range:
                     temp_dict = {"begin_date":temp_dat - dateutil.relativedelta.relativedelta(months=int(rc.range)), "end_date":temp_dat + dateutil.relativedelta.relativedelta(months=int(rc.range))} 
                 else:
                     temp_dict = {"begin_date":temp_dat - dateutil.relativedelta.relativedelta(months=2), "end_date":temp_dat + dateutil.relativedelta.relativedelta(months=2)}                
-                if is_current(temp_dict, now=temp_dat):
-                    contacts.append(contact)
+                if not is_current(temp_dict, now=temp_dat):
                     continue
             if rc.notes:
                 list_add = False
                 for note in rc.notes:
                     if isinstance(contact.get('notes'),str):
                         if note.casefold() in contact.get('notes').casefold():
-                            contacts.append(contact)
                             list_add = True
                     elif isinstance(contact.get('notes'),list):
                         for no in contact.get('notes'):
                              if note.casefold() in no.casefold():
-                                 contacts.append(contact)
                                  list_add = True
+                if not list_add:
+                    continue
+            contacts.append(contact)
         for con in contacts:
             if con.get('email'):
-                print(f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email')}")
-            else:
-                print(f"name: {con.get('name')}, institution: {con.get('institution')}")                
+                print(f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email','missing')}")
         return
 
