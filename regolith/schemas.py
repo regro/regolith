@@ -167,19 +167,14 @@ EXEMPLARS = {
             "_id": "SymPy-2.0",
             "amount": 3000.0,
             "alias": "sym2.0",
-            "begin_day": 1,
-            "begin_month": "June",
-            "begin_year": 2019,
             "call_for_proposals": "https://groups.google.com/d/msg"
                                   "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
-            "end_day": 31,
-            "end_month": "December",
-            "end_year": 2030,
             "funder": "NumFOCUS",
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
                          "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
                          "=sharing",
             "program": "Small Development Grants",
+            "proposal_id": "Small Development Grants",
             "team": [
                 {
                     "institution": "University of South Carolina",
@@ -940,7 +935,7 @@ EXEMPLARS = {
         ],
         "payee": "scopatz",
         "project": "Cyclus",
-        "overall_purpose": "testing the database",
+        "overall_purpose": "testing the databallectionsse",
     },
     "beamplan": {
         '_id': "test",
