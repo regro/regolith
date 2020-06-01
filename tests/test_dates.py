@@ -10,6 +10,8 @@ from regolith.dates import (month_to_str_int,
                             is_current, get_due_date,
                             has_started, has_finished)
 
+TEST_DATE = date(2019, 6, 15)
+
 
 @pytest.mark.parametrize(
     "input,expected",
@@ -23,6 +25,7 @@ from regolith.dates import (month_to_str_int,
 def test_month_to_str(input, expected):
     assert month_to_str_int(input) == expected
 
+
 @pytest.mark.parametrize(
     "input,expected",
     [
@@ -34,6 +37,7 @@ def test_month_to_str(input, expected):
 def test_get_due_date(input, expected):
     with pytest.raises(Exception):
         assert get_due_date(input) == expected
+
 
 @pytest.mark.parametrize(
     "input,expected",
@@ -50,34 +54,35 @@ def test_day_to_str(input, expected):
     "input,flag,expected",
     [
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 2, 1), date(2020, 2, 5))], False, True),
+          (date(2020, 2, 1), date(2020, 2, 5))], False, True),
         ([(date(2020, 2, 1), date(2020, 2, 5)),
-         (date(2020, 1, 1), date(2020, 1, 31))], False, True),
+          (date(2020, 1, 1), date(2020, 1, 31))], False, True),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 2, 2), date(2020, 2, 5))], False, False),
+          (date(2020, 2, 2), date(2020, 2, 5))], False, False),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 1, 31), date(2020, 2, 5))], False, False),
+          (date(2020, 1, 31), date(2020, 2, 5))], False, False),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 1, 31), date(2020, 2, 5))], True, True),
+          (date(2020, 1, 31), date(2020, 2, 5))], True, True),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 2, 1), date(2020, 2, 5)),
-         (date(2020, 2, 6), date(2020, 2, 7))], False, True),
+          (date(2020, 2, 1), date(2020, 2, 5)),
+          (date(2020, 2, 6), date(2020, 2, 7))], False, True),
         ([(date(2020, 1, 1), date(2020, 1, 31)),
-         (date(2020, 2, 1), date(2020, 2, 5)),
-         (date(2020, 2, 7), date(2020, 2, 7))], False, False)
+          (date(2020, 2, 1), date(2020, 2, 5)),
+          (date(2020, 2, 7), date(2020, 2, 7))], False, False)
     ],
 )
 def test_find_gaps_overlaps(input, flag, expected):
     actual = find_gaps_overlaps(input, overlaps_ok=flag)
     assert actual == expected
 
+
 @pytest.mark.parametrize(
     "input,expected",
     [
         ({'year': 2020}, {'begin_date': datetime.date(2020, 1, 1),
-                                'end_date': datetime.date(2020, 12, 31),
-                                'date': None
-                               }
+                          'end_date': datetime.date(2020, 12, 31),
+                          'date': None
+                          }
          ),
         ({'year': 2020, 'month': 9},
          {'begin_date': datetime.date(2020, 9, 1),
@@ -163,43 +168,95 @@ def test_get_dates(input, expected):
         (2020, 'Feb', 29)
     ]
 )
-def test_last_day(year,month,expected):
-    assert last_day(year,month) == expected
-
-@pytest.mark.parametrize(
-    "thing,date,expected",
-    [
-        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 1950, 'end_day': 2, 'end_month': 5, 'end_year': 3000}, None, True),
-        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 3000, 'end_day': 2, 'end_month': 5, 'end_year': 3100}, None, False),
-        ({'begin_day': 12, 'begin_month': 6, 'begin_year': 2025, 'end_day': 2, 'end_month': 5, 'end_year': 2030}, date(2026, 3, 3), True),
-        ({'begin_year': 2000, 'end_year': 2010}, None, False)
-    ]
-)
-def test_is_current(thing, date, expected):
-    assert is_current(thing, date) == expected
+def test_last_day(year, month, expected):
+    assert last_day(year, month) == expected
 
 
 @pytest.mark.parametrize(
-    "thing,date,expected",
+    "thing,expected",
     [
-        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 1950, 'end_day': 2, 'end_month': 5, 'end_year': 3000}, None, True),
-        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 3000, 'end_day': 2, 'end_month': 5, 'end_year': 3100}, None, False),
-        ({'begin_day': 12, 'begin_month': 6, 'begin_year': 2025, 'end_day': 2, 'end_month': 5, 'end_year': 2030}, date(2026, 3, 3), True),
-        ({'begin_year': 2026}, date(2027, 3, 3), True),
+        ({"begin_date": '2020-01-01', "end_date": '2020-12-31'}, False),
+        ({"begin_date": '2019-01-01', "end_date": '2020-12-31'}, True),
+        ({"begin_date": '2019-01-01'}, True),
+        ({"begin_year": 2018}, True),
+        ({"begin_year": 2019}, True),
+        ({"begin_year": 2020}, False),
+        ({"begin_year": 2019, "begin_month": "Apr"}, True),
+        ({"begin_year": 2019, "begin_month": "Jun"}, True),
+        ({"begin_year": 2019, "begin_month": "Jul"}, False),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 14}, True),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 15}, True),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 16}, False),
+        ({"year": 2018}, False),
+        ({"year": 2019}, True),
+        ({"year": 2020}, False),
+        ({"year": 2019, "month": "Apr"}, False),
+        ({"year": 2019, "month": "Jun"}, True),
+        ({"year": 2019, "month": "Jul"}, False),
+        ({"year": 2019, "month": "Jun", "day": 14}, False),
+        ({"year": 2019, "month": "Jun", "day": 15}, True),
+        ({"year": 2019, "month": "Jun", "day": 16}, False),
     ]
 )
-def test_has_started(thing, date, expected):
-    assert has_started(thing, date) == expected
+def test_is_current(thing, expected, now=TEST_DATE):
+    assert is_current(thing, now=now) == expected
 
 
 @pytest.mark.parametrize(
-    "thing,date,expected",
+    "thing,expected",
     [
-        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 1950, 'end_day': 2, 'end_month': 5, 'end_year': 3000}, None, False),
-        ({'begin_day': 1, 'begin_month': 5, 'begin_year': 3000, 'end_day': 2, 'end_month': 5, 'end_year': 3100}, None, False),
-        ({'begin_day': 12, 'begin_month': 6, 'begin_year': 2020, 'end_day': 2, 'end_month': 5, 'end_year': 2021}, date(2026, 3, 3), True),
-        ({'begin_year': 2026, 'end_year': 2026}, date(2027, 3, 3), True),
+        ({"begin_date": '2020-01-01', "end_date": '2020-12-31'}, False),
+        ({"begin_date": '2019-01-01', "end_date": '2020-12-31'}, True),
+        ({"begin_date": '2019-01-01'}, True),
+        ({"begin_year": 2018}, True),
+        ({"begin_year": 2019}, True),
+        ({"begin_year": 2020}, False),
+        ({"begin_year": 2019, "begin_month": "Apr"}, True),
+        ({"begin_year": 2019, "begin_month": "Jun"}, True),
+        ({"begin_year": 2019, "begin_month": "Jul"}, False),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 14}, True),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 15}, True),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 16}, False),
+        ({"year": 2018}, True),
+        ({"year": 2019}, True),
+        ({"year": 2020}, False),
+        ({"year": 2019, "month": "Apr"}, True),
+        ({"year": 2019, "month": "Jun"}, True),
+        ({"year": 2019, "month": "Jul"}, False),
+        ({"year": 2019, "month": "Jun", "day": 14}, True),
+        ({"year": 2019, "month": "Jun", "day": 15}, True),
+        ({"year": 2019, "month": "Jun", "day": 16}, False),
     ]
 )
-def test_has_finished(thing, date, expected):
-    assert has_finished(thing, date) == expected
+def test_has_started(thing, expected, now=TEST_DATE):
+    assert has_started(thing, now=now) == expected
+
+
+@pytest.mark.parametrize(
+    "thing,expected",
+    [
+        ({"begin_date": '2020-01-01', "end_date": '2020-12-31'}, False),
+        ({"begin_date": '2019-01-01', "end_date": '2019-06-15'}, False),
+        ({"begin_date": '2019-01-01'}, False),
+        ({"begin_year": 2018}, False),
+        ({"begin_year": 2019}, False),
+        ({"begin_year": 2020}, False),
+        ({"begin_year": 2019, "begin_month": "Apr"}, False),
+        ({"begin_year": 2019, "begin_month": "Jun"}, False),
+        ({"begin_year": 2019, "begin_month": "Jul"}, False),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 14}, False),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 15}, False),
+        ({"begin_year": 2019, "begin_month": "Jun", "begin_day": 16}, False),
+        ({"year": 2018}, True),
+        ({"year": 2019}, False),
+        ({"year": 2020}, False),
+        ({"year": 2019, "month": "Apr"}, True),
+        ({"year": 2019, "month": "Jun"}, False),
+        ({"year": 2019, "month": "Jul"}, False),
+        ({"year": 2019, "month": "Jun", "day": 14}, True),
+        ({"year": 2019, "month": "Jun", "day": 15}, False),
+        ({"year": 2019, "month": "Jun", "day": 16}, False),
+    ]
+)
+def test_has_finished(thing, expected, now=TEST_DATE):
+    assert has_finished(thing, now=now) == expected

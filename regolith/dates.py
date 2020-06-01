@@ -261,8 +261,10 @@ def is_current(thing, now=None):
         now = datetime.date.today()
     dates = get_dates(thing)
     current = False
+    if not dates.get("end_date"):
+        dates["end_date"] = datetime.date(5000, 12, 31)
     try:
-        if dates.get("begin_date") <= now <= dates.get("end_date", datetime.date(5000, 12, 31)):
+        if dates.get("begin_date") <= now <= dates.get("end_date"):
             current = True
     except:
         raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
@@ -317,9 +319,8 @@ def has_finished(thing, now=None):
         now = datetime.date.today()
     dates = get_dates(thing)
     finished = False
-    try:
-        if dates.get("end_date") < now:
-            finished = True
-    except:
-        raise RuntimeError(f"Cannot find end_date in document:\n {thing}")
+    if not dates.get("end_date"):
+        dates["end_date"] = datetime.date(5000, 12, 31)
+    if dates.get("end_date") < now:
+        finished = True
     return finished
