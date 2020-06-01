@@ -34,45 +34,51 @@ def subparser(subpi):
     subpi.add_argument("-a", "--authors",
                        help="Other investigator names"
                        )
-    subpi.add_argument("--begin_date", nargs="+",
-                       help="The start date for the proposed grant in format YYYY-MM-DD."
+    subpi.add_argument("--begin_day", nargs="+",
+                       help="The start day for the proposed grant in format YYYY-MM-DD."
+                       )
+    subpi.add_argument("--begin_month", nargs="+",
+                       help="The start month for the proposed grant in format YYYY-MM-DD."
+                       )
+    subpi.add_argument("--begin_year", nargs="+",
+                       help="The start year for the proposed grant in format YYYY-MM-DD."
                        )
     subpi.add_argument("--end_date", nargs="+",
                        help="The end date for the proposed grant in format YYYY-MM-DD."
                        )
-    subpi.add_argument("--call", "--call_for_proposals", nargs="+",
+    subpi.add_argument("--call_for_proposals", nargs="+",
                        help="Url for call for proposals"
                        )
-    subpi.add_argument("-cpp", "--cpp_info", nargs="+",
+    subpi.add_argument("--cpp_info", nargs="+",
                        help="Extra information needed for building current and"
                             "pending form"
                        )
-    subpi.add_argument("-c", "--currency"
+    subpi.add_argument("-c", "--currency",
                        help="Currency in which amount is specified."
                             " Typically $ or USD"
                        )
-    subpi.add_argument("--submitted_date"
+    subpi.add_argument("--submitted_date",
                        help="Day on which the proposal is submitted in format YYYY-MM-DD"
                        )
     subpi.add_argument("--due_date", nargs="+",
                        help="The due date for the proposal in format YYYY-MM-DD."
                        )
-    subpi.add_argument("-d", "--duration"
+    subpi.add_argument("-d", "--duration",
                        help="Duration of proposal in years"
                        )
-    subpi.add_argument("--funder", nargs="+"
+    subpi.add_argument("--funder", nargs="+",
                        help="Who funds the proposal. As funder in grants"
                        )
-    subpi.add_argument("--full", nargs="+"
+    subpi.add_argument("--full", nargs="+",
                        help="Full body of the proposal"
                        )
-    subpi.add_argument("-n", "--notes", nargs="+"
+    subpi.add_argument("-n", "--notes", nargs="+",
                        help="Anything to note"
                        )
-    subpi.add_argument("--pi", "--principal_investigator", nargs="+"
+    subpi.add_argument("--pi", "--principal_investigator", nargs="+",
                        help="Name of principal investigator"
                        )
-    subpi.add_argument("--pre", nargs="+"
+    subpi.add_argument("--pre", nargs="+",
                        help="Information about pre-posal"
                        )
     subpi.add_argument("-s", "--status",
@@ -84,17 +90,16 @@ def subparser(subpi):
     subpi.add_argument("-t", "--title",
                         help="Actual title of the proposal"
                        )
-    subpi.add_argument("--title_short", nargs="+"
+    subpi.add_argument("--title_short", nargs="+",
                         help="Short title of the proposal"
                        )
     return subpi
 
 
-class ProjectumAdderHelper(DbHelperBase):
-    """Helper for adding a projectum to the projecta collection.
+class ProposalAdderHelper(DbHelperBase):
+    """Helper for adding a proposal to the proposals collection.
 
-       Projecta are small bite-sized project quanta that typically will result in
-       one manuscript.
+       Proposals are...
     """
     # btype must be the same as helper target in helper.py
     btype = "a_proposal"
@@ -119,10 +124,10 @@ class ProjectumAdderHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        if not rc.date:
+        if not rc.submitted_date:
             now = dt.date.today()
         else:
-            now = date_parser.parse(rc.date).date()
+            now = date_parser.parse(rc.submitted_date).date()
         key = f"{str(now.year)[2:]}{rc.lead[:2]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
@@ -132,45 +137,63 @@ class ProjectumAdderHelper(DbHelperBase):
                 "This entry appears to already exist in the collection")
         else:
             pdoc = {}
-
+        pdoc.update({'_id': key})
+        if rc.amount:
+            pdoc.update({'amount': rc.amount})
+        else:
+            pdoc.update({'amount': 'tbd'})
+        if rc.authors:
+            if isinstance(rc.authors, str):
+                pdoc.update({'authors': [rc.authors]})
+            else:
+                pdoc.update({'authors': rc.authors})
+        else:
+            pdoc.update({'authors': 'tbd'})
         pdoc.update({
-            'begin_date': now,
-            'log_url': '',
-            'name': rc.name,
-            'pi_id': rc.pi_id,
-            'lead': rc.lead,
+            'begin_day': rc.begin_day,
+            'begin_month': rc.begin_month,
+            'begin_year': rc.begin_year,
+            'call_for_proposals': rc.call_for_proposals,
+            # 'cpp_info':
         })
-        if rc.lead is "tbd":
-            pdoc.update({
-                'status': 'proposed'
-            })
+        if rc.currency:
+            pdoc.update({'currency': rc.currency})
         else:
-            pdoc.update({
-                'status': 'started'
-            })
+            pdoc.update({'currency': 'USD'})
+        pdoc.update({'day': now.day
+                     'due_date': rc.due_date
+                     })
+        if rc.duration:
+            pdoc.update('duration': rc.duration)
+        else:
+            pdoc.update({'duration': 'tbd'})
+        pdoc.update({
+            'end_day': rc.end_day,
+            'end_month': rc.end_month,
+            'end_year': rc.end_year,
+            'funder': rc.funder,
+            'full': rc.full
+            'month': now.month # convert numeric to string
+            'notes': rc.notes
+        })
+        if rc.pi:
+            pdoc.update({'pi': rc.pi})
+        else:
+            pdoc.update({'pi': 'tbd'})
+        if rc.status:
+            pdoc.update({'status': rc.status})
+        else:
+            pdoc.update({'status': 'tbd'})
+        # pdoc.update({'team':})
+        if rc.title:
+            pdoc.update({'title': rc.title})
+        else:
+            pdoc.update({'title': 'tbd'})
+        pdoc.update({'title_short': rc.title_short
+                     'year': now.year
+                     })
 
-        if rc.description:
-            pdoc.update({
-                'description': rc.description,
-            })
-        if rc.grants:
-            if isinstance(rc.grants, str):
-                rc.grants = [rc.grants]
-            pdoc.update({'grants': rc.grants})
-        else:
-            pdoc.update({'grants': ["tbd"]})
-        if rc.group_members:
-            if isinstance(rc.group_members, str):
-                rc.group_members = [rc.group_members]
-            pdoc.update({'group_members': rc.group_members})
-        else:
-            pdoc.update({'group_members': []})
-        if rc.collaborators:
-            if isinstance(rc.collaborators, str):
-                rc.collaborators = [rc.collaborators]
-            pdoc.update({
-                'collaborators': rc.collaborators,
-            })
+
         pdoc.update({"_id": key})
         pdoc.update({"deliverable": {
             "due_date": now + relativedelta(years=1),
@@ -192,14 +215,6 @@ class ProjectumAdderHelper(DbHelperBase):
             "objective": "introduce project to the lead",
             "status": "proposed"
         }})
-
-        secondm = {'due_date': now + relativedelta(days=21),
-                   'name': 'Project lead presentation',
-                   'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
-                   'audience': ['lead', 'pi', 'group_members'],
-                   'status': 'proposed'
-                   }
-        pdoc.update({"milestones": [secondm]})
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
