@@ -1,4 +1,4 @@
-mypropsal:
+98_mypropsal:
   amount: 1000000.0,
   authors:
     - Anthony Scopatz
@@ -33,7 +33,7 @@ mypropsal:
   status: submitted
   title: A very fine proposal indeed
   year: 1999
-dmref15:
+15_dmref15:
   amount: 982785.0,
   authors:
     - qdu
