@@ -92,7 +92,7 @@ class ProjectumAdderHelper(DbHelperBase):
         if not rc.due_date:
             due_date = now + relativedelta(years=1)
         else:
-            due_date = rc.due_date
+            due_date = date_parser.parse(rc.due_date).date()
         key = f"{str(now.year)[2:]}{rc.lead[:2]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
