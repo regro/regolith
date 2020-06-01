@@ -35,7 +35,11 @@ helper_map = [
     (["helper", "l_grants", "-c", "-d", "2020-05-25"],
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
      ),
-
+    (["helper", "a_person", "aeinstein", "Albert Einstein",
+      "Theoretical physicist who developed the theory of relativity",
+      'PhD', 'uzurich', '1905',"A. Einstein", "Einstein"],
+       "aeinstein has been added in person\n"
+     ),
 ]
 
 
