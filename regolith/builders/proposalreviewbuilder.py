@@ -57,6 +57,8 @@ class PropRevBuilder(LatexBuilderBase):
             institution_names = [i["name"] if i else
                                 j for i,j in zip(instns,
                                                   rev.get("institutions"))]
+            if isinstance(rev["freewrite"], str):
+                rev["freewrite"] = [rev["freewrite"]]
 
 
             self.render(

@@ -31,25 +31,25 @@ Scientific and Technical merit:
 {% endfor -%}
 {% endif %}
 {% if agency.lower() == "nsf"%}
-{% if len(creativity_originality) > 0 %}
-Creativity and Originality:
-{%- for thing in creativity_originality %}
+ {% if len(creativity_originality) > 0 %}
+ Creativity and Originality:
+ {%- for thing in creativity_originality %}
   - {{ thing -}}
-{% endfor %}
-{% endif %}
+ {% endfor %}
+ {% endif %}
 {% endif %}
 {% if agency.lower() == "doe"%}
 
 Appropriateness of the approach:
-{%- for thing in appropriateness %}
+ {%- for thing in appropriateness %}
   - {{ thing -}}
-{% endfor %}
+ {% endfor %}
 {% endif %}
-{%- if agency.lower() == "nsf"%}
+ {%- if agency.lower() == "nsf"%}
   Appropriateness of the plan:
-{%- for thing in plan_good %}
+ {%- for thing in plan_good %}
   - {{ thing -}}
-{% endfor %}
+ {% endfor %}
 {% endif %}
 {% if agency.lower() == "doe"%}
 Competency of the team and adequacy of resources:
@@ -103,7 +103,9 @@ Broader Impacts:
 {% endif %}
 {% endif %}
 
-{{ freewrite }}
+{% for item in freewrite %}
+{{ item }}
+{% endfor %}
 
 In Summary:
 {{ summary }}

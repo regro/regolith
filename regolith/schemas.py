@@ -9,7 +9,7 @@ from .sorters import POSITION_LEVELS
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 
 ACTIVITIES_TYPE = ["teaching", "research"]
-AGENCIES = ["nsf", "doe"]
+AGENCIES = ["nsf", "doe", "other"]
 APPOINTMENTS_TYPE = ["gra", "ss", "pd", "ug"]
 COMMITTEES_TYPE = ["phdoral", "phddefense", "phdproposal", "promotion"]
 COMMITTEES_LEVEL = ["department", "school", "university", "external"]
@@ -3944,7 +3944,7 @@ SCHEMAS = {
             "type": "list",
         },
         "agency": {
-            "description": "currently nsf or doe",
+            "description": "currently nsf, doe or other",
             "type": "string",
             "eallowed": AGENCIES,
         },
