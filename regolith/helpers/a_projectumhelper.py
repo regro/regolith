@@ -50,6 +50,9 @@ def subparser(subpi):
     subpi.add_argument("-g", "--grants", nargs="+",
                        help="grant or (occasionally) list of grants that support this work"
                        )
+    subpi.add_argument("-u", "--due_date",
+                       help="proposed due date for the deliverable"
+                       )
     return subpi
 
 
@@ -86,6 +89,10 @@ class ProjectumAdderHelper(DbHelperBase):
             now = dt.date.today()
         else:
             now = date_parser.parse(rc.date).date()
+        if not rc.due_date:
+            due_date = now + relativedelta(years=1)
+        else:
+            due_date = date_parser.parse(rc.due_date).date()
         key = f"{str(now.year)[2:]}{rc.lead[:2]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
@@ -136,7 +143,7 @@ class ProjectumAdderHelper(DbHelperBase):
             })
         pdoc.update({"_id": key})
         pdoc.update({"deliverable": {
-            "due_date": now + relativedelta(years=1),
+            "due_date": due_date,
             "audience": ["beginning grad in chemistry"],
             "success_def": "audience is happy",
             "scope": [

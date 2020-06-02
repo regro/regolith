@@ -168,7 +168,7 @@ EXEMPLARS = {
             "amount": 3000.0,
             "alias": "sym2.0",
             "begin_day": 1,
-            "begin_month": "June",
+            "begin_month": 6,
             "begin_year": 2019,
             "call_for_proposals": "https://groups.google.com/d/msg"
                                   "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
@@ -661,7 +661,6 @@ EXEMPLARS = {
                   'audience': ['lead', 'pi', 'group_members'],
                   'status': 'proposed'
                   }],
-        "log_url": "https://path_to_gdrive_document",
         "name": "First Projectum",
         "pi_id": "scopatz",
         "status": "proposed"
@@ -940,7 +939,7 @@ EXEMPLARS = {
         ],
         "payee": "scopatz",
         "project": "Cyclus",
-        "overall_purpose": "testing the database",
+        "overall_purpose": "testing the databallectionsse",
     },
     "beamplan": {
         '_id': "test",
@@ -1232,12 +1231,12 @@ SCHEMAS = {
         },
         "begin_month": {
             "description": "start month of the grant",
-            "required": True,
+            "required": False,
             "anyof_type": ["string", "integer"],
         },
         "begin_year": {
             "description": "start year of the grant",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
         "benefit_of_collaboration": {
@@ -1265,7 +1264,7 @@ SCHEMAS = {
         },
         "end_year": {
             "description": "end year of the grant",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
         "funder": {
