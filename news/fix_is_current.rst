@@ -1,5 +1,5 @@
 **Added:**
-    * New date functions to dates.py
+    * New date functions to dates.py that utilize Python's datetime module
 
 **Changed:** None
 
