@@ -180,7 +180,6 @@ EXEMPLARS = {
                          "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
                          "=sharing",
             "program": "Small Development Grants",
-            "proposal_id": "Small Development Grants",
             "team": [
                 {
                     "institution": "University of South Carolina",
@@ -662,7 +661,6 @@ EXEMPLARS = {
                   'audience': ['lead', 'pi', 'group_members'],
                   'status': 'proposed'
                   }],
-        "log_url": "https://path_to_gdrive_document",
         "name": "First Projectum",
         "pi_id": "scopatz",
         "status": "proposed"
@@ -1233,12 +1231,12 @@ SCHEMAS = {
         },
         "begin_month": {
             "description": "start month of the grant",
-            "required": True,
+            "required": False,
             "anyof_type": ["string", "integer"],
         },
         "begin_year": {
             "description": "start year of the grant",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
         "benefit_of_collaboration": {
@@ -1266,7 +1264,7 @@ SCHEMAS = {
         },
         "end_year": {
             "description": "end year of the grant",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
         "funder": {
