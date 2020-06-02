@@ -36,10 +36,8 @@ def subparser(subpi):
 
 
 class MembersListerHelper(SoutHelperBase):
-    """Helper for listing upcoming (and past) projectum milestones.
+    """Helper for listing group members.
 
-       Projecta are small bite-sized project quanta that typically will result in
-       one manuscript.
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
@@ -76,12 +74,13 @@ class MembersListerHelper(SoutHelperBase):
         rc = self.rc
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
-        if rc.lead and rc.person:
-            raise RuntimeError(f"please specify either lead or person, not both")
         for person in self.gtx["people"]:
-            people.append(person.get("name"))
-        people.sort()
+            people.append(person)
+        #people.sort()
         for i in people:
-            print(i)
+            if rc.verbose:
+                print("{} {}".format(i.get('name'), i.get('position')))
+            else:
+                print("{}".format(i.get('name')))
         return
 
