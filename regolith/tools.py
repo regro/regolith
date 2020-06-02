@@ -119,49 +119,6 @@ def month_and_year(m=None, y=None):
     return "{0} {1}".format(SHORT_MONTH_NAMES[m], y)
 
 
-def is_between(y, sy, by, m=1, d=1, sm=1, sd=1, bm=12, bd=None):
-    """
-    tests whether a date is on or between two other dates
-
-    returns true if the target date is between the since date and the before
-    date, inclusive.
-
-    Parameters
-    ----------
-    y : int
-      the year to be tested
-    sy : int
-      the since year
-    by : int
-      the before year
-    m : int or str
-      the month to be tested. Optional, defaults to Jan
-    d : int
-      the day to be tested.  Defaults to 1
-    sm : int or str
-      the since month.  Optional, defaults to Jan
-    bm : int or str
-      the before month.  Optional, defaults to Dec
-    sd: int
-      the since day.  Optional, defaults to 1
-    bd: int
-      the before day.  Optional, defaults to 28
-
-    Returns
-    -------
-    True if the target date is between the since date and the before date,
-    inclusive (i.e., returns true if the target date is the same as either the
-    since date or the before date)
-
-    """
-
-    if not bd:
-        bd = monthrange(by, month_to_int(bm))[1]
-    return is_since(y, sy, m=m, d=d, sm=sm, sd=sd) and is_before(
-        y, by, m=m, d=d, bm=bm, bd=bd
-    )
-
-
 def filter_publications(citations, authors, reverse=False, bold=True):
     """Filter publications by the author(s)/editor(s)
 

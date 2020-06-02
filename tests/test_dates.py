@@ -9,10 +9,11 @@ from regolith.dates import (month_to_str_int,
                             get_dates, last_day,
                             is_current, get_due_date,
                             has_started, has_finished,
-                            is_before, is_after)
+                            is_before, is_after, is_between)
 
 TEST_DATE = date(2019, 6, 15)
-
+TEST_START_DATE = date(2019, 1, 1)
+TEST_END_DATE = date(2019, 2, 5)
 
 @pytest.mark.parametrize(
     "input,expected",
@@ -289,3 +290,17 @@ def test_is_before(thing, expected, now=TEST_DATE):
 )
 def test_is_after(thing, expected, now=TEST_DATE):
     assert is_after(thing, now=now) == expected
+
+
+@pytest.mark.parametrize(
+    "thing,expected",
+    [
+        ({"year": 2019, "month": "Jun", "day": 14}, False),
+        ({"year": 2019, "month": "Jan", "day": 15}, True),
+        ({"year": 2019, "month": "Jan", "day": 2}, True),
+        ({"date": "2019-04-15"}, False),
+        ({"date": "2019-02-03"}, True),
+    ]
+)
+def test_is_between(thing, expected, start=TEST_START_DATE, end=TEST_END_DATE):
+    assert is_between(thing, start=start, end=end) == expected

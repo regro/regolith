@@ -380,3 +380,31 @@ def is_after(thing, now=None):
     except:
         raise RuntimeError(f"Cannot find date in document:\n {thing}")
     return after
+
+
+def is_between(thing, start=None, end=None):
+    """
+    given a thing with a date, returns true if the thing is between the start and end date
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not is after a date
+    start: datetime.date object
+      a date for the start.  If it is None it uses the current date.  Default is None
+    end: datetime.date object
+      a date for the end.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing is between the start and end
+
+    """
+    if not start:
+        start = datetime.date.today()
+    if not end:
+        end = datetime.date.today()
+    between = False
+    if is_after(thing, start) and is_before(thing, end):
+        between = True
+    return between

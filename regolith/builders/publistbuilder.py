@@ -10,9 +10,11 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, is_between
+from regolith.tools import all_docs_from_collection
 from regolith.sorters import doc_date_key, ene_date_key, position_key
 from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
+from datetime import date
+from regolith.dates import is_between
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
@@ -122,12 +124,14 @@ class PubListBuilder(LatexBuilderBase):
 
     def filter_pubs_by_date(self, pubs, sy, sm, sd, by, bm, bd):
         filtered_pubs = []
+        start = date(sy, sm, sd)
+        end = date(by, bm, bd)
         for pub in pubs:
             month = pub.get("month", 1)
             day = pub.get("day", 1)
-            if is_between(int(pub.get("year")), sy, by, m=month, sm=sm,
-                          bm=bm,
-                          d=day, sd=sd, bd=bd):
+            year = int(pub.get("year"))
+            thing = {"year": year, "month": month, "day": day}
+            if is_between(thing, start=start, end=end):
                 filtered_pubs.append(pub)
         return filtered_pubs
 

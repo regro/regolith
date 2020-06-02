@@ -6,7 +6,6 @@ from regolith.tools import (
     get_pi_id,
     number_suffix,
     latex_safe,
-    is_between,
     update_schemas,
     merge_collections,
     group,
@@ -17,14 +16,6 @@ from regolith.tools import (
 def test_author_publications():
     citations = [{"author": ["CJ", "SJLB"]}, {"editor": "SJLB"}]
     filter_publications(citations, {"SJLB"})
-
-
-def test_is_between():
-    y1, y2, y3 = 2000, 2010, 2020
-    assert is_between(y2, y1, y3) is True
-    assert is_between(y1, y1, y1) is True
-    assert is_between(y1, y2, y3) is False
-    assert is_between(y1, y3, y2) is False
 
 
 def test_fuzzy_retrieval():
