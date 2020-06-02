@@ -324,3 +324,59 @@ def has_finished(thing, now=None):
     if dates.get("end_date") < now:
         finished = True
     return finished
+
+
+def is_before(thing, now=None):
+    """
+    given a thing with a date, returns true if the thing is before the input date
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not is before a date
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing is before the date
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    before = False
+    try:
+        if dates.get("date") < now:
+            before = True
+    except:
+        raise RuntimeError(f"Cannot find date in document:\n {thing}")
+    return before
+
+
+def is_after(thing, now=None):
+    """
+    given a thing with a date, returns true if the thing is after the input date
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not is after a date
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing is after the date
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    after = False
+    try:
+        if now < dates.get('date'):
+            after = True
+    except:
+        raise RuntimeError(f"Cannot find date in document:\n {thing}")
+    return after

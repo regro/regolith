@@ -6,8 +6,6 @@ from regolith.tools import (
     get_pi_id,
     number_suffix,
     latex_safe,
-    is_before,
-    is_since,
     is_between,
     update_schemas,
     merge_collections,
@@ -19,56 +17,6 @@ from regolith.tools import (
 def test_author_publications():
     citations = [{"author": ["CJ", "SJLB"]}, {"editor": "SJLB"}]
     filter_publications(citations, {"SJLB"})
-
-
-def test_is_since():
-    y1, y2, y3 = 2000, 2010, 2020
-    m1, m2, m3 = 1, 6, 12
-    m4, m5, m6 = "Jan", "Jun", "Dec"
-    d1, d2, d3 = 1, 15, 28
-    assert is_since(y2, y1) is True
-    assert is_since(y1, y1) is True
-    assert is_since(y1, y2) is False
-    assert is_since(y1, y1, m=m2, sm=m1) is True
-    assert is_since(y1, y1, m=m3, sm=m3) is True
-    assert is_since(y1, y1, m=m1, sm=m2) is False
-    assert is_since(y1, y1, m=m5, sm=m4) is True
-    assert is_since(y1, y1, m=m4, sm=m4) is True
-    assert is_since(y1, y1, m=m4, sm=m5) is False
-    assert is_since(y1, y1, m=m5, sm=m1) is True
-    assert is_since(y1, y1, m=m2, sm=m4) is True
-    assert is_since(y1, y1, m=m1, sm=m5) is False
-    assert is_since(y1, y1, m=m1, sm=m1, d=d2, sd=d1) is True
-    assert is_since(y1, y1, m=m1, sm=m1, d=d1, sd=d1) is True
-    assert is_since(y1, y1, m=m1, sm=m1, d=d1, sd=d2) is False
-    assert is_since(y1, y1, m=m1) is True
-    assert is_since(y1, y1, m=m2) is True
-    assert is_since(y1, y1, sm=m2) is False
-
-
-def test_is_before():
-    y1, y2, y3 = 2000, 2010, 2020
-    m1, m2, m3 = 1, 6, 12
-    m4, m5, m6 = "Jan", "Jun", "Dec"
-    d1, d2, d3 = 1, 15, 28
-    assert is_before(y2, y1) is False
-    assert is_before(y1, y1) is True
-    assert is_before(y1, y2) is True
-    assert is_before(y1, y1, m=m2, bm=m1) is False
-    assert is_before(y1, y1, m=m3, bm=m3) is True
-    assert is_before(y1, y1, m=m1, bm=m2) is True
-    assert is_before(y1, y1, m=m5, bm=m4) is False
-    assert is_before(y1, y1, m=m4, bm=m4) is True
-    assert is_before(y1, y1, m=m4, bm=m5) is True
-    assert is_before(y1, y1, m=m5, bm=m1) is False
-    assert is_before(y1, y1, m=m2, bm=m5) is True
-    assert is_before(y1, y1, m=m1, bm=m5) is True
-    assert is_before(y1, y1, m=m1, bm=m1, d=d2, bd=d1) is False
-    assert is_before(y1, y1, m=m1, bm=m1, d=d1, bd=d1) is True
-    assert is_before(y1, y1, m=m1, bm=m1, d=d1, bd=d2) is True
-    assert is_before(y1, y1, m=m1) is True
-    assert is_before(y1, y1, m=m3) is True
-    assert is_before(y1, y1, bm=m2) is False
 
 
 def test_is_between():

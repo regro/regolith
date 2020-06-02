@@ -8,7 +8,8 @@ from regolith.dates import (month_to_str_int,
                             find_gaps_overlaps,
                             get_dates, last_day,
                             is_current, get_due_date,
-                            has_started, has_finished)
+                            has_started, has_finished,
+                            is_before, is_after)
 
 TEST_DATE = date(2019, 6, 15)
 
@@ -260,3 +261,31 @@ def test_has_started(thing, expected, now=TEST_DATE):
 )
 def test_has_finished(thing, expected, now=TEST_DATE):
     assert has_finished(thing, now=now) == expected
+
+
+@pytest.mark.parametrize(
+    "thing,expected",
+    [
+        ({"year": 2019, "month": "Jun", "day": 14}, True),
+        ({"year": 2019, "month": "Jun", "day": 15}, False),
+        ({"year": 2019, "month": "Jun", "day": 16}, False),
+        ({"date": "2019-04-15"}, True),
+        ({"date": "2019-08-10"}, False),
+    ]
+)
+def test_is_before(thing, expected, now=TEST_DATE):
+    assert is_before(thing, now=now) == expected
+
+
+@pytest.mark.parametrize(
+    "thing,expected",
+    [
+        ({"year": 2019, "month": "Jun", "day": 14}, False),
+        ({"year": 2019, "month": "Jun", "day": 15}, False),
+        ({"year": 2019, "month": "Jun", "day": 16}, True),
+        ({"date": "2019-04-15"}, False),
+        ({"date": "2019-08-10"}, True),
+    ]
+)
+def test_is_after(thing, expected, now=TEST_DATE):
+    assert is_after(thing, now=now) == expected
