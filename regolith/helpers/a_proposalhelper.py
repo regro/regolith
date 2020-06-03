@@ -10,6 +10,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
+    fuzzy_retrieval
 )
 
 TARGET_COLL = "proposals"
@@ -26,51 +27,46 @@ def subparser(subpi):
     subpi.add_argument("amount", help="value of award",
                        default=None
                        )
-    subpi.add_argument("authors", help="Other investigator names"
+    subpi.add_argument("authors", nargs="+",
+                       help="Other investigator names"
                        )
-    subpi.add_argument("currency", help="Currency in which amount is specified."
-                                        " Typically $ or USD"
+    subpi.add_argument("date", help="The begin date for the proposed grant "
+                                          "in format YYYY-MM-DD."
+                       )
+    subpi.add_argument("end_date", help="The end date for the proposed grant "
+                                        "in format YYYY-MM-DD."
                        )
     subpi.add_argument("due_date", help="The due date for the proposal in format YYYY-MM-DD."
                        )
     subpi.add_argument("duration", help="Duration of proposal in years"
                        )
-    subpi.add_argument("submitted_date", help="Day on which the proposal is submitted "
-                                              "in format YYYY-MM-DD"
-                       )
-    subpi.add_argument("pi", help="Name of principal investigator"
-                       )
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
-    subpi.add_argument("-b", "--begin_date", nargs="+",
-                       help="The start date for the proposed grant in format YYYY-MM-DD."
+    subpi.add_argument("-c", "--currency",
+                       help="Currency in which amount is specified. Defaults to USD"
                        )
-    subpi.add_argument("--cpp_flag", nargs="+",
-                       help="Current and pending form (true or false)"
+    subpi.add_argument("-p", "--pi",
+                       help="Name of principal investigator. Defaults to"
+                            "group pi name in database"
                        )
-    subpi.add_argument("--cpp_agencies", nargs="+",
-                       help="Other agencies to which the proposal has been submitted"
+    subpi.add_argument("--cppflag", help="Current and pending form (true or false)"
                        )
-    subpi.add_argument("--cpp_institution", nargs="+",
-                       help="The institution to be stated on the current"
-                            "and pending form"
+    subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
+                                                "submitted"
                        )
-    subpi.add_argument("--cpp_months_academic", nargs="+",
-                       help="Number of working months in the academic year"
-                            "to be stated on the current and pending form"
+    subpi.add_argument("--institution", help="The institution where the work will primarily"
+                                             "be carried out"
                        )
-    subpi.add_argument("--cpp_months_summer", nargs="+",
-                       help="Number of working months in the summer to be"
-                            "stated on the current and pending form"
+    subpi.add_argument("--months_academic", help="Number of working months in the academic year"
+                                                 "to be stated on the current and pending form"
                        )
-    subpi.add_argument("--cpp_scope", nargs="+",
-                       help="Scope of the project"
+    subpi.add_argument("--months_summer", help="Number of working months in the summer to be"
+                                                "stated on the current and pending form"
                        )
-    subpi.add_argument("-e","--end_date", nargs="+",
-                       help="The end date for the proposed grant in format YYYY-MM-DD."
+    subpi.add_argument("--scope", help="Scope of the project"
                        )
-    subpi.add_argument("-f", "--funder", nargs="+",
-                       help="Who funds the proposal. As funder in grants"
+    subpi.add_argument("-f", "--funder",
+                       help="Agency where the proposal is being submitted"
                        )
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="Anything to note"
@@ -81,11 +77,12 @@ def subparser(subpi):
 class ProposalAdderHelper(DbHelperBase):
     """Helper for adding a proposal to the proposals collection.
 
-       Proposals are...
+       A proposal is a dictionary object describing a research or
+        project proposal submitted by the group.
     """
     # btype must be the same as helper target in helper.py
     btype = "a_proposal"
-    needed_dbs = [f'{TARGET_COLL}', 'groups', 'people']
+    needed_dbs = [f'{TARGET_COLL}', 'people']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -105,9 +102,13 @@ class ProposalAdderHelper(DbHelperBase):
         gtx["zip"] = zip
 
     def db_updater(self):
+        gtx = self.gtx
         rc = self.rc
-        submitted_date = date_parser.parse(rc.submitted_date).date()
-        key = f"{str(submitted_date.year)[2:]}_{''.join(rc.name.casefold().split()).strip()}"
+        if not rc.date:
+            now = dt.date.today()
+        else:
+            now = date_parser.parse(rc.date).date()
+        key = f"{str(now.year)[2:]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
@@ -120,39 +121,37 @@ class ProposalAdderHelper(DbHelperBase):
         if rc.amount:
             pdoc.update({'amount': rc.amount})
         else:
-            pdoc.update({'amount': 'tbd'})
+            pdoc.update({'amount': ''})
         if rc.authors:
             if isinstance(rc.authors, str):
                 pdoc.update({'authors': [rc.authors]})
             else:
                 pdoc.update({'authors': rc.authors})
         else:
-            pdoc.update({'authors': ['tbd']})
+            pdoc.update({'authors': ['']})
         if rc.begin_date:
             pdoc.update({'begin_date': rc.begin_date})
+        else:
+            pdoc.update({'begin_date': ''})
         cpp_info = {}
-        if rc.cpp_flag:
-            cpp_info['cppflag'] = rc.cpp_flag
-        if rc.cpp_agencies:
-            cpp_info['other_agencies_submitted'] = rc.cpp_agencies
-        if rc.cpp_institution:
-            cpp_info['institution'] = rc.cpp_institution
-        if rc.rc.cpp_months_academic:
-             cpp_info['person_months_academic'] = rc.cpp_months_academic
-        if rc.cpp_months_summer:
-            cpp_info['person_months_summer'] =  rc.cpp_months_summer
-        if rc.cpp_scope:
-            cpp_info['project_scope'] = rc.cpp_scope
+        if rc.cppflag:
+            cpp_info['cppflag'] = rc.cppflag
+        if rc.other_agencies:
+            cpp_info['other_agencies_submitted'] = rc.other_agencies
+        if rc.institution:
+            cpp_info['institution'] = rc.institution
+        if rc.months_academic:
+             cpp_info['person_months_academic'] = rc.months_academic
+        if rc.months_summer:
+            cpp_info['person_months_summer'] =  rc.months_summer
+        if rc.scope:
+            cpp_info['project_scope'] = rc.scope
         if cpp_info:
             pdoc.update({'cpp_info':cpp_info})
         if rc.currency:
             pdoc.update({'currency': rc.currency})
         else:
             pdoc.update({'currency': 'USD'})
-        if rc.submitted_date:
-            pdoc.update({'submitted_date': submitted_date})
-        else:
-            pdoc.update({'submitted_date': 'tbd'})
         if rc.due_date:
             pdoc.update({'due_date': rc.due_date})
         else:
@@ -163,6 +162,8 @@ class ProposalAdderHelper(DbHelperBase):
             pdoc.update({'duration': 'tbd'})
         if rc.end_date:
             pdoc.update({'end_date': rc.end_date})
+        else:
+            pdoc.update({'end_date': ''})
         if rc.funder:
             pdoc.update({'funder': rc.funder})
         if rc.full:
@@ -172,14 +173,16 @@ class ProposalAdderHelper(DbHelperBase):
         if rc.pi:
             pdoc.update({'pi': rc.pi})
         else:
-            pdoc.update({'pi': 'tbd'})
+            pi_entry = fuzzy_retrieval(gtx['people'], ['_id'], rc.pi_id, case_sensitive=True)
+            pi_name = pi_entry['name']
+            pdoc.update({'pi': pi_name})
         pdoc.update({'status': 'inprep'})
-        sample_team = {'cv':'http://pdf.com/goodbye-cv',
-                       'email':'goodbye@world.com',
-                       'institution':'Columbia University',
-                       'name': 'goodbyeworld',
-                       'position':'Adieu Bidder',
-                       'subaward_amount': 10.0
+        sample_team = {'cv':'',
+                       'email':'',
+                       'institution':'',
+                       'name': '',
+                       'position':'',
+                       'subaward_amount': ''
                        }
         pdoc.update({'team': [sample_team]})
         if rc.title:
