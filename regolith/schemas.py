@@ -133,6 +133,7 @@ EXEMPLARS = {
     "grants": [
         {
             "_id": "SymPy-1.1",
+            "proposal_id": "mypropsal",
             "amount": 3000.0,
             "alias": "sym",
             "begin_day": 1,
@@ -165,16 +166,17 @@ EXEMPLARS = {
         },
         {
             "_id": "SymPy-2.0",
+            "proposal_id": "dmref15",
             "amount": 3000.0,
             "alias": "sym2.0",
-            "begin_day": 1,
-            "begin_month": 6,
-            "begin_year": 2019,
+            # "begin_day": 1,
+            # "begin_month": 6,
+            # "begin_year": 2019,
             "call_for_proposals": "https://groups.google.com/d/msg"
                                   "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
-            "end_day": 31,
-            "end_month": "December",
-            "end_year": 2030,
+            # "end_day": 31,
+            # "end_month": "December",
+            # "end_year": 2030,
             "funder": "NumFOCUS",
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
                          "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
@@ -197,6 +199,7 @@ EXEMPLARS = {
         },
         {
             "_id": "dmref15",
+            "proposal_id": "SymPy",
             "account": "GG012345",
             "amount": 982785.0,
             "begin_day": 1,
@@ -618,7 +621,7 @@ EXEMPLARS = {
             "success_def": "audience is happy",
             "scope": ["UCs that are supported or some other scope description "
                       "if it is software", "sketch of science story if it is paper"
-                                                ],
+                      ],
             "platform": "description of how and where the audience will access "
                         "the deliverable.  Journal if it is a paper",
             "roll_out": [
@@ -640,27 +643,27 @@ EXEMPLARS = {
         "lead": "ascopatz",
         "log_url": "https://docs.google.com/document/d/1YC_wtW5Q",
         "milestones": [{
-                  'date': '2020-05-05',
-                  'due_date': '2020-05-06',
-                  'name': 'Kick off meeting',
-                  'objective': 'roll out of project to team',
-                  'audience': ['lead', 'pi', 'group_members',
-                               'collaborators'],
-                  'status': 'finished'
-                  },
-                 {'due_date': '2020-05-20',
-                  'name': 'Project lead presentation',
-                  'objective': 'lead presents background reading and '
-                               'initial project plan',
-                  'audience': ['lead', 'pi', 'group_members'],
-                  'status': 'proposed'
-                  },
-                 {'due_date': '2020-05-27',
-                  'name': 'planning meeting',
-                  'objective': 'develop a detailed plan with dates',
-                  'audience': ['lead', 'pi', 'group_members'],
-                  'status': 'proposed'
-                  }],
+            'date': '2020-05-05',
+            'due_date': '2020-05-06',
+            'name': 'Kick off meeting',
+            'objective': 'roll out of project to team',
+            'audience': ['lead', 'pi', 'group_members',
+                         'collaborators'],
+            'status': 'finished'
+        },
+            {'due_date': '2020-05-20',
+             'name': 'Project lead presentation',
+             'objective': 'lead presents background reading and '
+                          'initial project plan',
+             'audience': ['lead', 'pi', 'group_members'],
+             'status': 'proposed'
+             },
+            {'due_date': '2020-05-27',
+             'name': 'planning meeting',
+             'objective': 'develop a detailed plan with dates',
+             'audience': ['lead', 'pi', 'group_members'],
+             'status': 'proposed'
+             }],
         "name": "First Projectum",
         "pi_id": "scopatz",
         "status": "proposed"
@@ -833,8 +836,8 @@ EXEMPLARS = {
             "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/"
                                   "nsf14591.htm",
             "begin_day": 1,
-            "begin_month": "May",
-            "begin_year": 2018,
+            "begin_month": 6,
+            "begin_year": 2019,
             "cpp_info": {
                 "cppflag": True,
                 "other_agencies_submitted": "None",
@@ -845,13 +848,13 @@ EXEMPLARS = {
                                  "other of my grants"
             },
             "currency": "USD",
-            "day": 2,
+            # "day": 2,
             "duration": 3,
-            "end_day": 1,
-            "end_month": "May",
-            "end_year": 2019,
+            "end_day": 31,
+            "end_month": "December",
+            "end_year": 2030,
             "funder": "NSF",
-            "month": "february",
+            # "month": "february",
             "notes": "Quite an idea",
             "pi": "Simon Billinge",
             "status": "accepted",
@@ -876,7 +879,59 @@ EXEMPLARS = {
             "title": "DMREF: Novel, data validated, nanostructure determination "
                      "methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure",
-            "year": 2015,
+            # "year": 2015,
+        },
+        {
+            "_id": "SymPy",
+            "amount": 982785.0,
+            "authors": ["qdu", "dhsu", "sbillinge"],
+            "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/"
+                                  "nsf14591.htm",
+            "begin_day": 1,
+            "begin_month": "May",
+            "begin_year": 2018,
+            "cpp_info": {
+                "cppflag": True,
+                "other_agencies_submitted": "None",
+                "institution": "Columbia University",
+                "person_months_academic": 0,
+                "person_months_summer": 1,
+                "project_scope": "lots to do but it doesn't overlap with any "
+                                 "other of my grants"
+            },
+            "currency": "USD",
+            #"day": 2,
+            "duration": 3,
+            "end_day": 1,
+            "end_month": "May",
+            "end_year": 2019,
+            "funder": "NSF",
+            #"month": "february",
+            "notes": "Quite an idea",
+            "pi": "Simon Billinge",
+            "status": "accepted",
+            "team": [
+                {
+                    "institution": "Columbia Unviersity",
+                    "name": "qdu",
+                    "position": "Co-PI",
+                },
+                {
+                    "institution": "Columbia Unviersity",
+                    "name": "dhsu",
+                    "position": "Co-PI",
+                },
+                {
+                    "institution": "Columbia Unviersity",
+                    "name": "sbillinge",
+                    "position": "PI",
+                    "subaward_amount": 330000.0,
+                },
+            ],
+            "title": "DMREF: Novel, data validated, nanostructure determination "
+                     "methods for accelerating materials discovery",
+            "title_short": "DMREF nanostructure",
+            #"year": 2015,
         },
     ],
     "reading_lists": {
@@ -884,13 +939,13 @@ EXEMPLARS = {
         "day": "15",
         "month": "12",
         "papers": [{"doi": "10.1107/97809553602060000935",
-                   "text": "Very basic, but brief, intro to powder diffraction in general"},
+                    "text": "Very basic, but brief, intro to powder diffraction in general"},
                    {"doi": "10.1039/9781847558237-00464",
                     "text": "Lightest weight overview of PDF analysis around.  Good starting point"
                     },
                    {"url": "http://www.diffpy.org",
                     "text": "Download and install PDFgui software and run through the step by step tutorial under the help tab"}
-                  ],
+                   ],
         "purpose": "Beginning reading about PDF",
         "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
         "year": 2019,
@@ -1303,6 +1358,11 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "proposal_id": {
+            "description": "the ID of the corresponding proposal to this grant",
+            "required": True,
+            "type": "string",
+        },
         # TODO: maybe this should be moved to proposals?
         "status": {
             "allowed": ["pending", "declined", "accepted", "in-prep"],
@@ -1648,7 +1708,7 @@ SCHEMAS = {
             "type": "list",
         },
         "github_id": {"required": False, "type": "string",
-                       "description": "Your GitHub ID"},
+                      "description": "Your GitHub ID"},
         "google_scholar_url": {"required": False, "type": "string",
                                "description": "URL of your Google Scholar "
                                               "rofile"},
@@ -1932,7 +1992,7 @@ SCHEMAS = {
         "active": {
             "description": "true if the project is active",
             "required": False,
-            "anyof_type": ["string","boolean"],
+            "anyof_type": ["string", "boolean"],
         },
         "description": {
             "description": "brief project description.",
@@ -1960,11 +2020,11 @@ SCHEMAS = {
                              "required": True,
                              "type": "integer"},
                     "month": {"description": "the month of the highlight",
-                             "required": True,
-                             "anyof_type": ["string", "integer"]},
+                              "required": True,
+                              "anyof_type": ["string", "integer"]},
                     "description": {"description": "the highlight",
-                             "required": True,
-                             "type": "string"},
+                                    "required": True,
+                                    "type": "string"},
                 }
             }
         },
@@ -2012,7 +2072,7 @@ SCHEMAS = {
             "description": "The type of project",
             "required": False,
             "anyof_type": ["string"],
-            "eallowed": ["ossoftware","funded"]
+            "eallowed": ["ossoftware", "funded"]
         },
         "website": {
             "description": "URL of the website.",

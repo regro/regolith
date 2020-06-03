@@ -11,7 +11,7 @@ from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
+    get_pi_id, merge_collections
 )
 
 TARGET_COLL = "grants"
@@ -32,7 +32,8 @@ class GrantsListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}']
+    #needed_dbs = [f'{TARGET_COLL}']
+    needed_dbs =["grants", "proposals"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -67,7 +68,10 @@ class GrantsListerHelper(SoutHelperBase):
             desired_date = date_parser.parse(rc.date).date()
         else:
             desired_date = dt.date.today()
-        for grant in self.gtx["grants"]:
+        linked_grants = merge_collections(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
+        count = 0
+        for grant in linked_grants:
+            count += 1
             if rc.current and not is_current(grant, now=desired_date):
                 continue
             grants.append(grant)

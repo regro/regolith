@@ -4,12 +4,11 @@ import pytest
 
 from regolith.main import main
 
-
 helper_map = [
     (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
-      "Tess Guebre","-s", "downloaded", "-t", "A flat world theory"],
-      "A. Einstein proposal has been added/updated in proposal reviews\n"),
+      "Tess Guebre", "-s", "downloaded", "-t", "A flat world theory"],
+     "A. Einstein proposal has been added/updated in proposal reviews\n"),
     (["helper", "a_grppub_readlist", "test the lister",
       "A list to test the lister", "pdf", "--purpose", "Test the lister"],
      "test_the_lister has been added in reading_lists\n"),
@@ -55,14 +54,14 @@ def test_helper_python(hm, make_db, capsys):
     if are_outfiles and not expecteddir.is_dir():
         print("WARNING: there are built outputs that are not being tested")
     if are_outfiles and expecteddir.is_dir():
-        assert_outputs(builddir,expecteddir)
+        assert_outputs(builddir, expecteddir)
 
     builddir = repo / "db"
     if expecteddir.is_dir():
-        assert_outputs(builddir,expecteddir)
+        assert_outputs(builddir, expecteddir)
 
 
-def assert_outputs(builddir,expecteddir):
+def assert_outputs(builddir, expecteddir):
     """
 
     Parameters
@@ -92,4 +91,3 @@ def assert_outputs(builddir,expecteddir):
                                 assert expected == actual
                     else:
                         assert expected == actual
-
