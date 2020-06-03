@@ -13,11 +13,6 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "proposals"
-ALLOWED_TYPES = ["nsf", "doe", "other"]
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused",
-                 "cancelled"]
-MILESTONES_ALLOWED_STATI = ["proposed", "scheduled", "finished", "cancelled"]
-
 
 def subparser(subpi):
     # Do not delete --database arg
@@ -33,66 +28,52 @@ def subparser(subpi):
                        )
     subpi.add_argument("authors", help="Other investigator names"
                        )
-    subpi.add_argument("-d", "--begin_day", nargs="+",
-                       help="The start day for the proposed grant in format YYYY-MM-DD."
-                       )
-    subpi.add_argument("-m", "--begin_month", nargs="+",
-                       help="The start month for the proposed grant in format YYYY-MM-DD."
-                       )
-    subpi.add_argument("-y", "--begin_year", nargs="+",
-                       help="The start year for the proposed grant in format YYYY-MM-DD."
-                       )
-    subpi.add_argument("-c", "--call_for_proposals", nargs="+",
-                       help="Url for call for proposals"
-                       )
-    #subpi.add_argument("-i", "--cpp_info", nargs="+",
-    #                  help="Extra information needed for building current and"
-    #                       "pending form"
-    #                   )
     subpi.add_argument("currency", help="Currency in which amount is specified."
                                         " Typically $ or USD"
+                       )
+    subpi.add_argument("due_date", help="The due date for the proposal in format YYYY-MM-DD."
+                       )
+    subpi.add_argument("duration", help="Duration of proposal in years"
                        )
     subpi.add_argument("submitted_date", help="Day on which the proposal is submitted "
                                               "in format YYYY-MM-DD"
                        )
-    subpi.add_argument("-u", "--due_date", nargs="+",
-                       help="The due date for the proposal in format YYYY-MM-DD."
+    subpi.add_argument("pi", help="Name of principal investigator"
                        )
-    subpi.add_argument("duration", help="Duration of proposal in years"
+    subpi.add_argument("title", help="Actual title of the proposal"
                        )
-    subpi.add_argument("-x", "--end_day", nargs="+",
-                       help="The end day for the proposed grant in format YYYY-MM-DD."
+    subpi.add_argument("-b", "--begin_date", nargs="+",
+                       help="The start date for the proposed grant in format YYYY-MM-DD."
                        )
-    subpi.add_argument("-y", "--end_month", nargs="+",
-                       help="The end month for the proposed grant in format YYYY-MM-DD."
+    subpi.add_argument("--cpp_flag", nargs="+",
+                       help="Current and pending form (true or false)"
                        )
-    subpi.add_argument("-z", "--end_year", nargs="+",
-                       help="The end year for the proposed grant in format YYYY-MM-DD."
+    subpi.add_argument("--cpp_agencies", nargs="+",
+                       help="Other agencies to which the proposal has been submitted"
+                       )
+    subpi.add_argument("--cpp_institution", nargs="+",
+                       help="The institution to be stated on the current"
+                            "and pending form"
+                       )
+    subpi.add_argument("--cpp_months_academic", nargs="+",
+                       help="Number of working months in the academic year"
+                            "to be stated on the current and pending form"
+                       )
+    subpi.add_argument("--cpp_months_summer", nargs="+",
+                       help="Number of working months in the summer to be"
+                            "stated on the current and pending form"
+                       )
+    subpi.add_argument("--cpp_scope", nargs="+",
+                       help="Scope of the project"
+                       )
+    subpi.add_argument("-e","--end_date", nargs="+",
+                       help="The end date for the proposed grant in format YYYY-MM-DD."
                        )
     subpi.add_argument("-f", "--funder", nargs="+",
                        help="Who funds the proposal. As funder in grants"
                        )
-    #subpi.add_argument("-l", "--full", nargs="+",
-    #                   help="Full body of the proposal"
-    #                   )
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="Anything to note"
-                       )
-    subpi.add_argument("pi", help="Name of principal investigator"
-                       )
-    #subpi.add_argument("--pre", nargs="+",
-    #                   help="Information about pre-posal"
-    #                   )
-    subpi.add_argument("status", help=f"status, from {ALLOWED_STATI}. default is accepted"
-                        )
-    #subpi.add_argument("-m", "--team", nargs="+",
-    #                   help="Information about the team members participating"
-    #                        "in the grant"
-    #                   )
-    subpi.add_argument("title", help="Actual title of the proposal"
-                       )
-    subpi.add_argument("-t", "--title_short", nargs="+",
-                        help="Short title of the proposal"
                        )
     return subpi
 
@@ -125,11 +106,8 @@ class ProposalAdderHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        if not rc.submitted_date:
-            now = dt.date.today()
-        else:
-            now = date_parser.parse(rc.submitted_date).date()
-        key = f"{str(now.year)[2:]}_{''.join(rc.name.casefold().split()).strip()}"
+        submitted_date = date_parser.parse(rc.submitted_date).date()
+        key = f"{str(submitted_date.year)[2:]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
@@ -149,51 +127,65 @@ class ProposalAdderHelper(DbHelperBase):
             else:
                 pdoc.update({'authors': rc.authors})
         else:
-            pdoc.update({'authors': 'tbd'})
-        pdoc.update({
-            'begin_day': rc.begin_day,
-            'begin_month': rc.begin_month,
-            'begin_year': rc.begin_year,
-            'call_for_proposals': rc.call_for_proposals,
-            # 'cpp_info':
-        })
+            pdoc.update({'authors': ['tbd']})
+        if rc.begin_date:
+            pdoc.update({'begin_date': rc.begin_date})
+        cpp_info = {}
+        if rc.cpp_flag:
+            cpp_info['cppflag'] = rc.cpp_flag
+        if rc.cpp_agencies:
+            cpp_info['other_agencies_submitted'] = rc.cpp_agencies
+        if rc.cpp_institution:
+            cpp_info['institution'] = rc.cpp_institution
+        if rc.rc.cpp_months_academic:
+             cpp_info['person_months_academic'] = rc.cpp_months_academic
+        if rc.cpp_months_summer:
+            cpp_info['person_months_summer'] =  rc.cpp_months_summer
+        if rc.cpp_scope:
+            cpp_info['project_scope'] = rc.cpp_scope
+        if cpp_info:
+            pdoc.update({'cpp_info':cpp_info})
         if rc.currency:
             pdoc.update({'currency': rc.currency})
         else:
             pdoc.update({'currency': 'USD'})
-        pdoc.update({'day': now.day
-                     'due_date': rc.due_date
-                     })
+        if rc.submitted_date:
+            pdoc.update({'submitted_date': submitted_date})
+        else:
+            pdoc.update({'submitted_date': 'tbd'})
+        if rc.due_date:
+            pdoc.update({'due_date': rc.due_date})
+        else:
+            pdoc.update({'due_date': 'tbd'})
         if rc.duration:
             pdoc.update({'duration': rc.duration})
         else:
             pdoc.update({'duration': 'tbd'})
-        pdoc.update({
-            'end_day': rc.end_day,
-            'end_month': rc.end_month,
-            'end_year': rc.end_year,
-            'funder': rc.funder,
-            'full': rc.full
-            'month': now.month
-            #convert numeric to string
-            'notes': rc.notes
-        })
+        if rc.end_date:
+            pdoc.update({'end_date': rc.end_date})
+        if rc.funder:
+            pdoc.update({'funder': rc.funder})
+        if rc.full:
+            pdoc.update({'full': rc.full})
+        if rc.notes:
+            pdoc.update({'notes': rc.notes})
         if rc.pi:
             pdoc.update({'pi': rc.pi})
         else:
             pdoc.update({'pi': 'tbd'})
-        if rc.status:
-            pdoc.update({'status': rc.status})
-        else:
-            pdoc.update({'status': 'tbd'})
-        # pdoc.update({'team':})
+        pdoc.update({'status': 'inprep'})
+        sample_team = {'cv':'http://pdf.com/goodbye-cv',
+                       'email':'goodbye@world.com',
+                       'institution':'Columbia University',
+                       'name': 'goodbyeworld',
+                       'position':'Adieu Bidder',
+                       'subaward_amount': 10.0
+                       }
+        pdoc.update({'team': [sample_team]})
         if rc.title:
             pdoc.update({'title': rc.title})
         else:
             pdoc.update({'title': 'tbd'})
-        pdoc.update({'title_short': rc.title_short
-                     'year': now.year
-                     })
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
