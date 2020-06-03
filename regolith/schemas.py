@@ -169,14 +169,8 @@ EXEMPLARS = {
             "proposal_id": "dmref15",
             "amount": 3000.0,
             "alias": "sym2.0",
-            # "begin_day": 1,
-            # "begin_month": 6,
-            # "begin_year": 2019,
             "call_for_proposals": "https://groups.google.com/d/msg"
                                   "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
-            # "end_day": 31,
-            # "end_month": "December",
-            # "end_year": 2030,
             "funder": "NumFOCUS",
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
                          "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
@@ -848,13 +842,11 @@ EXEMPLARS = {
                                  "other of my grants"
             },
             "currency": "USD",
-            # "day": 2,
             "duration": 3,
             "end_day": 31,
             "end_month": "December",
             "end_year": 2030,
             "funder": "NSF",
-            # "month": "february",
             "notes": "Quite an idea",
             "pi": "Simon Billinge",
             "status": "accepted",
@@ -879,7 +871,6 @@ EXEMPLARS = {
             "title": "DMREF: Novel, data validated, nanostructure determination "
                      "methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure",
-            # "year": 2015,
         },
         {
             "_id": "SymPy",
@@ -900,13 +891,11 @@ EXEMPLARS = {
                                  "other of my grants"
             },
             "currency": "USD",
-            #"day": 2,
             "duration": 3,
             "end_day": 1,
             "end_month": "May",
             "end_year": 2019,
             "funder": "NSF",
-            #"month": "february",
             "notes": "Quite an idea",
             "pi": "Simon Billinge",
             "status": "accepted",
@@ -931,7 +920,6 @@ EXEMPLARS = {
             "title": "DMREF: Novel, data validated, nanostructure determination "
                      "methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure",
-            #"year": 2015,
         },
     ],
     "reading_lists": {
