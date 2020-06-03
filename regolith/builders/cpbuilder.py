@@ -5,7 +5,7 @@ from copy import copy
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import month_to_int
+from regolith.dates import month_to_int, is_current
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (
@@ -13,8 +13,6 @@ from regolith.tools import (
     filter_grants,
     fuzzy_retrieval,
     merge_collections,
-    has_started,
-    is_current,
 )
 
 
@@ -80,19 +78,7 @@ class CPBuilder(LatexBuilderBase):
             current_grants = [
                 dict(g)
                 for g in grants
-                if is_current(
-                    *[
-                        g.get(s, 1)
-                        for s in [
-                            "begin_year",
-                            "end_year",
-                            "begin_month",
-                            "begin_day",
-                            "end_month",
-                            "end_day",
-                        ]
-                    ]
-                )
+                if is_current(g)
             ]
             current_grants, _, _ = filter_grants(
                 current_grants, {pi["name"]}, pi=False, multi_pi=True

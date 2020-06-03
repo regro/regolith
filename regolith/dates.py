@@ -261,9 +261,150 @@ def is_current(thing, now=None):
         now = datetime.date.today()
     dates = get_dates(thing)
     current = False
+    if not dates.get("end_date"):
+        dates["end_date"] = datetime.date(5000, 12, 31)
     try:
-        if dates.get("begin_date") <= now <= dates.get("end_date", datetime.date(5000, 12, 31)):
+        if dates.get("begin_date") <= now <= dates.get("end_date"):
             current = True
     except:
         raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
     return current
+
+
+def has_started(thing, now=None):
+    """
+    given a thing with dates, returns true if the thing has started
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not it is has started
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing has started and false otherwise
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    started = False
+    try:
+        if dates.get("begin_date") <= now:
+            started = True
+    except:
+        raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
+    return started
+
+
+def has_finished(thing, now=None):
+    """
+    given a thing with dates, returns true if the thing has finished
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not it has finished
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing has finished and false otherwise
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    finished = False
+    if not dates.get("end_date"):
+        dates["end_date"] = datetime.date(5000, 12, 31)
+    if dates.get("end_date") < now:
+        finished = True
+    return finished
+
+
+def is_before(thing, now=None):
+    """
+    given a thing with a date, returns true if the thing is before the input date
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not is before a date
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing is before the date
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    before = False
+    try:
+        if dates.get("date") < now:
+            before = True
+    except:
+        raise RuntimeError(f"Cannot find date in document:\n {thing}")
+    return before
+
+
+def is_after(thing, now=None):
+    """
+    given a thing with a date, returns true if the thing is after the input date
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not is after a date
+    now: datetime.date object
+      a date for now.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing is after the date
+
+    """
+    if not now:
+        now = datetime.date.today()
+    dates = get_dates(thing)
+    after = False
+    try:
+        if now < dates.get('date'):
+            after = True
+    except:
+        raise RuntimeError(f"Cannot find date in document:\n {thing}")
+    return after
+
+
+def is_between(thing, start=None, end=None):
+    """
+    given a thing with a date, returns true if the thing is between the start and end date
+
+    Parameters
+    ----------
+    thing: dict
+      the thing that we want to know whether or not is after a date
+    start: datetime.date object
+      a date for the start.  If it is None it uses the current date.  Default is None
+    end: datetime.date object
+      a date for the end.  If it is None it uses the current date.  Default is None
+
+    Returns
+    -------
+    True if the thing is between the start and end
+
+    """
+    if not start:
+        start = datetime.date.today()
+    if not end:
+        end = datetime.date.today()
+    between = False
+    if is_after(thing, start) and is_before(thing, end):
+        between = True
+    return between
