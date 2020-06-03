@@ -75,13 +75,12 @@ dmref15:
   title: DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery
   title_short: DMREF nanostructure
   year: 2015
-21_a_new_proposal:
+20_a_new_proposal:
   amount: 500.0
   authors:
     - Kurt Godel
   begin_date: 2020-09-22
   currency: USD
-  submitted_date: 2021-04-09
   due_date: 2022-12-14
   duration: 3
   end_date: 2022-12-31
@@ -89,12 +88,12 @@ dmref15:
   pi: Simon Billinge
   status: inprep
   team:
-    - cv: http://pdf.com/goodbye-cv
-      email: goodbye@world.com
-      institution: Columbia University
-      name: goodbyeworld
-      position:A dieu Bidder
-      subaward_amount: 10.0
+    - cv: ''
+      email: ''
+      institution: ''
+      name: ''
+      position: ''
+      subaward_amount: ''
   title: To destroy numbers
 
 
