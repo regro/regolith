@@ -894,32 +894,32 @@ def group_member_ids(ppl_coll, grpname):
                     grpmembers.add(person["_id"])
     return grpmembers
 
-def fragment_retrieval(coll, fields, fragment, case_sensitive = True):
+def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
     """Retrieves a list of all documents from the collection where the fragment
     appears in any one of the given fields
 
     Parameters
     ----------
     coll: generator
-        The collection containg the documents
+        The collection containing the documents
     fields: iterable
         The fields of each document to check for the fragment
     fragment:
        The value to compare against to find the documents of interest
     case_sensitive: Bool
-        When true will match case (Default = True)
+        When true will match case (Default = False)
 
     Returns
     -------
-    dict:
-        The document
+    list:
+        A list of documents (that are dicts)
 
     Examples
     --------
-    >>> fuzzy_retrieval(people, ['aka', 'name'], 'pi_name', case_sensitive = False)
+    >>> fragment_retrieval(people, ['aka', 'name'], 'pi_name', case_sensitive = False)
 
-    This would get the person entry for which either the alias or the name was
-    ``pi_name``.
+    This would get all people for which either the alias or the name included 
+    the substring ``pi_name``.
 
     """
     
@@ -936,7 +936,8 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = True):
                        isinstance(reti, str)]
             if isinstance(fragment, str):
                 for item in frozenset(returns):
-                    if fragment in item:
+                    print(frozenset(returns))
+                    if fragment.lower() in item:
                         ret_list.append(doc)
                         break
         else:
