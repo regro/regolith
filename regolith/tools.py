@@ -935,9 +935,13 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = True):
             returns = [reti.lower() for reti in returns if
                        isinstance(reti, str)]
             if isinstance(fragment, str):
-                if fragment.lower() in frozenset(returns):
-                    ret_list.append(doc)
+                for item in frozenset(returns):
+                    if fragment in item:
+                        ret_list.append(doc)
+                        break
         else:
-            if fragment in frozenset(returns):
-                ret_list.append(doc)
+            for item in frozenset(returns):
+                if fragment in item:
+                    ret_list.append(doc)
+                    break
     return ret_list
