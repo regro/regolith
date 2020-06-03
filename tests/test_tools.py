@@ -3,6 +3,7 @@ import pytest
 from regolith.tools import (
     filter_publications,
     fuzzy_retrieval,
+    fragment_retrieval,
     get_pi_id,
     number_suffix,
     latex_safe,
@@ -728,3 +729,35 @@ def test_group_member_ids(input, expected):
     actual = group_member_ids(input, "bg")
     assert actual == expected
 
+def test_fragment_retrieval():
+    p1 = {
+        "_id": "scopatz",
+        "aka": [
+            "Scopatz",
+            "Scopatz, A",
+            "Scopatz, A.",
+            "Scopatz, A M",
+            "Anthony Michael Scopatz",
+        ],
+        "name": "Anthony Scopatz",
+    }
+    p2 = {
+        "_id": "abc",
+        "aka": [
+            "A. BC",
+            "BC, A",
+            "Anthony BC",
+        ],
+        "name": "Anthony Bill Chris",
+    }
+    assert fragment_retrieval([p1, p2], ["aka", "name", "_id"],
+                           "Anthony") == [p1, p2]
+    assert fragment_retrieval([p1,p2], ["aka", "name", "_id"],
+                           "scopatz, a") == []
+    assert (
+            fragment_retrieval(
+                [p1,p2], ["aka", "name", "_id"], "scopatz, a",
+                case_sensitive=False,
+            )
+            == [p1]
+    )
