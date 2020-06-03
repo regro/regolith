@@ -753,11 +753,10 @@ def test_fragment_retrieval():
     assert fragment_retrieval([p1, p2], ["aka", "name", "_id"],
                            "Anthony") == [p1, p2]
     assert fragment_retrieval([p1,p2], ["aka", "name", "_id"],
-                           "scopatz, a") == []
+                           "scopatz, a", case_sensitive = True) == []
     assert (
             fragment_retrieval(
-                [p1,p2], ["aka", "name", "_id"], "scopatz, a",
-                case_sensitive=False,
+                [p1,p2], ["aka", "name", "_id"], "scopatz, a"
             )
             == [p1]
     )
