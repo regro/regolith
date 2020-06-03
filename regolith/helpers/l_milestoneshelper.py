@@ -83,6 +83,7 @@ class MilestonesListerHelper(SoutHelperBase):
                 continue
             projectum["deliverable"].update({"name": "deliverable",
                                              "objective": "deliver"})
+            projectum["kickoff"].update({"type": "meeting"})
             gather_miles = [projectum["kickoff"], projectum["deliverable"]]
             gather_miles.extend(projectum["milestones"])
             for ms in gather_miles:
@@ -106,6 +107,7 @@ class MilestonesListerHelper(SoutHelperBase):
             if rc.verbose:
                 print(
                     f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
+                print(f"    Type: {ms.get('type','')}")
                 print(f"    Title: {ms.get('name')}")
                 print(f"    log url: {ms.get('log_url')}")
                 print(f"    Purpose: {ms.get('objective')}")

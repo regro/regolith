@@ -141,6 +141,11 @@ class ProjectumAdderHelper(DbHelperBase):
             pdoc.update({
                 'collaborators': rc.collaborators,
             })
+        else:
+            pdoc.update({
+                'collaborators': [],
+            })
+
         pdoc.update({"_id": key})
         pdoc.update({"deliverable": {
             "due_date": due_date,
@@ -167,7 +172,8 @@ class ProjectumAdderHelper(DbHelperBase):
                    'name': 'Project lead presentation',
                    'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
                    'audience': ['lead', 'pi', 'group_members'],
-                   'status': 'proposed'
+                   'status': 'proposed',
+                   'type': 'meeting'
                    }
         pdoc.update({"milestones": [secondm]})
 
