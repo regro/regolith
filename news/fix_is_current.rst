@@ -1,7 +1,7 @@
-**Added:**
-    * New date functions to dates.py that utilize Python's datetime module
+**Added:** None
 
-**Changed:** None
+**Changed:**
+    * is_current, is_before, is_after, has_started, has_finished, and is_between functions now use datetime objects
 
 **Deprecated:** None
 
