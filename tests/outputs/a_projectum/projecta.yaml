@@ -43,6 +43,7 @@
         - pi
         - group_members
       status: proposed
+      type: meeting
   name: New projectum
   pi_id: scopatz
   status: started
@@ -100,6 +101,7 @@
         - pi
         - group_members
       status: proposed
+      type: meeting
     - due_date: '2020-05-27'
       name: planning meeting
       objective: develop a detailed plan with dates
@@ -108,6 +110,7 @@
         - pi
         - group_members
       status: proposed
+      type: pr
   name: First Projectum
   pi_id: scopatz
   status: proposed

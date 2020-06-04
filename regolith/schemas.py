@@ -618,7 +618,7 @@ EXEMPLARS = {
             "success_def": "audience is happy",
             "scope": ["UCs that are supported or some other scope description "
                       "if it is software", "sketch of science story if it is paper"
-                                                ],
+                      ],
             "platform": "description of how and where the audience will access "
                         "the deliverable.  Journal if it is a paper",
             "roll_out": [
@@ -653,13 +653,15 @@ EXEMPLARS = {
                   'objective': 'lead presents background reading and '
                                'initial project plan',
                   'audience': ['lead', 'pi', 'group_members'],
-                  'status': 'proposed'
+                  'status': 'proposed',
+                  'type': 'meeting'
                   },
                  {'due_date': '2020-05-27',
                   'name': 'planning meeting',
                   'objective': 'develop a detailed plan with dates',
                   'audience': ['lead', 'pi', 'group_members'],
-                  'status': 'proposed'
+                  'status': 'proposed',
+                  'type': 'pr',
                   }],
         "name": "First Projectum",
         "pi_id": "scopatz",
