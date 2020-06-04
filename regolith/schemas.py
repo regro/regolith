@@ -86,19 +86,20 @@ EXEMPLARS = {
     "contacts": {
         "_id": "afriend",
         "aka": [
-            "A. B. Friend"
-            "AB Friend"
+            "A. B. Friend",
+            "AB Friend",
             "Tony Friend"
         ],
         "department": "physics",
         "email": "friend@deed.com",
         "institution": "columbiau",
         "name": "Anthony B Friend",
-        "notes": "The guy I meet for coffee sometimes",
+        "notes": ["The guy I meet for coffee sometimes"],
         "title": "Mr.",
         "month": "January",
         "year": 2020,
         "day": 15,
+        "uuid": "76f2a4c7-aa63-4fa3-88b5-396b0c15d368",
     },
     "courses": {
         "_id": "EMCH-552-2016-F",
@@ -1312,7 +1313,7 @@ SCHEMAS = {
             "description": "the day (of the month) when the entry was created",
             "required": False,
             "type": "integer",
-        },        
+        },
     },
     "grades": {
         "_description": {
