@@ -22,54 +22,56 @@ def subparser(subpi):
                             "first database in the regolithrc.json file."
                        )
     subpi.add_argument("name", help="A short but unique name for the proposal",
-                       default=None
-                       )
-    subpi.add_argument("amount", help="value of award",
-                       default=None
-                       )
-    subpi.add_argument("authors", nargs="+",
-                       help="Other investigator names"
-                       )
-    subpi.add_argument("date", help="The begin date for the proposed grant "
-                                          "in format YYYY-MM-DD."
-                       )
-    subpi.add_argument("end_date", help="The end date for the proposed grant "
-                                        "in format YYYY-MM-DD."
                        )
     subpi.add_argument("due_date", help="The due date for the proposal in format YYYY-MM-DD."
                        )
-    subpi.add_argument("duration", help="Duration of proposal in years"
+    subpi.add_argument("amount", help="value of award",
+                       )
+    subpi.add_argument("begin_date", help="The begin date for the proposed grant "
+                                          "in format YYYY-MM-DD."
+                       )
+    subpi.add_argument("duration", help="Duration of proposal in months"
                        )
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
+    subpi.add_argument("-a", "--authors", nargs="+",
+                       help="Other investigator names", default = []
+                       )
     subpi.add_argument("-c", "--currency",
-                       help="Currency in which amount is specified. Defaults to USD"
+                       help="Currency in which amount is specified. Defaults to USD",
+                       default = 'USD'
                        )
     subpi.add_argument("-p", "--pi",
                        help="Name of principal investigator. Defaults to"
-                            "group pi name in database"
+                            "group pi name in regolithrc.json", default = ''
                        )
-    subpi.add_argument("--cppflag", help="Current and pending form (true or false)"
+    subpi.add_argument("--cppflag", help="Current and pending form (true or false)",
+                       default = True
                        )
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
-                                                "submitted"
+                                                "submitted", default = False
                        )
-    subpi.add_argument("--institution", help="The institution where the work will primarily"
-                                             "be carried out"
+    subpi.add_argument("--institution", nargs="+",
+                       help="The institution where the work will primarily"
+                             "be carried out", default = []
                        )
     subpi.add_argument("--months_academic", help="Number of working months in the academic year"
-                                                 "to be stated on the current and pending form"
+                                                 "to be stated on the current and pending form",
+                       default = 0
                        )
     subpi.add_argument("--months_summer", help="Number of working months in the summer to be"
-                                                "stated on the current and pending form"
+                                                "stated on the current and pending form",
+                       default = 0
                        )
-    subpi.add_argument("--scope", help="Scope of the project"
+    subpi.add_argument("-s", "--scope", help="Scope of project and statement of any overlaps "
+                                             "with other current and pending grants",
+                       default = ''
                        )
-    subpi.add_argument("-f", "--funder",
-                       help="Agency where the proposal is being submitted"
+    subpi.add_argument("-f", "--funder", help="Agency where the proposal is being submitted",
+                       default = ''
                        )
     subpi.add_argument("-n", "--notes", nargs="+",
-                       help="Anything to note"
+                       help="Anything to note", default = ''
                        )
     return subpi
 
@@ -104,10 +106,7 @@ class ProposalAdderHelper(DbHelperBase):
     def db_updater(self):
         gtx = self.gtx
         rc = self.rc
-        if not rc.date:
-            now = dt.date.today()
-        else:
-            now = date_parser.parse(rc.date).date()
+        now = dt.date.today()
         key = f"{str(now.year)[2:]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
@@ -117,22 +116,15 @@ class ProposalAdderHelper(DbHelperBase):
                 "This entry appears to already exist in the collection")
         else:
             pdoc = {}
-        pdoc.update({'_id': key})
-        if rc.amount:
-            pdoc.update({'amount': rc.amount})
-        else:
-            pdoc.update({'amount': ''})
+        pdoc.update({'_id': key,
+                     'amount': rc.amount
+                     })
         if rc.authors:
             if isinstance(rc.authors, str):
                 pdoc.update({'authors': [rc.authors]})
             else:
                 pdoc.update({'authors': rc.authors})
-        else:
-            pdoc.update({'authors': ['']})
-        if rc.begin_date:
-            pdoc.update({'begin_date': rc.begin_date})
-        else:
-            pdoc.update({'begin_date': ''})
+        pdoc.update({'begin_date': ''})
         cpp_info = {}
         if rc.cppflag:
             cpp_info['cppflag'] = rc.cppflag
@@ -152,18 +144,10 @@ class ProposalAdderHelper(DbHelperBase):
             pdoc.update({'currency': rc.currency})
         else:
             pdoc.update({'currency': 'USD'})
-        if rc.due_date:
-            pdoc.update({'due_date': rc.due_date})
-        else:
-            pdoc.update({'due_date': 'tbd'})
-        if rc.duration:
-            pdoc.update({'duration': rc.duration})
-        else:
-            pdoc.update({'duration': 'tbd'})
-        if rc.end_date:
-            pdoc.update({'end_date': rc.end_date})
-        else:
-            pdoc.update({'end_date': ''})
+        pdoc.update({'due_date': rc.due_date,
+                     'duration': rc.duration
+                     })
+        pdoc.update({'end_date': now + relativedelta(months=rc.duration)})
         if rc.funder:
             pdoc.update({'funder': rc.funder})
         if rc.full:
@@ -173,22 +157,13 @@ class ProposalAdderHelper(DbHelperBase):
         if rc.pi:
             pdoc.update({'pi': rc.pi})
         else:
-            pi_entry = fuzzy_retrieval(gtx['people'], ['_id'], rc.pi_id, case_sensitive=True)
-            pi_name = pi_entry['name']
-            pdoc.update({'pi': pi_name})
+            pdoc.update({'pi': rc.pi_id})
         pdoc.update({'status': 'inprep'})
-        sample_team = {'cv':'',
-                       'email':'',
-                       'institution':'',
-                       'name': '',
-                       'position':'',
+        sample_team = {'name': '',
                        'subaward_amount': ''
                        }
         pdoc.update({'team': [sample_team]})
-        if rc.title:
-            pdoc.update({'title': rc.title})
-        else:
-            pdoc.update({'title': 'tbd'})
+        pdoc.update({'title': rc.title})
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
