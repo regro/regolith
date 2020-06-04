@@ -4,7 +4,6 @@ from regolith.tools import (
     filter_publications,
     fuzzy_retrieval,
     fragment_retrieval,
-    get_pi_id,
     number_suffix,
     latex_safe,
     is_before,
@@ -17,7 +16,9 @@ from regolith.tools import (
     merge_collections,
     group,
     is_fully_loaded,
-    group_member_ids)
+    group_member_ids,
+    month_and_year,
+    )
 
 
 def test_author_publications():
@@ -729,34 +730,49 @@ def test_group_member_ids(input, expected):
     actual = group_member_ids(input, "bg")
     assert actual == expected
 
-def test_fragment_retrieval():
-    p1 = {
-        "_id": "scopatz",
-        "aka": [
-            "Scopatz",
-            "Scopatz, A",
-            "Scopatz, A.",
-            "Scopatz, A M",
-            "Anthony Michael Scopatz",
-        ],
-        "name": "Anthony Scopatz",
-    }
-    p2 = {
-        "_id": "abc",
-        "aka": [
-            "A. BC",
-            "BC, A",
-            "Anthony BC",
-        ],
-        "name": "Anthony Bill Chris",
-    }
-    assert fragment_retrieval([p1, p2], ["aka", "name", "_id"],
-                           "Anthony") == [p1, p2]
-    assert fragment_retrieval([p1,p2], ["aka", "name", "_id"],
-                           "scopatz, a", case_sensitive = True) == []
-    assert (
-            fragment_retrieval(
-                [p1,p2], ["aka", "name", "_id"], "scopatz, a"
-            )
-            == [p1]
-    )
+p1 = {
+    "_id": "scopatz",
+    "aka": [
+        "Scopatz",
+        "Scopatz, A",
+        "Scopatz, A.",
+        "Scopatz, A M",
+        "Anthony Michael Scopatz",
+    ],
+    "name": "Anthony Scopatz",
+}
+p2 = {
+    "_id": "abc",
+    "aka": [
+        "A. BC",
+        "BC, A",
+        "Anthony BC",
+    ],
+    "name": "Anthony Bill Chris",
+}
+
+@pytest.mark.parametrize(
+    "input1, input2, input3, input4, expected",
+    [
+        ([p1, p2], ["aka", "name", "_id"],
+                           "Anthony", False,[p1,p2]),
+        ([p1, p2], ["aka", "name", "_id"],
+                           "scopatz, a", True,[]),
+        ([p1, p2], ["aka", "name", "_id"],
+                           "scopatz, a", False,[p1]),
+    ],
+)
+def test_fragment_retrieval(input1,input2,input3,input4, expected):
+    assert(fragment_retrieval(input1,input2,input3,input4) == expected)
+
+@pytest.mark.parametrize(
+    "input1, input2, expected",
+    [
+        (None, None, "present"),
+        (None, 2002, "2002"),
+        (5,2002, "May 2002"),        
+    ],
+)
+def test_month_and_year(input1, input2,expected):
+    assert(month_and_year(input1,input2) == expected)
+    
