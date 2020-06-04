@@ -1284,6 +1284,11 @@ SCHEMAS = {
             "required": False,
             "type": "string"
         },
+        'month': {
+            "description": "month when the entry was created/updated",
+            "required": False,
+            "type": "integer",
+        },
         "name": {
             "description": "the person's canonical name",
             "required": True,
@@ -1299,10 +1304,10 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
-        "month": {
-            "description": "the month when the entry was created",
+        'updated': {
+            "description": "date and time when the entry was created/updated",
             "required": False,
-            "anyof_type": ["integer", "string"],
+            "anyof_type": ["string", "datetime", "date"],
         },
         "year": {
             "description": "the year when the entry was created",
@@ -1313,6 +1318,11 @@ SCHEMAS = {
             "description": "the day (of the month) when the entry was created",
             "required": False,
             "type": "integer",
+        },
+        'uuid': {
+            "description": "universally unique identifier",
+            "required": False,
+            "type": "string",
         },
     },
     "grades": {
