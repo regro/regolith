@@ -35,6 +35,9 @@ helper_map = [
     (["helper", "l_grants", "-c", "-d", "2020-05-25"],
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
      ),
+    (["helper", "l_members", "-v"],
+     "Anthony Scopatz,professor\n"
+     ),
 
 ]
 

@@ -32,6 +32,8 @@ def subparser(subpi):
                        help=f"List of stati for the project that you want returned,"
                             f"from {ALLOWED_STATI}.  Default is proposed and started"
                        )
+    subpi.add_argument("-c", "--current", action="store_true", help='get only current group members ')
+
     return subpi
 
 
@@ -75,11 +77,13 @@ class MembersListerHelper(SoutHelperBase):
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
         for person in self.gtx["people"]:
+            if rc.current and not person.get('active'):
+                continue
             people.append(person)
         #people.sort()
         for i in people:
             if rc.verbose:
-                print("{} {}".format(i.get('name'), i.get('position')))
+                print("{},{}".format(i.get('name'), i.get('position')))
             else:
                 print("{}".format(i.get('name')))
         return
