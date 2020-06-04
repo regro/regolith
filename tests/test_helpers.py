@@ -35,9 +35,9 @@ helper_map = [
     (["helper", "l_grants", "-c", "-d", "2020-05-25"],
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
      ),
-    (["helper", "a_person", "aeinstein", "Albert Einstein",
-      'PhD', 'uzurich', '1905', "--active", "False"],
-       "aeinstein has been added in person\n"
+    (["helper", "u_contact", 'Anthony B Friend', 'columbiau', "-e", "-a",
+      "A. B. Friend", "AB Friend", "Tony Friend", "-n", "The guy I meet for coffee sometimes"],
+     "Anthony B Friend has been added/updated in contacts\n"
      ),
 ]
 
