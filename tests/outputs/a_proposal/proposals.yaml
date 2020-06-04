@@ -81,18 +81,14 @@ dmref15:
     - Kurt Godel
   begin_date: 2020-09-22
   currency: USD
-  due_date: 2022-12-14
+  due_date: 2020-12-29
   duration: 3
-  end_date: 2022-12-31
+  end_date: 2020-12-22
   funder: Columbia
   pi: Simon Billinge
   status: inprep
   team:
-    - cv: ''
-      email: ''
-      institution: ''
-      name: ''
-      position: ''
+    - name: ''
       subaward_amount: ''
   title: To destroy numbers
 
