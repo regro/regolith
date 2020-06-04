@@ -752,27 +752,29 @@ p2 = {
 }
 
 @pytest.mark.parametrize(
-    "input1, input2, input3, input4, expected",
+    "input, expected",
     [
-        ([p1, p2], ["aka", "name", "_id"],
-                           "Anthony", False,[p1,p2]),
-        ([p1, p2], ["aka", "name", "_id"],
-                           "scopatz, a", True,[]),
-        ([p1, p2], ["aka", "name", "_id"],
-                           "scopatz, a", False,[p1]),
+        (([p1, p2], ["aka", "name", "_id"],
+                           "Anth", False),[p1,p2]),
+        (([p1, p2], ["aka", "name", "_id"],
+                           "scopatz, a", True),[]),
+        (([p1, p2], ["aka", "name", "_id"],
+                           "scopatz, a", False),[p1]),
+        (([p1, p2], ["aka", "name", "_id"],
+                           "ill", False),[p2]),          
     ],
 )
-def test_fragment_retrieval(input1,input2,input3,input4, expected):
-    assert(fragment_retrieval(input1,input2,input3,input4) == expected)
+def test_fragment_retrieval(input, expected):
+    assert(fragment_retrieval(input[0],input[1],input[2],input[3]) == expected)
 
 @pytest.mark.parametrize(
-    "input1, input2, expected",
+    "input, expected",
     [
-        (None, None, "present"),
-        (None, 2002, "2002"),
-        (5,2002, "May 2002"),        
+        ((None, None), "present"),
+        ((None, 2002), "2002"),
+        ((5,2002), "May 2002"),        
     ],
 )
-def test_month_and_year(input1, input2,expected):
-    assert(month_and_year(input1,input2) == expected)
+def test_month_and_year(input,expected):
+    assert(month_and_year(input[0],input[1]) == expected)
     
