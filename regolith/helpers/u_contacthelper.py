@@ -75,25 +75,19 @@ class ContactUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         name = HumanName(rc.name)
-
         if not rc.date:
             now = dt.date.today()
         else:
             now = date_parser.parse(rc.date).date()
-
         key = str(name.first[0].lower().replace(" ", "") + name.last.lower().replace(" ", ""))
         filterid = {'_id': key}
         coll = self.gtx[rc.coll]
-
         pdoc = {'_id': key}
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
-
         if len(pdocl) > 0:
             current = rc.client.find_one(rc.database, rc.coll, filterid)
-            uid = current.get('uuid', str(uuid.uuid4()))
             notes = current.get('notes', [])
             aliases = current.get('aka', [])
-
         else:
             pdoc.update({'day': now.day, 'month': now.month, 'year': now.year, "date": now})
             notes = []
@@ -102,24 +96,19 @@ class ContactUpdaterHelper(DbHelperBase):
                 uid = str(uuid.uuid4())
             else:
                 uid = rc.uuid
-
+            pdoc.update({'uuid': uid})
         # if rc.e_email:
         #     pdoc.update({"email": rc.email})
-
         if rc.aliases:
             aliases.extend(rc.aliases)
-
         if rc.notes:
             notes.extend(rc.notes)
-
         if not rc.update:
             nowdt = dt.datetime.now()
         else:
             nowdt = rc.update
-
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
-        pdoc.update({'uuid': uid})
         pdoc.update({"name": name.full_name,
                     "institution": rc.institution,
                     })
