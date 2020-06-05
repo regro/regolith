@@ -765,7 +765,7 @@ p2 = {
     ],
 )
 def test_fragment_retrieval(input, expected):
-    assert(fragment_retrieval(input[0],input[1],input[2],input[3]) == expected)
+    assert(fragment_retrieval(input[0],input[1],input[2],case_sensitive = input[3]) == expected)
 
 @pytest.mark.parametrize(
     "input, expected",
@@ -776,5 +776,5 @@ def test_fragment_retrieval(input, expected):
     ],
 )
 def test_month_and_year(input,expected):
-    assert(month_and_year(input[0],input[1]) == expected)
-    
+    assert(month_and_year(input[0],input[1]) == expected) 
+
