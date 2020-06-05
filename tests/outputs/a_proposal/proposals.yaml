@@ -75,22 +75,72 @@ dmref15:
   title: DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery
   title_short: DMREF nanostructure
   year: 2015
-20_a_new_proposal:
+20_an_empty_new_proposal:
+  amount: 100.0
+  begin_date: tbd
+  currency: USD
+  due_date: tbd
+  duration: tbd
+  end_date: tbd
+  pi: ''
+  status: inprep
+  team:
+    - name: ''
+      subaward_amount: ''
+  title: To understand numbers
+20_a_sparse_new_proposal:
   amount: 500.0
   authors:
-    - Kurt Godel
-  begin_date: 2020-09-22
+    -
+  begin_date: tbd
+  cpp_info:
+    cppflag: True
+    other_agencies_submitted: False
+    institution:
+      -
+    person_months_acacdemic: 0
+    person_months_summer: 0
+    project_scope: ''
   currency: USD
-  due_date: 2020-12-29
-  duration: 3
-  end_date: 2020-12-22
-  funder: Columbia
-  pi: sbillinge
+  due_date: tbd
+  duration: tbd
+  end_date: tbd
+  funder: ''
+  notes: this is a minimal proposal
+  pi: ''
   status: inprep
   team:
     - name: ''
       subaward_amount: ''
   title: To destroy numbers
+20_a_dense_new_proposal:
+  amount: 1000.0
+  authors:
+    - Kurt Godel
+  begin_date: 2020-09-22
+  cpp_info:
+    cppflag: False
+    other_agencies_submittded: Flatland
+    institution:
+      - Columbia
+    person_months_acacdemic: 6
+    person_months_summer: 3
+    project_scope: UC6
+  currency: Bitcoin
+  due_date: 2020-12-29
+  duration: 3
+  end_date: 2020-12-22
+  funder: Columbia SEAS
+  notes: this is a maximal proposal
+  pi: sbillinge
+  status: inprep
+  team:
+    - name: ''
+      subaward_amount: ''
+  title: To create numbers
+
+
+
 
 
 

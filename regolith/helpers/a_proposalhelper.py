@@ -27,11 +27,14 @@ def subparser(subpi):
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
     subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
-                                          "in format YYYY-MM-DD."
+                                          "in format YYYY-MM-DD.",
+                       default = 'tbd'
                        )
-    subpi.add_argument("-d", "--duration", help="Duration of proposal in months"
+    subpi.add_argument("-d", "--duration", help="Duration of proposal in months",
+                       default = 'tbd'
                        )
-    subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD."
+    subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD.",
+                       default = 'tbd'
                        )
     subpi.add_argument("-a", "--authors", nargs="+",
                        help="Other investigator names", default = []
@@ -50,7 +53,7 @@ def subparser(subpi):
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
                                                 "submitted", default = False
                        )
-    subpi.add_argument("--institution", nargs="+",
+    subpi.add_argument("-i", "--institution", nargs="+",
                        help="The institution where the work will primarily"
                              "be carried out", default = []
                        )
@@ -73,7 +76,6 @@ def subparser(subpi):
                        help="Anything to note", default = ''
                        )
     return subpi
-
 
 class ProposalAdderHelper(DbHelperBase):
     """Helper for adding a proposal to the proposals collection.
@@ -170,7 +172,8 @@ class ProposalAdderHelper(DbHelperBase):
         if rc.pi:
             pdoc.update({'pi': rc.pi})
         else:
-            pdoc.update({'pi': rc.pi_id})
+            #pdoc.update({'pi': rc.pi_id})
+            pdoc.update({'pi': ''})
         pdoc.update({'status': 'inprep'})
         sample_team = {'name': '',
                        'subaward_amount': ''
