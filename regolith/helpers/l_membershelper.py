@@ -22,16 +22,6 @@ ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "ca
 
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
-    subpi.add_argument("-l", "--lead",
-                       help="Filter milestones for this project lead"
-                       )
-    subpi.add_argument("-p", "--person",
-                       help="Filter milestones for this person whether lead or not"
-                       )
-    subpi.add_argument("-s", "--stati", nargs="+",
-                       help=f"List of stati for the project that you want returned,"
-                            f"from {ALLOWED_STATI}.  Default is proposed and started"
-                       )
     subpi.add_argument("-c", "--current", action="store_true", help='get only current group members ')
 
     return subpi
