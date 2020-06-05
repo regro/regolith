@@ -1266,6 +1266,16 @@ SCHEMAS = {
             "type": "list",
             "description": "other names for the person",
         },
+        "date": {
+            "description": "date when the entry was created in ISO format",
+            "required": False,
+            "type": "string",
+        },
+        'day': {
+            "description": "day when the entry was created",
+            "required": False,
+            "type": "integer",
+        },
         "department": {
             "description": "Department at the institution",
             "type": "string",
@@ -1285,7 +1295,7 @@ SCHEMAS = {
             "type": "string"
         },
         'month': {
-            "description": "month when the entry was created/updated",
+            "description": "month when the entry was created",
             "required": False,
             "type": "integer",
         },
@@ -1305,17 +1315,12 @@ SCHEMAS = {
             "type": "string",
         },
         'updated': {
-            "description": "date and time when the entry was created/updated",
+            "description": "most recently updated",
             "required": False,
             "anyof_type": ["string", "datetime", "date"],
         },
-        "year": {
-            "description": "the year when the entry was created",
-            "required": False,
-            "type": "integer",
-        },
-        "day": {
-            "description": "the day (of the month) when the entry was created",
+        'year': {
+            "description": "year when the entry was created/updated",
             "required": False,
             "type": "integer",
         },

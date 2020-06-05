@@ -3,6 +3,7 @@
 """
 import datetime as dt
 from nameparser import HumanName
+import dateutil.parser as date_parser
 import sys
 import uuid
 
@@ -18,6 +19,8 @@ def subparser(subpi):
     subpi.add_argument("institution", help="person's institution.  Can be inf"
                                             "short form such as columbiau and will "
                                             "be retrieved from institutions collection")
+    # subpi.add_argument("-e", "--email",
+    #                    help="email address")
     subpi.add_argument("-a", "--aliases", nargs='+',
                         help="All the different ways that the person may "
                              "be referred to as.  As many as you like, in "
@@ -30,6 +33,20 @@ def subparser(subpi):
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
+    # Do not delete --date arg
+    subpi.add_argument("--date",
+                       help="The date when the contact was created in ISO format"
+                            " Defaults to today's date."
+                       )
+    subpi.add_argument("--update",
+                       help="The date and time when the contact was updated"
+                            " Defaults to the current date and time."
+                       )
+    subpi.add_argument("--uuid",
+                       help="universally unique identifier Defaults to "
+                            "a randomly generated uuid."
+                       )
+
     return subpi
 
 class ContactUpdaterHelper(DbHelperBase):
@@ -58,15 +75,17 @@ class ContactUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         name = HumanName(rc.name)
-        day = dt.date.today().day
-        month = dt.date.today().month
-        year = dt.date.today().year
-        now = dt.datetime.now()
+
+        if not rc.date:
+            now = dt.date.today()
+        else:
+            now = date_parser.parse(rc.date).date()
+
         key = str(name.first[0].lower().replace(" ", "") + name.last.lower().replace(" ", ""))
         filterid = {'_id': key}
         coll = self.gtx[rc.coll]
 
-        pdoc = {'_id': key, 'day': day, 'month': month, 'year': year}
+        pdoc = {'_id': key}
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
 
         if len(pdocl) > 0:
@@ -76,9 +95,16 @@ class ContactUpdaterHelper(DbHelperBase):
             aliases = current.get('aka', [])
 
         else:
-            uid = str(uuid.uuid4())
+            pdoc.update({'day': now.day, 'month': now.month, 'year': now.year, "date": now})
             notes = []
             aliases = [rc.name]
+            if not rc.uuid:
+                uid = str(uuid.uuid4())
+            else:
+                uid = rc.uuid
+
+        # if rc.e_email:
+        #     pdoc.update({"email": rc.email})
 
         if rc.aliases:
             aliases.extend(rc.aliases)
@@ -86,13 +112,18 @@ class ContactUpdaterHelper(DbHelperBase):
         if rc.notes:
             notes.extend(rc.notes)
 
+        if not rc.update:
+            nowdt = dt.datetime.now()
+        else:
+            nowdt = rc.update
+
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
         pdoc.update({'uuid': uid})
         pdoc.update({"name": name.full_name,
                     "institution": rc.institution,
                     })
-        pdoc.update({'updated': now})
+        pdoc.update({'updated': nowdt})
 
         rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         print("{} has been added/updated in contacts".format(rc.name))
