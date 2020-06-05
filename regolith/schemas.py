@@ -2291,7 +2291,7 @@ SCHEMAS = {
         },
         "day": {
             "description": "day that the proposal was submitted",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
         "due_date": {
@@ -2332,7 +2332,7 @@ SCHEMAS = {
         },
         "month": {
             "description": "month that the proposal was submitted",
-            "required": True,
+            "required": False,
             "anyof_type": ["string", "integer"]
         },
         "notes": {
@@ -2389,7 +2389,7 @@ SCHEMAS = {
         },
         "year": {
             "description": "Year that the proposal was submitted",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
     },
