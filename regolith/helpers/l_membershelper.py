@@ -83,7 +83,7 @@ class MembersListerHelper(SoutHelperBase):
         #people.sort()
         for i in people:
             if rc.verbose:
-                print("{},{}".format(i.get('name'), i.get('position')))
+                print("{}, {}, {}, {}".format(i.get('name'), i.get('position'), i.get('orcid_id'), i.get('github_id')))
             else:
                 print("{}".format(i.get('name')))
         return
