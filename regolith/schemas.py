@@ -1269,12 +1269,12 @@ SCHEMAS = {
         "date": {
             "description": "date when the entry was created in ISO format",
             "required": False,
-            "type": "string",
+            "anyof_type": ["string", "date"],
         },
         'day': {
             "description": "day when the entry was created",
             "required": False,
-            "anyof_type": ["string", "date"],
+            "type": "integer",
         },
         "department": {
             "description": "Department at the institution",
