@@ -75,7 +75,7 @@ dmref15:
   title: DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery
   title_short: DMREF nanostructure
   year: 2015
-20_an_empty_new_proposal:
+20_anemptynewproposal:
   amount: 100.0
   begin_date: tbd
   currency: USD
@@ -88,7 +88,7 @@ dmref15:
     - name: ''
       subaward_amount: ''
   title: To understand numbers
-20_a_sparse_new_proposal:
+20_asparsenewproposal:
   amount: 500.0
   authors:
     -
@@ -113,7 +113,7 @@ dmref15:
     - name: ''
       subaward_amount: ''
   title: To destroy numbers
-20_a_dense_new_proposal:
+20_adensenewproposal:
   amount: 1000.0
   authors:
     - Kurt Godel
@@ -122,7 +122,7 @@ dmref15:
     cppflag: False
     other_agencies_submittded: Flatland
     institution:
-      - Columbia
+      - columbiau
     person_months_acacdemic: 6
     person_months_summer: 3
     project_scope: UC6

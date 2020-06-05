@@ -28,10 +28,10 @@ def subparser(subpi):
                        )
     subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
                                           "in format YYYY-MM-DD.",
-                       default = 'tbd'
+                       #default = 'tbd'
                        )
     subpi.add_argument("-d", "--duration", help="Duration of proposal in months",
-                       default = 'tbd'
+                       #default = 'tbd'
                        )
     subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD.",
                        default = 'tbd'
@@ -165,8 +165,6 @@ class ProposalAdderHelper(DbHelperBase):
                          })
         if rc.funder:
             pdoc.update({'funder': rc.funder})
-        if rc.full:
-            pdoc.update({'full': rc.full})
         if rc.notes:
             pdoc.update({'notes': rc.notes})
         if rc.pi:

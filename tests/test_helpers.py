@@ -26,7 +26,7 @@ helper_map = [
     (["helper", "a_proposal", "a dense new proposal","1000.0","To create numbers",
       "--begin_date", "2020-09-22", "--duration", "3", "--due_date", "2020-12-29",
       "-a", "Kurt Godel", "-c", "Bitcoin" "-p", "sbillinge", "--cppflag", "False",
-      "--other_agencies", "Flatland", "-i", "Columbia", "--months_academic", "6",
+      "--other_agencies", "Flatland", "-i", "columbiau", "--months_academic", "6",
       "--months_summer", "3", "-s", "UC6", "-f", "Columbia SEAS",
       "-n", "this is a maximal proposal"],
      "20_a_dense_new_proposal has been added in proposals\n"),
