@@ -10,7 +10,6 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    fuzzy_retrieval
 )
 
 TARGET_COLL = "proposals"
@@ -23,16 +22,16 @@ def subparser(subpi):
                        )
     subpi.add_argument("name", help="A short but unique name for the proposal",
                        )
-    subpi.add_argument("due_date", help="The due date for the proposal in format YYYY-MM-DD."
-                       )
     subpi.add_argument("amount", help="value of award",
                        )
-    subpi.add_argument("begin_date", help="The begin date for the proposed grant "
+    subpi.add_argument("title", help="Actual title of the proposal"
+                       )
+    subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
                                           "in format YYYY-MM-DD."
                        )
-    subpi.add_argument("duration", help="Duration of proposal in months"
+    subpi.add_argument("-d", "--duration", help="Duration of proposal in months"
                        )
-    subpi.add_argument("title", help="Actual title of the proposal"
+    subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD."
                        )
     subpi.add_argument("-a", "--authors", nargs="+",
                        help="Other investigator names", default = []
@@ -42,8 +41,8 @@ def subparser(subpi):
                        default = 'USD'
                        )
     subpi.add_argument("-p", "--pi",
-                       help="Name of principal investigator. Defaults to"
-                            "group pi name in regolithrc.json", default = ''
+                       help="ID of principal investigator. Defaults to"
+                            "group pi id in regolithrc.json", default = ''
                        )
     subpi.add_argument("--cppflag", help="Current and pending form (true or false)",
                        default = True
@@ -84,7 +83,7 @@ class ProposalAdderHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "a_proposal"
-    needed_dbs = [f'{TARGET_COLL}', 'people']
+    needed_dbs = [f'{TARGET_COLL}', 'people', 'groups']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -124,7 +123,10 @@ class ProposalAdderHelper(DbHelperBase):
                 pdoc.update({'authors': [rc.authors]})
             else:
                 pdoc.update({'authors': rc.authors})
-        pdoc.update({'begin_date': ''})
+        if rc.begin_date:
+            pdoc.update({'begin_date': rc.begin_date})
+        else:
+            pdoc.update({'begin_date': 'tbd'})
         cpp_info = {}
         if rc.cppflag:
             cpp_info['cppflag'] = rc.cppflag
@@ -144,10 +146,21 @@ class ProposalAdderHelper(DbHelperBase):
             pdoc.update({'currency': rc.currency})
         else:
             pdoc.update({'currency': 'USD'})
-        pdoc.update({'due_date': rc.due_date,
-                     'duration': rc.duration
-                     })
-        pdoc.update({'end_date': now + relativedelta(months=rc.duration)})
+        if rc.due_date:
+            pdoc.update({'due_date': rc.due_date})
+        else:
+            pdoc.update({'due_date': 'tbd'})
+        if rc.duration:
+            pdoc.update({'duration': rc.duration})
+            if rc.begin_date:
+                begin_date = date_parser.parse(rc.begin_date).date()
+                pdoc.update({'end_date': begin_date + relativedelta(months = rc.duration)})
+            else:
+                pdoc.update({'end_date': 'tbd'})
+        else:
+            pdoc.update({'duration': 'tbd',
+                         'end_date': 'tbd'
+                         })
         if rc.funder:
             pdoc.update({'funder': rc.funder})
         if rc.full:
