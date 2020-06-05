@@ -1274,7 +1274,7 @@ SCHEMAS = {
         'day': {
             "description": "day when the entry was created",
             "required": False,
-            "type": "integer",
+            "anyof_type": ["string", "date"],
         },
         "department": {
             "description": "Department at the institution",
