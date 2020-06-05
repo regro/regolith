@@ -3,14 +3,16 @@ import pytest
 from regolith.tools import (
     filter_publications,
     fuzzy_retrieval,
-    get_pi_id,
+    fragment_retrieval,
     number_suffix,
     latex_safe,
     update_schemas,
     merge_collections,
     group,
     is_fully_loaded,
-    group_member_ids)
+    group_member_ids,
+    month_and_year,
+    )
 
 
 def test_author_publications():
@@ -614,4 +616,52 @@ ppl_coll = [
 def test_group_member_ids(input, expected):
     actual = group_member_ids(input, "bg")
     assert actual == expected
+
+p1 = {
+    "_id": "scopatz",
+    "aka": [
+        "Scopatz",
+        "Scopatz, A",
+        "Scopatz, A.",
+        "Scopatz, A M",
+        "Anthony Michael Scopatz",
+    ],
+    "name": "Anthony Scopatz",
+}
+p2 = {
+    "_id": "abc",
+    "aka": [
+        "A. BC",
+        "BC, A",
+        "Anthony BC",
+    ],
+    "name": "Anthony Bill Chris",
+}
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        (([p1, p2], ["aka", "name", "_id"],
+                           "Anth", False),[p1,p2]),
+        (([p1, p2], ["aka", "name", "_id"],
+                           "scopatz, a", True),[]),
+        (([p1, p2], ["aka", "name", "_id"],
+                           "scopatz, a", False),[p1]),
+        (([p1, p2], ["aka", "name", "_id"],
+                           "ill", False),[p2]),          
+    ],
+)
+def test_fragment_retrieval(input, expected):
+    assert(fragment_retrieval(input[0],input[1],input[2],case_sensitive = input[3]) == expected)
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ((None, None), "present"),
+        ((None, 2002), "2002"),
+        ((5,2002), "May 2002"),        
+    ],
+)
+def test_month_and_year(input,expected):
+    assert(month_and_year(input[0],input[1]) == expected) 
 
