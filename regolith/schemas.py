@@ -1152,7 +1152,7 @@ SCHEMAS = {
             "type": "string"
         },
         "name": {
-            "description": "the person canonical name",
+            "description": "the person's canonical name",
             "required": True,
             "type": "string",
         },
@@ -1167,12 +1167,12 @@ SCHEMAS = {
             "type": "string",
         },
         "month": {
-            "description": "what month the person was met",
+            "description": "the month when the entry was connected",
             "required": False,
             "type": "integer",
         },
         "year": {
-            "description": "how year the person was met",
+            "description": "the year when the entry was connected",
             "required": False,
             "type": "integer",
         },                
