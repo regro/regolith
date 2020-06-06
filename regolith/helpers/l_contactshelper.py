@@ -1,11 +1,10 @@
 """Helper for finding and listing contacts from the contacts.yml database.
 Prints name, institution, and email (if applicable) of the contact.
 """
-import datetime
 import dateutil
 import dateutil.parser as date_parser
 from collections import Counter
-
+from regolith.dates import is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -35,41 +34,14 @@ def subparser(subpi):
     subpi.add_argument(
         "-r",
         "--range",
-        help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2)')
+        help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2)',
+        default=4)
     subpi.add_argument(
         "-o",
         "--notes",
         help='list of fragments (multiple arguments allowed) to be found in the notes section of a contact',
         nargs='+')
     return subpi
-
-
-def is_current(thing, now=None):
-    """
-    given a thing with dates, returns true if the thing is current
-    looks for begin_ and end_ daty things (date, year, month, day), or just
-    the daty things themselves. e.g., begin_date, end_month, month, and so on.
-    Parameters
-    ----------
-    thing: dict
-      the thing that we want to know whether or not it is current
-    now: datetime.date object
-      a date for now.  If it is None it uses the current date.  Default is None
-    Returns
-    -------
-    True if the thing is current and false otherwise
-    """
-    if not now:
-        now = datetime.date.today()
-    dates = thing
-    current = False
-    try:
-        if dates.get("begin_date") <= now <= dates.get(
-                "end_date", datetime.date(5000, 12, 31)):
-            current = True
-    except BaseException:
-        raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
-    return current
 
 
 class ContactsListerHelper(SoutHelperBase):
@@ -137,24 +109,15 @@ class ContactsListerHelper(SoutHelperBase):
             temp_dat = date_parser.parse(rc.date).date()
             for contact in self.gtx["contacts"]:
                 if rc.date:
-                    if rc.range:
-                        temp_dict = {
-                            "begin_date": temp_dat -
-                            dateutil.relativedelta.relativedelta(
-                                months=int(
-                                    rc.range)),
-                            "end_date": temp_dat +
-                            dateutil.relativedelta.relativedelta(
-                                months=int(
-                                    rc.range))}
-                    else:
-                        temp_dict = {
-                            "begin_date": temp_dat -
-                            dateutil.relativedelta.relativedelta(
-                                months=2),
-                            "end_date": temp_dat +
-                            dateutil.relativedelta.relativedelta(
-                                months=2)}
+                    temp_dict = {
+                        "begin_date": (temp_dat -
+                                       dateutil.relativedelta.relativedelta(
+                                           months=int(
+                                               rc.range))).isoformat(),
+                        "end_date": (temp_dat +
+                                     dateutil.relativedelta.relativedelta(
+                                         months=int(
+                                             rc.range))).isoformat()}
                     if is_current(temp_dict, now=temp_dat):
                         contacts.append(contact)
         for con in contacts:
