@@ -15,7 +15,8 @@ from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import month_to_int, is_after, get_dates
+from regolith.chained_db import _convert_to_dict
+from regolith.dates import month_to_int, is_after, get_dates, has_started
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     fuzzy_retrieval
@@ -70,8 +71,6 @@ def get_advisors_name_inst(advisee, rc):
                 print("WARNING: {} not in institutions".format(adv.get("institution")))
                 yield advsior_name.last, advsior_name.first, adv.get("institution")
 
-#def active_advisee(item, rc):
-#    active_dates = get_dates()
 
 def get_advisees_name_inst(coll, advisor, rc):
     """Get advisor's advisees. Yield (last name, first name, institutions)"""
@@ -101,7 +100,9 @@ def get_advisees_name_inst(coll, advisor, rc):
 def filter_since_date(pubs, since_date):
     """Filter the publications after the since_date."""
     for pub in pubs:
-        if is_after(get_dates(pub), since_date):
+        if isinstance(pub.get("year"), str):
+            pub["year"] = int(pub.get("year"))
+        if has_started(pub, since_date):
             if not pub.get("month"):
                 print("WARNING: {} is missing month".format(
                     pub["_id"]))
