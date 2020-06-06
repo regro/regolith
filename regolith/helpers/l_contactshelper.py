@@ -163,5 +163,5 @@ class ContactsListerHelper(SoutHelperBase):
         temp_c = Counter(ret_list)
         for key in temp_c:
             if temp_c[key] == num:
-                print(temp_c[key])
+                print(key)
         return
