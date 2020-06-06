@@ -15,10 +15,10 @@ from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import month_to_int
+from regolith.dates import month_to_int, is_after, get_dates
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
-    fuzzy_retrieval, is_since
+    fuzzy_retrieval
 
 NUM_COAUTHOR_MONTHS = 48
 NUM_POSTDOC_MONTHS = 60
@@ -101,8 +101,7 @@ def get_advisees_name_inst(coll, advisor, rc):
 def filter_since_date(pubs, since_date):
     """Filter the publications after the since_date."""
     for pub in pubs:
-        if is_since(pub.get("year"), since_date.year,
-                    pub.get("month", 1), since_date.month):
+        if is_after(get_dates(pub), since_date):
             if not pub.get("month"):
                 print("WARNING: {} is missing month".format(
                     pub["_id"]))
