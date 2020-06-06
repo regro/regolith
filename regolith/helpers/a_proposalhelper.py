@@ -28,10 +28,10 @@ def subparser(subpi):
                        )
     subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
                                           "in format YYYY-MM-DD.",
-                       #default = 'tbd'
+                       default = 'tbd'
                        )
     subpi.add_argument("-d", "--duration", help="Duration of proposal in months",
-                       #default = 'tbd'
+                       default = 'tbd'
                        )
     subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD.",
                        default = 'tbd'
@@ -45,24 +45,26 @@ def subparser(subpi):
                        )
     subpi.add_argument("-p", "--pi",
                        help="ID of principal investigator. Defaults to"
-                            "group pi id in regolithrc.json", default = ''
+                            "group pi id in regolithrc.json"
                        )
-    subpi.add_argument("--cppflag", help="Current and pending form (true or false)",
+    subpi.add_argument("--cppflag", help="Current and pending form (True or False). Defaults to True)",
                        default = True
                        )
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
-                                                "submitted", default = False
+                                                "submitte. Defaults to False", default = False
                        )
     subpi.add_argument("-i", "--institution", nargs="+",
                        help="The institution where the work will primarily"
                              "be carried out", default = []
                        )
     subpi.add_argument("--months_academic", help="Number of working months in the academic year"
-                                                 "to be stated on the current and pending form",
+                                                 "to be stated on the current and pending form."
+                                                 "Defaults to 0",
                        default = 0
                        )
     subpi.add_argument("--months_summer", help="Number of working months in the summer to be"
-                                                "stated on the current and pending form",
+                                                "stated on the current and pending form"
+                                               "Defaults to 0",
                        default = 0
                        )
     subpi.add_argument("-s", "--scope", help="Scope of project and statement of any overlaps "
@@ -72,7 +74,7 @@ def subparser(subpi):
     subpi.add_argument("-f", "--funder", help="Agency where the proposal is being submitted",
                        default = ''
                        )
-    subpi.add_argument("-n", "--notes", nargs="+",
+    subpi.add_argument("-n", "--notes",
                        help="Anything to note", default = ''
                        )
     return subpi
@@ -118,60 +120,55 @@ class ProposalAdderHelper(DbHelperBase):
         else:
             pdoc = {}
         pdoc.update({'_id': key,
-                     'amount': rc.amount
+                     'amount': float(rc.amount)
                      })
-        if rc.authors:
-            if isinstance(rc.authors, str):
-                pdoc.update({'authors': [rc.authors]})
-            else:
-                pdoc.update({'authors': rc.authors})
-        if rc.begin_date:
-            pdoc.update({'begin_date': rc.begin_date})
+        if isinstance(rc.authors, str):
+            pdoc.update({'authors': [rc.authors]})
         else:
-            pdoc.update({'begin_date': 'tbd'})
+            pdoc.update({'authors': rc.authors})
+        if rc.begin_date != 'tbd':
+            pdoc.update({'begin_date': date_parser.parse(rc.begin_date).date()})
+        else:
+            pdoc.update({'begin_date': rc.begin_date})
         cpp_info = {}
         if rc.cppflag:
-            cpp_info['cppflag'] = rc.cppflag
-        if rc.other_agencies:
-            cpp_info['other_agencies_submitted'] = rc.other_agencies
-        if rc.institution:
-            cpp_info['institution'] = rc.institution
-        if rc.months_academic:
-             cpp_info['person_months_academic'] = rc.months_academic
-        if rc.months_summer:
-            cpp_info['person_months_summer'] =  rc.months_summer
-        if rc.scope:
-            cpp_info['project_scope'] = rc.scope
-        if cpp_info:
-            pdoc.update({'cpp_info':cpp_info})
-        if rc.currency:
-            pdoc.update({'currency': rc.currency})
+            cpp_info['cppflag'] = True
         else:
-            pdoc.update({'currency': 'USD'})
-        if rc.due_date:
+            cpp_info['cppflag'] = False
+        cpp_info['other_agencies_submitted'] = rc.other_agencies
+        cpp_info['institution'] = rc.institution
+        cpp_info['person_months_academic'] = int(rc.months_academic)
+        cpp_info['person_months_summer'] =  int(rc.months_summer)
+        cpp_info['project_scope'] = rc.scope
+        pdoc.update({'cpp_info':cpp_info})
+        pdoc.update({'currency': rc.currency})
+        if rc.due_date != 'tbd':
+            pdoc.update({'due_date': date_parser.parse(rc.due_date).date()})
+        else:
             pdoc.update({'due_date': rc.due_date})
-        else:
-            pdoc.update({'due_date': 'tbd'})
-        if rc.duration:
-            pdoc.update({'duration': rc.duration})
-            if rc.begin_date:
+        if rc.duration != 'tbd':
+            pdoc.update({'duration': int(rc.duration)})
+            if rc.begin_date != 'tbd':
                 begin_date = date_parser.parse(rc.begin_date).date()
-                pdoc.update({'end_date': begin_date + relativedelta(months = rc.duration)})
+                pdoc.update({'end_date': begin_date + relativedelta(months = int(rc.duration))})
             else:
                 pdoc.update({'end_date': 'tbd'})
         else:
-            pdoc.update({'duration': 'tbd',
+            pdoc.update({'duration': rc.duration,
                          'end_date': 'tbd'
                          })
         if rc.funder:
             pdoc.update({'funder': rc.funder})
+        else:
+            pdoc.update({'funder': ''})
         if rc.notes:
             pdoc.update({'notes': rc.notes})
+        else:
+            pdoc.update({'notes': ''})
         if rc.pi:
             pdoc.update({'pi': rc.pi})
         else:
-            #pdoc.update({'pi': rc.pi_id})
-            pdoc.update({'pi': ''})
+            pdoc.update({'pi': rc.pi_id})
         pdoc.update({'status': 'inprep'})
         sample_team = {'name': '',
                        'subaward_amount': ''
