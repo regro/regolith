@@ -85,13 +85,13 @@ class ContactsListerHelper(SoutHelperBase):
         if rc.name:
             num += 1
             for name in rc.name:
-                contacts.extend(
+                contacts.append(
                     fragment_retrieval(
                         self.gtx['contacts'], [
                             "_id", "aka", "name"], name))
         if rc.inst:
             num += 1
-            contacts.extend(
+            contacts.append(
                 fragment_retrieval(
                     self.gtx['contacts'],
                     ["institution"],
@@ -99,12 +99,13 @@ class ContactsListerHelper(SoutHelperBase):
         if rc.notes:
             num += 1
             for note in rc.notes:
-                contacts.extend(
+                contacts.append(
                     fragment_retrieval(
                         self.gtx['contacts'],
                         ["notes"],
                         note))
         if rc.date:
+            date_list = []
             num += 1
             temp_dat = date_parser.parse(rc.date).date()
             for contact in self.gtx["contacts"]:
@@ -119,12 +120,14 @@ class ContactsListerHelper(SoutHelperBase):
                                          months=int(
                                              rc.range))).isoformat()}
                     if is_current(temp_dict, now=temp_dat):
-                        contacts.append(contact)
-        for con in contacts:
-            ret_list.append(
-                f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email','missing')}")
-        temp_c = Counter(ret_list)
-        for key in temp_c:
-            if temp_c[key] == num:
-                print(key)
+                        date_list.append(contact)
+            contacts.append(date_list)
+        for lis in contacts:
+            temp_lis = []
+            for con in lis:
+                temp_lis.append(
+                    f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email','missing')}")
+            ret_list.append(set(temp_lis))
+        for item in set.intersection(*ret_list):
+            print(item)
         return
