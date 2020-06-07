@@ -1167,12 +1167,12 @@ SCHEMAS = {
             "type": "string",
         },
         "month": {
-            "description": "the month when the entry was connected",
+            "description": "the month when the entry was created",
             "required": False,
             "type": "integer",
         },
         "year": {
-            "description": "the year when the entry was connected",
+            "description": "the year when the entry was created",
             "required": False,
             "type": "integer",
         },                
