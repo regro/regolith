@@ -39,11 +39,13 @@ def subparser(subpi):
         "-o",
         "--notes",
         help='fragment (single argument only) to be found in the notes section of a contact'
-        )
+    )
     return subpi
 
+
 def stringify(con):
-    return  f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email','missing')}"
+    return f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email','missing')}"
+
 
 class ContactsListerHelper(SoutHelperBase):
     """Helper for finding and listing contacts from the contacts.yml file
@@ -83,26 +85,26 @@ class ContactsListerHelper(SoutHelperBase):
         contacts = []
         ret_list = []
         def_l = set(stringify(i) for i in
-               self.gtx['contacts'])
+                    self.gtx['contacts'])
         if rc.name:
             namel = set(stringify(i) for i in
-                fragment_retrieval(
-                    self.gtx['contacts'], [
+                        fragment_retrieval(
+                self.gtx['contacts'], [
                         "_id", "aka", "name"], rc.name))
         else:
             namel = def_l
         if rc.inst:
             instl = set(stringify(i) for i in
-                fragment_retrieval(
-                    self.gtx['contacts'],
-                    ["institution"],
-                    rc.inst))
+                        fragment_retrieval(
+                self.gtx['contacts'],
+                ["institution"],
+                rc.inst))
         else:
             instl = def_l
         if rc.notes:
             notel = set(stringify(i) for i in
-                fragment_retrieval(
-                    self.gtx['contacts'], [
+                        fragment_retrieval(
+                self.gtx['contacts'], [
                         "notes"], rc.notes))
         else:
             notel = def_l
@@ -125,7 +127,7 @@ class ContactsListerHelper(SoutHelperBase):
             datel = set(date_list)
         else:
             datel = def_l
-        res_l = set.intersection(namel,instl,notel,datel)
+        res_l = set.intersection(namel, instl, notel, datel)
         for item in res_l:
             print(item)
         return
