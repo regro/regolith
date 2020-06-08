@@ -19,6 +19,7 @@ def subparser(subpi):
     subpi.add_argument("institution", help="person's institution.  Can be inf"
                                             "short form such as columbiau and will "
                                             "be retrieved from institutions collection")
+    #FIXME
     # subpi.add_argument("-e", "--email",
     #                    help="email address")
     subpi.add_argument("-a", "--aliases", nargs='+',
@@ -97,6 +98,7 @@ class ContactUpdaterHelper(DbHelperBase):
             else:
                 uid = rc.uuid
             pdoc.update({'uuid': uid})
+        #FIXME
         # if rc.e_email:
         #     pdoc.update({"email": rc.email})
         if rc.aliases:
