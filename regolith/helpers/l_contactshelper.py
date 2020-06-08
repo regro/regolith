@@ -3,7 +3,6 @@ Prints name, institution, and email (if applicable) of the contact.
 """
 import dateutil
 import dateutil.parser as date_parser
-from collections import Counter
 from regolith.dates import is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
@@ -82,8 +81,6 @@ class ContactsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        contacts = []
-        ret_list = []
         def_l = set(stringify(i) for i in
                     self.gtx['contacts'])
         if rc.name:
