@@ -73,8 +73,8 @@ class MembersListerHelper(SoutHelperBase):
         #people.sort()
         for i in people:
             if rc.verbose:
-                print("{}, {} | group_id: {} | orcid: {} | github_id: {}".format(i.get('name'), i.get('position'), i.get('_id'), i.get('orcid_id'),
-                                                  i.get('github_id')))
+                print("{}, {} | group_id: {}".format(i.get('name'), i.get('position'), i.get('_id')))
+                print("    orcid: {} | github_id: {}".format(i.get('orcid_id'), i.get('github_id')))
             else:
                 print("{}".format(i.get('name')))
         return
