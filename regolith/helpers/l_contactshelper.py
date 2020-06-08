@@ -21,8 +21,7 @@ def subparser(subpi):
     subpi.add_argument(
         "-n",
         "--name",
-        help='list of names or name fragments (multiple arguments allowed) to use to find contacts',
-        nargs='+')
+        help='name or name fragment (single argument only) to use to find contacts')
     subpi.add_argument(
         "-i",
         "--inst",
@@ -39,10 +38,12 @@ def subparser(subpi):
     subpi.add_argument(
         "-o",
         "--notes",
-        help='list of fragments (multiple arguments allowed) to be found in the notes section of a contact',
-        nargs='+')
+        help='fragment (single argument only) to be found in the notes section of a contact'
+        )
     return subpi
 
+def stringify(con):
+    return  f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email','missing')}"
 
 class ContactsListerHelper(SoutHelperBase):
     """Helper for finding and listing contacts from the contacts.yml file
@@ -81,32 +82,32 @@ class ContactsListerHelper(SoutHelperBase):
         rc = self.rc
         contacts = []
         ret_list = []
-        num = 0
+        def_l = set(stringify(i) for i in
+               self.gtx['contacts'])
         if rc.name:
-            num += 1
-            for name in rc.name:
-                contacts.append(
-                    fragment_retrieval(
-                        self.gtx['contacts'], [
-                            "_id", "aka", "name"], name))
+            namel = set(stringify(i) for i in
+                fragment_retrieval(
+                    self.gtx['contacts'], [
+                        "_id", "aka", "name"], rc.name))
+        else:
+            namel = def_l
         if rc.inst:
-            num += 1
-            contacts.append(
+            instl = set(stringify(i) for i in
                 fragment_retrieval(
                     self.gtx['contacts'],
                     ["institution"],
                     rc.inst))
+        else:
+            instl = def_l
         if rc.notes:
-            num += 1
-            for note in rc.notes:
-                contacts.append(
-                    fragment_retrieval(
-                        self.gtx['contacts'],
-                        ["notes"],
-                        note))
+            notel = set(stringify(i) for i in
+                fragment_retrieval(
+                    self.gtx['contacts'], [
+                        "notes"], rc.notes))
+        else:
+            notel = def_l
         if rc.date:
             date_list = []
-            num += 1
             temp_dat = date_parser.parse(rc.date).date()
             for contact in self.gtx["contacts"]:
                 if rc.date:
@@ -120,14 +121,11 @@ class ContactsListerHelper(SoutHelperBase):
                                          months=int(
                                              rc.range))).isoformat()}
                     if is_current(temp_dict, now=temp_dat):
-                        date_list.append(contact)
-            contacts.append(date_list)
-        for lis in contacts:
-            temp_lis = []
-            for con in lis:
-                temp_lis.append(
-                    f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email','missing')}")
-            ret_list.append(set(temp_lis))
-        for item in set.intersection(*ret_list):
+                        date_list.append(stringify(contact))
+            datel = set(date_list)
+        else:
+            datel = def_l
+        res_l = set.intersection(namel,instl,notel,datel)
+        for item in res_l:
             print(item)
         return
