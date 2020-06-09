@@ -96,8 +96,9 @@ EXEMPLARS = {
         "name": "Anthony B Friend",
         "notes": "The guy I meet for coffee sometimes",
         "title": "Mr.",
-        "month": 1,
+        "month": "January",
         "year": 2020,
+        "day": 15,
     },
     "courses": {
         "_id": "EMCH-552-2016-F",
@@ -1307,6 +1308,11 @@ SCHEMAS = {
             "required": False,
             "type": "integer",
         },
+        "day": {
+            "description": "the day (of the month) when the entry was created",
+            "required": False,
+            "type": "integer",
+        },        
     },
     "grades": {
         "_description": {
