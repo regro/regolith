@@ -4,7 +4,6 @@ import pytest
 
 from regolith.main import main
 
-
 helper_map = [
     (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
@@ -18,9 +17,10 @@ helper_map = [
       "-m", "ascopatz", "-g", "SymPy-1.1"],
      "20ly_newprojectum has been added in projecta\n"),
     (["helper", "a_proposal", "a new proposal","100.0","To destroy numbers",
-      "--begin_date", "2020-09-22", "--duration", "3", "-a", "Kurt Godel",
-      "-c", "Bitcoin", "--other_agencies", "Flatland","-n", "this is a sample added proposal"],
-    "20_anewproposal has been added in proposals\n"),
+      "--begin_date", "2020-09-22", "--duration", "3", "-a","Kurt Godel", "MC Escher",
+      "Johann Sebastian Bach","-c", "Bitcoin", "--other_agencies", "Flatland","-n",
+      "this is a sample added proposal"],
+     "20_anewproposal has been added in proposals\n"),
     (["helper", "l_milestones", "--verbose"],
      "2021-04-29: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),

@@ -14,6 +14,7 @@ from regolith.tools import (
 
 TARGET_COLL = "proposals"
 
+
 def subparser(subpi):
     # Do not delete --database arg
     subpi.add_argument("--database",
@@ -27,62 +28,55 @@ def subparser(subpi):
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
     subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
-                                          "in format YYYY-MM-DD.",
-                       default = 'tbd'
+                                            "in format YYYY-MM-DD.",
                        )
     subpi.add_argument("-d", "--duration", help="Duration of proposal in months",
-                       default = 'tbd'
                        )
-    subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD.",
-                       default = 'tbd'
+    subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD",
                        )
     subpi.add_argument("-a", "--authors", nargs="+",
-                       help="Other investigator names", default = []
+                       help="Other investigator names", default=[]
                        )
     subpi.add_argument("-c", "--currency",
                        help="Currency in which amount is specified. Defaults to USD",
                        default = 'USD'
                        )
     subpi.add_argument("-p", "--pi",
-                       help="ID of principal investigator. Defaults to"
+                       help="ID of principal investigator. Defaults to "
                             "group pi id in regolithrc.json"
                        )
     subpi.add_argument("--cppflag", help="Current and pending form (True or False). Defaults to True)",
-                       default = True
+                       default=True
                        )
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
-                                                "submitte. Defaults to False", default = False
+                                                "submitted. Defaults to False", default='none'
                        )
-    subpi.add_argument("-i", "--institution", nargs="+",
-                       help="The institution where the work will primarily"
-                             "be carried out", default = []
+    subpi.add_argument("-i", "--institution",
+                       help="The institution where the work will primarily "
+                            "be carried out", default=''
                        )
-    subpi.add_argument("--months_academic", help="Number of working months in the academic year"
-                                                 "to be stated on the current and pending form."
+    subpi.add_argument("--months_academic", help="Number of working months in the academic year "
+                                                 "to be stated on the current and pending form. "
                                                  "Defaults to 0",
-                       default = 0
+                       default=0
                        )
-    subpi.add_argument("--months_summer", help="Number of working months in the summer to be"
-                                                "stated on the current and pending form"
+    subpi.add_argument("--months_summer", help="Number of working months in the summer to be "
+                                               "stated on the current and pending form. "
                                                "Defaults to 0",
-                       default = 0
+                       default=0
                        )
     subpi.add_argument("-s", "--scope", help="Scope of project and statement of any overlaps "
                                              "with other current and pending grants",
-                       default = ''
+                       default=''
                        )
     subpi.add_argument("-f", "--funder", help="Agency where the proposal is being submitted",
-                       default = ''
+                       default=''
                        )
-    subpi.add_argument("-n", "--notes",
-                       help="Anything to note", default = ''
+    subpi.add_argument("-n", "--notes", nargs="+",
+                       help="Anything to note", default=[]
                        )
-
-    #subpi.add_argument("-t", "--target_collection",
-    #                   help="Collection to add proposal to", default='proposals'
-    #                   )
-
     return subpi
+
 
 class ProposalAdderHelper(DbHelperBase):
     """Helper for adding a proposal to the proposals collection.
@@ -101,7 +95,6 @@ class ProposalAdderHelper(DbHelperBase):
         rc = self.rc
         rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
-        #rc.coll = f"{rc.target_collection}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         gtx[rc.coll] = sorted(
@@ -128,14 +121,11 @@ class ProposalAdderHelper(DbHelperBase):
         pdoc.update({'_id': key,
                      'amount': float(rc.amount)
                      })
-        if isinstance(rc.authors, str):
-            pdoc.update({'authors': [rc.authors]})
-        else:
-            pdoc.update({'authors': rc.authors})
-        if rc.begin_date != 'tbd':
+        pdoc.update({'authors': rc.authors})
+        if rc.begin_date:
             pdoc.update({'begin_date': date_parser.parse(rc.begin_date).date()})
         else:
-            pdoc.update({'begin_date': rc.begin_date})
+            pdoc.update({'begin_date': 'tbd'})
         cpp_info = {}
         if rc.cppflag:
             cpp_info['cppflag'] = True
@@ -144,33 +134,27 @@ class ProposalAdderHelper(DbHelperBase):
         cpp_info['other_agencies_submitted'] = rc.other_agencies
         cpp_info['institution'] = rc.institution
         cpp_info['person_months_academic'] = int(rc.months_academic)
-        cpp_info['person_months_summer'] =  int(rc.months_summer)
+        cpp_info['person_months_summer'] = int(rc.months_summer)
         cpp_info['project_scope'] = rc.scope
-        pdoc.update({'cpp_info':cpp_info})
+        pdoc.update({'cpp_info': cpp_info})
         pdoc.update({'currency': rc.currency})
-        if rc.due_date != 'tbd':
+        if rc.due_date:
             pdoc.update({'due_date': date_parser.parse(rc.due_date).date()})
         else:
-            pdoc.update({'due_date': rc.due_date})
-        if rc.duration != 'tbd':
+            pdoc.update({'due_date': 'tbd'})
+        if rc.duration:
             pdoc.update({'duration': int(rc.duration)})
-            if rc.begin_date != 'tbd':
+            if rc.begin_date:
                 begin_date = date_parser.parse(rc.begin_date).date()
-                pdoc.update({'end_date': begin_date + relativedelta(months = int(rc.duration))})
+                pdoc.update({'end_date': begin_date + relativedelta(months=int(rc.duration))})
             else:
                 pdoc.update({'end_date': 'tbd'})
         else:
-            pdoc.update({'duration': rc.duration,
+            pdoc.update({'duration': 'tbd',
                          'end_date': 'tbd'
                          })
-        if rc.funder:
-            pdoc.update({'funder': rc.funder})
-        else:
-            pdoc.update({'funder': ''})
-        if rc.notes:
-            pdoc.update({'notes': rc.notes})
-        else:
-            pdoc.update({'notes': ''})
+        pdoc.update({'funder': rc.funder})
+        pdoc.update({'notes': rc.notes})
         if rc.pi:
             pdoc.update({'pi': rc.pi})
         else:
@@ -185,6 +169,5 @@ class ProposalAdderHelper(DbHelperBase):
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print(f"{key} has been added in {TARGET_COLL}")
-        #print(f"{key} has been added in {rc.target_collection}")
 
         return

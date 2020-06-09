@@ -2,11 +2,13 @@
   amount: 100.0
   authors:
     - Kurt Godel
+    - MC Escher
+    - Johann Sebastian Bach
   begin_date: 2020-09-22
   cpp_info:
     cppflag: true
     other_agencies_submitted: Flatland
-    institution: []
+    institution: ''
     person_months_academic: 0
     person_months_summer: 0
     project_scope: ''
@@ -15,7 +17,8 @@
   duration: 3
   end_date: 2020-12-22
   funder: ''
-  notes: this is a sample added proposal
+  notes:
+    - this is a sample added proposal
   pi: scopatz
   status: inprep
   team:
