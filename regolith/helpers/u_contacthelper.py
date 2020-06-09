@@ -25,10 +25,10 @@ def subparser(subpi):
     subpi.add_argument("-a", "--aliases", nargs='+',
                         help="All the different ways that the person may "
                              "be referred to as.  As many as you like, in "
-                             "quotes separated by commas")
+                             "quotes separated by a space")
     subpi.add_argument("-n", "--notes", nargs='+',
                         help="notes.  As many notes as you like, each one in "
-                             "quotes and separated by a comma, such as where"
+                             "quotes and separated by a space, such as where"
                              "and when met, what discussed.")
     # Do not delete --database arg
     subpi.add_argument("--database",
@@ -38,14 +38,6 @@ def subparser(subpi):
     subpi.add_argument("--date",
                        help="The date when the contact was created in ISO format"
                             " Defaults to today's date."
-                       )
-    subpi.add_argument("--update",
-                       help="The date and time when the contact was updated"
-                            " Defaults to the current date and time."
-                       )
-    subpi.add_argument("--uuid",
-                       help="universally unique identifier Defaults to "
-                            "a randomly generated uuid."
                        )
 
     return subpi
@@ -77,7 +69,7 @@ class ContactUpdaterHelper(DbHelperBase):
         rc = self.rc
         name = HumanName(rc.name)
         if not rc.date:
-            now = dt.date.today()
+            now = dt.datetime.now()
         else:
             now = date_parser.parse(rc.date).date()
         key = str(name.first[0].lower().replace(" ", "") + name.last.lower().replace(" ", ""))
@@ -90,7 +82,7 @@ class ContactUpdaterHelper(DbHelperBase):
             notes = current.get('notes', [])
             aliases = current.get('aka', [])
         else:
-            pdoc.update({'day': now.day, 'month': now.month, 'year': now.year, "date": now})
+            pdoc.update({'day': now.day, 'month': now.month, 'year': now.year, "date": dt.today()})
             notes = []
             aliases = [rc.name]
             if not rc.uuid:
@@ -105,16 +97,12 @@ class ContactUpdaterHelper(DbHelperBase):
             aliases.extend(rc.aliases)
         if rc.notes:
             notes.extend(rc.notes)
-        if not rc.update:
-            nowdt = dt.datetime.now()
-        else:
-            nowdt = rc.update
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
         pdoc.update({"name": name.full_name,
                     "institution": rc.institution,
                     })
-        pdoc.update({'updated': nowdt})
+        pdoc.update({'updated': now})
 
         rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         print("{} has been added/updated in contacts".format(rc.name))
