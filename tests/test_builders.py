@@ -18,12 +18,12 @@ builder_map = [
     "reimb",
     "figure",
     "recent-collabs",
-    "beamplan"
+    "beamplan",
     "annual-appraisal"
 ]
 
 xls_check = ("B17", "B20", "B36")
-recent_collabs_xlsx_check = ["A51", "B51", "C51"] 
+recent_collabs_xlsx_check = ["A51", "B51", "C51"]
 
 
 def prep_figure():

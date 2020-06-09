@@ -50,9 +50,15 @@ class CVBuilder(LatexBuilderBase):
                 pubs, pid=p["_id"], person_dir=self.bldir
             )
             emp = p.get("employment", [])
+            for e in emp:
+                e['position'] = e.get('position_full', e.get('position').title())
             emp.sort(key=ene_date_key, reverse=True)
             edu = p.get("education", [])
             edu.sort(key=ene_date_key, reverse=True)
+            teach = p.get("teaching", [])
+            for t in teach:
+                t['position'] = t.get('position').title()
+
             projs = filter_projects(
                 all_docs_from_collection(rc.client, "projects"), names
             )
