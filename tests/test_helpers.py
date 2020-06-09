@@ -8,8 +8,8 @@ from regolith.main import main
 helper_map = [
     (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
-      "Tess Guebre","-s", "downloaded", "-t", "A flat world theory"],
-      "A. Einstein proposal has been added/updated in proposal reviews\n"),
+      "Tess Guebre", "-s", "downloaded", "-t", "A flat world theory"],
+     "A. Einstein proposal has been added/updated in proposal reviews\n"),
     (["helper", "a_grppub_readlist", "test the lister",
       "A list to test the lister", "pdf", "--purpose", "Test the lister"],
      "test_the_lister has been added in reading_lists\n"),
@@ -39,7 +39,9 @@ helper_map = [
      "Anthony Scopatz, professor | group_id: scopatz\n"
      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
      ),
-
+    (["helper", "l_contacts", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
+     "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
+     ),
 ]
 
 
@@ -59,14 +61,14 @@ def test_helper_python(hm, make_db, capsys):
     if are_outfiles and not expecteddir.is_dir():
         print("WARNING: there are built outputs that are not being tested")
     if are_outfiles and expecteddir.is_dir():
-        assert_outputs(builddir,expecteddir)
+        assert_outputs(builddir, expecteddir)
 
     builddir = repo / "db"
     if expecteddir.is_dir():
-        assert_outputs(builddir,expecteddir)
+        assert_outputs(builddir, expecteddir)
 
 
-def assert_outputs(builddir,expecteddir):
+def assert_outputs(builddir, expecteddir):
     """
 
     Parameters
@@ -89,11 +91,11 @@ def assert_outputs(builddir,expecteddir):
 
                 # Skip because of a date time in
                 if file != "rss.xml":
-                    # Fixme proper fix for testing hard coded filepaths on windows
+                    # Fixme proper fix for testing hard coded filepaths on
+                    # windows
                     if os.name == "nt":
                         if "tmp" not in expected:
                             if "../.." not in expected:
                                 assert expected == actual
                     else:
                         assert expected == actual
-

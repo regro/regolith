@@ -96,6 +96,8 @@ EXEMPLARS = {
         "name": "Anthony B Friend",
         "notes": "The guy I meet for coffee sometimes",
         "title": "Mr.",
+        "month": 1,
+        "year": 2020,
     },
     "courses": {
         "_id": "EMCH-552-2016-F",
@@ -1150,7 +1152,7 @@ SCHEMAS = {
             "type": "string"
         },
         "name": {
-            "description": "the person canonical name",
+            "description": "the person's canonical name",
             "required": True,
             "type": "string",
         },
@@ -1164,6 +1166,16 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
+        "month": {
+            "description": "the month when the entry was created",
+            "required": False,
+            "type": "integer",
+        },
+        "year": {
+            "description": "the year when the entry was created",
+            "required": False,
+            "type": "integer",
+        },                
     },
     "grades": {
         "_description": {
