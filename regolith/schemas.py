@@ -1320,7 +1320,7 @@ SCHEMAS = {
             "anyof_type": ["string", "datetime", "date"],
         },
         'year': {
-            "description": "year when the entry was created/updated",
+            "description": "year when the entry was created",
             "required": False,
             "type": "integer",
         },
