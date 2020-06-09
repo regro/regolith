@@ -85,10 +85,7 @@ class ContactUpdaterHelper(DbHelperBase):
             pdoc.update({'day': now.day, 'month': now.month, 'year': now.year, "date": dt.today()})
             notes = []
             aliases = [rc.name]
-            if not rc.uuid:
-                uid = str(uuid.uuid4())
-            else:
-                uid = rc.uuid
+            uid = str(uuid.uuid4())
             pdoc.update({'uuid': uid})
         #FIXME
         # if rc.e_email:
