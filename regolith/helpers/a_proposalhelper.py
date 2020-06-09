@@ -77,6 +77,11 @@ def subparser(subpi):
     subpi.add_argument("-n", "--notes",
                        help="Anything to note", default = ''
                        )
+
+    #subpi.add_argument("-t", "--target_collection",
+    #                   help="Collection to add proposal to", default='proposals'
+    #                   )
+
     return subpi
 
 class ProposalAdderHelper(DbHelperBase):
@@ -96,6 +101,7 @@ class ProposalAdderHelper(DbHelperBase):
         rc = self.rc
         rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
+        #rc.coll = f"{rc.target_collection}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         gtx[rc.coll] = sorted(
@@ -179,5 +185,6 @@ class ProposalAdderHelper(DbHelperBase):
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print(f"{key} has been added in {TARGET_COLL}")
+        #print(f"{key} has been added in {rc.target_collection}")
 
         return

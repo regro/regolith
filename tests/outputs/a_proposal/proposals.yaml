@@ -1,51 +1,27 @@
-20_adensenewproposal:
-  amount: 1000.0
+20_anewproposal:
+  amount: 100.0
   authors:
     - Kurt Godel
   begin_date: 2020-09-22
   cpp_info:
-    cppflag: false
-    other_agencies_submitted: Flatland
-    institution:
-      - columbiau
-    person_months_academic: 6
-    person_months_summer: 3
-    project_scope: UC6
-  currency: Bitcoin
-  due_date: 2020-12-29
-  duration: 3
-  end_date: 2020-12-22
-  funder: Columbia SEAS
-  notes: this is a maximal proposal
-  pi: sbillinge
-  status: inprep
-  team:
-    - name: ''
-      subaward_amount: ''
-  title: To create numbers
-20_asparsenewproposal:
-  amount: 100.0
-  authors: []
-  begin_date: tbd
-  cpp_info:
     cppflag: true
-    other_agencies_submitted: false
+    other_agencies_submitted: Flatland
     institution: []
     person_months_academic: 0
     person_months_summer: 0
     project_scope: ''
-  currency: USD
+  currency: Bitcoin
   due_date: tbd
-  duration: tbd
-  end_date: tbd
+  duration: 3
+  end_date: 2020-12-22
   funder: ''
-  notes: ''
+  notes: this is a sample added proposal
   pi: scopatz
   status: inprep
   team:
     - name: ''
       subaward_amount: ''
-  title: To understand numbers
+  title: To destroy numbers
 dmref15:
   amount: 982785.0
   authors:

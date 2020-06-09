@@ -17,15 +17,10 @@ helper_map = [
       "--date", "2020-04-29", "-c", "afriend", "-d", "more work",
       "-m", "ascopatz", "-g", "SymPy-1.1"],
      "20ly_newprojectum has been added in projecta\n"),
-    (["helper", "a_proposal", "a sparse new proposal","100.0","To understand numbers"],
-    "20_asparsenewproposal has been added in proposals\n"),
-    (["helper", "a_proposal", "a dense new proposal","1000.0","To create numbers",
-      "--begin_date", "2020-09-22", "--duration", "3", "--due_date", "2020-12-29",
-      "-a", "Kurt Godel", "-c", "Bitcoin", "-p", "sbillinge", "--cppflag", False,
-      "--other_agencies", "Flatland", "-i", "columbiau", "--months_academic", "6",
-      "--months_summer", "3", "-s", "UC6", "-f", "Columbia SEAS",
-      "-n", "this is a maximal proposal"],
-     "20_adensenewproposal has been added in proposals\n"),
+    (["helper", "a_proposal", "a new proposal","100.0","To destroy numbers",
+      "--begin_date", "2020-09-22", "--duration", "3", "-a", "Kurt Godel",
+      "-c", "Bitcoin", "--other_agencies", "Flatland","-n", "this is a sample added proposal"],
+    "20_anewproposal has been added in proposals\n"),
     (["helper", "l_milestones", "--verbose"],
      "2021-04-29: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
@@ -59,7 +54,7 @@ def test_helper_python(hm, make_db, capsys):
     assert out == hm[1]
 
     builddir = repo / "_build" / hm[0][1]
-    expecteddir = testfile.parent / "outputs" / hm[0][1]
+    expecteddir = testfile.parent / "outputs" / hm[0][1] #this is the name of the helper
     are_outfiles = any(builddir.iterdir())
     if are_outfiles and not expecteddir.is_dir():
         print("WARNING: there are built outputs that are not being tested")
