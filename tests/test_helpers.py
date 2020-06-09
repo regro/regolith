@@ -54,7 +54,7 @@ def test_helper_python(hm, make_db, capsys):
     assert out == hm[1]
 
     builddir = repo / "_build" / hm[0][1]
-    expecteddir = testfile.parent / "outputs" / hm[0][1] #this is the name of the helper
+    expecteddir = testfile.parent / "outputs" / hm[0][1]
     are_outfiles = any(builddir.iterdir())
     if are_outfiles and not expecteddir.is_dir():
         print("WARNING: there are built outputs that are not being tested")
