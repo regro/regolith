@@ -1169,7 +1169,7 @@ SCHEMAS = {
         "month": {
             "description": "the month when the entry was created",
             "required": False,
-            "type": "integer",
+            "anyof_type": ["integer", "string"],
         },
         "year": {
             "description": "the year when the entry was created",
