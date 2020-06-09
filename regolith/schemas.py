@@ -1174,7 +1174,7 @@ SCHEMAS = {
         "year": {
             "description": "the year when the entry was created",
             "required": False,
-            "anyof_type": ["integer"],
+            "type": "integer",
         },                
     },
     "grades": {
