@@ -118,9 +118,12 @@ class ContactsListerHelper(SoutHelperBase):
                                  months=int(
                                      rc.range))).isoformat()}
             for contact in self.gtx["contacts"]:
-                if(contact.get('year') and contact.get('month') and contact.get('day')):
+                if contact.get('day'):
                     curr_d = date_parser.parse(str(contact.get('year')) + "-" + month_to_str_int(
                         contact.get('month')) + "-" + str(day_to_str_int(contact.get('day')))).date()
+                else:
+                    curr_d = date_parser.parse(str(contact.get(
+                        'year')) + "-" + month_to_str_int(contact.get('month')) + "-01").date()
                 if is_current(temp_dict, now=curr_d):
                     date_list.append(stringify(contact))
             datel = set(date_list)
