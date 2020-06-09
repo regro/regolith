@@ -1,0 +1,25 @@
+2003sb_google:
+	expense_type: business
+	grant_percentages:
+		- 50
+		- 50
+	grants:
+		- dmref15
+		- SymPy-1.1
+	itemized_expenses:
+		- day: 14
+		  month: Jan
+		  purpose: test
+		  unsegregated_expense: 156
+		  segregated_expense: 0.0
+	payee: scopatz
+	project: Cyclus
+	overall_purpose: testing
+
+
+
+
+
+
+
+
