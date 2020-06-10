@@ -82,17 +82,19 @@ class ContactUpdaterHelper(DbHelperBase):
             notes = current.get('notes', [])
             aliases = current.get('aka', [])
         else:
-            pdoc.update({'day': now.day, 'month': now.month, 'year': now.year, "date": dt.today()})
+            pdoc.update({"date": dt.today()})
             notes = []
-            aliases = [rc.name]
-            uid = str(uuid.uuid4())
-            pdoc.update({'uuid': uid})
+            aliases = []
+            UUID = str(uuid.uuid4())
+            pdoc.update({'uuid': UUID})
         #FIXME
         # if rc.e_email:
         #     pdoc.update({"email": rc.email})
         if rc.aliases:
             aliases.extend(rc.aliases)
         if rc.notes:
+            if isinstance(rc.notes, str):
+                rc.notes.list()
             notes.extend(rc.notes)
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
