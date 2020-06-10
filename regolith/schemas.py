@@ -1,6 +1,5 @@
 """Database schemas, examples, and tools"""
 import copy
-from datetime import date
 from warnings import warn
 
 from cerberus import Validator
@@ -949,8 +948,8 @@ EXEMPLARS = {
     "beamplan": {
         '_id': "test",
         'beamtime': '2020-1-XPD',
-        'begin_date': date(2020, 1, 1),
-        'end_date': date(2020, 1, 2),
+        'begin_date': '2020-01-01',
+        'end_date': '2020-01-02',
         'container': '',
         'devices': ['cryostream'],
         'exp_plan': ['load samples on the holder',
@@ -1100,12 +1099,12 @@ SCHEMAS = {
         "begin_date": {
             "description": "The begin date of the beam time.",
             "required": True,
-            "type": "date"
+            "anyof_type": ["string", "datetime", "date"]
         },
         "end_date": {
             "description": "The end date of the beam time.",
             "required": True,
-            "type": "date"
+            "anyof_type": ["string", "datetime", "date"]
         },
         "beamtime": {
             "description": "The id for the beamtime. Check the Airtable.",
