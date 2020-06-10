@@ -6,7 +6,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_due_date
+from regolith.dates import get_due_date, is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -23,6 +23,7 @@ ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "ca
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-c", "--current", action="store_true", help='get only current group members ')
+    subpi.add_argument("-f", "--former", action="store_true", help='most recent employment of former members ')
 
     return subpi
 
@@ -67,9 +68,17 @@ class MembersListerHelper(SoutHelperBase):
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
         for person in self.gtx["people"]:
-            if rc.current and not person.get('active'):
-                continue
-            people.append(person)
+            if rc.current:
+                if not person.get('active'):
+                    continue
+                people.append(person)
+            elif rc.former:
+                if person.get('active'):
+                    continue
+                people.append(person)
+            else:
+                people.append(person)
+
         #people.sort()
         for i in people:
             if rc.verbose:
@@ -77,5 +86,10 @@ class MembersListerHelper(SoutHelperBase):
                 print("    orcid: {} | github_id: {}".format(i.get('orcid_id'), i.get('github_id')))
             else:
                 print("{}".format(i.get('name')))
+            if rc.former:
+                for employment in i.get('employment'):
+                    if is_current(employment):
+                        print("    current organization: {}".format(employment.get('organization')))
+                        print("    current position: {}".format(employment.get('position')))
         return
 
