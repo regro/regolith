@@ -3,7 +3,12 @@ Prints name, institution, and email (if applicable) of the contact.
 """
 import dateutil
 import dateutil.parser as date_parser
-from regolith.dates import is_current
+from regolith.dates import (
+    is_current,
+    month_to_str_int,
+    day_to_str_int,
+    get_dates
+)
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -108,19 +113,19 @@ class ContactsListerHelper(SoutHelperBase):
         if rc.date:
             date_list = []
             temp_dat = date_parser.parse(rc.date).date()
+            temp_dict = {
+                "begin_date": (temp_dat -
+                               dateutil.relativedelta.relativedelta(
+                                   months=int(
+                                       rc.range))).isoformat(),
+                "end_date": (temp_dat +
+                             dateutil.relativedelta.relativedelta(
+                                 months=int(
+                                     rc.range))).isoformat()}
             for contact in self.gtx["contacts"]:
-                if rc.date:
-                    temp_dict = {
-                        "begin_date": (temp_dat -
-                                       dateutil.relativedelta.relativedelta(
-                                           months=int(
-                                               rc.range))).isoformat(),
-                        "end_date": (temp_dat +
-                                     dateutil.relativedelta.relativedelta(
-                                         months=int(
-                                             rc.range))).isoformat()}
-                    if is_current(temp_dict, now=temp_dat):
-                        date_list.append(stringify(contact))
+                curr_d = get_dates(contact)['date']
+                if is_current(temp_dict, now=curr_d):
+                    date_list.append(stringify(contact))
             datel = set(date_list)
         else:
             datel = def_l

@@ -42,6 +42,9 @@ helper_map = [
     (["helper", "l_contacts", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
+     (["helper", "l_contacts", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
+     ""
+     ),
 ]
 
 
