@@ -3,7 +3,12 @@ Prints name, institution, and email (if applicable) of the contact.
 """
 import dateutil
 import dateutil.parser as date_parser
-from regolith.dates import is_current, month_to_str_int, day_to_str_int
+from regolith.dates import (
+    is_current,
+    month_to_str_int,
+    day_to_str_int,
+    get_dates
+)
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -118,12 +123,7 @@ class ContactsListerHelper(SoutHelperBase):
                                  months=int(
                                      rc.range))).isoformat()}
             for contact in self.gtx["contacts"]:
-                if contact.get('day'):
-                    curr_d = date_parser.parse(str(contact.get('year')) + "-" + month_to_str_int(
-                        contact.get('month')) + "-" + str(day_to_str_int(contact.get('day')))).date()
-                else:
-                    curr_d = date_parser.parse(str(contact.get(
-                        'year')) + "-" + month_to_str_int(contact.get('month')) + "-01").date()
+                curr_d = get_dates(contact)['date']
                 if is_current(temp_dict, now=curr_d):
                     date_list.append(stringify(contact))
             datel = set(date_list)
