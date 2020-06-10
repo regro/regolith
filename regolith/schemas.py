@@ -948,6 +948,8 @@ EXEMPLARS = {
     "beamplan": {
         '_id': "test",
         'beamtime': '2020-1-XPD',
+        'begin_date': '2020-01-01',
+        'end_date': '2020-01-02',
         'container': '',
         'devices': ['cryostream'],
         'exp_plan': ['load samples on the holder',
@@ -1124,11 +1126,6 @@ SCHEMAS = {
             "schema": {
                 "type": "string"
             }
-        },
-        "temp_controller": {
-            "description": "The temperature controller used to change the temperature of the samples. If not needed, use empty string.",
-            "required": True,
-            "type": "string"
         },
         "measurement": {
             "description": "What data to be measured, e. g. PDF, XRD, SAXS. This will determine the setup.",
