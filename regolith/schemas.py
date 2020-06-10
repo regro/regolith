@@ -898,7 +898,7 @@ EXEMPLARS = {
              "month": "May",
              "day": 12,
     }],
-        "office": {"1105 Seely W. Mudd Building (inner office)"},
+        "office": "1105 Seely W. Mudd Building (inner office)",
         "home_address": {
             "street": "123 Wallabe Ln",
             "city": "The big apple",
@@ -2474,7 +2474,7 @@ SCHEMAS = {
                     "end_day": {"required": False, "type": "integer"},
                     "other": {"required": False,
                               "anyof_type": ["string", "list"]},
-                    "type": {"required": True, "type": "string",
+                    "type": {"required": False, "type": "string",
                              "description": "profession, department, school, university",
                              "eallowed": ["profession", "university",
                                           "school", "department"]},
@@ -2503,7 +2503,7 @@ SCHEMAS = {
                 "type": "dict",
                 "schema": {
                     "course": {"required": True, "type": "string"},
-                    "courseid": {"required": True, "type": "string"},
+                    "courseid": {"required": False, "type": "string"},
                     "description": {"required": False, "type": "string"},
                     "end_month": {"required": False,
                                   "anyof_type": ["string", "integer"]},
