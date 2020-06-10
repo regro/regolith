@@ -36,6 +36,8 @@ helper_map = [
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
      ),
     (["helper", "l_members", "-v"],
+     "Simon J. L. Billinge, professor | group_id: sbillinge\n"
+     "    orcid: 0000-0002-9432-4248 | github_id: None\n"
      "Anthony Scopatz, professor | group_id: scopatz\n"
      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
      ),
