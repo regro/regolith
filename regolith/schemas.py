@@ -642,29 +642,29 @@ EXEMPLARS = {
         "lead": "ascopatz",
         "log_url": "https://docs.google.com/document/d/1YC_wtW5Q",
         "milestones": [{
-                  'date': '2020-05-05',
-                  'due_date': '2020-05-06',
-                  'name': 'Kick off meeting',
-                  'objective': 'roll out of project to team',
-                  'audience': ['lead', 'pi', 'group_members',
-                               'collaborators'],
-                  'status': 'finished'
-                  },
-                 {'due_date': '2020-05-20',
-                  'name': 'Project lead presentation',
-                  'objective': 'lead presents background reading and '
-                               'initial project plan',
-                  'audience': ['lead', 'pi', 'group_members'],
-                  'status': 'proposed',
-                  'type': 'meeting'
-                  },
-                 {'due_date': '2020-05-27',
-                  'name': 'planning meeting',
-                  'objective': 'develop a detailed plan with dates',
-                  'audience': ['lead', 'pi', 'group_members'],
-                  'status': 'proposed',
-                  'type': 'pr',
-                  }],
+            'date': '2020-05-05',
+            'due_date': '2020-05-06',
+            'name': 'Kick off meeting',
+            'objective': 'roll out of project to team',
+            'audience': ['lead', 'pi', 'group_members',
+                         'collaborators'],
+            'status': 'finished'
+        },
+            {'due_date': '2020-05-20',
+             'name': 'Project lead presentation',
+             'objective': 'lead presents background reading and '
+                          'initial project plan',
+             'audience': ['lead', 'pi', 'group_members'],
+             'status': 'proposed',
+             'type': 'meeting'
+             },
+            {'due_date': '2020-05-27',
+             'name': 'planning meeting',
+             'objective': 'develop a detailed plan with dates',
+             'audience': ['lead', 'pi', 'group_members'],
+             'status': 'proposed',
+             'type': 'pr',
+             }],
         "name": "First Projectum",
         "pi_id": "scopatz",
         "status": "proposed"
@@ -888,13 +888,13 @@ EXEMPLARS = {
         "day": "15",
         "month": "12",
         "papers": [{"doi": "10.1107/97809553602060000935",
-                   "text": "Very basic, but brief, intro to powder diffraction in general"},
+                    "text": "Very basic, but brief, intro to powder diffraction in general"},
                    {"doi": "10.1039/9781847558237-00464",
                     "text": "Lightest weight overview of PDF analysis around.  Good starting point"
                     },
                    {"url": "http://www.diffpy.org",
                     "text": "Download and install PDFgui software and run through the step by step tutorial under the help tab"}
-                  ],
+                   ],
         "purpose": "Beginning reading about PDF",
         "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
         "year": 2019,
@@ -948,6 +948,8 @@ EXEMPLARS = {
     "beamplan": {
         '_id': "test",
         'beamtime': '2020-1-XPD',
+        'begin_date': '2020-01-01',
+        'end_date': '2020-01-02',
         'container': '',
         'devices': ['cryostream'],
         'exp_plan': ['load samples on the holder',
@@ -1076,6 +1078,135 @@ SCHEMAS = {
             "type": "string",
         },
     },
+    "beamplan": {
+        "_id": {
+            "description": "Unique identifier for the experiment plan. It should have a format '{year:2d}{month:2d}{people_id:s}_{plan_name:s}'",
+            "required": True,
+            "type": "string"
+        },
+        "_description": {
+            "description": "Information about the experiment plan for the beamtime."},
+        "project_lead": {
+            "description": "The id for person who put out this plan. It should be inside the people.yml.",
+            "required": True,
+            "type": "string"
+        },
+        "project": {
+            "description": "The id for the project which the plan belongs to. It should be on airtable.",
+            "required": True,
+            "type": "string"
+        },
+        "begin_date": {
+            "description": "The begin date of the beam time.",
+            "required": True,
+            "anyof_type": ["string", "datetime", "date"]
+        },
+        "end_date": {
+            "description": "The end date of the beam time.",
+            "required": True,
+            "anyof_type": ["string", "datetime", "date"]
+        },
+        "beamtime": {
+            "description": "The id for the beamtime. Check the Airtable.",
+            "required": True,
+            "type": "string"
+        },
+        "container": {
+            "description": "Sample container used during the measurement, e. g. 1mm OD glass tubes.",
+            "required": True,
+            "type": "string"
+        },
+        "holder": {
+            "description": "Sample holder used during the measurement, e. g. 3 mm OD tubes holder.",
+            "required": True,
+            "type": "string"
+        },
+        "devices": {
+            "description": "The dictionary of devices used in the measurement e. g. ",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "string"
+            }
+        },
+        "measurement": {
+            "description": "What data to be measured, e. g. PDF, XRD, SAXS. This will determine the setup.",
+            "required": True,
+            "type": "string"
+        },
+        "samples": {
+            "description": "The list of samples to be measured.",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "string"
+            }
+        },
+        "time": {
+            "description": "The total time of executing the exp_plan. Unit: min.",
+            "required": True,
+            "type": "integer"
+        },
+        "objective": {
+            "description": "What to study in the experiments. What goal to achieve.",
+            "required": True,
+            "type": "string"
+        },
+        "prep_plan": {
+            "description": "Steps to prepare the samples. Do NOT need details.",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "string"
+            }
+        },
+        "ship_plan": {
+            "description": "Steps to carry the samples from the producer to the BNL. Do NOT need details.",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "string"
+            }
+        },
+        "exp_plan": {
+            "description": "Steps to carry out the experiments at BNL. Need details",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "string"
+            }
+        },
+        "scanplan": {
+            "description": "The scanplan for the experiment, e. g. tseries, Tramp, ct.",
+            "required": True,
+            "type": "string"
+        },
+        "pipeline": {
+            "description": "The analysis pipeline for the experiment. If no new pipeline is needed, use 'usual'.",
+            "required": True,
+            "type": "string",
+            "default": "usual"
+        },
+        "todo": {
+            "description": "The TODO list before the beamtime.",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "string"
+            }
+        },
+        "notes": {
+            "description": "Notes of the plan, e. g. the preferred time.",
+            "required": False,
+            "anyof_type": [
+                "list",
+                "string"
+            ],
+            "schema": {
+                "type": "string"
+            }
+        }
+    },
     "blog": {
         "_description": {
             "description": "This collection represents blog posts written by "
@@ -1175,7 +1306,7 @@ SCHEMAS = {
             "description": "the year when the entry was created",
             "required": False,
             "type": "integer",
-        },                
+        },
     },
     "grades": {
         "_description": {
@@ -1662,7 +1793,7 @@ SCHEMAS = {
             "type": "list",
         },
         "github_id": {"required": False, "type": "string",
-                       "description": "Your GitHub ID"},
+                      "description": "Your GitHub ID"},
         "google_scholar_url": {"required": False, "type": "string",
                                "description": "URL of your Google Scholar "
                                               "rofile"},
@@ -1946,7 +2077,7 @@ SCHEMAS = {
         "active": {
             "description": "true if the project is active",
             "required": False,
-            "anyof_type": ["string","boolean"],
+            "anyof_type": ["string", "boolean"],
         },
         "description": {
             "description": "brief project description.",
@@ -1974,11 +2105,11 @@ SCHEMAS = {
                              "required": True,
                              "type": "integer"},
                     "month": {"description": "the month of the highlight",
-                             "required": True,
-                             "anyof_type": ["string", "integer"]},
+                              "required": True,
+                              "anyof_type": ["string", "integer"]},
                     "description": {"description": "the highlight",
-                             "required": True,
-                             "type": "string"},
+                                    "required": True,
+                                    "type": "string"},
                 }
             }
         },
@@ -2026,7 +2157,7 @@ SCHEMAS = {
             "description": "The type of project",
             "required": False,
             "anyof_type": ["string"],
-            "eallowed": ["ossoftware","funded"]
+            "eallowed": ["ossoftware", "funded"]
         },
         "website": {
             "description": "URL of the website.",
