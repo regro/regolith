@@ -28,9 +28,10 @@ def subparser(subpi):
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
     subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
-                                            "in format YYYY-MM-DD.",
+                                            "in format YYYY-MM-DD."
                        )
-    subpi.add_argument("-d", "--duration", help="Duration of proposal in months",
+    subpi.add_argument("--end_date", help="The end date for the proposed "
+                                          "grant in format YYYY-MM-DD"
                        )
     subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD",
                        )
@@ -49,7 +50,7 @@ def subparser(subpi):
                        default=True
                        )
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
-                                                "submitted. Defaults to False", default='none'
+                                                "submitted. Defaults to False", default='None'
                        )
     subpi.add_argument("-i", "--institution",
                        help="The institution where the work will primarily "
@@ -123,7 +124,12 @@ class ProposalAdderHelper(DbHelperBase):
                      })
         pdoc.update({'authors': rc.authors})
         if rc.begin_date:
-            pdoc.update({'begin_date': date_parser.parse(rc.begin_date).date()})
+            begin_date = date_parser.parse(rc.begin_date).date()
+            if rc.end_date:
+                end_date = date_parser.parse(rc.end_date).date()
+                if begin_date > end_date:
+                    raise ValueError("begin_date can not be after end_date")
+            pdoc.update({'begin_date': begin_date})
         else:
             pdoc.update({'begin_date': 'tbd'})
         cpp_info = {}
@@ -142,17 +148,10 @@ class ProposalAdderHelper(DbHelperBase):
             pdoc.update({'due_date': date_parser.parse(rc.due_date).date()})
         else:
             pdoc.update({'due_date': 'tbd'})
-        if rc.duration:
-            pdoc.update({'duration': int(rc.duration)})
-            if rc.begin_date:
-                begin_date = date_parser.parse(rc.begin_date).date()
-                pdoc.update({'end_date': begin_date + relativedelta(months=int(rc.duration))})
-            else:
-                pdoc.update({'end_date': 'tbd'})
+        if rc.end_date:
+            pdoc.update({'end_date': date_parser.parse(rc.end_date).date()})
         else:
-            pdoc.update({'duration': 'tbd',
-                         'end_date': 'tbd'
-                         })
+            pdoc.update({'end_date': 'tbd'})
         pdoc.update({'funder': rc.funder})
         pdoc.update({'notes': rc.notes})
         if rc.pi:
