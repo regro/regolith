@@ -1085,6 +1085,8 @@ SCHEMAS = {
             "required": True,
             "type": "string"
         },
+        "_description": {
+            "description": "Information about the experiment plan for the beamtime."},
         "project_lead": {
             "description": "The id for person who put out this plan. It should be inside the people.yml.",
             "required": True,
