@@ -1,5 +1,6 @@
 """Database schemas, examples, and tools"""
 import copy
+from datetime import date
 from warnings import warn
 
 from cerberus import Validator
@@ -948,8 +949,8 @@ EXEMPLARS = {
     "beamplan": {
         '_id': "test",
         'beamtime': '2020-1-XPD',
-        'begin_date': '2020-01-01',
-        'end_date': '2020-01-02',
+        'begin_date': date(2020, 1, 1),
+        'end_date': date(2020, 1, 2),
         'container': '',
         'devices': ['cryostream'],
         'exp_plan': ['load samples on the holder',
