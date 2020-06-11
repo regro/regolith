@@ -2241,7 +2241,7 @@ SCHEMAS = {
             "required": True,
             "type": "string",
             "eallowed": ["pending", "declined", "accepted", "in-prep",
-                         "submitted"],
+                         "inprep", "submitted"],
         },
         "team": {
             "description": "information about the team members participating "
