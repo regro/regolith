@@ -23,6 +23,11 @@ HELPER_TARGET = "l_contacts"
 
 def subparser(subpi):
     subpi.add_argument(
+        "-u",
+        "--run",
+        required=True,
+        help='required argument: "y" must be entered here in order for the lister to run')    
+    subpi.add_argument(
         "-n",
         "--name",
         help='name or name fragment (single argument only) to use to find contacts')
@@ -86,50 +91,51 @@ class ContactsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        def_l = set(stringify(i) for i in
-                    self.gtx['contacts'])
-        if rc.name:
-            namel = set(stringify(i) for i in
-                        fragment_retrieval(
-                self.gtx['contacts'], [
-                        "_id", "aka", "name"], rc.name))
-        else:
-            namel = def_l
-        if rc.inst:
-            instl = set(stringify(i) for i in
-                        fragment_retrieval(
-                self.gtx['contacts'],
-                ["institution"],
-                rc.inst))
-        else:
-            instl = def_l
-        if rc.notes:
-            notel = set(stringify(i) for i in
-                        fragment_retrieval(
-                self.gtx['contacts'], [
-                        "notes"], rc.notes))
-        else:
-            notel = def_l
-        if rc.date:
-            date_list = []
-            temp_dat = date_parser.parse(rc.date).date()
-            temp_dict = {
-                "begin_date": (temp_dat -
-                               dateutil.relativedelta.relativedelta(
-                                   months=int(
-                                       rc.range))).isoformat(),
-                "end_date": (temp_dat +
-                             dateutil.relativedelta.relativedelta(
-                                 months=int(
-                                     rc.range))).isoformat()}
-            for contact in self.gtx["contacts"]:
-                curr_d = get_dates(contact)['date']
-                if is_current(temp_dict, now=curr_d):
-                    date_list.append(stringify(contact))
-            datel = set(date_list)
-        else:
-            datel = def_l
-        res_l = set.intersection(namel, instl, notel, datel)
-        for item in res_l:
-            print(item)
+        if rc.run == "y":
+            def_l = set(stringify(i) for i in
+                        self.gtx['contacts'])
+            if rc.name:
+                namel = set(stringify(i) for i in
+                            fragment_retrieval(
+                    self.gtx['contacts'], [
+                            "_id", "aka", "name"], rc.name))
+            else:
+                namel = def_l
+            if rc.inst:
+                instl = set(stringify(i) for i in
+                            fragment_retrieval(
+                    self.gtx['contacts'],
+                    ["institution"],
+                    rc.inst))
+            else:
+                instl = def_l
+            if rc.notes:
+                notel = set(stringify(i) for i in
+                            fragment_retrieval(
+                    self.gtx['contacts'], [
+                            "notes"], rc.notes))
+            else:
+                notel = def_l
+            if rc.date:
+                date_list = []
+                temp_dat = date_parser.parse(rc.date).date()
+                temp_dict = {
+                    "begin_date": (temp_dat -
+                                   dateutil.relativedelta.relativedelta(
+                                       months=int(
+                                           rc.range))).isoformat(),
+                    "end_date": (temp_dat +
+                                 dateutil.relativedelta.relativedelta(
+                                     months=int(
+                                         rc.range))).isoformat()}
+                for contact in self.gtx["contacts"]:
+                    curr_d = get_dates(contact)['date']
+                    if is_current(temp_dict, now=curr_d):
+                        date_list.append(stringify(contact))
+                datel = set(date_list)
+            else:
+                datel = def_l
+            res_l = set.intersection(namel, instl, notel, datel)
+            for item in res_l:
+                print(item)
         return
