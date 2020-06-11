@@ -76,5 +76,21 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        gaps = []
+
+        for person in self.gtx["people"]:
+            appointments = person.get("appointments")
+            for appt in appointments:
+                total_load = 0
+                if rc.gap and appt.is_current():
+                    total_load += appt.get("load")
+                if rc.out_of_date:
+
+
+            if rc.gap and total_load != 1:
+                gaps.append(person)
+
+
+
         return
 
