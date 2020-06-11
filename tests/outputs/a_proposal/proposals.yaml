@@ -19,10 +19,10 @@
   notes:
     - this is a sample added proposal
   pi: scopatz
-  status: inprep
+  status: in-prep
   team:
     - name: ''
-      subaward_amount: ''
+      subaward_amount: 0
   title: To destroy numbers
 dmref15:
   amount: 982785.0

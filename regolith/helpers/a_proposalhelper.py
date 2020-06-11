@@ -2,6 +2,7 @@
 """
 import datetime as dt
 import dateutil.parser as date_parser
+from dateutil.relativedelta import relativedelta
 import sys
 
 from regolith.helpers.basehelper import DbHelperBase
@@ -31,6 +32,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("--end_date", help="The end date for the proposed "
                                           "grant in format YYYY-MM-DD"
+                       )
+    subpi.add_argument("--duration", help="The duration for the proposed grant in months"
                        )
     subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD",
                        )
@@ -128,6 +131,12 @@ class ProposalAdderHelper(DbHelperBase):
                 end_date = date_parser.parse(rc.end_date).date()
                 if begin_date > end_date:
                     raise ValueError("begin_date can not be after end_date")
+                if rc.duration:
+                    expected_duration = 12*relativedelta(end_date, begin_date).years + relativedelta(end_date, begin_date).months
+                    if expected_duration != int(rc.duration):
+                        raise ValueError(f"Entered duration {rc.duration} is inconsistent with"
+                                         f"expected duration {expected_duration} or difference between "
+                                         f"begin_date and end_date in months")
             pdoc.update({'begin_date': begin_date})
         else:
             pdoc.update({'begin_date': 'tbd'})
@@ -149,6 +158,9 @@ class ProposalAdderHelper(DbHelperBase):
             pdoc.update({'due_date': 'tbd'})
         if rc.end_date:
             pdoc.update({'end_date': date_parser.parse(rc.end_date).date()})
+        elif rc.begin_date and rc.duration:
+            begin_date = date_parser.parse(rc.begin_date).date()
+            pdoc.update({'end_date': begin_date + relativedelta(months=int(rc.duration))})
         else:
             pdoc.update({'end_date': 'tbd'})
         pdoc.update({'funder': rc.funder})
@@ -157,9 +169,9 @@ class ProposalAdderHelper(DbHelperBase):
             pdoc.update({'pi': rc.pi})
         else:
             pdoc.update({'pi': rc.pi_id})
-        pdoc.update({'status': 'inprep'})
+        pdoc.update({'status': 'in-prep'})
         sample_team = {'name': '',
-                       'subaward_amount': ''
+                       'subaward_amount': 0
                        }
         pdoc.update({'team': [sample_team]})
         pdoc.update({'title': rc.title})

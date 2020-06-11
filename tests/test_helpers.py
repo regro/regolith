@@ -17,7 +17,7 @@ helper_map = [
       "-m", "ascopatz", "-g", "SymPy-1.1"],
      "20ly_newprojectum has been added in projecta\n"),
     (["helper", "a_proposal", "a new proposal","100.0","To destroy numbers",
-      "--begin_date", "2020-09-22", "--end_date", "2020-12-22", "-a","Kurt Godel", "MC Escher",
+      "--begin_date", "2020-09-22", "--duration", "3","-a","Kurt Godel", "MC Escher",
       "Johann Sebastian Bach","-c", "Bitcoin", "--other_agencies", "Flatland","-n",
       "this is a sample added proposal"],
      "20_anewproposal has been added in proposals\n"),
