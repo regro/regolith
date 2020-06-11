@@ -1297,7 +1297,7 @@ SCHEMAS = {
         'month': {
             "description": "month when the entry was created",
             "required": False,
-            "type": "integer",
+            "anyof_type": ["string", "date"],
         },
         "name": {
             "description": "the person's canonical name",
