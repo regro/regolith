@@ -5,8 +5,6 @@ import dateutil
 import dateutil.parser as date_parser
 from regolith.dates import (
     is_current,
-    month_to_str_int,
-    day_to_str_int,
     get_dates
 )
 from regolith.helpers.basehelper import SoutHelperBase
@@ -22,6 +20,9 @@ HELPER_TARGET = "l_contacts"
 
 
 def subparser(subpi):
+    subpi.add_argument(
+        "run",
+        help='run the lister. To see allowed optional arguments, type "regolith helper l_contacts"')
     subpi.add_argument(
         "-n",
         "--name",
