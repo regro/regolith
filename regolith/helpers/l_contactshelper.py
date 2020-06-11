@@ -22,7 +22,7 @@ HELPER_TARGET = "l_contacts"
 def subparser(subpi):
     subpi.add_argument(
         "run",
-        help='required argument that must be entered here in order for the contacts lister to run')
+        help='run the lister. To see allowed optional arguments, type "regolith helper l_contacts"')
     subpi.add_argument(
         "-n",
         "--name",
