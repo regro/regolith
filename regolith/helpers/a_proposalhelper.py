@@ -30,10 +30,12 @@ def subparser(subpi):
     subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
                                             "in format YYYY-MM-DD."
                        )
-    subpi.add_argument("--end_date", help="The end date for the proposed "
-                                          "grant in format YYYY-MM-DD"
+    subpi.add_argument("--end_date", help="The end date for the proposed grant in "
+                                          "format YYYY-MM-DD. Please enter either an "
+                                          "end date or a duration"
                        )
-    subpi.add_argument("--duration", help="The duration for the proposed grant in months"
+    subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
+                                          "Please enter either an end date or a duration"
                        )
     subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD",
                        )
