@@ -1,18 +1,18 @@
 """Implementation of commands for command line."""
-import os
-from pprint import pprint
-import re
 import json
+import os
+import re
 import sys
+from pprint import pprint
 
-from regolith.tools import string_types
 from regolith.builder import builder, BUILDERS
-from regolith.helper import HELPERS, helpr
-from regolith.emailer import emailer as email
 from regolith.deploy import deploy as dploy
+from regolith.helper import HELPERS, helpr
+from regolith.runcontrol import RunControl
+from regolith.tools import string_types
 
-RE_AND = re.compile("\s+and\s+")
-RE_SPACE = re.compile("\s+")
+RE_AND = re.compile(r"\s+and\s+")
+RE_SPACE = re.compile(r"\s+")
 
 INGEST_COLL_LU = {".bib": "citations"}
 
@@ -140,10 +140,12 @@ def build(rc):
         bldr = builder(t, rc)
         bldr.build()
 
+
 def helper(rc):
     """Runs the helper targets"""
     hlpr = helpr(rc.helper_target, rc)
     hlpr.hlp()
+
 
 def deploy(rc):
     """Deploys all of the deployment targets."""
@@ -178,6 +180,23 @@ def yaml_to_json(rc):
         base, ext = os.path.splitext(inp)
         out = base + ".json"
         fsclient.yaml_to_json(inp, out)
+
+
+def fs_to_mongo(rc: RunControl) -> None:
+    """Import database from filesystem to mongo db.
+
+    Parameters
+    ----------
+    rc : RunControl
+        The RunControl. The mongo client will be created according to 'mongodbpath' in it. The databases will
+        be loaded according to the 'databases' in it.
+    """
+    from regolith.mongoclient import MongoClient
+    client = MongoClient(rc)
+    dbs = getattr(rc, 'databases')
+    for db in dbs:
+        client.load_database(db)
+    return
 
 
 def validate(rc):
