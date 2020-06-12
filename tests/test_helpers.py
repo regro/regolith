@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 import pytest
 
 from regolith.main import main
@@ -50,7 +51,7 @@ helper_map = [
      "Anthony Scopatz\n"
      "    current organization: The University of South Carolina\n"
      "    current position: Assistant Professor, Mechanical Engineering Department\n"),
-    (["helper", "l_contacts", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
+    (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
