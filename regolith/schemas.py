@@ -2240,8 +2240,8 @@ SCHEMAS = {
             "description": "e.g. 'pending', 'accepted', 'rejected'",
             "required": True,
             "type": "string",
-            "eallowed": ["pending", "declined", "accepted", "in-prep",
-                         "inprep", "submitted"],
+            "eallowed": ["pending", "declined", "accepted", "inprep",
+                         "submitted"],
         },
         "team": {
             "description": "information about the team members participating "

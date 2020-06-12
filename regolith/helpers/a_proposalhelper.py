@@ -136,9 +136,29 @@ class ProposalAdderHelper(DbHelperBase):
                 if begin_date > end_date:
                     raise ValueError("begin_date can not be after end_date")
                 if rc.duration:
-                    expected_duration = 12*relativedelta(end_date, begin_date).years + relativedelta(end_date, begin_date).months
-                    if expected_duration != int(rc.duration):
-                        raise ValueError("ERROR: please rerun specifying a duration OR an end-date but not both")
+                    expected_duration = relativedelta(end_date,begin_date)
+                    input_duration = float(rc.duration)
+                    input_years = floor(input_duration / 12)
+                    input_months = floor(input_duration) % 12
+                    input_days = (input_duration % 1) * 30.5
+                    # we take 30.5 as an average of 30 and 31 day months
+                    if expected_duration.years != input_years or expected_duration.months != input_months or\
+                        abs(expected_duration.days - input_days) > 3.05:
+                        # assuming that the user inputs the correct duration up to 1 decimal place
+                        # so the maximum allowed difference is 0.1*30.5
+                        raise ValueError(f"ERROR: please rerun specifying a duration OR an end-date but not both \n")
+
+                        #                f"Expected years: {expected_duration.years} Actual years:{input_years} \n"
+                        #                f"Expected months: {expected_duration.months} Actual months:{input_months} \n"
+                        #                f"Expected days: {expected_duration.days} Actual days:{input_days} \n")
+                    #expected_duration = 12*30.5*relativedelta(end_date, begin_date).years + \
+                    #                    30.5*relativedelta(end_date, begin_date).months + \
+                    #                    relativedelta(end_date, begin_date).days
+                    #if abs(expected_duration - float(rc.duration)*30.5) > 3.05:
+                    #    raise ValueError(f"ERROR: please rerun specifying a duration OR an end-date but not both "
+                    #
+                    #                     f"Expected duration (in days): {expected_duration}"
+                    #                     f"Entered duration (in days): {float(rc.duration)*30.5}")
             pdoc.update({'begin_date': begin_date})
         else:
             pdoc.update({'begin_date': 'tbd'})
@@ -149,8 +169,8 @@ class ProposalAdderHelper(DbHelperBase):
             cpp_info['cppflag'] = False
         cpp_info['other_agencies_submitted'] = rc.other_agencies
         cpp_info['institution'] = rc.institution
-        cpp_info['person_months_academic'] = int(rc.months_academic)
-        cpp_info['person_months_summer'] = int(rc.months_summer)
+        cpp_info['person_months_academic'] = float(rc.months_academic)
+        cpp_info['person_months_summer'] = float(rc.months_summer)
         cpp_info['project_scope'] = rc.scope
         pdoc.update({'cpp_info': cpp_info})
         pdoc.update({'currency': rc.currency})

@@ -4,17 +4,17 @@
     - Kurt Godel
     - MC Escher
     - Johann Sebastian Bach
-  begin_date: 2020-09-22
+  begin_date: 2020-09-15
   cpp_info:
     cppflag: true
     other_agencies_submitted: Flatland
     institution: ''
-    person_months_academic: 0
-    person_months_summer: 0
+    person_months_academic: 0.0
+    person_months_summer: 0.0
     project_scope: ''
   currency: Bitcoin
   due_date: tbd
-  end_date: 2020-12-22
+  end_date: 2022-02-14
   funder: ''
   notes:
     - this is a sample added proposal
