@@ -1,11 +1,11 @@
 """Client interface for MongoDB."""
 import os
+import shutil
 import sys
 import time
-import shutil
-from xonsh.lib import subprocess
 from glob import iglob
-from warnings import warn
+
+from xonsh.lib import subprocess
 
 #
 # setup mongo
@@ -18,7 +18,7 @@ try:
 except ImportError:
     MONGO_AVAILABLE = False
 
-from regolith.tools import dbdirname, dbpathname, fallback
+from regolith.tools import dbpathname, fallback
 
 
 if not MONGO_AVAILABLE:
@@ -42,10 +42,6 @@ class MongoClient:
     """A client backed by MongoDB."""
 
     def __init__(self, rc):
-        warn(
-            "Mongo support will be deprecated in the near future please use "
-            "fsclient.FileSystemClient"
-        )
         if not MONGO_AVAILABLE:
             raise RuntimeError(
                 "MongoDB is not available on the current system."
@@ -64,6 +60,7 @@ class MongoClient:
         os.makedirs(mongodbpath)
 
     def _startserver(self):
+        mongodbpath = self.rc.mongodbpath
         self.proc = subprocess.Popen(
             ["mongod", "--dbpath", mongodbpath], universal_newlines=True
         )
