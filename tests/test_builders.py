@@ -18,7 +18,7 @@ builder_map = [
     "reimb",
     "figure",
     "recent-collabs",
-    "beamplan"
+    "beamplan",
     "annual-appraisal"
 ]
 

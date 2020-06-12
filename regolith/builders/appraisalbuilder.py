@@ -6,7 +6,7 @@ from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
-from regolith.dates import month_to_int
+from regolith.dates import month_to_int, is_current
 from regolith.sorters import position_key, doc_date_key
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
@@ -25,7 +25,7 @@ from regolith.tools import (
     filter_patents,
     filter_licenses,
     merge_collections,
-    is_current, get_id_from_name)
+    get_id_from_name)
 
 
 class AppraisalBuilder(LatexBuilderBase):
@@ -137,19 +137,7 @@ class AppraisalBuilder(LatexBuilderBase):
         current_grants = [
             dict(g)
             for g in grants
-            if is_current(
-                *[
-                    g.get(s, 1)
-                    for s in [
-                        "begin_year",
-                        "end_year",
-                        "begin_month",
-                        "begin_day",
-                        "end_month",
-                        "end_day",
-                    ]
-                ]
-            )
+            if is_current(g)
         ]
 
         current_grants, _, _ = filter_grants(
