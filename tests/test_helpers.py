@@ -81,11 +81,11 @@ helper_map = [
     "    current position: Assistant Professor, Mechanical Engineering Department\n"
     "    billinge group position: Fake Billinge Group position\n"
      ),
-    (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
+    (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"]),
     (["helper", "l_members", "-f"],
-    "Anthony Scopatz\n"
-    "    current organization: The University of South Carolina\n"
-    "    current position: Assistant Professor, Mechanical Engineering Department\n"),
+     "Anthony Scopatz\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: Assistant Professor, Mechanical Engineering Department\n"),
     (["helper", "l_contacts", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
