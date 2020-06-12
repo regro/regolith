@@ -182,7 +182,7 @@ class ProposalAdderHelper(DbHelperBase):
             pdoc.update({'end_date': date_parser.parse(rc.end_date).date()})
         elif rc.begin_date and rc.duration and not rc.end_date:
             begin_date = date_parser.parse(rc.begin_date).date()
-            pdoc.update({'end_date': begin_date + relativedelta(months=floor(float(rc.duration)))})
+            pdoc.update({'end_date': begin_date + relativedelta(days=30.5*float(rc.duration))})
         else:
             pdoc.update({'end_date': 'tbd'})
         pdoc.update({'funder': rc.funder})
