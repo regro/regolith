@@ -55,9 +55,12 @@ def dump_json(filename, docs):
         fh.write(s)
 
 
-def load_yaml(filename, return_inst=False):
+def load_yaml(filename, return_inst=False, loader=None):
     """Loads a YAML file and returns a dict of its documents."""
-    inst = YAML()
+    if loader is None:
+        inst = YAML()
+    else:
+        inst = loader
     with open(filename, encoding="utf-8") as fh:
         docs = inst.load(fh)
         docs = _rec_re_type(docs)
@@ -87,9 +90,9 @@ def json_to_yaml(inp, out):
     dump_yaml(out, docs)
 
 
-def yaml_to_json(inp, out):
+def yaml_to_json(inp, out, loader=None):
     """Converts a YAML file to a JSON one."""
-    docs = load_yaml(inp)
+    docs = load_yaml(inp, loader=loader)
     dump_json(out, docs)
 
 

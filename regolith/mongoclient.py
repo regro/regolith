@@ -8,6 +8,8 @@ import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from ruamel.yaml import YAML
+
 #
 # setup mongo
 #
@@ -81,7 +83,10 @@ def import_yamls(dbpath: str, dbname: str) -> None:
     with TemporaryDirectory() as tempd:
         for yaml_file in yaml_files:
             json_file = Path(tempd).joinpath(yaml_file.with_suffix('.json').name)
-            fsclient.yaml_to_json(str(yaml_file), str(json_file))
+            loader = YAML(typ='safe')
+            loader.constructor.yaml_constructors[u'tag:yaml.org,2002:timestamp'] = \
+                loader.constructor.yaml_constructors[u'tag:yaml.org,2002:str']
+            fsclient.yaml_to_json(str(yaml_file), str(json_file), loader=loader)
         import_jsons(tempd, dbname)
     return
 

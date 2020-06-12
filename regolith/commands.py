@@ -7,9 +7,12 @@ from pprint import pprint
 
 from regolith.builder import builder, BUILDERS
 from regolith.deploy import deploy as dploy
+from regolith.emailer import emailer
 from regolith.helper import HELPERS, helpr
 from regolith.runcontrol import RunControl
 from regolith.tools import string_types
+
+email = emailer
 
 RE_AND = re.compile(r"\s+and\s+")
 RE_SPACE = re.compile(r"\s+")
