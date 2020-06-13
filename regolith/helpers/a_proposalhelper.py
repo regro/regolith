@@ -146,19 +146,7 @@ class ProposalAdderHelper(DbHelperBase):
                         abs(expected_duration.days - input_days) > 3.05:
                         # assuming that the user inputs the correct duration up to 1 decimal place
                         # so the maximum allowed difference is 0.1*30.5
-                        raise ValueError(f"ERROR: please rerun specifying a duration OR an end-date but not both \n")
-
-                        #                f"Expected years: {expected_duration.years} Actual years:{input_years} \n"
-                        #                f"Expected months: {expected_duration.months} Actual months:{input_months} \n"
-                        #                f"Expected days: {expected_duration.days} Actual days:{input_days} \n")
-                    #expected_duration = 12*30.5*relativedelta(end_date, begin_date).years + \
-                    #                    30.5*relativedelta(end_date, begin_date).months + \
-                    #                    relativedelta(end_date, begin_date).days
-                    #if abs(expected_duration - float(rc.duration)*30.5) > 3.05:
-                    #    raise ValueError(f"ERROR: please rerun specifying a duration OR an end-date but not both "
-                    #
-                    #                     f"Expected duration (in days): {expected_duration}"
-                    #                     f"Entered duration (in days): {float(rc.duration)*30.5}")
+                        raise ValueError(f"ERROR: please rerun specifying a duration OR an end-date but not both")
             pdoc.update({'begin_date': begin_date})
         else:
             pdoc.update({'begin_date': 'tbd'})
