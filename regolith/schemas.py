@@ -1998,7 +1998,7 @@ SCHEMAS = {
         "due_date": {
             "description": "date the review is due in ISO format",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "date"],
         },
         "freewrite": {
             "description": "Anything and this will appear in the built document"
@@ -2312,7 +2312,7 @@ SCHEMAS = {
         "due_date": {
             "description": "date the review is due in ISO format",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "date"],
         },
         "editor_eyes_only": {
             "description": "Comments you don't want passed to the author",
