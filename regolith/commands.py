@@ -186,7 +186,7 @@ def yaml_to_json(rc):
 
 
 def fs_to_mongo(rc: RunControl) -> None:
-    """Import database from filesystem to mongo db.
+    """Convert database collection from filesystem to mongo db.
 
     Parameters
     ----------
