@@ -528,6 +528,17 @@ EXEMPLARS = {
         ],
         "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
         "github_id": "ascopatz",
+        "hindex": {
+            "h": 25,
+            "h_last_five": 46,
+            "citations": 19837,
+            "citations_last_five": 9419,
+            "origin": "Google Scholar",
+            "since": 1991,
+            "year": 2020,
+            "month": 2,
+            "day": 19
+            },
         "home_address": {
             "street": "123 Wallabe Ln",
             "city": "The big apple",

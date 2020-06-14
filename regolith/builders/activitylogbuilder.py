@@ -1,7 +1,7 @@
 """Builder for CVs."""
 import datetime as dt
-import os
-import sys
+from dateutil import parser as date_parser
+from dateutil.relativedelta import relativedelta
 from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
@@ -28,7 +28,7 @@ from regolith.tools import (
     get_id_from_name)
 
 
-class AppraisalBuilder(LatexBuilderBase):
+class ActivitylogBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
     btype = "activity-log"
@@ -80,13 +80,23 @@ class AppraisalBuilder(LatexBuilderBase):
         begin_year = int(rc.from_date.split("-")[0])
         begin_month = int(rc.from_date.split("-")[1])
         pre_begin_year = begin_year - 1
-        end_year = begin_year + 1
-        end_month = begin_month - 1
-        post_end_year = begin_year + 2
-        begin_period = dt.date(begin_year, begin_month, 1)
-        pre_begin_period = dt.date(pre_begin_year, begin_month, 1)
-        end_period = dt.date(end_year, end_month, 28)
-        post_end_period = dt.date(post_end_year, end_month, 28)
+        #fixme this won't work if end_month is january
+        if rc.to_date:
+            end_year = rc.to_date.split("-")[0]
+            end_month = rc.to_date.split("-")[0]
+        else:
+            end_year = begin_year + 1
+            end_month = begin_month - 1
+        post_end_year = end_year + 1
+        begin_period = date_parser.parse(rc.from_date).date()
+        pre_begin_period = begin_period - relativedelta(years=1)
+        if rc.to_date:
+            to_date = date_parser.parse(rc.to_date).date()
+            end_period = to_date
+            post_end_period = to_date + relativedelta(years=1)
+        else:
+            end_period = begin_period + relativedelta(years=1) - relativedelta(days=1)
+            post_end_period = begin_period + relativedelta(years=2) - relativedelta(days=1)
 
         me = [p for p in self.gtx["people"] if p["_id"] == build_target][0]
         me["begin_period"] = dt.date.strftime(begin_period, "%m/%d/%Y")

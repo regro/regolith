@@ -14,11 +14,11 @@ from regolith.builders.cpbuilder import CPBuilder
 from regolith.builders.figurebuilder import FigureBuilder
 from regolith.builders.coabuilder import RecentCollaboratorsBuilder
 from regolith.builders.beamplanbuilder import BeamPlanBuilder
-from regolith.builders.appraisalbuilder import AppraisalBuilder
+from regolith.builders.activitylogbuilder import ActivitylogBuilder
 
 
 BUILDERS = {
-    "annual-appraisal": AppraisalBuilder,
+    "activity-log": ActivitylogBuilder,
     "beamplan": BeamPlanBuilder,
     "current-pending": CPBuilder,
     "cv": CVBuilder,

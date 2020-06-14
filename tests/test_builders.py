@@ -9,17 +9,17 @@ from regolith.broker import load_db
 from regolith.main import main
 
 builder_map = [
-    "cv",
-    "html",
-    "resume",
-    "publist",
-    "current-pending",
-    "preslist",
-    "reimb",
-    "figure",
-    "recent-collabs",
-    "beamplan",
-    "annual-appraisal"
+    "activity-log",
+    # "cv",
+    # "html",
+    # "resume",
+    # "publist",
+    # "current-pending",
+    # "preslist",
+    # "reimb",
+    # "figure",
+    # "recent-collabs",
+    # "beamplan"
 ]
 
 xls_check = ("B17", "B20", "B36")
@@ -55,11 +55,11 @@ def test_builder(bm, make_db):
     if bm == "reimb" or bm == "recent-collabs":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
                         "scopatz"], check=True, cwd=repo )
-    if bm == "annual-appraisal":
+    if bm == "activity-log":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
-                        "scopatz", "--from", "2018-04-01"], check=True, cwd=repo)
+                        "sbillinge", "--from", "2017-04-01"], check=True, cwd=repo)
     else:
-        subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo )
+        subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo)
     os.chdir(os.path.join(repo, "_build", bm))
     expected_base = os.path.join(os.path.dirname(__file__), "outputs")
     for root, dirs, files in os.walk("."):
@@ -115,6 +115,9 @@ def test_builder_python(bm, make_db):
         os.makedirs("templates/static", exist_ok=True)
     if bm == "reimb" or bm == "recent-collabs":
         main(["build", bm, "--no-pdf", "--people", "scopatz"])
+    if bm == "activity-log":
+        main(["build", bm, "--no-pdf", "--people",
+                        "sbillinge", "--from", "2017-04-01"])
     else:
         main(["build", bm, "--no-pdf"])
     os.chdir(os.path.join(repo, "_build", bm))

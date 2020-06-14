@@ -12,7 +12,7 @@ from copy import deepcopy
 from datetime import datetime, date, timedelta
 
 from regolith.chained_db import ChainDB
-from regolith.dates import month_to_int, date_to_float, get_dates
+from regolith.dates import month_to_int, date_to_float, get_dates, last_day
 from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
 from regolith.chained_db import ChainDB
 
@@ -483,33 +483,30 @@ def filter_licenses(patentscoll, people, target, since=None, before=None):
     return licenses
 
 
-def filter_activities(people, begin_period, type):
+def filter_activities(people, begin_period, type, verbose=False):
     activities = []
     for p in people:
         myactivity = []
         svc = copy(p.get("activities", []))
         for i in svc:
             if i.get("type") == type:
-                if i.get('year'):
-                    end_year = i.get('year')
-                    if verbose: print("end_year from 'year' = {}".format(end_year))
-                elif i.get('end_year'):
-                    end_year = i.get('end_year')
-                    if verbose: print("end_year from 'end_year' = {}".format(end_year))
-                else:
-                    end_year = date.today().year
-                    if verbose: print("no end_year, using today = {}".format(end_year))
-                end_date = date(end_year,
-                                i.get("end_month", 12),
-                                i.get("end_day", 28))
-                if verbose: print("end_date = {} and begin_period = {}".format(end_date,begin_period))
-                if verbose: print("condition end_date >= begin_period will be used")
-                if end_date >= begin_period:
-                    if not i.get('month'):
-                        month = i.get("begin_month", 0)
-                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
-                    else:
-                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                # if i.get('year'):
+                #     end_year = i.get('year')
+                #     if verbose: print("end_year from 'year' = {}".format(end_year))
+                # elif i.get('end_year'):
+                #     end_year = i.get('end_year')
+                #     if verbose: print("end_year from 'end_year' = {}".format(end_year))
+                # else:
+                #     end_year = date.today().year
+                #     if verbose: print("no end_year, using today = {}".format(end_year))                                i.get("end_month", 12),
+                #                 i.get("end_day", last_day(end_year,  i.get("end_month")))
+                # if verbose: print("end_date = {} and begin_period = {}".format(end_date,begin_period))
+                # if verbose: print("condition end_date >= begin_period will be used")
+                idates = get_dates(i)
+                if idates["end_date"] >= begin_period:
+                    usedate = idates.get('begin_date', idates.get('date'))
+                    i['year'] = usedate.year
+                    i['month'] = SHORT_MONTH_NAMES[month_to_int(usedate.month)]
                     myactivity.append(i)
         p['activities'] = myactivity
         if len(p['activities']) > 0:
