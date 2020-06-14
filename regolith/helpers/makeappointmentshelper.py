@@ -18,8 +18,9 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from regolith.dates import is_current
 
-TARGET_COLL = "appointments"
+TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
 
 
@@ -80,17 +81,13 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         for person in self.gtx["people"]:
             appointments = person.get("appointments")
+            total_load = 0
             for appt in appointments:
-                total_load = 0
-                if rc.gap and appt.is_current():
-                    total_load += appt.get("load")
-                if rc.out_of_date:
-
-
+                if rc.gap and is_current(appt):
+                    total_load += appt.get("loading")
             if rc.gap and total_load != 1:
                 gaps.append(person)
-
-
-
+        for person in gaps:
+            print(person.get('name'))
         return
 

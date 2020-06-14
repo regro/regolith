@@ -8,6 +8,7 @@ from regolith.helpers import l_milestoneshelper as l_milestone
 from regolith.helpers import l_projectahelper as l_projecta
 from regolith.helpers import l_grantshelper as l_grants
 from regolith.helpers import l_membershelper as l_members
+from regolith.helpers import makeappointmentshelper as makeappointments
 
 HELPERS = {
     "hello": (hello.HelloHelper, hello.subparser),
@@ -18,6 +19,7 @@ HELPERS = {
     "l_projecta": (l_projecta.ProjectaListerHelper, l_projecta.subparser),
     "l_grants": (l_grants.GrantsListerHelper, l_grants.subparser),
     "l_members": (l_members.MembersListerHelper, l_members.subparser),
+    "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser)
 }
 
 
