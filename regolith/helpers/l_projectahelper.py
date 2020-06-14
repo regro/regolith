@@ -8,7 +8,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_due_date
+from regolith.dates import get_due_date, get_dates
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -19,7 +19,6 @@ from regolith.tools import (
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"
 ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
-
 
 
 def subparser(subpi):
@@ -33,6 +32,18 @@ def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs="+",
                        help=f"List of stati for the project that you want returned,"
                             f"from {ALLOWED_STATI}.  Default is proposed and started"
+                       )
+    subpi.add_argument("-e", "--ended", action="store_true",
+                       help="Lists projects that have ended. Use the -d and -r flags to specify"
+                            "from one date and how many days"
+                       )
+    subpi.add_argument("-d", "--date",
+                       help="projecta with end_date within RANGE before this date will be listed."
+                            "Default is today"
+                       )
+    subpi.add_argument("-r", "--range",
+                       help="date range back from DATE to search over in days. If no "
+                            "range is specified, search will be 7 days"
                        )
     return subpi
 
@@ -76,6 +87,16 @@ class ProjectaListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        if rc.date:
+            desired_date = date_parser.parse(rc.date).date()
+        else:
+            desired_date = dt.date.today()
+
+        if rc.range:
+            num_of_days = int(rc.range)
+        else:
+            num_of_days = 7
+
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         projecta = []
         if rc.lead and rc.person:
@@ -96,10 +117,20 @@ class ProjectaListerHelper(SoutHelperBase):
                         good_p.append(i)
                 if len(good_p) == 0:
                     continue
-            if not rc.stati and projectum.get('status') in bad_stati:
+            if not rc.ended and not rc.stati and projectum.get('status') in bad_stati:
                 continue
             if rc.stati and projectum.get('status') not in rc.stati:
                 continue
+            if rc.ended and not projectum.get('end_date'):
+                continue
+            if rc.ended:
+                end_date = projectum.get('end_date')
+                if isinstance(end_date, str):
+                    end_date = date_parser.parse(end_date).date()
+                low_range = desired_date - dt.timedelta(days=num_of_days)
+                high_range = desired_date + dt.timedelta(days=num_of_days)
+                if not (low_range <= end_date <= high_range):
+                    continue
             projecta.append(projectum["_id"])
 
         projecta.sort()
