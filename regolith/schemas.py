@@ -568,16 +568,31 @@ EXEMPLARS = {
         "service": [{
             "name": "International Steering Committee",
             "role": "chair",
-            "type": "professional]",
+            "type": "profession",
             "year": 2020,
             "month": 3,
             "notes": ["something"],
             },{
             "name": "National Steering Committee",
-            "type": "professional]",
+            "type": "profession",
             "begin_year": 2018,
             "end_year": 2021,
             "notes": "something",
+            },
+            {
+                "name": "Master of Ceremonies and Organizer Brown University "
+                        '"Chemistry: Believe it or Not" public chemistry '
+                        "demonstration",
+                "type": "department",
+                "year": 2013,
+            },
+            {
+                "begin_year": 2012,
+                "end_year": 2014,
+                "type": "profession",
+                "name": "Renewable Energy Presenter and Facility Tour Guide "
+                        'at the NSLS "Science Sunday" laboratory open house '
+                        "at Brookhaven National Laboratory",
             },
             ],
         "skills": [
@@ -602,6 +617,7 @@ EXEMPLARS = {
             },
             {
                 "course": "EMCH 558/758: Reactor Power Systems",
+                "courseid": "EMCH 558",
                 "description": "This course covers conventional " "reactors.",
                 "enrollment": 28,
                 "evaluation": {
@@ -626,21 +642,6 @@ EXEMPLARS = {
             },
        ],
         "title": "Dr.",
-        "service": [
-            {
-                "name": "Master of Ceremonies and Organizer Brown University "
-                        '"Chemistry: Believe it or Not" public chemistry '
-                        "demonstration",
-                "year": 2013,
-            },
-            {
-                "begin_year": 2012,
-                "end_year": 2014,
-                "name": "Renewable Energy Presenter and Facility Tour Guide "
-                        'at the NSLS "Science Sunday" laboratory open house '
-                        "at Brookhaven National Laboratory",
-            },
-        ],
     },
     {
         "_id": "sbillinge",
@@ -744,7 +745,7 @@ EXEMPLARS = {
              "month": "May",
              "day": 12,
          }],
-        "office": {"1105 Seely W. Mudd Building (inner office)"},
+        "office": "1105 Seely W. Mudd Building (inner office)",
         "home_address": {
             "street": "123 Wallabe Ln",
             "city": "The big apple",
