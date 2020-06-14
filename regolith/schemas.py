@@ -579,21 +579,6 @@ EXEMPLARS = {
             "end_year": 2021,
             "notes": "something",
             },
-            {
-                "name": "Master of Ceremonies and Organizer Brown University "
-                        '"Chemistry: Believe it or Not" public chemistry '
-                        "demonstration",
-                "type": "department",
-                "year": 2013,
-            },
-            {
-                "begin_year": 2012,
-                "end_year": 2014,
-                "type": "profession",
-                "name": "Renewable Energy Presenter and Facility Tour Guide "
-                        'at the NSLS "Science Sunday" laboratory open house '
-                        "at Brookhaven National Laboratory",
-            },
             ],
         "skills": [
             {"category": "Programming Languages", "level": "expert",
