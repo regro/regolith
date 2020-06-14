@@ -31,7 +31,7 @@ from regolith.tools import (
 class AppraisalBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
-    btype = "activity-log"
+    btype = "annual-activity"
     needed_dbs = ['groups', 'people', 'grants', 'proposals', 'institutions',
                   'projects', 'presentations', 'patents', 'citations']
 

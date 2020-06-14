@@ -18,7 +18,7 @@ from regolith.builders.activitylogbuilder import ActivitylogBuilder
 
 
 BUILDERS = {
-    "activity-log": ActivitylogBuilder,
+    "annual-activity": ActivitylogBuilder,
     "beamplan": BeamPlanBuilder,
     "current-pending": CPBuilder,
     "cv": CVBuilder,
