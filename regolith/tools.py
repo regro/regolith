@@ -10,8 +10,10 @@ from copy import deepcopy
 from calendar import monthrange
 
 from datetime import datetime, date, timedelta
+from dateutil import parser as date_parser
+from dateutil.relativedelta import relativedelta
 
-from regolith.dates import month_to_int, date_to_float, get_dates
+from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import doc_date_key, id_key, ene_date_key
 from regolith.chained_db import ChainDB
 
@@ -751,3 +753,50 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
                     ret_list.append(doc)
                     break
     return ret_list
+
+def is_fully_appointed(appts, begin=None, duration=None, now=None):
+    datearray = []
+    status = [True, '']
+    if begin and duration and now:
+        raise ValueError("Please enter interval or current date, not both.")
+    if now:
+        now = date_parser.parse(now).date()
+    else:
+        now = date.today()
+    if begin:
+        begin_date = date_parser.parse(begin).date()
+        if duration:
+            end_date = begin_date + relativedelta(months=int(duration))
+        else:
+            end_date = begin_date + relativedelta(years=1)
+        timespan = end_date - begin_date
+        for x in range(0, timespan.days):
+            datearray.append(begin_date + relativedelta(days=x))
+        loading = [0] * len(datearray)
+        for day in datearray:
+            for appt in appts:
+                if is_current(appt, now=day):
+                    loading[datearray.index(day)] = loading[datearray.index(day)] + \
+                                                    appt.get("loading")
+        if max(loading) > 1.0:
+            status[0] = False
+            status[1] = "max {} at {}".format(max(loading),
+                                        datearray[
+                                            list(loading).index(max(loading))])
+        elif min(loading) < 1.0:
+            status[0] = False
+            status[1] = "min {} at {}".format(min(loading),
+                                        datearray[list(loading).index(min(loading))]
+                                        )
+    else:
+        load = 0
+        for appt in appts:
+            if is_current(appt, now=now):
+                load += appt.get('loading')
+        if load < 1:
+            status[0] = False
+            status[1] = "not fully appointed"
+        elif load > 1:
+            status[0] = False
+            status[1] = "exceeds full loading"
+    return status

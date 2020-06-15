@@ -39,7 +39,8 @@ helper_map = [
      "Anthony Scopatz, professor | group_id: scopatz\n"
      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
      ),
-    (["helper", "makeappointments", "-g"], "Anthony Scopatz\n"),
+    (["helper", "makeappointments", "-g"], "People with gaps in their appointments:\nAnthony Scopatz\n"),
+    (["helper", "makeappointments", "-o"], "\n")
 ]
 
 
