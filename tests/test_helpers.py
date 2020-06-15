@@ -32,7 +32,7 @@ helper_map = [
      "20ly_newprojectum\n20sb_firstprojectum\n"
      ),
     (["helper", "l_projecta", "--ended", "-d", "2020-06-02"],
-     "20sb_firstprojectum\n"
+     "20sb_firstprojectum    My first projectum\n    Lead: ascopatz    Members: None    Collaborators: ['aeinstein', 'pdirac']\n"
      ),
     (["helper", "l_grants", "-c", "-d", "2020-05-25"],
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"

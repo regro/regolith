@@ -84,7 +84,6 @@ class ProjectaListerHelper(SoutHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-
     def sout(self):
         rc = self.rc
         if rc.date:
@@ -99,10 +98,11 @@ class ProjectaListerHelper(SoutHelperBase):
 
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         projecta = []
+        end_projecta = []
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")
         for projectum in self.gtx["projecta"]:
-            if isinstance(projectum.get('group_members'),str):
+            if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
@@ -129,12 +129,18 @@ class ProjectaListerHelper(SoutHelperBase):
                     end_date = date_parser.parse(end_date).date()
                 low_range = desired_date - dt.timedelta(days=num_of_days)
                 high_range = desired_date + dt.timedelta(days=num_of_days)
-                if not (low_range <= end_date <= high_range):
+                if low_range <= end_date <= high_range:
+                    end_projecta.append(projectum)
                     continue
             projecta.append(projectum["_id"])
 
+        if rc.ended:
+            for p in end_projecta:
+                print("{}    {}\n    Lead: {}    Members: {}    Collaborators: {}".format(p.get("_id"),
+                                                                                       p.get("description"),
+                                                                                       p.get("lead"), p.get("members"),
+                                                                                       p.get("collaborators")))
         projecta.sort()
         for i in projecta:
             print(i)
         return
-
