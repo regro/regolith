@@ -207,11 +207,20 @@ def get_dates(thing):
                                        month_to_int(thing['month']),
                                        thing['day'])
     if thing.get('begin_date'):
-        begin_date = date_parser.parse(thing.get('begin_date')).date()
+        if isinstance(thing.get('begin_date'), str):
+            begin_date = date_parser.parse(thing.get('begin_date')).date()
+        else:
+            begin_date = thing.get('begin_date')
     if thing.get('end_date'):
-        end_date = date_parser.parse(thing.get('end_date')).date()
+        if isinstance(thing.get('end_date'), str):
+            end_date = date_parser.parse(thing.get('end_date')).date()
+        else:
+            end_date = thing.get('end_date')
     if thing.get('date'):
-        date = date_parser.parse(thing.get('date')).date()
+        if isinstance(thing.get('date'), str):
+            date = date_parser.parse(thing.get('date')).date()
+        else:
+            date = thing.get('date')
     dates = {'begin_date': begin_date, 'end_date': end_date, 'date': date}
     return dates
 
