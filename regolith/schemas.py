@@ -600,7 +600,7 @@ EXEMPLARS = {
             "end_month": 5,
             "end_day": 22,
             "institution": "columbiau",
-            "nopeolptes": ["what a week!"],
+            "notes": ["what a week!"],
             "project": "18kj_conservation",
             "status": "accepted",
             "title": "Nanostructure challenges and successes from "
