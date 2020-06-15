@@ -31,11 +31,12 @@ HELPER_TARGET = "makeappointments"
 
 def subparser(subpi):
 
-    subpi.add_argument("--date", help="date to check appointments and grants against",
-                       default=dt.date.today())
+    subpi.add_argument("--date", help="date to check appointments and grants against")
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-g", "--gap", action="store_true",
                        help='get group members with a gap in their appointments')
+    subpi.add_argument("-b", "--begin_date", help='begin date of interval to check appointments')
+    subpi.add_argument("--duration", help='duration of interval to check appointments', default=1)
     subpi.add_argument("-o", "--out_of_date", action="store_true",
                        help='get group members supported on an out of date grant')
     subpi.add_argument("-d", "--depleted", action="store_true",
@@ -87,17 +88,45 @@ class MakeAppointmentsHelper(SoutHelperBase):
         gaps = []
         outdated = []
         depleted = []
+
+        if rc.begin_date and rc.date:
+            raise ValueError("Please enter either an interval or a date, not both")
+        if rc.date:
+            desired_date = date_parser.parse(rc.date).date()
+        else:
+            desired_date = dt.date.today()
+
         for person in self.gtx["people"]:
             appts = person.get("appointments")
-            if not is_fully_appointed(appts)[0]:
-                #gaps.append(f" person: {person.get('name')} gap: {is_fully_appointed(appts)[1]}")
-                gaps.append(person.get('name'))
-                gaps.append((is_fully_appointed(appts, begin="2018-04-02", duration="3"))[1])
-            for appt in appts:
-                if rc.out_of_date:
+            if rc.gap:
+                if rc.begin_date:
+                    if not is_fully_appointed(appts, begin=rc.begin_date, duration=rc.duration)[0]:
+                        gaps.append(person.get('name'))
+                        gaps.append((is_fully_appointed(appts, begin=rc.begin_date, duration=rc.duration))[1])
+                else:
+                    if not is_fully_appointed(appts, now=desired_date)[0]:
+                        gaps.append(person.get('name'))
+                        gaps.append((is_fully_appointed(appts, now=desired_date))[1])
+            if rc.out_of_date:
+                for appt in appts:
                     grant = fuzzy_retrieval(self.gtx["grants"], ['_id'], appt.get("grant"), case_sensitive=False)
-                    if has_finished(grant, rc.date):
+                    if has_finished(grant, desired_date):
                         outdated.append(f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')}")
+            if rc.depleted:
+                for appt in appts:
+                    grant_value = fuzzy_retrieval(self.gtx["grants"], ['_id'], appt.get("grant"), case_sensitive=False).get('amount')
+                    if grant_amount < :
+                        outdated.append(
+                            f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')}")
+
+
+
+
+
+
+
+
+
         if rc.gap:
             print("People with gaps in their appointments:")
             for thing in gaps:

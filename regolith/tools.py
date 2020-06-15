@@ -754,25 +754,31 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
                     break
     return ret_list
 
-def is_fully_appointed(appts, begin=None, duration=None, now=None):
+def is_fully_appointed(appts, begin=None, end=None, now=None):
     datearray = []
     status = [True, '']
-    if begin and duration and now:
+    if begin and end and now:
         raise ValueError("Please enter interval or current date, not both.")
-    if now:
+    if now and isinstance(now, str):
         now = date_parser.parse(now).date()
-    else:
+    elif not now:
         now = date.today()
     if begin:
-        begin_date = date_parser.parse(begin).date()
-        if duration:
-            end_date = begin_date + relativedelta(months=int(duration))
+        if isinstance(begin,str):
+            begin_date = date_parser.parse(begin).date()
+        else:
+            begin_date = begin
+        if end:
+            if isinstance(end, str):
+                end_date = date_parser.parse(end).date()
+            else:
+                end_date = end
         else:
             end_date = begin_date + relativedelta(years=1)
         timespan = end_date - begin_date
         for x in range(0, timespan.days):
             datearray.append(begin_date + relativedelta(days=x))
-        loading = [0] * len(datearray)
+        loading = [0.0] * len(datearray)
         for day in datearray:
             for appt in appts:
                 if is_current(appt, now=day):
@@ -789,7 +795,7 @@ def is_fully_appointed(appts, begin=None, duration=None, now=None):
                                         datearray[list(loading).index(min(loading))]
                                         )
     else:
-        load = 0
+        load = 0.0
         for appt in appts:
             if is_current(appt, now=now):
                 load += appt.get('loading')
