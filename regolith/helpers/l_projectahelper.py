@@ -46,7 +46,7 @@ def subparser(subpi):
                             "range is specified, search will be 7 days"
                        )
     subpi.add_argument("-g", "--grant",
-                       help="Filter projecta by by a grant ID"
+                       help="Filter projecta by a grant ID"
                        )
     return subpi
 
