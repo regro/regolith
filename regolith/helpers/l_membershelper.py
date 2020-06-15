@@ -11,7 +11,7 @@ from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
+    get_pi_id, search_collection
 )
 
 TARGET_COLL = "people"
@@ -23,6 +23,7 @@ ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "ca
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-c", "--current", action="store_true", help='get only current group members ')
+    subpi.add_argument("-s", "--search", nargs="+", help="Search this collection by giving key element pairs")
 
     return subpi
 
@@ -64,6 +65,10 @@ class MembersListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        if rc.search:
+            results = search_collection(self.gtx["people"], rc.search)
+            print(results, end="")
+            return
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
         for person in self.gtx["people"]:
