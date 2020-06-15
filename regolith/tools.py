@@ -779,11 +779,10 @@ def is_fully_appointed(appts, begin=None, end=None, now=None):
         for x in range(0, timespan.days):
             datearray.append(begin_date + relativedelta(days=x))
         loading = [0.0] * len(datearray)
-        for day in datearray:
+        for x in range(0, len(datearray)):
             for appt in appts:
-                if is_current(appt, now=day):
-                    loading[datearray.index(day)] = loading[datearray.index(day)] + \
-                                                    appt.get("loading")
+                if is_current(appt, now=datearray[x]):
+                    loading[x] = loading[x] + appt.get("loading")
         if max(loading) > 1.0:
             status[0] = False
             status[1] = "max {} at {}".format(max(loading),
