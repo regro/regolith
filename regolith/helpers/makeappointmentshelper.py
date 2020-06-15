@@ -36,7 +36,7 @@ def subparser(subpi):
     subpi.add_argument("-g", "--gap", action="store_true",
                        help='get group members with a gap in their appointments')
     subpi.add_argument("-b", "--begin_date", help='begin date of interval to check appointments')
-    subpi.add_argument("--duration", help='duration of interval to check appointments', default=1)
+    subpi.add_argument("--end_date", help='end date of interval to check appointments', default=None)
     subpi.add_argument("-o", "--out_of_date", action="store_true",
                        help='get group members supported on an out of date grant')
     subpi.add_argument("-d", "--depleted", action="store_true",
@@ -95,14 +95,13 @@ class MakeAppointmentsHelper(SoutHelperBase):
             desired_date = date_parser.parse(rc.date).date()
         else:
             desired_date = dt.date.today()
-
         for person in self.gtx["people"]:
             appts = person.get("appointments")
             if rc.gap:
                 if rc.begin_date:
-                    if not is_fully_appointed(appts, begin=rc.begin_date, duration=rc.duration)[0]:
+                    if not is_fully_appointed(appts, begin=rc.begin_date, end=rc.end_date)[0]:
                         gaps.append(person.get('name'))
-                        gaps.append((is_fully_appointed(appts, begin=rc.begin_date, duration=rc.duration))[1])
+                        gaps.append((is_fully_appointed(appts, begin=rc.begin_date, end=rc.end_date))[1])
                 else:
                     if not is_fully_appointed(appts, now=desired_date)[0]:
                         gaps.append(person.get('name'))
@@ -114,19 +113,10 @@ class MakeAppointmentsHelper(SoutHelperBase):
                         outdated.append(f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')}")
             if rc.depleted:
                 for appt in appts:
-                    grant_value = fuzzy_retrieval(self.gtx["grants"], ['_id'], appt.get("grant"), case_sensitive=False).get('amount')
-                    if grant_amount < :
+                    grant_amount = fuzzy_retrieval(self.gtx["grants"], ['_id'], appt.get("grant"), case_sensitive=False).get('budget').get('months')
+                    if 30*grant_amount < 1:
                         outdated.append(
                             f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')}")
-
-
-
-
-
-
-
-
-
         if rc.gap:
             print("People with gaps in their appointments:")
             for thing in gaps:
@@ -135,5 +125,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
             print("Appointments supported on outdated grants:")
             for appt in outdated:
                 print(appt)
+
         return
 
