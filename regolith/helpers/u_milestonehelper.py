@@ -72,7 +72,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
         if len(pdocl) == 0:
             raise RuntimeError(
                 "This entry appears to not exist in the collection")
-
         filterid = {'_id': key}
         current = rc.client.find_one(rc.database, rc.coll, filterid)
         milestones = current.get('milestones', {})
@@ -82,7 +81,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
         nmil = len(milestones)
         for i in range(nmil):
             lmil[str(i + 4)] = milestones[i]
-
         #if list number was not informed, print a numbered list
         if not rc.number:
             print('Please choose from one of the following to update/add:')
