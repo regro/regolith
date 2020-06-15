@@ -126,13 +126,13 @@ class MilestoneUpdaterHelper(DbHelperBase):
         if int(rc.number) > 3:
             mil = lmil[rc.number]
             if rc.due_date:
-                mil.update({'due_date':rc.due_date})
+                mil.update({'due_date': rc.due_date})
             if rc.status:
                 mil.update({'status': rc.status})
             num = int(rc.number) - 4
             milestones[num] = mil
 
         rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
-        print("{} has been updated in projecta".format(rc.projectum_id))
+        print("{} has been updated in projecta".format(key))
 
         return
