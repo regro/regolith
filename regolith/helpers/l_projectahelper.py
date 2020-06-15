@@ -89,6 +89,8 @@ class ProjectaListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose):
+            return
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
         else:
