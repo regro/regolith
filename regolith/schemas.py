@@ -630,6 +630,7 @@ EXEMPLARS = {
             "status": "finalized"
         },
         "description": "My first projectum",
+        "end_date": "2020-06-05",
         "grants": "SymPy-1.1",
         "group_members": ["ascopatz"],
         "kickoff": {
