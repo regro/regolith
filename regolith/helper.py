@@ -9,6 +9,7 @@ from regolith.helpers import l_projectahelper as l_projecta
 from regolith.helpers import l_grantshelper as l_grants
 from regolith.helpers import l_membershelper as l_members
 from regolith.helpers import l_contactshelper as l_contacts
+from regolith.helpers import u_logurlhelper as u_logurl
 
 HELPERS = {
     "hello": (hello.HelloHelper, hello.subparser),
@@ -20,6 +21,7 @@ HELPERS = {
     "l_grants": (l_grants.GrantsListerHelper, l_grants.subparser),
     "l_members": (l_members.MembersListerHelper, l_members.subparser),
     "l_contacts": (l_contacts.ContactsListerHelper, l_contacts.subparser),
+    "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser)
 }
 
 

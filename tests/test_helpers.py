@@ -47,6 +47,8 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
+    (["helper", "u_logurl", "20ly_newprojectum", "this is a test pt.2"],
+     "20ly_newprojectum has been updated with a log_url of this is a test pt.2\n"),
 ]
 
 
