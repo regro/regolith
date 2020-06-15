@@ -541,29 +541,6 @@ EXEMPLARS = {
                         "at Brookhaven National Laboratory",
             },
         ],
-        "appointments": [
-            {
-                "name": "f20_1",
-                "begin_date": "2019-09-01",
-                "end_date": "2019-12-31",
-                "grant": "dmref19",
-                "loading": 1.0,
-            },
-            {
-                "name": "ss20_1",
-                "begin_date": "2020-04-01",
-                "end_date": "2020-07-31",
-                "grant": "dmref19",
-                "loading": 0.8,
-            },
-            {
-                "name": "ss20_2",
-                "begin_date": "2020-04-01",
-                "end_date": "2020-07-31",
-                "grant": "dmref19",
-                "loading": 0.1,
-            }
-        ]
     },
     "presentations": [
         {
@@ -1829,29 +1806,6 @@ SCHEMAS = {
             "description": "for example, Dr., etc.",
             "required": False,
             "type": "string",
-        },
-        "appointments": {
-            "description": "grant appointments assigned to this group member",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "begin_day": {"required": False, "type": "integer"},
-                    "begin_month": {"required": False, "anyof_type": ["string", "integer"],},
-                    "begin_year": {"required": False, "type": "integer"},
-                    "begin_date": {"required": False, "anyof_type": ["string", "date"],},
-                    "end_day": {"required": False, "type": "integer"},
-                    "end_month": {"required": False, "anyof_type": ["string", "integer"],},
-                    # Could be ongoing with undefined end
-                    "end_year": {"required": False, "type": "integer"},
-                    "end_date": {"required": False, "anyof_type": ["string", "date"],},
-                    "grant": {"required": True, "type": "string"},
-                    "loading": {"required": True, "anyof_type": ["float", "integer"],},
-                    "status": {"required": False, "type": "string"},
-                    "notes": {"required": False, "type": "list"},
-                },
-            },
-            "anyof_type": ["list", "dict"],
         },
     },
     "presentations": {
