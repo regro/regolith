@@ -45,6 +45,9 @@ def subparser(subpi):
                        help="date range back from DATE to search over in days. If no "
                             "range is specified, search will be 7 days"
                        )
+    subpi.add_argument("-g", "--grant",
+                       help="Filter projecta by by a grant ID"
+                       )
     return subpi
 
 
@@ -117,6 +120,8 @@ class ProjectaListerHelper(SoutHelperBase):
                         good_p.append(i)
                 if len(good_p) == 0:
                     continue
+            if rc.grant and rc.grant not in projectum.get('grants'):
+                continue
             if not rc.ended and not rc.stati and projectum.get('status') in bad_stati:
                 continue
             if rc.stati and projectum.get('status') not in rc.stati:
@@ -131,7 +136,7 @@ class ProjectaListerHelper(SoutHelperBase):
                 high_range = desired_date + dt.timedelta(days=num_of_days)
                 if low_range <= end_date <= high_range:
                     end_projecta.append(projectum)
-                    continue
+                continue
             projecta.append(projectum["_id"])
 
         if rc.ended:
