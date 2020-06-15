@@ -136,10 +136,15 @@ class ProjectaListerHelper(SoutHelperBase):
 
         if rc.ended:
             for p in end_projecta:
+                members, collaborators = None, None
+                if p.get("group_members"):
+                    members = ', '.join(p.get("group_members"))
+                if p.get("collaborators"):
+                    collaborators = ', '.join(p.get("collaborators"))
                 print("{}    {}\n    Lead: {}    Members: {}    Collaborators: {}".format(p.get("_id"),
-                                                                                       p.get("description"),
-                                                                                       p.get("lead"), p.get("members"),
-                                                                                       p.get("collaborators")))
+                                                                                          p.get("description"),
+                                                                                          p.get("lead"), members,
+                                                                                          collaborators))
         projecta.sort()
         for i in projecta:
             print(i)
