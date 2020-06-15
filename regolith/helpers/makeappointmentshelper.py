@@ -36,7 +36,7 @@ def subparser(subpi):
     subpi.add_argument("-g", "--gap", action="store_true",
                        help='get group members with a gap in their appointments')
     subpi.add_argument("-b", "--begin_date", help='begin date of interval to check appointments')
-    subpi.add_argument("--end_date", help='end date of interval to check appointments', default=None)
+    subpi.add_argument("-e", "--end_date", help='end date of interval to check appointments', default=None)
     subpi.add_argument("-o", "--out_of_date", action="store_true",
                        help='get group members supported on an out of date grant')
     subpi.add_argument("-d", "--depleted", action="store_true",
