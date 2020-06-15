@@ -10,6 +10,7 @@ from regolith.helpers import l_projectahelper as l_projecta
 from regolith.helpers import l_grantshelper as l_grants
 from regolith.helpers import l_membershelper as l_members
 from regolith.helpers import l_contactshelper as l_contacts
+from regolith.helpers import u_milestonehelper as u_milestone
 
 from regolith.helpers import u_contacthelper as u_contact
 HELPERS = {
@@ -24,6 +25,7 @@ HELPERS = {
     "l_members": (l_members.MembersListerHelper, l_members.subparser),
     "l_contacts": (l_contacts.ContactsListerHelper, l_contacts.subparser),
     "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
+    "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
 }
 
 
