@@ -14,24 +14,26 @@ from regolith.builders.cpbuilder import CPBuilder
 from regolith.builders.figurebuilder import FigureBuilder
 from regolith.builders.coabuilder import RecentCollaboratorsBuilder
 from regolith.builders.beamplanbuilder import BeamPlanBuilder
+from regolith.builders.activitylogbuilder import ActivitylogBuilder
 
 
 BUILDERS = {
+    "annual-activity": ActivitylogBuilder,
+    "beamplan": BeamPlanBuilder,
+    "current-pending": CPBuilder,
     "cv": CVBuilder,
-    "html": HtmlBuilder,
-    "publist": PubListBuilder,
+    "figure": FigureBuilder,
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,
-    "resume": ResumeBuilder,
-    "current-pending": CPBuilder,
+    "html": HtmlBuilder,
     "postdocad": PostdocadBuilder,
+    "preslist": PresListBuilder,
+    "publist": PubListBuilder,
+    "reimb": ReimbursementBuilder,
+    "recent-collabs": RecentCollaboratorsBuilder,
+    "resume": ResumeBuilder,
     "review-man": ManRevBuilder,
     "review-prop": PropRevBuilder,
-    "preslist": PresListBuilder,
-    "reimb": ReimbursementBuilder,
-    "figure": FigureBuilder,
-    "recent-collabs": RecentCollaboratorsBuilder,
-    "beamplan": BeamPlanBuilder
 }
 
 

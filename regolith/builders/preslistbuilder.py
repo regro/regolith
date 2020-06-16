@@ -178,9 +178,10 @@ class PresListBuilder(LatexBuilderBase):
                             )
                             if pres["institution"] is None:
                                 print(
-                                    "WARNING: institution {} not found in "
-                                    "institutions.yml.  Please add and "
-                                    "rerun".format(inst)
+                                    "WARNING: institution {} in {} not found in "
+                                    "institutions.yml.  Preslist will build "
+                                    "but to avoid errors please add and "
+                                    "rerun".format(inst, pres["_id"])
                                 )
                                 pres["institution"] = {"_id": inst,
                                                        "department": {

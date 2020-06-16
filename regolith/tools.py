@@ -6,13 +6,15 @@ import platform
 import re
 import sys
 import time
+from copy import deepcopy, copy
 from calendar import monthrange
 from copy import deepcopy
 from datetime import datetime, date, timedelta
 
 from regolith.chained_db import ChainDB
-from regolith.dates import month_to_int, date_to_float, get_dates
-from regolith.sorters import doc_date_key, id_key, ene_date_key
+from regolith.dates import month_to_int, date_to_float, get_dates, last_day
+from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
+from regolith.chained_db import ChainDB
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -117,8 +119,12 @@ def month_and_year(m=None, y=None):
     m = month_to_int(m)
     return "{0} {1}".format(SHORT_MONTH_NAMES[m], y)
 
+def get_team_from_grant(grantcol):
+    for grant in grantcol:
+        return gets(grant["team"], "name")
 
-def filter_publications(citations, authors, reverse=False, bold=True):
+def filter_publications(citations, authors, reverse=False, bold=True,
+                        since=None, before=None, ):
     """Filter publications by the author(s)/editor(s)
 
     Parameters
@@ -131,6 +137,10 @@ def filter_publications(citations, authors, reverse=False, bold=True):
         If True reverse the order, defaults to False
     bold : bool, optional
         If True put latex bold around the author(s) in question
+    since : date, optional
+        The date after which papers must have been published
+    before : date, optional
+        The date before which papers must have been published
     """
     pubs = []
     for pub in citations:
@@ -139,6 +149,9 @@ def filter_publications(citations, authors, reverse=False, bold=True):
                     pub.get("editor", []))) & authors)
                 == 0
         ):
+            continue
+        if not pub.get("month") or pub.get("month") == "tbd":
+#            print("WARNING: {} missing month will be ignored".format(pub.get("title")))
             continue
         pub = deepcopy(pub)
         if bold:
@@ -151,32 +164,68 @@ def filter_publications(citations, authors, reverse=False, bold=True):
             pub["author"] = bold_self
         else:
             pub = deepcopy(pub)
-        pubs.append(pub)
+        if since:
+            bibdate = date(int(pub.get("year")),
+                           month_to_int(pub.get("month", 12)),
+                           int(pub.get("day", 28)))
+            if bibdate > since:
+                if before:
+                    if bibdate < before:
+                        pubs.append(pub)
+                else:
+                    pubs.append(pub)
+        else:
+            pubs.append(pub)
+
     pubs.sort(key=doc_date_key, reverse=reverse)
     return pubs
 
 
-def filter_projects(projects, authors, reverse=False):
+def filter_projects(projects, people, reverse=False,
+                    active_only=False, group=None, ptype=None):
     """Filter projects by the author(s)
 
     Parameters
     ----------
     projects : list of dict
         The publication citations
-    authors : set of list of str
-        The authors to be filtered against
+    people : set of list of str
+        The people to be filtered against
     reverse : bool, optional
         If True reverse the order, defaults to False
+    since : date, optional
+        The date after which a highlight must be for a project to be returned,
+        defaults to None
+    before : date, optional
+        The date before which a highlight must be for a project to be returned,
+        defaults to None
+    active_only : bool, optional
+        Only active projects will be returned if True,
+        defaults to False
+    group : str, optional
+        Only projects from this group will be returned if specified, otherwise
+        projects from all groups will be returned, defaults to None
+    ptype : str, optional
+        The type of the project to filter for, such as ossoftware for open source
+        software, defaults to None
     """
     projs = []
+    # Fixme dereference team from grant collection if provided
     for proj in projects:
         team_names = set(gets(proj["team"], "name"))
-        if len(team_names & authors) == 0:
+        if len(team_names & people) == 0:
             continue
-        # FIXME delete these lines if not required.  I think they are wrong (SJLB)
-        # proj = dict(proj)
-        # proj["team"] = [x for x in proj["team"] if x["name"] in authors]
+        if active_only:
+            if not proj.get("active"):
+                continue
+        if group:
+            if proj.get("group") != group:
+                continue
+        if ptype:
+            if proj.get("type") != ptype:
+                continue
         projs.append(proj)
+
     projs.sort(key=id_key, reverse=reverse)
     return projs
 
@@ -230,6 +279,425 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     return grants, total_amount, subaward_amount
 
 
+def filter_employment_for_advisees(people, begin_period, status, active=False):
+    advisees = []
+    for p in people:
+        for i in p.get("employment", []):
+            if i.get("status") == status:
+                if i.get("end_year"):
+                    end_date = date(i.get("end_year"),
+                                    month_to_int(i.get("end_month", 12)),
+                                    i.get("end_day", 28))
+                else:
+                    end_date = date.today()
+                    i["end_year"] = end_date.year
+                if end_date >= begin_period:
+                    p['role'] = i.get("position")
+                    p['status'] = status
+                    p['end_year'] = i.get("end_year", "n/a")
+                    p['position'] = i.get("position")
+                    advisees.append(p)
+                    advisees.sort(key=lambda x: x['end_year'], reverse=True)
+    return advisees
+
+
+def filter_service(ppl, begin_period, type, verbose=False):
+    service = []
+    people = copy(ppl)
+    for p in people:
+        myservice = []
+        svc = copy(p.get("service", []))
+        for i in svc:
+            if i.get("type") == type:
+                if i.get('year'):
+                    end_year = i.get('year')
+                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]),end_year))
+                elif i.get('end_year'):
+                    end_year = i.get('end_year')
+                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]),end_year))
+                else:
+                    end_year = date.today().year
+                    if verbose: print("no end_year, using today = {}".format(end_year))
+                end_date = date(int(end_year),
+                                month_to_int(i.get("end_month", 12)),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    if not i.get('month'):
+                        month = i.get("begin_month", 0)
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                    else:
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                    myservice.append(i)
+        p['service'] = myservice
+        if len(p['service']) > 0:
+            service.append(p)
+    return service
+
+
+def filter_facilities(people, begin_period, type, verbose=False):
+    facilities = []
+    for p in people:
+        myfacility = []
+        svc = copy(p.get("facilities", []))
+        for i in svc:
+            if i.get("type") == type:
+                if i.get('year'):
+                    end_year = i.get('year')
+                elif i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if end_date >= begin_period:
+                    if not i.get('month'):
+                        month = i.get("begin_month", 0)
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                    else:
+                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                    myfacility.append(i)
+        if verbose: print("p['facilities'] = {}".format(myfacility))
+        p['facilities'] = myfacility
+        if len(p['facilities']) > 0:
+            facilities.append(p)
+    return facilities
+
+
+def filter_patents(patentscoll, people, target, since=None, before=None):
+    patents = []
+    allowed_statuses = ["active", "pending"]
+    for i in patentscoll:
+        if i.get("status") in allowed_statuses and i.get("type") in "patent":
+            inventors = [
+                fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    inv,
+                    case_sensitive=False,
+                )
+                for inv in i['inventors']
+            ]
+            person = fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                target,
+                case_sensitive=False,
+            )
+            if person in inventors:
+                if i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if since:
+                    if end_date >= since:
+                        if not i.get('month'):
+                            month = i.get("begin_month", 0)
+                            i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                        else:
+                            i['month'] = SHORT_MONTH_NAMES[
+                                month_to_int(i['month'])]
+
+                        events = [event for event in i["events"] if
+                                  date(event["year"], event["month"],
+                                       event.get("day", 28)) > since]
+                        events = sorted(events,
+                                        key=lambda event: date(
+                                            event["year"],
+                                            event["month"],
+                                            event.get("day", 28)))
+                        i["events"] = events
+                        patents.append(i)
+                else:
+                    events = [event for event in i["events"]]
+                    events = sorted(events,
+                                    key=lambda event: date(event["year"],
+                                                           event["month"],
+                                                           28))
+                    i["events"] = events
+                    patents.append(i)
+    return patents
+
+
+def filter_licenses(patentscoll, people, target, since=None, before=None):
+    licenses = []
+    allowed_statuses = ["active", "pending"]
+    for i in patentscoll:
+        if i.get("status") in allowed_statuses and i.get("type") in "license":
+            inventors = [
+                fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    inv,
+                    case_sensitive=False,
+                )
+                for inv in i['inventors']
+            ]
+            person = fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                target,
+                case_sensitive=False,
+            )
+            if person in inventors:
+                if i.get('end_year'):
+                    end_year = i.get('end_year')
+                else:
+                    end_year = date.today().year
+                end_date = date(end_year,
+                                i.get("end_month", 12),
+                                i.get("end_day", 28))
+                if since:
+                    if end_date >= since:
+                        if not i.get('month'):
+                            month = i.get("begin_month", 0)
+                            i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                        else:
+                            i['month'] = SHORT_MONTH_NAMES[
+                                month_to_int(i['month'])]
+                        total = sum([event.get("amount") for event in i["events"]])
+                        i["total_amount"] = total
+                        events = [event for event in i["events"] if
+                                  date(event["year"], event["month"],
+                                       event.get("day", 28)) > since]
+                        events = sorted(events,
+                                        key=lambda event: date(event["year"],
+                                                               event["month"],
+                                                               event.get("day", 28)))
+                        i["events"] = events
+                        licenses.append(i)
+                else:
+                    total = sum([event.get("amount") for event in events])
+                    i["total_amount"] = total
+                    events = [event for event in i["events"]]
+                    events = sorted(events,
+                                    key=lambda event: date(event["year"],
+                                                           event["month"],
+                                                           28))
+                    i["events"] = events
+                    licenses.append(i)
+
+    return licenses
+
+
+def filter_activities(people, begin_period, type, verbose=False):
+    activities = []
+    for p in people:
+        myactivity = []
+        svc = copy(p.get("activities", []))
+        for i in svc:
+            if i.get("type") == type:
+                # if i.get('year'):
+                #     end_year = i.get('year')
+                #     if verbose: print("end_year from 'year' = {}".format(end_year))
+                # elif i.get('end_year'):
+                #     end_year = i.get('end_year')
+                #     if verbose: print("end_year from 'end_year' = {}".format(end_year))
+                # else:
+                #     end_year = date.today().year
+                #     if verbose: print("no end_year, using today = {}".format(end_year))                                i.get("end_month", 12),
+                #                 i.get("end_day", last_day(end_year,  i.get("end_month")))
+                # if verbose: print("end_date = {} and begin_period = {}".format(end_date,begin_period))
+                # if verbose: print("condition end_date >= begin_period will be used")
+                idates = get_dates(i)
+                if idates["end_date"] >= begin_period:
+                    usedate = idates.get('begin_date', idates.get('date'))
+                    i['year'] = usedate.year
+                    i['month'] = SHORT_MONTH_NAMES[month_to_int(usedate.month)]
+                    myactivity.append(i)
+        p['activities'] = myactivity
+        if len(p['activities']) > 0:
+            activities.append(p)
+    return activities
+
+
+def filter_presentations(people, presentations, institutions, target, types=["all"],
+                         since=None, before=None, statuses=["accepted"]):
+    '''
+    filters presentations for different types and date ranges
+
+    Parameters
+    ----------
+    people: iterable of dicts
+      The people collection
+    presentations: iterable of dicts
+      The presentations collection
+    institutions: iterable of dicts
+      The institutions collection
+    target: str
+      The id of the person you will build the list for
+    types: list of strings.  Optional, default = all
+      The types to filter for.  Allowed types are
+        "all",
+        "award"
+        "plenary"
+        "keynote"
+        "invited"
+        "colloquium"
+        "seminar"
+        "tutorial"
+        "contributed-oral"
+        "poster"
+    since: date.  Optional, default is None
+        The begin date to filter from
+    before: date. Optional, default is None
+        The end date to filter for.  None does not apply this filter
+    statuses: list of str.  Optional. Default is accepted
+      The list of statuses to filter for.  Allowed statuses are
+        "all"
+        "accepted"
+        "declined"
+        "cancelled"
+
+    Returns
+    -------
+    list of presentation documents
+
+    '''
+    presentations = deepcopy(presentations)
+
+    firstclean = list()
+    secondclean = list()
+    thirdclean = list()
+    fourthclean = list()
+    presclean = list()
+
+    # build the filtered collection
+    # only list the talk if the group member is an author
+    for pres in presentations:
+        pauthors = pres["authors"]
+        if isinstance(pauthors, str):
+            pauthors = [pauthors]
+        authors = [
+            fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                author,
+                case_sensitive=False,
+            )
+            for author in pauthors
+        ]
+        authorids = [
+            author["_id"]
+            for author in authors
+            if author is not None
+        ]
+        if target in authorids:
+            firstclean.append(pres)
+    # only list the presentation if it has status in statuses
+    for pres in firstclean:
+        if pres["status"] in statuses or "all" in statuses:
+            secondclean.append(pres)
+    # only list the presentation if it has type in types
+    for pres in secondclean:
+        if pres["type"] in types or "all" in types:
+            thirdclean.append(pres)
+    # if specified, only list presentations in specified date ranges
+    if since:
+        for pres in thirdclean:
+            presdate = date((pres["begin_year"]),
+                            month_to_int(pres["begin_month"]),
+                            int(pres["begin_day"]))
+            if presdate > since:
+                fourthclean.append(pres)
+    else:
+        fourthclean = thirdclean
+    if before:
+        for pres in fourthclean:
+            presdate = date((pres["begin_year"]),
+                            month_to_int(pres["begin_month"]),
+                            int(pres["begin_day"]))
+            if presdate < before:
+                presclean.append(pres)
+    else:
+        presclean = fourthclean
+
+    # build author list
+    for pres in presclean:
+        pauthors = pres["authors"]
+        if isinstance(pauthors, str):
+            pauthors = [pauthors]
+        pres["authors"] = [
+            author
+            if fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                author,
+                case_sensitive=False,
+            )
+               is None
+            else fuzzy_retrieval(
+                people,
+                ["aka", "name", "_id"],
+                author,
+                case_sensitive=False,
+            )["name"]
+            for author in pauthors
+        ]
+        authorlist = ", ".join(pres["authors"])
+        pres["authors"] = authorlist
+        pres["begin_month"] = month_to_int(pres["begin_month"])
+        pres["date"] = date(
+            pres["begin_year"],
+            pres["begin_month"],
+            pres["begin_day"],
+        )
+        for day in ["begin_day", "end_day"]:
+            pres["{}_suffix".format(day)] = number_suffix(
+                pres.get(day, None)
+            )
+        if "institution" in pres:
+            try:
+                pres["institution"] = fuzzy_retrieval(
+                    institutions,
+                    ["aka", "name", "_id"],
+                    pres["institution"],
+                    case_sensitive=False,
+                )
+                if pres["institution"] is None:
+                    print(
+                        "WARNING: department {} not found in"
+                        " {} in institutions.yml.  Pres list will"
+                        " build but please check this entry carefully and "
+                            "rerun to remove "
+                        "errors".format(pres["institution"],pres["_id"])
+                    )
+            except:
+                sys.exit(
+                    "ERROR: institution {} not found in "
+                    "institutions.yml.  Please add and "
+                    "rerun".format(pres["institution"])
+                )
+            if "department" in pres:
+                try:
+                    pres["department"] = pres["institution"][
+                        "departments"
+                    ][pres["department"]]
+                except:
+                    print(
+                        "WARNING: department {} not found in"
+                        " {} in institutions.yml.  Pres list will"
+                        " build but please check this entry carefully and"
+                        " please add the dept to the institution!".format(
+                            pres["department"],
+                            pres["institution"],
+                        )
+                    )
+                    pres["department"] = {
+                        "name": pres["department"]
+                    }
+    if len(presclean) > 0:
+        presclean = sorted(
+            presclean,
+            key=lambda k: k.get("date", None),
+            reverse=True,
+        )
+    return presclean
+
+
 def awards_grants_honors(p):
     """Make sorted awards grants and honors list.
 
@@ -239,17 +707,18 @@ def awards_grants_honors(p):
         The person entry
     """
     aghs = []
-    for x in p.get("funding", ()):
-        d = {
-            "description": "{0} ({1}{2:,})".format(
-                latex_safe(x["name"]),
-                x.get("currency", "$").replace("$", "\$"),
-                x["value"],
-            ),
-            "year": x["year"],
-            "_key": date_to_float(x["year"], x.get("month", 0)),
-        }
-        aghs.append(d)
+    if p.get("funding"):
+        for x in p.get("funding", ()):
+            d = {
+                "description": "{0} ({1}{2:,})".format(
+                    latex_safe(x["name"]),
+                    x.get("currency", "$").replace("$", "\$"),
+                    x["value"],
+                ),
+                "year": x["year"],
+                "_key": date_to_float(x["year"], x.get("month", 0)),
+            }
+            aghs.append(d)
     for x in p.get("service", []) + p.get("honors", []):
         d = {"description": latex_safe(x["name"])}
         if "year" in x:
@@ -274,6 +743,44 @@ def awards_grants_honors(p):
         aghs.append(d)
     aghs.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)
     return aghs
+
+def awards(p, since=None, before=None,):
+    """Make sorted awards and honors
+
+    Parameters
+    ----------
+    p : dict
+        The person entry
+    since : date.  Optional, default is None
+        The begin date to filter from
+    before : date. Optional, default is None
+        The end date to filter for.  None does not apply this filter
+
+    """
+    if not since: since = date(1500, 1, 1)
+    a = []
+    for x in p.get("honors", []):
+        if "year" in x:
+            if date(x.get("year"), 12, 31) > since:
+                d = {"description": latex_safe(x["name"]), "year": x["year"],
+                     "_key": date_to_float(x["year"], x.get("month", 0))}
+                a.append(d)
+        elif "begin_year" in x and "end_year" in x:
+            if date(x.get("begin_year", 12, 31)) > since:
+                d = {"description": latex_safe(x["name"]),
+                     "year": "{}-{}".format(x["begin_year"], x["end_year"]),
+                     "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                     }
+                a.append(d)
+        elif "begin_year" in x:
+            if date(x.get("begin_year"), 12, 31) > since:
+                d = {"description": latex_safe(x["name"]),
+                     "year": "{}".format(x["begin_year"]),
+                     "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                     }
+                a.append(d)
+    a.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)
+    return a
 
 
 HTTP_RE = re.compile(
@@ -347,7 +854,9 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         for key in ent.keys():
             if key in skip_keys:
                 continue
-            ent[key] = latex_safe(str(ent[key]))
+            # don't think I want the bibfile entries to be latex safe
+            # ent[key] = latex_safe(ent[key])
+            ent[key] = str(ent[key])
         ents.append(ent)
     fname = os.path.join(person_dir, pid) + ".bib"
     with open(fname, "w", encoding="utf-8") as f:
@@ -772,3 +1281,10 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
                     ret_list.append(doc)
                     break
     return ret_list
+
+def get_id_from_name(coll, name):
+    person = fuzzy_retrieval(coll,["name", "aka", "_id"], name,
+                             case_sensitive=False)
+    if person:
+        return person["_id"]
+    else: return None

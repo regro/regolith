@@ -3,6 +3,9 @@ import calendar
 import datetime
 from dateutil import parser as date_parser
 
+import datetime as dt
+import calendar
+
 MONTHS = {
     "jan": 1,
     "jan.": 1,
@@ -80,7 +83,7 @@ def date_to_float(y, m, d=0):
     y = int(y)
     m = month_to_int(m)
     d = int(d)
-    return y + (m / 100.0) + (d / 100000.0)
+    return y + (m / 100.0) + (d / 10000.0)
 
 
 def find_gaps_overlaps(dateslist, overlaps_ok=False):
