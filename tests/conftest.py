@@ -14,6 +14,8 @@ import pytest
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
 
+OUTPUT_FAKE_DB = True
+
 
 @pytest.fixture(scope="session")
 def make_db():
@@ -67,7 +69,8 @@ def make_db():
     subprocess.run(["git", "commit", "-am", "Initial readme"])
     yield repo
     os.chdir(cwd)
-    rmtree(repo)
+    if not OUTPUT_FAKE_DB:
+        rmtree(repo)
 
 
 @pytest.fixture(scope="session")
