@@ -51,7 +51,7 @@ def subparser(subpi):
     subpi.add_argument("-d", "--begin",
                        help="Input begin date for this expense. Defaults to today's date"
                        )
-    subpi.add_arguemnt("-e,", "--end",
+    subpi.add_argument("-e,", "--end",
                        help="Input end date for this expense. Defaults to today's date"
                        )
     return subpi
