@@ -755,7 +755,6 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
     return ret_list
 
 def is_fully_appointed(appts, begin=None, end=None, now=None):
-    datearray = []
     status = [True, '']
     if begin and end and now:
         raise ValueError("Please enter interval or current date, not both.")
@@ -776,23 +775,24 @@ def is_fully_appointed(appts, begin=None, end=None, now=None):
         else:
             end_date = begin_date + relativedelta(years=1)
         timespan = end_date - begin_date
+        loading = []
+        max, min = 0.0, 1.0
         for x in range(0, timespan.days):
-            datearray.append(begin_date + relativedelta(days=x))
-        loading = [0.0] * len(datearray)
-        for x in range(0, len(datearray)):
+            loading.append(0.0)
+            day = begin_date + relativedelta(days=x)
             for appt in appts:
-                if is_current(appt, now=datearray[x]):
+                if is_current(appt, now=day):
                     loading[x] = loading[x] + appt.get("loading")
-        if max(loading) > 1.0:
-            status[0] = False
-            status[1] = "max {} at {}".format(max(loading),
-                                        datearray[
-                                            list(loading).index(max(loading))])
-        elif min(loading) < 1.0:
-            status[0] = False
-            status[1] = "min {} at {}".format(min(loading),
-                                        datearray[list(loading).index(min(loading))]
-                                        )
+            if loading[x] > 1.0:
+                status[0] = False
+                if loading[x] > max:
+                    status[1] = "max {} at {}".format(loading[x], str(day))
+                    max = loading[x]
+            if loading[x] < 1.0:
+                status[0] = False
+                if loading[x] < min:
+                    status[1] = "min {} at {}".format(loading[x], str(day))
+                    min = loading[x]
     else:
         load = 0.0
         for appt in appts:
