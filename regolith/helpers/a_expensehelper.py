@@ -31,7 +31,7 @@ def subparser(subpi):
                        help="payee of the expense, defaults to sbillinge"
                        )
     subpi.add_argument("-g", "--grants", nargs="+",
-                       help="list of grants that cover this expense"
+                       help="grant, or list of grants that cover this expense"
                        )
     subpi.add_argument("-s", "--status",
                        help=f"status, from {ALLOWED_STATI}. Default is unsubmitted"
