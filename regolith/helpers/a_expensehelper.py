@@ -14,42 +14,45 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "projecta"
-ALLOWED_TYPES = ["nsf", "doe", "other"]
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused",
-                 "cancelled"]
-MILESTONES_ALLOWED_STATI = ["proposed", "scheduled", "finished", "cancelled"]
+ALLOWED_TYPES = ["business", "travel"] # need to check all expense types.
+ALLOWED_STATI = ["submitted", "unsubmitted"]
 
 
 def subparser(subpi):
-    subpi.add_argument("name", help="A short but unique name for the projectum",
-                       default=None)
-    subpi.add_argument("lead", help="id of the group lead or tbd",
-                       default=None)
-    # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
+    subpi.add_argument("amount", help="expense amount",
                        )
-    # Do not delete --date arg
-    subpi.add_argument("--date",
-                       help="The begin_date for the projectum  Defaults to "
-                            "today's date."
+    subpi.add_argument("name", help="A short name for the expense",
+                       default=None
                        )
-    subpi.add_argument("-d", "--description",
-                       help="Slightly longer description of the projectum"
+    subpi.add_argument("-b", "--business",
+                       help="expense type is business"
                        )
-    subpi.add_argument("-c", "--collaborators", nargs="+",
-                       help="list of outside collaborators who should  be in contacts"
-                            "collection"
+    subpi.add_argument("-t", "--travel",
+                       help="expense type is travel"
                        )
-    subpi.add_argument("-m", "--group_members", nargs="+",
-                       help="list of group members other than the lead who are involved"
+    subpi.add_argument("-y", "--payee",
+                       help="payee of the expense, defaults to sbillinge"
                        )
     subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant or (occasionally) list of grants that support this work"
+                       help="grant or (occasionally) list of grants that cover this expense"
                        )
-    subpi.add_argument("-u", "--due_date",
-                       help="proposed due date for the deliverable"
+    subpi.add_argument("-s", "--status",
+                       help=f"status, from {ALLOWED_STATI}. default is unsubmitted"
+                       )
+    subpi.add_argument("-z", "--segregated",
+                       help="Amount for the segregated expense, defaults to 0"
+                       )
+    subpi.add_argument("-w", "--where",
+                       help="Where the expense has been submitted"
+                       )
+    subpi.add_argument("-n", "--notes", nargs="+",
+                       help="list of notes for the expense, defaults to empty list"
+                       )
+    subpi.add_argument("-d", "--begin",
+                       help="Input begin date for this expense. Defaults to today's date"
+                       )
+    subpi.add_arguemnt("-e,", "--end",
+                       help="Input end date for this expense. Defaults to today's date"
                        )
     return subpi
 
