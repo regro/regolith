@@ -1327,13 +1327,10 @@ def is_fully_appointed(person, begin_date, end_date):
 def search_collection(collection, arguments):
     if len(arguments) % 2 != 0:
         raise RuntimeError("Error: Number of keys and values do not match")
-    valid_elements = {}
+    elements = collection
     for i in range(0, len(arguments) - 1, 2):
-        elements = fragment_retrieval(collection, [arguments[i]], arguments[i + 1])
-        for e in elements:
-            if e.get('_id') not in valid_elements:
-                valid_elements[e.get('_id')] = e
+        elements = fragment_retrieval(elements, [arguments[i]], arguments[i + 1])
     output = ""
-    for key in valid_elements:
-        output += key + '\n'
+    for e in elements:
+        output += (e.get('_id') + '\n')
     return output
