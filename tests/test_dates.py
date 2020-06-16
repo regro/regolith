@@ -15,6 +15,7 @@ TEST_DATE = date(2019, 6, 15)
 TEST_START_DATE = date(2019, 1, 1)
 TEST_END_DATE = date(2019, 2, 5)
 
+
 @pytest.mark.parametrize(
     "input,expected",
     [
@@ -153,6 +154,21 @@ def test_find_gaps_overlaps(input, flag, expected):
           'end_day': 10},
          {'begin_date': datetime.date(2019, 1, 1),
           'end_date': datetime.date(2020, 2, 10),
+          'date': datetime.date(2020, 5, 20)
+          }
+         ),
+        ({'date': datetime.date(2020, 5, 20), 'begin_year': 2019, 'end_year': 2020,
+          'end_month': 'Feb',
+          'end_day': 10},
+         {'begin_date': datetime.date(2019, 1, 1),
+          'end_date': datetime.date(2020, 2, 10),
+          'date': datetime.date(2020, 5, 20)
+          }
+         ),
+        ({'date': datetime.date(2020, 5, 20), 'begin_date': datetime.date(2015, 6, 8),
+          'end_date': datetime.date(2025, 10, 4)},
+         {'begin_date': datetime.date(2015, 6, 8),
+          'end_date': datetime.date(2025, 10, 4),
           'date': datetime.date(2020, 5, 20)
           }
          ),
