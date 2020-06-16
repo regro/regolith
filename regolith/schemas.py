@@ -1240,6 +1240,274 @@ EXEMPLARS = {
             "position": "Graduate Student",
         },
     ],
+    "people": [
+        {
+            "_id": "scopatz",
+            "aka": [
+                "Scopatz",
+                "Scopatz, A",
+                "Scopatz, A.",
+                "Scopatz, A M",
+                "Anthony Michael Scopatz",
+            ],
+            "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
+            "bio": "Anthony Scopatz is currently an Assistant Professor",
+            "education": [
+                {
+                    "begin_year": 2008,
+                    "degree": "Ph.D. Mechanical Engineering, "
+                              "Nuclear and Radiation Engineering "
+                              "Program",
+                    "end_year": 2011,
+                    "group": "ergs",
+                    "institution": "The University of Texas at Austin",
+                    "department": "apam",
+                    "location": "Austin, TX",
+                    "other": [
+                        "Adviser: Erich A. Schneider",
+                        "Dissertation: Essential Physics for Fuel Cycle "
+                        "Modeling & Analysis",
+                    ],
+                },
+                {
+                    "begin_year": 2006,
+                    "degree": "M.S.E. Mechanical Engineering, Nuclear and "
+                              "Radiation Engineering Program",
+                    "end_year": 2007,
+                    "institution": "The University of Texas at Austin",
+                    "location": "Austin, TX",
+                    "other": [
+                        "Adviser: Erich A. Schneider",
+                        "Thesis: Recyclable Uranium Options under the Global "
+                        "Nuclear Energy Partnership",
+                    ],
+                },
+                {
+                    "begin_year": 2002,
+                    "begin_month": "Sep",
+                    "begin_day": 1,
+                    "degree": "B.S. Physics",
+                    "end_year": 2006,
+                    "end_month": 5,
+                    "end_day": 20,
+                    "institution": "University of California, Santa Barbara",
+                    "location": "Santa Barbara, CA",
+                    "other": [
+                        "Graduated with a Major in Physics and a Minor in " "Mathematics"
+                    ],
+                },
+                {
+                    "begin_year": 2008,
+                    "degree": "ongoing",
+                    "group": "life",
+                    "institution": "solar system",
+                    "department": "earth",
+                    "location": "land, mostly",
+                },
+            ],
+            "email": "scopatz@cec.sc.edu",
+            "employment": [
+                {
+                    "begin_year": 2015,
+                    "group": "ergs",
+                    "location": "Columbia, SC",
+                    "organization": "The University of South Carolina",
+                    "other": [
+                        "Cyclus: An agent-based, discrete time nuclear fuel "
+                        "cycle simulator.",
+                        "PyNE: The Nuclear Engineering Toolkit.",
+                        "Website: http://www.ergs.sc.edu/",
+                    ],
+                    "position": "Assistant Professor, Mechanical Engineering " "Department",
+                },
+                {
+                    "begin_year": 2013,
+                    "begin_month": "Jun",
+                    "begin_day": 1,
+                    "end_year": 2015,
+                    "end_month": 3,
+                    "end_day": 15,
+                    "location": "Madison, WI",
+                    "organization": "CNERG, The University of " "Wisconsin-Madison",
+                    "department": "Physics",
+                    "other": [
+                        "Cyclus: An agent-based, discrete time nuclear fuel "
+                        "cycle simulator.",
+                        "PyNE: The Nuclear Engineering Toolkit.",
+                        "Website: https://cnerg.github.io/",
+                    ],
+                    "position": "Associate Scientist, Engineering Physics " "Department",
+                },
+                {
+                    "begin_day": 1,
+                    "begin_month": "Nov",
+                    "begin_year": 2011,
+                    "end_month": "May",
+                    "end_year": 2013,
+                    "location": "Chicago, IL",
+                    "organization": "The FLASH Center, The University of " "Chicago",
+                    "other": [
+                        "NIF: Simulation of magnetic field generation from "
+                        "neutral plasmas using FLASH.",
+                        "CosmoB: Simulation of magnetic field generation "
+                        "from neutral plasmas using FLASH.",
+                        "FLASH4: High-energy density physics capabilities "
+                        "and utilities.",
+                        "Simulated Diagnostics: Schlieren, shadowgraphy, "
+                        "Langmuir probes, etc. from FLASH.",
+                        "OpacPlot: HDF5-based equation of state and opacity "
+                        "file format.",
+                        "Website: http://flash.uchicago.edu/site/",
+                    ],
+                    "position": "Research Scientist, Postdoctoral Scholar",
+                    "status": "PI"
+                },
+                {
+                    "begin_year": 2017,
+                    "begin_month": 9,
+                    "position": "Fake Billinge Group position",
+                    "organization": "columbiau",
+                    "advisor": "sbillinge",
+                    "status": "phd",
+                    "group": "bg",
+                    "end_year": 2019,
+                    "end_month": 12,
+                },
+            ],
+            "funding": [
+                {
+                    "name": "Omega Laser User's Group Travel Award",
+                    "value": 1100,
+                    "year": 2013,
+                },
+                {"name": "NIF User's Group Travel Award", "value": 1150,
+                 "year": 2013},
+            ],
+            "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
+            "github_id": "ascopatz",
+            "home_address": {
+                "street": "123 Wallabe Ln",
+                "city": "The big apple",
+                "state": "plasma",
+                "zip": "007",
+            },
+            "initials": "AMS",
+            "membership": [
+                {
+                    "begin_year": 2006,
+                    "organization": "American Nuclear Society",
+                    "position": "Member",
+                },
+                {
+                    "begin_year": 2013,
+                    "organization": "Python Software Foundation",
+                    "position": "Fellow",
+                },
+            ],
+            "name": "Anthony Scopatz",
+            "orcid_id": "0000-0002-9432-4248",
+            "position": "professor",
+            "research_focus_areas": [
+                {"begin_year": 2010, "description": "software applied to nuclear "
+                                                    "engineering and life"}
+            ],
+            "skills": [
+                {"category": "Programming Languages", "level": "expert",
+                 "name": "Python"},
+                {"category": "Programming Languages", "level": "expert",
+                 "name": "Cython"},
+            ],
+            "teaching": [
+                {
+                    "course": "EMCH 552: Intro to Nuclear Engineering",
+                    "description": "This course is an introduction to nuclear " "physics.",
+                    "month": "August",
+                    "organization": "University of South Carolina",
+                    "position": "Professor",
+                    "syllabus": "https://drive.google.com/open?id"
+                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "year": 2017,
+                },
+                {
+                    "course": "EMCH 558/758: Reactor Power Systems",
+                    "description": "This course covers conventional " "reactors.",
+                    "month": "January",
+                    "organization": "University of South Carolina",
+                    "position": "Professor",
+                    "syllabus": "https://docs.google.com/document/d"
+                                "/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8"
+                                "-PxiboYdM/edit?usp=sharing",
+                    "year": 2017,
+                },
+            ],
+            "title": "Dr.",
+            "service": [
+                {
+                    "name": "Master of Ceremonies and Organizer Brown University "
+                            '"Chemistry: Believe it or Not" public chemistry '
+                            "demonstration",
+                    "year": 2013,
+                },
+                {
+                    "begin_year": 2012,
+                    "end_year": 2014,
+                    "name": "Renewable Energy Presenter and Facility Tour Guide "
+                            'at the NSLS "Science Sunday" laboratory open house '
+                            "at Brookhaven National Laboratory",
+                },
+            ],
+        },
+        {
+            "_id": "sstao",
+            "active": "true",
+                "aka": [
+                "- Songsheng Tao",
+                "- Tao, Songsheng",
+                "- S. Tao",
+                "- Tao, S.",
+            ],
+            "avatar": "https://github.com/st3107.png",
+            "bio":  "Songsheng grew up in Beijing, China. He attended Peking University where he"
+                    'earned a B. S. in physics. As a MS/PhD track student in Columbia University, he'
+                    'joined the Billinge Group in fall 2018 and is currently working on developing'
+                    'tools for texture analysis and using pair distribution functions for structure'
+                    "analysis. In his spare time, he enjoys board games and computer games.",
+            "education":[
+                {
+                    "institution": "Columbia University",
+                    "begin_year": "2017",
+                    "group": "bg",
+                    "location": "New York, NY",
+                    "advisor": "sbillinge",
+                    "department": "apam",
+                    "degree": "MS/PhD in Applied Physics"
+                },
+                {
+                    "institution": "Peking University",
+                    "degree": "BS in Physics",
+                    "begin_year": "2013",
+                    "end_year": "2017",
+                    "location": "Beijing, China",
+                    "email": "st3107@columbia.edu"
+                }
+            ],
+            "employment": [
+                {
+                    "begin_year": 2017,
+                    "begin_month": 9,
+                    "position": "Graduate Research Assistant",
+                    "organization": "columbiau",
+                    "advisor": "sbillinge",
+                    "status": "phd",
+                    "group": "bg"
+                }
+            ],
+            "name": "Songsheng Tao",
+            "orcid_id": "0000-0002-7565-3503",
+            "github_id": "st3107",
+            "position": "Graduate Student",
+        },
+    ],
     "presentations": [
         {
             "_id": "18sb_this_and_that",

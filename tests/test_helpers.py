@@ -68,6 +68,19 @@ helper_map = [
      "Anthony Scopatz\n"
      "    current organization: The University of South Carolina\n"
      "    current position: Assistant Professor, Mechanical Engineering Department\n"),
+    (["helper", "l_members","-c", "-v"],
+     "Songsheng Tao, Graduate Student | group_id: sstao\n"
+     "    orcid: 0000-0002-7565-3503 | github_id: st3107\n"
+     "    current organization: columbiau\n"
+     "    current position: Graduate Research Assistant\n"
+     ),
+    (["helper", "l_members", "-f","-v"],
+    "Anthony Scopatz, professor | group_id: scopatz\n"
+    "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
+    "    current organization: The University of South Carolina\n"
+    "    current position: Assistant Professor, Mechanical Engineering Department\n"
+    "    billinge group position: Fake Billinge Group position\n"
+     ),
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
