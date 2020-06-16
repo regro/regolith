@@ -30,9 +30,6 @@ HELPER_TARGET = "makeappointments"
 
 def subparser(subpi):
 
-    subpi.add_argument("--desired_date", help="desired date on which to check validity of appointments"
-                                              "please enter EITHER this OR the begin_date and end_date "
-                                              "of the interval")
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     #subpi.add_argument("-g", "--gap", action="store_true",
     #                   help='get group members with a gap in their appointments')
@@ -40,10 +37,8 @@ def subparser(subpi):
     #                   help='get group members supported on an out of date grant')
     #subpi.add_argument("-d", "--depleted", action="store_true",
     #                   help='get group members supported on a depleted grant')
-    subpi.add_argument("-b", "--begin_date", help='begin date of interval to check appointment, to specify'
-                                                  'along with end_date. Please enter EITHER these OR desired_date,')
-    subpi.add_argument("-e", "--end_date", help='end date of interval to check appointments. please'
-                                                'specify along with begin_date', default=None)
+    subpi.add_argument("-b", "--begin_date", help='begin date of interval to check appointment, to specify')
+    subpi.add_argument("-e", "--end_date", help='end date of interval to check appointments')
     subpi.add_argument("-o", "--overspent", action="store_true", help='return grants that are overspent by more' 
                                                                       'than 10k by their end')
     subpi.add_argument("-u", "--underspent", action="store_true", help='return grants that are underspent by more' 
@@ -99,51 +94,33 @@ class MakeAppointmentsHelper(SoutHelperBase):
             underspent =[]
         if rc.overspent:
             overspent = []
-
         if rc.begin_date:
             begin_date = date_parser.parse(rc.begin_date).date()
-            if rc.desired_date:
-                raise ValueError("Please enter either an interval or a date, not both")
-            if not rc.end_date:
-                end_date = begin_date + relativedelta(years=1)
-        elif rc.desired_date:
-            desired_date = date_parser.parse(rc.date).date()
         else:
-            desired_date = dt.date.today()
+            begin_date = dt.date.today()
+        if rc.end_date:
+            end_date = date_parser.parse(rc.end_date).date()
+        else:
+            end_date = begin_date + relativedelta(years=1)
 
         for person in self.gtx["people"]:
             appts = person.get("appointments")
-            #if we are checking over an interval of time
-            if rc.begin_date:
-                if not is_fully_appointed(appts, begin=rc.begin_date, end=rc.end_date)[0]:
-                    gaps.append(person.get('name'))
-                    gaps.append((is_fully_appointed(appts, begin=rc.begin_date, end=rc.end_date))[1])
-                for appt in appts:
-                    grant = rc.client.find_one(rc.database, self.gtx["grants"], {"_id": appt.get("grant")})
-                    timespan = end_date - begin_date
-                    for x in range(0, timespan.days):
-                        day = begin_date + relativedelta(days=x)
-                        if not is_current(grant, desired_date):
-                            outdated.append(
-                            f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')} "
-                            f"date: {str(day)}")
-                        if  grant.get('amount') < 1:
-                            depleted.append(
-                            f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')} "
-                            f"date: {str(day)}")
-            #if we are checking against a desired date
-            else:
-                if not is_fully_appointed(appts, now=desired_date)[0]:
-                    gaps.append(person.get('name'))
-                    gaps.append((is_fully_appointed(appts, now=desired_date))[1])
-                for appt in appts:
-                    grant = rc.client.find_one(rc.database, self.gtx["grants"], {"_id": appt.get("grant")})
+            if not is_fully_appointed(appts, begin=rc.begin_date, end=rc.end_date)[0]:
+                gaps.append(person.get('name'))
+                gaps.append((is_fully_appointed(appts, begin=rc.begin_date, end=rc.end_date))[1])
+            for appt in appts:
+                grant = rc.client.find_one(rc.database, self.gtx["grants"], {"_id": appt.get("grant")})
+                timespan = end_date - begin_date
+                for x in range(0, timespan.days):
+                    day = begin_date + relativedelta(days=x)
                     if not is_current(grant, desired_date):
                         outdated.append(
-                            f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')}")
+                        f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')} "
+                        f"date: {str(day)}")
                     if grant.get('amount') < 1:
                         depleted.append(
-                            f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')}")
+                        f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')} "
+                        f"date: {str(day)}")
 
         if gaps:
             print("People with gaps in their appointments:")
