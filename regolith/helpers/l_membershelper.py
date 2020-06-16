@@ -23,7 +23,7 @@ ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "ca
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-c", "--current", action="store_true", help='get only current group members ')
-    subpi.add_argument("-f", "--former", action="store_true", help='most recent employment of former members ')
+    subpi.add_argument("-f", "--former", action="store_true", help='get only former group members ')
 
     return subpi
 
@@ -84,12 +84,14 @@ class MembersListerHelper(SoutHelperBase):
             if rc.verbose:
                 print("{}, {} | group_id: {}".format(i.get('name'), i.get('position'), i.get('_id')))
                 print("    orcid: {} | github_id: {}".format(i.get('orcid_id'), i.get('github_id')))
-            else:
-                print("{}".format(i.get('name')))
-            if rc.former:
                 for employment in i.get('employment'):
                     if is_current(employment):
                         print("    current organization: {}".format(employment.get('organization')))
                         print("    current position: {}".format(employment.get('position')))
+                    if not i.get('active'):
+                        if employment.get('group') == "bg":
+                            print("    billinge group position: {}".format(employment.get('position')))
+            else:
+                print("{}".format(i.get('name')))
         return
 
