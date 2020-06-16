@@ -1,5 +1,4 @@
-**Added:**
-    * get_dates function that now works with objects with datetime objects
+**Added:** None
 
 **Changed:** None
 
@@ -7,6 +6,7 @@
 
 **Removed:** None
 
-**Fixed:** None
+**Fixed:**
+    * get_dates function works with datetime objects and strings
 
 **Security:** None
