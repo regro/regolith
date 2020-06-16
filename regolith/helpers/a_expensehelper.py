@@ -15,7 +15,7 @@ from regolith.tools import (
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = ["business", "travel"] # need to check all expense types.
-ALLOWED_STATI = ["submitted", "unsubmitted"]
+ALLOWED_STATI = ["submitted", "unsubmitted", "reimbursed"]
 
 
 def subparser(subpi):
@@ -25,34 +25,33 @@ def subparser(subpi):
                        default=None
                        )
     subpi.add_argument("-b", "--business",
-                       help="expense type is business"
-                       )
-    subpi.add_argument("-t", "--travel",
-                       help="expense type is travel"
+                       help="expense type is business. If not specified defaults to travel"
                        )
     subpi.add_argument("-y", "--payee",
                        help="payee of the expense, defaults to sbillinge"
                        )
     subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant or (occasionally) list of grants that cover this expense"
+                       help="list of grants that cover this expense"
                        )
     subpi.add_argument("-s", "--status",
-                       help=f"status, from {ALLOWED_STATI}. default is unsubmitted"
+                       help=f"status, from {ALLOWED_STATI}. Default is unsubmitted"
                        )
     subpi.add_argument("-z", "--segregated",
-                       help="Amount for the segregated expense, defaults to 0"
+                       help="Amount for any segregated expense. Defaults to 0"
                        )
     subpi.add_argument("-w", "--where",
                        help="Where the expense has been submitted"
                        )
     subpi.add_argument("-n", "--notes", nargs="+",
-                       help="list of notes for the expense, defaults to empty list"
+                       help="List of notes for the expense. Defaults to empty list"
                        )
-    subpi.add_argument("-d", "--begin",
-                       help="Input begin date for this expense. Defaults to today's date"
+    subpi.add_argument("-d", "--begin_date",
+                       help="Input begin date for this expense. "
+                            "In YYYY-MM-DD format. Defaults to today's date"
                        )
-    subpi.add_argument("-e,", "--end",
-                       help="Input end date for this expense. Defaults to today's date"
+    subpi.add_argument("-e,", "--end_date",
+                       help="Input end date for this expense. "
+                            "In YYYY-MM-DD format. Defaults to today's date"
                        )
     return subpi
 
