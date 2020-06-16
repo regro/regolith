@@ -16,28 +16,23 @@ from regolith.tools import (
     get_pi_id,
 )
 
-TARGET_COLL = "projecta"
-HELPER_TARGET = "l_milestones"
-ALLOWED_STATI = ["all", "proposed", "started", "finished", "back_burner",
-                 "paused", "cancelled"]
-ROLES = ['pi',  'lead', 'group_members', 'collaborators']
+TARGET_COLL = "todolist"
+TARGET_COLL2="projecta"
+HELPER_TARGET = "l_todo"
+Importance = [1,2,3,4,5]
+user = "jwzang"
 
 
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='increase verbosity of output')
-    subpi.add_argument("-l", "--lead",
-                       help="Filter milestones for this project lead"
-                       )
-    subpi.add_argument("-s", "--stati", nargs="+",
-                       help=f"Filter milestones for these stati from {ALLOWED_STATI}."
-                            f" Default is active projecta, i.e. 'started'",
-                       default=None
+    subpi.add_argument("-u", "--user",
+                       help=f"Filter todos for this user. The default user is {user}."
                        )
     return subpi
 
 
-class MilestonesListerHelper(SoutHelperBase):
+class TodoListerHelper(SoutHelperBase):
     """Helper for listing upcoming (and past) projectum milestones.
 
        Projecta are small bite-sized project quanta that typically will result in
@@ -45,7 +40,7 @@ class MilestonesListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_dbs = [f'{TARGET_COLL}',f'{TARGET_COLL2}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -75,11 +70,21 @@ class MilestonesListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        for person in self.gtx["todolist"]:
+            gather_todos = person["todos"]
+        gather_todos.sort(key=lambda x: x['importance'], reverse=True)
+        gather_todos.sort(key=lambda x: x['due_date'], reverse=False)
+        num=0
+        for t in gather_todos:
+            print(f"{num+1}. {t.get('name')} (due date: {t.get('due_date')}, {t.get('estimated_time')} min)")
+            num+=1
+
+
         all_milestones = []
-        if not rc.stati:
-            rc.stati = ['started']
+        if not rc.user:
+            rc.user=user
         for projectum in self.gtx["projecta"]:
-            if rc.lead and projectum.get('lead') != rc.lead:
+            if rc.user and projectum.get('lead') != rc.user:
                 continue
             projectum["deliverable"].update({"name": "deliverable",
                                              "objective": "deliver"})
@@ -87,8 +92,7 @@ class MilestonesListerHelper(SoutHelperBase):
             gather_miles = [projectum["kickoff"], projectum["deliverable"]]
             gather_miles.extend(projectum["milestones"])
             for ms in gather_miles:
-                if projectum["status"] in rc.stati or \
-                        'all' in rc.stati:
+                if projectum["status"] not in ["finished", "cancelled"]:
                     if ms.get('status') not in \
                             ["finished", "cancelled"]:
                         due_date = get_due_date(ms)
@@ -103,6 +107,7 @@ class MilestonesListerHelper(SoutHelperBase):
                         })
                         all_milestones.append(ms)
         all_milestones.sort(key=lambda x: x['due_date'], reverse=True)
+        print("milestones:")
         for ms in all_milestones:
             if rc.verbose:
                 print(
@@ -123,6 +128,7 @@ class MilestonesListerHelper(SoutHelperBase):
             else:
                 print(
                     f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")
+
 
         return
 
