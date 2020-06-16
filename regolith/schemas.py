@@ -86,19 +86,20 @@ EXEMPLARS = {
     "contacts": {
         "_id": "afriend",
         "aka": [
-            "A. B. Friend"
-            "AB Friend"
+            "A. B. Friend",
+            "AB Friend",
             "Tony Friend"
         ],
         "department": "physics",
         "email": "friend@deed.com",
         "institution": "columbiau",
         "name": "Anthony B Friend",
-        "notes": "The guy I meet for coffee sometimes",
+        "notes": ["The guy I meet for coffee sometimes"],
         "title": "Mr.",
         "month": "January",
         "year": 2020,
         "day": 15,
+        "uuid": "76f2a4c7-aa63-4fa3-88b5-396b0c15d368",
     },
     "courses": {
         "_id": "EMCH-552-2016-F",
@@ -1693,6 +1694,16 @@ SCHEMAS = {
             "type": "list",
             "description": "other names for the person",
         },
+        "date": {
+            "description": "date when the entry was created in ISO format",
+            "required": False,
+            "anyof_type": ["string", "date"],
+        },
+        'day': {
+            "description": "day when the entry was created",
+            "required": False,
+            "type": "integer",
+        },
         "department": {
             "description": "Department at the institution",
             "type": "string",
@@ -1711,6 +1722,11 @@ SCHEMAS = {
             "required": False,
             "type": "string"
         },
+        'month': {
+            "description": "month when the entry was created",
+            "required": False,
+            "anyof_type": ["string", "date"],
+        },
         "name": {
             "description": "the person's canonical name",
             "required": True,
@@ -1726,21 +1742,21 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
-        "month": {
-            "description": "the month when the entry was created",
+        'updated': {
+            "description": "most recently updated",
             "required": False,
-            "anyof_type": ["integer", "string"],
+            "anyof_type": ["string", "datetime", "date"],
         },
-        "year": {
-            "description": "the year when the entry was created",
+        'year': {
+            "description": "year when the entry was created",
             "required": False,
             "type": "integer",
         },
-        "day": {
-            "description": "the day (of the month) when the entry was created",
+        'uuid': {
+            "description": "universally unique identifier",
             "required": False,
-            "type": "integer",
-        },        
+            "type": "string",
+        },
     },
     "grades": {
         "_description": {
