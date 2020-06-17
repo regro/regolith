@@ -1292,6 +1292,38 @@ def get_id_from_name(coll, name):
     else: return None
 
 def is_fully_appointed(appts, begin_date, end_date):
+    """Checks if a collection of appointments for a person is valid and fully loaded
+        for a given interval of time
+
+        Parameters
+        ----------
+        appts: iterable
+            The iterable of appointments
+        begin_date: datetime, string
+            The start date of the interval of time to check appointments for
+        end_date:
+            The end date of the interval of time to check appointments for
+
+        Returns
+        -------
+        list:
+            A list with is a boolean at index 0, True if the person
+            is fully appointed and False if not, and  a string at index 1
+            which is empty if fully appointed or contains the max/min loading
+            and corresponding date if not
+
+        Examples
+        --------
+        >>> appts = [{"begin_year": 2017, "begin_month": 6, "begin_day": 1, "end_year": 2017, "end_month": 6,\
+         "end_day": 15, "grant": "grant1", "loading": 1.0, "type": "pd", }, {"begin_year": 2017, "begin_month": 6, \
+         "begin_day": 17,  "end_year": 2017,  "end_month": 6, "end_day": 30, "grant": "grant2", "loading": 1.0, \
+         "type": "pd",} ]
+        >>> is_fully_appointed(appts, "2017-06-01", "2017-06-30")
+
+        In this case, we have an insufficient loading and minimum of 0.0 on 2017-06-16, hence it would return an array
+        with False at index 0 and "min 0.0 at 2017-06-16" at index 1.
+        """
+
     status = [True, '']
     if isinstance(begin_date,str):
          begin_date = date_parser.parse(begin_date).date()
