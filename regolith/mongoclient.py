@@ -163,7 +163,7 @@ class MongoClient:
     def open(self, host=None):
         """Opens the database client"""
         if host is None:
-            host = 'localhost'
+            host = 'localhost:27017'
         while self.client is None:
             try:
                 self.client = pymongo.MongoClient(host)
