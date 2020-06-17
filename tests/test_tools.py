@@ -711,3 +711,46 @@ def test_get_id_from_name(input,expected):
 )
 def test_date_to_rfc822(input,expected):
     assert(date_to_rfc822(input[0], input[1], input[2]) == expected)
+
+person1 = {
+    "_id": "scopatz",
+    "aka": [
+        "Scopatz",
+        "Scopatz, A",
+        "Scopatz, A.",
+        "Scopatz, A M",
+        "Anthony Michael Scopatz",
+    ],
+    "name": "Anthony Scopatz",
+    "position": "Professor"
+}
+person2 = {
+    "_id": "abc",
+    "aka": [
+        "A. BC",
+        "BC, A",
+        "Anthony BC",
+    ],
+    "name": "Anthony Bill Chris",
+    "position": "Professor"
+}
+person3 = {
+    "_id": "jdoe",
+    "aka": [
+        "A. BC",
+        "BC, A",
+        "Anthony BC",
+    ],
+    "name": "John Doe",
+}
+people = [person1, person2, person3]
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ((people, ['name', 'Doe']), "jdoe\n"),
+        ((people, ['name', 'Jerry']), ""),
+        ((people, ['position', 'Prof', 'name', 'Chris']), "abc\n"),
+    ],
+)
+def test_search_collection(input, expected):
+    assert(search_collection(input[0], input[1]) == expected)

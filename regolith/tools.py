@@ -1325,6 +1325,29 @@ def is_fully_appointed(person, begin_date, end_date):
 
 
 def search_collection(collection, arguments):
+    """Retrieves a list of all documents from the collection where the fragment
+        appears in any one of the given fields
+
+        Parameters
+        ----------
+        collection: generator
+            The collection containing the documents
+        arguments: list
+            The name of the fields to look for and their accompanying substring
+
+        Returns
+        -------
+        str:
+            A str of all the ids of the collection concatenated together
+
+        Examples
+        --------
+        >>> search_collection(people, ['name', 'ab', 'position', 'professor'])
+
+        This would get all people for which their name contains the string 'ab'
+        and whose position is professor
+
+        """
     if len(arguments) % 2 != 0:
         raise RuntimeError("Error: Number of keys and values do not match")
     elements = collection
