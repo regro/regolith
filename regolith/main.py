@@ -1,16 +1,18 @@
 """The main CLI for regolith"""
 from __future__ import print_function
+
 import copy
 import os
 from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
 
-from regolith.commands import INGEST_COLL_LU
-from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.database import connect
+
 from regolith import commands
 from regolith import storage
 from regolith.builder import BUILDERS
+from regolith.commands import INGEST_COLL_LU
 from regolith.helper import HELPERS
+from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
 
@@ -32,6 +34,7 @@ CONNECTED_COMMANDS = {
     "classlist": commands.classlist,
     "validate": commands.validate,
     "helper": commands.helper,
+    "fs-to-mongo": commands.fs_to_mongo
 }
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
@@ -43,14 +46,14 @@ def create_parser():
     subp = p.add_subparsers(title="cmd", dest="cmd")
 
     # helper subparser
-    hlprp = subp.add_parser(
+    subp.add_parser(
         "helper",
         help="runs an available helper target",
         formatter_class=RawTextHelpFormatter,
     )
 
     # rc subparser
-    rcp = subp.add_parser("rc", help="prints run control")
+    subp.add_parser("rc", help="prints run control")
 
     # add subparser
     addp = subp.add_parser(
@@ -257,6 +260,21 @@ def create_parser():
         "yaml-to-json", help="Converts files from YAML to JSON"
     )
     ytj.add_argument("files", nargs="+", help="file names to convert")
+
+    # fs-to-mongo subparser
+    ftm = subp.add_parser(
+        "fs-to-mongo", help="Import database from filesystem to mongodb. Optional 'mongohost' in configuration "
+                            "json file."
+    )
+    ftm.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
+                                    "default, the mongoimport attempts to connect to a MongoDB instance running "
+                                    "on the localhost on port number 27017.",
+                     dest="host",
+                     default=None)
+    ftm.add_argument("--uri", help="Specify a resolvable URI connection string (enclose in quotes) "
+                                   "to connect to the MongoDB deployment.",
+                     dest="uri",
+                     default=None)
 
     # Validator
     val = subp.add_parser("validate", help="Validates db")
