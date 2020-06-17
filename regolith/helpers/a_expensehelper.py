@@ -24,7 +24,7 @@ def subparser(subpi):
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
                        )
-    subpi.add_argument("-b", "--business",
+    subpi.add_argument("-b", "--business", action='store_true',
                        help="expense type is business. If not specified defaults to travel"
                        )
     subpi.add_argument("-y", "--payee",
