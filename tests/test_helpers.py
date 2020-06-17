@@ -56,10 +56,6 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
-    (["helper", "u_contact", "Albert Einstein", "--date", "2020-01-02",
-      "-n", "Test note"],
-     "Institution (--inst) is required to create a new contact\n"
-     ),
     ]
 
 

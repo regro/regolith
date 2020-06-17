@@ -16,12 +16,12 @@ TARGET_COLL = "contacts"
 
 def subparser(subpi):
     subpi.add_argument("name", help="first name space last name in quotes")
-    subpi.add_argument("--id", help="id of the person, e.g., first letter first name "
-                                    "plus last name, but unique")
-    subpi.add_argument("--inst", help="person's institution.  Can be inf "
-                                      "short form such as columbiau and will "
-                                      "be retrieved from institutions collection. "
-                                      "required to create a new contact")
+    subpi.add_argument("-d", "--id", help="id of the person, e.g., first letter first name "
+                                            "plus last name, but unique")
+    subpi.add_argument("-i", "--institution", help="person's institution. It can be "
+                                                   "institution id or anything in the "
+                                                   "aka or name from institutions collection. "
+                                                   "it is required to create a new contact")
     #FIXME
     # subpi.add_argument("-e", "--email",
     #                    help="email address")
@@ -88,15 +88,14 @@ class ContactUpdaterHelper(DbHelperBase):
             notes = current.get('notes', [])
             aliases = current.get('aka', [])
         else:
-            if not rc.inst:
-                print("Institution (--inst) is required to create a new contact")
-                return
+            if not rc.institution:
+                raise RuntimeError("Institution is required to create a new contact")
             pdoc.update({"date": dt.date.today()})
-            pdoc.update({"institution": rc.inst})
+            pdoc.update({"institution": rc.institution})
             notes = []
             aliases = []
-            UUID = str(uuid.uuid4())
-            pdoc.update({'uuid': UUID})
+            uniqueidentifier = str(uuid.uuid4())
+            pdoc.update({'uuid': uniqueidentifier})
         #FIXME
         # if rc.e_email:
         #     pdoc.update({"email": rc.email})
