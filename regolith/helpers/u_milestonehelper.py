@@ -11,6 +11,8 @@ from regolith.tools import all_docs_from_collection
 
 
 TARGET_COLL = "projecta"
+ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
+ALLOWED_STATUS = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burner","c":"converged"}
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="the id of the projectum")
@@ -19,18 +21,18 @@ def subparser(subpi):
     subpi.add_argument("--due_date",
                        help="new due date of the milestone in ISO format (YYYY-MM-DD) "
                             "required to add a new milestone")
-    subpi.add_argument("-s", "--status",
-                       help="initial of the status of the milestone/deliverable: "
-                            "p = proposed, s = started, f = finished, c = cancelled")
     subpi.add_argument("--name",
                        help="name of the new milestone. "
                             "required to add a new milestone")
     subpi.add_argument("-o", "--objective",
                        help="objective of the new milestone. "
                             "required to add a new milestone")
+    subpi.add_argument("-s", "--status",
+                       help="initial of the status of the milestone/deliverable: "
+                            f"{ALLOWED_STATUS}")
     subpi.add_argument("-t", "--type",
                        help="initial of type of the new milestone "
-                            "m = meeting, r = release, p = pull request, o = other")
+                            f"{ALLOWED_TYPES}")
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -63,8 +65,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         key = rc.projectum_id
-        allowed_types = {'m': 'meeting', 'r':'release', 'p':'pr', 'o':'other'}
-        allowed_status = {'p':'proposed', 's':'started', 'f':'finished', 'c':'cancelled'}
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) == 0:
@@ -108,16 +108,15 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 for i in numbered_milestones:
                     current_mil = numbered_milestones[i]
                     del current_mil['identifier']
-                print('Please inform name, objective, and due date to add a new milestone')
-                return
+                raise RuntimeError('Please inform name, objective, and due date to add a new milestone')
             mil.update({'due_date': rc.due_date, 'objective': rc.objective, 'name': rc.name})
             mil.update({'audience': ['lead', 'pi', 'group_members']})
             if rc.status:
-                mil.update({'status': allowed_status[rc.status]})
+                mil.update({'status': ALLOWED_STATUS[rc.status]})
             else:
                 mil.update({'status': 'proposed'})
             if rc.type:
-                mil.update({'type': allowed_types[rc.type]})
+                mil.update({'type': ALLOWED_TYPES[rc.type]})
             else:
                 mil.update({'type': 'meeting'})
             milestones.append(mil)
@@ -128,7 +127,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             if rc.due_date:
                 doc.update({'due_date':rc.due_date})
             if rc.status:
-                doc.update({'status': rc.status})
+                doc.update({'status': ALLOWED_STATUS[rc.status]})
             if identifier == 'milestones':
                 new_mil = []
                 for i in numbered_milestones:
