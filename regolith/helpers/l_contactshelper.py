@@ -12,7 +12,8 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    fragment_retrieval
+    fragment_retrieval,
+    search_collection
 )
 
 TARGET_COLL = "contacts"
@@ -45,11 +46,17 @@ def subparser(subpi):
         "--notes",
         help='fragment (single argument only) to be found in the notes section of a contact'
     )
+    subpi.add_argument(
+        "-f",
+        "--find",
+        nargs="+",
+        help='Search this collection by giving key element pairs'
+    )
     return subpi
 
 
 def stringify(con):
-    return f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email','missing')}"
+    return f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email', 'missing')}"
 
 
 class ContactsListerHelper(SoutHelperBase):
@@ -87,28 +94,32 @@ class ContactsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        if rc.find:
+            results = search_collection(self.gtx["contacts"], rc.find)
+            print(results, end="")
+            return
         def_l = set(stringify(i) for i in
                     self.gtx['contacts'])
         if rc.name:
             namel = set(stringify(i) for i in
                         fragment_retrieval(
-                self.gtx['contacts'], [
-                        "_id", "aka", "name"], rc.name))
+                            self.gtx['contacts'], [
+                                "_id", "aka", "name"], rc.name))
         else:
             namel = def_l
         if rc.inst:
             instl = set(stringify(i) for i in
                         fragment_retrieval(
-                self.gtx['contacts'],
-                ["institution"],
-                rc.inst))
+                            self.gtx['contacts'],
+                            ["institution"],
+                            rc.inst))
         else:
             instl = def_l
         if rc.notes:
             notel = set(stringify(i) for i in
                         fragment_retrieval(
-                self.gtx['contacts'], [
-                        "notes"], rc.notes))
+                            self.gtx['contacts'], [
+                                "notes"], rc.notes))
         else:
             notel = def_l
         if rc.date:

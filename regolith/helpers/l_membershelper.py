@@ -23,7 +23,7 @@ ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "ca
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-c", "--current", action="store_true", help='get only current group members ')
-    subpi.add_argument("-s", "--search", nargs="+", help="Search this collection by giving key element pairs")
+    subpi.add_argument("-f", "--find", nargs="+", help="Search this collection by giving key element pairs")
 
     return subpi
 
@@ -65,8 +65,8 @@ class MembersListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        if rc.search:
-            results = search_collection(self.gtx["people"], rc.search)
+        if rc.find:
+            results = search_collection(self.gtx["people"], rc.find)
             print(results, end="")
             return
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
