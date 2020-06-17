@@ -1365,6 +1365,3 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
                 min = loading[x]
                 status[1] = "min {} at {}".format(min, str(day))
     return status
-
-
-
