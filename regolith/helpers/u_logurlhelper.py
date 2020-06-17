@@ -15,7 +15,7 @@ ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused",
 
 
 def subparser(subpi):
-    subpi.add_argument("name", help="Projecta name to apply updates",
+    subpi.add_argument("name", help="Projectum name to apply updates",
                        default=None)
     subpi.add_argument("log_url", help="Google Doc url link to project's Projectum Agenda Log")
     # Do not delete --database arg
@@ -28,7 +28,7 @@ def subparser(subpi):
 
 class LogUrlUpdaterHelper(DbHelperBase):
     """
-    Update a project's Log_url, will add a new Log_URL if one doesn't yet exist
+    Update a projectum's Log_url, will add a new Log_URL if one doesn't yet exist
     """
     # btype must be the same as helper target in helper.py
     btype = "u_logurl"
@@ -54,11 +54,11 @@ class LogUrlUpdaterHelper(DbHelperBase):
         rc = self.rc
         key = f"{rc.name}"
         filterid = {'_id' : key}
-        current = rc.client.find_one(rc.database, rc.coll, filterid)
+        projectum = rc.client.find_one(rc.database, rc.coll, filterid)
 
-        if current is None:
+        if projectum is None:
             raise RuntimeError(
-                "There does not seem to be a projecta with this name in this database"
+                "There does not seem to be a projectum with this name in this database"
             )
         else:
             rc.client.update_one(rc.database, rc.coll, filterid, {'log_url': rc.log_url})
