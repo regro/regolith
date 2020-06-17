@@ -263,7 +263,8 @@ def create_parser():
 
     # fs-to-mongo subparser
     subp.add_parser(
-        "fs-to-mongo", help="Import database from filesystem to mongodb"
+        "fs-to-mongo", help="Import database from filesystem to mongodb. Optional 'mongohost' in configuration "
+                            "json file."
     )
 
     # Validator
