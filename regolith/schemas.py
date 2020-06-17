@@ -849,6 +849,7 @@ EXEMPLARS = {
     },
     {
         "_id": "sbillinge",
+        "active": True,
         "activities": [{
             "type": "teaching",
             "name": "course development",

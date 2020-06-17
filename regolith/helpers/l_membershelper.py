@@ -6,7 +6,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_due_date
+from regolith.dates import get_due_date, is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -28,6 +28,7 @@ def subparser(subpi):
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when running "
                                                        "--filter. If no argument is given the default is just the id.")
 
+    subpi.add_argument("-p", "--prior", action="store_true", help='get only former group members ')
     return subpi
 
 
@@ -84,11 +85,29 @@ class MembersListerHelper(SoutHelperBase):
             print(results, end="")
             return
 
+        for person in self.gtx["people"]:
+            if rc.current:
+                if not person.get('active'):
+                    continue
+                people.append(person)
+            elif rc.prior:
+                if person.get('active'):
+                    continue
+                people.append(person)
+            else:
+                people.append(person)
+
         for i in people:
             if rc.verbose:
                 print("{}, {} | group_id: {}".format(i.get('name'), i.get('position'), i.get('_id')))
                 print("    orcid: {} | github_id: {}".format(i.get('orcid_id'), i.get('github_id')))
+                for employment in i.get('employment'):
+                    if is_current(employment):
+                        print("    current organization: {}".format(employment.get('organization')))
+                        print("    current position: {}".format(employment.get('position')))
+                    if not i.get('active'):
+                        if employment.get('group') == "bg":
+                            print("    billinge group position: {}".format(employment.get('position')))
             else:
                 print("{}".format(i.get('name')))
         return
-
