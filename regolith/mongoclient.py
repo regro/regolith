@@ -62,10 +62,10 @@ def import_jsons(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
     for json_path in Path(dbpath).glob("*.json"):
         cmd = ["mongoimport"]
         if host is not None:
-            cmd += ['--host', host]
+            cmd += ['--host', host, "--db", dbname]
         if uri is not None:
             cmd += ['--uri', uri]
-        cmd += ["--db", dbname, "--collection", json_path.stem, "--file", str(json_path)]
+        cmd += ["--collection", json_path.stem, "--file", str(json_path)]
         subprocess.check_call(cmd)
     return
 
@@ -98,7 +98,7 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
             loader.constructor.yaml_constructors[u'tag:yaml.org,2002:timestamp'] = \
                 loader.constructor.yaml_constructors[u'tag:yaml.org,2002:str']
             fsclient.yaml_to_json(str(yaml_file), str(json_file), loader=loader)
-        import_jsons(tempd, dbname, host)
+        import_jsons(tempd, dbname, host=host, uri=uri)
     return
 
 
