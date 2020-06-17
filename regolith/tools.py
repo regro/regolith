@@ -754,54 +754,57 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
                     break
     return ret_list
 
-def is_fully_appointed(appts, begin=None, end=None, now=None):
+def is_fully_appointed(appts, begin_date, end_date):
+    """Checks if a collection of appointments for a person is valid and fully loaded
+        for a given interval of time
+        Parameters
+        ----------
+        appts: iterable
+            The iterable of appointments
+        begin_date: datetime, string
+            The start date of the interval of time to check appointments for
+        end_date:
+            The end date of the interval of time to check appointments for
+        Returns
+        -------
+        list:
+            A list with is a boolean at index 0, True if the person
+            is fully appointed and False if not, and  a string at index 1
+            which is empty if fully appointed or contains the max/min loading
+            and corresponding date if not
+        Examples
+        --------
+        >>> appts = [{"begin_year": 2017, "begin_month": 6, "begin_day": 1, "end_year": 2017, "end_month": 6,\
+         "end_day": 15, "grant": "grant1", "loading": 1.0, "type": "pd", }, {"begin_year": 2017, "begin_month": 6, \
+         "begin_day": 17,  "end_year": 2017,  "end_month": 6, "end_day": 30, "grant": "grant2", "loading": 1.0, \
+         "type": "pd",} ]
+        >>> is_fully_appointed(appts, "2017-06-01", "2017-06-30")
+        In this case, we have an insufficient loading and minimum of 0.0 on 2017-06-16, hence it would return an array
+        with False at index 0 and "min 0.0 at 2017-06-16" at index 1.
+        """
+
     status = [True, '']
-    if begin and end and now:
-        raise ValueError("Please enter interval or current date, not both.")
-    if now and isinstance(now, str):
-        now = date_parser.parse(now).date()
-    elif not now:
-        now = date.today()
-    if begin:
-        if isinstance(begin,str):
-            begin_date = date_parser.parse(begin).date()
-        else:
-            begin_date = begin
-        if end:
-            if isinstance(end, str):
-                end_date = date_parser.parse(end).date()
-            else:
-                end_date = end
-        else:
-            end_date = begin_date + relativedelta(years=1)
-        timespan = end_date - begin_date
-        loading = []
-        max, min = 0.0, 1.0
-        for x in range(0, timespan.days):
-            loading.append(0.0)
-            day = begin_date + relativedelta(days=x)
-            for appt in appts:
-                if is_current(appt, now=day):
-                    loading[x] = loading[x] + appt.get("loading")
-            if loading[x] > 1.0:
-                status[0] = False
-                if loading[x] > max:
-                    status[1] = "max {} at {}".format(loading[x], str(day))
-                    max = loading[x]
-            if loading[x] < 1.0:
-                status[0] = False
-                if loading[x] < min:
-                    status[1] = "min {} at {}".format(loading[x], str(day))
-                    min = loading[x]
-    else:
-        load = 0.0
+    if isinstance(begin_date,str):
+         begin_date = date_parser.parse(begin_date).date()
+    if isinstance(end_date, str):
+        end_date = date_parser.parse(end_date).date()
+    timespan = end_date - begin_date
+    loading = []
+    max, min = 0.0, 1.0
+    for x in range(0, timespan.days):
+        loading.append(0.0)
+        day = begin_date + relativedelta(days=x)
         for appt in appts:
-            if is_current(appt, now=now):
-                load += appt.get('loading')
-        if load < 1:
+            if is_current(appt, now=day):
+                loading[x] = loading[x] + appt.get("loading")
+        if loading[x] > 1.0:
             status[0] = False
-            status[1] = "not fully appointed"
-        elif load > 1:
+            if loading[x] > max:
+                max = loading[x]
+                status[1] = "max {} at {}".format(max, str(day))
+        if loading[x] < 1.0:
             status[0] = False
-            status[1] = "exceeds full loading"
+            if loading[x] < min:
+                min = loading[x]
+                status[1] = "min {} at {}".format(min, str(day))
     return status
