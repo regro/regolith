@@ -231,6 +231,9 @@ helper_map = [
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
 ]
+    (["helper", "makeappointments"], "People with gaps in their appointments:\nAnthony Scopatz\nnot fully appointed on 2020-06-15\n"
+     ),
+    ]
 
 
 @pytest.mark.parametrize("hm", helper_map)
