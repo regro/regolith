@@ -9,5 +9,5 @@ def test_fs_to_mongo(make_db):
         repo = str(Path(__file__).parent.parent.parent.joinpath('rg-db-group', 'local'))
     else:
         repo = make_db
-    cp = subprocess.run(['regolith', 'fs-to-mongo'], cwd=repo)
+    cp = subprocess.run(['regolith', 'fs-to-mongo', '--uri', "mongodb+srv://stao:e=2.71828E00@cluster0-txgoy.mongodb.net/rg-db-group?retryWrites=true&w=majority"], cwd=repo)
     assert cp.returncode == 0

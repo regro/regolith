@@ -173,16 +173,16 @@ class MongoClient:
 
     def open(self):
         """Opens the database client"""
-        settings = dict()
+        settings = list()
         host = getattr(self.rc, 'host')
         if host is not None:
-            settings.update({'host': host})
+            settings.append(host)
         uri = getattr(self.rc, 'uri')
         if uri is not None:
-            settings.update({'uri': uri})
+            settings.append(uri)
         while self.client is None:
             try:
-                self.client = pymongo.MongoClient(**settings)
+                self.client = pymongo.MongoClient(*settings)
             except (AutoReconnect, ConnectionFailure):
                 time.sleep(0.1)
         while not self.is_alive():
