@@ -15,9 +15,10 @@ ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused",
 
 
 def subparser(subpi):
-    subpi.add_argument("name", help="Projectum name to apply updates",
+    subpi.add_argument("projectum_id", help="The ID of the Projectum",
                        default=None)
     subpi.add_argument("log_url", help="Google Doc url link to project's Projectum Agenda Log")
+    subpi.add_argument("-n", "--number", help="The id you would like to choose from the listed projectum ids")
     # Do not delete --database arg
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated.  Defaults to "
@@ -52,16 +53,39 @@ class LogUrlUpdaterHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        key = f"{rc.name}"
+        key = f"{rc.projectum_id}"
         filterid = {'_id' : key}
-        projectum = rc.client.find_one(rc.database, rc.coll, filterid)
+        found_projectum = rc.client.find_one(rc.database, rc.coll, filterid)
+        # find all similar projectum ids
+        ids = []
+        for projectum in self.gtx["projecta"]:
+            if key in projectum.get("_id"):
+                ids.append(projectum.get("_id"))
 
-        if projectum is None:
-            raise RuntimeError(
-                "There does not seem to be a projectum with this name in this database"
-            )
+        if found_projectum is None and len(ids) == 0:
+            raise RuntimeError("Please input a valid projectum id or a valid fragment of a projectum id")
+        elif found_projectum is None and not rc.number:
+            print("There does not seem to be a projectum with this name in this database.")
+            print("However, there are projectums with similar names: ")
+            for i in range(len(ids)):
+                print(str(i+1) + ". " + str(ids[i]))
+            print("Please rerun the u_logurl helper with the same name as previously inputted, "
+                  "but with the addition of -n followed by a number corresponding to one of the above listed "
+                  "projectum ids that you would like to update.")
+        elif found_projectum is None:
+            if int(rc.number) < 1 or int(rc.number) > len(ids):
+                print("Sorry, you picked an invalid number")
+                print("Here are the projectums with similar names: ")
+                for i in range(len(ids)):
+                    print(str(i + 1) + ". " + str(ids[i]))
+                print("Please rerun the u_logurl helper with the same name as previously inputted, "
+                      "but with the addition of -n followed by a number corresponding to one of the above listed "
+                      "projectum ids that you would like to update.")
+            else:
+                filterid = {'_id' : ids[int(rc.number) - 1]}
+                rc.client.update_one(rc.database, rc.coll, filterid, {'log_url': rc.log_url})
+                print(str(ids[int(rc.number) - 1]) + " has been updated with a log_url of " + rc.log_url)
         else:
             rc.client.update_one(rc.database, rc.coll, filterid, {'log_url': rc.log_url})
-
-        print(rc.name + " has been updated with a log_url of " + rc.log_url)
+            print(rc.projectum_id + " has been updated with a log_url of " + rc.log_url)
         return
