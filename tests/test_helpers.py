@@ -58,11 +58,17 @@ helper_map = [
     (["helper", "l_grants", "--current", "--date", "2020-05-25"],
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
      ),
-    (["helper", "l_members", "-v"],
+    (["helper", "l_members", "-c", "-v"],
      "Simon J. L. Billinge, professor | group_id: sbillinge\n"
      "    orcid: 0000-0002-9432-4248 | github_id: None\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: assistant professor\n"
+     ),
+    (["helper", "l_members", "-f", "-v"],
      "Anthony Scopatz, professor | group_id: scopatz\n"
      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: assistant professor\n"
      ),
     (["helper", "l_members", "--filter", "name", "sco"],
      "scopatz    \n"
