@@ -1291,7 +1291,7 @@ def get_id_from_name(coll, name):
         return person["_id"]
     else: return None
 
-def is_fully_appointed(appts, begin_date, end_date):
+def is_fully_appointed(person, begin_date=None, end_date=None):
     """Checks if a collection of appointments for a person is valid and fully loaded
         for a given interval of time
 
@@ -1318,15 +1318,31 @@ def is_fully_appointed(appts, begin_date, end_date):
          "end_day": 15, "grant": "grant1", "loading": 1.0, "type": "pd", }, {"begin_year": 2017, "begin_month": 6, \
          "begin_day": 17,  "end_year": 2017,  "end_month": 6, "end_day": 30, "grant": "grant2", "loading": 1.0, \
          "type": "pd",} ]
-        >>> is_fully_appointed(appts, "2017-06-01", "2017-06-30")
+        >>> aejaz = {"name": "Adiba Ejaz", "_id": "aejaz", "appointments": appts}
+        >>> is_fully_appointed(aejaz, "2017-06-01", "2017-06-30")
 
         In this case, we have an insufficient loading and minimum of 0.0 on 2017-06-16, hence it would return an array
         with False at index 0 and "min 0.0 at 2017-06-16" at index 1.
         """
 
     status = [True, '']
-    if isinstance(begin_date,str):
-         begin_date = date_parser.parse(begin_date).date()
+    appts = person.get('appointments')
+    earliest = get_dates(appts[0])['begin_date']
+    latest = get_dates(appts[0])['end_date']
+    for appt in appts:
+        dates = get_dates(appt)
+        if dates['begin_date'] < earliest:
+            earliest = dates['begin_date']
+        if dates['end_date'] > latest:
+            latest = dates['end_date']
+    if not begin_date:
+        begin_date = earliest
+    if not end_date:
+        end_date = latest
+    if begin_date > end_date:
+        raise ValueError("invalid begin and end dates")
+    if isinstance(begin_date, str):
+        begin_date = date_parser.parse(begin_date).date()
     if isinstance(end_date, str):
         end_date = date_parser.parse(end_date).date()
     timespan = end_date - begin_date
@@ -1349,3 +1365,6 @@ def is_fully_appointed(appts, begin_date, end_date):
                 min = loading[x]
                 status[1] = "min {} at {}".format(min, str(day))
     return status
+
+
+
