@@ -126,7 +126,7 @@ class MongoClient:
         # actually startup mongo
         self._preclean()
         self._startserver()
-        self.open(getattr(rc, 'mongohost', None))
+        self.open(getattr(rc, 'host', None))
 
     def _preclean(self):
         mongodbpath = self.rc.mongodbpath

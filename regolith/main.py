@@ -262,10 +262,11 @@ def create_parser():
     ytj.add_argument("files", nargs="+", help="file names to convert")
 
     # fs-to-mongo subparser
-    subp.add_parser(
+    ftm = subp.add_parser(
         "fs-to-mongo", help="Import database from filesystem to mongodb. Optional 'mongohost' in configuration "
                             "json file."
     )
+    ftm.add_argument("--host", help="The host of mongodb. Default 'localhost:27017'.", default=None)
 
     # Validator
     val = subp.add_parser("validate", help="Validates db")
