@@ -16,9 +16,12 @@ TARGET_COLL = "contacts"
 
 def subparser(subpi):
     subpi.add_argument("name", help="first name space last name in quotes")
-    subpi.add_argument("institution", help="person's institution.  Can be inf"
-                                            "short form such as columbiau and will "
-                                            "be retrieved from institutions collection")
+    subpi.add_argument("--id", help="id of the person, e.g., first letter first name "
+                                    "plus last name, but unique")
+    subpi.add_argument("--inst", help="person's institution.  Can be inf "
+                                      "short form such as columbiau and will "
+                                      "be retrieved from institutions collection. "
+                                      "required to create a new contact")
     #FIXME
     # subpi.add_argument("-e", "--email",
     #                    help="email address")
@@ -72,7 +75,10 @@ class ContactUpdaterHelper(DbHelperBase):
             now = dt.datetime.now()
         else:
             now = date_parser.parse(rc.date).date()
-        key = str(name.first[0].lower().replace(" ", "") + name.last.lower().replace(" ", ""))
+        if not rc.id:
+            key = str(name.first[0].lower().replace(" ", "") + name.last.lower().replace(" ", ""))
+        else:
+            key = rc.id
         filterid = {'_id': key}
         coll = self.gtx[rc.coll]
         pdoc = {'_id': key}
@@ -82,7 +88,11 @@ class ContactUpdaterHelper(DbHelperBase):
             notes = current.get('notes', [])
             aliases = current.get('aka', [])
         else:
-            pdoc.update({"date": dt.today()})
+            if not rc.inst:
+                print("Institution (--inst) is required to create a new contact")
+                return
+            pdoc.update({"date": dt.date.today()})
+            pdoc.update({"institution": rc.inst})
             notes = []
             aliases = []
             UUID = str(uuid.uuid4())
@@ -98,9 +108,7 @@ class ContactUpdaterHelper(DbHelperBase):
             notes.extend(rc.notes)
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
-        pdoc.update({"name": name.full_name,
-                    "institution": rc.institution,
-                    })
+        pdoc.update({"name": name.full_name})
         pdoc.update({'updated': now})
 
         rc.client.update_one(rc.database, rc.coll, filterid, pdoc)

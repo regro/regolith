@@ -49,14 +49,17 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
-    (["helper", "u_contact", "Anthony B Friend", "columbiau", "-a", "Friend", "--date", "2020-01-02",
+    (["helper", "u_contact", "Anthony B Friend","--id", "afriend", "-a", "Friend", "--date", "2020-01-02",
       "-n", "Test note"],
      "Anthony B Friend has been added/updated in contacts\n"
      ),
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
-
+    (["helper", "u_contact", "Albert Einstein", "--date", "2020-01-02",
+      "-n", "Test note"],
+     "Institution (--inst) is required to create a new contact\n"
+     ),
     ]
 
 
