@@ -3,11 +3,8 @@
     It can add a new milestone to the projecta collection.
 """
 import datetime as dt
-from nameparser import HumanName
-import dateutil.parser as date_parser
 import sys
-import uuid
-
+from dateutil import parser
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection
@@ -20,20 +17,20 @@ def subparser(subpi):
     subpi.add_argument("--number",
                         help="number of the milestone to update from numbered list")
     subpi.add_argument("--due_date",
-                       help="new due date of the milestone"
+                       help="new due date of the milestone in ISO format (YYYY-MM-DD) "
                             "required to add a new milestone")
     subpi.add_argument("-s", "--status",
-                       help="status of the milestone/deliverable:"
-                            "proposed, started, finished, back_burner"
-                            "paused, cancelled")
+                       help="initial of the status of the milestone/deliverable: "
+                            "p = proposed, s = started, f = finished, c = cancelled")
     subpi.add_argument("--name",
-                       help="name of the new milestone."
-                            "required to add a new milestone.")
+                       help="name of the new milestone. "
+                            "required to add a new milestone")
     subpi.add_argument("-o", "--objective",
-                       help="objective of the new milestone."
+                       help="objective of the new milestone. "
                             "required to add a new milestone")
     subpi.add_argument("-t", "--type",
-                       help="type of the new milestone")
+                       help="initial of type of the new milestone "
+                            "m = meeting, r = release, p = pull request, o = other")
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -66,7 +63,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         key = rc.projectum_id
-
+        allowed_types = {'m': 'meeting', 'r':'release', 'p':'pr', 'o':'other'}
+        allowed_status = {'p':'proposed', 's':'started', 'f':'finished', 'c':'cancelled'}
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) == 0:
@@ -74,63 +72,75 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 "This entry appears to not exist in the collection")
         filterid = {'_id': key}
         current = rc.client.find_one(rc.database, rc.coll, filterid)
-        milestones = current.get('milestones', {})
-        deliverable = current.get('deliverable', {})
-        kickoff = current.get('kickoff', {})
-        lmil = {}
-        nmil = len(milestones)
-        for i in range(nmil):
-            lmil[str(i + 4)] = milestones[i]
-        #if list number was not informed, print a numbered list
+        milestones = current.get('milestones')
+        deliverable = current.get('deliverable')
+        kickoff = current.get('kickoff')
+        deliverable['identifier'] = 'deliverable'
+        kickoff['identifier'] = 'kickoff'
+        for item in milestones:
+            item['identifier'] = 'milestones'
+        all_milestones = [deliverable, kickoff]
+        all_milestones.extend(milestones)
+        all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
+        index = 1
+        numbered_milestones = {}
+        for item in all_milestones:
+            numbered_milestones[str(index)] = item
+            index += 1
         if not rc.number:
-            print('Please choose from one of the following to update/add:')
-            print('1. name: deliverable     due date:{}'.format(deliverable['due_date']))
-            print('2. name: kick off    due date:{}'.format(kickoff['due_date']))
-            print('3. name: new milestone')
-            for key in lmil:
-                current_mil = lmil[key]
-                print("{}. name: {}      due date:{}".format(key, current_mil['name'], current_mil['due_date']))
+            print("Please choose from one of the following to update/add:")
+            for i in numbered_milestones:
+                current_mil = numbered_milestones[i]
+                if 'name' in current_mil:
+                    print("{}. {}    due date: {}    {}".format(i, current_mil["name"],
+                                                    current_mil["due_date"], current_mil["status"]))
+                else:
+                    print("{}. {}    due date: {}    {}".format(i, current_mil['identifier'],
+                                                                current_mil["due_date"], current_mil["status"]))
+                del current_mil['identifier']
+            print("{}. new milestone".format(index))
             return
-
-        lmil['1'] = deliverable
-        lmil['2'] = kickoff
         pdoc = {}
-        if rc.number == '1':
-            if rc.due_date:
-                deliverable.update({'due_date':rc.due_date})
-            if rc.status:
-                deliverable.update({'status': rc.status})
-            pdoc.update({'deliverable':deliverable})
-        if rc.number == '2':
-            if rc.due_date:
-                kickoff.update({'due_date':rc.due_date})
-            if rc.status:
-                kickoff.update({'status': rc.status})
-            pdoc.update({'kickoff': kickoff})
-        if int(rc.number) == 3:
+        #new milestone:
+        if int(rc.number) == index:
             mil = {}
             if not rc.due_date or not rc.name or not rc.objective:
+                for i in numbered_milestones:
+                    current_mil = numbered_milestones[i]
+                    del current_mil['identifier']
                 print('Please inform name, objective, and due date to add a new milestone')
                 return
             mil.update({'due_date': rc.due_date, 'objective': rc.objective, 'name': rc.name})
             mil.update({'audience': ['lead', 'pi', 'group_members']})
             if rc.status:
-                mil.update({'status': rc.status})
+                mil.update({'status': allowed_status[rc.status]})
             else:
                 mil.update({'status': 'proposed'})
             if rc.type:
-                mil.update({'type': rc.type})
+                mil.update({'type': allowed_types[rc.type]})
             else:
                 mil.update({'type': 'meeting'})
             milestones.append(mil)
-        if int(rc.number) > 3:
-            mil = lmil[rc.number]
+            pdoc = {'milestones':milestones}
+        if int(rc.number) < index:
+            doc = numbered_milestones[rc.number]
+            identifier = doc['identifier']
             if rc.due_date:
-                mil.update({'due_date': rc.due_date})
+                doc.update({'due_date':rc.due_date})
             if rc.status:
-                mil.update({'status': rc.status})
-            num = int(rc.number) - 4
-            milestones[num] = mil
+                doc.update({'status': rc.status})
+            if identifier == 'milestones':
+                new_mil = []
+                for i in numbered_milestones:
+                    if numbered_milestones[i]['identifier'] =='milestones' and i!= rc.number:
+                        new_mil.append(numbered_milestones[i])
+                new_mil.append(doc)
+                pdoc.update({'milestones':new_mil})
+            else:
+                pdoc.update({identifier:doc})
+        for i in numbered_milestones:
+            current_mil = numbered_milestones[i]
+            del current_mil['identifier']
 
         rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         print("{} has been updated in projecta".format(key))

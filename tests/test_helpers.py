@@ -61,19 +61,28 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
-    (["helper", "u_milestone", "20sb_firstprojectum", "--number", "5",
-      "--due_date", "2020-05-10", "--status", "finished"],
+    (["helper", "u_milestone", "20sb_firstprojectum", "--number", "4",
+      "--status", "converged", "--due_date", "2022-01-01"],
      "20sb_firstprojectum has been updated in projecta\n"
      ),
     (["helper", "u_milestone", "20sb_firstprojectum"],
      "Please choose from one of the following to update/add:\n"
-     "1. name: deliverable     due date:2021-05-05\n"
-     "2. name: kick off    due date:2020-05-06\n"
-     "3. name: new milestone\n"
-     "4. name: Kick off meeting      due date:2020-05-06\n"
-     "5. name: Project lead presentation      due date:2020-05-10\n"
-     "6. name: planning meeting      due date:2020-05-27\n"
+     "1. Kick off meeting    due date: 2020-05-06    finished\n"
+     "2. Kick off meeting    due date: 2020-05-06    finished\n"
+     "3. Project lead presentation    due date: 2020-05-20    proposed\n"
+     "4. deliverable    due date: 2021-05-05    finalized\n"
+     "5. planning meeting    due date: 2022-01-01    converged\n"
+     "6. new milestone\n"
      ),
+    (["helper", "u_milestone", "20sb_firstprojectum", "--number", "6",
+      "--name", "test"],
+     "Please inform name, objective, and due date to add a new milestone\n"
+     ),
+    # this works! adding a new milestone:
+    # (["helper", "u_milestone", "20sb_firstprojectum", "--number", "6",
+    #   "--due_date", "2020-05-10", "--name", "test", "-o", "testing"],
+    #  "20sb_firstprojectum has been updated in projecta\n"
+    #  ),
 ]
 
 
