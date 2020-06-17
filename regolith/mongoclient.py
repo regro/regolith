@@ -39,7 +39,7 @@ else:
     ON_PYMONGO_V3 = True
 
 
-def import_jsons(dbpath: str, dbname: str) -> None:
+def import_jsons(dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
     """Import the json files to mongo db.
 
     Each json file will be a collection in the database. The _id will be the same as it is in the json file.
@@ -51,22 +51,26 @@ def import_jsons(dbpath: str, dbname: str) -> None:
 
     dbname : str
         The name of the database in mongo.
+
+    host : str
+        The hostname or IP address or Unix domain socket path of a single mongod or mongos instance to connect
+        to, or a mongodb URI, or a list of hostnames / mongodb URIs.
+
+    uri : str
+        Specify a resolvable URI connection string (enclose in quotes) to connect to the MongoDB deployment.
     """
     for json_path in Path(dbpath).glob("*.json"):
-        cmd = [
-            "mongoimport",
-            "--db",
-            dbname,
-            "--collection",
-            json_path.stem,
-            "--file",
-            str(json_path),
-        ]
+        cmd = ["mongoimport"]
+        if host is not None:
+            cmd += ['--host', host]
+        if uri is not None:
+            cmd += ['--uri', uri]
+        cmd += ["--db", dbname, "--collection", json_path.stem, "--file", str(json_path)]
         subprocess.check_call(cmd)
     return
 
 
-def import_yamls(dbpath: str, dbname: str) -> None:
+def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
     """Import the yaml files to mongo db.
 
     Each yaml file will be a collection in the database. The _id will be the id_key for each doc in the yaml file.
@@ -78,6 +82,13 @@ def import_yamls(dbpath: str, dbname: str) -> None:
 
     dbname : str
         The name of the database in mongo.
+
+    host : str
+        The hostname or IP address or Unix domain socket path of a single mongod or mongos instance to connect
+        to, or a mongodb URI, or a list of hostnames / mongodb URIs.
+
+    uri : str
+        Specify a resolvable URI connection string (enclose in quotes) to connect to the MongoDB deployment.
     """
     yaml_files = itertools.chain(Path(dbpath).glob('*.yaml'), Path(dbpath).glob('*.yml'))
     with TemporaryDirectory() as tempd:
@@ -87,7 +98,7 @@ def import_yamls(dbpath: str, dbname: str) -> None:
             loader.constructor.yaml_constructors[u'tag:yaml.org,2002:timestamp'] = \
                 loader.constructor.yaml_constructors[u'tag:yaml.org,2002:str']
             fsclient.yaml_to_json(str(yaml_file), str(json_file), loader=loader)
-        import_jsons(tempd, dbname)
+        import_jsons(tempd, dbname, host)
     return
 
 
@@ -126,7 +137,7 @@ class MongoClient:
         # actually startup mongo
         self._preclean()
         self._startserver()
-        self.open(getattr(rc, 'host', None))
+        self.open()
 
     def _preclean(self):
         mongodbpath = self.rc.mongodbpath
@@ -160,13 +171,18 @@ class MongoClient:
         else:
             return False
 
-    def open(self, host=None):
+    def open(self):
         """Opens the database client"""
-        if host is None:
-            host = 'localhost:27017'
+        settings = dict()
+        host = getattr(self.rc, 'host')
+        if host is not None:
+            settings.update({'host': host})
+        uri = getattr(self.rc, 'uri')
+        if uri is not None:
+            settings.update({'uri': uri})
         while self.client is None:
             try:
-                self.client = pymongo.MongoClient(host)
+                self.client = pymongo.MongoClient(**settings)
             except (AutoReconnect, ConnectionFailure):
                 time.sleep(0.1)
         while not self.is_alive():
@@ -181,10 +197,12 @@ class MongoClient:
         db : dict
             The dictionary of data information, such as 'name'.
         """
+        host = getattr(self.rc, 'host')
+        uri = getattr(self.rc, 'uri')
         dbpath = dbpathname(db, self.rc)
         dbname = db['name']
-        import_jsons(dbpath, dbname)
-        import_yamls(dbpath, dbname)
+        import_jsons(dbpath, dbname, host=host, uri=uri)
+        import_yamls(dbpath, dbname, host=host, uri=uri)
         return
 
     def dump_database(self, db):

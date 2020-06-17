@@ -266,7 +266,15 @@ def create_parser():
         "fs-to-mongo", help="Import database from filesystem to mongodb. Optional 'mongohost' in configuration "
                             "json file."
     )
-    ftm.add_argument("--host", help="The host of mongodb. Default 'localhost:27017'.", default=None)
+    ftm.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
+                                    "default, the mongoimport attempts to connect to a MongoDB instance running "
+                                    "on the localhost on port number 27017.",
+                     dest="host",
+                     default=None)
+    ftm.add_argument("--uri", help="Specify a resolvable URI connection string (enclose in quotes) "
+                                   "to connect to the MongoDB deployment.",
+                     dest="uri",
+                     default=None)
 
     # Validator
     val = subp.add_parser("validate", help="Validates db")
