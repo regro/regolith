@@ -10,9 +10,11 @@ from copy import deepcopy, copy
 from calendar import monthrange
 from copy import deepcopy
 from datetime import datetime, date, timedelta
+from dateutil import parser as date_parser
+from dateutil.relativedelta import relativedelta
 
 from regolith.chained_db import ChainDB
-from regolith.dates import month_to_int, date_to_float, get_dates, last_day
+from regolith.dates import month_to_int, date_to_float, get_dates, last_day, is_current
 from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
 from regolith.chained_db import ChainDB
 
@@ -1288,3 +1290,30 @@ def get_id_from_name(coll, name):
     if person:
         return person["_id"]
     else: return None
+
+def is_fully_appointed(appts, begin_date, end_date):
+    status = [True, '']
+    if isinstance(begin_date,str):
+         begin_date = date_parser.parse(begin_date).date()
+    if isinstance(end_date, str):
+        end_date = date_parser.parse(end_date).date()
+    timespan = end_date - begin_date
+    loading = []
+    max, min = 0.0, 1.0
+    for x in range(0, timespan.days):
+        loading.append(0.0)
+        day = begin_date + relativedelta(days=x)
+        for appt in appts:
+            if is_current(appt, now=day):
+                loading[x] = loading[x] + appt.get("loading")
+        if loading[x] > 1.0:
+            status[0] = False
+            if loading[x] > max:
+                max = loading[x]
+                status[1] = "max {} at {}".format(max, str(day))
+        if loading[x] < 1.0:
+            status[0] = False
+            if loading[x] < min:
+                min = loading[x]
+                status[1] = "min {} at {}".format(min, str(day))
+    return status
