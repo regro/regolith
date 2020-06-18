@@ -61,7 +61,20 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
-    ]
+    (["helper", "u_milestone", "20sb_firstprojectum", "--number", "4",
+      "-s", "c", "--due_date", "2020-05-30"],
+     "20sb_firstprojectum has been updated in projecta\n"
+     ),
+    (["helper", "u_milestone", "20sb_firstprojectum"],
+     "Please choose from one of the following to update/add:\n"
+     "1. new milestone\n"
+     "2. Kick off meeting    due date: 2020-05-06    finished\n"
+     "3. Project lead presentation    due date: 2020-05-20    proposed\n"
+     "4. planning meeting    due date: 2020-05-30    converged\n"
+     "5. deliverable    due date: 2021-05-05    finalized\n"
+     ),
+]
+
 
 
 @pytest.mark.parametrize("hm", helper_map)

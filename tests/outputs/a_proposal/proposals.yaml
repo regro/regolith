@@ -53,15 +53,15 @@ dmref15:
   pi: Simon Billinge
   status: accepted
   team:
-    - institution: Columbia Unviersity
+    - institution: Columbia University
       name: qdu
-      position: Co-PI
-    - institution: Columbia Unviersity
+      position: co-pi
+    - institution: Columbia University
       name: dhsu
-      position: Co-PI
-    - institution: Columbia Unviersity
+      position: co-pi
+    - institution: Columbia University
       name: sbillinge
-      position: PI
+      position: pi
       subaward_amount: 330000.0
   title: 'DMREF: Novel, data validated, nanostructure determination methods for accelerating
     materials discovery'
