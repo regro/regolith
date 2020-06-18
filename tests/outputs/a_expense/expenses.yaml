@@ -1,95 +1,103 @@
 2003sb_google:
-	begin_day: 22
-	begin_month: 3
-	begin_year: 2020
-	end_day: 22
-	end_month: 3
-	end_year: 2020
 	expense_type: business
-	grant_percentages:
-		- 100
+	grant_percenatges:
+		- 50.0
+		- 50.0
 	grants:
 		- dmref15
-	itemized_expenses:
-		- day: 22
-		  month: 3
-		  purpose: payment for cloud services
-		  segregated_expense: 0.0
-		  unsegregated_expense: 0.0
-	notes: []
-	overall_purpose: Payment to Google Cloud to pay for cloud services
-	payee: sbillinge
-	reimbursments:
-		- amount: 159.18
-		  day: 6
-		  month: 4
-		  submission_day: 22
-		  submission_month: 3
-		  submission_year: 2020
-		  where: Bank
-		  year: 2020
-	status: submitted
-2003st_beamtime1:
-	begin_day: 14
-	begin_month: Feb
-	begin_year: 2020
-	end_day: 18
-	end_month: Feb
-	end_year: 2020
-	expense_type: travel
-	grant_percentages:
-		- 100
-	grants:
 		- mrsec14
 	itemized_expenses:
-		- day: 14
-		  month: Feb
-		  year: 2020
-		  purpose: Buy the train ticket (Penn station to Ronkonkoma LIRR station)
-		  unsegregated_expense: 14.25
-		  segregated_expense: 0.0
-		- day: 14
-		  month: Feb
-		  year: 2020
-		  purpose: Pay the rent of the dorm at BNL for three nights
-		  unsegregated_expense: 156.0
-		  segregated_expense: 0.0
-		- day: 16
-		  month: Feb
-		  year: 2020
-		  purpose: Buy lunch for three group members (Rohan Pokratath, Sani Harouna-Mayer,
-			  Hung Vuong) and myself from TGI Friday's
-		  unsegregated_expense: 82.42
-		  segregated_expense: 0.0
-		- day: 17
-		  month: Feb
-		  year: 2020
-		  purpose: Buy dinner for myself from TGI Friday's
-		  unsegregated_expense: 27.67
-		  segregated_expense: 0.0
 		- day: 18
-		  month: Feb
-		  year: 2020
-		  purpose: Buy lunch for myself from wasabi
-		  unsegregated_expense: 19.65
-		  segregated_expense: 0.0
-		- day: 18
-		  month: Feb
-		  year: 2020
-		  purpose: Pay for the Uber (BNL to Ronkonkoma LIRR station)
-		  unsegregated_expense: 23.41
-		  segregated_expense: 0.0
-		- day: 18
-		  month: Feb
-		  year: 2020
-		  purpose: Buy the train ticket (Ronkonkoma LIRR station to Penn station)
-		  unsegregated_expense: 14.25
-		  segregated_expense: 0.0
-	notes: []
-	overall_purpose: Travel to the Brookhaven National Laboratory (BNL) to conduct x-ray
-		diffraction experiments
-	payee: sstao
-	status: submitted
+		- month: june
+		- year: 2020
+		- purpose: Payment to Google Cloud to pay for cloud services
+	payee: sbillinge
+	project: google
+	overall_purpose: Payment to Google Cloud to pay for cloud services
+test:
+	expense_type: business
+	grant_percentages:
+		- 50
+		- 50
+	grants:
+		- dmref15
+		- mrsec14
+	itemized_expenses:
+		- day: 1
+		  month: jan
+		  year: 2018
+		  purpose: test
+		  unsegregated_expense: 10
+		  segregated_expense: 0
+		- day: 2
+		  month: jan
+		  year: 2018
+		  purpose: test
+		  unsegregated_expense: 20
+		  segregated_expense: 0
+		- day: 3
+		  month: jan
+		  year: 2018
+		  purpose: test
+		  unsegregated_expense: 30
+		  segregated_expense: 0
+		- day: 4
+		  month: jan
+		  year: 2018
+		  purpose: 2
+		  unsegregated_expense: 40
+		  segregated_expense: 0
+		- day: 5
+		  month: jan
+		  year: 2018
+		  purpose: test
+		  unsegregated_expense: 50
+		  segregated_expense: 0
+		- day: 6
+		  month: jan
+		  year: 2018
+		  purpose: test
+		  unsegregated_expense: 60
+		  segregated_expense: 0
+		- day: 7
+		  month: jan
+		  year: 2018
+		  purpose: test
+		  unsegregated_expense: 70
+		  segregated_expense: 0
+		- day: 8
+		  month: jan
+		  year: 2018
+		  purpose: test
+		  unsegregated_expense: 80
+		  segregated_expense: 0
+		- day: 9
+		  month: jan
+		  year: 2018
+		  purpose: test
+		  unsegregated_expense: 90
+		  segregated_expense: 0
+		- day: 10
+		  month: jan
+		  year: 2018
+		  purpsoe: test
+		  unsegregated_expense: 100
+		  segregated_expense: 0
+	payee: scopatz
+	project: cyclus
+	overall_purpose: testing for databallectionsse
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
