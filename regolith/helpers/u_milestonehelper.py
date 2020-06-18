@@ -81,6 +81,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
             item['identifier'] = 'milestones'
         all_milestones = [deliverable, kickoff]
         all_milestones.extend(milestones)
+        for i in all_milestones:
+            if isinstance(i['due_date'], str):
+                i['due_date'] = dt.date.fromisoformat(i['due_date'])
         all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
         index = 2
         numbered_milestones = {}
@@ -108,7 +111,11 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     current_mil = numbered_milestones[i]
                     del current_mil['identifier']
                 raise RuntimeError("name, objective, and due date are required for a new milestone")
-            mil.update({'due_date': rc.due_date, 'objective': rc.objective, 'name': rc.name})
+            if isinstance(rc.due_date, str):
+                mil.update({'due_date': dt.date.fromisoformat(rc.due_date)})
+            else:
+                mil.update({'due_date': rc.due_date})
+            mil.update({'objective': rc.objective, 'name': rc.name})
             mil.update({'audience': ['lead', 'pi', 'group_members']})
             if rc.status:
                 mil.update({'status': ALLOWED_STATUS[rc.status]})
@@ -124,7 +131,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
             doc = numbered_milestones[rc.number]
             identifier = doc['identifier']
             if rc.due_date:
-                doc.update({'due_date':rc.due_date})
+                if isinstance(rc.due_date, str):
+                    doc.update({'due_date': dt.date.fromisoformat(rc.due_date)})
+                else:
+                    doc.update({'due_date': rc.due_date})
             if rc.status:
                 doc.update({'status': ALLOWED_STATUS[rc.status]})
             if identifier == 'milestones':
