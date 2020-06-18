@@ -1302,9 +1302,9 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
         ----------
         person: dict
             The person whose appointments need to be checked
-        begin_date: datetime, string
+        begin_date: datetime, string, optional
             The start date of the interval of time to check appointments for
-        end_date:
+        end_date: datetime, string, optional
             The end date of the interval of time to check appointments for
 
         Returns
@@ -1321,8 +1321,8 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
         >>> aejaz = {"name": "Adiba Ejaz", "_id": "aejaz", "appointments": appts}
         >>> is_fully_appointed(aejaz, "2017-06-01", "2017-06-30")
 
-        In this case, we have an insufficient loading and minimum of 0.0 on 2017-06-16, hence it would return an array
-        with False at index 0 and "min 0.0 at 2017-06-16" at index 1.
+        In this case, we have an insufficient loading and minimum of 0.0 on 2017-06-16, hence it would return False and
+        print "aejaz is short of full loading with minimim 0.0 on 2017-06-16".
         """
 
     status = True
