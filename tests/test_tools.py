@@ -681,7 +681,7 @@ def test_month_and_year(input,expected):
              "grant": "grant1",
              "loading": 1.0,
              "type": "pd",
-            }]}, "2017-06-01", "2017-06-30", [True, '']),
+            }]}, "2017-06-01", "2017-06-30", True),
         ({"name": "MC Escher",
           "_id": "mcescher",
           "appointments": [
@@ -696,7 +696,7 @@ def test_month_and_year(input,expected):
             "grant": "grant2",
             "loading": 0.5,
             "type": "pd",
-            }]} , "2017-06-01", "2017-06-30", [True, '']),
+            }]} , "2017-06-01", "2017-06-30", True),
         ({"name": "Johann Sebastian Bach",
           "_id": "jsbach",
           "appointments":[
@@ -711,7 +711,7 @@ def test_month_and_year(input,expected):
              "grant": "grant2",
              "loading": 0.5,
              "type": "pd",
-            }]}, "2017-06-01", "2017-06-30", [False, 'min 0.5 at 2017-06-01']),
+            }]}, "2017-06-01", "2017-06-30", False),
         ({"name": "Evariste Galois",
           "_id": "egalois",
           "appointments": [
@@ -726,7 +726,7 @@ def test_month_and_year(input,expected):
              "grant": "grant2",
              "loading": 1.0,
              "type": "pd",
-            }]},"2017-06-01", "2017-06-30", [True, '']),
+            }]},"2017-06-01", "2017-06-30", True),
         ({"name": "Ludwig Wittgenstein",
           "_id": "lwittgenstein",
           "appointments": [
@@ -747,7 +747,7 @@ def test_month_and_year(input,expected):
              "grant": "grant3",
              "loading": 1.0,
              "type": "pd",
-            }]}, "2017-06-01", "2017-06-30", [False, 'min 0.0 at 2017-06-16']),
+            }]}, "2017-06-01", "2017-06-30", False),
         ({"name": "Buckminster Fuller",
           "_id": "bfuller",
           "appointments":[
@@ -762,7 +762,7 @@ def test_month_and_year(input,expected):
              "grant": "grant2",
              "loading": 1.0,
              "type": "pd",
-            }]}, "2017-06-01", "2017-06-30", [False, 'max 2.0 at 2017-06-17']),
+            }]}, "2017-06-01", "2017-06-30", False),
         ({"name": "Sophie Germain",
           "_id": "sgermain",
           "appointments": [
@@ -777,7 +777,7 @@ def test_month_and_year(input,expected):
              "grant": "grant2",
              "loading": 0.9,
              "type": "pd",
-            }]}, None, None, [False, 'min 0.1 at 2017-07-01']),
+            }]}, None, None, False),
         ({"name": "Karl Popper",
           "_id": "kpopper",
           "appointments": [
@@ -798,7 +798,7 @@ def test_month_and_year(input,expected):
                "grant": "grant3",
                "loading": 0.9,
                "type": "pd",
-               }]}, None, None, [False, 'min 0.1 at 2017-06-17']),
+               }]}, None, None, False),
         ({"name": "GEM Anscombe",
           "_id": "ganscombe",
           "appointments": [
@@ -813,7 +813,7 @@ def test_month_and_year(input,expected):
                "grant": "grant2",
                "loading": 0.9,
                "type": "pd",
-              }]}, None, None, [True, '']),
+              }]}, None, None, True),
     ],
 )
 def test_is_fully_appointed(appts, start, end, expected):
