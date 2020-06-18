@@ -51,7 +51,7 @@ helper_map = [
      "20sb_firstprojectum has been updated with a log_url of this is a test\n"
      ),
     (["helper", "u_logurl", "20ly", "this is a test pt.2"],
-     "There does not seem to be a projectum with this name in this database.\n"
+     "There does not seem to be a projectum with this exact name in this database.\n"
      "However, there are projecta with similar names: \n"
      "1. 20ly_newprojectum\n"
      "Please rerun the u_logurl helper with the same name as previously inputted, "
