@@ -1,25 +1,33 @@
 """Client interface for MongoDB."""
+import itertools
 import os
+import shutil
+import subprocess
 import sys
 import time
-import shutil
-from xonsh.lib import subprocess
-from glob import iglob
-from warnings import warn
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from ruamel.yaml import YAML
 
 #
 # setup mongo
 #
 try:
     import pymongo
+    from pymongo.database import Database
     from pymongo.errors import AutoReconnect, ConnectionFailure
 
     MONGO_AVAILABLE = True
 except ImportError:
+    print(
+        "pymongo not found. Please install it following the instructions "
+        "https://pymongo.readthedocs.io/en/stable/installation.html"
+    )
     MONGO_AVAILABLE = False
 
-from regolith.tools import dbdirname, dbpathname, fallback
-
+from regolith.tools import dbpathname, fallback
+from regolith import fsclient
 
 if not MONGO_AVAILABLE:
     ON_PYMONGO_V2 = ON_PYMONGO_V3 = False
@@ -31,6 +39,69 @@ else:
     ON_PYMONGO_V3 = True
 
 
+def import_jsons(dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
+    """Import the json files to mongo db.
+
+    Each json file will be a collection in the database. The _id will be the same as it is in the json file.
+
+    Parameters
+    ----------
+    dbpath : str
+        The path to the db folder.
+
+    dbname : str
+        The name of the database in mongo.
+
+    host : str
+        The hostname or IP address or Unix domain socket path of a single mongod or mongos instance to connect
+        to, or a mongodb URI, or a list of hostnames / mongodb URIs.
+
+    uri : str
+        Specify a resolvable URI connection string (enclose in quotes) to connect to the MongoDB deployment.
+    """
+    for json_path in Path(dbpath).glob("*.json"):
+        cmd = ["mongoimport"]
+        if host is not None:
+            cmd += ['--host', host, "--db", dbname]
+        if uri is not None:
+            cmd += ['--uri', uri]
+        cmd += ["--collection", json_path.stem, "--file", str(json_path)]
+        subprocess.check_call(cmd)
+    return
+
+
+def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
+    """Import the yaml files to mongo db.
+
+    Each yaml file will be a collection in the database. The _id will be the id_key for each doc in the yaml file.
+
+    Parameters
+    ----------
+    dbpath : str
+        The path to the db folder.
+
+    dbname : str
+        The name of the database in mongo.
+
+    host : str
+        The hostname or IP address or Unix domain socket path of a single mongod or mongos instance to connect
+        to, or a mongodb URI, or a list of hostnames / mongodb URIs.
+
+    uri : str
+        Specify a resolvable URI connection string (enclose in quotes) to connect to the MongoDB deployment.
+    """
+    yaml_files = itertools.chain(Path(dbpath).glob('*.yaml'), Path(dbpath).glob('*.yml'))
+    with TemporaryDirectory() as tempd:
+        for yaml_file in yaml_files:
+            json_file = Path(tempd).joinpath(yaml_file.with_suffix('.json').name)
+            loader = YAML(typ='safe')
+            loader.constructor.yaml_constructors[u'tag:yaml.org,2002:timestamp'] = \
+                loader.constructor.yaml_constructors[u'tag:yaml.org,2002:str']
+            fsclient.yaml_to_json(str(yaml_file), str(json_file), loader=loader)
+        import_jsons(tempd, dbname, host=host, uri=uri)
+    return
+
+
 @fallback(ON_PYMONGO_V2, None)
 class InsertOneProxy(object):
     def __init__(self, inserted_id, acknowledged):
@@ -39,13 +110,24 @@ class InsertOneProxy(object):
 
 
 class MongoClient:
-    """A client backed by MongoDB."""
+    """A client backed by MongoDB.
+
+    The mongodb server will be automatically opened when the client is initiated.
+
+    Attributes
+    ----------
+    rc : RunControl
+        The RunControl. It may include the 'mongohost' attribute to initiate the client.
+
+    client : MongoClient
+        The mongo client. It is initiate from the 'mongohost' attribute if it exists in rc. Otherwise,
+        it will be initiated from the 'localhost'.
+
+    proc : Popen
+        The Popen of 'mongod --dpath <mongodbpath>'. The 'mongodbpath' is from rc.
+    """
 
     def __init__(self, rc):
-        warn(
-            "Mongo support will be deprecated in the near future please use "
-            "fsclient.FileSystemClient"
-        )
         if not MONGO_AVAILABLE:
             raise RuntimeError(
                 "MongoDB is not available on the current system."
@@ -64,6 +146,7 @@ class MongoClient:
         os.makedirs(mongodbpath)
 
     def _startserver(self):
+        mongodbpath = self.rc.mongodbpath
         self.proc = subprocess.Popen(
             ["mongod", "--dbpath", mongodbpath], universal_newlines=True
         )
@@ -90,30 +173,37 @@ class MongoClient:
 
     def open(self):
         """Opens the database client"""
+        settings = list()
+        host = getattr(self.rc, 'host')
+        if host is not None:
+            settings.append(host)
+        uri = getattr(self.rc, 'uri')
+        if uri is not None:
+            settings.append(uri)
         while self.client is None:
             try:
-                self.client = pymongo.MongoClient()
+                self.client = pymongo.MongoClient(*settings)
             except (AutoReconnect, ConnectionFailure):
                 time.sleep(0.1)
         while not self.is_alive():
             # we need to wait for the server to startup
             time.sleep(0.1)
 
-    def load_database(self, db):
-        """Loads a database via mongoimport.  Takes a database dict db."""
+    def load_database(self, db: dict):
+        """Load the database to the mongo backend.
+
+        Parameters
+        ----------
+        db : dict
+            The dictionary of data information, such as 'name'.
+        """
+        host = getattr(self.rc, 'host')
+        uri = getattr(self.rc, 'uri')
         dbpath = dbpathname(db, self.rc)
-        for f in iglob(os.path.join(dbpath, "*.json")):
-            base, ext = os.path.splitext(os.path.split(f)[-1])
-            cmd = [
-                "mongoimport",
-                "--db",
-                db["name"],
-                "--collection",
-                base,
-                "--file",
-                f,
-            ]
-            subprocess.check_call(cmd)
+        dbname = db['name']
+        import_jsons(dbpath, dbname, host=host, uri=uri)
+        import_yamls(dbpath, dbname, host=host, uri=uri)
+        return
 
     def dump_database(self, db):
         """Dumps a database dict via mongoexport."""

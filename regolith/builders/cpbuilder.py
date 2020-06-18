@@ -5,7 +5,7 @@ from copy import copy
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import month_to_int, is_current
+from regolith.dates import month_to_int, is_current, has_started
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (

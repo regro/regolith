@@ -8,3 +8,4 @@ rever
 openpyxl
 nameparser
 pandas
+pymongo

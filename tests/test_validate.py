@@ -45,14 +45,14 @@ def test_validate_bad_python(make_bad_db):
     assert "Errors found in " in out
     assert "NO ERRORS IN DBS" not in out
 
-
+@pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 def test_validate(make_db):
     repo = make_db
     os.chdir(repo)
     out = subprocess.run(["regolith", "validate"], check=False).out
     assert "NO ERRORS IN DBS" in out
 
-
+@pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 def test_validate_bad(make_bad_db):
     repo = make_bad_db
     os.chdir(repo)

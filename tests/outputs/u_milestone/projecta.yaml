@@ -93,14 +93,14 @@
         - group_members
       status: proposed
       type: meeting
-    - due_date: '2020-05-27'
+    - due_date: '2020-05-30'
       name: planning meeting
       objective: develop a detailed plan with dates
       audience:
         - lead
         - pi
         - group_members
-      status: proposed
+      status: converged
       type: pr
   name: First Projectum
   pi_id: scopatz

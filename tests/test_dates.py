@@ -15,6 +15,7 @@ TEST_DATE = date(2019, 6, 15)
 TEST_START_DATE = date(2019, 1, 1)
 TEST_END_DATE = date(2019, 2, 5)
 
+
 @pytest.mark.parametrize(
     "input,expected",
     [
@@ -26,6 +27,8 @@ TEST_END_DATE = date(2019, 2, 5)
 )
 def test_month_to_str(input, expected):
     assert month_to_str_int(input) == expected
+import datetime
+from regolith.dates import date_to_float, month_to_int
 
 
 @pytest.mark.parametrize(
@@ -44,8 +47,31 @@ def test_get_due_date(input, expected):
 @pytest.mark.parametrize(
     "input,expected",
     [
-        (1, "01"),
-        (10, "10"),
+        ('Jan', 1),
+        (1, 1),
+        ('February', 2)
+    ],
+)
+def test_month_to_int(input, expected):
+    assert month_to_int(input) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ([2019, 1, 15], 2019.0115),
+        ([2019, 'May', 0], 2019.05),
+        ([2019, 'February', 2], 2019.0202)
+    ],
+)
+def test_date_to_float(input, expected):
+    assert date_to_float(input[0], input[1], d=input[2]) == expected
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+            (1, "01"),
+    (10, "10"),
     ],
 )
 def test_day_to_str(input, expected):
@@ -153,6 +179,21 @@ def test_find_gaps_overlaps(input, flag, expected):
           'end_day': 10},
          {'begin_date': datetime.date(2019, 1, 1),
           'end_date': datetime.date(2020, 2, 10),
+          'date': datetime.date(2020, 5, 20)
+          }
+         ),
+        ({'date': datetime.date(2020, 5, 20), 'begin_year': 2019, 'end_year': 2020,
+          'end_month': 'Feb',
+          'end_day': 10},
+         {'begin_date': datetime.date(2019, 1, 1),
+          'end_date': datetime.date(2020, 2, 10),
+          'date': datetime.date(2020, 5, 20)
+          }
+         ),
+        ({'date': datetime.date(2020, 5, 20), 'begin_date': datetime.date(2015, 6, 8),
+          'end_date': datetime.date(2025, 10, 4)},
+         {'begin_date': datetime.date(2015, 6, 8),
+          'end_date': datetime.date(2025, 10, 4),
           'date': datetime.date(2020, 5, 20)
           }
          ),

@@ -9,6 +9,7 @@ from regolith.broker import load_db
 from regolith.main import main
 
 builder_map = [
+    "annual-activity",
     "cv",
     "html",
     "resume",
@@ -53,7 +54,7 @@ def test_builder(bm, make_db):
         os.makedirs("templates/static", exist_ok=True)
     if bm == "reimb" or bm == "recent-collabs":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
-                        "scopatz"], check=True, cwd=repo)
+                        "scopatz"], check=True, cwd=repo )
     elif bm == "annual-activity":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
                         "sbillinge", "--from", "2017-04-01"], check=True, cwd=repo)
@@ -114,6 +115,9 @@ def test_builder_python(bm, make_db):
         os.makedirs("templates/static", exist_ok=True)
     if bm == "reimb" or bm == "recent-collabs":
         main(["build", bm, "--no-pdf", "--people", "scopatz"])
+    elif bm == "annual-activity":
+        main(["build", bm, "--no-pdf", "--people",
+                        "sbillinge", "--from", "2017-04-01"])
     else:
         main(["build", bm, "--no-pdf"])
     os.chdir(os.path.join(repo, "_build", bm))
