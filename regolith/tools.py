@@ -1232,6 +1232,7 @@ def group_member_ids(ppl_coll, grpname):
                     grpmembers.add(person["_id"])
     return grpmembers
 
+
 def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
     """Retrieves a list of all documents from the collection where the fragment
     appears in any one of the given fields
@@ -1284,6 +1285,7 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
                     break
     return ret_list
 
+
 def get_id_from_name(coll, name):
     person = fuzzy_retrieval(coll,["name", "aka", "_id"], name,
                              case_sensitive=False)
@@ -1291,14 +1293,15 @@ def get_id_from_name(coll, name):
         return person["_id"]
     else: return None
 
+
 def is_fully_appointed(person, begin_date=None, end_date=None):
     """Checks if a collection of appointments for a person is valid and fully loaded
         for a given interval of time
 
         Parameters
         ----------
-        appts: iterable
-            The iterable of appointments
+        person: dict
+            The person whose appointments need to be checked
         begin_date: datetime, string
             The start date of the interval of time to check appointments for
         end_date:
@@ -1306,11 +1309,8 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
 
         Returns
         -------
-        list:
-            A list with is a boolean at index 0, True if the person
-            is fully appointed and False if not, and  a string at index 1
-            which is empty if fully appointed or contains the max/min loading
-            and corresponding date if not
+        bool:
+            True if the person is fully appointed and False if not
 
         Examples
         --------
@@ -1325,7 +1325,7 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
         with False at index 0 and "min 0.0 at 2017-06-16" at index 1.
         """
 
-    status = [True, '']
+    status = True
     appts = person.get('appointments')
     earliest = get_dates(appts[0])['begin_date']
     latest = get_dates(appts[0])['end_date']
@@ -1335,10 +1335,8 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
             earliest = dates['begin_date']
         if dates['end_date'] > latest:
             latest = dates['end_date']
-    if not begin_date:
-        begin_date = earliest
-    if not end_date:
-        end_date = latest
+    begin_date = earliest if not begin_date else begin_date
+    end_date = latest if not end_date else end_date
     if begin_date > end_date:
         raise ValueError("invalid begin and end dates")
     if isinstance(begin_date, str):
@@ -1346,8 +1344,7 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
     if isinstance(end_date, str):
         end_date = date_parser.parse(end_date).date()
     timespan = end_date - begin_date
-    loading = []
-    max, min = 0.0, 1.0
+    loading, max, min, help = [], 0.0, 1.0, ''
     for x in range(0, timespan.days):
         loading.append(0.0)
         day = begin_date + relativedelta(days=x)
@@ -1355,13 +1352,15 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
             if is_current(appt, now=day):
                 loading[x] = loading[x] + appt.get("loading")
         if loading[x] > 1.0:
-            status[0] = False
+            status = False
             if loading[x] > max:
                 max = loading[x]
-                status[1] = "max {} at {}".format(max, str(day))
+                help = "{} exceeds full loading with maximum value {} on {}".format(person.get('_id'), max, str(day))
         if loading[x] < 1.0:
-            status[0] = False
+            status = False
             if loading[x] < min:
                 min = loading[x]
-                status[1] = "min {} at {}".format(min, str(day))
+                help = "{} is short of full loading with minimum value {} on {}".format(person.get('_id'), min, str(day))
+    if help:
+        print(help)
     return status
