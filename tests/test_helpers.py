@@ -89,6 +89,11 @@ helper_map = [
      "1. Anthony as a new contact\n"
      "2. Anthony B Friend    id: afriend \n"
      ),
+    (["helper", "u_contact", "friend", "--date", "2020-01-02"],
+     "Please choose from one of the following to update/add:\n"
+     "1. friend as a new contact\n"
+     "2. Anthony B Friend    id: afriend \n"
+     ),
     (["helper", "u_contact", "Maria", "--date", "2020-01-02"],
      "Please choose from one of the following to update/add:\n"
      "1. Maria as a new contact\n"
