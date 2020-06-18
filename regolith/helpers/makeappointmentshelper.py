@@ -87,9 +87,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        gaps = []
-        outdated = []
-        depleted = []
+        gaps, outdated, depleted = [], [], []
         if rc.underspent:
             underspent =[]
         if rc.overspent:
@@ -105,9 +103,9 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         for person in self.gtx["people"]:
             appts = person.get("appointments")
-            if not is_fully_appointed(appts, begin_date=rc.begin_date, end_date=rc.end_date)[0]:
+            if not is_fully_appointed(appts, begin_date=begin_date, end_date=end_date)[0]:
                 gaps.append(person.get('name'))
-                gaps.append((is_fully_appointed(appts, begin_date=rc.begin_date, end_date=rc.end_date))[1])
+                gaps.append((is_fully_appointed(appts, begin_date=begin_date, end_date=end_date))[1])
             for appt in appts:
                 grant = rc.client.find_one(rc.database, self.gtx["grants"], {"_id": appt.get("grant")})
                 timespan = end_date - begin_date
