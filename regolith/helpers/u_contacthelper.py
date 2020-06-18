@@ -75,9 +75,10 @@ class ContactUpdaterHelper(DbHelperBase):
         name = HumanName(rc.name)
         frag = fragment_retrieval(self.gtx['contacts'], ["_id", "aka", "name"], rc.name)
         ids = set(i.get('_id') for i in frag)
+        sorted_ids = sorted(ids)
         index = 1
         all_names = {}
-        for i in ids:
+        for i in sorted_ids:
             currentid = rc.client.find_one(rc.database, rc.coll, {'_id': i})
             index += 1
             all_names[str(index)] = {"_id":i, "name":currentid.get("name")}
@@ -117,7 +118,7 @@ class ContactUpdaterHelper(DbHelperBase):
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
         pdoc.update({'updated': now})
-
+        print(all_names)
         rc.client.update_one(rc.database, rc.coll, {'_id': key}, pdoc)
         print("{} has been added/updated in contacts".format(rc.name))
 
