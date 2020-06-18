@@ -47,8 +47,17 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
-    (["helper", "u_logurl", "20ly", "-n 1", "this is a test pt.2"],
-     "20ly_newprojectum has been updated with a log_url of this is a test pt.2\n"),
+    (["helper", "u_logurl", "20sb", "-n 1", "this is a test"],
+     "20sb_firstprojectum has been updated with a log_url of this is a test\n"
+     ),
+    (["helper", "u_logurl", "20ly", "this is a test pt.2"],
+     "There does not seem to be a projectum with this name in this database.\n"
+     "However, there are projecta with similar names: \n"
+     "1. 20ly_newprojectum\n"
+     "Please rerun the u_logurl helper with the same name as previously inputted, "
+     "but with the addition of -n followed by a number corresponding to one of the "
+     "above listed projectum ids that you would like to update.\n"
+     ),
 ]
 
 

@@ -4,15 +4,9 @@
 """
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.tools import (
-    all_docs_from_collection,
-)
+from regolith.tools import all_docs_from_collection
 
 TARGET_COLL = "projecta"
-ALLOWED_TYPES = ["nsf", "doe", "other"]
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused",
-                 "cancelled"]
-
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="The ID of the Projectum",
@@ -54,38 +48,40 @@ class LogUrlUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         key = f"{rc.projectum_id}"
-        filterid = {'_id' : key}
+        filterid = {'_id': key}
         found_projectum = rc.client.find_one(rc.database, rc.coll, filterid)
+
         # find all similar projectum ids
         ids = []
         for projectum in self.gtx["projecta"]:
             if key in projectum.get("_id"):
                 ids.append(projectum.get("_id"))
 
+        # no matches to id fragment and id does not exist
         if found_projectum is None and len(ids) == 0:
             raise RuntimeError("Please input a valid projectum id or a valid fragment of a projectum id")
+
+        # id fragment and no inputted number
         elif found_projectum is None and not rc.number:
             print("There does not seem to be a projectum with this name in this database.")
-            print("However, there are projectums with similar names: ")
+            print("However, there are projecta with similar names: ")
             for i in range(len(ids)):
-                print(str(i+1) + ". " + str(ids[i]))
+                print(f"{i + 1}. {ids[i]}")
             print("Please rerun the u_logurl helper with the same name as previously inputted, "
                   "but with the addition of -n followed by a number corresponding to one of the above listed "
                   "projectum ids that you would like to update.")
+
+        # id fragment and inputted number
         elif found_projectum is None:
             if int(rc.number) < 1 or int(rc.number) > len(ids):
-                print("Sorry, you picked an invalid number")
-                print("Here are the projectums with similar names: ")
-                for i in range(len(ids)):
-                    print(str(i + 1) + ". " + str(ids[i]))
-                print("Please rerun the u_logurl helper with the same name as previously inputted, "
-                      "but with the addition of -n followed by a number corresponding to one of the above listed "
-                      "projectum ids that you would like to update.")
+                raise RuntimeError("Sorry, you picked an invalid number.")
             else:
-                filterid = {'_id' : ids[int(rc.number) - 1]}
+                filterid = {'_id': ids[int(rc.number) - 1]}
                 rc.client.update_one(rc.database, rc.coll, filterid, {'log_url': rc.log_url})
-                print(str(ids[int(rc.number) - 1]) + " has been updated with a log_url of " + rc.log_url)
+                print(f"{ids[int(rc.number) - 1]} has been updated with a log_url of {rc.log_url}")
+
+        # id exists
         else:
             rc.client.update_one(rc.database, rc.coll, filterid, {'log_url': rc.log_url})
-            print(rc.projectum_id + " has been updated with a log_url of " + rc.log_url)
+            print(f"{rc.projectum_id} has been updated with a log_url of {rc.log_url}")
         return
