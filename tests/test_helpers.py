@@ -54,10 +54,6 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
-    (["helper", "u_contact", "Anthony B Friend", "--id", "afriend", "-a", "Friend", "--date", "2020-01-02",
-      "-n", "Test note"],
-     "Anthony B Friend has been added/updated in contacts\n"
-     ),
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
@@ -83,6 +79,19 @@ helper_map = [
      "Please rerun the u_logurl helper with the same name as previously inputted, "
      "but with the addition of -n followed by a number corresponding to one of the "
      "above listed projectum ids that you would like to update.\n"
+     ),
+    (["helper", "u_contact", "afriend", "--number", "2",
+      "--notes", "Test note", "-a", "Friend", "--date", "2020-01-02"],
+     "afriend has been added/updated in contacts\n"
+     ),
+    (["helper", "u_contact", "Anthony", "--date", "2020-01-02"],
+     "Please choose from one of the following to update/add:\n"
+     "1. Anthony as a new contact\n"
+     "2. Anthony B Friend    id: afriend \n"
+     ),
+    (["helper", "u_contact", "Maria", "--date", "2020-01-02"],
+     "Please choose from one of the following to update/add:\n"
+     "1. Maria as a new contact\n"
      ),
 ]
 
