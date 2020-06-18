@@ -56,6 +56,8 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
+    (["helper", "l_appointments", "-g", "mrsec14"], "f19, scopatz, loading=0.75, 2019-09-01 to 2019-10-31\n"
+     ),
 
     ]
 
