@@ -24,6 +24,9 @@ def subparser(subpi):
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
                        )
+    subpi.add_argument("purpose", help="A short description of expense purpose",
+                       default=None)
+    subpi.add_argument("reimbur")
     subpi.add_argument("-b", "--business", action='store_true',
                        help="expense type is business. If not specified defaults to travel"
                        )
@@ -84,16 +87,28 @@ class ExpenseAdderHelper(DbHelperBase):
         gtx["zip"] = zip
 
     def db_updater(self):
+        gtx = self.gtx
+
         rc = self.rc
-        if not rc.date:
-            now = dt.date.today()
+
+        if not rc.begin_date:
+            begin_date = dt.date.today() # string with date time format
+            begin_date = begin_date.strftime('%Y-%m-%d')
         else:
-            now = date_parser.parse(rc.date).date()
-        if not rc.due_date:
-            due_date = now + relativedelta(years=1)
+            begin_date = rc.begin_date() # need to raise exception for wrongly formatted user input
+        if not rc.end_date:
+            end_date = dt.date.today()
+            end_date = end_date.strftime('%Y-%m-%d')
         else:
-            due_date = date_parser.parse(rc.due_date).date()
-        key = f"{str(now.year)[2:]}{rc.lead[:2]}_{''.join(rc.name.casefold().split()).strip()}"
+            end_date = rc.end_date
+
+        # defaults to sbillinge
+        if rc.payee:
+            key = f"{str(begin_date.year)[2:]}{rc.payee[:2]}_{''.join(rc.name.casefold().split()).strip()}"
+        else:
+            key = f"{str(begin_date.year)[2:]}{'sb'}_{''.join(rc.name.casefold().split()).strip()}"
+
+
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
@@ -103,81 +118,61 @@ class ExpenseAdderHelper(DbHelperBase):
         else:
             pdoc = {}
 
-        pdoc.update({
-            'begin_date': now,
-            'log_url': '',
-            'name': rc.name,
-            'pi_id': rc.pi_id,
-            'lead': rc.lead,
-        })
-        if rc.lead is "tbd":
-            pdoc.update({
-                'status': 'proposed'
-            })
-        else:
-            pdoc.update({
-                'status': 'started'
-            })
 
-        if rc.description:
-            pdoc.update({
-                'description': rc.description,
-            })
+        pdoc.update({
+            "begin_year": int(begin_date.split('-')[0]),
+             "begin_month": int(begin_date.split('-')[1]),
+             "begin_day": int(begin_date.split('-')[2]),
+             "end_year": int(end_date.split('-')[0]),
+             "end_month": int(end_date.split('-')[1]),
+             "end_day": int(end_date.split('-')[2])
+             })
+        if rc.business:
+            pdoc.update({'expense_type': "business"
+                         })
+        else:
+            pdoc.update({"expense_type":"travel"
+                         })
+    # Updates the grants, assumes equal percentage for each grant
         if rc.grants:
             if isinstance(rc.grants, str):
                 rc.grants = [rc.grants]
-            pdoc.update({'grants': rc.grants})
+            percentages = [100 / len(rc.grants) for i in rc.grants]
         else:
-            pdoc.update({'grants': ["tbd"]})
-        if rc.group_members:
-            if isinstance(rc.group_members, str):
-                rc.group_members = [rc.group_members]
-            pdoc.update({'group_members': rc.group_members})
-        else:
-            pdoc.update({'group_members': []})
-        if rc.collaborators:
-            if isinstance(rc.collaborators, str):
-                rc.collaborators = [rc.collaborators]
-            pdoc.update({
-                'collaborators': rc.collaborators,
-            })
-        else:
-            pdoc.update({
-                'collaborators': [],
-            })
+            rc.grants = 'tbd'
+            percentages = 0 #No grant => no percentage?
 
-        pdoc.update({"_id": key})
-        pdoc.update({"deliverable": {
-            "due_date": due_date,
-            "audience": ["beginning grad in chemistry"],
-            "success_def": "audience is happy",
-            "scope": [
-                "UCs that are supported or some other scope description if it software",
-                "sketch of science story if it is paper"],
-            "platform": "description of how and where the audience will access the deliverable.  journal if it is a paper",
-            "roll_out": [
-                "steps that the audience will take to access and interact with the deliverable",
-                "not needed for paper submissions"],
-            "status": "proposed"}
+        # segregated expense
+        if not rc.segregated:
+            rc.segregated = "0"
+
+
+
+        pdoc.update({"grant_percentages": percentages,
+                     "grants": rc.grants,
+                     "itemized_expenses":{
+                         [{"day": int(begin_date.split('-')[2]),
+                           "month": int(begin_date.split('-')[1]),
+                           "purpose": rc.purpose,
+                           "segregated_expense" : int(rc.segregated),
+                           "unsegregated_expense": int(rc.amount) - int(rc.segregated)
+                         }]
+                     }
+                     })
+        # Notes
+        if rc.notes:
+            if isinstance(rc.notes, str)
+            notes = [rc.notes]
+        else:
+            notes = []
+        pdoc.update({
+            "notes": notes,
+            "overall_purpose": rc.purpose,
+            "payee": rc.payee
+
         })
-        pdoc.update({"kickoff": {
-            "due_date": now + relativedelta(days=7),
-            "audience": ["lead", "pi", "group_members"],
-            "name": "Kick off meeting",
-            "objective": "introduce project to the lead",
-            "status": "proposed"
-        }})
 
-        secondm = {'due_date': now + relativedelta(days=21),
-                   'name': 'Project lead presentation',
-                   'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
-                   'audience': ['lead', 'pi', 'group_members'],
-                   'status': 'proposed',
-                   'type': 'meeting'
-                   }
-        pdoc.update({"milestones": [secondm]})
 
-        rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print(f"{key} has been added in {TARGET_COLL}")
 
