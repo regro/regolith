@@ -84,16 +84,6 @@
   lead: ascopatz
   log_url: this is a test
   milestones:
-    - date: '2020-05-05'
-      due_date: '2020-05-06'
-      name: Kick off meeting
-      objective: roll out of project to team
-      audience:
-        - lead
-        - pi
-        - group_members
-        - collaborators
-      status: finished
     - due_date: '2020-05-20'
       name: Project lead presentation
       objective: lead presents background reading and initial project plan
@@ -103,14 +93,14 @@
         - group_members
       status: proposed
       type: meeting
-    - due_date: '2020-05-27'
+    - due_date: '2020-05-30'
       name: planning meeting
       objective: develop a detailed plan with dates
       audience:
         - lead
         - pi
         - group_members
-      status: proposed
+      status: converged
       type: pr
   name: First Projectum
   pi_id: scopatz
