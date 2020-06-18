@@ -82,13 +82,14 @@ class MilestoneUpdaterHelper(DbHelperBase):
         all_milestones = [deliverable, kickoff]
         all_milestones.extend(milestones)
         all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
-        index = 1
+        index = 2
         numbered_milestones = {}
         for item in all_milestones:
             numbered_milestones[str(index)] = item
             index += 1
         if not rc.number:
             print("Please choose from one of the following to update/add:")
+            print("1. new milestone")
             for i in numbered_milestones:
                 current_mil = numbered_milestones[i]
                 if 'name' in current_mil:
@@ -98,17 +99,15 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     print("{}. {}    due date: {}    {}".format(i, current_mil['identifier'],
                                                                 current_mil["due_date"], current_mil["status"]))
                 del current_mil['identifier']
-            print("{}. new milestone".format(index))
             return
         pdoc = {}
-        #new milestone:
-        if int(rc.number) == index:
+        if int(rc.number) == 1:
             mil = {}
             if not rc.due_date or not rc.name or not rc.objective:
                 for i in numbered_milestones:
                     current_mil = numbered_milestones[i]
                     del current_mil['identifier']
-                raise RuntimeError('Please inform name, objective, and due date to add a new milestone')
+                raise RuntimeError("name, objective, and due date are required for a new milestone")
             mil.update({'due_date': rc.due_date, 'objective': rc.objective, 'name': rc.name})
             mil.update({'audience': ['lead', 'pi', 'group_members']})
             if rc.status:
@@ -121,7 +120,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 mil.update({'type': 'meeting'})
             milestones.append(mil)
             pdoc = {'milestones':milestones}
-        if int(rc.number) < index:
+        if int(rc.number) > 1:
             doc = numbered_milestones[rc.number]
             identifier = doc['identifier']
             if rc.due_date:

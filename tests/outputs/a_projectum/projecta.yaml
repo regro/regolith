@@ -84,16 +84,6 @@
   lead: ascopatz
   log_url: https://docs.google.com/document/d/1YC_wtW5Q
   milestones:
-    - date: '2020-05-05'
-      due_date: '2020-05-06'
-      name: Kick off meeting
-      objective: roll out of project to team
-      audience:
-        - lead
-        - pi
-        - group_members
-        - collaborators
-      status: finished
     - due_date: '2020-05-20'
       name: Project lead presentation
       objective: lead presents background reading and initial project plan
