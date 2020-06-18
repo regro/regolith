@@ -118,7 +118,6 @@ class ContactUpdaterHelper(DbHelperBase):
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
         pdoc.update({'updated': now})
-        print(all_names)
         rc.client.update_one(rc.database, rc.coll, {'_id': key}, pdoc)
         print("{} has been added/updated in contacts".format(rc.name))
 
