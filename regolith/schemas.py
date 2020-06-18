@@ -1283,7 +1283,7 @@ EXEMPLARS = {
             "status": "accepted",
             "team": [
                 {
-                    "institution": "Columbia Unviersity",
+                    "institution": "Columbia University",
                     "name": "qdu",
                     "position": "co-pi",
                 },
