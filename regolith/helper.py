@@ -21,8 +21,7 @@ HELPERS = {
     "l_grants": (l_grants.GrantsListerHelper, l_grants.subparser),
     "l_members": (l_members.MembersListerHelper, l_members.subparser),
     "l_contacts": (l_contacts.ContactsListerHelper, l_contacts.subparser),
-    "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser)
-    "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
+    "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser),
 }
 
 
