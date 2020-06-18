@@ -73,10 +73,10 @@ helper_map = [
      "4. planning meeting    due date: 2020-05-30    converged\n"
      "5. deliverable    due date: 2021-05-05    finalized\n"
      ),
-    (["helper", "u_logurl", "20sb", "-n 1", "this is a test"],
-     "20sb_firstprojectum has been updated with a log_url of this is a test\n"
+    (["helper", "u_logurl", "20sb", "-n", "1", "https://docs.google.com/document/d/1pQMFpuI"],
+     "20sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
      ),
-    (["helper", "u_logurl", "20ly", "this is a test pt.2"],
+    (["helper", "u_logurl", "20ly", "https://docs.google.com/document/d/1pQMFpuI"],
      "There does not seem to be a projectum with this exact name in this database.\n"
      "However, there are projecta with similar names: \n"
      "1. 20ly_newprojectum\n"

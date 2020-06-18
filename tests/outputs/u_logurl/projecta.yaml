@@ -82,7 +82,7 @@
       - group_members
     status: finished
   lead: ascopatz
-  log_url: this is a test
+  log_url: https://docs.google.com/document/d/1pQMFpuI
   milestones:
     - due_date: '2020-05-20'
       name: Project lead presentation
