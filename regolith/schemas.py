@@ -2959,7 +2959,7 @@ SCHEMAS = {
         "due_date": {
             "description": "date the review is due in ISO format",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "date"],
         },
         "freewrite": {
             "description": "Anything and this will appear in the built document"
@@ -3080,8 +3080,13 @@ SCHEMAS = {
         },
         "authors": {
             "description": "other investigator names",
-            "required": True,
+            "required": False,
             "anyof_type": ["list", "string"],
+        },
+        "begin_date": {
+            "description": "start date of the proposed grant in format YYYY-MM-DD",
+            "required": False,
+            "anyof_type": ["string", "date"]
         },
         "begin_day": {
             "description": "start day of the proposed grant",
@@ -3128,18 +3133,23 @@ SCHEMAS = {
         },
         "day": {
             "description": "day that the proposal was submitted",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
         "due_date": {
             "description": "day that the proposal is due",
             "required": False,
-            "type": "string",
+            "anyof_type": ["string", "date"],
         },
         "duration": {
             "description": "number of years",
-            "required": True,
+            "required": False,
             "type": ("integer", "float"),
+        },
+        "end_date": {
+            "description": "end date of the proposed grant in format YYYY-MM-DD",
+            "required": False,
+            "anyof_type": ["string", "date"]
         },
         "end_day": {
             "description": "end day of the proposed grant",
@@ -3169,7 +3179,7 @@ SCHEMAS = {
         },
         "month": {
             "description": "month that the proposal was submitted",
-            "required": True,
+            "required": False,
             "anyof_type": ["string", "integer"]
         },
         "notes": {
@@ -3191,7 +3201,7 @@ SCHEMAS = {
             "description": "e.g. 'pending', 'accepted', 'rejected'",
             "required": True,
             "type": "string",
-            "eallowed": ["pending", "declined", "accepted", "in-prep",
+            "eallowed": ["pending", "declined", "accepted", "inprep",
                          "submitted"],
         },
         "team": {
@@ -3202,9 +3212,9 @@ SCHEMAS = {
                 "schema": {
                     "cv": {"required": False, "type": "string"},
                     "email": {"required": False, "type": "string"},
-                    "institution": {"required": True, "type": "string"},
-                    "name": {"required": True, "type": "string"},
-                    "position": {"required": True, "type": "string"},
+                    "institution": {"required": False, "type": "string"},
+                    "name": {"required": False, "type": "string"},
+                    "position": {"required": False, "type": "string"},
                     "subaward_amount": {
                         "required": False,
                         "type": ("integer", "float"),
@@ -3226,7 +3236,7 @@ SCHEMAS = {
         },
         "year": {
             "description": "Year that the proposal was submitted",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
     },
@@ -3263,7 +3273,7 @@ SCHEMAS = {
         "due_date": {
             "description": "date the review is due in ISO format",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "date"],
         },
         "editor_eyes_only": {
             "description": "Comments you don't want passed to the author",
