@@ -22,9 +22,9 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 
 
 def subparser(subpi):
-    subpi.add_argument("name", help="Full name of the first author"
+    subpi.add_argument("name", help="Full name of the first author",
                        )
-    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD"
+    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD in quotes", default=''
                        )
     subpi.add_argument("-c", "--recommendation",
                        help="Recommendation for this manuscript: reject, smalledits, or majoredits", default=None
@@ -89,8 +89,8 @@ class ManuRevAdderHelper(DbHelperBase):
                      'final_assessment': [],
                      'first_author_last_name': name.last,
                      'freewrite': '',
-                     'journal': [],
-                     'month': 'tbd',
+                     'journal': '',
+                     'month': month,
                      'validity_assessment': [],
                      'year': year
                      })
