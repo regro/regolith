@@ -8,7 +8,7 @@ from dateutil import parser
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection
-
+from regolith.dates import get_due_date
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
@@ -82,14 +82,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
         all_milestones = [deliverable, kickoff]
         all_milestones.extend(milestones)
         for i in all_milestones:
-            if isinstance(i['due_date'], str):
-                i['due_date'] = dt.date.fromisoformat(i['due_date'])
-        all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
-        index = 2
-        numbered_milestones = {}
-        for item in all_milestones:
-            numbered_milestones[str(index)] = item
-            index += 1
+            i['due_date'] = get_due_date(i)
+        all_milestones.sort(key = lambda x: x['due_date'], reverse=False)
+        index = list(range(2, (len(all_milestones)+2)))
+        numbered_milestones = dict(zip(index, all_milestones))
         if not rc.number:
             print("Please choose from one of the following to update/add:")
             print("1. new milestone")
@@ -111,10 +107,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     current_mil = numbered_milestones[i]
                     del current_mil['identifier']
                 raise RuntimeError("name, objective, and due date are required for a new milestone")
-            if isinstance(rc.due_date, str):
-                mil.update({'due_date': dt.date.fromisoformat(rc.due_date)})
-            else:
-                mil.update({'due_date': rc.due_date})
+            mil.update({'due_date': rc.due_date})
+            mil['due_date'] = get_due_date(mil)
             mil.update({'objective': rc.objective, 'name': rc.name})
             mil.update({'audience': ['lead', 'pi', 'group_members']})
             if rc.status:
@@ -128,19 +122,17 @@ class MilestoneUpdaterHelper(DbHelperBase):
             milestones.append(mil)
             pdoc = {'milestones':milestones}
         if int(rc.number) > 1:
-            doc = numbered_milestones[rc.number]
+            doc = numbered_milestones[int(rc.number)]
             identifier = doc['identifier']
             if rc.due_date:
-                if isinstance(rc.due_date, str):
-                    doc.update({'due_date': dt.date.fromisoformat(rc.due_date)})
-                else:
-                    doc.update({'due_date': rc.due_date})
+                doc.update({'due_date': rc.due_date})
             if rc.status:
                 doc.update({'status': ALLOWED_STATUS[rc.status]})
+            doc['due_date'] = get_due_date(doc)
             if identifier == 'milestones':
                 new_mil = []
                 for i in numbered_milestones:
-                    if numbered_milestones[i]['identifier'] =='milestones' and i!= rc.number:
+                    if numbered_milestones[i]['identifier'] =='milestones' and i!= int(rc.number):
                         new_mil.append(numbered_milestones[i])
                 new_mil.append(doc)
                 pdoc.update({'milestones':new_mil})
