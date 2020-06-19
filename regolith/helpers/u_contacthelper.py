@@ -77,8 +77,7 @@ class ContactUpdaterHelper(DbHelperBase):
         found_contacts.sort(key=lambda x: x['_id'], reverse=False)
         index = list(range(2, (len(found_contacts) + 2)))
         if not rc.number:
-            print("Please, rerun the helper with the same name as previously inputted,"
-                                                "plus --number from the list below:")
+            print("Please rerun the helper specifying '-n list-index' to update item number 'list-index':")
             print(f"{1}. {rc.name} as a new contact")
             for i, j in zip(index, found_contacts):
                 print(f"{i}. {j['name']}    id: {j['_id']}")

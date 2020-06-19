@@ -85,14 +85,12 @@ helper_map = [
      "afriend has been added/updated in contacts\n"
      ),
     (["helper", "u_contact", "Anthony", "--date", "2020-01-02"],
-     "Please, rerun the helper with the same name as previously inputted,"
-     "plus --number from the list below:\n"
+     "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. Anthony as a new contact\n"
      "2. Anthony B Friend    id: afriend\n"
      ),
     (["helper", "u_contact", "Maria", "--date", "2020-01-02"],
-     "Please, rerun the helper with the same name as previously inputted,"
-     "plus --number from the list below:\n"
+     "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. Maria as a new contact\n"
      ),
 ]
