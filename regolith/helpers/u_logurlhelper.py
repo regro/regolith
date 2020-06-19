@@ -1,6 +1,5 @@
-"""Helper for updating a project's log_url
-
-   Log_urls are the google doc links to a project's Projectum Agenda Log
+"""Helper for updating a projectum's log_url
+   Log_urls are the google doc links to a projectum's Projectum Agenda Log
 """
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -69,7 +68,7 @@ class LogUrlUpdaterHelper(DbHelperBase):
                 print("There does not seem to be a projectum with this exact name in this database.")
                 print("However, there are projecta with similar names: ")
                 for i in range(len(pra)):
-                    print(f"{i + 1}. {pra[i].get('_id')}")
+                    print(f"{i + 1}. {pra[i].get('_id')}     current url: {pra[i].get('log_url')}")
                 print("Please rerun the u_logurl helper with the same name as previously inputted, "
                       "but with the addition of -n followed by a number corresponding to one of the above listed "
                       "projectum ids that you would like to update.")

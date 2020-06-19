@@ -79,7 +79,7 @@ helper_map = [
     (["helper", "u_logurl", "20ly", "https://docs.google.com/document/d/1pQMFpuI"],
      "There does not seem to be a projectum with this exact name in this database.\n"
      "However, there are projecta with similar names: \n"
-     "1. 20ly_newprojectum\n"
+     "1. 20ly_newprojectum     current url: \n"
      "Please rerun the u_logurl helper with the same name as previously inputted, "
      "but with the addition of -n followed by a number corresponding to one of the "
      "above listed projectum ids that you would like to update.\n"
