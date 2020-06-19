@@ -31,18 +31,8 @@ HELPER_TARGET = "makeappointments"
 def subparser(subpi):
 
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
-    #subpi.add_argument("-g", "--gap", action="store_true",
-    #                   help='get group members with a gap in their appointments')
-    #subpi.add_argument("-o", "--out_of_date", action="store_true",
-    #                   help='get group members supported on an out of date grant')
-    #subpi.add_argument("-d", "--depleted", action="store_true",
-    #                   help='get group members supported on a depleted grant')
     subpi.add_argument("-b", "--begin_date", help='begin date of interval to check appointment, to specify')
     subpi.add_argument("-e", "--end_date", help='end date of interval to check appointments')
-    subpi.add_argument("-o", "--overspent", action="store_true", help='return grants that are overspent by more' 
-                                                                      'than 10k by their end')
-    subpi.add_argument("-u", "--underspent", action="store_true", help='return grants that are underspent by more' 
-                                                                       'than 10k by their end')
     subpi.add_argument("-m", "-member", help='suggest appointments for this member')
     subpi.add_argument("-a", "--appoint", action="store_true", help='suggest new appointments')
 
@@ -87,19 +77,15 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        outdated, depleted = [], []
-        if rc.underspent:
-            underspent =[]
-        if rc.overspent:
-            overspent = []
+        outdated, depleted, underspent, overspent = [], [], [], []
         if rc.begin_date:
             begin_date = date_parser.parse(rc.begin_date).date()
         else:
-            begin_date = dt.date.today()
+            begin_date = None
         if rc.end_date:
             end_date = date_parser.parse(rc.end_date).date()
         else:
-            end_date = begin_date + relativedelta(years=1)
+            end_date = None
 
         for person in self.gtx["people"]:
             appts = person.get("appointments")
