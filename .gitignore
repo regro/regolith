@@ -73,3 +73,5 @@ docs/collections/students.rst
 
 # Idea
 .idea/
+
+.DS_Store
