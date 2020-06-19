@@ -16,8 +16,9 @@ ALLOWED_STATUS = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burne
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="the id of the projectum")
-    subpi.add_argument("--number",
-                        help="number of the milestone to update from numbered list")
+    subpi.add_argument("--index",
+                        help="index of the item in the enumerated list chosen to update",
+                        type = int)
     subpi.add_argument("--due_date",
                        help="new due date of the milestone in ISO format (YYYY-MM-DD) "
                             "required to add a new milestone")
@@ -65,13 +66,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         key = rc.projectum_id
-        coll = self.gtx[rc.coll]
-        pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
-        if len(pdocl) == 0:
-            raise RuntimeError(
-                "This entry appears to not exist in the collection")
         filterid = {'_id': key}
         current = rc.client.find_one(rc.database, rc.coll, filterid)
+        if not current:
+            raise RuntimeError("This entry appears to not exist in the collection")
         milestones = current.get('milestones')
         deliverable = current.get('deliverable')
         kickoff = current.get('kickoff')
@@ -84,28 +82,23 @@ class MilestoneUpdaterHelper(DbHelperBase):
         for i in all_milestones:
             i['due_date'] = get_due_date(i)
         all_milestones.sort(key = lambda x: x['due_date'], reverse=False)
-        index = list(range(2, (len(all_milestones)+2)))
-        numbered_milestones = dict(zip(index, all_milestones))
-        if not rc.number:
+        index_list = list(range(2, (len(all_milestones)+2)))
+        if not rc.index:
             print("Please choose from one of the following to update/add:")
             print("1. new milestone")
-            for i in numbered_milestones:
-                current_mil = numbered_milestones[i]
-                if 'name' in current_mil:
-                    print("{}. {}    due date: {}    {}".format(i, current_mil["name"],
-                                                    current_mil["due_date"], current_mil["status"]))
+            for i, j in zip(index_list, all_milestones):
+                if 'name' in j:
+                    print("{}. {}    due date: {}    {}".format(i, j["name"],
+                                                    j["due_date"], j["status"]))
                 else:
-                    print("{}. {}    due date: {}    {}".format(i, current_mil['identifier'],
-                                                                current_mil["due_date"], current_mil["status"]))
-                del current_mil['identifier']
+                    print("{}. {}    due date: {}    {}".format(i, j['identifier'],
+                                                                j["due_date"], j["status"]))
+                del j['identifier']
             return
         pdoc = {}
-        if int(rc.number) == 1:
+        if rc.index == 1:
             mil = {}
             if not rc.due_date or not rc.name or not rc.objective:
-                for i in numbered_milestones:
-                    current_mil = numbered_milestones[i]
-                    del current_mil['identifier']
                 raise RuntimeError("name, objective, and due date are required for a new milestone")
             mil.update({'due_date': rc.due_date})
             mil['due_date'] = get_due_date(mil)
@@ -121,8 +114,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 mil.update({'type': 'meeting'})
             milestones.append(mil)
             pdoc = {'milestones':milestones}
-        if int(rc.number) > 1:
-            doc = numbered_milestones[int(rc.number)]
+        if rc.index > 1:
+            doc = all_milestones[rc.index-2]
             identifier = doc['identifier']
             if rc.due_date:
                 doc.update({'due_date': rc.due_date})
@@ -131,17 +124,15 @@ class MilestoneUpdaterHelper(DbHelperBase):
             doc['due_date'] = get_due_date(doc)
             if identifier == 'milestones':
                 new_mil = []
-                for i in numbered_milestones:
-                    if numbered_milestones[i]['identifier'] =='milestones' and i!= int(rc.number):
-                        new_mil.append(numbered_milestones[i])
+                for i, j in zip(index_list, all_milestones):
+                    if j['identifier'] == 'milestones' and i!= rc.index:
+                        new_mil.append(j)
                 new_mil.append(doc)
                 pdoc.update({'milestones':new_mil})
             else:
                 pdoc.update({identifier:doc})
-        for i in numbered_milestones:
-            current_mil = numbered_milestones[i]
-            del current_mil['identifier']
-
+        for i in all_milestones:
+            del i['identifier']
         rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         print("{} has been updated in projecta".format(key))
 

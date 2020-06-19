@@ -61,7 +61,7 @@ helper_map = [
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2019-01-15", "-r", "2"],
      ""
      ),
-    (["helper", "u_milestone", "20sb_firstprojectum", "--number", "4",
+    (["helper", "u_milestone", "20sb_firstprojectum", "--index", "4",
       "-s", "c", "--due_date", "2020-05-30"],
      "20sb_firstprojectum has been updated in projecta\n"
      ),
