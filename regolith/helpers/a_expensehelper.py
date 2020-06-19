@@ -26,12 +26,13 @@ def subparser(subpi):
                        )
     subpi.add_argument("purpose", help="A short description of expense purpose",
                        default=None)
-    subpi.add_argument("reimbur")
+
     subpi.add_argument("-b", "--business", action='store_true',
                        help="expense type is business. If not specified defaults to travel"
                        )
     subpi.add_argument("-y", "--payee",
-                       help="payee of the expense, defaults to sbillinge"
+                       help="payee of the expense. defaults to sbillinge",
+                       default="sbillinge"
                        )
     subpi.add_argument("-g", "--grants", nargs="+",
                        help="grant, or list of grants that cover this expense. Defaults to tbd"
@@ -40,7 +41,8 @@ def subparser(subpi):
                        help=f"status, from {ALLOWED_STATI}. Default is unsubmitted"
                        )
     subpi.add_argument("-z", "--segregated",
-                       help="Amount for any segregated expense. Defaults to 0"
+                       help="Amount for any segregated expense. Defaults to 0",
+                       default="0"
                        )
     subpi.add_argument("-w", "--where",
                        help="Where the expense has been submitted"
@@ -50,11 +52,14 @@ def subparser(subpi):
                        )
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date"
+                            "In YYYY-MM-DD format. Defaults to today's date",
+                       default="dt.today().strftime('%Y-%m-%d')"
+
                        )
     subpi.add_argument("-e,", "--end_date",
                        help="Input end date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date"
+                            "In YYYY-MM-DD format. Defaults to today's date",
+                       default= "dt.today().strftime('%Y-%m-%d')"
                        )
     return subpi
 
@@ -92,21 +97,19 @@ class ExpenseAdderHelper(DbHelperBase):
         rc = self.rc
 
         if not rc.begin_date:
-            begin_date = dt.date.today() # string with date time format
-            begin_date = begin_date.strftime('%Y-%m-%d')
+            begin_date = dt.date.today() # string with date time format, leave as dt object
         else:
-            begin_date = rc.begin_date() # need to raise exception for wrongly formatted user input
+            begin_date = rc.begin_date # need to raise exception for wrongly formatted user input
         if not rc.end_date:
             end_date = dt.date.today()
-            end_date = end_date.strftime('%Y-%m-%d')
         else:
             end_date = rc.end_date
 
         # defaults to sbillinge
         if rc.payee:
-            key = f"{str(begin_date.year)[2:]}{rc.payee[:2]}_{''.join(rc.name.casefold().split()).strip()}"
+            key = f"{str(begin_date.year)[2:]}{str(begin_date.month)}{rc.payee[0:2]}_{''.join(rc.name.casefold().split()).strip()}"
         else:
-            key = f"{str(begin_date.year)[2:]}{'sb'}_{''.join(rc.name.casefold().split()).strip()}"
+            key = f"{str(begin_date.year)[2:]}{str(begin_date.month)}{'sb'}_{''.join(rc.name.casefold().split()).strip()}"
 
 
 
@@ -120,12 +123,9 @@ class ExpenseAdderHelper(DbHelperBase):
 
 
         pdoc.update({
-            "begin_year": int(begin_date.split('-')[0]),
-             "begin_month": int(begin_date.split('-')[1]),
-             "begin_day": int(begin_date.split('-')[2]),
-             "end_year": int(end_date.split('-')[0]),
-             "end_month": int(end_date.split('-')[1]),
-             "end_day": int(end_date.split('-')[2])
+            "begin_date" : begin_date,
+            "end_date": end_date,
+
              })
         if rc.business:
             pdoc.update({'expense_type': "business"
@@ -140,19 +140,16 @@ class ExpenseAdderHelper(DbHelperBase):
             percentages = [100 / len(rc.grants) for i in rc.grants]
         else:
             rc.grants = 'tbd'
-            percentages = 0 #No grant => no percentage?
+            percentages = [100]
 
-        # segregated expense
-        if not rc.segregated:
-            rc.segregated = "0"
+
 
 
 
         pdoc.update({"grant_percentages": percentages,
                      "grants": rc.grants,
                      "itemized_expenses":{
-                         [{"day": int(begin_date.split('-')[2]),
-                           "month": int(begin_date.split('-')[1]),
+                         [{"date" : begin_date,
                            "purpose": rc.purpose,
                            "segregated_expense" : int(rc.segregated),
                            "unsegregated_expense": int(rc.amount) - int(rc.segregated)
