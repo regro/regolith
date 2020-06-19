@@ -80,23 +80,20 @@ helper_map = [
      "but with the addition of -n followed by a number corresponding to one of the "
      "above listed projectum ids that you would like to update.\n"
      ),
-    (["helper", "u_contact", "afriend", "--number", "2",
+    (["helper", "u_contact", "afriend", "--number", "1",
       "--notes", "Test note", "-a", "Friend", "--date", "2020-01-02"],
      "afriend has been added/updated in contacts\n"
      ),
     (["helper", "u_contact", "Anthony", "--date", "2020-01-02"],
      "Please choose from one of the following to update/add:\n"
-     "1. Anthony as a new contact\n"
-     "2. Anthony B Friend    id: afriend \n"
-     ),
-    (["helper", "u_contact", "friend", "--date", "2020-01-02"],
-     "Please choose from one of the following to update/add:\n"
-     "1. friend as a new contact\n"
-     "2. Anthony B Friend    id: afriend \n"
+     "0. Anthony as a new contact\n"
+     "1. Anthony B Friend    id: afriend\n"
+     "\n"
      ),
     (["helper", "u_contact", "Maria", "--date", "2020-01-02"],
      "Please choose from one of the following to update/add:\n"
-     "1. Maria as a new contact\n"
+     "0. Maria as a new contact\n"
+     "\n"
      ),
 ]
 

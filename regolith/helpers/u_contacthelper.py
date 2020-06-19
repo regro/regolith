@@ -73,26 +73,23 @@ class ContactUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         name = HumanName(rc.name)
-        frag = fragment_retrieval(self.gtx['contacts'], ["_id", "aka", "name"], rc.name)
-        ids = set(i.get('_id') for i in frag)
-        sorted_ids = sorted(ids)
-        index = 1
-        all_names = {}
-        for i in sorted_ids:
-            currentid = rc.client.find_one(rc.database, rc.coll, {'_id': i})
-            index += 1
-            all_names[str(index)] = {"_id":i, "name":currentid.get("name")}
+        sorted_ids = sorted(set(i.get('_id') for i in fragment_retrieval(self.gtx['contacts'],
+                                            ["_id", "aka", "name"], rc.name)))
+        index = list(range(len(sorted_ids)))
         if not rc.number:
             print("Please choose from one of the following to update/add:")
-            print(f"1. {rc.name} as a new contact")
-            for k, v in all_names.items():
-                print(f"{k}. {v['name']}    id: {v['_id']} ")
+            print(f"{0}. {rc.name} as a new contact")
+            print(*[f"{i+1}. {rc.client.find_one(rc.database, rc.coll, {'_id': j})['name']}    id: {j}\n"
+                                                                    for i, j, in zip(index, sorted_ids)])
             return
         pdoc = {}
-        if rc.number == '1':
+        if rc.number == 0:
             if not rc.institution:
                 raise RuntimeError("institution is required to create a new contact")
-            key = str(name.first[0].lower().replace(" ", "") + name.last.lower().replace(" ", ""))
+            if not rc.d:
+                key = str(name.first[0].lower().replace(" ", "") + name.last.lower().replace(" ", ""))
+            else:
+                key = rc.d
             pdoc.update({"name": name.full_name})
             pdoc.update({"date": dt.date.today()})
             pdoc.update({"institution": rc.institution})
@@ -101,7 +98,7 @@ class ContactUpdaterHelper(DbHelperBase):
             uniqueidentifier = str(uuid.uuid4())
             pdoc.update({'uuid': uniqueidentifier})
         else:
-            key = all_names[str(rc.number)]['_id']
+            key = sorted_ids[int(rc.number)-1]
             current = rc.client.find_one(rc.database, rc.coll, {'_id': key})
             notes = current.get('notes', [])
             aliases = current.get('aka', [])
