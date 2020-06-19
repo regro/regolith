@@ -80,7 +80,7 @@ helper_map = [
      "but with the addition of -n followed by a number corresponding to one of the "
      "above listed projectum ids that you would like to update.\n"
      ),
-    (["helper", "u_contact", "afriend", "--number", "1",
+    (["helper", "u_contact", "afriend", "--number", "2",
       "--notes", "Test note", "-a", "Friend", "--date", "2020-01-02"],
      "afriend has been added/updated in contacts\n"
      ),
