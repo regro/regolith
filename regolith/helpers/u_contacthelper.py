@@ -30,7 +30,7 @@ def subparser(subpi):
                              "quotes separated by a space")
     subpi.add_argument("--notes", nargs='+',
                         help="notes.  As many notes as you like, each one in "
-                             "quotes and separated by a space, such as where"
+                             "quotes and separated by a space, such as where "
                              "and when met, what discussed.")
     # Do not delete --database arg
     subpi.add_argument("--database",
@@ -77,10 +77,11 @@ class ContactUpdaterHelper(DbHelperBase):
         found_contacts.sort(key=lambda x: x['_id'], reverse=False)
         index = list(range(2, (len(found_contacts) + 2)))
         if not rc.number:
-            print("Please choose from one of the following to update/add:")
+            print("Please, rerun the helper with the same name as previously inputted,"
+                                                "plus --number from the list below:")
             print(f"{1}. {rc.name} as a new contact")
-            print(*[f"{i}. {j['name']}    id: {j['_id']}\n"
-                                for i, j, in zip(index, found_contacts)])
+            for i, j in zip(index, found_contacts):
+                print(f"{i}. {j['name']}    id: {j['_id']}")
             return
         pdoc = {}
         if int(rc.number) == 1:
