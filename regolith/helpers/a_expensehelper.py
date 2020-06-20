@@ -53,13 +53,13 @@ def subparser(subpi):
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
                             "In YYYY-MM-DD format. Defaults to today's date",
-                       default="dt.today().strftime('%Y-%m-%d')"
+                       default=dt.date.today()
 
                        )
     subpi.add_argument("-e,", "--end_date",
                        help="Input end date for this expense. "
                             "In YYYY-MM-DD format. Defaults to today's date",
-                       default= "dt.today().strftime('%Y-%m-%d')"
+                       default= dt.date.today()
                        )
     return subpi
 
@@ -127,6 +127,7 @@ class ExpenseAdderHelper(DbHelperBase):
             "end_date": end_date,
 
              })
+        pdoc = pdoc.get_dates
         if rc.business:
             pdoc.update({'expense_type': "business"
                          })
