@@ -17,7 +17,8 @@ def subparser(subpi):
     subpi.add_argument("name", help="name, name fragment (single argument only) or id "
                                     "used to find an existing contact. "
                                     "please, inform full name if this is a new contact")
-    subpi.add_argument("--number", help="number in the numbered list")
+    subpi.add_argument("--index", help="index of the item in the enumerated list chosen to update",
+                                  type = int)
     subpi.add_argument("-d", "--id", help="id of the person, e.g., first letter first name "
                                             "plus last name, but unique")
     subpi.add_argument("-i", "--institution", help="person's institution. It can be "
@@ -75,15 +76,15 @@ class ContactUpdaterHelper(DbHelperBase):
         name = HumanName(rc.name)
         found_contacts = fragment_retrieval(self.gtx['contacts'], ["_id", "aka", "name"], rc.name)
         found_contacts.sort(key=lambda x: x['_id'], reverse=False)
-        index = list(range(2, (len(found_contacts) + 2)))
-        if not rc.number:
+        index_list = list(range(2, (len(found_contacts) + 2)))
+        if not rc.index:
             print("Please rerun the helper specifying '-n list-index' to update item number 'list-index':")
             print(f"{1}. {rc.name} as a new contact")
-            for i, j in zip(index, found_contacts):
+            for i, j in zip(index_list, found_contacts):
                 print(f"{i}. {j['name']}    id: {j['_id']}")
             return
         pdoc = {}
-        if int(rc.number) == 1:
+        if int(rc.index) == 1:
             if not rc.institution:
                 raise RuntimeError("institution is required to create a new contact")
             if not rc.id:
@@ -98,7 +99,7 @@ class ContactUpdaterHelper(DbHelperBase):
             uniqueidentifier = str(uuid.uuid4())
             pdoc.update({'uuid': uniqueidentifier})
         else:
-            current = found_contacts[int(rc.number)-2]
+            current = found_contacts[rc.index-2]
             key = current.get('_id')
             notes = current.get('notes', [])
             aliases = current.get('aka', [])
