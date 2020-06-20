@@ -1074,46 +1074,6 @@ def update_schemas(default_schema, user_schema):
     return updated_schema
 
 
-def is_fully_loaded(appts):
-    status = True
-    earliest, latest = date.today(), date.today()
-    for appt in appts:
-        dates = get_dates(appt)
-        begin_date = dates['begin_date']
-        end_date = dates['end_date']
-        if latest == date.today():
-            latest = end_date
-        appt['begin_date'] = begin_date
-        appt['end_date'] = end_date
-        if begin_date < earliest:
-            earliest = begin_date
-        if end_date > latest:
-            latest = end_date
-    datearray = []
-    timespan = latest - earliest
-    for x in range(0, timespan.days):
-        datearray.append(earliest + timedelta(days=x))
-
-    loading = [0] * len(datearray)
-    for day in datearray:
-        for appt in appts:
-            if appt['begin_date'] <= day <= appt["end_date"]:
-                loading[datearray.index(day)] = loading[datearray.index(day)] + \
-                                                appt.get("loading")
-
-    if max(loading) > 1.0:
-        status = False
-        print("max {} at {}".format(max(loading),
-                                    datearray[
-                                        list(loading).index(max(loading))]))
-    elif min(loading) < 1.0:
-        status = False
-        print("min {} at {}".format(min(loading),
-                                    datearray[list(loading).index(min(loading))]
-                                    ))
-    return status
-
-
 def get_person(person_id, rc):
     """Get the person's name."""
     person_found = fuzzy_retrieval(
