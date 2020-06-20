@@ -5,7 +5,8 @@
 
 **Deprecated:** None
 
-**Removed:** None
+**Removed:**
+* old is_fully_loaded function in tools.py and its tests in test_tools.py since the new function is an improved version that does the same thing
 
 **Fixed:** None
 
