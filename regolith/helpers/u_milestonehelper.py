@@ -17,7 +17,7 @@ ALLOWED_STATUS = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burne
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="the id of the projectum")
     subpi.add_argument("--index",
-                        help="index of the item in the enumerated list chosen to update",
+                        help="index of the item in the enumerated list to update",
                         type = int)
     subpi.add_argument("--due_date",
                        help="new due date of the milestone in ISO format (YYYY-MM-DD) "
@@ -67,12 +67,12 @@ class MilestoneUpdaterHelper(DbHelperBase):
         rc = self.rc
         key = rc.projectum_id
         filterid = {'_id': key}
-        current = rc.client.find_one(rc.database, rc.coll, filterid)
-        if not current:
-            raise RuntimeError("This entry appears to not exist in the collection")
-        milestones = current.get('milestones')
-        deliverable = current.get('deliverable')
-        kickoff = current.get('kickoff')
+        target_prum = rc.client.find_one(rc.database, rc.coll, filterid)
+        if not target_prum:
+            raise RuntimeError(f"Cannot find {key} in the projecta collection")
+        milestones = target_prum.get('milestones')
+        deliverable = target_prum.get('deliverable')
+        kickoff = target_prum.get('kickoff')
         deliverable['identifier'] = 'deliverable'
         kickoff['identifier'] = 'kickoff'
         for item in milestones:
@@ -125,7 +125,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             if identifier == 'milestones':
                 new_mil = []
                 for i, j in zip(index_list, all_milestones):
-                    if j['identifier'] == 'milestones' and i!= rc.index:
+                    if j['identifier'] == 'milestones' and i != rc.index:
                         new_mil.append(j)
                 new_mil.append(doc)
                 pdoc.update({'milestones':new_mil})
