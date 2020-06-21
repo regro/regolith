@@ -87,22 +87,26 @@ class MakeAppointmentsHelper(SoutHelperBase):
         else:
             end_date = None
 
-        for person in self.gtx["people"]:
-            appts = person.get("appointments")
-            is_fully_appointed(appts, begin_date=begin_date, end_date=end_date)
-            for appt in appts:
-                grant = rc.client.find_one(rc.database, self.gtx["grants"], {"_id": appt.get("grant")})
-                timespan = end_date - begin_date
-                for x in range(0, timespan.days):
-                    day = begin_date + relativedelta(days=x)
-                    if not is_current(grant, day):
-                        outdated.append(
-                        f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')} "
-                        f"date: {str(day)}")
-                    if grant.get('amount') < 1:
-                        depleted.append(
-                        f"person: {person.get('_id')} appointment: {appt.get('_id')} grant: {grant.get('_id')} "
-                        f"date: {str(day)}")
+        for p in self.gtx["people"]:
+            if p.get("appointments"):
+                appts = p.get("appointments")
+                is_fully_appointed(p, begin_date=begin_date, end_date=end_date)
+                for a in appts:
+                    g = rc.client.find_one(rc.database, self.gtx["grants"], {"_id": a.get("grant")})
+                    timespan = end_date - begin_date
+                    for x in range(0, timespan.days):
+                        day = begin_date + relativedelta(days=x)
+                        if not is_current(g, day):
+                            outdated.append(
+                            f"person: {[p].get('_id')} appointment: {a.get('_id')} grant: {g.get('_id')} "
+                            f"date: {str(day)}")
+                        if get_grant_amount(g, day) <= 0:
+                        # define this in tools.py
+                            depleted.append(
+                                f"person: {[p].get('_id')} appointment: {a.get('_id')} grant: {g.get('_id')} "
+                                f"date: {str(day)}")
+
+
 
         if outdated:
             print("Appointments supported on outdated grants:")
