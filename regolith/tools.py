@@ -1500,6 +1500,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
 
 def get_grant_amount(grant, day, type):
     pass
+
 def get_grant_amount(grant, people, begin_date=None, end_date=None):
     grant_amounts = []
     if not grant.get('budget'):
