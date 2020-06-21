@@ -1500,3 +1500,41 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
 
 def get_grant_amount(grant, day, type):
     pass
+def get_grant_amount(grant, people, begin_date=None, end_date=None):
+    grant_amounts = []
+    if not grant.get('budget'):
+        return "This grant has no specified budget"
+    begin_date = get_dates(grant)['begin_date'] if not begin_date else begin_date
+    end_date = get_dates(grant)['end_date'] if not end_date else end_date
+    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
+    end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
+    timespan = end_date - begin_date
+    grad_val, pd_val, ss_val = 0.0, 0.0, 0.0
+    for b in grant.get('budget'):
+        if b.get('student_months'):
+            grad_val += b.get('student_months') * 30.5
+        if b.get('postdoc_months'):
+            pd_val += b.get('postdoc_months') * 30.5
+        if b.get('ss_months'):
+            pd_val += b.get('ss_months') * 30.5
+    # setting initial values for the grant
+
+    for x in range(timespan.days + 1):
+        day = begin_date + relativedelta(days=x)
+        for p in people:
+            if p.get('appointments') and (p.get('grant') == grant.get('_id') or p.get('grant') == grant.get('alias')):
+                appts = p.get('appointments')
+                for a in appts:
+                    if is_current(a,day):
+                        if a.get('type') == 'gra':
+                            grad_val -= a.get('loading') * 1
+                        elif a.get('type') == 'pd':
+                            pd_val -= a.get('loading') * 1
+                        elif a.get('type') == 'ss':
+                            ss_val -= a.get('loading') * 1
+                        #what if appointment is none of these types?
+        doc = {"date": str(day), "student_months": ss_val, "postdoc_months": pd_val, "ss_months": ss_val}
+        grant_amounts.append(doc)
+
+    return grant_amounts
+
