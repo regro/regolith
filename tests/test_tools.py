@@ -561,7 +561,7 @@ def test_month_and_year(input,expected):
              "grant": "grant1",
              "loading": 1.0,
              "type": "pd",
-            }]}, "2017-06-01", "2017-06-30", True),
+            }]}, "2017-06-01", "2017-07-01", False),
         ({"name": "MC Escher",
           "_id": "mcescher",
           "appointments": [
@@ -587,7 +587,7 @@ def test_month_and_year(input,expected):
              "type": "pd",
             },
             {"begin_date": '2017-06-02',
-             "end_date": '2017-06-30',
+             "end_date": '2017-06-29',
              "grant": "grant2",
              "loading": 0.5,
              "type": "pd",

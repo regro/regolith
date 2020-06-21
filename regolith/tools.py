@@ -1289,9 +1289,8 @@ def is_fully_appointed(person, begin_date, end_date):
         print("No appointments defined for this person")
         return False
     status = True
+    messages = []
     appts = person.get('appointments')
-    if not begin_date or not end_date:
-        raise RuntimeError("Please specify begin and end dates")
     if begin_date > end_date:
         raise ValueError("invalid begin and end dates")
     if isinstance(begin_date, str):
@@ -1299,24 +1298,27 @@ def is_fully_appointed(person, begin_date, end_date):
     if isinstance(end_date, str):
         end_date = date_parser.parse(end_date).date()
     timespan = end_date - begin_date
-    most, least, help = 0.0, 1.0, ''
-    for x in range(timespan.days):
+    good_period, start_gap, end_gap = True, None, None
+    for x in range(timespan.days + 1):
         day_loading = 0.0
         day = begin_date + relativedelta(days=x)
         for appt in appts:
             if is_current(appt, now=day):
                 day_loading += appt.get("loading")
-        if day_loading > 1.0:
+        if day_loading > 1.0 or day_loading < 1.0:
             status = False
-            if day_loading > most:
-                most = day_loading
-                help = "{} exceeds full loading with maximum value {} on {}".format(person.get('_id'), most, str(day))
-        if day_loading < 1.0:
-            status = False
-            if day_loading < least:
-                least = day_loading
-                help = "{} is short of full loading with minimum value {} on {}".format(person.get('_id'), least, str(day))
-
-    if help:
-        print(help)
+            if good_period:
+                start_gap = day
+                good_period = False
+        else:
+            if not good_period:
+                print("period of invalid loading for {} from {} to {}".format(person.get('_id'),
+                                                                     str(start_gap), str(day - relativedelta(days=1))))
+            good_period = True
+        if x == timespan.days and not good_period:
+            if day != start_gap:
+                print("period of invalid loading for {} from {} to {}".format(person.get('_id'),
+                                                                     str(start_gap), str(day - relativedelta(days=1))))
+            else:
+                print("day of invalid loading for {} on {}".format(person.get('_id'), str(day)))
     return status
