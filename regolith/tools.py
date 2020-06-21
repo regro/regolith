@@ -1298,7 +1298,7 @@ def is_fully_appointed(person, begin_date, end_date):
     if isinstance(end_date, str):
         end_date = date_parser.parse(end_date).date()
     timespan = end_date - begin_date
-    good_period, start_gap, end_gap = True, None, None
+    good_period, start_gap = True, None
     for x in range(timespan.days + 1):
         day_loading = 0.0
         day = begin_date + relativedelta(days=x)
