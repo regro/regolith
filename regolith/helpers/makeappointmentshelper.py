@@ -101,7 +101,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                             outdated.append(
                             f"person: {[p].get('_id')} appointment: {a.get('_id')} grant: {g.get('_id')} "
                             f"date: {str(day)}")
-                        if get_grant_amount(g, day) <= 0:
+                        if get_grant_amount(g, self.gtx["people"], day, day) <= 0:
                         # define this in tools.py
                             depleted.append(
                                 f"person: {[p].get('_id')} appointment: {a.get('_id')} grant: {g.get('_id')} "
@@ -109,15 +109,12 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         for g in self.gtx["grants"]:
             end_date = get_dates(g)['end_date']
-            if get_grant_amount(g, end_date) > 100:
+            if get_grant_amount(g, self.gtx["people"], end_date, end_date) > 100:
                 # what is the required 'underspend' amount?
                 underspent.append(g.get('_id'))
-            elif get_grant_amount(g, end_date) < 100:
+            elif get_grant_amount(g, self.gtx["people"], end_date, end_date) < 100:
                 # what is the required 'overspend' amount?
                 overspent.append(g.get('_id'))
-
-
-
 
         if outdated:
             print("Appointments supported on outdated grants:")
