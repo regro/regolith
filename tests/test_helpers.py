@@ -12,7 +12,7 @@ helper_map = [
     (["helper", "a_grppub_readlist", "test the lister",
       "A list to test the lister", "pdf", "--purpose", "Test the lister"],
      "test_the_lister has been added in reading_lists\n"),
-    (["helper", "a_manusrev", "A. Einstein", "2020-09-15", "-c", "reject", "-r",
+    (["helper", "a_manurev", "A. Einstein", "2020-09-15", "-c", "reject", "-r",
       "zcliu", "-s", "invited"],
      "A. Einstein manuscript has been added/updated in manuscript reviews\n"),
     (["helper", "a_projectum", "New projectum", "lyang",

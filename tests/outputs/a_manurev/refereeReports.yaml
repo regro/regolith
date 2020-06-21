@@ -1,21 +1,27 @@
 1902cl_actaArev:
   claimed_found_what:
+    -
   claimed_why_important:
+    -
   did_how:
+    -
   did_what:
-  due_date: '2020-09-15'
+    -
+  due_date: ''
   editor_eyes_only: ''
   final_assessment:
-  first_author_last_name: Einstein
+    -
+  first_author_last_name: ''
   freewrite: ''
   journal: ''
-  month: 06
+  month: ''
   recommendation: reject
-  reviewer: zcliu
+  reviewer: ''
   status: invited
   title: ''
   validity_assessment:
-  year: 2020
+    -
+  year: ''
 1902nature:
   claimed_found_what:
     - gravity waves
