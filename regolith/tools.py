@@ -1276,13 +1276,13 @@ def is_fully_appointed(person, begin_date, end_date):
         --------
         >>> appts = [{"begin_year": 2017, "begin_month": 6, "begin_day": 1, "end_year": 2017, "end_month": 6,\
          "end_day": 15, "grant": "grant1", "loading": 1.0, "type": "pd", }, {"begin_year": 2017, "begin_month": 6, \
-         "begin_day": 17,  "end_year": 2017,  "end_month": 6, "end_day": 30, "grant": "grant2", "loading": 1.0, \
+         "begin_day": 20,  "end_year": 2017,  "end_month": 6, "end_day": 30, "grant": "grant2", "loading": 1.0, \
          "type": "pd",} ]
         >>> aejaz = {"name": "Adiba Ejaz", "_id": "aejaz", "appointments": appts}
         >>> is_fully_appointed(aejaz, "2017-06-01", "2017-06-30")
 
-        In this case, we have an insufficient loading and minimum of 0.0 on 2017-06-16, hence it would return False and
-        print "aejaz is short of full loading with minimim 0.0 on 2017-06-16".
+        In this case, we have an invalid loading from 2017-06-16 to 2017-06-19 hence it would return False and
+        print "appointment gap for aejaz from 2017-06-16 to 2017-06-19".
         """
 
     if not person.get('appointments'):
@@ -1312,13 +1312,13 @@ def is_fully_appointed(person, begin_date, end_date):
                 good_period = False
         else:
             if not good_period:
-                print("period of invalid loading for {} from {} to {}".format(person.get('_id'),
+                print("appointment gap for {} from {} to {}".format(person.get('_id'),
                                                                      str(start_gap), str(day - relativedelta(days=1))))
             good_period = True
         if x == timespan.days and not good_period:
             if day != start_gap:
-                print("period of invalid loading for {} from {} to {}".format(person.get('_id'),
+                print("appointment gap for {} from {} to {}".format(person.get('_id'),
                                                                      str(start_gap), str(day - relativedelta(days=1))))
             else:
-                print("day of invalid loading for {} on {}".format(person.get('_id'), str(day)))
+                print("appointment gap for {} on {}".format(person.get('_id'), str(day)))
     return status
