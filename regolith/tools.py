@@ -1496,3 +1496,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
                 appts.append(a)
                 appts[-1].update({'person': p.get('_id')})
     return appts
+
+
+def get_grant_amount(grant, day, type):
+    pass
