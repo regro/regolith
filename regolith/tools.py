@@ -1254,7 +1254,7 @@ def get_id_from_name(coll, name):
     else: return None
 
 
-def is_fully_appointed(person, begin_date=None, end_date=None):
+def is_fully_appointed(person, begin_date, end_date):
     """Checks if a collection of appointments for a person is valid and fully loaded
         for a given interval of time
 
@@ -1285,18 +1285,13 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
         print "aejaz is short of full loading with minimim 0.0 on 2017-06-16".
         """
 
+    if not person.get('appointments'):
+        print("No appointments defined for this person")
+        return False
     status = True
     appts = person.get('appointments')
-    earliest = get_dates(appts[0])['begin_date']
-    latest = get_dates(appts[0])['end_date']
-    for appt in appts:
-        dates = get_dates(appt)
-        if dates['begin_date'] < earliest:
-            earliest = dates['begin_date']
-        if dates['end_date'] > latest:
-            latest = dates['end_date']
-    begin_date = earliest if not begin_date else begin_date
-    end_date = latest if not end_date else end_date
+    if not begin_date or not end_date:
+        raise RuntimeError("Please specify begin and end dates")
     if begin_date > end_date:
         raise ValueError("invalid begin and end dates")
     if isinstance(begin_date, str):
@@ -1304,23 +1299,24 @@ def is_fully_appointed(person, begin_date=None, end_date=None):
     if isinstance(end_date, str):
         end_date = date_parser.parse(end_date).date()
     timespan = end_date - begin_date
-    loading, max, min, help = [], 0.0, 1.0, ''
-    for x in range(0, timespan.days):
-        loading.append(0.0)
+    most, least, help = 0.0, 1.0, ''
+    for x in range(timespan.days):
+        day_loading = 0.0
         day = begin_date + relativedelta(days=x)
         for appt in appts:
             if is_current(appt, now=day):
-                loading[x] = loading[x] + appt.get("loading")
-        if loading[x] > 1.0:
+                day_loading += appt.get("loading")
+        if day_loading > 1.0:
             status = False
-            if loading[x] > max:
-                max = loading[x]
-                help = "{} exceeds full loading with maximum value {} on {}".format(person.get('_id'), max, str(day))
-        if loading[x] < 1.0:
+            if day_loading > most:
+                most = day_loading
+                help = "{} exceeds full loading with maximum value {} on {}".format(person.get('_id'), most, str(day))
+        if day_loading < 1.0:
             status = False
-            if loading[x] < min:
-                min = loading[x]
-                help = "{} is short of full loading with minimum value {} on {}".format(person.get('_id'), min, str(day))
+            if day_loading < least:
+                least = day_loading
+                help = "{} is short of full loading with minimum value {} on {}".format(person.get('_id'), least, str(day))
+
     if help:
         print(help)
     return status

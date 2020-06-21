@@ -6,7 +6,7 @@
 **Deprecated:** None
 
 **Removed:**
-* old is_fully_loaded function in tools.py and its tests in test_tools.py since the new function is an improved version that does the same thing
+* old is_fully_loaded function in tools.py, which is replaced by the new is_fully_appointed function.
 
 **Fixed:** None
 
