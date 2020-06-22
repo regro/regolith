@@ -11,6 +11,8 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
+    get_dates
+
 )
 
 TARGET_COLL = "expenses"
@@ -38,7 +40,8 @@ def subparser(subpi):
                        help="grant, or list of grants that cover this expense. Defaults to tbd"
                        )
     subpi.add_argument("-s", "--status",
-                       help=f"status, from {ALLOWED_STATI}. Default is unsubmitted"
+                       help=f"status, from {ALLOWED_STATI}. Default is unsubmitted",
+                       default='unsubmitted'
                        )
     subpi.add_argument("-z", "--segregated",
                        help="Amount for any segregated expense. Defaults to 0",
@@ -48,7 +51,8 @@ def subparser(subpi):
                        help="Where the expense has been submitted"
                        )
     subpi.add_argument("-n", "--notes", nargs="+",
-                       help="List of notes for the expense. Defaults to empty list"
+                       help="List of notes for the expense. Defaults to empty list",
+                       default= []
                        )
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
@@ -89,21 +93,15 @@ class ExpenseAdderHelper(DbHelperBase):
         # dates
         if rc.begin_date:
             begin_date = date_parser.parse(rc.begin_date).date()
+            date = begin_date
         else:
             begin_date = dt.datetime.now()
+            date = begin_date
         if rc.end_date:
             end_date = date_parser.parse(rc.end_date).date()
         else:
             end_date = dt.datetime.now()
-
-        # id
-
-
-
-
         key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{rc.payee[0:2]}_{''.join(rc.name.casefold().split()).strip()}"
-
-
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
@@ -112,9 +110,124 @@ class ExpenseAdderHelper(DbHelperBase):
         else:
             pdoc = {}
         pdoc.update({'_id': key,
-                     'amount': float(rc.amount)
+                     'begin_date': begin_date,
+                     'end_date': end_date,
+
                      })
-        pdoc.update({'authors': rc.authors})
+        # expense_type
+
+
+        if rc.business:
+            expense_type = 'business'
+        else:
+            expense_type = 'travel'
+        pdoc.update({'expense_type': expense_type})
+
+        if rc.grants:
+            percentages = [100/len(rc.grants) for i in rc.grants]
+
+
+        else:
+            percentages = [100]
+        pdoc.update({'grant_percentages':percentages,
+                     'grants': rc.grants})
+        if expense_type == 'travel':
+            pdoc.update({'itemized_expenses': [
+                {
+                    'date': date,
+                    'purpose': 'registration',
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+                },
+                {
+                    'date': date,
+                    'purpose': 'home to airport',
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+                },
+                {
+                    'date': date,
+                    'purpose': 'flights',
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+
+
+                },
+                {
+                    'date': date,
+                    'purpose': 'airport to hotel',
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+                },
+                {
+                    'date': date,
+                    'purpose': 'hotel',
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+                },
+                {
+                    'date': date,
+                    'purpose': 'hotel to airport',
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+                },
+                {
+                    'date': date,
+                    'purpose': 'airport to home',
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+                },
+                {
+                    'date': date,
+                    'purpose': 'meals',
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+                }
+                ]
+            })
+        else:
+            pdoc.update({'itemized_expenses': [
+                {
+                    'date': date,
+                    'purpose': rc.purpose,
+                    'unsegregated_expense': 0,
+                    'segregated_expense': 0
+                }]
+            })
+        pdoc.update({'notes': rc.notes,
+                     'overall_purpose': rc.purpose,
+                     'payee': rc.payee,
+                     })
+        if rc.status == 'submitted':
+            submission_day = begin_date.day
+            submission_month = begin_date.month
+            submission_year = begin_date.year
+        else:
+            submission_day = 0
+            submission_month ='tbd'
+            submission_year = begin_date.year
+
+
+        pdoc.update({'reimbursements': [
+            {
+                'amount': 0,
+                'day': 0,
+                'month': 'tbd',
+                'submission_day': submission_day,
+                'submission_month': submission_month,
+                'submission_year': submission_year,
+                'where': rc.where,
+                'year': begin_date.year
+
+
+            }
+            ]
+        })
+        pdoc.update({
+            'status': rc.status
+        })
+        get_dates(pdoc)
+
 
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
