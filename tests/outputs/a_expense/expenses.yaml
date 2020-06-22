@@ -1,4 +1,6 @@
 2006as_timbuktoo:
+  begin_date: 2020-06-20
+  end_date: 2020-06-25
   expense_type: travel
   grant_percenatges:
     - 50.0
@@ -58,67 +60,67 @@ test:
     - mrsec14
   itemized_expenses:
     - day: 1
-      month: jan
+      month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 10
       segregated_expense: 0
     - day: 2
-      month: jan
+      month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 20
       segregated_expense: 0
     - day: 3
-      month: jan
+      month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 30
       segregated_expense: 0
     - day: 4
-      month: jan
+      month: Jan
       year: 2018
       purpose: 2
       unsegregated_expense: 40
       segregated_expense: 0
     - day: 5
-      month: jan
+      month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 50
       segregated_expense: 0
     - day: 6
-      month: jan
+      month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 60
       segregated_expense: 0
     - day: 7
-      month: jan
+      month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 70
       segregated_expense: 0
     - day: 8
-      month: jan
+      month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 80
       segregated_expense: 0
     - day: 9
-      month: jan
+      month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 90
       segregated_expense: 0
     - day: 10
-      month: jan
+      month: Jan
       year: 2018
-      purpsoe: test
+      purpose: test
       unsegregated_expense: 100
       segregated_expense: 0
   payee: scopatz
-  project: cyclus
+  project: Cyclus
   overall_purpose: testing for databallectionsse
 
 

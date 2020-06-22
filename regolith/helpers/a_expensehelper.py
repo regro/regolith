@@ -13,7 +13,7 @@ from regolith.tools import (
     get_pi_id,
 )
 
-TARGET_COLL = "projecta"
+TARGET_COLL = "expenses"
 ALLOWED_TYPES = ["business", "travel"] # need to check all expense types.
 ALLOWED_STATI = ["submitted", "unsubmitted", "reimbursed"]
 
@@ -53,26 +53,18 @@ def subparser(subpi):
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
                             "In YYYY-MM-DD format. Defaults to today's date",
-                       default=dt.date.today()
 
                        )
     subpi.add_argument("-e,", "--end_date",
                        help="Input end date for this expense. "
                             "In YYYY-MM-DD format. Defaults to today's date",
-                       default= dt.date.today()
                        )
     return subpi
 
 
 class ExpenseAdderHelper(DbHelperBase):
-    """
-    Helper to add expenses
-
-
-    """
-    # btype must be the same as helper target in helper.py
     btype = "a_expense"
-    needed_dbs = ['expenses']
+    needed_dbs = [f'{TARGET_COLL}', 'people', 'groups']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -93,24 +85,23 @@ class ExpenseAdderHelper(DbHelperBase):
 
     def db_updater(self):
         gtx = self.gtx
-
         rc = self.rc
-
-        if not rc.begin_date:
-            begin_date = dt.date.today() # string with date time format, leave as dt object
+        # dates
+        if rc.begin_date:
+            begin_date = date_parser.parse(rc.begin_date).date()
         else:
-            begin_date = rc.begin_date # need to raise exception for wrongly formatted user input
-        if not rc.end_date:
-            end_date = dt.date.today()
+            begin_date = dt.datetime.now()
+        if rc.end_date:
+            end_date = date_parser.parse(rc.end_date).date()
         else:
-            end_date = rc.end_date
+            end_date = dt.datetime.now()
 
-        # defaults to sbillinge
-        if rc.payee:
-            key = f"{str(begin_date.year)[2:]}{str(begin_date.month)}{rc.payee[0:2]}_{''.join(rc.name.casefold().split()).strip()}"
-        else:
-            key = f"{str(begin_date.year)[2:]}{str(begin_date.month)}{'sb'}_{''.join(rc.name.casefold().split()).strip()}"
+        # id
 
+
+
+
+        key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{rc.payee[0:2]}_{''.join(rc.name.casefold().split()).strip()}"
 
 
         coll = self.gtx[rc.coll]
@@ -120,57 +111,13 @@ class ExpenseAdderHelper(DbHelperBase):
                 "This entry appears to already exist in the collection")
         else:
             pdoc = {}
-
-
-        pdoc.update({
-            "begin_date" : begin_date,
-            "end_date": end_date,
-
-             })
-        pdoc = pdoc.get_dates
-        if rc.business:
-            pdoc.update({'expense_type': "business"
-                         })
-        else:
-            pdoc.update({"expense_type":"travel"
-                         })
-    # Updates the grants, assumes equal percentage for each grant
-        if rc.grants:
-            if isinstance(rc.grants, str):
-                rc.grants = [rc.grants]
-            percentages = [100 / len(rc.grants) for i in rc.grants]
-        else:
-            rc.grants = 'tbd'
-            percentages = [100]
-
-
-
-
-
-        pdoc.update({"grant_percentages": percentages,
-                     "grants": rc.grants,
-                     "itemized_expenses":{
-                         [{"date" : begin_date,
-                           "purpose": rc.purpose,
-                           "segregated_expense" : int(rc.segregated),
-                           "unsegregated_expense": int(rc.amount) - int(rc.segregated)
-                         }]
-                     }
+        pdoc.update({'_id': key,
+                     'amount': float(rc.amount)
                      })
-        # Notes
-        if rc.notes:
-            if isinstance(rc.notes, str)
-            notes = [rc.notes]
-        else:
-            notes = []
-        pdoc.update({
-            "notes": notes,
-            "overall_purpose": rc.purpose,
-            "payee": rc.payee
-
-        })
+        pdoc.update({'authors': rc.authors})
 
 
+        rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print(f"{key} has been added in {TARGET_COLL}")
 
