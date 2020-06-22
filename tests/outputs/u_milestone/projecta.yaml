@@ -100,8 +100,8 @@
         - lead
         - pi
         - group_members
-      status: converged
-      type: pr
+      status: proposed
+      type: meeting
   name: First Projectum
   pi_id: scopatz
   status: proposed

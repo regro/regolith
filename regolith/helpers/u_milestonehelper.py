@@ -16,6 +16,8 @@ ALLOWED_STATUS = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burne
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="the id of the projectum")
+    subpi.add_argument("-v", "--verbose", action="store_true",
+                        help="gives a list of the milestones available to update.")
     subpi.add_argument("--index",
                         help="index of the item in the enumerated list to update",
                         type = int)
@@ -83,16 +85,20 @@ class MilestoneUpdaterHelper(DbHelperBase):
             i['due_date'] = get_due_date(i)
         all_milestones.sort(key = lambda x: x['due_date'], reverse=False)
         index_list = list(range(2, (len(all_milestones)+2)))
-        if not rc.index:
+        if rc.verbose:
             print("Please choose from one of the following to update/add:")
             print("1. new milestone")
             for i, j in zip(index_list, all_milestones):
-                if 'name' in j:
-                    print("{}. {}    due date: {}    {}".format(i, j["name"],
-                                                    j["due_date"], j["status"]))
+                if j['identifier'] == 'milestones':
+                    print(f"{i}. {j['name']}    due date: {j['due_date']}:\n"
+                          f"     audience: {j['audience']}\n"
+                          f"     objetive: {j['objective']}\n"
+                          f"     status: {j['status']}\n"
+                          f"     type: {j['type']}")
                 else:
-                    print("{}. {}    due date: {}    {}".format(i, j['identifier'],
-                                                                j["due_date"], j["status"]))
+                    print(f"{i}. {j['identifier']}    due date: {j['due_date']}:\n"
+                          f"     audience: {j['audience']}\n"
+                          f"     status: {j['status']}")
                 del j['identifier']
             return
         pdoc = {}
@@ -121,6 +127,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 doc.update({'due_date': rc.due_date})
             if rc.status:
                 doc.update({'status': ALLOWED_STATUS[rc.status]})
+            if rc.type:
+                doc.update({'type': ALLOWED_TYPES[rc.type]})
             doc['due_date'] = get_due_date(doc)
             if identifier == 'milestones':
                 new_mil = []

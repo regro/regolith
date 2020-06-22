@@ -62,16 +62,28 @@ helper_map = [
      ""
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--index", "4",
-      "-s", "c", "--due_date", "2020-05-30"],
+      "-s", "p","-t", "m", "--due_date", "2020-05-30"],
      "20sb_firstprojectum has been updated in projecta\n"
      ),
-    (["helper", "u_milestone", "20sb_firstprojectum"],
+    (["helper", "u_milestone", "20sb_firstprojectum", "-v"],
      "Please choose from one of the following to update/add:\n"
      "1. new milestone\n"
-     "2. Kick off meeting    due date: 2020-05-06    finished\n"
-     "3. Project lead presentation    due date: 2020-05-20    proposed\n"
-     "4. planning meeting    due date: 2020-05-30    converged\n"
-     "5. deliverable    due date: 2021-05-05    finalized\n"
+     "2. kickoff    due date: 2020-05-06:\n"
+     "     audience: ['lead', 'pi', 'group_members']\n"
+     "     status: finished\n"
+     "3. Project lead presentation    due date: 2020-05-20:\n"
+     "     audience: ['lead', 'pi', 'group_members']\n"
+     "     objetive: lead presents background reading and initial project plan\n"
+     "     status: proposed\n"
+     "     type: meeting\n"
+     "4. planning meeting    due date: 2020-05-30:\n"
+     "     audience: ['lead', 'pi', 'group_members']\n"
+     "     objetive: develop a detailed plan with dates\n"
+     "     status: proposed\n"
+     "     type: meeting\n"
+     "5. deliverable    due date: 2021-05-05:\n"
+     "     audience: ['beginning grad in chemistry']\n"
+     "     status: finalized\n"
      ),
     (["helper", "u_logurl", "20sb", "-n", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "20sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
