@@ -1401,14 +1401,15 @@ EXEMPLARS = {
     "todolist": {
         "_id": "jwzang",
         "id": "jwzang",
-        "todos": [{
-            "description": "read paper",
-            "due_date": "2020-07-19",
-            "estimated_time": 60.0,
-            "importance": 5,
-            "status": "started",
-            "mark": 1
-        }]
+        "todos": [
+            {"description": "read paper",
+             "due_date": "2020-07-19",
+             "estimated_time": 60.0,
+             "importance": 5,
+             "status": "started",
+             "mark": 1
+             }
+        ],
     },
     "meetings": {
         "_id": "grp2020-06-12",
@@ -3488,6 +3489,52 @@ SCHEMAS = {
             "allowed": ["travel", "business"],
             "required": True,
         },
+    },
+    "todolist": {
+        "_description": {
+            "description": "This collection lists the to-do tasks for everyone. "
+        },
+        "_id": {
+            "description": "Unique project identifier.",
+            "required": True,
+            "type": "string",
+        },
+        "id": {
+            "description": "the user's group id",
+            "required": True,
+            "type": "string",
+        },
+        "todos": {
+            "description": "a list of the todo tasks",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "description": {"description": "the description of the to-do task",
+                                    "required": True,
+                                    "type": "string"},
+                    "due_date": {"description": "the due date",
+                                 "required": False,
+                                 "type": "string"},
+                    "estimated_time": {
+                        "description": "the size of the task/ the estimated time it will take to finish the task",
+                        "required": False,
+                        "type": "float"},
+                    "importance": {
+                        "description": "the importance, from 0 to 5",
+                        "required": False,
+                        "type": "integer"},
+                    "status": {"description": "the status: started/finished",
+                               "required": True,
+                               "type": "string"},
+                    "mark": {"description": "use this mark to update the task",
+                             "required": True,
+                             "type": "integer"},
+
+                }
+            }
+    },
     },
 }
 
