@@ -1502,6 +1502,26 @@ def get_grant_amount(grant, day, type):
     pass
 
 def get_grant_amount(grant, people, begin_date=None, end_date=None):
+def get_grant_amount(grant, ppl_coll, begin_date=None, end_date=None):
+    """
+    Parameters
+    ----------
+    grant: dict
+        The person whose appointments need to be checked
+    ppl_coll: collection (list of dicts)
+        The people collection that contains the grant appointments
+    begin_date: datetime, string, optional
+        The start date of the interval of time to check the grant amount for
+    end_date: datetime, string, optional
+        The end date of the interval of time to check the grant amount for
+
+    Returns
+    -------
+    list:
+        A list of dictionaries, each containing the date and the corresponding student_months, postdoc_months and
+        ss_months on that date
+    """
+
     grant_amounts = []
     if not grant.get('budget'):
         return "{} has no specified budget".format(grant.get('_id'))
