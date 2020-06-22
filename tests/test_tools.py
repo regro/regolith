@@ -12,6 +12,9 @@ from regolith.tools import (
     is_fully_appointed,
     group_member_ids,
     month_and_year,
+    awards_grants_honors,
+    get_id_from_name,
+    date_to_rfc822,
     )
 
 
@@ -648,3 +651,63 @@ def test_month_and_year(input,expected):
 def test_is_fully_appointed(appts, start, end, expected):
     actual = is_fully_appointed(appts, start, end)
     assert actual == expected
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ({'funding':[
+            {"name": "Omega Laser User's Group Travel Award",
+             "value": 1100,
+             "year": 2013},
+            {"name": "NIF User's Group Travel Award",
+             "value": 1150,
+             "year": 2013}]},
+        [{'description': "Omega Laser User's Group Travel Award (\\$1,100)",
+          'year': 2013,
+          '_key': 2013.0},
+         {'description':"NIF User's Group Travel Award (\\$1,150)",
+          'year': 2013,
+          '_key': 2013.0}]),
+        ({'funding':[
+            {"name": "Omega Laser User's Group Travel Award",
+             "value": 1100,
+             "year": 2013}],
+             "service":[{"name": "International Steering Committee", "role": "chair",
+                         "type": "profession", "year": 2020,
+                         "month": 3, "notes": ["something"]}]},
+         [{"description":"International Steering Committee",
+           "year":2020,
+           "_key":2020.03},
+          {'description': "Omega Laser User's Group Travel Award (\\$1,100)",
+           'year': 2013,
+           '_key': 2013.0}]
+        )
+    ],
+)
+def test_get_id_from_name(input,expected):
+    assert(awards_grants_honors(input) == expected)
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        (([{'_id':'afriend','aka':['AB Friend','Tony Friend'], 'name': 'Anthony B Friend'}], 'Simon'), None),
+        (([{'_id':'afriend','aka':['AB Friend','Tony Friend'], 'name': 'Anthony B Friend'}], 'Anthony B Friend'),
+         'afriend'),
+        (([{'_id':'afriend','aka':['AB Friend','Tony Friend'], 'name': 'Anthony B Friend'},
+           {'_id':'aeinstein','aka':['Einstein'], 'name': 'Albert Einstein'}],
+         'Albert Einstein'),
+         'aeinstein')
+    ],
+)
+def test_get_id_from_name(input,expected):
+    assert(get_id_from_name(input[0],input[1]) == expected)
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ((2012, 'Jan', 18), 'Wed, 18 Jan 2012 00:00:00 -0000'),
+        ((2020, 6, 22), 'Mon, 22 Jun 2020 00:00:00 -0000'),
+    ],
+)
+def test_date_to_rfc822(input,expected):
+    assert(date_to_rfc822(input[0], input[1], input[2]) == expected)
