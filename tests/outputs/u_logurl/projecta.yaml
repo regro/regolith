@@ -55,7 +55,7 @@
   deliverable:
     audience:
       - beginning grad in chemistry
-    due_date: '2021-05-05'
+    due_date: 2021-05-05
     success_def: audience is happy
     scope:
       - UCs that are supported or some other scope description if it is software
@@ -73,7 +73,7 @@
     - ascopatz
   kickoff:
     date: '2020-05-05'
-    due_date: '2020-05-06'
+    due_date: 2020-05-06
     name: Kick off meeting
     objective: introduce project to the lead
     audience:
@@ -84,7 +84,7 @@
   lead: ascopatz
   log_url: https://docs.google.com/document/d/1pQMFpuI
   milestones:
-    - due_date: '2020-05-20'
+    - due_date: 2020-05-20
       name: Project lead presentation
       objective: lead presents background reading and initial project plan
       audience:
@@ -93,15 +93,15 @@
         - group_members
       status: proposed
       type: meeting
-    - due_date: '2020-05-30'
+    - due_date: 2020-05-30
       name: planning meeting
       objective: develop a detailed plan with dates
       audience:
         - lead
         - pi
         - group_members
-      status: converged
-      type: pr
+      status: proposed
+      type: meeting
   name: First Projectum
   pi_id: scopatz
   status: proposed
