@@ -10,9 +10,11 @@ from copy import deepcopy, copy
 from calendar import monthrange
 from copy import deepcopy
 from datetime import datetime, date, timedelta
+from dateutil import parser as date_parser
+from dateutil.relativedelta import relativedelta
 
 from regolith.chained_db import ChainDB
-from regolith.dates import month_to_int, date_to_float, get_dates, last_day
+from regolith.dates import month_to_int, date_to_float, get_dates, last_day, is_current
 from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
 from regolith.chained_db import ChainDB
 
@@ -1072,46 +1074,6 @@ def update_schemas(default_schema, user_schema):
     return updated_schema
 
 
-def is_fully_loaded(appts):
-    status = True
-    earliest, latest = date.today(), date.today()
-    for appt in appts:
-        dates = get_dates(appt)
-        begin_date = dates['begin_date']
-        end_date = dates['end_date']
-        if latest == date.today():
-            latest = end_date
-        appt['begin_date'] = begin_date
-        appt['end_date'] = end_date
-        if begin_date < earliest:
-            earliest = begin_date
-        if end_date > latest:
-            latest = end_date
-    datearray = []
-    timespan = latest - earliest
-    for x in range(0, timespan.days):
-        datearray.append(earliest + timedelta(days=x))
-
-    loading = [0] * len(datearray)
-    for day in datearray:
-        for appt in appts:
-            if appt['begin_date'] <= day <= appt["end_date"]:
-                loading[datearray.index(day)] = loading[datearray.index(day)] + \
-                                                appt.get("loading")
-
-    if max(loading) > 1.0:
-        status = False
-        print("max {} at {}".format(max(loading),
-                                    datearray[
-                                        list(loading).index(max(loading))]))
-    elif min(loading) < 1.0:
-        status = False
-        print("min {} at {}".format(min(loading),
-                                    datearray[list(loading).index(min(loading))]
-                                    ))
-    return status
-
-
 def get_person(person_id, rc):
     """Get the person's name."""
     person_found = fuzzy_retrieval(
@@ -1230,6 +1192,7 @@ def group_member_ids(ppl_coll, grpname):
                     grpmembers.add(person["_id"])
     return grpmembers
 
+
 def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
     """Retrieves a list of all documents from the collection where the fragment
     appears in any one of the given fields
@@ -1282,9 +1245,80 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
                     break
     return ret_list
 
+
 def get_id_from_name(coll, name):
     person = fuzzy_retrieval(coll,["name", "aka", "_id"], name,
                              case_sensitive=False)
     if person:
         return person["_id"]
     else: return None
+
+
+def is_fully_appointed(person, begin_date, end_date):
+    """Checks if a collection of appointments for a person is valid and fully loaded
+        for a given interval of time
+
+        Parameters
+        ----------
+        person: dict
+            The person whose appointments need to be checked
+        begin_date: datetime, string, optional
+            The start date of the interval of time to check appointments for
+        end_date: datetime, string, optional
+            The end date of the interval of time to check appointments for
+
+        Returns
+        -------
+        bool:
+            True if the person is fully appointed and False if not
+
+        Examples
+        --------
+        >>> appts = [{"begin_year": 2017, "begin_month": 6, "begin_day": 1, "end_year": 2017, "end_month": 6,\
+         "end_day": 15, "grant": "grant1", "loading": 1.0, "type": "pd", }, {"begin_year": 2017, "begin_month": 6, \
+         "begin_day": 20,  "end_year": 2017,  "end_month": 6, "end_day": 30, "grant": "grant2", "loading": 1.0, \
+         "type": "pd",} ]
+        >>> aejaz = {"name": "Adiba Ejaz", "_id": "aejaz", "appointments": appts}
+        >>> is_fully_appointed(aejaz, "2017-06-01", "2017-06-30")
+
+        In this case, we have an invalid loading from 2017-06-16 to 2017-06-19 hence it would return False and
+        print "appointment gap for aejaz from 2017-06-16 to 2017-06-19".
+        """
+
+    if not person.get('appointments'):
+        print("No appointments defined for this person")
+        return False
+    status = True
+    messages = []
+    appts = person.get('appointments')
+    if begin_date > end_date:
+        raise ValueError("invalid begin and end dates")
+    if isinstance(begin_date, str):
+        begin_date = date_parser.parse(begin_date).date()
+    if isinstance(end_date, str):
+        end_date = date_parser.parse(end_date).date()
+    timespan = end_date - begin_date
+    good_period, start_gap = True, None
+    for x in range(timespan.days + 1):
+        day_loading = 0.0
+        day = begin_date + relativedelta(days=x)
+        for appt in appts:
+            if is_current(appt, now=day):
+                day_loading += appt.get("loading")
+        if day_loading > 1.0 or day_loading < 1.0:
+            status = False
+            if good_period:
+                start_gap = day
+                good_period = False
+        else:
+            if not good_period:
+                print("appointment gap for {} from {} to {}".format(person.get('_id'),
+                                                                     str(start_gap), str(day - relativedelta(days=1))))
+            good_period = True
+        if x == timespan.days and not good_period:
+            if day != start_gap:
+                print("appointment gap for {} from {} to {}".format(person.get('_id'),
+                                                                     str(start_gap), str(day - relativedelta(days=1))))
+            else:
+                print("appointment gap for {} on {}".format(person.get('_id'), str(day)))
+    return status
