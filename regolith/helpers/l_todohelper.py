@@ -1,12 +1,10 @@
-"""Helper for listing upcoming (and past) projectum milestones.
+"""Helper for listing the to-do tasks. Tasks are gathered from todolist.yml, milestones, and group meeting actions.
 
-   Projecta are small bite-sized project quanta that typically will result in
-   one manuscript.
 """
 import datetime as dt
 import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
 import sys
+from dateutil.relativedelta import *
 
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
@@ -17,30 +15,30 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "todolist"
-TARGET_COLL2="projecta"
+TARGET_COLL2 = "projecta"
+TARGET_COLL3 = "meetings"
 HELPER_TARGET = "l_todo"
-Importance = [1,2,3,4,5]
-user = "jwzang"
+Importance = [0, 1, 2, 3, 4, 5]
+ALLOWED_STATI = ["started", "finished"]
 
 
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true",
-                       help='increase verbosity of output')
-    subpi.add_argument("-u", "--user",
-                       help=f"Filter todos for this user. The default user is {user}."
+                       help='include due_date, estimated time and importance')
+    subpi.add_argument("-i", "--id",
+                       help=f"Filter to-do tasks for this user id. Default is saved in user.json."
                        )
+    subpi.add_argument("-f", "--firstname",
+                       help='Filter to-do tasks for this first name. Default is saved in user.json.')
     return subpi
 
 
 class TodoListerHelper(SoutHelperBase):
-    """Helper for listing upcoming (and past) projectum milestones.
-
-       Projecta are small bite-sized project quanta that typically will result in
-       one manuscript.
+    """Helper for listing the to-do tasks. Tasks are gathered from todolist.yml, milestones, and group meeting actions.
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}',f'{TARGET_COLL2}']
+    needed_dbs = [f'{TARGET_COLL}', f'{TARGET_COLL2}', f'{TARGET_COLL3}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -70,25 +68,35 @@ class TodoListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        for person in self.gtx["todolist"]:
-            gather_todos = person["todos"]
-        gather_todos.sort(key=lambda x: x['importance'], reverse=True)
-        gather_todos.sort(key=lambda x: x['due_date'], reverse=False)
-        num=0
-        for t in gather_todos:
-            print(f"{num+1}. {t.get('name')} (due date: {t.get('due_date')}, {t.get('estimated_time')} min)")
-            num+=1
+        if not rc.id:
+            try:
+                rc.id = rc.default_user_id
+            except AttributeError:
+                raise RuntimeError(
+                    "Please set default_user_id and user_first_name in '~/.config/regolith/user.json',\
+                     or you need to input your id and first name in the command line")
+        if not rc.firstname:
+            try:
+                rc.firstname = rc.user_first_name
+            except AttributeError:
+                raise RuntimeError(
+                    "Please set default_user_id and user_first_name in '~/.config/regolith/user.json',\
+                     or you need to input your id and first name in the command line")
+        gather_todos = []
+        # gather to-do tasks in todolist.yml
+        for member in self.gtx["todolist"]:
+            if member.get('id') == rc.id:
+                for todo in member["todos"]:
+                    if type(todo["due_date"])==str:
+                        todo["due_date"] = date_parser.parse(todo["due_date"]).date()
+                gather_todos = member["todos"]
+                break
 
-
-        all_milestones = []
-        if not rc.user:
-            rc.user=user
+        # gather to-do tasks in projecta.yml
         for projectum in self.gtx["projecta"]:
-            if rc.user and projectum.get('lead') != rc.user:
+            if projectum.get('lead') != rc.id:
                 continue
-            projectum["deliverable"].update({"name": "deliverable",
-                                             "objective": "deliver"})
-            projectum["kickoff"].update({"type": "meeting"})
+            projectum["deliverable"].update({"name": "deliverable"})
             gather_miles = [projectum["kickoff"], projectum["deliverable"]]
             gather_miles.extend(projectum["milestones"])
             for ms in gather_miles:
@@ -97,38 +105,57 @@ class TodoListerHelper(SoutHelperBase):
                             ["finished", "cancelled"]:
                         due_date = get_due_date(ms)
                         ms.update({
-                            'lead': projectum.get('lead'),
-                            'group_members': projectum.get('group_members'),
-                            'collaborators': projectum.get('collaborators'),
                             'id': projectum.get('_id'),
                             'due_date': due_date,
-                            'log_url': projectum.get('log_url'),
-                            'pi': projectum.get('pi_id')
                         })
-                        all_milestones.append(ms)
-        all_milestones.sort(key=lambda x: x['due_date'], reverse=True)
-        print("milestones:")
-        for ms in all_milestones:
-            if rc.verbose:
-                print(
-                    f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
-                print(f"    Type: {ms.get('type','')}")
-                print(f"    Title: {ms.get('name')}")
-                print(f"    log url: {ms.get('log_url')}")
-                print(f"    Purpose: {ms.get('objective')}")
-                audience = []
-                for i in ms.get('audience'):
-                    if isinstance(ms.get(i,i), str):
-                        audience.append(ms.get(i,i))
-                    else:
-                        if ms.get(i):
-                            audience.extend(ms.get(i))
-                out = ", ".join(audience)
-                print(f"    Audience: {out}")
-            else:
-                print(
-                    f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")
+                        ms.update({'description': f'{ms.get("id")}, {ms.get("name")}', 'mark': 'no mark'})
 
+                        gather_todos.append(ms)
+
+        today = dt.date.today()
+
+        mtgs = []
+        for mtg in self.gtx["meetings"]:
+            mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
+                                  mtg.get("day"))
+            if len(list(mtg.get('actions'))) != 0:
+                mtgs.append(mtg)
+        if len(mtgs)>0:
+            mtgs = sorted(mtgs, key=lambda x: x.get('date'), reverse=True)
+            actions = mtgs[0].get('actions')
+
+            due_date = mtgs[0].get('date') + relativedelta(weekday=TH)
+            for a in actions:
+                ac = a.casefold()
+                if "everyone" in ac or "all" in ac or rc.firstname.casefold() in ac:
+                    gather_todos.append({
+                        'description': a,
+                        'due_date': due_date,
+                        'mark': 'no mark',
+                        'status': 'started'
+                    })
+
+
+
+        num = 0
+
+        for item in gather_todos:
+            if item.get('importance') == None:
+                item['importance'] = 0
+
+        gather_todos.sort(key=lambda x: x['importance'], reverse=True)
+        gather_todos.sort(key=lambda x: x['due_date'], reverse=False)
+        if rc.verbose:
+            for t in gather_todos:
+                if t.get('status') not in ["finished", "cancelled"]:
+                    print(
+                        f"{num + 1}.  {t.get('description')}")
+                    print(f"     --( {t.get('mark')}, {t.get('due_date')}, {t.get('estimated_time')} min, importance: {t.get('importance')})")
+                    num += 1
+        else:
+            for t in gather_todos:
+                if t.get('status') not in ["finished", "cancelled"]:
+                    print(f"{num + 1}. {t.get('description')}")
+                    num+=1
 
         return
-

@@ -1397,8 +1397,47 @@ EXEMPLARS = {
         "begin_time": "8:00 am",
         "end_date": "2020-02-17",
         "end_time": "8:00 am"
-    }
+    },
+    "todolist": {
+        "_id": "jwzang",
+        "id": "jwzang",
+        "todos": [{
+
+            "description": "read paper",
+            "due_date": "2020-07-19",
+            "estimated_time": 60.0,
+            "importance": 5,
+            "status": "started",
+            "mark": 1
+
+        }]
+
+    },
+    "meetings": {
+        "_id": "grp2020-06-12",
+        "actions":[
+            "Jiawei: test",
+            "Everyone: Clear out-of-date prums milestones."
+        ],
+        "agenda": ["Review actions",],
+        "buddies": [],
+        "day": 12,
+        "journal_club": [],
+        "lead": "nthomas",
+        "minutes": [],
+        "month": 6,
+        "place": "Mudd 1106",
+        "presentation": [],
+        "scribe": "hvuong",
+        "time": '0',
+        "updated": "",
+        "uuid": "",
+        "year": 2020
+
+    },
 }
+
+
 
 SCHEMAS = {
     "abstracts": {
@@ -3453,6 +3492,50 @@ SCHEMAS = {
             "required": True,
         },
     },
+    "todolist": {
+        "_description": {
+            "description": "This collection lists the to-do tasks for everyone. "
+        },
+        "_id": {
+            "description": "Unique project identifier.",
+            "required": True,
+            "type": "string",
+        },
+        "id": {
+            "description": "the user's group id",
+            "required": True,
+            "anyof_type": "string",
+        },
+        "todo": {
+            "description": "list of ",
+            "required": False,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "description": {"description": "the description of the to-do task",
+                                    "required": True,
+                                    "type": "string"},
+                    "due_date": {"description": "the due date",
+                                 "required": True,
+                                 "type": "string"},
+                    "estimated_time": {"description": "the size of the task/ the estimated time it will take to finish the task",
+                                       "required": False,
+                                       "type": "float"},
+                    "importance": {"description": "the importance, from 0 to 5",
+                                   "required": False,
+                                   "type": "int"},
+                    "status": {"description": "the status: started/finished",
+                               "required": True,
+                               "type": "string"},
+                    "mark": {"description": "use this mark to update the task",
+                             "required": True,
+                             "type": "int"},
+
+                }
+            }
+        },
+    }
 }
 
 for s in SCHEMAS:

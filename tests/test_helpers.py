@@ -108,6 +108,10 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. Maria as a new contact\n"
      ),
+    (["helper", "l_todo", "-i", "jwzang", "-f", "Jiawei"],
+     "1. Jiawei: test\n2. Everyone: Clear out-of-date prums milestones.\n3. read paper\n"
+     ),
+
 ]
 
 

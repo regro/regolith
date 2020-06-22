@@ -14,12 +14,15 @@ from regolith.helpers import u_logurlhelper as u_logurl
 from regolith.helpers import u_milestonehelper as u_milestone
 from regolith.helpers import u_contacthelper as u_contact
 from regolith.helpers import l_todohelper as l_todo
+from regolith.helpers import a_todohelper as a_todo
+from regolith.helpers import u_todohelper as u_todo
 
 HELPERS = {
     "hello": (hello.HelloHelper, hello.subparser),
     "a_proprev": (a_proprev.PropRevAdderHelper, a_proprev.subparser),
     "a_grppub_readlist": (a_gprl.GrpPubReadListAdderHelper, a_gprl.subparser),
     "a_projectum": (a_projectum.ProjectumAdderHelper, a_projectum.subparser),
+    "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser),
     "a_proposal": (a_proposal.ProposalAdderHelper, a_proposal.subparser),
     "l_milestones": (l_milestone.MilestonesListerHelper, l_milestone.subparser),
     "l_projecta": (l_projecta.ProjectaListerHelper, l_projecta.subparser),
@@ -30,6 +33,8 @@ HELPERS = {
     "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
     "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
     "l_todo":(l_todo.TodoListerHelper,l_todo.subparser),
+    "l_todo":(l_todo.TodoListerHelper, l_todo.subparser),
+    "u_todo":(u_todo.TodoUpdaterHelper, u_todo.subparser)
 }
 
 
