@@ -49,6 +49,8 @@ def subparser(subpi):
     subpi.add_argument("-g", "--grant",
                        help="Filter projecta by a grant ID"
                        )
+    subpi.add_argument("--grp_by_lead", action='store_true',
+                       help="Lists all projecta by their lead")
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs"
                        )
@@ -99,7 +101,8 @@ class ProjectaListerHelper(SoutHelperBase):
             results = search_collection(self.gtx["projecta"], rc.filter, rc.keys)
             print(results, end="")
             return
-        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose):
+
+        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead):
             return
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
@@ -114,9 +117,16 @@ class ProjectaListerHelper(SoutHelperBase):
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         projecta = []
         end_projecta = []
+        grp_by_lead = {}
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")
         for projectum in self.gtx["projecta"]:
+            if rc.grp_by_lead:
+                if projectum.get('lead') not in grp_by_lead:
+                    grp_by_lead[projectum.get('lead')] = [projectum.get('_id')]
+                else:
+                    grp_by_lead[projectum.get('lead')].append(projectum.get('_id'))
+                continue
             if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
             if rc.lead and projectum.get('lead') != rc.lead:
@@ -162,6 +172,11 @@ class ProjectaListerHelper(SoutHelperBase):
                                                                                           p.get("description"),
                                                                                           p.get("lead"), members,
                                                                                           collaborators))
+        if rc.grp_by_lead:
+            for key, values in grp_by_lead.items():
+                print(key + ':')
+                for v in values:
+                    print('    ' + v)
         projecta.sort()
         for i in projecta:
             print(i)
