@@ -52,7 +52,7 @@ helper_map = [
      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
      ),
     (["helper", "l_members", "-f", "name", "sco"],
-     "scopatz\n"
+     "scopatz    \n"
      ),
     (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"

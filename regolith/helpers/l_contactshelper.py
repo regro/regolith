@@ -13,7 +13,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     fragment_retrieval,
-    search_collection
+    key_value_pair_filter
 )
 
 TARGET_COLL = "contacts"
@@ -48,9 +48,15 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "-f",
-        "--find",
+        "--filter",
         nargs="+",
         help='Search this collection by giving key element pairs'
+    )
+    subpi.add_argument(
+        "-k",
+        "--keys",
+        nargs="+",
+        help='Specify what keys to return when running --filter. If no argument is given the default is just the id.'
     )
     return subpi
 
@@ -94,8 +100,8 @@ class ContactsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        if rc.find:
-            results = search_collection(self.gtx["contacts"], rc.find)
+        if rc.filter:
+            results = key_value_pair_filter(self.gtx["contacts"], rc.filter, rc.keys)
             print(results, end="")
             return
         def_l = set(stringify(i) for i in

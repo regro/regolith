@@ -121,9 +121,11 @@ def month_and_year(m=None, y=None):
     m = month_to_int(m)
     return "{0} {1}".format(SHORT_MONTH_NAMES[m], y)
 
+
 def get_team_from_grant(grantcol):
     for grant in grantcol:
         return gets(grant["team"], "name")
+
 
 def filter_publications(citations, authors, reverse=False, bold=True,
                         since=None, before=None, ):
@@ -746,7 +748,8 @@ def awards_grants_honors(p):
     aghs.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)
     return aghs
 
-def awards(p, since=None, before=None,):
+
+def awards(p, since=None, before=None, ):
     """Make sorted awards and honors
 
     Parameters
@@ -1251,7 +1254,8 @@ def get_id_from_name(coll, name):
                              case_sensitive=False)
     if person:
         return person["_id"]
-    else: return None
+    else:
+        return None
 
 
 def is_fully_appointed(person, begin_date, end_date):
@@ -1323,8 +1327,7 @@ def is_fully_appointed(person, begin_date, end_date):
                 print("appointment gap for {} on {}".format(person.get('_id'), str(day)))
     return status
 
-
-def search_collection(collection, arguments):
+def key_value_pair_filter(collection, arguments, keys=None):
     """Retrieves a list of all documents from the collection where the fragment
         appears in any one of the given fields
 
@@ -1334,6 +1337,8 @@ def search_collection(collection, arguments):
             The collection containing the documents
         arguments: list
             The name of the fields to look for and their accompanying substring
+        keys: list
+            The name of the fields to return from the search
 
         Returns
         -------
@@ -1342,12 +1347,18 @@ def search_collection(collection, arguments):
 
         Examples
         --------
-        >>> search_collection(people, ['name', 'ab', 'position', 'professor'])
+        >>> key_value_pair_filter(people, ['name', 'ab', 'position', 'professor'], ['_id', 'name'])
 
         This would get all people for which their name contains the string 'ab'
-        and whose position is professor
+        and whose position is professor. It would return the name and id of the
+        valid entries
 
         """
+    if not keys:
+        keys = ['_id']
+    if '_id' not in keys:
+        keys.insert(0, '_id')
+
     if len(arguments) % 2 != 0:
         raise RuntimeError("Error: Number of keys and values do not match")
     elements = collection
@@ -1355,5 +1366,10 @@ def search_collection(collection, arguments):
         elements = fragment_retrieval(elements, [arguments[i]], arguments[i + 1])
     output = ""
     for e in elements:
-        output += (e.get('_id') + '\n')
+        for key in keys:
+            if key == '_id':
+                output += (e.get(key) + '    ')
+            else:
+                output += ('{}: {}    '.format(key, e.get(key)))
+        output += '\n'
     return output

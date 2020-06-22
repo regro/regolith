@@ -14,7 +14,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    search_collection
+    key_value_pair_filter
 )
 
 TARGET_COLL = "projecta"
@@ -35,9 +35,12 @@ def subparser(subpi):
                             f" Default is active projecta, i.e. 'started'",
                        default=None
                        )
-    subpi.add_argument("-f", "--find", nargs="+",
+    # The --filter and --keys flags should be in every lister
+    subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs"
                        )
+    subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return when running --filter. If no "
+                                                       "argument is given the default is just the id.")
     return subpi
 
 
@@ -79,8 +82,9 @@ class MilestonesListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        if rc.find:
-            results = search_collection(self.gtx["projecta"], rc.find)
+        # This if statement should be in all listers. Make sure to change self.gtx to get the database the lister needs
+        if rc.filter:
+            results = key_value_pair_filter(self.gtx["projecta"], rc.filter, rc.keys)
             print(results, end="")
             return
         all_milestones = []
