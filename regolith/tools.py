@@ -1504,7 +1504,7 @@ def get_grant_amount(grant, day, type):
 def get_grant_amount(grant, people, begin_date=None, end_date=None):
     grant_amounts = []
     if not grant.get('budget'):
-        return "This grant has no specified budget"
+        return "{} has no specified budget".format(grant.get('_id'))
     begin_date = get_dates(grant)['begin_date'] if not begin_date else begin_date
     end_date = get_dates(grant)['end_date'] if not end_date else end_date
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
