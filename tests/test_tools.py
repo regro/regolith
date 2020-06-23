@@ -887,12 +887,96 @@ grant1 = {}
 grant2 = {}
 grant3 = {}
 grants = [grant1, grant2, grant3]
-@pytest.mark.parametrize(
-    "grant,people,start,end,expected",
-    [
 
+grant_people = [
+    {'name': 'Kurt Godel', '_id': 'kgodel',
+     'appointments':
+     [{'_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
+      {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'pd'},
+      {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'ss'}]
+    },
+    {'name': 'MC Escher', '_id': 'mcescher',
+     'appointments':
+     [{'_id': 'A', "begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
+      {'_id' :'B', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'gra'},
+      {'_id': 'C', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},]
+    },
+    {'name': 'Johann Sebastian Bach', '_id': 'jsbach',
+     'appointments':
+     [{'_id': 'A', "begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'gra'},
+      {'_id': 'B', "begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'gra'},
+      {'_id': 'C', "begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}]
+    },
+    {'name': 'Ludwig Wittgenstein', '_id': 'lwittgenstein',
+     'appointments':
+     [{'_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant_two', 'loading': 1.0, 'type': 'ss'}]
+    },
+    {'name': 'Karl Popper', '_id': 'kpopper',
+     'appointments':
+     [{'_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant_two', 'loading': 1.0, 'type': 'ss'}]
+     },
+    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': []}
+    ]
+grant1 = {'_id': 'grant1', 'alias': 'grant_one', 'begin_date': '2019-09-01', 'end_date': '2019-09-10', 'budget': [
+    {'begin_date': '2019-09-01', 'end_date': '2019-09-03',  'student_months': 1, 'postdoc_months': 0.5, 'ss_months': 0},
+    {'begin_date': '2019-09-04', 'end_date': '2019-09-07',  'student_months': 1.5, 'postdoc_months': 0, 'ss_months': 0},
+    {'begin_date': '2019-09-08', 'end_date': '2019-09-10',  'student_months': 2, 'postdoc_months': 1.5, 'ss_months': 0},
+]}
+grant2 = {'_id': 'grant2', 'alias': 'grant_two', 'begin_date': '2019-09-01', 'end_date': '2019-12-31','budget': [
+    {'begin_date': '2019-09-01', 'end_date': '2019-12-31',  'student_months': 4, 'postdoc_months': 2.5, 'ss_months': 1}
+]}
+grant3 = {'_id': 'grant3', 'begin_date': '2019-09-01', 'end_date': '2019-12-31','budget': [
+    {'begin_date': '2019-09-01', 'end_date': '2019-10-31',  'student_months': 0, 'postdoc_months': 1, 'ss_months': 2},
+    {'begin_date': '2019-11-01', 'end_date': '2019-12-31',  'student_months': 2, 'postdoc_months': 0.5, 'ss_months': 0}
+]}
+@pytest.mark.parametrize(
+    "grant,ppl,start,end,expected",
+    [
+        (grant1, grant_people, None, None,
+         ['values for grant grant1 from 2019-09-01 to 2019-09-10:',
+          {'date': '2019-09-01', 'postdoc_days': 60.75, 'ss_days': -0.25, 'student_days': 136.75},
+          {'date': '2019-09-02', 'postdoc_days': 60.5, 'ss_days':-0.5, 'student_days': 136.25},
+          {'date': '2019-09-03', 'postdoc_days': 60.25, 'ss_days': -0.75, 'student_days': 135.75},
+          {'date': '2019-09-04', 'postdoc_days': 60.0, 'ss_days': -1.0, 'student_days': 135.25},
+          {'date': '2019-09-05', 'postdoc_days': 59.75, 'ss_days': -1.25, 'student_days': 134.75},
+          {'date': '2019-09-06', 'postdoc_days': 59.5, 'ss_days': -1.5, 'student_days': 134.25},
+          {'date': '2019-09-07', 'postdoc_days': 59.25, 'ss_days': -1.75, 'student_days': 133.75},
+          {'date': '2019-09-08', 'postdoc_days': 59.0, 'ss_days': -2.0, 'student_days': 133.25},
+          {'date': '2019-09-09', 'postdoc_days': 58.75, 'ss_days': -2.25, 'student_days': 132.75},
+          {'date': '2019-09-10', 'postdoc_days': 58.5, 'ss_days': -2.5, 'student_days': 132.25}]
+        ),
+        (grant2, grant_people, '2019-12-15', '2019-12-31',
+         ['values for grant grant2 from 2019-12-15 to 2019-12-31:',
+          {'date': '2019-12-15', 'postdoc_days': 76.25, 'ss_days': 24.5, 'student_days': 107.0},
+          {'date': '2019-12-16', 'postdoc_days': 76.25, 'ss_days': 23.5, 'student_days': 106.1},
+          {'date': '2019-12-17', 'postdoc_days': 76.25, 'ss_days': 22.5, 'student_days': 105.2},
+          {'date': '2019-12-18', 'postdoc_days': 76.25, 'ss_days': 21.5, 'student_days': 104.3},
+          {'date': '2019-12-19', 'postdoc_days': 76.25, 'ss_days': 20.5, 'student_days': 103.4},
+          {'date': '2019-12-20', 'postdoc_days': 76.25, 'ss_days': 19.5, 'student_days': 102.5},
+          {'date': '2019-12-21', 'postdoc_days': 76.25, 'ss_days': 19.5, 'student_days': 101.6},
+          {'date': '2019-12-22', 'postdoc_days': 76.25, 'ss_days': 19.5, 'student_days': 100.7},
+          {'date': '2019-12-23', 'postdoc_days': 76.25, 'ss_days': 19.5, 'student_days': 99.8},
+          {'date': '2019-12-24', 'postdoc_days': 76.25, 'ss_days': 19.5, 'student_days': 98.9},
+          {'date': '2019-12-25', 'postdoc_days': 76.25, 'ss_days': 18.5, 'student_days': 98.0},
+          {'date': '2019-12-26', 'postdoc_days': 76.25, 'ss_days': 17.5, 'student_days': 97.1},
+          {'date': '2019-12-27', 'postdoc_days': 76.25, 'ss_days': 16.5, 'student_days': 96.2},
+          {'date': '2019-12-28', 'postdoc_days': 76.25, 'ss_days': 15.5, 'student_days': 95.3},
+          {'date': '2019-12-29', 'postdoc_days': 76.25, 'ss_days': 14.5, 'student_days': 94.4},
+          {'date': '2019-12-30', 'postdoc_days': 76.25, 'ss_days': 13.5, 'student_days': 93.5},
+          {'date': '2019-12-31', 'postdoc_days': 76.25, 'ss_days': 12.5, 'student_days': 92.6}]
+        ),
+        (grant3, grant_people, '2019-12-31', '2019-12-31',
+        ['values for grant grant3 from 2019-12-31 to 2019-12-31:',
+         {'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
+        ),
+        ({'_id': 'malicious_grant', 'alias': 'very_malicious_grant'},grant_people, '2012-12-23', '2013-01-24',
+         'malicious_grant has no specified budget'),
+        (grant1, [{'name': 'Malicious Person', '_id': 'mperson',
+        'appointments': [{'_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05', 'loading': 1.0,
+                          'grant': 'grant1', 'type': 'imaginary'}]}],
+         None, None, 'invalid  type for appointment A of mperson')
     ]
 )
-def test_get_grant_amount(grant, people, start, end, expected):
-    actual = get_grant_amount(grant, people, begin_date=start, end_date=end)
+def test_get_grant_amount(grant, ppl, start, end, expected):
+    actual = get_grant_amount(grant, ppl, begin_date=start, end_date=end)
     assert actual == expected
