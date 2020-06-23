@@ -79,16 +79,10 @@ class MakeAppointmentsHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         outdated, depleted, underspent, overspent = [], [], [], []
-        if rc.begin_date:
-            begin_date = date_parser.parse(rc.begin_date).date()
-        else:
-            begin_date = None
-        if rc.end_date:
-            end_date = date_parser.parse(rc.end_date).date()
-        else:
-            end_date = None
+        begin_date = date_parser.parse(rc.begin_date).date() if rc.begin_date else None
+        end_date = date_parser.parse(rc.end_date).date() if rc.end_date else None
 
-        for p in self.gtx["people"]:
+        for p in rc.coll:
             if p.get("appointments"):
                 appts = p.get("appointments")
                 is_fully_appointed(p, begin_date=begin_date, end_date=end_date)
@@ -98,34 +92,38 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     for x in range(0, timespan.days):
                         day = begin_date + relativedelta(days=x)
                         if not is_current(g, day):
-                            outdated.append(
-                            f"person: {[p].get('_id')} appointment: {a.get('_id')} grant: {g.get('_id')} "
-                            f"date: {str(day)}")
+                            outdated.append("person: {} appointment: {} grant: {} date: {}".format(
+                                p.get('_id'), a.get('_id'), g.get('_id'), str(day)))
                         if get_grant_amount(g, self.gtx["people"], day, day) <= 0:
-                        # define this in tools.py
-                            depleted.append(
-                                f"person: {[p].get('_id')} appointment: {a.get('_id')} grant: {g.get('_id')} "
-                                f"date: {str(day)}")
+                            depleted.append("person: {} appointment: {} grant: {} date: {}".format(
+                                p.get('_id'), a.get('_id'), g.get('_id'), str(day)))
 
         for g in self.gtx["grants"]:
             end_date = get_dates(g)['end_date']
-            if get_grant_amount(g, self.gtx["people"], end_date, end_date) > 100:
-                # what is the required 'underspend' amount?
-                underspent.append(g.get('_id'))
-            elif get_grant_amount(g, self.gtx["people"], end_date, end_date) < 100:
-                # what is the required 'overspend' amount?
-                overspent.append(g.get('_id'))
+            g_amt = get_grant_amount(g, self.gtx["people"], end_date, end_date).get('student_days') + \
+                    get_grant_amount(g, self.gtx["people"], end_date, end_date).get('postdoc_days') + \
+                    get_grant_amount(g, self.gtx["people"], end_date, end_date).get('ss_days')
+            if g_amt > 30.5:
+                underspent.append("{}: grant: {}, underspend amount: {} months".format(
+                    str(g.get('end_date')), g.get('_id'), g_amt/30.5))
+            elif g_amt < -30.5:
+                overspent.append("{}: grant: {}, overspend amount: {} months".format(
+                    str(g.get('end_date')), g.get('_id'), g_amt/30.5))
 
         if outdated:
-            print("Appointments supported on outdated grants:")
+            print("appointments  on outdated grants:")
+            for appt in outdated:
+                print(appt)
+        if depleted:
+            print("appointments  on depleted grants:")
             for appt in outdated:
                 print(appt)
         if underspent:
-            print("Underspent grants:")
+            print("underspent grants:")
             for g in underspent:
                 print(g)
         if overspent:
-            print("Overspent grants:")
+            print("overspent grants:")
             for g in overspent:
                 print(g)
 
