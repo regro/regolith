@@ -15,7 +15,9 @@ from regolith.tools import (
     awards_grants_honors,
     get_id_from_name,
     date_to_rfc822,
-    key_value_pair_filter
+    key_value_pair_filter,
+    collection_str,
+    search_collection
     )
 
 
@@ -748,11 +750,37 @@ people = [person1, person2, person3]
 @pytest.mark.parametrize(
     "input, expected",
     [
-        ((people, ['name', 'Doe'], None), "jdoe    \n"),
-        ((people, ['name', 'Jerry'], None), ""),
-        ((people, ['position', 'Prof', 'name', 'Chris'], None), "abc    \n"),
-        ((people, ['position', 'Prof', 'name', 'Chris'], ['position']), "abc    position: Professor    \n"),
+        ((people, ['name', 'Doe']), [person3]),
+        ((people, ['name', 'Jerry']), []),
+        ((people, ['position', 'Prof']), [person1, person2]),
+        ((people, ['position', 'Prof', 'name', 'Chris']), [person2]),
     ],
 )
 def test_key_value_pair_filter(input, expected):
-    assert(key_value_pair_filter(input[0], input[1], input[2]) == expected)
+    assert(key_value_pair_filter(input[0], input[1]) == expected)
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        (([person3], None), "jdoe    \n"),
+        (([], None), ''),
+        (([person1, person2], ['position']), "scopatz    position: Professor    \nabc    position: Professor    \n"),
+        (([person2], ['position']), "abc    position: Professor    \n"),
+    ],
+)
+def test_collection_str(input, expected):
+    assert(collection_str(input[0], input[1]) == expected)
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ((people, ['name', 'Doe'], None), "jdoe    \n"),
+        ((people, ['name', 'Jerry'], None), ""),
+        ((people, ['position', 'Prof', 'name', 'Chris'], None), "abc    \n"),
+        ((people, ['position', 'prof', 'name', 'Chris'], ['position']), "abc    position: Professor    \n"),
+    ],
+)
+def test_search_collection(input, expected):
+    assert(search_collection(input[0], input[1], input[2]) == expected)

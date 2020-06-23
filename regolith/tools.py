@@ -1327,7 +1327,7 @@ def is_fully_appointed(person, begin_date, end_date):
                 print("appointment gap for {} on {}".format(person.get('_id'), str(day)))
     return status
 
-def key_value_pair_filter(collection, arguments, keys=None):
+def key_value_pair_filter(collection, arguments):
     """Retrieves a list of all documents from the collection where the fragment
         appears in any one of the given fields
 
@@ -1337,39 +1337,86 @@ def key_value_pair_filter(collection, arguments, keys=None):
             The collection containing the documents
         arguments: list
             The name of the fields to look for and their accompanying substring
-        keys: list
-            The name of the fields to return from the search
 
         Returns
         -------
-        str:
-            A str of all the ids of the collection concatenated together
+        generator:
+            The collection containing the elements that satisfy the search criteria
 
         Examples
         --------
-        >>> key_value_pair_filter(people, ['name', 'ab', 'position', 'professor'], ['_id', 'name'])
+        >>> key_value_pair_filter(people, ['name', 'ab', 'position', 'professor'])
 
         This would get all people for which their name contains the string 'ab'
-        and whose position is professor. It would return the name and id of the
-        valid entries
+        and whose position is professor and return them
 
         """
-    if not keys:
-        keys = ['_id']
-    if '_id' not in keys:
-        keys.insert(0, '_id')
 
     if len(arguments) % 2 != 0:
         raise RuntimeError("Error: Number of keys and values do not match")
     elements = collection
     for i in range(0, len(arguments) - 1, 2):
         elements = fragment_retrieval(elements, [arguments[i]], arguments[i + 1])
+    return elements
+
+
+def collection_str(collection, keys=None):
+    """Retrieves a list of all documents from the collection where the fragment
+        appears in any one of the given fields
+
+        Parameters
+        ----------
+        collection: generator
+            The collection containing the documents
+        keys: list, optional
+            The name of the fields to return from the search. Defaults to none in which case only the id is returned
+
+        Returns
+        -------
+        str:
+            A str of all the values
+    """
+    if not keys:
+        keys = ['_id']
+    if '_id' not in keys:
+        keys.insert(0, '_id')
     output = ""
-    for e in elements:
+    for doc in collection:
         for key in keys:
             if key == '_id':
-                output += (e.get(key) + '    ')
+                output += (doc.get(key) + '    ')
             else:
-                output += ('{}: {}    '.format(key, e.get(key)))
+                output += ('{}: {}    '.format(key, doc.get(key)))
         output += '\n'
     return output
+
+
+def search_collection(collection, arguments, keys=None):
+    """Retrieves a list of all documents from the collection where the fragment
+        appears in any one of the given fields
+
+        Parameters
+        ----------
+        collection: generator
+            The collection containing the documents
+        arguments: list
+            The name of the fields to look for and their accompanying substring
+        keys: list, optional
+            The name of the fields to return from the search. Defaults to none in which case only the id is returned
+
+        Returns
+        -------
+        generator:
+            The collection containing the elements that satisfy the search criteria
+
+        Examples
+        --------
+        >>> search_collection(people, ['name', 'ab', 'position', 'professor'], ['_id', 'name'])
+
+        This would get all people for which their name contains the string 'ab'
+        and whose position is professor. It would return the name and id of the
+        valid entries
+
+        """
+    collection = key_value_pair_filter(collection, arguments)
+    return collection_str(collection, keys)
