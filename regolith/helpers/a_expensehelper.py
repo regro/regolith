@@ -91,12 +91,11 @@ class ExpenseAdderHelper(DbHelperBase):
         # dates
         if rc.begin_date:
             begin_date = date_parser.parse(rc.begin_date).date()
-            date = begin_date
-            #date = date_parser.parse(rc.begin_date).date().strftime('%Y-%m-%d')
+            date = date_parser.parse(rc.begin_date).date().strftime('%Y-%m-%d')
         else:
             begin_date = dt.date.today()
             date = begin_date
-            #date = dt.date.today().strftime('%Y-%m-%d')
+            date = dt.date.today().strftime('%Y-%m-%d')
         if rc.end_date:
             end_date = date_parser.parse(rc.end_date).date()
         else:
