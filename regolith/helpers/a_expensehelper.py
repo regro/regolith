@@ -11,8 +11,6 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    get_dates
-
 )
 
 TARGET_COLL = "expenses"
@@ -94,13 +92,15 @@ class ExpenseAdderHelper(DbHelperBase):
         if rc.begin_date:
             begin_date = date_parser.parse(rc.begin_date).date()
             date = begin_date
+            #date = date_parser.parse(rc.begin_date).date().strftime('%Y-%m-%d')
         else:
-            begin_date = dt.datetime.now()
+            begin_date = dt.date.today()
             date = begin_date
+            #date = dt.date.today().strftime('%Y-%m-%d')
         if rc.end_date:
             end_date = date_parser.parse(rc.end_date).date()
         else:
-            end_date = dt.datetime.now()
+            end_date = dt.date.today()
         key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{rc.payee[0:2]}_{''.join(rc.name.casefold().split()).strip()}"
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
@@ -131,6 +131,7 @@ class ExpenseAdderHelper(DbHelperBase):
             percentages = [100]
         pdoc.update({'grant_percentages':percentages,
                      'grants': rc.grants})
+
         if expense_type == 'travel':
             pdoc.update({'itemized_expenses': [
                 {
@@ -199,34 +200,23 @@ class ExpenseAdderHelper(DbHelperBase):
                      'payee': rc.payee,
                      })
         if rc.status == 'submitted':
-            submission_day = begin_date.day
-            submission_month = begin_date.month
-            submission_year = begin_date.year
-        else:
-            submission_day = 0
-            submission_month ='tbd'
-            submission_year = begin_date.year
+            submission_date = dt.date.today()
 
+        else:
+            submission_date = 'tbd'
 
         pdoc.update({'reimbursements': [
             {
                 'amount': 0,
-                'day': 0,
-                'month': 'tbd',
-                'submission_day': submission_day,
-                'submission_month': submission_month,
-                'submission_year': submission_year,
+                'date': 'tbd',
+                'submission_date': submission_date,
                 'where': rc.where,
-                'year': begin_date.year
-
-
             }
             ]
         })
         pdoc.update({
             'status': rc.status
         })
-        get_dates(pdoc)
 
 
 
