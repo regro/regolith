@@ -8,7 +8,7 @@ from dateutil import parser
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection
-
+from regolith.dates import get_due_date
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
@@ -16,8 +16,11 @@ ALLOWED_STATUS = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burne
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="the id of the projectum")
-    subpi.add_argument("--number",
-                        help="number of the milestone to update from numbered list")
+    subpi.add_argument("-v", "--verbose", action="store_true",
+                        help="gives a list of the milestones available to update.")
+    subpi.add_argument("--index",
+                        help="index of the item in the enumerated list to update",
+                        type = int)
     subpi.add_argument("--due_date",
                        help="new due date of the milestone in ISO format (YYYY-MM-DD) "
                             "required to add a new milestone")
@@ -65,50 +68,47 @@ class MilestoneUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         key = rc.projectum_id
-        coll = self.gtx[rc.coll]
-        pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
-        if len(pdocl) == 0:
-            raise RuntimeError(
-                "This entry appears to not exist in the collection")
         filterid = {'_id': key}
-        current = rc.client.find_one(rc.database, rc.coll, filterid)
-        milestones = current.get('milestones')
-        deliverable = current.get('deliverable')
-        kickoff = current.get('kickoff')
+        target_prum = rc.client.find_one(rc.database, rc.coll, filterid)
+        if not target_prum:
+            raise RuntimeError(f"Cannot find {key} in the projecta collection")
+        milestones = target_prum.get('milestones')
+        deliverable = target_prum.get('deliverable')
+        kickoff = target_prum.get('kickoff')
         deliverable['identifier'] = 'deliverable'
         kickoff['identifier'] = 'kickoff'
         for item in milestones:
             item['identifier'] = 'milestones'
         all_milestones = [deliverable, kickoff]
         all_milestones.extend(milestones)
-        all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
-        index = 2
-        numbered_milestones = {}
-        for item in all_milestones:
-            numbered_milestones[str(index)] = item
-            index += 1
-        if not rc.number:
+        for i in all_milestones:
+            i['due_date'] = get_due_date(i)
+        all_milestones.sort(key = lambda x: x['due_date'], reverse=False)
+        index_list = list(range(2, (len(all_milestones)+2)))
+        if rc.verbose:
             print("Please choose from one of the following to update/add:")
             print("1. new milestone")
-            for i in numbered_milestones:
-                current_mil = numbered_milestones[i]
-                if 'name' in current_mil:
-                    print("{}. {}    due date: {}    {}".format(i, current_mil["name"],
-                                                    current_mil["due_date"], current_mil["status"]))
+            for i, j in zip(index_list, all_milestones):
+                if j['identifier'] == 'milestones':
+                    print(f"{i}. {j['name']}    due date: {j['due_date']}:\n"
+                          f"     audience: {j['audience']}\n"
+                          f"     objetive: {j['objective']}\n"
+                          f"     status: {j['status']}\n"
+                          f"     type: {j['type']}")
                 else:
-                    print("{}. {}    due date: {}    {}".format(i, current_mil['identifier'],
-                                                                current_mil["due_date"], current_mil["status"]))
-                del current_mil['identifier']
+                    print(f"{i}. {j['identifier']}    due date: {j['due_date']}:\n"
+                          f"     audience: {j['audience']}\n"
+                          f"     status: {j['status']}")
+                del j['identifier']
             return
         pdoc = {}
-        if int(rc.number) == 1:
+        if rc.index == 1:
             mil = {}
             if not rc.due_date or not rc.name or not rc.objective:
-                for i in numbered_milestones:
-                    current_mil = numbered_milestones[i]
-                    del current_mil['identifier']
                 raise RuntimeError("name, objective, and due date are required for a new milestone")
-            mil.update({'due_date': rc.due_date, 'objective': rc.objective, 'name': rc.name})
+            mil.update({'due_date': rc.due_date})
+            mil['due_date'] = get_due_date(mil)
+            mil.update({'objective': rc.objective, 'name': rc.name})
             mil.update({'audience': ['lead', 'pi', 'group_members']})
             if rc.status:
                 mil.update({'status': ALLOWED_STATUS[rc.status]})
@@ -120,26 +120,27 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 mil.update({'type': 'meeting'})
             milestones.append(mil)
             pdoc = {'milestones':milestones}
-        if int(rc.number) > 1:
-            doc = numbered_milestones[rc.number]
+        if rc.index > 1:
+            doc = all_milestones[rc.index-2]
             identifier = doc['identifier']
             if rc.due_date:
-                doc.update({'due_date':rc.due_date})
+                doc.update({'due_date': rc.due_date})
             if rc.status:
                 doc.update({'status': ALLOWED_STATUS[rc.status]})
+            if rc.type:
+                doc.update({'type': ALLOWED_TYPES[rc.type]})
+            doc['due_date'] = get_due_date(doc)
             if identifier == 'milestones':
                 new_mil = []
-                for i in numbered_milestones:
-                    if numbered_milestones[i]['identifier'] =='milestones' and i!= rc.number:
-                        new_mil.append(numbered_milestones[i])
+                for i, j in zip(index_list, all_milestones):
+                    if j['identifier'] == 'milestones' and i != rc.index:
+                        new_mil.append(j)
                 new_mil.append(doc)
                 pdoc.update({'milestones':new_mil})
             else:
                 pdoc.update({identifier:doc})
-        for i in numbered_milestones:
-            current_mil = numbered_milestones[i]
-            del current_mil['identifier']
-
+        for i in all_milestones:
+            del i['identifier']
         rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         print("{} has been updated in projecta".format(key))
 
