@@ -167,7 +167,13 @@ def get_dates(thing):
     If begin_year is found, the begin month and begin day are missing they are set to
     1 and 1, respectively
     '''
-
+    minimal_set = ["end_year", "begin_year", "year", "begin_date", "end_date", 
+                   "date"]
+    minimal_things = list(set([thing.get(i) for i in minimal_set]))
+    if len(minimal_things) == 1 and not minimal_things[0]:
+        print("WARNING: cannot find any dates")
+        dates = {'begin_date': None, 'end_date': None, 'date': None}
+        return dates
     if thing.get("end_year") and not thing.get("begin_year"):
         print('WARNING: end_year specified without begin_year')
     begin_date, end_date, date = None, None, None
@@ -279,7 +285,7 @@ def is_current(thing, now=None):
         if dates.get("begin_date") <= now <= dates.get("end_date"):
             current = True
     except:
-        raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
+        raise RuntimeError(f"Cannot find begin_date in document: {thing['_id']}")
     return current
 
 
