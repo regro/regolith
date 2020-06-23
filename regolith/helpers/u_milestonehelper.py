@@ -90,15 +90,15 @@ class MilestoneUpdaterHelper(DbHelperBase):
             print("1. new milestone")
             for i, j in zip(index_list, all_milestones):
                 if j['identifier'] == 'milestones':
-                    print(f"{i}. {j['name']}    due date: {j['due_date']}:\n"
-                          f"     audience: {j['audience']}\n"
-                          f"     objetive: {j['objective']}\n"
-                          f"     status: {j['status']}\n"
-                          f"     type: {j['type']}")
+                    print(f"{i}. {j.get('name')}    due date: {j.get('due_date')}:\n"
+                          f"     audience: {j.get('audience')}\n"
+                          f"     objetive: {j.get('objective')}\n"
+                          f"     status: {j.get('status')}\n"
+                          f"     type: {j.get('type')}")
                 else:
-                    print(f"{i}. {j['identifier']}    due date: {j['due_date']}:\n"
-                          f"     audience: {j['audience']}\n"
-                          f"     status: {j['status']}")
+                    print(f"{i}. {j.get('identifier')}    due date: {j.get('due_date')}:\n"
+                          f"     audience: {j.get('audience')}\n"
+                          f"     status: {j.get('status')}")
                 del j['identifier']
             return
         pdoc = {}
