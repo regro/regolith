@@ -148,6 +148,9 @@ class StorageClient(object):
             The path, if the file is not in the store None
         """
         ret = os.path.join(self.path, file_name)
+        temp = (self.path + file_name).find(self.path, 1, -1)
+        if temp != -1:
+            return file_name
         if os.path.exists(ret):
             return os.path.join(self.path, file_name)
         else:
