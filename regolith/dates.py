@@ -161,7 +161,7 @@ def get_dates(thing, date_field_prefix=None):
     If "year", "month" and "day" are found the function will return these in the
     "date" field and begin_date and end_date will match the "date" field. If only
     a "year" is found, then the date attribute will be none but the begin and end
-    dates will be the first and last day of that respective year. 
+    dates will be the first and last day of that respective year.
 
     If year is found but no month or day are found the function will return
     begin_date and end_date with the beginning and the end of the given year/month.
@@ -207,6 +207,13 @@ def get_dates(thing, date_field_prefix=None):
     if date_field_prefix:
         datenames = [f"{date_field_prefix}_{datename}" for datename in datenames]
 
+    minimal_set = ["end_year", "begin_year", "year", "begin_date", "end_date",
+                   "date"]
+    minimal_things = list(set([thing.get(i) for i in minimal_set]))
+    if len(minimal_things) == 1 and not minimal_things[0]:
+        print("WARNING: cannot find any dates")
+        dates = {'begin_date': None, 'end_date': None, 'date': None}
+        return dates
     if thing.get("end_year") and not thing.get("begin_year"):
         print('WARNING: end_year specified without begin_year')
     begin_date, end_date, date = None, None, None
@@ -322,7 +329,7 @@ def is_current(thing, now=None):
         if dates.get("begin_date") <= now <= dates.get("end_date"):
             current = True
     except:
-        raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
+        raise RuntimeError(f"Cannot find begin_date in document: {thing['_id']}")
     return current
 
 
