@@ -2,7 +2,6 @@
 from regolith.database import dump_database, open_dbs
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.storage import store_client, push
-from os import getcwd
 
 
 def load_db(rc_file="regolithrc.json"):
@@ -81,9 +80,8 @@ class Broker:
         path : str or None
             The file path, if not in the storage None
         """
-        cwd = getcwd()
         if "files" in document:
-            return cwd + '\\' + self.store.retrieve(document["files"][name])
+            return self.store.retrieve(document["files"][name])
         else:
             return None
 

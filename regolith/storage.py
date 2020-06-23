@@ -149,10 +149,13 @@ class StorageClient(object):
         """
         ret = os.path.join(self.path, file_name)
         temp = (self.path + file_name).find(self.path, 1, -1)
-        if temp != -1:
-            return file_name
         if os.path.exists(ret):
             return os.path.join(self.path, file_name)
+        elif temp != -1:
+            if os.name == "posix":
+                return os.getcwd() + '/' + file_name
+            else:
+                return os.getcwd() + '\\' + file_name
         else:
             return None
 
