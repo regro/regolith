@@ -87,11 +87,10 @@ class ExpenseAdderHelper(DbHelperBase):
         # dates
         if rc.begin_date:
             begin_date = date_parser.parse(rc.begin_date).date()
-            date = date_parser.parse(rc.begin_date).date().strftime('%Y-%m-%d')
+            date_string = rc.begin_date
         else:
             begin_date = dt.date.today()
-            date = begin_date
-            date = dt.date.today().strftime('%Y-%m-%d')
+            date_string = dt.date.today().strftime('%Y-%m-%d')
         if rc.end_date:
             end_date = date_parser.parse(rc.end_date).date()
         else:
@@ -129,49 +128,49 @@ class ExpenseAdderHelper(DbHelperBase):
         if expense_type == 'travel':
             pdoc.update({'itemized_expenses': [
                 {
-                    'date': date,
+                    'date': date_parser.parse(date_string).date(),
                     'purpose': 'registration',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
                 },
                 {
-                    'date': date,
+                    'date': date_parser.parse(date_string).date(),
                     'purpose': 'home to airport',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
                 },
                 {
-                    'date': date,
+                    'date': date_parser.parse(date_string).date(),
                     'purpose': 'flights',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
                 },
                 {
-                    'date': date,
+                    'date':date_parser.parse(date_string).date() ,
                     'purpose': 'airport to hotel',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
                 },
                 {
-                    'date': date,
+                    'date': date_parser.parse(date_string).date(),
                     'purpose': 'hotel',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
                 },
                 {
-                    'date': date,
+                    'date': date_parser.parse(date_string).date(),
                     'purpose': 'hotel to airport',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
                 },
                 {
-                    'date': date,
+                    'date': date_parser.parse(date_string).date(),
                     'purpose': 'airport to home',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
                 },
                 {
-                    'date': date,
+                    'date': date_parser.parse(date_string).date(),
                     'purpose': 'meals',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
@@ -181,7 +180,7 @@ class ExpenseAdderHelper(DbHelperBase):
         else:
             pdoc.update({'itemized_expenses': [
                 {
-                    'date': date,
+                    'date': date_parser.parse(date_string).date(),
                     'purpose': rc.purpose,
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
