@@ -13,7 +13,10 @@ Loading the broker
 ******************
 
 To load the broker you need a ``regolithrc.json`` file.
-With that you can use either the class based or function interface
+With that you can use either the class based or function interface.
+Note: When utilizing the broker with the local FS, load_db must be
+run from the local directory. In this case, the argument can optionally
+be omitted (i.e. db = Broker.from_rc()).
 
 .. code-block:: python
 
@@ -25,7 +28,8 @@ With that you can use either the class based or function interface
 Inserting files into the store
 ******************************
 
-To insert documents into the broker you can use the ``add_file`` interface
+To insert documents into the broker you can use the ``add_file`` interface.
+Note: The files to be added must be present in the cwd
 
 .. code-block:: python
 
@@ -49,7 +53,8 @@ This will:
 Retrieving files from the store
 *******************************
 
-To retrive files from the store you can use the ``get_file`` interface
+To retrieve files from the store you can use the ``get_file`` interface.
+Importantly, this will only retrieve the path to the file.
 
 .. code-block:: python
 
