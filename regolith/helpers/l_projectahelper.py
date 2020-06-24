@@ -117,15 +117,15 @@ class ProjectaListerHelper(SoutHelperBase):
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         projecta = []
         end_projecta = []
-        lead_to_projecta = {}
+        grouped_projecta = {}
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")
         for projectum in self.gtx["projecta"]:
             if rc.grp_by_lead:
-                if projectum.get('lead') not in lead_to_projecta:
-                    lead_to_projecta[projectum.get('lead')] = [projectum.get('_id')]
+                if projectum.get('lead') not in grouped_projecta:
+                    grouped_projecta[projectum.get('lead')] = [projectum.get('_id')]
                 else:
-                    lead_to_projecta[projectum.get('lead')].append(projectum.get('_id'))
+                    grouped_projecta[projectum.get('lead')].append(projectum.get('_id'))
                 continue
             if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
@@ -173,7 +173,7 @@ class ProjectaListerHelper(SoutHelperBase):
                                                                                           p.get("lead"), members,
                                                                                           collaborators))
         if rc.grp_by_lead:
-            for key, values in lead_to_projecta.items():
+            for key, values in grouped_projecta.items():
                 print(f"{key}:")
                 for v in values:
                     print(f"    {v}")
