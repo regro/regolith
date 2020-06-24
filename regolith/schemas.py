@@ -1408,11 +1408,11 @@ EXEMPLARS = {
              "duration": 60.0,
              "importance": 2,
              "status": "started",
-             "mark": 1
+             "mark": 0
              },
             {"description": "prepare the presentation",
              "due_date": "2020-07-29",
-             "begin_date": "",
+             "begin_date": "2020-06-22",
              "duration": 30.0,
              "importance": 0,
              "status": "started",

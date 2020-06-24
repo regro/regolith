@@ -21,6 +21,8 @@ helper_map = [
       "-a", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "-c", "Bitcoin",
       "--other_agencies", "Flatland", "-n", "this is a sample added proposal"],
      "20_anewproposal has been added in proposals\n"),
+    (["helper", "a_todo", "test, due date is 4 days from the begin date", "4", "-i", "jwzang", "-b", "2020-06-24"],
+     "The task has been added in todolist.\n"),
     (["helper", "l_milestones", "--verbose"],
      "2021-01-01: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
@@ -108,16 +110,18 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. Maria as a new contact\n"
      ),
-    (["helper", "l_todo", "-i", "jwzang", "-f", "Jiawei"],
-     "1. Jiawei: test\n2. Everyone: Clear out-of-date prums milestones.\n3. read paper\n4. prepare the presentation\n"
-     ),
     (["helper", "l_todo", "-i", "jwzang", "-f", "Jiawei", "-d", "30"],
      "1. prepare the presentation\n"
+     ),
+    (["helper", "l_todo", "-i", "jwzang", "-f", "Jiawei"],
+     "1. Jiawei: test\n2. Everyone: Clear out-of-date prums milestones.\n3. test, due date is 4 days from the begin date\n4. read paper\n5. prepare the presentation\n"
      ),
     (["helper", "l_todo", "-i", "ascopatz", "-f", "asc"],
      "1. 20sb_firstprojectum, Project lead presentation\n2. 20sb_firstprojectum, planning meeting\n3. Everyone: Clear out-of-date prums milestones.\n4. 20sb_firstprojectum, deliverable\n"
      ),
-
+    (["helper", "l_todo","-v", "-i", "jwzang", "-f", "Jiawei"],
+     "1. Jiawei: test\n     --(no mark, due: 2020-06-18, None min, importance:1, start date: None)\n2. Everyone: Clear out-of-date prums milestones.\n     --(no mark, due: 2020-06-18, None min, importance:1, start date: None)\n3. test, due date is 4 days from the begin date\n     --(2, due: 2020-06-28, 60.0 min, importance:1, start date: 2020-06-24)\n4. read paper\n     --(0, due: 2020-07-19, 60.0 min, importance:2, start date: 2020-06-15)\n5. prepare the presentation\n     --(1, due: 2020-07-29, 30.0 min, importance:0, start date: 2020-06-22)\n"
+     ),
 ]
 
 

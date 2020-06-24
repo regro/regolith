@@ -147,9 +147,9 @@ class TodoListerHelper(SoutHelperBase):
             for t in gather_todos:
                 if t.get('status') not in ["finished", "cancelled"]:
                     print(
-                        f"{num + 1}.  {t.get('description')}")
-                    print(f"     --( {t.get('mark')}, due: {t.get('due_date')}, {t.get('duration')} min, importance:"
-                          f"{t.get('importance')}, start date: {t.get('begin_date')}")
+                        f"{num + 1}. {t.get('description')}")
+                    print(f"     --({t.get('mark')}, due: {t.get('due_date')}, {t.get('duration')} min, importance:"
+                          f"{t.get('importance')}, start date: {t.get('begin_date')})")
                     num += 1
         elif rc.duration:
             for t in gather_todos:

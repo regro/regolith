@@ -1,0 +1,24 @@
+jwzang:
+  id: jwzang
+  todos:
+    - description: read paper
+      due_date: '2020-07-19'
+      begin_date: '2020-06-15'
+      duration: 60.0
+      importance: 2
+      status: started
+      mark: 0
+    - description: prepare the presentation
+      due_date: '2020-07-29'
+      begin_date: '2020-06-22'
+      duration: 30.0
+      importance: 0
+      status: started
+      mark: 1
+    - description: test, due date is 4 days from the begin date
+      due_date: 2020-06-28
+      begin_date: 2020-06-24
+      duration: 60.0
+      importance: 1
+      status: started
+      mark: 2
