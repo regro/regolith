@@ -41,10 +41,6 @@ def subparser(subpi):
                        help=f"status, from {ALLOWED_STATI}. Default is unsubmitted",
                        default='unsubmitted'
                        )
-    subpi.add_argument("-z", "--segregated",
-                       help="Amount for any segregated expense. Defaults to 0",
-                       default="0"
-                       )
     subpi.add_argument("-w", "--where",
                        help="Where the expense has been submitted"
                        )
@@ -111,7 +107,6 @@ class ExpenseAdderHelper(DbHelperBase):
         pdoc.update({'_id': key,
                      'begin_date': begin_date,
                      'end_date': end_date,
-
                      })
         # expense_type
 
@@ -150,8 +145,6 @@ class ExpenseAdderHelper(DbHelperBase):
                     'purpose': 'flights',
                     'unsegregated_expense': 0,
                     'segregated_expense': 0
-
-
                 },
                 {
                     'date': date,
