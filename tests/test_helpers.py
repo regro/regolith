@@ -68,7 +68,7 @@ helper_map = [
      ""
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--index", "4",
-      "-s", "p","-t", "m", "--due_date", "2020-05-30"],
+      "-s", "p", "-t", "m", "--due_date", "2020-05-30"],
      "20sb_firstprojectum has been updated in projecta\n"
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "-v"],

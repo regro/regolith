@@ -124,15 +124,20 @@ class MilestoneUpdaterHelper(DbHelperBase):
         if rc.index > 1:
             doc = all_milestones[rc.index-2]
             identifier = doc['identifier']
+            if not rc.type and not doc.get('type'):
+                    raise RuntimeError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
             if rc.type:
-                doc.update({'type': ALLOWED_TYPES[rc.type]})
-            else:
-                if not doc.get('type'):
-                    raise RuntimeError(f"please rerun specifying --t with a value from {ALLOWED_TYPES}")
+                try:
+                    doc.update({'type': ALLOWED_TYPES[rc.type]})
+                except:
+                    raise ValueError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
+            if rc.status:
+                try:
+                    doc.update({'status': ALLOWED_STATUS[rc.status]})
+                except:
+                    raise ValueError(f"please rerun specifying --status with a value from {ALLOWED_STATUS}")
             if rc.due_date:
                 doc.update({'due_date': rc.due_date})
-            if rc.status:
-                doc.update({'status': ALLOWED_STATUS[rc.status]})
             doc['due_date'] = get_due_date(doc)
             if identifier == 'milestones':
                 new_mil = []
