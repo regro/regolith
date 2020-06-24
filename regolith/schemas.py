@@ -296,13 +296,8 @@ EXEMPLARS = {
             "_id": "dmref15",
             "alias": "dmref15",
             "account": "GG012345",
+            "alias": "dmref15",
             "amount": 982785.0,
-            "begin_day": 1,
-            "begin_month": "october",
-            "begin_year": 2015,
-            "end_day": 30,
-            "end_month": "september",
-            "end_year": 2025,
             "funder": "NSF",
             "grant_id": "DMREF-1534910",
             "institution": "Columbia University",
@@ -311,6 +306,7 @@ EXEMPLARS = {
             "person_months_academic": 0.0,
             "person_months_summer": 0.25,
             "program": "DMREF",
+            "proposal_id": "dmref15",
             "scope": "This grant is to develop complex modeling methods for regularizing "
                      "ill-posed nanostructure inverse problems using data analytic and "
                      "machine learning based approaches. This does not overlap with any "
