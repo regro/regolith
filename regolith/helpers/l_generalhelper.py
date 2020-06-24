@@ -1,5 +1,4 @@
-"""Helper for finding and listing contacts from the contacts.yml database.
-Prints name, institution, and email (if applicable) of the contact.
+"""Helper for finding people's information in the people collection
 """
 import dateutil
 import dateutil.parser as date_parser
@@ -16,7 +15,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "people"
-HELPER_TARGET = "l_general"
+HELPER_TARGET = "list"
 
 
 def subparser(subpi):
@@ -27,15 +26,11 @@ def subparser(subpi):
         "-l",
         "--",
         help='name or name fragment (single argument only) to use to find people')
-    subpi.add_argument(
-        "-i",
-        "--inst",
-        help='institution or an institution fragment (single argument only) to use to find contacts')
 
     return subpi
 
 class GeneralListerHelper(SoutHelperBase):
-    """Helper for finding and listing contacts from the contacts.yml file
+    """Helper for finding and listing people's information from people.yml
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
