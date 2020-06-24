@@ -159,6 +159,22 @@ helper_map = [
      "20sb_firstprojectum     status:finished\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
+
+    #UC1
+    (["helper", "list", "people"],
+     "scopatz\nsbillinge\n"),
+    #UC2
+    (["helper", "list", "--kv_filter", "name", "simon"],
+     "sbillinge\n"),
+    #UC3
+    (["helper", "list", "--kv_filter", "name", "simon", "-r", "name", "position"],
+     "sbillinge, name: Simon J. L. Billinge, position: professor\n"),
+    #UC4?
+    (["helper", "list", "people", "-k"],
+     "active: If the person is an active member, default True\n"
+     "aka: list of aliases (also-known-as), useful for "
+     "identifying the group member in citations or elsewhere.\n"
+     "...")
 ]
 
 
