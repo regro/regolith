@@ -26,16 +26,17 @@ def subparser(subpi):
                             "required to add a new milestone")
     subpi.add_argument("--name",
                        help="name of the new milestone. "
-                            "required to add a new milestone")
+                            "required to add a new milestone.")
     subpi.add_argument("-o", "--objective",
                        help="objective of the new milestone. "
                             "required to add a new milestone")
     subpi.add_argument("-s", "--status",
-                       help="initial of the status of the milestone/deliverable: "
+                       help="status of the milestone/deliverable: "
                             f"{ALLOWED_STATUS}")
     subpi.add_argument("-t", "--type",
-                       help="initial of type of the new milestone "
-                            f"{ALLOWED_TYPES}")
+                       help="type of the milestone: "
+                            f"{ALLOWED_TYPES}"
+                            "new milestone defaults to meeting")
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -123,12 +124,15 @@ class MilestoneUpdaterHelper(DbHelperBase):
         if rc.index > 1:
             doc = all_milestones[rc.index-2]
             identifier = doc['identifier']
+            if rc.type:
+                doc.update({'type': ALLOWED_TYPES[rc.type]})
+            else:
+                if not doc.get('type'):
+                    raise RuntimeError(f"please rerun specifying --t with a value from {ALLOWED_TYPES}")
             if rc.due_date:
                 doc.update({'due_date': rc.due_date})
             if rc.status:
                 doc.update({'status': ALLOWED_STATUS[rc.status]})
-            if rc.type:
-                doc.update({'type': ALLOWED_TYPES[rc.type]})
             doc['due_date'] = get_due_date(doc)
             if identifier == 'milestones':
                 new_mil = []
