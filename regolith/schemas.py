@@ -3377,6 +3377,15 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "begin_date": {
+            "description": "begin date in YYYY-MM-DD",
+            "anyof_type": ["string", "date"],
+        },
+        "end_date": {
+            "description": "end date in YYYY-MM-DD",
+            "anyof_type": ["string", "date"],
+
+        },
         "grant_percentages": {
             "description": "the percentage of the reimbursement amount to put "
                            "on each grant. This list must be the same length as"
@@ -3394,7 +3403,6 @@ SCHEMAS = {
             "description": "project or list of projects that this "
                            "presentation is associated with.  Should "
                            "be discoverable in projects collection",
-            "required": True,
             "anyof_type": ["string", "list"],
         },
         "payee": {
@@ -3409,17 +3417,23 @@ SCHEMAS = {
                 "schema": {
                     "day": {
                         "description": "Expense day",
-                        "required": True,
+                        "required": False,
                         "type": "integer",
+                    },
+                    "date": {
+                        "description": "Expense date",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+
                     },
                     "month": {
                         "description": "Expense month",
-                        "required": True,
+                        "required": False,
                         "anyof_type": ["string", "integer"],
                     },
                     "year": {
                         "description": "Expense year",
-                        "required": True,
+                        "required": False,
                         "type": "integer",
                     },
                     "purpose": {
@@ -3447,6 +3461,44 @@ SCHEMAS = {
             "type": "string",
             "required": True,
         },
+        "notes": {
+            "description": "Notes about the expense",
+            "type": "list",
+
+        },
+        "status": {
+            "description": "The status of the expense",
+            "eallowed": ["reimbursed", "submitted", "unsubmitted",],
+            "type": "string"
+
+
+        },
+        "reimbursements": {
+            "description": "Reimbursements for the expense",
+            "schema": {
+                "schema": {
+                    'amount': {"description": 'amount for reimbursements',
+                               "type": "integer",
+                               },
+                    'date': {"description": "date of reimbursement",
+                             "anyof_type": ["string", "date"],
+                             },
+                    'submission_date': {"description": "date of submission",
+                                        "anyof_type": ["string", "date"],
+                                        },
+                    'where': {"description": 'where the reimbursement has been sent',
+                              "type": 'string',
+                              },
+
+
+                },
+                "type": "dict"
+
+            },
+            "type": "list"
+
+        },
+
         "expense_type": {
             "description": "The type of expense",
             "allowed": ["travel", "business"],
