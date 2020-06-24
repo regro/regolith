@@ -1,45 +1,80 @@
 """Helper for finding people's information in the people collection
 """
-import dateutil
-import dateutil.parser as date_parser
-from regolith.dates import (
-    is_current,
-    get_dates
-)
+
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    fragment_retrieval
+    search_collection,
+    collection_str
 )
-
-TARGET_COLL = "people"
-HELPER_TARGET = "list"
+HELPER_TARGET = "lister"
 
 
 def subparser(subpi):
     subpi.add_argument(
-        "people",
-        help='run the lister. To see allowed optional arguments, type "regolith helper l_contacts"')
+        "coll",
+        help='collection where the lister is going to run.')
     subpi.add_argument(
-        "-l",
-        "--",
-        help='name or name fragment (single argument only) to use to find people')
-
+        "--kv_filter",
+        nargs="+",
+        help='search the given collection by key element pairs')
+    subpi.add_argument(
+        "-r",
+        nargs="+",
+        help='the name of the fields to return from the search')
+    subpi.add_argument(
+        "-k", "--keys",
+        action="store_true",
+        help='list of the available keys and their description')
     return subpi
 
 class GeneralListerHelper(SoutHelperBase):
-    """Helper for finding and listing people's information from people.yml
+    """Helper for finding and listing contacts from the contacts.yml file
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_dbs = ["beam_proposals", "beam_plan", "beam_time",
+                  "citations", "contacts", "expenses", "meetings",
+                  "patents", "people", "projecta", "projects",
+                  "reading_lists", "refereeReports", "groups",
+                  "institutions", "jobs", "news", "pronouns",
+                  "proposals"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
+        if "groups" in self.needed_dbs:
+            rc.pi_id = get_pi_id(rc)
+        try:
+            if not rc.database:
+                rc.database = rc.databases[0]["name"]
+        except BaseException:
+            pass
+        colls = [
+            sorted(
+                all_docs_from_collection(rc.client, collname), key=_id_key
+            )
+            for collname in self.needed_dbs
+        ]
+        for db, coll in zip(self.needed_dbs, colls):
+            gtx[db] = coll
+        gtx["all_docs_from_collection"] = all_docs_from_collection
+        gtx["float"] = float
+        gtx["str"] = str
+        gtx["zip"] = zip
 
+    def sout(self):
+        rc = self.rc
+        coll = self.gtx[rc.coll]
+        if not rc.kv_filter and not rc.r:
+            print(collection_str(coll).strip())
+        if rc.kv_filter:
+            if rc.r:
+                print((search_collection(coll, rc.kv_filter, rc.r)).strip())
+            else:
+                print((search_collection(coll, rc.kv_filter)).strip())
         return
