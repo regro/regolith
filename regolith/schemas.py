@@ -3470,8 +3470,6 @@ SCHEMAS = {
             "description": "The status of the expense",
             "eallowed": ["reimbursed", "submitted", "unsubmitted",],
             "type": "string"
-
-
         },
         "reimbursements": {
             "description": "Reimbursements for the expense",
@@ -3489,16 +3487,11 @@ SCHEMAS = {
                     'where': {"description": 'where the reimbursement has been sent',
                               "type": 'string',
                               },
-
-
                 },
                 "type": "dict"
-
             },
             "type": "list"
-
         },
-
         "expense_type": {
             "description": "The type of expense",
             "allowed": ["travel", "business"],
