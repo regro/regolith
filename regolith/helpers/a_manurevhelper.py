@@ -1,4 +1,4 @@
-"""Builder for Current and Pending Reports."""
+"""Builder for manuscript reviews."""
 import datetime as dt
 import sys
 import time
@@ -16,7 +16,6 @@ from regolith.tools import (
     fuzzy_retrieval,
 )
 
-ALLOWED_TYPES = ["nsf", "doe", "other"]
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
                  "submitted", "cancelled"]
 
@@ -26,21 +25,21 @@ def subparser(subpi):
                        )
     subpi.add_argument("due_date", help="due date in form YYYY-MM-DD in quotes", default=''
                        )
-    subpi.add_argument("-c", "--recommendation",
-                       help="Recommendation for this manuscript: reject, smalledits, or majoredits", default=None
-                       )
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated. Defaults to "
                             "first database in the regolithrc.json file."
                        )
+    subpi.add_argument("-q", "--requester",
+                       help="Name of the Program officer requesting"
+                       )
     subpi.add_argument("-r", "--reviewer",
-                       help="name of the reviewer.  Defaults to sbillinge"
+                       help="name of the reviewer. Defaults to sbillinge"
                        )
     subpi.add_argument("-s", "--status",
                        help=f"status, from {ALLOWED_STATI}. default is submitted"
                        )
     subpi.add_argument("-t", "--title",
-                       help="the title of the Manuscript"
+                       help="the title of the Manuscript", default=''
                        )
     return subpi
 
@@ -91,22 +90,20 @@ class ManuRevAdderHelper(DbHelperBase):
                      'freewrite': '',
                      'journal': '',
                      'month': month,
+                     'recommendation': 'invited',
+                     'title': rc.title,
                      'validity_assessment': [],
                      'year': year
                      })
 
-        if rc.title:
-            pdoc.update({'title': rc.title})
-        else:
-            pdoc.update({'title': ''})
         if rc.reviewer:
             pdoc.update({'reviewer': rc.reviewer})
         else:
             pdoc.update({'reviewer': 'sbillinge'})
-        if rc.recommendation:
-            pdoc.update({'recommendation': rc.recommendation})
+        if rc.requester:
+            pdoc.update({'requester': rc.requester})
         else:
-            pdoc.update({'recommendation': ''})
+            pdoc.update({'requester': ''})
         if rc.status:
             if rc.status not in ALLOWED_STATI:
                 raise ValueError(
@@ -114,7 +111,7 @@ class ManuRevAdderHelper(DbHelperBase):
             else:
                 pdoc.update({'status': rc.status})
         else:
-            pdoc.update({'status': 'submitted'})
+            pdoc.update({'status': 'invited'})
 
         pdoc.update({"_id": key})
         rc.client.insert_one(rc.database, rc.coll, pdoc)
