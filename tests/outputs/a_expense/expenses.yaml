@@ -47,9 +47,9 @@
   reimbursements:
     - amount: 0
       date: tbd
-      submission_date: 2020-06-23
+      submission_date: tbd
       where: bank
-  status: submitted
+  status: unsubmitted
 test:
   expense_type: business
   grant_percentages:

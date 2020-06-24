@@ -22,7 +22,7 @@ helper_map = [
       "--other_agencies", "Flatland","-n", "this is a sample added proposal"],
      "20_anewproposal has been added in proposals\n"),
     (["helper", "a_expense", "159.18", "timbuktoo", "travel to timbuktoo",
-      "--grants", "mrsec14", "dmref15", "--payee", "ashaaban", "--status", "submitted",
+      "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
       "--where", "bank", "--begin_date", "2020-06-20", "--end_date", "2020-06-25"],
      "2006as_timbuktoo has been added in expenses\n"),
     (["helper", "l_milestones", "--verbose"],
