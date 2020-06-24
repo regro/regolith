@@ -120,10 +120,9 @@ helper_map = [
     (["helper", "l_todo","-v", "-i", "jwzang", "-f", "Jiawei"],
      "1. Jiawei: test\n     --(no mark, due: 2020-06-18, None min, importance:1, start date: None)\n2. Everyone: Clear out-of-date prums milestones.\n     --(no mark, due: 2020-06-18, None min, importance:1, start date: None)\n3. read paper\n     --(0, due: 2020-07-19, 60.0 min, importance:2, start date: 2020-06-15)\n4. prepare the presentation\n     --(1, due: 2020-07-29, 30.0 min, importance:0, start date: 2020-06-22)\n"
      ),
-    (["helper", "a_todo", "test, due date is 4 days from the begin date", "4", "-i", "jwzang", "-b", "2020-06-24"],
-     "The task has been added in todolist.\n"),
     (["helper", "f_todo", "1", "-i", "jwzang", "-e", "2020-06-25"],
      "The task (prepare the presentation) is set as finished.\n"),
+
 ]
 
 

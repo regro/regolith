@@ -16,10 +16,3 @@ jwzang:
       status: finished
       mark: 1
       end_date: 2020-06-25
-    - description: test, due date is 4 days from the begin date
-      due_date: 2020-06-28
-      begin_date: 2020-06-24
-      duration: 60.0
-      importance: 1
-      status: started
-      mark: 2
