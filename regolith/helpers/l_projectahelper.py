@@ -14,6 +14,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
+    search_collection
 )
 
 TARGET_COLL = "projecta"
@@ -48,6 +49,11 @@ def subparser(subpi):
     subpi.add_argument("-g", "--grant",
                        help="Filter projecta by a grant ID"
                        )
+    subpi.add_argument("-f", "--filter", nargs="+",
+                       help="Search this collection by giving key element pairs"
+                       )
+    subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when running "
+                                                       "--filter. If no argument is given the default is just the id.")
     return subpi
 
 
@@ -89,6 +95,10 @@ class ProjectaListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        if rc.filter:
+            results = search_collection(self.gtx["projecta"], rc.filter, rc.keys)
+            print(results, end="")
+            return
         if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose):
             return
         if rc.date:
