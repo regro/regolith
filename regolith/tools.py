@@ -1504,6 +1504,9 @@ def get_grant_amount(grant, day, type):
 def get_grant_amount(grant, people, begin_date=None, end_date=None):
 def get_grant_amount(grant, ppl_coll, begin_date=None, end_date=None):
     """
+    Given a grant, a database of people appointed on assorted grants, and two dates marking the limits of an interval,
+    it returns a list of the net amount of the grant on each day of the interval.
+
     Parameters
     ----------
     grant: dict
