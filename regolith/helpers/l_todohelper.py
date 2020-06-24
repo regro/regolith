@@ -18,18 +18,20 @@ TARGET_COLL = "todolist"
 TARGET_COLL2 = "projecta"
 TARGET_COLL3 = "meetings"
 HELPER_TARGET = "l_todo"
-Importance = [0, 1, 2, 3, 4, 5]
+Importance = [0, 1, 2]
 ALLOWED_STATI = ["started", "finished"]
 
 
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true",
-                       help='include due_date, estimated time and importance')
+                       help='increase verbosity of output')
     subpi.add_argument("-i", "--id",
                        help=f"Filter to-do tasks for this user id. Default is saved in user.json."
                        )
     subpi.add_argument("-f", "--firstname",
                        help='Filter to-do tasks for this first name. Default is saved in user.json.')
+    subpi.add_argument("-d", "--duration",
+                       help='Filter to-do tasks whose estimated duration is less than the input value.')
     return subpi
 
 
@@ -87,7 +89,7 @@ class TodoListerHelper(SoutHelperBase):
         for member in self.gtx["todolist"]:
             if member.get('id') == rc.id:
                 for todo in member["todos"]:
-                    if type(todo["due_date"])==str:
+                    if type(todo["due_date"]) == str:
                         todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 gather_todos = member["todos"]
                 break
@@ -112,15 +114,13 @@ class TodoListerHelper(SoutHelperBase):
 
                         gather_todos.append(ms)
 
-        today = dt.date.today()
-
         mtgs = []
         for mtg in self.gtx["meetings"]:
             mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
                                   mtg.get("day"))
             if len(list(mtg.get('actions'))) != 0:
                 mtgs.append(mtg)
-        if len(mtgs)>0:
+        if len(mtgs) > 0:
             mtgs = sorted(mtgs, key=lambda x: x.get('date'), reverse=True)
             actions = mtgs[0].get('actions')
 
@@ -135,27 +135,32 @@ class TodoListerHelper(SoutHelperBase):
                         'status': 'started'
                     })
 
-
-
         num = 0
 
         for item in gather_todos:
-            if item.get('importance') == None:
-                item['importance'] = 0
+            if item.get('importance') is None:
+                item['importance'] = 1
 
-        gather_todos.sort(key=lambda x: x['importance'], reverse=True)
-        gather_todos.sort(key=lambda x: x['due_date'], reverse=False)
+        gather_todos = sorted(gather_todos, key=lambda k: (k['due_date'], -k['importance']))
+
         if rc.verbose:
             for t in gather_todos:
                 if t.get('status') not in ["finished", "cancelled"]:
                     print(
                         f"{num + 1}.  {t.get('description')}")
-                    print(f"     --( {t.get('mark')}, {t.get('due_date')}, {t.get('estimated_time')} min, importance: {t.get('importance')})")
+                    print(f"     --( {t.get('mark')}, due: {t.get('due_date')}, {t.get('duration')} min, importance:"
+                          f"{t.get('importance')}, start date: {t.get('begin_date')}")
                     num += 1
+        elif rc.duration:
+            for t in gather_todos:
+                if t.get('status') not in ["finished", "cancelled"]:
+                    if t.get('duration') and float(t.get('duration')) <= float(rc.duration):
+                        print(f"{num + 1}. {t.get('description')}")
+                        num += 1
         else:
             for t in gather_todos:
                 if t.get('status') not in ["finished", "cancelled"]:
                     print(f"{num + 1}. {t.get('description')}")
-                    num+=1
+                    num += 1
 
         return

@@ -1404,8 +1404,17 @@ EXEMPLARS = {
         "todos": [
             {"description": "read paper",
              "due_date": "2020-07-19",
-             "estimated_time": 60.0,
-             "importance": 5,
+             "begin_date": "2020-06-15",
+             "duration": 60.0,
+             "importance": 2,
+             "status": "started",
+             "mark": 1
+             },
+            {"description": "prepare the presentation",
+             "due_date": "2020-07-29",
+             "begin_date": "",
+             "duration": 30.0,
+             "importance": 0,
              "status": "started",
              "mark": 1
              }
@@ -1434,7 +1443,6 @@ EXEMPLARS = {
 
     },
 }
-
 
 
 SCHEMAS = {
@@ -3517,15 +3525,21 @@ SCHEMAS = {
                     "due_date": {"description": "the due date",
                                  "required": False,
                                  "type": "string"},
-                    "estimated_time": {
-                        "description": "the size of the task/ the estimated time it will take to finish the task",
+                    "begin_date": {"description": "the begin date",
+                                 "required": False,
+                                 "type": "string"},
+                    "end_date": {"description": "the end date",
+                                 "required": False,
+                                 "type": "string"},
+                    "duration": {
+                        "description": "the size of the task/ the estimated duration it will take to finish the task",
                         "required": False,
                         "type": "float"},
                     "importance": {
-                        "description": "the importance, from 0 to 5",
+                        "description": "the importance, from 0 to 2",
                         "required": False,
                         "type": "integer"},
-                    "status": {"description": "the status: started/finished",
+                    "status": {"description": "the status: proposed/started/finished",
                                "required": True,
                                "type": "string"},
                     "mark": {"description": "use this mark to update the task",

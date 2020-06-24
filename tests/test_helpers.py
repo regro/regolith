@@ -109,7 +109,13 @@ helper_map = [
      "1. Maria as a new contact\n"
      ),
     (["helper", "l_todo", "-i", "jwzang", "-f", "Jiawei"],
-     "1. Jiawei: test\n2. Everyone: Clear out-of-date prums milestones.\n3. read paper\n"
+     "1. Jiawei: test\n2. Everyone: Clear out-of-date prums milestones.\n3. read paper\n4. prepare the presentation\n"
+     ),
+    (["helper", "l_todo", "-i", "jwzang", "-f", "Jiawei", "-d", "30"],
+     "1. prepare the presentation\n"
+     ),
+    (["helper", "l_todo", "-i", "ascopatz", "-f", "asc"],
+     "1. 20sb_firstprojectum, Project lead presentation\n2. 20sb_firstprojectum, planning meeting\n3. Everyone: Clear out-of-date prums milestones.\n4. 20sb_firstprojectum, deliverable\n"
      ),
 
 ]
