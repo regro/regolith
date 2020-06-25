@@ -102,6 +102,14 @@ class MilestoneUpdaterHelper(DbHelperBase):
                           f"     status: {j.get('status')}")
                 del j['identifier']
             return
+        if rc.type:
+            for k, v in ALLOWED_TYPES.items():
+                if rc.type == v:
+                    rc.type = k
+        if rc.status:
+            for k, v in ALLOWED_STATUS.items():
+                if rc.status == v:
+                    rc.status = k
         pdoc = {}
         if rc.index == 1:
             mil = {}

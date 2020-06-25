@@ -46,7 +46,6 @@ helper_map = [
     (["helper", "l_projecta", "--grp_by_lead"],
      "lyang:\n    20ly_newprojectum\nascopatz:\n    20sb_firstprojectum\n"
      ),
-    (["helper", "l_projecta", "--ended", "-d", "2020-06-02"],
     (["helper", "l_projecta", "--ended", "--date", "2020-06-02"],
      "20sb_firstprojectum    My first projectum\n    Lead: ascopatz    Members: ascopatz    Collaborators: aeinstein, pdirac\n"
      ),
@@ -59,10 +58,11 @@ helper_map = [
      "Anthony Scopatz, professor | group_id: scopatz\n"
      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
      ),
-    (["helper", "l_members", "-f", "name", "sco"],
+    (["helper", "l_members", "--filter", "name", "sco"],
      "scopatz    \n"
      ),
-    (["helper", "l_contacts", "run", "-n", "ny", "-i", "col", "-o", "coffee", "-d", "2020-01-15", "-r", "2"],
+    (["helper", "l_contacts", "run", "--name", "ny", "--inst", "col",
+      "--notes", "coffee", "--date", "2020-01-15", "--range", "2"],
      "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
      ),
     (["helper", "l_contacts", "run", "--name", "ny", "--inst", "col",
@@ -70,7 +70,7 @@ helper_map = [
      ""
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--index", "4",
-      "--status", "p", "--type", "m", "--due_date", "2020-05-30"],
+      "--status", "proposed", "--type", "meeting", "--due_date", "2020-05-30"],
      "20sb_firstprojectum has been updated in projecta\n"
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--verbose"],
