@@ -271,10 +271,6 @@ def create_parser():
                                     "on the localhost on port number 27017.",
                      dest="host",
                      default=None)
-    ftm.add_argument("--uri", help="Specify a resolvable URI connection string (enclose in quotes) "
-                                   "to connect to the MongoDB deployment.",
-                     dest="uri",
-                     default=None)
 
     # Validator
     val = subp.add_parser("validate", help="Validates db")
