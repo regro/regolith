@@ -991,3 +991,4 @@ def test_get_grant_amount_exception(grant, ppl, start, end, message):
     with pytest.raises(ValueError) as excinfo:
         obs = get_grant_amount(grant, ppl, begin_date=start, end_date=end)
     assert str(excinfo.value) == message
+    
