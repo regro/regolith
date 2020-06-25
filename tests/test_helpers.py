@@ -197,7 +197,7 @@ helper_map = [
      "'milestones', 'name', 'pi_id', 'status']\n"),
     (["helper", "lister", "contacts", "--keys"],
      "['_id', 'aka', 'day', 'department', 'email', 'institution', 'month', 'name', "
-     "'notes', 'title', 'uuid', 'year']\n"
+     "'notes', 'title', 'updated', 'uuid', 'year']\n"
      )
 ]
 
