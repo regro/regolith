@@ -242,7 +242,7 @@ class MongoClient:
             The dictionary of data base information, such as 'name'.
         """
         host = getattr(self.rc, 'host', None)
-        uri = db.get('uri', None)
+        uri = db.get('dst_url', None)
         dbpath = dbpathname(db, self.rc)
         dbname = db['name']
         import_jsons(dbpath, dbname, host=host, uri=uri)
