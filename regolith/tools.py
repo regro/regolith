@@ -1526,7 +1526,7 @@ def get_grant_amount(grant, ppl_coll, begin_date=None, end_date=None):
     """
 
     if not grant.get('budget'):
-        return "{} has no specified budget".format(grant.get('_id'))
+        raise ValueError("{} has no specified budget".format(grant.get('_id')))
     grant_begin, grant_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
     begin_date = grant_begin if not begin_date else begin_date
     end_date = grant_end if not end_date else end_date
@@ -1556,7 +1556,7 @@ def get_grant_amount(grant, ppl_coll, begin_date=None, end_date=None):
                     elif a.get('type') == 'ss':
                         ss_val -= a.get('loading') * 1
                     else:
-                        return "invalid  type for appointment {} of {}".format(a.get('_id'), p.get('_id'))
+                        raise ValueError("invalid  type for appointment {} of {}".format(a.get('_id'), p.get('_id')))
         if begin_date <= day <= end_date:
             gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
                    "ss_days": round(ss_val, 2)}

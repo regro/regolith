@@ -970,14 +970,24 @@ grant3 = {'_id': 'grant3', 'begin_date': '2019-09-01', 'end_date': '2019-12-31',
         ['values for grant grant3 from 2019-12-31 to 2019-12-31:',
          {'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
         ),
-        ({'_id': 'malicious_grant', 'alias': 'very_malicious_grant'},grant_people, '2012-12-23', '2013-01-24',
-         'malicious_grant has no specified budget'),
-        (grant1, [{'name': 'Malicious Person', '_id': 'mperson',
-        'appointments': [{'_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05', 'loading': 1.0,
-                          'grant': 'grant1', 'type': 'imaginary'}]}],
-         None, None, 'invalid  type for appointment A of mperson')
     ]
 )
 def test_get_grant_amount(grant, ppl, start, end, expected):
     actual = get_grant_amount(grant, ppl, begin_date=start, end_date=end)
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "grant, ppl, start, end, message",
+    [({'_id': 'malicious_grant', 'alias': 'very_malicious_grant'}, grant_people, '2012-12-23', '2013-01-24',
+      'malicious_grant has no specified budget'),
+     (grant1, [{'name': 'Malicious Person', '_id': 'mperson',
+        'appointments': [{'_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05', 'loading': 1.0,
+                          'grant': 'grant1', 'type': 'imaginary'}]}],
+      None, None, 'invalid  type for appointment A of mperson')
+    ]
+)
+def test_get_grant_amount_exception(grant, ppl, start, end, message):
+    with pytest.raises(ValueError) as excinfo:
+        obs = get_grant_amount(grant, ppl, begin_date=start, end_date=end)
+    assert str(excinfo.value) == message
