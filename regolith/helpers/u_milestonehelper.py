@@ -9,6 +9,7 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection
 from regolith.dates import get_due_date
+from itertools import chain
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
@@ -102,14 +103,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
                           f"     status: {j.get('status')}")
                 del j['identifier']
             return
-        if rc.type:
-            for k, v in ALLOWED_TYPES.items():
-                if rc.type == v:
-                    rc.type = k
-        if rc.status:
-            for k, v in ALLOWED_STATUS.items():
-                if rc.status == v:
-                    rc.status = k
         pdoc = {}
         if rc.index == 1:
             mil = {}
@@ -132,16 +125,23 @@ class MilestoneUpdaterHelper(DbHelperBase):
         if rc.index > 1:
             doc = all_milestones[rc.index-2]
             identifier = doc['identifier']
-            if not rc.type and not doc.get('type'):
+            if rc.type not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_TYPES.items()))):
+                if not doc.get('type'):
                     raise RuntimeError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
             if rc.type:
                 try:
+                    for k, v in ALLOWED_TYPES.items():
+                        if rc.type == v:
+                            rc.type = k
                     doc.update({'type': ALLOWED_TYPES[rc.type]})
                 except KeyError:
                     print(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
                     return
             if rc.status:
                 try:
+                    for k, v in ALLOWED_STATUS.items():
+                        if rc.status == v:
+                            rc.status = k
                     doc.update({'status': ALLOWED_STATUS[rc.status]})
                 except KeyError:
                     print(f"please rerun specifying --status with a value from {ALLOWED_STATUS}")
