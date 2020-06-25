@@ -84,11 +84,11 @@ Here is an example tex document
     \affiliation{Department of Applied Physics
     and Applied Mathematics, Columbia University, New York, NY 10027}
 
-    \includegraphics{ {{-get_file_path(db['projects']['regro'], 'hw_file')-}} }
+    \includegraphics{ {{-get_file_path(db['projects']['regro'], 'hw_file').replace('\\', '/')-}} }
     \end{document}
 
 After running ``regolith build figure`` in the directory
-``{{-get_file_path(db['projects']['regro'], 'hw_file')-}}`` will be replaced with
+``{{-get_file_path(db['projects']['regro'], 'hw_file').replace('\\', '/')-}}`` will be replaced with
 the path to the file in the store.
 This way the figure can be accessed across machines in a uniform way.
 
