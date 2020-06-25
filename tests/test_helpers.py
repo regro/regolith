@@ -21,6 +21,10 @@ helper_map = [
       "-a", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "-c", "Bitcoin",
       "--other_agencies", "Flatland", "-n", "this is a sample added proposal"],
      "20_anewproposal has been added in proposals\n"),
+    (["helper", "a_expense", "159.18", "timbuktoo", "travel to timbuktoo",
+      "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
+      "--where", "bank", "--begin_date", "2020-06-20", "--end_date", "2020-06-25"],
+     "2006as_timbuktoo has been added in expenses\n"),
     (["helper", "l_milestones", "--verbose"],
      "2021-01-01: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),

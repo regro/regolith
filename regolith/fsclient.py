@@ -72,6 +72,7 @@ def load_yaml(filename, return_inst=False, loader=None):
 def dump_yaml(filename, docs, inst=None):
     """Dumps a dict of documents into a file."""
     inst = YAML() if inst is None else inst
+    inst.representer.ignore_aliases = lambda *data: True
     inst.indent(mapping=2, sequence=4, offset=2)
     sorted_dict = ruamel.yaml.comments.CommentedMap()
     for k in sorted(docs):
