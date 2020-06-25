@@ -184,17 +184,20 @@ helper_map = [
     (["helper", "lister", "contacts","--kv_filter", "institution", "columbiau", "-r", "name"],
      "afriend    name: Anthony B Friend\n"),
     (["helper", "lister", "people", "--keys"],
-     "active: If the person is an active member\n"
-     "name: Full, canonical name for the person\n"
-     "position: such as professor, graduate student, or scientist\n"),
+     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
+     "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
+     "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
+     "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
+     "'title']\n"
+     ),
     (["helper", "lister", "projecta", "--keys"],
-     "lead: lead of the prum\n"
-     "name: name of the Prum\n"
-     "pi_id: id of the Principle Investigator\n"),
+     "['_id', 'begin_date', 'collaborators', 'deliverable', 'description', "
+     "'end_date', 'grants', 'group_members', 'kickoff', 'lead', 'log_url', "
+     "'milestones', 'name', 'pi_id', 'status']\n"),
     (["helper", "lister", "contacts", "--keys"],
-     "institution: the institution where they are located.\n"
-     "department: Department at the institution\n"
-     "name: the person's canonical name\n"
+     "['_id', 'aka', 'day', 'department', 'email', 'institution', 'month', 'name', "
+     "'notes', 'title', 'uuid', 'year']\n"
      )
 ]
 
