@@ -70,7 +70,7 @@ helper_map = [
      ""
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--index", "4",
-      "--status", "proposed", "--type", "meeting", "--due_date", "2020-05-30"],
+      "--status", "proposed", "--type", "meeting","--due_date", "2020-05-30"],
      "20sb_firstprojectum has been updated in projecta\n"
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--verbose"],

@@ -13,7 +13,7 @@ from itertools import chain
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
-ALLOWED_STATUS = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burner","c":"converged"}
+ALLOWED_STATI = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burner","c":"converged"}
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="the id of the projectum")
@@ -33,7 +33,7 @@ def subparser(subpi):
                             "required to add a new milestone")
     subpi.add_argument("-s", "--status",
                        help="status of the milestone/deliverable: "
-                            f"{ALLOWED_STATUS}")
+                            f"{ALLOWED_STATI}")
     subpi.add_argument("-t", "--type",
                        help="type of the milestone: "
                             f"{ALLOWED_TYPES}"
@@ -104,6 +104,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 del j['identifier']
             return
         pdoc = {}
+        if rc.type and rc.type not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_TYPES.items()))):
+                raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
+        if rc.status and rc.status not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_STATI.items()))):
+                raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_STATI}")
         if rc.index == 1:
             mil = {}
             if not rc.due_date or not rc.name or not rc.objective:
@@ -113,11 +117,17 @@ class MilestoneUpdaterHelper(DbHelperBase):
             mil.update({'objective': rc.objective, 'name': rc.name})
             mil.update({'audience': ['lead', 'pi', 'group_members']})
             if rc.status:
-                mil.update({'status': ALLOWED_STATUS[rc.status]})
+                if rc.type in ALLOWED_TYPES:
+                    mil.update({'type': ALLOWED_TYPES.get(rc.type)})
+                else:
+                    mil.update({'type': rc.type})
             else:
                 mil.update({'status': 'proposed'})
             if rc.type:
-                mil.update({'type': ALLOWED_TYPES[rc.type]})
+                if rc.status in ALLOWED_STATI:
+                    mil.update({'status': ALLOWED_STATI.get(rc.status)})
+                else:
+                    mil.update({'status': rc.status})
             else:
                 mil.update({'type': 'meeting'})
             milestones.append(mil)
@@ -125,27 +135,18 @@ class MilestoneUpdaterHelper(DbHelperBase):
         if rc.index > 1:
             doc = all_milestones[rc.index-2]
             identifier = doc['identifier']
-            if rc.type not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_TYPES.items()))):
-                if not doc.get('type'):
+            if not doc.get('type') and not rc.type:
                     raise RuntimeError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
             if rc.type:
-                try:
-                    for k, v in ALLOWED_TYPES.items():
-                        if rc.type == v:
-                            rc.type = k
-                    doc.update({'type': ALLOWED_TYPES[rc.type]})
-                except KeyError:
-                    print(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
-                    return
+                if rc.type in ALLOWED_TYPES:
+                    doc.update({'type': ALLOWED_TYPES.get(rc.type)})
+                else:
+                    doc.update({'type': rc.type})
             if rc.status:
-                try:
-                    for k, v in ALLOWED_STATUS.items():
-                        if rc.status == v:
-                            rc.status = k
-                    doc.update({'status': ALLOWED_STATUS[rc.status]})
-                except KeyError:
-                    print(f"please rerun specifying --status with a value from {ALLOWED_STATUS}")
-                    return
+                if rc.status in ALLOWED_STATI:
+                    doc.update({'status': ALLOWED_STATI.get(rc.status)})
+                else:
+                    doc.update({'status': rc.status})
             if rc.due_date:
                 doc.update({'due_date': rc.due_date})
             doc['due_date'] = get_due_date(doc)
