@@ -129,13 +129,15 @@ class MilestoneUpdaterHelper(DbHelperBase):
             if rc.type:
                 try:
                     doc.update({'type': ALLOWED_TYPES[rc.type]})
-                except:
-                    raise ValueError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
+                except KeyError:
+                    print(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
+                    return
             if rc.status:
                 try:
                     doc.update({'status': ALLOWED_STATUS[rc.status]})
-                except:
-                    raise ValueError(f"please rerun specifying --status with a value from {ALLOWED_STATUS}")
+                except KeyError:
+                    print(f"please rerun specifying --status with a value from {ALLOWED_STATUS}")
+                    return
             if rc.due_date:
                 doc.update({'due_date': rc.due_date})
             doc['due_date'] = get_due_date(doc)
