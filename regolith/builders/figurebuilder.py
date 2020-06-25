@@ -31,4 +31,4 @@ class FigureBuilder(LatexBuilderBase):
         for f in [ff for ff in os.listdir(".") if ff.endswith(".tex")]:
             fn, ext = os.path.splitext(f)
             self.render(f, fn + "_rend" + ext)
-            self.pdf(fn + "_rend" + ext)
+            self.pdf(fn + "_rend")
