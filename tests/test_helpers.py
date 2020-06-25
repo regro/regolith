@@ -169,19 +169,33 @@ helper_map = [
      "afriend\n"),
     (["helper", "lister", "proposals"],
      "20_anewproposal    \ndmref15    \nmypropsal\n"),
-    #UC2
+    (["helper", "lister", "abstracts"],
+     "Mouginot.Model\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon"],
      "sbillinge\n"),
     (["helper", "lister", "projecta","--kv_filter", "lead", "ascopatz"],
      "20sb_firstprojectum\n"),
-    #UC3
+    (["helper", "lister", "contacts","--kv_filter", "institution", "columbiau"],
+     "afriend\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "-r", "name", "position"],
      "sbillinge    name: Simon J. L. Billinge    position: professor\n"),
     (["helper", "lister", "projecta","--kv_filter", "lead", "ascopatz", "-r", "lead", "name"],
      "20sb_firstprojectum    lead: ascopatz    name: First Projectum\n"),
-    #UC4
-    # (["helper", "lister", "people", "-k"],
-    #  "name\n position\n institution"),
+    (["helper", "lister", "contacts","--kv_filter", "institution", "columbiau", "-r", "name"],
+     "afriend    name: Anthony B Friend\n"),
+    (["helper", "lister", "people", "--keys"],
+     "active: If the person is an active member\n"
+     "name: Full, canonical name for the person\n"
+     "position: such as professor, graduate student, or scientist\n"),
+    (["helper", "lister", "projecta", "--keys"],
+     "lead: lead of the prum\n"
+     "name: name of the Prum\n"
+     "pi_id: id of the Principle Investigator\n"),
+    (["helper", "lister", "contacts", "--keys"],
+     "institution: the institution where they are located.\n"
+     "department: Department at the institution\n"
+     "name: the person's canonical name\n"
+     )
 ]
 
 
