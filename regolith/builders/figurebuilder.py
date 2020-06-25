@@ -22,7 +22,7 @@ class FigureBuilder(LatexBuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         gtx["db"] = self.db.md
-        gtx["get_file"] = self.db.get_file
+        gtx["get_file_path"] = self.db.get_file_path
         gtx["fuzzy_retrieval"] = fuzzy_retrieval
 
     def latex(self):

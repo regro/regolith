@@ -29,7 +29,7 @@ recent_collabs_xlsx_check = ["A51", "B51", "C51"]
 def prep_figure():
     # Make latex file with some jinja2 in it
     text = r"""
-    \include{ {{-get_file(db['groups']['ergs'], 'hello')-}}}"""
+    \include{ {{-get_file_path(db['groups']['ergs'], 'hello')-}}}"""
     with open("figure.tex", "w") as f:
         f.write(text)
     # make file to be loaded
@@ -38,8 +38,8 @@ def prep_figure():
         f.write("hello world")
     # load the db and register the file
     db = load_db()
-    print(db.get_file(db["groups"]["ergs"], "hello"))
-    if not db.get_file(db["groups"]["ergs"], "hello"):
+    print(db.get_file_path(db["groups"]["ergs"], "hello"))
+    if not db.get_file_path(db["groups"]["ergs"], "hello"):
         db.add_file(db["groups"]["ergs"], "hello", "fig/hello.txt")
 
 

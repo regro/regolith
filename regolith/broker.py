@@ -25,7 +25,7 @@ class Broker:
     >>> # Store a file
     >>> db.add_file(ergs, 'myfile', '/path/to/file/hello.txt')
     >>> # Get a file from the store
-    >>> path = db.get_file(ergs, 'myfile')
+    >>> path = db.get_file_path(ergs, 'myfile')
     """
 
     def __init__(self, rc=DEFAULT_RC):
@@ -63,7 +63,7 @@ class Broker:
         """Return a Broker instance"""
         return load_db(rc_file)
 
-    def get_file(self, document, name):
+    def get_file_path(self, document, name):
         """ Get a file from the file storage associated with the document and
         name
 
