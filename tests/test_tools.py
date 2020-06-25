@@ -20,6 +20,7 @@ from regolith.tools import (
     search_collection,
     collect_appts,
     search_collection,
+    search_collection,
     get_grant_amount,
     )
 
