@@ -916,7 +916,12 @@ grant_people = [
      'appointments':
      [{'_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant_two', 'loading': 1.0, 'type': 'ss'}]
      },
-    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': []}
+    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': []},
+    {'name': 'Sophie Germain', '_id': 'sgermain',
+     'appointments':
+         [{'_id': 'A', 'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0,
+           'type': 'ss'}]
+     },
     ]
 grant1 = {'_id': 'grant1', 'alias': 'grant_one', 'begin_date': '2019-09-01', 'end_date': '2019-09-10', 'budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-09-03',  'student_months': 1, 'postdoc_months': 0.5, 'ss_months': 0},
@@ -930,6 +935,8 @@ grant3 = {'_id': 'grant3', 'begin_date': '2019-09-01', 'end_date': '2019-12-31',
     {'begin_date': '2019-09-01', 'end_date': '2019-10-31',  'student_months': 0, 'postdoc_months': 1, 'ss_months': 2},
     {'begin_date': '2019-11-01', 'end_date': '2019-12-31',  'student_months': 2, 'postdoc_months': 0.5, 'ss_months': 0}
 ]}
+grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'end_date': '2019-09-07','budget': [
+    {'begin_date': '2019-09-01', 'end_date': '2019-09-07',  'student_months': 1, 'postdoc_months': 1, 'ss_months': 1}]}
 @pytest.mark.parametrize(
     "grant,ppl,start,end,expected",
     [
@@ -970,6 +977,16 @@ grant3 = {'_id': 'grant3', 'begin_date': '2019-09-01', 'end_date': '2019-12-31',
         ['values for grant grant3 from 2019-12-31 to 2019-12-31:',
          {'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
         ),
+        (grant4, grant_people, None, None,
+        ['values for grant grant4 from 2019-09-01 to 2019-09-07:',
+         {'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 29.5, 'student_days': 30.5},
+         {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 28.5, 'student_days': 30.5},
+         {'date': '2019-09-04', 'postdoc_days': 30.5, 'ss_days': 27.5, 'student_days': 30.5},
+         {'date': '2019-09-05', 'postdoc_days': 30.5, 'ss_days': 26.5, 'student_days': 30.5},
+         {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5},
+         {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5}]
+         )
     ]
 )
 def test_get_grant_amount(grant, ppl, start, end, expected):
@@ -991,4 +1008,3 @@ def test_get_grant_amount_exception(grant, ppl, start, end, message):
     with pytest.raises(ValueError) as excinfo:
         obs = get_grant_amount(grant, ppl, begin_date=start, end_date=end)
     assert str(excinfo.value) == message
-    
