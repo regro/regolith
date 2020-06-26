@@ -1,10 +1,11 @@
 """Helper for updating milestones to the projecta collection.
-    It can update the status and due date of a projectum.
+    It can update the status, type, and due date of a projectum.
     It can add a new milestone to the projecta collection.
 """
 import datetime as dt
 import sys
 from dateutil import parser
+from argparse import ArgumentParser
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection
@@ -19,13 +20,13 @@ def subparser(subpi):
     subpi.add_argument("projectum_id", help="the id of the projectum")
     subpi.add_argument("-v", "--verbose", action="store_true",
                         help="gives a list of the milestones available to update.")
-    subpi.add_argument("--index",
+    subpi.add_argument("-i", "--index",
                         help="index of the item in the enumerated list to update",
                         type = int)
-    subpi.add_argument("--due_date",
+    subpi.add_argument("-d", "--due_date",
                        help="new due date of the milestone in ISO format (YYYY-MM-DD) "
                             "required to add a new milestone")
-    subpi.add_argument("--name",
+    subpi.add_argument("-n", "--name",
                        help="name of the new milestone. "
                             "required to add a new milestone.")
     subpi.add_argument("-o", "--objective",
