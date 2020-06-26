@@ -22,11 +22,11 @@ def subparser(subpi):
     subpi.add_argument(
         "-r",  "--return_fields",
         nargs="+",
-        help='keys of fields whose values will be printed after filtering')
+        help='keys of fields whose values will be printed after filtering.')
     subpi.add_argument(
         "-k", "--keys",
         action="store_true",
-        help='list of the available keys and their description')
+        help='list of the available keys and their description.')
     return subpi
 
 class GeneralListerHelper(SoutHelperBase):
