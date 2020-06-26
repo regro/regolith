@@ -149,6 +149,16 @@ helper_map = [
      "1. Simon: test; notes: None\n     --(no mark, due: 2020-06-18, None min, importance:1, start date: None)\n2. Everyone: Clear out-of-date prums milestones.; notes: None\n     --(no mark, due: 2020-06-18, None min, importance:1, start date: None)\n3. read paper; notes: None\n     --(0, due: 2020-07-19, 60.0 min, importance:2, start date: 2020-06-15)\n4. prepare the presentation; notes: ['about 10 minutes', \"don't forget to upload to the website\"]\n     --(1, due: 2020-07-29, 30.0 min, importance:0, start date: 2020-06-22)\n"
      ),
 
+    (["helper", "finish_prum", "--list"],
+     "1. 20ly_newprojectum      status: started      lead: lyang\n"
+     "2. 20sb_firstprojectum      status: proposed      lead: ascopatz\n"
+     ),
+    (["helper", "finish_prum", "--index", "1"],
+     "20ly_newprojectum status have been updated to finished.\n"
+     ),
+    (["helper", "finish_prum", "--list", "--lead", "ascopatz"],
+     "1. 20sb_firstprojectum      status: proposed      lead: ascopatz\n"
+     ),
 ]
 
 
