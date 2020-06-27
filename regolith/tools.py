@@ -1455,4 +1455,55 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     This would return all appointments on the grants 'mrsec14' and 'dmref19' irrespective of their dates.
     """
 
-    pass
+
+    if (begin_date and not end_date) or (end_date and not begin_date):
+        raise RuntimeError("please enter both begin date and end date or neither")
+    filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
+    filter_value = [filter_value] if not isinstance(filter_value, list) else filter_value
+    if (bool(filter_key)^bool(filter_value)) or (filter_key and filter_value and len(filter_key) != len(filter_value)):
+        raise RuntimeError("number of filter keys and filter values do not match")
+    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
+    end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
+    timespan = 0
+    if begin_date:
+        timespan = end_date - begin_date
+        if timespan.days < 0:
+            raise ValueError("begin date is after end date")
+    appts = []
+    for p in ppl_coll:
+        if not p.get('appointments'):
+            continue
+        for a in p.get('appointments'):
+            if filter_key:
+                to_add = True
+                for x in range(len(filter_key)):
+                    if a.get(filter_key[x]) != filter_value[x]:
+                        to_add = False
+                        break
+                if to_add:
+                    if begin_date:
+                        for y in range(timespan.days + 1):
+                            day = begin_date + relativedelta(days=y)
+                            if is_current(a, now=day):
+                                appts.append(a)
+                                appts[-1].update({'person': p.get('_id')})
+                                break
+                    else:
+                        appts.append(a)
+                        appts[-1].update({'person': p.get('_id')})
+            elif timespan:
+                    for y in range(timespan.days + 1):
+                        day = begin_date + relativedelta(days=y)
+                        if is_current(a, now=day):
+                            appts.append(a)
+                            appts[-1].update({'person': p.get('_id')})
+                            break
+            else:
+                appts.append(a)
+                appts[-1].update({'person': p.get('_id')})
+    return appts
+
+
+
+
+

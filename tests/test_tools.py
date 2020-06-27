@@ -841,7 +841,7 @@ appointed_people = [
       [{'person': 'lwittgenstein', '_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'},
        {'person': 'kpopper', '_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}
        ]),
-     (appointed_people, ['loading', 'type', 'grant'], [0.9, 'pd', 'grant1'], None, None, []),
+     (appointed_people, ['loading', 'type', 'grant'], [0.9, 'pd', 'grant3'], None, None, []),
      (appointed_people, None, None, None, None,
       [{'person': 'kgodel', '_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
        {'person': 'kgodel', '_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
@@ -853,10 +853,12 @@ appointed_people = [
        {'person': 'jsbach', '_id': 'B', "begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
        {'person': 'jsbach', '_id': 'C', "begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'},
        {'person': 'lwittgenstein', '_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'},
-       {'person': 'kgodel', '_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+       {'person': 'kpopper', '_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'},
        {'person': 'sgermain', '_id': 'A', 'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0, 'type': 'ss'},
       ]),
-     (people, 'type', 'ss', '2019-10-21', '2019-09-01', "inconsistent begin and end dates")
+     (appointed_people, 'type', 'ss', '2019-10-21', '2019-09-01', 'begin date is after end date'),
+     (appointed_people, ['type', 'loading'], None, None, None, 'number of filter keys and filter values do not match'),
+     (appointed_people, 'type', 'pd', '2019-12-10', None, 'please enter both begin date and end date or neither'),
     ]
 )
 def test_collect_appts(people, key, value, start, end, expected):
@@ -865,5 +867,9 @@ def test_collect_appts(people, key, value, start, end, expected):
         assert actual == expected
     except ValueError:
         with pytest.raises(ValueError) as excinfo:
+            actual = collect_appts(people, filter_key=key, filter_value=value, begin_date=start, end_date=end)
+        assert str(excinfo.value) == expected
+    except RuntimeError:
+        with pytest.raises(RuntimeError) as excinfo:
             actual = collect_appts(people, filter_key=key, filter_value=value, begin_date=start, end_date=end)
         assert str(excinfo.value) == expected
