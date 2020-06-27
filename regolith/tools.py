@@ -1420,3 +1420,39 @@ def search_collection(collection, arguments, keys=None):
         """
     collection = key_value_pair_filter(collection, arguments)
     return collection_str(collection, keys)
+
+
+def collect_appts(ppl_coll, filter_by=None, filter_id=None, begin_date=None, end_date=None):
+    """
+    Retrieves a list of all the appointments on the given grant(s) in the given interval of time for each person in the
+    given people collection.
+
+    Parameters
+    ----------
+    ppl_coll: collection (list of dicts)
+        The people collection containing persons with appointments
+    filter_by: string, list, optional
+        The key we want to filter appointments by
+    filter_id: string, int, float, list, optional
+        The values for each key that we want to filter appointments by
+    begin_date: string, datetime, optional
+        The start date for the interval in which we want to collect appointments
+    end_date: string, datetime, optional
+        The start date for the interval in which we want to collect appointments
+
+    Returns
+    -------
+    list:
+        a list of all appointments in the people collection that satisfy the provided conditions (if any)
+
+    Examples
+    --------
+    >>> collect_appts(people,filter_by=['grant', 'status'], filter_id=['mrsec14', 'finalized'], \
+    begin_date= '2020-09-01', end_date='2020-12-31')
+    This would return all appointments on the grant 'mrsec14' with status 'finalized' that are valid on/during any
+    dates from 2020-09-01 to 2020-12-31
+    >>> collect_appts(people, ['grant', 'grant'], ['mrsec14', 'dmref19'])
+    This would return all appointments on the grants 'mrsec14' and 'dmref19' irrespective of their dates.
+    """
+
+    pass
