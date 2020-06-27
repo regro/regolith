@@ -14,19 +14,22 @@ HELPER_TARGET = "lister"
 def subparser(subpi):
     subpi.add_argument(
         "coll",
-        help='collection where the lister is going to run.')
+        help='Collection where the lister is going to run.')
     subpi.add_argument(
         "-f","--kv_filter",
         nargs="+",
-        help='search the given collection by key element pairs')
+        help="Search the given collection by key element pairs. "
+             "e.g. < -f name simon >, will return the id of all the people "
+             "who's name contains simon.")
     subpi.add_argument(
         "-r",  "--return_fields",
         nargs="+",
-        help='keys of fields whose values will be printed after filtering.')
+        help="Specify what keys to return values from when running --filter. "
+             "If no argument is given the default is just the id.")
     subpi.add_argument(
         "-k", "--keys",
         action="store_true",
-        help='list of the available keys and their description.')
+        help="List of the available keys in the collection.")
     return subpi
 
 class GeneralListerHelper(SoutHelperBase):
