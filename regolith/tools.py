@@ -1562,4 +1562,3 @@ def get_grant_amount(grant, ppl_coll, begin_date=None, end_date=None):
                    "ss_days": round(ss_val, 2)}
             grant_amounts.append(gvals)
     return grant_amounts
-
