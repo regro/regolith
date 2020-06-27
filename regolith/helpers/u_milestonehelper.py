@@ -2,10 +2,6 @@
     It can update the status, type, and due date of a projectum.
     It can add a new milestone to the projecta collection.
 """
-import datetime as dt
-import sys
-from dateutil import parser
-from argparse import ArgumentParser
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection
