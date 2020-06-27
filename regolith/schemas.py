@@ -3204,7 +3204,7 @@ SCHEMAS = {
         },
         "end_date": {
             "description": "end_date in YYYY-MM-DD",
-            "anyof_type": ["date, string"],
+            "anyof_type": ["date", "string"],
         },
         "begin_year": {
             "description": "year the conference or trip begins.",
