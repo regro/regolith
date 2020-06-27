@@ -1,0 +1,39 @@
+2006as_mars:
+  abstract: the earth is round as seen from mars
+  authors: []
+  begin_date: 2020-06-26
+  end_date: 2020-06-26
+  location: Mars
+  meeting_name: flat earth
+  project:
+    - all
+  status: accepted
+  title: tbd
+  type: award
+18sb_this_and_that:
+  abstract: we pulled apart graphite with tape
+  authors:
+    - scopatz
+  begin_year: 2018
+  begin_month: 5
+  begin_day: 22
+  department: apam
+  institution: columbiau
+  location: Upton NY
+  meeting_name: Meeting to check flexibility on dates
+  notes:
+    - We hope the weather will be sunny
+    - if the weather is nice we will go to the beach
+  project: 18sob_clustermining
+  status: accepted
+  title: Graphitic Defenestration
+  type: award
+  
+  
+  
+  
+
+
+  
+  
+  
