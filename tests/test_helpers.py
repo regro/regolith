@@ -72,9 +72,22 @@ helper_map = [
       "--notes", "coffee", "--date", "2019-01-15", "--range", "2"],
      ""
      ),
-    (["helper", "u_milestone", "20sb_firstprojectum", "--index", "4",
-      "--status", "proposed", "--type", "meeting", "--due_date", "2020-05-30"],
+    (["helper", "u_milestone", "20sb_firstprojectum", "--index", "5",
+      "--status", "converged","--due_date", "2020-06-01"],
      "20sb_firstprojectum has been updated in projecta\n"
+     ),
+    (["helper", "u_milestone", "20sb"],
+     "Projectum not found. Projectum with similar names: \n"
+     "20sb_firstprojectum\n"
+     "Please rerun the helper with the correct name of the projectum.\n"
+     ),
+    (["helper", "u_milestone", "20sb_firstprojectum"],
+     "Please choose from one of the following to update/add:\n"
+     "1. new milestone\n"
+     "2. kickoff    due date: 2020-05-06    status: finished\n"
+     "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
+     "4. planning meeting    due date: 2020-05-27    status: proposed\n"
+     "5. deliverable    due date: 2020-06-01    status: converged\n"
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--verbose"],
      "Please choose from one of the following to update/add:\n"
@@ -87,14 +100,14 @@ helper_map = [
      "     objetive: lead presents background reading and initial project plan\n"
      "     status: proposed\n"
      "     type: meeting\n"
-     "4. planning meeting    due date: 2020-05-30:\n"
+     "4. planning meeting    due date: 2020-05-27:\n"
      "     audience: ['lead', 'pi', 'group_members']\n"
      "     objetive: develop a detailed plan with dates\n"
      "     status: proposed\n"
-     "     type: meeting\n"
-     "5. deliverable    due date: 2021-05-05:\n"
+     "     type: pr\n"
+     "5. deliverable    due date: 2020-06-01:\n"
      "     audience: ['beginning grad in chemistry']\n"
-     "     status: finalized\n"
+     "     status: converged\n"
      ),
     (["helper", "u_logurl", "20sb", "--number", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "20sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
