@@ -19,6 +19,11 @@ ALLOWED_STATI = ["submitted", "unsubmitted", "reimbursed"]
 
 
 def subparser(subpi):
+    # Do not delete --database arg
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file."
+                       )
     subpi.add_argument("amount", help="expense amount",
                        )
     subpi.add_argument("name", help="A short name for the expense",
