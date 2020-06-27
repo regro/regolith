@@ -77,9 +77,9 @@ helper_map = [
      "20sb_firstprojectum has been updated in projecta\n"
      ),
     (["helper", "u_milestone", "20sb"],
-     "Projectum not found. Projectum with similar names: \n"
+     "Projecta not found. Projecta with similar names: \n"
      "20sb_firstprojectum\n"
-     "Please rerun the helper with the correct name of the projectum.\n"
+     "Please rerun the helper specifying the complete ID.\n"
      ),
     (["helper", "u_milestone", "20sb_firstprojectum"],
      "Please choose from one of the following to update/add:\n"

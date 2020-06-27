@@ -15,27 +15,32 @@ ALLOWED_STATI = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burner
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
-                        help="Gives a list of the milestones available to update "
-                             "with specific information about each milestone.")
+                        help="Increases the verbosity of the output.")
     subpi.add_argument("-i", "--index",
-                        help="Index of the item in the enumerated list to update. ",
+                        help="Index of the item in the enumerated list to update.",
                         type = int)
     subpi.add_argument("-d", "--due_date",
                        help="New due date of the milestone in ISO format(YYYY-MM-DD). "
-                            "Required to add a new milestone. ")
+                            "Required for a new milestone.")
     subpi.add_argument("-n", "--name",
-                       help="Name of the new milestone. "
-                            "Required to add a new milestone.")
+                       help="Name of the milestone. "
+                            "Required for a new milestone.")
     subpi.add_argument("-o", "--objective",
-                       help="Objective of the new milestone. "
-                            "Required to add a new milestone.")
+                       help="Objective of the milestone. "
+                            "Required for a new milestone.")
     subpi.add_argument("-s", "--status",
                        help="Status of the milestone/deliverable: "
-                            f"{ALLOWED_STATI}.")
+                            f"{ALLOWED_STATI}. "
+                            "Defaults to proposed for a new milestone.")
     subpi.add_argument("-t", "--type",
                        help="Type of the milestone: "
-                            f"{ALLOWED_TYPES}"
-                            "New milestone defaults to meeting.")
+                            f"{ALLOWED_TYPES} "
+                            "Defaults to meeting for a new milestone.")
+    subpi.add_argument("-a", "--audience",
+                       nargs = '+',
+                       help="Audience of the milestone. "
+                            "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
+                       )
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -74,10 +79,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
             pra = fragment_retrieval(self.gtx["projecta"], ["_id"], rc.projectum_id)
             if len(pra) == 0:
                 raise RuntimeError("Please input a valid projectum id or a valid fragment of a projectum id")
-            print("Projectum not found. Projectum with similar names: ")
+            print("Projecta not found. Projecta with similar names: ")
             for i in range(len(pra)):
                 print(f"{pra[i].get('_id')}")
-            print("Please rerun the helper with the correct name of the projectum.")
+            print("Please rerun the helper specifying the complete ID.")
             return
         milestones = target_prum.get('milestones')
         deliverable = target_prum.get('deliverable')
@@ -132,7 +137,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
             mil.update({'due_date': rc.due_date})
             mil['due_date'] = get_due_date(mil)
             mil.update({'objective': rc.objective, 'name': rc.name})
-            mil.update({'audience': ['lead', 'pi', 'group_members']})
+            if rc.audience:
+                mil.update({'audience': rc.audience})
+            else:
+                mil.update({'audience': ['lead', 'pi', 'group_members']})
             if rc.status:
                 if rc.type in ALLOWED_TYPES:
                     mil.update({'type': ALLOWED_TYPES.get(rc.type)})
@@ -164,10 +172,16 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     doc.update({'status': ALLOWED_STATI.get(rc.status)})
                 else:
                     doc.update({'status': rc.status})
+            if rc.audience:
+                doc.update({'audience': rc.audience})
             if rc.due_date:
                 doc.update({'due_date': rc.due_date})
             doc['due_date'] = get_due_date(doc)
             if identifier == 'milestones':
+                if rc.name:
+                    doc.update({'name': rc.name})
+                if rc.objective:
+                    doc.update({'objective': rc.objective})
                 new_mil = []
                 for i, j in zip(index_list, all_milestones):
                     if j['identifier'] == 'milestones' and i != rc.index:
