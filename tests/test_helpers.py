@@ -198,7 +198,12 @@ helper_map = [
     (["helper", "lister", "contacts", "--keys"],
      "['_id', 'aka', 'day', 'department', 'email', 'institution', 'month', 'name', "
      "'notes', 'title', 'updated', 'uuid', 'year']\n"
-     )
+     ),
+    (["helper", "lister", "people", "--return_fields", "name", "position"],
+     "sbillinge    name: Simon J. L. Billinge    position: professor    \n"
+     "scopatz    name: Anthony Scopatz    position: professor\n"),
+    (["helper", "lister", "contacts", "--return_fields", "name", "uuid"],
+     "afriend    name: Anthony B Friend    uuid: 76f2a4c7-aa63-4fa3-88b5-396b0c15d368\n"),
 ]
 
 

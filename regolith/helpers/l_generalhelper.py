@@ -18,14 +18,16 @@ def subparser(subpi):
     subpi.add_argument(
         "-f","--kv_filter",
         nargs="+",
-        help="Search the given collection by key element pairs. "
-             "e.g. < -f name simon >, will return the id of all the people "
-             "who's name contains simon.")
+        help="Search the given collection by key-value pairs. "
+             "e.g. 'regolith helper lister -f name simon' will "
+             "return the id of all the people who's name contains simon.")
     subpi.add_argument(
         "-r",  "--return_fields",
         nargs="+",
-        help="Specify what keys to return values from when running --filter. "
-             "If no argument is given the default is just the id.")
+        help="Specify from which keys to print values. "
+             "e.g. 'regolith helper lister people -r name status title' "
+             "will return the name, status, and title of all the people "
+             "in the collection. If no argument is given the default is just the id.")
     subpi.add_argument(
         "-k", "--keys",
         action="store_true",
@@ -74,6 +76,9 @@ class GeneralListerHelper(SoutHelperBase):
             else:
                 print((search_collection(coll, rc.kv_filter)).strip())
                 return
+        if rc.return_fields:
+            print(collection_str(coll, rc.return_fields).strip())
+            return
         if rc.keys:
             print(sorted(set([i for k in coll for i in k.keys()])))
             return
