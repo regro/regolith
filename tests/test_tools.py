@@ -17,7 +17,8 @@ from regolith.tools import (
     date_to_rfc822,
     key_value_pair_filter,
     collection_str,
-    search_collection
+    search_collection,
+    collect_appts,
     )
 
 
@@ -784,3 +785,85 @@ def test_collection_str(input, expected):
 )
 def test_search_collection(input, expected):
     assert(search_collection(input[0], input[1], input[2]) == expected)
+
+
+appointed_people = [
+    {'name': 'Kurt Godel', '_id': 'kgodel',
+     'appointments':
+     [{'_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
+      {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+      {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}]
+    },
+    {'name': 'MC Escher', '_id': 'mcescher',
+     'appointments':
+     [{'_id': 'A', "begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
+      {'_id' :'B', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
+      {'_id': 'C', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},]
+    },
+    {'name': 'Johann Sebastian Bach', '_id': 'jsbach',
+     'appointments':
+     [{'_id': 'A', "begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
+      {'_id': 'B', "begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
+      {'_id': 'C', "begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}]
+    },
+    {'name': 'Ludwig Wittgenstein', '_id': 'lwittgenstein',
+     'appointments':
+     [{'_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}]
+    },
+    {'name': 'Karl Popper', '_id': 'kpopper',
+     'appointments':
+     [{'_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}]
+     },
+    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': []},
+    {'name': 'Sophie Germain', '_id': 'sgermain',
+     'appointments':
+         [{'_id': 'A', 'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0,
+           'type': 'ss'}]
+     },
+    ]
+
+@pytest.mark.parametrize(
+    "people,key,value,start,end,expected",
+    [(appointed_people, 'grant', 'grant1', None, None,
+      [{'person': 'kgodel', '_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
+       {'person': 'kgodel', '_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+       {'person': 'kgodel', '_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+       {'person': 'mcescher', '_id': 'A', "begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
+       {'person': 'jsbach', '_id': 'A', "begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
+      ]),
+     (appointed_people, None, None, '2019-09-01', '2019-09-30',
+      [{'person': 'kgodel', '_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
+       {'person': 'kgodel', '_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+       {'person': 'kgodel', '_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+       {'person': 'sgermain', '_id': 'A', 'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0, 'type': 'ss'} ,
+      ]),
+     (appointed_people, ['loading', 'type'], [1.0, 'ss'], '2019-12-15', '2019-12-25',
+      [{'person': 'lwittgenstein', '_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'},
+       {'person': 'kpopper', '_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}
+       ]),
+     (appointed_people, ['loading', 'type', 'grant'], [0.9, 'pd', 'grant1'], None, None, []),
+     (appointed_people, None, None, None, None,
+      [{'person': 'kgodel', '_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
+       {'person': 'kgodel', '_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+       {'person': 'kgodel', '_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+       {'person': 'mcescher', '_id': 'A', "begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
+       {'person': 'mcescher', '_id' :'B', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
+       {'person': 'mcescher', '_id': 'C', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},
+       {'person': 'jsbach', '_id': 'A', "begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
+       {'person': 'jsbach', '_id': 'B', "begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
+       {'person': 'jsbach', '_id': 'C', "begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'},
+       {'person': 'lwittgenstein', '_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'},
+       {'person': 'kgodel', '_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+       {'person': 'sgermain', '_id': 'A', 'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0, 'type': 'ss'},
+      ]),
+     (people, 'type', 'ss', '2019-10-21', '2019-09-01', "inconsistent begin and end dates")
+    ]
+)
+def test_collect_appts(people, key, value, start, end, expected):
+    try:
+        actual = collect_appts(people, filter_key=key, filter_value=value, begin_date=start, end_date=end)
+        assert actual == expected
+    except ValueError:
+        with pytest.raises(ValueError) as excinfo:
+            actual = collect_appts(people, filter_key=key, filter_value=value, begin_date=start, end_date=end)
+        assert str(excinfo.value) == expected
