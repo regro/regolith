@@ -1,7 +1,4 @@
-"""Helper for adding a projectum to the projecta collection.
-
-   Projecta are small bite-sized project quanta that typically will result in
-   one manuscript.
+"""Helper for adding a presentation to the presentation collection.
 """
 import datetime as dt
 import dateutil.parser as date_parser
@@ -19,7 +16,6 @@ TARGET_COLL = "presentations"
 ALLOWED_TYPES = ["award", "keynote", "plenary", "invited", "contributed_oral",
                  "poster", "colloquium", "seminar","other"]
 ALLOWED_STATI = ["accepted"]
-MILESTONES_ALLOWED_STATI = ["proposed", "scheduled", "finished", "cancelled"]
 
 
 def subparser(subpi):
@@ -33,8 +29,8 @@ def subparser(subpi):
     subpi.add_argument("name", help="name of the presentation, meeting name if meeting,"
                                     "department if seminar",
                        )
-    subpi.add_argument("t","--type", help=f"types, from {ALLOWED_TYPES}. Default is other",
-                       default="other"
+    subpi.add_argument("-t","--type", help=f"types, from {ALLOWED_TYPES}. Default is other",
+                       default="invited"
                        )
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
@@ -49,18 +45,23 @@ def subparser(subpi):
                        default="sbillinge"
                        )
     subpi.add_argument("-a", "--abstract",
-                       help="abstract description"
+                       help="abstract description, defaults to tbd",
+                       default='tbd'
                        ) #isn't an abstract a description?
     subpi.add_argument("-s", "--status",
-                       help="status of the presentation"
+                       help="status of the presentation, default is accepted",
+                       default="accepted"
                        )
-    subpi.add_argument("-t", "--title",
+    subpi.add_argument("-x", "--title",
                        help="the title of the presentation, default is tbd",
                        default='tbd'
                        )
+    subpi.add_argument("-y", "--authors",
+                       help="specify the authors of this presentation, "
+                            "default is empty list",
+                       default=[])
     return subpi
 
-    return subpi
 
 
 class PresentationAdderHelper(DbHelperBase):
@@ -89,16 +90,18 @@ class PresentationAdderHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        if not rc.date:
-            now = dt.date.today()
+        gtx = self.gtx
+        rc = self.rc
+        # dates
+        if rc.begin_date:
+            begin_date = date_parser.parse(rc.begin_date).date()
         else:
-            now = date_parser.parse(rc.date).date()
-        if not rc.due_date:
-            due_date = now + relativedelta(years=1)
+            begin_date = dt.date.today()
+        if rc.end_date:
+            end_date = date_parser.parse(rc.end_date).date()
         else:
-            due_date = date_parser.parse(rc.due_date).date()
-        key = f"{str(now.year)[2:]}{rc.lead[:2]}_{''.join(rc.name.casefold().split()).strip()}"
-
+            end_date = dt.date.today()
+        key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{rc.payee[0:2]}_{''.join(rc.place.casefold().split()).strip()}"
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
@@ -107,81 +110,33 @@ class PresentationAdderHelper(DbHelperBase):
         else:
             pdoc = {}
 
-        pdoc.update({
-            'begin_date': now,
-            'log_url': '',
-            'name': rc.name,
-            'pi_id': rc.pi_id,
-            'lead': rc.lead,
-        })
-        if rc.lead is "tbd":
-            pdoc.update({
-                'status': 'proposed'
-            })
+        if rc.authors:
+            authors = rc.authors
         else:
-            pdoc.update({
-                'status': 'started'
-            })
 
-        if rc.description:
-            pdoc.update({
-                'description': rc.description,
-            })
-        if rc.grants:
-            if isinstance(rc.grants, str):
-                rc.grants = [rc.grants]
-            pdoc.update({'grants': rc.grants})
-        else:
-            pdoc.update({'grants': ["tbd"]})
-        if rc.group_members:
-            if isinstance(rc.group_members, str):
-                rc.group_members = [rc.group_members]
-            pdoc.update({'group_members': rc.group_members})
-        else:
-            pdoc.update({'group_members': []})
-        if rc.collaborators:
-            if isinstance(rc.collaborators, str):
-                rc.collaborators = [rc.collaborators]
-            pdoc.update({
-                'collaborators': rc.collaborators,
-            })
-        else:
-            pdoc.update({
-                'collaborators': [],
-            })
 
-        pdoc.update({"_id": key})
-        pdoc.update({"deliverable": {
-            "due_date": due_date,
-            "audience": ["beginning grad in chemistry"],
-            "success_def": "audience is happy",
-            "scope": [
-                "UCs that are supported or some other scope description if it software",
-                "sketch of science story if it is paper"],
-            "platform": "description of how and where the audience will access the deliverable.  journal if it is a paper",
-            "roll_out": [
-                "steps that the audience will take to access and interact with the deliverable",
-                "not needed for paper submissions"],
-            "status": "proposed"}
-        })
-        pdoc.update({"kickoff": {
-            "due_date": now + relativedelta(days=7),
-            "audience": ["lead", "pi", "group_members"],
-            "name": "Kick off meeting",
-            "objective": "introduce project to the lead",
-            "status": "proposed"
-        }})
 
-        secondm = {'due_date': now + relativedelta(days=21),
-                   'name': 'Project lead presentation',
-                   'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
-                   'audience': ['lead', 'pi', 'group_members'],
-                   'status': 'proposed',
-                   'type': 'meeting'
-                   }
-        pdoc.update({"milestones": [secondm]})
+        pdoc.update({'_id': key,
+                     'abstract': rc.abstract,
+                     'authors': rc.authors,
+                     'begin_date': begin_date,
+                     'end_date': end_date,
+                     })
+
+        if rc.type in ['seminar', 'colloquium']:
+            pdoc.update({"institution": rc.place,
+                        "department": rc.name})
+        else:
+            pdoc.update({"location": rc.place,
+                        "meeting_name": rc.name})
+        pdoc.update({"project": ['all'],
+                     "status": rc.status,
+                     "title": rc.title,
+                     "type": rc.type,
+                     })
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
+
 
         print(f"{key} has been added in {TARGET_COLL}")
 
