@@ -113,6 +113,7 @@ class PresentationAdderHelper(DbHelperBase):
         if rc.authors:
             authors = rc.authors
         else:
+            pass
 
 
 

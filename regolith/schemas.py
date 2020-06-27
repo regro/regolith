@@ -3198,6 +3198,14 @@ SCHEMAS = {
             "required": True,
             "anyof_type": ["string", "list"],
         },
+        "begin_date": {
+            "description": "begin date in YYYY-MM-DD",
+            "anyof_type": ["date", "string"],
+        },
+        "end_date": {
+            "description": "end_date in YYYY-MM-DD",
+            "anyof_type": ["date, string"],
+        },
         "begin_year": {
             "description": "year the conference or trip begins.",
             "required": True,
