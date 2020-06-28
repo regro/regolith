@@ -1420,3 +1420,79 @@ def search_collection(collection, arguments, keys=None):
         """
     collection = key_value_pair_filter(collection, arguments)
     return collection_str(collection, keys)
+
+
+def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None, end_date=None):
+    """
+    Retrieves a list of all the appointments on the given grant(s) in the given interval of time for each person in the
+    given people collection.
+
+    Parameters
+    ----------
+    ppl_coll: collection (list of dicts)
+        The people collection containing persons with appointments
+    filter_key: string, list, optional
+        The key we want to filter appointments by
+    filter_value: string, int, float, list, optional
+        The values for each key that we want to filter appointments by
+    begin_date: string, datetime, optional
+        The start date for the interval in which we want to collect appointments
+    end_date: string, datetime, optional
+        The start date for the interval in which we want to collect appointments
+
+    Returns
+    -------
+    list:
+        a list of all appointments in the people collection that satisfy the provided conditions (if any)
+
+    Examples
+    --------
+    >>> collect_appts(people,filter_key=['grant', 'status'], filter_value=['mrsec14', 'finalized'], \
+    begin_date= '2020-09-01', end_date='2020-12-31')
+    This would return all appointments on the grant 'mrsec14' with status 'finalized' that are valid on/during any
+    dates from 2020-09-01 to 2020-12-31
+    >>> collect_appts(people, filter_key=['grant', 'grant'], filter_value=['mrsec14', 'dmref19'])
+    This would return all appointments on the grants 'mrsec14' and 'dmref19' irrespective of their dates.
+    """
+
+    if bool(begin_date) ^ bool(end_date):
+        raise RuntimeError("please enter both begin date and end date or neither")
+    filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
+    filter_value = [filter_value] if not isinstance(filter_value, list) else filter_value
+    if (bool(filter_key)^bool(filter_value)) or (filter_key and filter_value and len(filter_key) != len(filter_value)):
+        raise RuntimeError("number of filter keys and filter values do not match")
+    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
+    end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
+    timespan = 0
+    if begin_date:
+        timespan = end_date - begin_date
+        if timespan.days < 0:
+            raise ValueError("begin date is after end date")
+    appts = []
+    for p in ppl_coll:
+        if not p.get('appointments'):
+            continue
+        for a in p.get('appointments'):
+            if filter_key:
+                if all(a.get(filter_key[x]) == filter_value[x] for x in range(len(filter_key))):
+                    if begin_date:
+                        for y in range(timespan.days + 1):
+                            day = begin_date + relativedelta(days=y)
+                            if is_current(a, now=day):
+                                appts.append(a)
+                                appts[-1].update({'person': p.get('_id')})
+                                break
+                    else:
+                        appts.append(a)
+                        appts[-1].update({'person': p.get('_id')})
+            elif timespan:
+                    for y in range(timespan.days + 1):
+                        day = begin_date + relativedelta(days=y)
+                        if is_current(a, now=day):
+                            appts.append(a)
+                            appts[-1].update({'person': p.get('_id')})
+                            break
+            else:
+                appts.append(a)
+                appts[-1].update({'person': p.get('_id')})
+    return appts
