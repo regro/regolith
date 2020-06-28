@@ -1497,6 +1497,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
                 appts[-1].update({'person': p.get('_id')})
     return appts
 
+
 def grant_burn(grant, appts, begin_date=None, end_date=None):
     """
     Retrieves the total burn of a grantt over an interval of time by integrating over all appointments
@@ -1522,11 +1523,15 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
 
     if not grant.get('budget'):
         raise ValueError("{} has no specified budget".format(grant.get('_id')))
+    if bool(begin_date) ^ bool(end_date):
+        raise RuntimeError("please enter both begin date and end date or neither")
     grant_begin, grant_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
     begin_date = grant_begin if not begin_date else begin_date
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
     end_date = grant_end if not end_date else end_date
     end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
+    if begin_date < end_date:
+        raise ValueError("begin date is after end date")
     timespan, grad_val, pd_val, ss_val = grant_end - grant_begin, 0.0, 0.0, 0.0
     grant_amounts = ["values for grant {} from {} to {}:".format(grant.get('_id'), str(begin_date), str(end_date))]
     for b in grant.get('budget'):
