@@ -21,16 +21,18 @@ HELPER_TARGET = "l_grants"
 BLACKLIST = ["frap", "they_pay", "collgf", "physmatch", "ta", "chemmatch",
              "summer@seas", "startup"]
 
+
 def subparser(subpi):
     subpi.add_argument("-d", "--date",
                        help="Filter grants by a date in ISO format (YYYY-MM-DD)"
                        )
-    subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')
-    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
-    subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when when running "
-                                         "--filter. If no argument is given the default is just the id.")
     subpi.add_argument("-c", "--current", action="store_true",
-                       help='outputs only the current grants')
+                       help='outputs only current grants')
+    subpi.add_argument("-f", "--filter", nargs="+",
+                       help="Search this collection by giving key element pairs")
+    subpi.add_argument("-k", "--keys", nargs="+",
+                       help="Specify what keys to return values from when when running "
+                            "--filter. If no argument is given the default is just the id.")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='if set, outputs also hidden grants such as TA, '
                             'matches etc.')
@@ -66,8 +68,8 @@ class GrantsListerHelper(SoutHelperBase):
         ]
         for db, coll in zip(self.needed_dbs, colls):
             gtx[db] = coll
-        gtx["grants"] = merge_collections(gtx["proposals"], gtx["grants"],
-                                   "proposal_id")
+        gtx["g+p"] = merge_collections(gtx["grants"], gtx["proposals"],
+                                          "proposal_id")
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -76,7 +78,7 @@ class GrantsListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         if rc.filter:
-            results = search_collection(self.gtx["grants"], rc.filter, rc.keys)
+            results = search_collection(self.gtx["g+p"], rc.filter, rc.keys)
             print(results, end="")
             return
         grants = []
@@ -84,9 +86,13 @@ class GrantsListerHelper(SoutHelperBase):
             desired_date = date_parser.parse(rc.date).date()
         else:
             desired_date = dt.date.today()
-        for grant in self.gtx["grants"]:
-            if grant['year']:    # year is used for prop submission but breaks get_dates
+        print(self.gtx["g+p"])
+        for grant in self.gtx["g+p"]:
+            # year is used for proposal submission but breaks get_dates
+            if grant.get('year'):
                 del grant['year']
+            print(grant["_id"])
+            print(is_current(grant, now=desired_date))
             if rc.current and not is_current(grant, now=desired_date):
                 continue
             if not rc.verbose:
@@ -97,7 +103,8 @@ class GrantsListerHelper(SoutHelperBase):
 
         grants.sort(key=lambda k: get_dates(k).get('end_date'))
         for g in grants:
-            print("{}, awardnr: {}, acctn: {}, {} to {}".format(g.get('alias', ''), g.get('awardnr', ''),
-                                                                g.get('account', ''), get_dates(g).get('begin_date'),
-                                                                get_dates(g).get('end_date')))
+            print("{}, awardnr: {}, acctn: {}, {} to {}".format(
+                g.get('alias', ''), g.get('awardnr', ''),
+                g.get('account', ''), get_dates(g).get('begin_date'),
+                get_dates(g).get('end_date')))
         return
