@@ -1455,7 +1455,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     This would return all appointments on the grants 'mrsec14' and 'dmref19' irrespective of their dates.
     """
 
-    if (begin_date and not end_date) or (end_date and not begin_date):
+    if bool(begin_date) ^ bool(end_date):
         raise RuntimeError("please enter both begin date and end date or neither")
     filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
     filter_value = [filter_value] if not isinstance(filter_value, list) else filter_value
