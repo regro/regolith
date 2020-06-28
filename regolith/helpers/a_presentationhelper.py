@@ -56,10 +56,10 @@ def subparser(subpi):
                        help="the title of the presentation, default is tbd",
                        default='tbd'
                        )
-    subpi.add_argument("-y", "--authors",
+    subpi.add_argument("-y", "--authors", nargs="+",
                        help="specify the authors of this presentation, "
                             "default is empty list",
-                       default=[])
+                       )
     return subpi
 
 
@@ -110,12 +110,13 @@ class PresentationAdderHelper(DbHelperBase):
         else:
             pdoc = {}
 
-        if rc.authors:
-            authors = rc.authors
-        else:
-            pass
-
-
+        if not rc.authors:
+            try:
+                rc.authors = [rc.default_user_id]
+            except AttributeError:
+                raise RuntimeError(
+                    "Please set default user ID and user first name in config.json file"
+                )
 
         pdoc.update({'_id': key,
                      'abstract': rc.abstract,

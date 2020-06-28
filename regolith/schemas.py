@@ -3208,7 +3208,7 @@ SCHEMAS = {
         },
         "begin_year": {
             "description": "year the conference or trip begins.",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
         "begin_month": {"required": True,
