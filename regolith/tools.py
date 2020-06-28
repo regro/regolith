@@ -1497,21 +1497,21 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
                 appts[-1].update({'person': p.get('_id')})
     return appts
 
-def get_grant_amount(grant, ppl_coll, begin_date=None, end_date=None):
+def grant_burn(grant, appts, begin_date=None, end_date=None):
     """
-    Given a grant, a database of people appointed on assorted grants, and two dates marking the limits of an interval,
-    it returns a list of the net amount of the grant on each day of the interval.
+    Retrieves the total burn of a grantt over an interval of time by integrating over all appointments
+    made on the grant.
 
     Parameters
     ----------
     grant: dict
-        The person whose appointments need to be checked
-    ppl_coll: collection (list of dicts)
-        The people collection that contains the grant appointments
+        The grant_id or grant object whose burn needs to be retrieved
+    appts: collection (list of dicts)
+        The collection of appointments made on assorted grants
     begin_date: datetime, string, optional
-        The start date of the interval of time to check the grant amount for
+        The start date of the interval of time to retrieve the grant burn for
     end_date: datetime, string, optional
-        The end date of the interval of time to check the grant amount for
+        The end date of the interval of time to retrieve the grant burn for
 
     Returns
     -------
@@ -1524,11 +1524,10 @@ def get_grant_amount(grant, ppl_coll, begin_date=None, end_date=None):
         raise ValueError("{} has no specified budget".format(grant.get('_id')))
     grant_begin, grant_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
     begin_date = grant_begin if not begin_date else begin_date
-    end_date = grant_end if not end_date else end_date
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
+    end_date = grant_end if not end_date else end_date
     end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
-    timespan = grant_end - grant_begin
-    grad_val, pd_val, ss_val = 0.0, 0.0, 0.0
+    timespan, grad_val, pd_val, ss_val = grant_end - grant_begin, 0.0, 0.0, 0.0
     grant_amounts = ["values for grant {} from {} to {}:".format(grant.get('_id'), str(begin_date), str(end_date))]
     for b in grant.get('budget'):
         if b.get('student_months'):
@@ -1539,106 +1538,19 @@ def get_grant_amount(grant, ppl_coll, begin_date=None, end_date=None):
             ss_val += b.get('ss_months') * 30.5
     for x in range(timespan.days + 1):
         day = grant_begin + relativedelta(days=x)
-        for p in ppl_coll:
-            if not p.get('appointments'):
-                continue
-            for a in p.get('appointments'):
-                if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a,now=day):
-                    if a.get('type') == 'gra':
-                        grad_val -= a.get('loading') * 1
-                    elif a.get('type') == 'pd':
-                        pd_val -= a.get('loading') * 1
-                    elif a.get('type') == 'ss':
-                        ss_val -= a.get('loading') * 1
+        for a in appts:
+            if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a,now=day):
+                if a.get('type') == 'gra':
+                    grad_val -= a.get('loading') * 1
+                elif a.get('type') == 'pd':
+                    pd_val -= a.get('loading') * 1
+                elif a.get('type') == 'ss':
+                    ss_val -= a.get('loading') * 1
+                else:
+                    if a.get('person'):
+                        raise ValueError("invalid  type for appointment {} of {}".format(a.get('_id'), a.get('person')))
                     else:
-                        raise ValueError("invalid  type for appointment {} of {}".format(a.get('_id'), p.get('_id')))
-        if begin_date <= day <= end_date:
-            gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
-                   "ss_days": round(ss_val, 2)}
-            grant_amounts.append(gvals)
-    return grant_amounts
-
-def burn(grants_coll, appts_coll, begin_date=None, end_date=None):
-    """
-    Retrieves the total burn of a collection of grants over an interval of time by integrating over all appointments
-    made on the grantts.
-
-    Parameters
-    ----------
-    grants_coll: coll (list of dicts)
-        The person whose appointments need to be checked
-    appts_coll: collection (list of dicts)
-        The collection of appointments made on assorted grants
-    begin_date: datetime, string, optional
-        The start date of the interval of time to retrieve the grants burn for
-    end_date: datetime, string, optional
-        The end date of the interval of time to retrieve the grants burn for
-
-    Returns
-    -------
-    list:
-        A list of dictionaries, each containing the date and the corresponding student_months, postdoc_months and
-        ss_months on that date
-    """
-
-    if not grant.get('budget'):
-        raise ValueError("{} has no specified budget".format(grant.get('_id')))
-    grant_begin, grant_end = get_dates(grants_coll[0])['begin_date'], get_dates(grants_coll[0])['end_date']
-
-    for grant in grants_coll:
-        if not grant.get('budget'):
-            raise ValueError("{} has no specified budget".format(grant.get('_id')))
-        start, end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
-        grant_begin = start if start < grant_begin else grant_begin
-        grant_end = end if end > grant_end else grant_end
-
-    begin_date = grant_begin if not begin_date else begin_date
-    end_date = grant_end if not end_date else end_date
-    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
-    end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
-    timespan = grant_end - grant_begin
-    grad_val, pd_val, ss_val = 0.0, 0.0, 0.0
-    grant_amounts = ["values for grants from {} to {}:".format(str(begin_date), str(end_date))]
-
-    for grant in grants_coll:
-        for b in grant.get('budget'):
-            if b.get('student_months'):
-                grad_val += b.get('student_months') * 30.5
-            if b.get('postdoc_months'):
-                pd_val += b.get('postdoc_months') * 30.5
-            if b.get('ss_months'):
-                ss_val += b.get('ss_months') * 30.5
-
-    for x in range(timespan.days + 1):
-        day = grant_begin + relativedelta(days=x)
-        for p in ppl_coll:
-            if not p.get('appointments'):
-                continue
-            for a in p.get('appointments'):
-                for grant
-
-
-
-
-
-
-
-
-
-
-
-
-                if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias'))\
-                        for grant in grants_coll \
-                                and is_current(a,now=day):
-                    if a.get('type') == 'gra':
-                        grad_val -= a.get('loading') * 1
-                    elif a.get('type') == 'pd':
-                        pd_val -= a.get('loading') * 1
-                    elif a.get('type') == 'ss':
-                        ss_val -= a.get('loading') * 1
-                    else:
-                        raise ValueError("invalid  type for appointment {} of {}".format(a.get('_id'), p.get('_id')))
+                        raise ValueError("invalid  type for appointment {}".format(a))
         if begin_date <= day <= end_date:
             gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
                    "ss_days": round(ss_val, 2)}

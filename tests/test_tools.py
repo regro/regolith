@@ -19,7 +19,7 @@ from regolith.tools import (
     collection_str,
     search_collection,
     collect_appts,
-    get_grant_amount,
+    grant_burn,
     )
 
 
@@ -875,40 +875,8 @@ def test_collect_appts(people, key, value, start, end, expected):
             actual = collect_appts(people, filter_key=key, filter_value=value, begin_date=start, end_date=end)
         assert str(excinfo.value) == expected
 
-grant_people = [
-    {'name': 'Kurt Godel', '_id': 'kgodel',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
-      {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
-      {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}]
-    },
-    {'name': 'MC Escher', '_id': 'mcescher',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
-      {'_id' :'B', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
-      {'_id': 'C', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},]
-    },
-    {'name': 'Johann Sebastian Bach', '_id': 'jsbach',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
-      {'_id': 'B', "begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
-      {'_id': 'C', "begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}]
-    },
-    {'name': 'Ludwig Wittgenstein', '_id': 'lwittgenstein',
-     'appointments':
-     [{'_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant_two', 'loading': 1.0, 'type': 'ss'}]
-    },
-    {'name': 'Karl Popper', '_id': 'kpopper',
-     'appointments':
-     [{'_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant_two', 'loading': 1.0, 'type': 'ss'}]
-     },
-    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': []},
-    {'name': 'Sophie Germain', '_id': 'sgermain',
-     'appointments':
-         [{'_id': 'A', 'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0,
-           'type': 'ss'}]
-     },
-    ]
+
+appts = collect_appts(appointed_people)
 grant1 = {'_id': 'grant1', 'alias': 'grant_one', 'begin_date': '2019-09-01', 'end_date': '2019-09-10', 'budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-09-03',  'student_months': 1, 'postdoc_months': 0.5, 'ss_months': 0},
     {'begin_date': '2019-09-04', 'end_date': '2019-09-07',  'student_months': 1.5, 'postdoc_months': 0, 'ss_months': 0},
@@ -924,9 +892,9 @@ grant3 = {'_id': 'grant3', 'begin_date': '2019-09-01', 'end_date': '2019-12-31',
 grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'end_date': '2019-09-07','budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-09-07',  'student_months': 1, 'postdoc_months': 1, 'ss_months': 1}]}
 @pytest.mark.parametrize(
-    "grant,ppl,start,end,expected",
+    "grant,appointments,start,end,expected",
     [
-        (grant1, grant_people, None, None,
+        (grant1, appts, None, None,
          ['values for grant grant1 from 2019-09-01 to 2019-09-10:',
           {'date': '2019-09-01', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 136.25},
           {'date': '2019-09-02', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 135.25},
@@ -939,7 +907,7 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
           {'date': '2019-09-09', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 128.25},
           {'date': '2019-09-10', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 127.25}]
         ),
-        (grant2, grant_people, '2019-12-15', '2019-12-31',
+        (grant2, appts, '2019-12-15', '2019-12-31',
          ['values for grant grant2 from 2019-12-15 to 2019-12-31:',
           {'date': '2019-12-15', 'postdoc_days': 76.25, 'ss_days': 9.5, 'student_days': 122.0},
           {'date': '2019-12-16', 'postdoc_days': 75.35, 'ss_days': 8.5, 'student_days': 122.0},
@@ -959,11 +927,11 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
           {'date': '2019-12-30', 'postdoc_days': 62.75, 'ss_days': -1.5, 'student_days': 122.0},
           {'date': '2019-12-31', 'postdoc_days': 61.85, 'ss_days': -2.5, 'student_days': 122.0}]
         ),
-        (grant3, grant_people, '2019-12-31', '2019-12-31',
+        (grant3, appts, '2019-12-31', '2019-12-31',
         ['values for grant grant3 from 2019-12-31 to 2019-12-31:',
          {'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
         ),
-        (grant4, grant_people, None, None,
+        (grant4, appts, None, None,
         ['values for grant grant4 from 2019-09-01 to 2019-09-07:',
          {'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 29.5, 'student_days': 30.5},
@@ -973,21 +941,20 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
          {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5},
          {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5}]
          ),
-        ({'_id': 'malicious_grant', 'alias': 'very_malicious_grant'}, grant_people, '2012-12-23', '2013-01-24',
+        ({'_id': 'malicious_grant', 'alias': 'very_malicious_grant'}, appts, '2012-12-23', '2013-01-24',
           'malicious_grant has no specified budget'
          ),
-        (grant1, [{'name': 'Malicious Person', '_id': 'mperson',
-         'appointments': [{'_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05', 'loading': 1.0,
-                          'grant': 'grant1', 'type': 'imaginary'}]}],
-         None, None, 'invalid  type for appointment A of mperson'
+        (grant1, [{'person': 'malicious person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
+                   'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}],
+         None, None, 'invalid  type for appointment A of malicious person'
          )
     ]
 )
-def test_get_grant_amount(grant, ppl, start, end, expected):
+def test_grant_burn(grant, appointments, start, end, expected):
     try:
-        actual = get_grant_amount(grant, ppl, begin_date=start, end_date=end)
+        actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
         assert actual == expected
     except ValueError:
         with pytest.raises(ValueError) as excinfo:
-            actual = get_grant_amount(grant, ppl, begin_date=start, end_date=end)
+            actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
         assert str(excinfo.value) == expected
