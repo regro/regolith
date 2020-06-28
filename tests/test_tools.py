@@ -19,8 +19,6 @@ from regolith.tools import (
     collection_str,
     search_collection,
     collect_appts,
-    search_collection,
-    search_collection,
     get_grant_amount,
     )
 
@@ -876,18 +874,6 @@ def test_collect_appts(people, key, value, start, end, expected):
         with pytest.raises(RuntimeError) as excinfo:
             actual = collect_appts(people, filter_key=key, filter_value=value, begin_date=start, end_date=end)
         assert str(excinfo.value) == expected
-
-appts1 = []
-appts2 = []
-appts3 = []
-person1 = {}
-person2 = {}
-person3 = {}
-people = []
-grant1 = {}
-grant2 = {}
-grant3 = {}
-grants = [grant1, grant2, grant3]
 
 grant_people = [
     {'name': 'Kurt Godel', '_id': 'kgodel',
