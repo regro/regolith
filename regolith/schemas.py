@@ -3211,7 +3211,7 @@ SCHEMAS = {
             "required": False,
             "type": "integer",
         },
-        "begin_month": {"required": True,
+        "begin_month": {"required": False,
                         "anyof_type": ["string", "integer"],
                         },
         "begin_day": {"required": False, "type": "integer"},
