@@ -46,6 +46,9 @@ helper_map = [
     (["helper", "l_projecta", "--grp_by_lead"],
      "lyang:\n    20ly_newprojectum\nascopatz:\n    20sb_firstprojectum\n"
      ),
+    (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"],
+     "ascopatz:\n    20sb_firstprojectum\n"
+     ),
     (["helper", "l_projecta", "--ended", "--date", "2020-06-02"],
      "20sb_firstprojectum    My first projectum\n    Lead: ascopatz    Members: ascopatz    Collaborators: aeinstein, pdirac\n"
      ),
@@ -70,7 +73,7 @@ helper_map = [
      ""
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--index", "4",
-      "--status", "proposed", "--type", "meeting","--due_date", "2020-05-30"],
+      "--status", "proposed", "--type", "meeting", "--due_date", "2020-05-30"],
      "20sb_firstprojectum has been updated in projecta\n"
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--verbose"],
