@@ -18,7 +18,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     is_fully_appointed,
-    get_grant_amount,
+    collect_appts,
 )
 from regolith.dates import (
     is_current,
