@@ -121,12 +121,6 @@ class ProjectaListerHelper(SoutHelperBase):
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")
         for projectum in self.gtx["projecta"]:
-            if rc.grp_by_lead:
-                if projectum.get('lead') not in grouped_projecta:
-                    grouped_projecta[projectum.get('lead')] = [projectum.get('_id')]
-                else:
-                    grouped_projecta[projectum.get('lead')].append(projectum.get('_id'))
-                continue
             if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
             if rc.lead and projectum.get('lead') != rc.lead:
@@ -159,7 +153,7 @@ class ProjectaListerHelper(SoutHelperBase):
                 if low_range <= end_date <= high_range:
                     end_projecta.append(projectum)
                 continue
-            projecta.append(projectum["_id"])
+            projecta.append(projectum)
 
         if rc.ended:
             for p in end_projecta:
@@ -173,11 +167,18 @@ class ProjectaListerHelper(SoutHelperBase):
                                                                                           p.get("lead"), members,
                                                                                           collaborators))
         if rc.grp_by_lead:
+            for p in projecta:
+                if p.get('lead') not in grouped_projecta:
+                    grouped_projecta[p.get('lead')] = [p.get('_id')]
+                else:
+                    grouped_projecta[p.get('lead')].append(p.get('_id'))
             for key, values in grouped_projecta.items():
                 print(f"{key}:")
                 for v in values:
                     print(f"    {v}")
-        projecta.sort()
+            return
+
+        projecta.sort(key=lambda prum: prum.get("_id"))
         for i in projecta:
-            print(i)
+            print(i.get("_id"))
         return
