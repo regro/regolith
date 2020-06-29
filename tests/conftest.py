@@ -129,7 +129,6 @@ def make_mongodb():
             example['_id'].replace('.', '')
             col.insert_one(example)
     yield repo
-    os.chdir(cwd)
     if not OUTPUT_FAKE_DB:
         rmtree(repo)
 

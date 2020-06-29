@@ -116,7 +116,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb):
     else:
         raise ValueError("Unknown database source: {}".format(db_src))
     # FIXME: Somehow the mongo backend failed to build figure
-    if db_src == "mongo" and "bm" == "figure":
+    if db_src == "mongo" and bm == "figure":
         return
     os.chdir(repo)
     if bm == "figure":
