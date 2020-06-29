@@ -152,12 +152,13 @@ helper_map = [
     (["helper", "finish_prum", "--list"],
      "1. 20ly_newprojectum      status: started      lead: lyang\n"
      "2. 20sb_firstprojectum      status: proposed      lead: ascopatz\n"
+    (["helper", "finish_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
+     "20sb_firstprojectum status has been updated to finished\n"
      ),
-    (["helper", "finish_prum", "--index", "1"],
-     "20ly_newprojectum status have been updated to finished.\n"
-     ),
-    (["helper", "finish_prum", "--list", "--lead", "ascopatz"],
-     "1. 20sb_firstprojectum      status: proposed      lead: ascopatz\n"
+    (["helper", "finish_prum", "20sb"],
+     "Projecta not found. Projecta with similar names: \n"
+     "20sb_firstprojectum     status:finished\n"
+     "Please rerun the helper specifying the complete ID.\n"
      ),
 ]
 
