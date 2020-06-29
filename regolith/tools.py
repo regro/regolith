@@ -1500,19 +1500,21 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
 
 def grant_burn(grant, appts, begin_date=None, end_date=None):
     """
-    Retrieves the total burn of a grantt over an interval of time by integrating over all appointments
+    Retrieves the total burn of a grant over an interval of time by integrating over all appointments
     made on the grant.
 
     Parameters
     ----------
     grant: dict
-        The grant_id or grant object whose burn needs to be retrieved
+        The grant object whose burn needs to be retrieved
     appts: collection (list of dicts)
         The collection of appointments made on assorted grants
     begin_date: datetime, string, optional
-        The start date of the interval of time to retrieve the grant burn for
+        The start date of the interval of time to retrieve the grant burn for, either a date object or a string
+        in YYYY-MM-DD format. Defaults to the begin_date of the grant.
     end_date: datetime, string, optional
-        The end date of the interval of time to retrieve the grant burn for
+        The end date of the interval of time to retrieve the grant burn for, either a date object or a string
+        in YYYY-MM-DD format. Defaults to the end_date of the grant.
 
     Returns
     -------
@@ -1530,7 +1532,7 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
     end_date = grant_end if not end_date else end_date
     end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
-    if begin_date < end_date:
+    if begin_date > end_date:
         raise ValueError("begin date is after end date")
     timespan, grad_val, pd_val, ss_val = grant_end - grant_begin, 0.0, 0.0, 0.0
     grant_amounts = ["values for grant {} from {} to {}:".format(grant.get('_id'), str(begin_date), str(end_date))]
@@ -1553,7 +1555,8 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
                     ss_val -= a.get('loading') * 1
                 else:
                     if a.get('person'):
-                        raise ValueError("invalid  type for appointment {} of {}".format(a.get('_id'), a.get('person')))
+                        raise ValueError("invalid  type {} for appointment {} of {}".format(a.get('type'), a.get('_id'),
+                                                                                                    a.get('person')))
                     else:
                         raise ValueError("invalid  type for appointment {}".format(a))
         if begin_date <= day <= end_date:

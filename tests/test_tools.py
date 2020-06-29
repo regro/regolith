@@ -941,12 +941,12 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
          {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5},
          {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5}]
          ),
-        ({'_id': 'malicious_grant', 'alias': 'very_malicious_grant'}, appts, '2012-12-23', '2013-01-24',
-          'malicious_grant has no specified budget'
+        ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts, '2012-12-23', '2013-01-24',
+          'magical_grant has no specified budget'
          ),
-        (grant1, [{'person': 'malicious person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
+        (grant1, [{'person': 'magical person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
                    'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}],
-         None, None, 'invalid  type for appointment A of malicious person'
+         None, None, 'invalid  type imaginary for appointment A of magical person'
          )
     ]
 )
