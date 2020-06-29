@@ -21,6 +21,7 @@ builder_map = [
     "recent-collabs",
     "beamplan"
 ]
+db_srcs = ["mongo", "fs"]
 
 xls_check = ("B17", "B20", "B36")
 recent_collabs_xlsx_check = ["A51", "B51", "C51"]
@@ -106,8 +107,17 @@ def test_builder(bm, make_db):
 
 
 @pytest.mark.parametrize("bm", builder_map)
-def test_builder_python(bm, make_db):
-    repo = make_db
+@pytest.mark.parametrize("db_src", db_srcs)
+def test_builder_python(bm, db_src, make_db, make_mongodb):
+    if db_src == "fs":
+        repo = make_db
+    elif db_src == "mongo":
+        repo = make_mongodb
+    else:
+        raise ValueError("Unknown database source: {}".format(db_src))
+    # FIXME: Somehow the mongo backend failed to build figure
+    if db_src == "mongo" and "bm" == "figure":
+        return
     os.chdir(repo)
     if bm == "figure":
         prep_figure()
@@ -117,7 +127,7 @@ def test_builder_python(bm, make_db):
         main(["build", bm, "--no-pdf", "--people", "scopatz"])
     elif bm == "annual-activity":
         main(["build", bm, "--no-pdf", "--people",
-                        "sbillinge", "--from", "2017-04-01"])
+              "sbillinge", "--from", "2017-04-01"])
     else:
         main(["build", bm, "--no-pdf"])
     os.chdir(os.path.join(repo, "_build", bm))

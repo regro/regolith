@@ -76,13 +76,14 @@ def load_mongo_database(db, client):
 
 def load_database(db, client, rc):
     """Loads a database"""
+    if rc.backend in ('mongo', 'mongodb'):
+        load_mongo_database(db, client)
+        return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
         load_git_database(db, client, rc)
     elif url.startswith('hg+'):
         load_hg_database(db, client, rc)
-    elif url.startswith('mongodb+'):
-        load_mongo_database(db, client)
     elif os.path.exists(os.path.expanduser(url)):
         load_local_database(db, client, rc)
     else:
@@ -139,14 +140,14 @@ def dump_local_database(db, client, rc):
 
 def dump_database(db, client, rc):
     """Dumps a database"""
+    # do not dump mongo db
+    if rc.backend in ('mongo', 'mongodb'):
+        return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
         dump_git_database(db, client, rc)
     elif url.startswith('hg+'):
         dump_hg_database(db, client, rc)
-    elif url.startswith('mongodb+'):
-        # do not dump database to mongodb
-        return
     elif os.path.exists(url):
         dump_local_database(db, client, rc)
     else:

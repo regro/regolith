@@ -2,14 +2,13 @@
 All rights reserved."""
 import json
 import os
-import shutil
-from xonsh.lib import subprocess
-from xonsh.lib.os import rmtree
-import sys
 import tempfile
 from copy import deepcopy
 
 import pytest
+from pymongo import MongoClient
+from xonsh.lib import subprocess
+from xonsh.lib.os import rmtree
 
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
@@ -53,7 +52,7 @@ def make_db():
                         "public": True,
                     }
                 ],
-                # 'storename': 'store',
+                "backend": "filesystem"
             },
             f,
         )
@@ -67,6 +66,68 @@ def make_db():
         dump_yaml("db/{}.yaml".format(coll), d)
     subprocess.run(["git", "add", "."])
     subprocess.run(["git", "commit", "-am", "Initial readme"])
+    yield repo
+    os.chdir(cwd)
+    if not OUTPUT_FAKE_DB:
+        rmtree(repo)
+
+
+@pytest.fixture(scope="session")
+def make_mongodb():
+    """A test fixutre that creates and destroys a git repo in a temporary
+    directory.
+    This will yield the path to the repo.
+    """
+    cwd = os.getcwd()
+    name = "regolith_mongo_fake"
+    repo = os.path.join(tempfile.gettempdir(), name)
+    if os.path.exists(repo):
+        rmtree(repo)
+    subprocess.run(["git", "init", repo])
+    os.chdir(repo)
+    with open("README", "w") as f:
+        f.write("testing " + name)
+    mongodbpath = os.path.join(repo, 'dbs')
+    os.mkdir(mongodbpath)
+    with open("regolithrc.json", "w") as f:
+        json.dump(
+            {
+                "groupname": "ERGS",
+                "databases": [
+                    {
+                        "name": "test",
+                        "url": 'localhost',
+                        "path": repo,
+                        "public": True,
+                        "local": False,
+                    }
+                ],
+                "stores": [
+                    {
+                        "name": "store",
+                        "url": repo,
+                        "path": repo,
+                        "public": True,
+                    }
+                ],
+                "mongodbpath": mongodbpath,
+                "backend": "mongodb"
+            },
+            f,
+        )
+    subprocess.run(['mongod', '--fork', '--syslog', '--dbpath', mongodbpath])
+    # Write collection docs
+    for col_name, example in deepcopy(EXEMPLARS).items():
+        client = MongoClient('localhost', serverSelectionTimeoutMS=2000)
+        db = client['test']
+        col = db[col_name]
+        if isinstance(example, list):
+            for doc in example:
+                doc['_id'].replace('.', '')
+            col.insert_many(example)
+        else:
+            example['_id'].replace('.', '')
+            col.insert_one(example)
     yield repo
     os.chdir(cwd)
     if not OUTPUT_FAKE_DB:

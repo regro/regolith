@@ -27,7 +27,6 @@ except ImportError:
     MONGO_AVAILABLE = False
 
 from pymongo.collection import Collection
-from pymongo.errors import AutoReconnect, ConnectionFailure
 
 from regolith.tools import dbpathname, fallback
 from regolith import fsclient
@@ -174,7 +173,8 @@ class MongoClient:
     def _startserver(self):
         mongodbpath = self.rc.mongodbpath
         self.proc = subprocess.Popen(
-            ["mongod", "--dbpath", mongodbpath], universal_newlines=True
+            ["mongod", "--fork", "--syslog", "--dbpath", mongodbpath],
+            universal_newlines=True
         )
         print("mongod pid: {0}".format(self.proc.pid), file=sys.stderr)
 
@@ -205,13 +205,11 @@ class MongoClient:
         else:
             dbs = getattr(rc, 'databases')
             host = dbs[0]['url']
-        while self.client is None:
-            try:
-                self.client = pymongo.MongoClient(host)
-            except (AutoReconnect, ConnectionFailure):
-                time.sleep(0.1)
-        while not self.is_alive():
+        self.client = pymongo.MongoClient(host)
+        if not self.is_alive():
             # we need to wait for the server to startup
+            self._preclean()
+            self._startserver()
             time.sleep(0.1)
         self.closed = False
 
