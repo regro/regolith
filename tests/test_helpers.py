@@ -71,7 +71,7 @@ helper_map = [
      "    current organization: The University of South Carolina\n"
      "    current position: Assistant Professor\n"
      ),
-    (["helper", "l_members", "-f", "-v"],
+    (["helper", "l_members", "-p", "-v"],
      "Anthony Scopatz, professor | group_id: scopatz\n"
      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
      "    current organization: The University of South Carolina\n"
