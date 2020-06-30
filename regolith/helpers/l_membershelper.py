@@ -12,8 +12,10 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id, search_collection,
-    key_value_pair_filter, collection_str
+    key_value_pair_filter, collection_str,
+    fuzzy_retrieval,
 )
+from regolith.dates import get_dates
 
 TARGET_COLL = "people"
 HELPER_TARGET = "l_members"
@@ -68,6 +70,7 @@ class MembersListerHelper(SoutHelperBase):
 
 
     def sout(self):
+        gtx = self.gtx
         rc = self.rc
         if rc.filter:
             collection = key_value_pair_filter(self.gtx["people"], rc.filter)
@@ -86,6 +89,7 @@ class MembersListerHelper(SoutHelperBase):
             return
 
         for person in self.gtx["people"]:
+        for person in gtx["people"]:
             if rc.current:
                 if not person.get('active'):
                     continue
@@ -101,13 +105,21 @@ class MembersListerHelper(SoutHelperBase):
             if rc.verbose:
                 print("{}, {} | group_id: {}".format(i.get('name'), i.get('position'), i.get('_id')))
                 print("    orcid: {} | github_id: {}".format(i.get('orcid_id'), i.get('github_id')))
-                for employment in i.get('employment'):
-                    if is_current(employment):
-                        print("    current organization: {}".format(employment.get('organization')))
-                        print("    current position: {}".format(employment.get('position')))
+                not_current_positions = [emp for emp in i.get('employment') if not is_current(emp)]
+                not_current_positions.sort(key=lambda x: get_dates(x)["end_date"])
+                current_positions = [emp for emp in i.get('employment') if is_current(emp)]
+                current_positions.sort(
+                    key=lambda x: get_dates(x)["begin_date"])
+                positions = not_current_positions + current_positions
+                for position in positions:
+                    if is_current(position):
+                        inst = fuzzy_retrieval(gtx["institutions"], ["aka", "name", "_id"],
+                                               position.get("organization")).get("name")
+                        print("    current organization: {}".format(inst))
+                        print("    current position: {}".format(position.get('full_position', position.get('position').title())))
                     if not i.get('active'):
-                        if employment.get('group') == "bg":
-                            print("    billinge group position: {}".format(employment.get('position')))
+                        if position.get('group') == "bg":
+                            print("    billinge group position: {}".format(position.get('position')))
             else:
                 print("{}".format(i.get('name')))
         return
