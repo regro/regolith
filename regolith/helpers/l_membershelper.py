@@ -68,7 +68,7 @@ class MembersListerHelper(SoutHelperBase):
         gtx["float"] = float
         gtx["str"] = str
         gtx["zip"] = zip
-        gtx["institutions"] = str
+
 
 
     def sout(self):
