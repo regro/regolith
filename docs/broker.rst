@@ -10,7 +10,8 @@ Regolith has a system to help with this by providing file storage which can
 be addressed to various documents in the database. In order to do so, the user
 must clone the regolith-storage github directory into their dbs folder, and run
 python in a terminal in that (regolith-storage) directory with their
-regolith_env conda environment activated.
+regolith_env conda environment activated. The user must also have push rights to the
+regolith-storage git directory, and an SSH connection established.
 
 Loading the broker
 ******************
@@ -70,7 +71,8 @@ Importantly, this will only retrieve the path to the file.
     doc = db['projects']['regro']
     path = db.get_file_path(doc, 'hw_file')
 
-This can be used inside tex documents via the ``FigureBuilder`` class/CLI
+This can be used inside tex documents via the ``FigureBuilder`` class/CLI. In order to do so,
+the user must have latex installed on their local machine.
 
 Here is an example tex document
 
