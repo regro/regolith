@@ -120,6 +120,9 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. Maria as a new contact\n"
      ),
+    (["helper", "l_appointments", "-g", "mrsec14"], "f19, scopatz, loading=0.75, 2019-09-01 to 2019-10-31\n"
+     ),
+
 ]
 
 
