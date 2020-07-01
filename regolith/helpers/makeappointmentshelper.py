@@ -19,6 +19,7 @@ from regolith.tools import (
     get_pi_id,
     is_fully_appointed,
     collect_appts,
+    grant_burn,
 )
 from regolith.dates import (
     is_current,
@@ -82,30 +83,41 @@ class MakeAppointmentsHelper(SoutHelperBase):
         begin_date = date_parser.parse(rc.begin_date).date()
         end_date = date_parser.parse(rc.end_date).date()
 
+        all_appts = collect_appts(self.gtx["people"])
+
+
         for p in self.gtx["people"]:
-            if p.get("appointments"):
-                appts = p.get("appointments")
+            appts = collect_appts([p])
+            if appts:
                 is_fully_appointed(p, begin_date, end_date)
                 for a in appts:
+                    a = a.items()
                     g = rc.client.find_one(rc.database, "grants", {"_id": a.get("grant")})
                     if not g:
-                        raise ValueError("grant: {} for person: {} appointment: {} not found in grants database".format
+                        raise RuntimeError("grant: {} for person: {} appointment: {} not found in grants database".format
                                          (a.get("grant"), p.get("_id"), a.get("_id")))
+                    total_burn = grant_burn(g, all_appts, begin_date=begin_date, end_date=end_date)
                     timespan = end_date - begin_date
-                    for x in range(0, timespan.days):
+                    for x in range (timespan.days + 1):
                         day = begin_date + relativedelta(days=x)
-                        if not is_current(g, day):
+                        if not is_current(g, now=day):
                             outdated.append("person: {} appointment: {} grant: {} date: {}".format(
                                 p.get('_id'), a.get('_id'), g.get('_id'), str(day)))
-                        g_amt = get_grant_amount(g, self.gtx["people"], end_date, end_date)[0]
-                        g_amt = g_amt.get('student_days') + g_amt.get('postdoc_days') + g_amt.get('ss_days')
-                        if g_amt <= 0:
+                        day_burn = 0
+                        if a.get('type') == 'gra':
+                            day_burn = total_burn[x].get('student_days')
+                        elif a.get('type') == 'pd':
+                            day_burn = total_burn[x].get('postdoc_days')
+                        elif a.get('type') == 'ss':
+                            day_burn = total_burn[x].get('ss_days')
+                        if day_burn <= 0:
                             depleted.append("person: {} appointment: {} grant: {} date: {}".format(
                                 p.get('_id'), a.get('_id'), g.get('_id'), str(day)))
 
+
         for g in self.gtx["grants"]:
-            end_date = get_dates(g)['end_date']
-            g_amt = get_grant_amount(g, self.gtx["people"], end_date, end_date)[0]
+            g_end = get_dates(g)['end_date']
+            g_amt = grant_burn(g, self.gtx["people"], g_end, g_end)[0]
             g_amt = g_amt.get('student_days') + g_amt.get('postdoc_days') + g_amt.get('ss_days')
             if g_amt > 30.5:
                 underspent.append("{}: grant: {}, underspend amount: {} months".format(
