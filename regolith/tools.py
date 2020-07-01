@@ -1544,6 +1544,8 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
             pd_val += b.get('postdoc_months') * 30.5
         if b.get('ss_months'):
             ss_val += b.get('ss_months') * 30.5
+    if isinstance(appts, dict):
+        appts = collect_appts([{"appointments": appts}])
     for x in range(timespan.days + 1):
         day = grant_begin + relativedelta(days=x)
         for a in appts:

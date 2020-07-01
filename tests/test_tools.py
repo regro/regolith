@@ -889,7 +889,17 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
         (grant1, [{'person': 'magical person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
                    'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}],
          None, None, 'invalid  type imaginary for appointment A of magical person'
-         )
+         ),
+         (grant4, appointed_people[0].get('appointments'), None, None,
+        ['values for grant grant4 from 2019-09-01 to 2019-09-07:',
+         {'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-04', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-05', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5}]
+        )
     ]
 )
 def test_grant_burn(grant, appointments, start, end, expected):
