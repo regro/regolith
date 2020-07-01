@@ -197,9 +197,15 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. columbia  as a new institution\n"
      "2. Columbia University\n"
+    (["helper", "u_institutions", "columbiau", "--aka", "ucolumbia", "Columbia University in the City of New York",
+      "--date", "2020-01-01"],
+     "columbiau has been updated in institutions\n"
      ),
-    (["helper", "u_institution", "columbia", "--index", "2", "--aka", "ucolumbia"]),
-    "Columbia has been added/updated in institutions\n"
+    (["helper", "u_institutions", "col"],
+     "Institution not found. Institutions with similar id:\n"
+     "columbiau\n"
+     "Please rerun the helper specifying the complete ID. If it is a new institution use '--new'\n"
+     ),
 ]
 
 

@@ -333,7 +333,7 @@ EXEMPLARS = {
                 "aka": ["Chemistry", "Dept. of Chemistry"],
             },
             "apam": {
-                "name": "Department of Applied Physics" "and Applied Mathematics",
+                "name": "Department of Applied Physics " "and Applied Mathematics",
                 "aka": ["APAM"],
             },
         },
