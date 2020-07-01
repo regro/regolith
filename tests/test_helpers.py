@@ -156,6 +156,9 @@ helper_map = [
      "20sb_firstprojectum     status:finished\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
+    (["helper", "l_appointments", "-g", "mrsec14"], "f19, scopatz, loading=0.75, 2019-09-01 to 2019-10-31\n"
+     ),
+
 ]
 
 
