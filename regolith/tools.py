@@ -1508,7 +1508,7 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     ----------
     grant: dict
         The grant object whose burn needs to be retrieved
-    appts: collection (list of dicts)
+    appts: collection (list of dicts), dict
         The collection of appointments made on assorted grants
     begin_date: datetime, string, optional
         The start date of the interval of time to retrieve the grant burn for, either a date object or a string
