@@ -162,28 +162,23 @@ helper_map = [
 
     #UC1
     (["helper", "lister", "people"],
-     "sbillinge    \nscopatz\n"),
-    (["helper", "lister", "projecta"],
-     "20ly_newprojectum    \n20sb_firstprojectum\n"),
-    (["helper", "lister", "contacts"],
-     "afriend\n"),
-    (["helper", "lister", "proposals"],
-     "20_anewproposal    \ndmref15    \nmypropsal\n"),
-    (["helper", "lister", "abstracts"],
-     "Mouginot.Model\n"),
+     "Results of your search:\nsbillinge    \nscopatz\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon"],
+     "Results of your search:\n"
      "sbillinge\n"),
-    (["helper", "lister", "projecta","--kv_filter", "lead", "ascopatz"],
-     "20sb_firstprojectum\n"),
-    (["helper", "lister", "contacts","--kv_filter", "institution", "columbiau"],
-     "afriend\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "--return_fields", "name", "position"],
-     "sbillinge    name: Simon J. L. Billinge    position: professor\n"),
-    (["helper", "lister", "projecta","--kv_filter", "lead", "ascopatz", "--return_fields", "lead", "name"],
-     "20sb_firstprojectum    lead: ascopatz    name: First Projectum\n"),
-    (["helper", "lister", "contacts","--kv_filter", "institution", "columbiau", "--return_fields", "name"],
-     "afriend    name: Anthony B Friend\n"),
+     "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n"),
     (["helper", "lister", "people", "--keys"],
+     "Available keys:\n"
+     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
+     "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
+     "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
+     "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
+     "'title']\n"),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
+     "Results of your search:\nsbillinge\n"
+     "Available keys:\n"
      "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
@@ -191,19 +186,9 @@ helper_map = [
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
      "'title']\n"
      ),
-    (["helper", "lister", "projecta", "--keys"],
-     "['_id', 'begin_date', 'collaborators', 'deliverable', 'description', "
-     "'end_date', 'grants', 'group_members', 'kickoff', 'lead', 'log_url', "
-     "'milestones', 'name', 'pi_id', 'status']\n"),
-    (["helper", "lister", "contacts", "--keys"],
-     "['_id', 'aka', 'day', 'department', 'email', 'institution', 'month', 'name', "
-     "'notes', 'title', 'updated', 'uuid', 'year']\n"
+    (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
+     "There are no results that match your search.\n"
      ),
-    (["helper", "lister", "people", "--return_fields", "name", "position"],
-     "sbillinge    name: Simon J. L. Billinge    position: professor    \n"
-     "scopatz    name: Anthony Scopatz    position: professor\n"),
-    (["helper", "lister", "contacts", "--return_fields", "name", "uuid"],
-     "afriend    name: Anthony B Friend    uuid: 76f2a4c7-aa63-4fa3-88b5-396b0c15d368\n"),
 ]
 
 
