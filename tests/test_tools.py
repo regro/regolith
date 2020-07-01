@@ -19,6 +19,7 @@ from regolith.tools import (
     collection_str,
     search_collection,
     collect_appts,
+    grant_burn,
     )
 
 
@@ -872,4 +873,88 @@ def test_collect_appts(people, key, value, start, end, expected):
     except RuntimeError:
         with pytest.raises(RuntimeError) as excinfo:
             actual = collect_appts(people, filter_key=key, filter_value=value, begin_date=start, end_date=end)
+        assert str(excinfo.value) == expected
+
+
+appts = collect_appts(appointed_people)
+grant1 = {'_id': 'grant1', 'alias': 'grant_one', 'begin_date': '2019-09-01', 'end_date': '2019-09-10', 'budget': [
+    {'begin_date': '2019-09-01', 'end_date': '2019-09-03',  'student_months': 1, 'postdoc_months': 0.5, 'ss_months': 0},
+    {'begin_date': '2019-09-04', 'end_date': '2019-09-07',  'student_months': 1.5, 'postdoc_months': 0, 'ss_months': 0},
+    {'begin_date': '2019-09-08', 'end_date': '2019-09-10',  'student_months': 2, 'postdoc_months': 1.5, 'ss_months': 0},
+]}
+grant2 = {'_id': 'grant2', 'alias': 'grant_two', 'begin_date': '2019-09-01', 'end_date': '2019-12-31','budget': [
+    {'begin_date': '2019-09-01', 'end_date': '2019-12-31',  'student_months': 4, 'postdoc_months': 2.5, 'ss_months': 1}
+]}
+grant3 = {'_id': 'grant3', 'begin_date': '2019-09-01', 'end_date': '2019-12-31','budget': [
+    {'begin_date': '2019-09-01', 'end_date': '2019-10-31',  'student_months': 0, 'postdoc_months': 1, 'ss_months': 2},
+    {'begin_date': '2019-11-01', 'end_date': '2019-12-31',  'student_months': 2, 'postdoc_months': 0.5, 'ss_months': 0}
+]}
+grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'end_date': '2019-09-07','budget': [
+    {'begin_date': '2019-09-01', 'end_date': '2019-09-07',  'student_months': 1, 'postdoc_months': 1, 'ss_months': 1}]}
+@pytest.mark.parametrize(
+    "grant,appointments,start,end,expected",
+    [
+        (grant1, appts, None, None,
+         ['values for grant grant1 from 2019-09-01 to 2019-09-10:',
+          {'date': '2019-09-01', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 136.25},
+          {'date': '2019-09-02', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 135.25},
+          {'date': '2019-09-03', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 134.25},
+          {'date': '2019-09-04', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 133.25},
+          {'date': '2019-09-05', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 132.25},
+          {'date': '2019-09-06', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 131.25},
+          {'date': '2019-09-07', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 130.25},
+          {'date': '2019-09-08', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 129.25},
+          {'date': '2019-09-09', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 128.25},
+          {'date': '2019-09-10', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 127.25}]
+        ),
+        (grant2, appts, '2019-12-15', '2019-12-31',
+         ['values for grant grant2 from 2019-12-15 to 2019-12-31:',
+          {'date': '2019-12-15', 'postdoc_days': 76.25, 'ss_days': 9.5, 'student_days': 122.0},
+          {'date': '2019-12-16', 'postdoc_days': 75.35, 'ss_days': 8.5, 'student_days': 122.0},
+          {'date': '2019-12-17', 'postdoc_days': 74.45, 'ss_days': 7.5, 'student_days': 122.0},
+          {'date': '2019-12-18', 'postdoc_days': 73.55, 'ss_days': 6.5, 'student_days': 122.0},
+          {'date': '2019-12-19', 'postdoc_days': 72.65, 'ss_days': 5.5, 'student_days': 122.0},
+          {'date': '2019-12-20', 'postdoc_days': 71.75, 'ss_days': 4.5, 'student_days': 122.0},
+          {'date': '2019-12-21', 'postdoc_days': 70.85, 'ss_days': 4.5, 'student_days': 122.0},
+          {'date': '2019-12-22', 'postdoc_days': 69.95, 'ss_days': 4.5, 'student_days': 122.0},
+          {'date': '2019-12-23', 'postdoc_days': 69.05, 'ss_days': 4.5, 'student_days': 122.0},
+          {'date': '2019-12-24', 'postdoc_days': 68.15, 'ss_days': 4.5, 'student_days': 122.0},
+          {'date': '2019-12-25', 'postdoc_days': 67.25, 'ss_days': 3.5, 'student_days': 122.0},
+          {'date': '2019-12-26', 'postdoc_days': 66.35, 'ss_days': 2.5, 'student_days': 122.0},
+          {'date': '2019-12-27', 'postdoc_days': 65.45, 'ss_days': 1.5, 'student_days': 122.0},
+          {'date': '2019-12-28', 'postdoc_days': 64.55, 'ss_days': 0.5, 'student_days': 122.0},
+          {'date': '2019-12-29', 'postdoc_days': 63.65, 'ss_days': -0.5, 'student_days': 122.0},
+          {'date': '2019-12-30', 'postdoc_days': 62.75, 'ss_days': -1.5, 'student_days': 122.0},
+          {'date': '2019-12-31', 'postdoc_days': 61.85, 'ss_days': -2.5, 'student_days': 122.0}]
+        ),
+        (grant3, appts, '2019-12-31', '2019-12-31',
+        ['values for grant grant3 from 2019-12-31 to 2019-12-31:',
+         {'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
+        ),
+        (grant4, appts, None, None,
+        ['values for grant grant4 from 2019-09-01 to 2019-09-07:',
+         {'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 29.5, 'student_days': 30.5},
+         {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 28.5, 'student_days': 30.5},
+         {'date': '2019-09-04', 'postdoc_days': 30.5, 'ss_days': 27.5, 'student_days': 30.5},
+         {'date': '2019-09-05', 'postdoc_days': 30.5, 'ss_days': 26.5, 'student_days': 30.5},
+         {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5},
+         {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5}]
+         ),
+        ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts, '2012-12-23', '2013-01-24',
+          'magical_grant has no specified budget'
+         ),
+        (grant1, [{'person': 'magical person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
+                   'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}],
+         None, None, 'invalid  type imaginary for appointment A of magical person'
+         )
+    ]
+)
+def test_grant_burn(grant, appointments, start, end, expected):
+    try:
+        actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
+        assert actual == expected
+    except ValueError:
+        with pytest.raises(ValueError) as excinfo:
+            actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
         assert str(excinfo.value) == expected
