@@ -1,9 +1,9 @@
 """Helps manage mongodb setup and connections."""
 import os
-from xonsh.lib import subprocess
 from contextlib import contextmanager
 from warnings import warn
 
+from xonsh.lib import subprocess
 from xonsh.lib.os import indir
 
 try:
@@ -69,8 +69,16 @@ def load_local_database(db, client, rc):
     client.load_database(db)
 
 
+def load_mongo_database(db, client):
+    """Load a mongo database."""
+    client.load_database(db)
+
+
 def load_database(db, client, rc):
     """Loads a database"""
+    if rc.backend in ('mongo', 'mongodb'):
+        load_mongo_database(db, client)
+        return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
         load_git_database(db, client, rc)
@@ -132,6 +140,9 @@ def dump_local_database(db, client, rc):
 
 def dump_database(db, client, rc):
     """Dumps a database"""
+    # do not dump mongo db
+    if rc.backend in ('mongo', 'mongodb'):
+        return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
         dump_git_database(db, client, rc)

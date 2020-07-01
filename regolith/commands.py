@@ -198,7 +198,7 @@ def fs_to_mongo(rc: RunControl) -> None:
     client = MongoClient(rc)
     dbs = getattr(rc, 'databases')
     for db in dbs:
-        client.load_database(db)
+        client.import_database(db)
     return
 
 

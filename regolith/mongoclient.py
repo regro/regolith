@@ -5,6 +5,8 @@ import shutil
 import subprocess
 import sys
 import time
+from collections import defaultdict
+from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -15,8 +17,6 @@ from ruamel.yaml import YAML
 #
 try:
     import pymongo
-    from pymongo.database import Database
-    from pymongo.errors import AutoReconnect, ConnectionFailure
 
     MONGO_AVAILABLE = True
 except ImportError:
@@ -25,6 +25,8 @@ except ImportError:
         "https://pymongo.readthedocs.io/en/stable/installation.html"
     )
     MONGO_AVAILABLE = False
+
+from pymongo.collection import Collection
 
 from regolith.tools import dbpathname, fallback
 from regolith import fsclient
@@ -102,6 +104,27 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
     return
 
 
+def load_mongo_col(col: Collection) -> dict:
+    """Load the pymongo collection to a dictionary.
+
+    In the dictionary. The key will be the '_id' and in each value which is a dictionary there will also be a
+    key '_id' so that the structure will be the same as the filesystem collection.
+
+    Parameters
+    ----------
+    col : Collection
+        The mongodb collection.
+
+    Returns
+    -------
+    dct : dict
+        A dictionary with all the info in the collection.
+    """
+    return {
+        doc['_id']: doc for doc in col.find({})
+    }
+
+
 @fallback(ON_PYMONGO_V2, None)
 class InsertOneProxy(object):
     def __init__(self, inserted_id, acknowledged):
@@ -133,10 +156,12 @@ class MongoClient:
                 "MongoDB is not available on the current system."
             )
         self.rc = rc
-        self.client = self.proc = None
+        self.client = None
+        self.proc = None
+        self.dbs = defaultdict(lambda: defaultdict(dict))
+        self.chained_db = dict()
+        self.closed = True
         # actually startup mongo
-        self._preclean()
-        self._startserver()
         self.open()
 
     def _preclean(self):
@@ -148,7 +173,8 @@ class MongoClient:
     def _startserver(self):
         mongodbpath = self.rc.mongodbpath
         self.proc = subprocess.Popen(
-            ["mongod", "--dbpath", mongodbpath], universal_newlines=True
+            ["mongod", "--fork", "--syslog", "--dbpath", mongodbpath],
+            universal_newlines=True
         )
         print("mongod pid: {0}".format(self.proc.pid), file=sys.stderr)
 
@@ -173,32 +199,48 @@ class MongoClient:
 
     def open(self):
         """Opens the database client"""
-        settings = list()
-        host = getattr(self.rc, 'host')
-        if host is not None:
-            settings.append(host)
-        uri = getattr(self.rc, 'uri')
-        if uri is not None:
-            settings.append(uri)
-        while self.client is None:
-            try:
-                self.client = pymongo.MongoClient(*settings)
-            except (AutoReconnect, ConnectionFailure):
-                time.sleep(0.1)
-        while not self.is_alive():
+        rc = self.rc
+        if hasattr(rc, 'host'):
+            host = getattr(rc, 'host')
+        else:
+            dbs = getattr(rc, 'databases')
+            host = dbs[0]['url']
+        self.client = pymongo.MongoClient(host)
+        if not self.is_alive():
             # we need to wait for the server to startup
+            self._preclean()
+            self._startserver()
             time.sleep(0.1)
+        self.closed = False
 
     def load_database(self, db: dict):
-        """Load the database to the mongo backend.
+        """Load the database information from mongo database.
+
+        It populate the 'dbs' attribute with a dictionary like {database: {collection: docs_dict}}.
 
         Parameters
         ----------
         db : dict
-            The dictionary of data information, such as 'name'.
+            The dictionary of data base information, such as 'name'.
         """
-        host = getattr(self.rc, 'host')
-        uri = getattr(self.rc, 'uri')
+        dbs: dict = self.dbs
+        client: pymongo.MongoClient = self.client
+        mongodb = client[db['name']]
+        for colname in mongodb.list_collection_names():
+            col = mongodb[colname]
+            dbs[db['name']][colname] = load_mongo_col(col)
+        return
+
+    def import_database(self, db: dict):
+        """Import the database from filesystem to the mongo backend.
+
+        Parameters
+        ----------
+        db : dict
+            The dictionary of data base information, such as 'name'.
+        """
+        host = getattr(self.rc, 'host', None)
+        uri = db.get('dst_url', None)
         dbpath = dbpathname(db, self.rc)
         dbname = db['name']
         import_jsons(dbpath, dbname, host=host, uri=uri)
@@ -230,18 +272,8 @@ class MongoClient:
 
     def close(self):
         """Closes the database connection."""
-        if not self.is_alive():
-            pass
-        elif ON_PYMONGO_V2:
-            self.client.disconnect()
-        elif ON_PYMONGO_V3:
-            self.client.close()
-        else:
-            raise RuntimeError("did not recognize pymongo version")
-        self.proc.terminate()
-        mongodbpath = self.rc.mongodbpath
-        if os.path.isdir(mongodbpath):
-            shutil.rmtree(mongodbpath, ignore_errors=True)
+        self.closed = True
+        return
 
     def keys(self):
         return self.client.database_names()
@@ -253,9 +285,11 @@ class MongoClient:
         """Returns the collection names for the database name."""
         return self.client[dbname].collection_names()
 
-    def all_documents(self, dbname, collname):
+    def all_documents(self, collname, copy=True):
         """Returns an iterable over all documents in a collection."""
-        return self.client[dbname][collname].find()
+        if copy:
+            return deepcopy(self.chained_db.get(collname, {})).values()
+        return self.chained_db.get(collname, {}).values()
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""

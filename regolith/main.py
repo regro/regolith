@@ -263,17 +263,16 @@ def create_parser():
 
     # fs-to-mongo subparser
     ftm = subp.add_parser(
-        "fs-to-mongo", help="Import database from filesystem to mongodb. Optional 'mongohost' in configuration "
-                            "json file."
+        "fs-to-mongo",
+        help="Import database from filesystem to mongodb. By default, the database will be import to the local "
+             "mongodb. If the 'dst_url' key is specified in the database in 'databases' part in "
+             "'regolithrc.json'. The database will be import to the destination specified by 'dst_url'."
     )
+
     ftm.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
                                     "default, the mongoimport attempts to connect to a MongoDB instance running "
                                     "on the localhost on port number 27017.",
                      dest="host",
-                     default=None)
-    ftm.add_argument("--uri", help="Specify a resolvable URI connection string (enclose in quotes) "
-                                   "to connect to the MongoDB deployment.",
-                     dest="uri",
                      default=None)
 
     # Validator
