@@ -1293,7 +1293,6 @@ def is_fully_appointed(person, begin_date, end_date):
         print("No appointments defined for this person")
         return False
     status = True
-    messages = []
     appts = person.get('appointments')
     if begin_date > end_date:
         raise ValueError("invalid begin and end dates")
