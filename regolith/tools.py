@@ -1307,8 +1307,8 @@ def is_fully_appointed(person, begin_date, end_date):
         day_loading = 0.0
         day = begin_date + relativedelta(days=x)
         for appt in appts:
-            if is_current(appt, now=day):
-                day_loading += appt.get("loading")
+            if is_current(appts[appt], now=day):
+                day_loading += appts[appt].get("loading")
         if day_loading > 1.0 or day_loading < 1.0:
             status = False
             if good_period:
