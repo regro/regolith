@@ -54,7 +54,7 @@ class FinishprumUpdaterHelper(DbHelperBase):
             pra = fragment_retrieval(self.gtx["projecta"], ["_id"], key)
             if len(pra) == 0:
                 raise RuntimeError("Please input a valid projectum id or a valid fragment of a projectum id")
-            print("Projecta not found. Projecta with similar names: ")
+            print("Projectum not found. Projecta with similar names: ")
             for i in range(len(pra)):
                 print(f"{pra[i].get('_id')}     status:{pra[i].get('status')}")
             print("Please rerun the helper specifying the complete ID.")

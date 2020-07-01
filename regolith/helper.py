@@ -32,7 +32,7 @@ HELPERS = {
     "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser),
     "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
     "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
-    "l_todo": (l_todo.TodoListerHelper, l_todo.subparser)
+    "l_todo": (l_todo.TodoListerHelper, l_todo.subparser),
     "finish_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
 }
 
