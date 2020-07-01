@@ -14,6 +14,7 @@ from regolith.helpers import l_contactshelper as l_contacts
 from regolith.helpers import u_logurlhelper as u_logurl
 from regolith.helpers import u_milestonehelper as u_milestone
 from regolith.helpers import u_contacthelper as u_contact
+from regolith.helpers import l_todohelper as l_todo
 
 HELPERS = {
     "hello": (hello.HelloHelper, hello.subparser),
@@ -30,6 +31,7 @@ HELPERS = {
     "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser),
     "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
     "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
+    "l_todo": (l_todo.TodoListerHelper, l_todo.subparser)
 }
 
 

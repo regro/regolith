@@ -33,6 +33,37 @@ EXEMPLARS = {
         "points": [1, 2, 3],
         "questions": ["1-9", "1-10", "1-12"],
     },
+    "beamplan": {
+        '_id': "test",
+        'beamtime': '2020-1-XPD',
+        'begin_date': '2020-01-01',
+        'end_date': '2020-01-02',
+        'container': '',
+        'devices': ['cryostream'],
+        'exp_plan': ['load samples on the holder',
+                     'scan the holder to locate the samples',
+                     'take room temperature measurement of sample and the subtrate',
+                     'ramp down temperature to 100K',
+                     'ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure'],
+        'holder': 'film holder (1 cm * 1 cm * 1 mm)',
+        'measurement': 'Tramp',
+        'objective': 'temperature ramping PDF of one WO3 film (100, 300K, 10K)',
+        'pipeline': 'usual',
+        'prep_plan': ['films will be made by kriti'],
+        'project': '20ks_wo3',
+        'project_lead': 'kseth',
+        'samples': ['WO3 film', 'glass subtrate'],
+        'scanplan': 'Tramp',
+        'ship_plan': ['seal and ship to CU', 'carry to the beamline'],
+        'time': 190,
+        'todo': ["todo something"]},
+    "beamtime": {
+        "_id": "2020-1-XPD",
+        "begin_date": "2020-02-14",
+        "begin_time": "8:00 am",
+        "end_date": "2020-02-17",
+        "end_time": "8:00 am"
+    },
     "blog": {
         "_id": "my-vision",
         "author": "Anthony Scopatz",
@@ -126,6 +157,26 @@ EXEMPLARS = {
             "midterm": 0.2,
         },
         "year": 2016,
+    },
+    "expenses": {
+        "_id": "test",
+        "expense_type": "business",
+        "grant_percentages": ["50", "50"],
+        "grants": ["dmref15", "SymPy-1.1"],
+        "itemized_expenses": [
+            {
+                "day": i,
+                "month": "Jan",
+                "year": 2018,
+                "purpose": "test",
+                "unsegregated_expense": 10 * i,
+                "segregated_expense": 0,
+            }
+            for i in range(1, 11)
+        ],
+        "payee": "scopatz",
+        "project": "Cyclus",
+        "overall_purpose": "testing the databallectionsse",
     },
     "grades": {
         "_id": "Human A. Person-rx-power-hw02-EMCH-758-2017-S",
@@ -332,6 +383,28 @@ EXEMPLARS = {
         "start_date": "ASAP",
         "title": "Open Source Scientific Software Maintainer",
         "year": 2015,
+    },
+    "meetings": {
+        "_id": "grp2020-06-12",
+        "actions": [
+            "Simon: test",
+            "Everyone: Clear out-of-date prums milestones."
+        ],
+        "agenda": ["Review actions", ],
+        "buddies": [],
+        "day": 12,
+        "journal_club": [],
+        "lead": "nthomas",
+        "minutes": [],
+        "month": 6,
+        "place": "Mudd 1106",
+        "presentation": [],
+        "scribe": "hvuong",
+        "time": '0',
+        "updated": "",
+        "uuid": "",
+        "year": 2020
+
     },
     "news": {
         "_id": "56b4eb6d421aa921504ef2a9",
@@ -1347,57 +1420,29 @@ EXEMPLARS = {
         "email": "haperson@uni.edu",
         "university_id": "HAP42",
     },
-    "expenses": {
-        "_id": "test",
-        "expense_type": "business",
-        "grant_percentages": ["50", "50"],
-        "grants": ["dmref15", "SymPy-1.1"],
-        "itemized_expenses": [
-            {
-                "day": i,
-                "month": "Jan",
-                "year": 2018,
-                "purpose": "test",
-                "unsegregated_expense": 10 * i,
-                "segregated_expense": 0,
-            }
-            for i in range(1, 11)
+    "todolist": {
+        "_id": "sbillinge",
+        "todos": [
+            {"description": "read paper",
+             "due_date": "2020-07-19",
+             "begin_date": "2020-06-15",
+             "duration": 60.0,
+             "importance": 2,
+             "status": "started",
+             "mark": 0
+             },
+            {"description": "prepare the presentation",
+             "due_date": "2020-07-29",
+             "begin_date": "2020-06-22",
+             "duration": 30.0,
+             "importance": 0,
+             "status": "started",
+             "notes": ["about 10 minutes", "don't forget to upload to the website"],
+             "mark": 1
+             }
         ],
-        "payee": "scopatz",
-        "project": "Cyclus",
-        "overall_purpose": "testing the databallectionsse",
     },
-    "beamplan": {
-        '_id': "test",
-        'beamtime': '2020-1-XPD',
-        'begin_date': '2020-01-01',
-        'end_date': '2020-01-02',
-        'container': '',
-        'devices': ['cryostream'],
-        'exp_plan': ['load samples on the holder',
-                     'scan the holder to locate the samples',
-                     'take room temperature measurement of sample and the subtrate',
-                     'ramp down temperature to 100K',
-                     'ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure'],
-        'holder': 'film holder (1 cm * 1 cm * 1 mm)',
-        'measurement': 'Tramp',
-        'objective': 'temperature ramping PDF of one WO3 film (100, 300K, 10K)',
-        'pipeline': 'usual',
-        'prep_plan': ['films will be made by kriti'],
-        'project': '20ks_wo3',
-        'project_lead': 'kseth',
-        'samples': ['WO3 film', 'glass subtrate'],
-        'scanplan': 'Tramp',
-        'ship_plan': ['seal and ship to CU', 'carry to the beamline'],
-        'time': 190,
-        'todo': ["todo something"]},
-    "beamtime": {
-        "_id": "2020-1-XPD",
-        "begin_date": "2020-02-14",
-        "begin_time": "8:00 am",
-        "end_date": "2020-02-17",
-        "end_time": "8:00 am"
-    }
+
 }
 
 SCHEMAS = {
@@ -1748,6 +1793,137 @@ SCHEMAS = {
             "description": "universally unique identifier",
             "required": False,
             "type": "string",
+        },
+    },
+    "expenses": {
+        "_description": {
+            "description": "This collection records expenses for the "
+                           "group. It should most likely be private"
+        },
+        "_id": {
+            "description": "short representation, such as this-is-my-name",
+            "required": True,
+            "type": "string",
+        },
+        "begin_date": {
+            "description": "begin date in YYYY-MM-DD",
+            "anyof_type": ["string", "date"],
+        },
+        "end_date": {
+            "description": "end date in YYYY-MM-DD",
+            "anyof_type": ["string", "date"],
+
+        },
+        "grant_percentages": {
+            "description": "the percentage of the reimbursement amount to put "
+                           "on each grant. This list must be the same length as"
+                           "the grants list and the percentages placed in the "
+                           "order that the grants appear in that list",
+            "required": False,
+            "type": "list",
+        },
+        "grants": {
+            "description": "the grants in a list, or a string if only one grant",
+            "required": True,
+            "anyof_type": ["string", "list"],
+        },
+        "project": {
+            "description": "project or list of projects that this "
+                           "presentation is associated with.  Should "
+                           "be discoverable in projects collection",
+            "anyof_type": ["string", "list"],
+        },
+        "payee": {
+            "description": "The name or id of the payee filing the expense",
+            "required": True,
+            "type": "string",
+        },
+        "itemized_expenses": {
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "day": {
+                        "description": "Expense day",
+                        "required": False,
+                        "type": "integer",
+                    },
+                    "date": {
+                        "description": "Expense date",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+
+                    },
+                    "month": {
+                        "description": "Expense month",
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
+                    "year": {
+                        "description": "Expense year",
+                        "required": False,
+                        "type": "integer",
+                    },
+                    "purpose": {
+                        "description": "reason for expense",
+                        "type": "string",
+                        "required": True,
+                    },
+                    "unsegregated_expense": {
+                        "description": "The allowed expenses",
+                        "type": "float",
+                    },
+                    "segregated_expense": {
+                        "description": "The unallowed expenses",
+                        "type": "float",
+                    },
+                    "original_currency": {
+                        "description": "The currency the payment was made in",
+                        "type": "float",
+                    },
+                },
+            },
+        },
+        "overall_purpose": {
+            "description": "The reason for the expenses",
+            "type": "string",
+            "required": True,
+        },
+        "notes": {
+            "description": "Notes about the expense",
+            "type": "list",
+
+        },
+        "status": {
+            "description": "The status of the expense",
+            "eallowed": ["reimbursed", "submitted", "unsubmitted", ],
+            "type": "string"
+        },
+        "reimbursements": {
+            "description": "Reimbursements for the expense",
+            "schema": {
+                "schema": {
+                    'amount': {"description": 'amount for reimbursements',
+                               "type": "integer",
+                               },
+                    'date': {"description": "date of reimbursement",
+                             "anyof_type": ["string", "date"],
+                             },
+                    'submission_date': {"description": "date of submission",
+                                        "anyof_type": ["string", "date"],
+                                        },
+                    'where': {"description": 'where the reimbursement has been sent',
+                              "type": 'string',
+                              },
+                },
+                "type": "dict"
+            },
+            "type": "list"
+        },
+        "expense_type": {
+            "description": "The type of expense",
+            "allowed": ["travel", "business"],
+            "required": True,
         },
     },
     "grades": {
@@ -3367,135 +3543,56 @@ SCHEMAS = {
             "type": "string",
         },
     },
-    "expenses": {
+    "todolist": {
         "_description": {
-            "description": "This collection records expenses for the "
-                           "group. It should most likely be private"
+            "description": "This collection lists the to-do tasks for everyone. "
         },
         "_id": {
-            "description": "short representation, such as this-is-my-name",
+            "description": "Unique project identifier.",
             "required": True,
             "type": "string",
         },
-        "begin_date": {
-            "description": "begin date in YYYY-MM-DD",
-            "anyof_type": ["string", "date"],
-        },
-        "end_date": {
-            "description": "end date in YYYY-MM-DD",
-            "anyof_type": ["string", "date"],
-
-        },
-        "grant_percentages": {
-            "description": "the percentage of the reimbursement amount to put "
-                           "on each grant. This list must be the same length as"
-                           "the grants list and the percentages placed in the "
-                           "order that the grants appear in that list",
-            "required": False,
-            "type": "list",
-        },
-        "grants": {
-            "description": "the grants in a list, or a string if only one grant",
+        "todos": {
+            "description": "a list of the todo tasks",
             "required": True,
-            "anyof_type": ["string", "list"],
-        },
-        "project": {
-            "description": "project or list of projects that this "
-                           "presentation is associated with.  Should "
-                           "be discoverable in projects collection",
-            "anyof_type": ["string", "list"],
-        },
-        "payee": {
-            "description": "The name or id of the payee filing the expense",
-            "required": True,
-            "type": "string",
-        },
-        "itemized_expenses": {
             "type": "list",
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "day": {
-                        "description": "Expense day",
+                    "description": {"description": "the description of the to-do task",
+                                    "required": True,
+                                    "type": "string"},
+                    "due_date": {"description": "the due date",
+                                 "required": False,
+                                 "type": "string"},
+                    "begin_date": {"description": "the begin date",
+                                   "required": False,
+                                   "type": "string"},
+                    "end_date": {"description": "the end date",
+                                 "required": False,
+                                 "type": "string"},
+                    "duration": {
+                        "description": "the size of the task/ the estimated duration it will take to finish the task. Unit: miniutes.",
                         "required": False,
-                        "type": "integer",
-                    },
-                    "date": {
-                        "description": "Expense date",
+                        "type": "float"},
+                    "importance": {
+                        "description": "the importance, from 0 to 2",
                         "required": False,
-                        "anyof_type": ["string", "date"],
-
-                    },
-                    "month": {
-                        "description": "Expense month",
-                        "required": False,
-                        "anyof_type": ["string", "integer"],
-                    },
-                    "year": {
-                        "description": "Expense year",
-                        "required": False,
-                        "type": "integer",
-                    },
-                    "purpose": {
-                        "description": "reason for expense",
-                        "type": "string",
-                        "required": True,
-                    },
-                    "unsegregated_expense": {
-                        "description": "The allowed expenses",
-                        "type": "float",
-                    },
-                    "segregated_expense": {
-                        "description": "The unallowed expenses",
-                        "type": "float",
-                    },
-                    "original_currency": {
-                        "description": "The currency the payment was made in",
-                        "type": "float",
-                    },
-                },
-            },
-        },
-        "overall_purpose": {
-            "description": "The reason for the expenses",
-            "type": "string",
-            "required": True,
-        },
-        "notes": {
-            "description": "Notes about the expense",
-            "type": "list",
-
-        },
-        "status": {
-            "description": "The status of the expense",
-            "eallowed": ["reimbursed", "submitted", "unsubmitted",],
-            "type": "string"
-        },
-        "reimbursements": {
-            "description": "Reimbursements for the expense",
-            "schema": {
-                "schema": {
-                    'amount': {"description": 'amount for reimbursements',
-                               "type": "integer",
-                               },
-                    'date': {"description": "date of reimbursement",
-                             "anyof_type": ["string", "date"],
-                             },
-                    'submission_date': {"description": "date of submission",
-                                        "anyof_type": ["string", "date"],
-                                        },
-                    'where': {"description": 'where the reimbursement has been sent',
-                              "type": 'string',
+                        "type": "integer"},
+                    "status": {"description": "the status: proposed/started/finished",
+                               "required": True,
+                               "type": "string"},
+                    "notes": {"description": "additional notes for this task",
+                               "required": False,
+                               "type": "list",
+                              "schema": {"type": "string"}
                               },
-                },
-                "type": "dict"
-            },
-            "type": "list"
-        },
-        "expense_type": {
-            "description": "The type of expense",
-            "allowed": ["travel", "business"],
-            "required": True,
+                    "mark": {"description": "use this mark to update the task",
+                             "required": True,
+                             "type": "integer"},
+
+                }
+            }
         },
     },
 }

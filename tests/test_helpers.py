@@ -120,6 +120,22 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. Maria as a new contact\n"
      ),
+    (["helper", "l_todo", "--id", "sbillinge", "--short_tasks"],
+     "1. prepare the presentation\n"
+     ),
+    (["helper", "l_todo", "--id", "sbillinge", "--short_tasks", "65"],
+     "1. read paper\n2. prepare the presentation\n"
+     ),
+    (["helper", "l_todo", "--id", "sbillinge"],
+     "1. Simon: test\n2. Everyone: Clear out-of-date prums milestones.\n3. read paper\n4. prepare the presentation\n"
+     ),
+    (["helper", "l_todo", "-i", "wrong_id"],
+     "The id you entered can't be found in people.yml.\n"
+     ),
+    (["helper", "l_todo", "--verbose", "--id", "sbillinge"],
+     "1. Simon: test; notes: None\n     --(no mark, due: 2020-06-18, None min, importance:1, start date: None)\n2. Everyone: Clear out-of-date prums milestones.; notes: None\n     --(no mark, due: 2020-06-18, None min, importance:1, start date: None)\n3. read paper; notes: None\n     --(0, due: 2020-07-19, 60.0 min, importance:2, start date: 2020-06-15)\n4. prepare the presentation; notes: ['about 10 minutes', \"don't forget to upload to the website\"]\n     --(1, due: 2020-07-29, 30.0 min, importance:0, start date: 2020-06-22)\n"
+     ),
+
 ]
 
 
