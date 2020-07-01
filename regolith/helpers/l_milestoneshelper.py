@@ -14,14 +14,16 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    search_collection
+    search_collection,
+    key_value_pair_filter,
+    collection_str
 )
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
 ALLOWED_STATI = ["all", "proposed", "started", "finished", "back_burner",
                  "paused", "cancelled"]
-ROLES = ['pi',  'lead', 'group_members', 'collaborators']
+ROLES = ['pi', 'lead', 'group_members', 'collaborators']
 
 
 def subparser(subpi):
@@ -84,13 +86,13 @@ class MilestonesListerHelper(SoutHelperBase):
         rc = self.rc
         # This if statement should be in all listers. Make sure to change self.gtx to get the database the lister needs
         if rc.filter:
-            results = search_collection(self.gtx["projecta"], rc.filter, rc.keys)
-            print(results, end="")
-            return
+            collection = key_value_pair_filter(self.gtx["projecta"], rc.filter)
+        else:
+            collection = self.gtx["projecta"]
         all_milestones = []
         if not rc.stati:
             rc.stati = ['started']
-        for projectum in self.gtx["projecta"]:
+        for projectum in collection:
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
             projectum["deliverable"].update({"name": "deliverable",
@@ -115,18 +117,22 @@ class MilestonesListerHelper(SoutHelperBase):
                         })
                         all_milestones.append(ms)
         all_milestones.sort(key=lambda x: x['due_date'], reverse=True)
+        if rc.keys:
+            results = (collection_str(all_milestones, rc.keys))
+            print(results, end="")
+            return
         for ms in all_milestones:
             if rc.verbose:
                 print(
                     f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
-                print(f"    Type: {ms.get('type','')}")
+                print(f"    Type: {ms.get('type', '')}")
                 print(f"    Title: {ms.get('name')}")
                 print(f"    log url: {ms.get('log_url')}")
                 print(f"    Purpose: {ms.get('objective')}")
                 audience = []
                 for i in ms.get('audience'):
-                    if isinstance(ms.get(i,i), str):
-                        audience.append(ms.get(i,i))
+                    if isinstance(ms.get(i, i), str):
+                        audience.append(ms.get(i, i))
                     else:
                         if ms.get(i):
                             audience.extend(ms.get(i))
@@ -137,4 +143,3 @@ class MilestonesListerHelper(SoutHelperBase):
                     f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")
 
         return
-
