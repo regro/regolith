@@ -1519,8 +1519,8 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     Returns
     -------
     list:
-        A list of dictionaries, each containing the date and the corresponding student_months, postdoc_months and
-        ss_months on that date
+        A list of dictionaries, each containing the date and the corresponding student_days, postdoc_days and
+        ss_days on that date
     """
 
     if not grant.get('budget'):
