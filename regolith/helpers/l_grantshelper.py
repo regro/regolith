@@ -12,7 +12,9 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    search_collection
+    search_collection,
+    key_value_pair_filter,
+    collection_str
 )
 
 TARGET_COLL = "grants"
@@ -67,21 +69,25 @@ class GrantsListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         if rc.filter:
-            results = search_collection(self.gtx["grants"], rc.filter, rc.keys)
-            print(results, end="")
-            return
+            collection = key_value_pair_filter(self.gtx["grants"], rc.filter)
+        else:
+            collection = self.gtx["grants"]
         grants = []
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
         else:
             desired_date = dt.date.today()
-        for grant in self.gtx["grants"]:
+        for grant in collection:
             if rc.current and not is_current(grant, now=desired_date):
                 continue
             grants.append(grant)
 
         # Sort the grants by end date in reverse chronological order
         grants.sort(key=lambda k: get_dates(k).get('end_date'), reverse=True)
+        if rc.keys:
+            results = (collection_str(grants, rc.keys))
+            print(results, end="")
+            return
         for g in grants:
             print("{}, awardnr: {}, acctn: {}, {} to {}".format(g.get('alias', ''), g.get('awardnr', ''),
                                                                 g.get('account', ''), get_dates(g).get('begin_date'),
