@@ -196,6 +196,11 @@ helper_map = [
      "20sb_firstprojectum     status:finished\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
+    (["helper", "v_meetings", "-v"],
+     "grp2020-06-12 does not have a journal club doi\n"
+     "grp2020-06-12 does not have a presentation link\n"
+     "grp2020-06-12 does not have a presentation title\n"
+     ),
     (["helper", "lister", "people"],
      "Results of your search:\nsbillinge    \nscopatz\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon"],
