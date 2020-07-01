@@ -69,12 +69,12 @@ class MembersListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         if rc.filter:
-            database = key_value_pair_filter(self.gtx["people"], rc.filter)
+            collection = key_value_pair_filter(self.gtx["people"], rc.filter)
         else:
-            database = self.gtx["people"]
+            collection = self.gtx["people"]
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
-        for person in database:
+        for person in collection:
             if rc.current and not person.get('active'):
                 continue
             people.append(person)
