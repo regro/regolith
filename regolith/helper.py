@@ -35,7 +35,6 @@ HELPERS = {
     "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
     "l_todo": (l_todo.TodoListerHelper, l_todo.subparser),
     "finish_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
-    "l_todo": (l_todo.TodoListerHelper, l_todo.subparser)
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
 }
 
