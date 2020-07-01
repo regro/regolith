@@ -1470,31 +1470,32 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
             raise ValueError("begin date is after end date")
     appts = []
     for p in ppl_coll:
-        if not p.get('appointments'):
+        p_appts = p.get('appointments')
+        if not p_appts:
             continue
-        for a in p.get('appointments'):
+        for a in p_appts:
             if filter_key:
-                if all(a.get(filter_key[x]) == filter_value[x] for x in range(len(filter_key))):
+                if all(p_appts[a].get(filter_key[x]) == filter_value[x] for x in range(len(filter_key))):
                     if begin_date:
                         for y in range(timespan.days + 1):
                             day = begin_date + relativedelta(days=y)
-                            if is_current(a, now=day):
-                                appts.append(a)
-                                appts[-1].update({'person': p.get('_id')})
+                            if is_current(p_appts[a], now=day):
+                                appts.append(p_appts[a])
+                                appts[-1].update({'person': p.get('_id'), '_id': a})
                                 break
                     else:
-                        appts.append(a)
-                        appts[-1].update({'person': p.get('_id')})
+                        appts.append(p_appts[a])
+                        appts[-1].update({'person': p.get('_id'), '_id': a})
             elif timespan:
                     for y in range(timespan.days + 1):
                         day = begin_date + relativedelta(days=y)
-                        if is_current(a, now=day):
-                            appts.append(a)
-                            appts[-1].update({'person': p.get('_id')})
+                        if is_current(p_appts[a], now=day):
+                            appts.append(p_appts[a])
+                            appts[-1].update({'person': p.get('_id'), '_id': a})
                             break
             else:
-                appts.append(a)
-                appts[-1].update({'person': p.get('_id')})
+                appts.append(p_appts[a])
+                appts[-1].update({'person': p.get('_id'), '_id': a})
     return appts
 
 

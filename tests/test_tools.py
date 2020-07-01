@@ -739,37 +739,30 @@ def test_search_collection(input, expected):
 
 appointed_people = [
     {'name': 'Kurt Godel', '_id': 'kgodel',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
-      {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
-      {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}]
-    },
+     'appointments': {
+     "A": {"begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
+     "B": {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+     "C": {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}}},
     {'name': 'MC Escher', '_id': 'mcescher',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
-      {'_id' :'B', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
-      {'_id': 'C', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},]
-    },
+     'appointments':{
+     "A": {"begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
+     "B": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
+     "C": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},}},
     {'name': 'Johann Sebastian Bach', '_id': 'jsbach',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
-      {'_id': 'B', "begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
-      {'_id': 'C', "begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}]
-    },
+     'appointments': {
+     "A": {"begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
+     "B": {"begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
+     "C": {"begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}}},
     {'name': 'Ludwig Wittgenstein', '_id': 'lwittgenstein',
-     'appointments':
-     [{'_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}]
-    },
+     'appointments': {
+     "A": {'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}}},
     {'name': 'Karl Popper', '_id': 'kpopper',
-     'appointments':
-     [{'_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}]
-     },
-    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': []},
+     'appointments': {
+     "A": {'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}}},
+    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': {}},
     {'name': 'Sophie Germain', '_id': 'sgermain',
-     'appointments':
-         [{'_id': 'A', 'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0,
-           'type': 'ss'}]
-     },
+     'appointments': {
+     "A": {'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0, 'type': 'ss'}}},
     ]
 
 @pytest.mark.parametrize(
