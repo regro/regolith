@@ -101,7 +101,10 @@ class PresentationAdderHelper(DbHelperBase):
             end_date = date_parser.parse(rc.end_date).date()
         else:
             end_date = dt.date.today()
-        key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{rc.payee[0:2]}_{''.join(rc.place.casefold().split()).strip()}"
+
+        # code for authors.
+
+        key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{rc.person[0:2]}_{''.join(rc.place.casefold().split()).strip()}"
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
@@ -112,15 +115,19 @@ class PresentationAdderHelper(DbHelperBase):
 
         if not rc.authors:
             try:
-                rc.authors = [rc.default_user_id]
+                authors = [rc.default_user_id]
             except AttributeError:
                 raise RuntimeError(
                     "Please set default user ID and user first name in config.json file"
                 )
+        else:
+            authors = rc.authors
+
+
 
         pdoc.update({'_id': key,
                      'abstract': rc.abstract,
-                     'authors': rc.authors,
+                     'authors': authors,
                      'begin_date': begin_date,
                      'end_date': end_date,
                      })

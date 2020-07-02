@@ -29,7 +29,8 @@ helper_map = [
      "2006as_timbuktoo has been added in expenses\n"),
     (["helper", "a_presentation", "Mars", "flat earth", "--type", "contributed_oral",
       "--begin_date", "2020-06-26", "--end_date", "2020-06-26", "--person", "ashaaban",
-    "--authors", "sbillinge", "--abstract", "the earth is round as seen from mars", "--title", "On the roundness of the Earth"],
+      "--authors", "sbillinge", "--abstract", "the earth is round as seen from mars",
+      "--title", "On the roundness of the Earth"],
      "2006as_mars has been added in presentations\n"),
     (["helper", "l_milestones", "--verbose"],
      "2021-01-01: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
