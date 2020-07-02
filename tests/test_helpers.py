@@ -234,6 +234,9 @@ helper_map = [
     (["helper", "makeappointments"], "People with gaps in their appointments:\nAnthony Scopatz\nnot fully appointed on 2020-06-15\n"
     (["helper", "makeappointments", "2019-08-31", "2019-10-31",], "People with gaps in their appointments:\nAnthony Scopatz\nnot fully appointed on 2020-06-15\n"
      ),
+    (["helper", "makeappointments", "2019-08-31", "2019-10-31",],
+     "appointment gap for scopatz from 2019-08-31 to 2019-10-30\nappointments  on depleted grants:\nperson: scopatz, appointment: f19, grant: dmref15, from 2019-08-31 until 2019-10-31\nunderspent grants:\n2030-12-31: grant: SymPy-1.1, underspend amount: 8.0 months\n2030-12-31: grant: SymPy-2.0, underspend amount: 86.0 months\n2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
+     )
 ]
 
 
