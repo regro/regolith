@@ -12,11 +12,11 @@ TARGET_COLL = "institutions"
 
 def subparser(subpi):
     subpi.add_argument("institution_id",
-                       help="id of the institution. e.g.:columbiau")
+                       help="id of the institution. e.g.:columbiau.")
     subpi.add_argument("-n","--name",
                         help="Full name of the institution")
     subpi.add_argument("-i","--index",
-                       help="index of the item in the enumerated list chosen to update",
+                       help="Index of the item in the enumerated list chosen to update.",
                        type=int)
     subpi.add_argument("--city",
                        help="The city where the institution is. "
@@ -31,19 +31,19 @@ def subparser(subpi):
     subpi.add_argument("--state",
                        help="The state where the institution is.")
     subpi.add_argument("--zip",
-                       help="zipcode of the institution")
+                       help="zipcode of the institution.")
     subpi.add_argument("--dept_id",
-                       help="Department identificator. e.g.: physics")
+                       help="e.g.: physics, apam.")
     subpi.add_argument("--dept_name",
                        help="Department canonical name. e.g.: Department of Physics. "
-                            "Defaults to Department id.")
+                            "Defaults to 'Department of {department id.}'")
     subpi.add_argument("--dept_aka",
                        nargs='+',
-                       help="Department aliases. e.g.: dept. of physics")
+                       help="Department aliases. e.g.: dept. of physics.")
     subpi.add_argument("--school",
-                       help="Full canonical name. e.g.: School of Engineering and Applied Science")
+                       help="Full canonical name. e.g.: School of Engineering and Applied Science.")
     subpi.add_argument("--school_id",
-                       help="Short name for the school. e.g.: SEAS")
+                       help="Short name for the school. e.g.: SEAS.")
     subpi.add_argument("--school_aka",
                        nargs='+',
                        help="School aliases.")
@@ -127,12 +127,10 @@ class InstitutionsUpdaterHelper(DbHelperBase):
                     current_aka.extend(rc.aka)
                     pdoc.update({'aka': current_aka})
                 current_departments = chosen_inst.get('departments')
-                departments = {}
                 for k, v in current_departments.items():
                     info_department = {'name':v.get('name'), 'aka':v.get('aka')}
                     departments.update({k:info_department})
                 current_schools = chosen_inst.get('schools')
-                schools = {}
                 for k, v in current_schools.items():
                     info_school = {'name': v.get('name'), 'aka': v.get('aka')}
                     schools.update({k: info_school})
