@@ -2155,11 +2155,31 @@ SCHEMAS = {
             "required": False,
             "schema": {
                 "schema": {
-                    "begin_date": {"required": False, "type": "string"},
-                    "end_date": {"required": False, "type": "string"},
-                    "student_months": {"required": False, "anyof_type": ["float", "integer"]},
-                    "postdoc_months": {"required": False, "anyof_type": ["float", "integer"]},
-                    "ss_months": {"required": False, "anyof_type": ["float", "integer"]},
+                    "begin_date": {
+                        "description": "start date of the budget period in format YYYY-MM-DD",
+                        "required": False,
+                        "type": "string"
+                    },
+                    "end_date": {
+                        "description": "end date of the budget period in format YYYY-MM-DD",
+                        "required": False,
+                        "type": "string"
+                    },
+                    "student_months": {
+                        "description": "number of months of funding for student members during the academic year",
+                        "required": False,
+                        "anyof_type": ["float", "integer"]
+                    },
+                    "postdoc_months": {
+                        "description": "number of months of funding for postdoc members during the academic year",
+                        "required": False,
+                        "anyof_type": ["float", "integer"]
+                    },
+                    "ss_months": {
+                        "description": "number of months of funding for the summer",
+                        "required": False,
+                        "anyof_type": ["float", "integer"]
+                    },
                 },
                 "type": "dict",
             },
