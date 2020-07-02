@@ -35,9 +35,16 @@ def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("begin_date", help='begin date of interval to check appointment, to specify')
     subpi.add_argument("end_date", help='end date of interval to check appointments')
-    subpi.add_argument("-m", "-member", help='suggest appointments for this member')
-    subpi.add_argument("-a", "--appoint", action="store_true", help='suggest new appointments')
-
+    subpi.add_argument("-c", "--check", action="store_true", help="appointment adding mode")
+    subpi.add_argument("-p", "-person", help='id of person to add appointment for', nargs="+")
+    subpi.add_argument("-a", "--appointment",  help='id of appointment')
+    subpi.add_argument("-b", "--a_begin", help='start date of appointment')
+    subpi.add_argument("-e", "--a_end", help='end date of appointment')
+    subpi.add_argument("-l", "--loading", help='loading of appointment')
+    subpi.add_argument("-g", "--grant", help='grant of appointment')
+    subpi.add_argument("-s", "--status", help='status of appointment')
+    subpi.add_argument("-n", "--notes", help='any notes for appointment', nargs="+")
+    
     return subpi
 
 
