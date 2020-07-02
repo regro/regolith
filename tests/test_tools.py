@@ -559,98 +559,47 @@ def test_month_and_year(input,expected):
     [
         ({"name": "Kurt Godel",
           "_id": "kgodel",
-          "appointments": [
-            {"begin_year": 2017,
-             "begin_month": 6,
-             "begin_day": 1,
-             "end_year": 2017,
-             "end_month": 6,
-             "end_day": 30,
-             "grant": "grant1",
-             "loading": 1.0,
-             "type": "pd",
-            }]}, "2017-06-01", "2017-07-01", False),
+          "appointments": {
+            "A": {"begin_year": 2017, "begin_month": 6, "begin_day": 1, "end_year": 2017, "end_month": 6, "end_day": 30,
+                  "grant": "grant1",  "loading": 1.0, "type": "pd",}}},
+         "2017-06-01", "2017-07-01", False),
         ({"name": "MC Escher",
           "_id": "mcescher",
-          "appointments": [
-            {"begin_date": '2017-06-01',
-             "end_date": '2017-06-30',
-             "grant": "grant1",
-             "loading": 0.5,
-             "type": "pd",
-            },
-           {"begin_date": '2017-06-01',
-            "end_date": '2017-06-30',
-            "grant": "grant2",
-            "loading": 0.5,
-            "type": "pd",
-            }]} , "2017-06-01", "2017-06-30", True),
+          "appointments": {
+            "A": {"begin_date": '2017-06-01', "end_date": '2017-06-30', "grant": "grant1", "loading": 0.5, "type": "pd",},
+            "B": {"begin_date": '2017-06-01', "end_date": '2017-06-30', "grant": "grant2", "loading": 0.5, "type": "pd",
+             }}},"2017-06-01", "2017-06-30", True),
         ({"name": "Johann Sebastian Bach",
           "_id": "jsbach",
-          "appointments":[
-            {"begin_date": '2017-06-01',
-             "end_date": '2017-06-30',
-             "grant": "grant1",
-             "loading": 0.5,
-             "type": "pd",
-            },
-            {"begin_date": '2017-06-02',
-             "end_date": '2017-06-29',
-             "grant": "grant2",
-             "loading": 0.5,
-             "type": "pd",
-            }]}, "2017-06-01", "2017-06-30", False),
+          "appointments":{
+            "A": {"begin_date": '2017-06-01', "end_date": '2017-06-30', "grant": "grant1", "loading": 0.5, "type": "pd",},
+            "B": {"begin_date": '2017-06-02', "end_date": '2017-06-29', "grant": "grant2", "loading": 0.5, "type": "pd",
+            }}}, "2017-06-01", "2017-06-30", False),
         ({"name": "Evariste Galois",
           "_id": "egalois",
-          "appointments": [
-            {"begin_date": '2017-06-01',
-             "end_date": '2017-06-15',
-             "grant": "grant1",
-             "loading": 1.0,
-             "type": "pd",
-            },
-            {"begin_date": '2017-06-16',
-             "end_date": '2017-06-30',
-             "grant": "grant2",
-             "loading": 1.0,
-             "type": "pd",
-            }]},"2017-06-01", "2017-06-30", True),
+          "appointments": {
+            "A": {"begin_date": '2017-06-01', "end_date": '2017-06-15', "grant": "grant1", "loading": 1.0, "type": "pd",},
+            "B": {"begin_date": '2017-06-16', "end_date": '2017-06-30', "grant": "grant2", "loading": 1.0, "type": "pd",
+            }}},"2017-06-01", "2017-06-30", True),
         ({"name": "Ludwig Wittgenstein",
           "_id": "lwittgenstein",
-          "appointments": [
-            {"begin_date": '2017-06-01',
-             "end_date": '2017-06-15',
-             "grant": "grant1",
-             "loading": 1.0,
-             "type": "pd",
-            },
-            {"begin_date": '2017-06-17',
-             "end_date": '2017-06-30',
-             "grant": "grant2",
-             "loading": 1.0,
-             "type": "pd",
-            },
-            {"begin_date": '2017-07-01',
-             "end_date": '2017-07-30',
-             "grant": "grant3",
-             "loading": 1.0,
-             "type": "pd",
-            }]}, "2017-06-01", "2017-06-30", False),
+          "appointments": {
+            "A": {"begin_date": '2017-06-01', "end_date": '2017-06-15', "grant": "grant1", "loading": 1.0, "type": "pd",},
+            "B": {"begin_date": '2017-06-17', "end_date": '2017-06-30', "grant": "grant2", "loading": 1.0, "type": "pd",},
+            "C": {"begin_date": '2017-07-01', "end_date": '2017-07-30', "grant": "grant3", "loading": 1.0, "type": "pd",
+            }}}, "2017-06-01", "2017-06-30", False),
         ({"name": "Buckminster Fuller",
           "_id": "bfuller",
-          "appointments":[
-            {"begin_date": '2017-06-01',
-             "end_date": '2017-06-30',
-             "grant": "grant1",
-             "loading": 1.0,
-             "type": "pd",
-            },
-            {"begin_date": '2017-06-17',
-             "end_date": '2017-06-30',
-             "grant": "grant2",
-             "loading": 1.0,
-             "type": "pd",
-            }]}, "2017-06-01", "2017-06-30", False),
+          "appointments":{
+            "A": {"begin_date": '2017-06-01', "end_date": '2017-06-30', "grant": "grant1",  "loading": 1.0, "type": "pd",},
+            "B": {"begin_date": '2017-06-17', "end_date": '2017-06-30', "grant": "grant2", "loading": 1.0, "type": "pd",
+            }}}, "2017-06-01", "2017-06-30", False),
+        ({"name": "Lorem Ipsum",
+          "_id": "lipsum",
+          "appointments":{
+              "A": {"begin_date": '2017-06-01', "end_date": '2017-06-30', "grant": "grant1", "loading": 1.0,"type": "pd",},
+              "B": {"begin_date": '2017-06-17', "end_date": '2017-06-30', "grant": "grant2", "loading": 1.0, "type": "pd",}
+          }}, "2017-06-01", "2017-06-30", False),
     ],
 )
 def test_is_fully_appointed(appts, start, end, expected):
@@ -790,37 +739,30 @@ def test_search_collection(input, expected):
 
 appointed_people = [
     {'name': 'Kurt Godel', '_id': 'kgodel',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
-      {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
-      {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}]
-    },
+     'appointments': {
+     "A": {"begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
+     "B": {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
+     "C": {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}}},
     {'name': 'MC Escher', '_id': 'mcescher',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
-      {'_id' :'B', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
-      {'_id': 'C', "begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},]
-    },
+     'appointments':{
+     "A": {"begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
+     "B": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
+     "C": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},}},
     {'name': 'Johann Sebastian Bach', '_id': 'jsbach',
-     'appointments':
-     [{'_id': 'A', "begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
-      {'_id': 'B', "begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
-      {'_id': 'C', "begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}]
-    },
+     'appointments': {
+     "A": {"begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
+     "B": {"begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
+     "C": {"begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}}},
     {'name': 'Ludwig Wittgenstein', '_id': 'lwittgenstein',
-     'appointments':
-     [{'_id': 'A', 'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}]
-    },
+     'appointments': {
+     "A": {'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}}},
     {'name': 'Karl Popper', '_id': 'kpopper',
-     'appointments':
-     [{'_id': 'A', 'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}]
-     },
-    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': []},
+     'appointments': {
+     "A": {'begin_date': '2019-12-25', 'end_date': '2019-12-31', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}}},
+    {'name': 'GEM Anscombe', '_id': 'ganscombe', 'appointments': {}},
     {'name': 'Sophie Germain', '_id': 'sgermain',
-     'appointments':
-         [{'_id': 'A', 'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0,
-           'type': 'ss'}]
-     },
+     'appointments': {
+     "A": {'begin_date': '2019-09-02', 'end_date': '2019-09-06', 'grant': 'grant4', 'loading': 1.0, 'type': 'ss'}}},
     ]
 
 @pytest.mark.parametrize(
@@ -947,7 +889,17 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
         (grant1, [{'person': 'magical person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
                    'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}],
          None, None, 'invalid  type imaginary for appointment A of magical person'
-         )
+         ),
+         (grant4, appointed_people[0].get('appointments'), None, None,
+        ['values for grant grant4 from 2019-09-01 to 2019-09-07:',
+         {'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-04', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-05', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+         {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5}]
+        )
     ]
 )
 def test_grant_burn(grant, appointments, start, end, expected):

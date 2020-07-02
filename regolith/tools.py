@@ -1293,7 +1293,6 @@ def is_fully_appointed(person, begin_date, end_date):
         print("No appointments defined for this person")
         return False
     status = True
-    messages = []
     appts = person.get('appointments')
     if begin_date > end_date:
         raise ValueError("invalid begin and end dates")
@@ -1307,8 +1306,8 @@ def is_fully_appointed(person, begin_date, end_date):
         day_loading = 0.0
         day = begin_date + relativedelta(days=x)
         for appt in appts:
-            if is_current(appt, now=day):
-                day_loading += appt.get("loading")
+            if is_current(appts[appt], now=day):
+                day_loading += appts[appt].get("loading")
         if day_loading > 1.0 or day_loading < 1.0:
             status = False
             if good_period:
@@ -1470,31 +1469,32 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
             raise ValueError("begin date is after end date")
     appts = []
     for p in ppl_coll:
-        if not p.get('appointments'):
+        p_appts = p.get('appointments')
+        if not p_appts:
             continue
-        for a in p.get('appointments'):
+        for a in p_appts:
             if filter_key:
-                if all(a.get(filter_key[x]) == filter_value[x] for x in range(len(filter_key))):
+                if all(p_appts[a].get(filter_key[x]) == filter_value[x] for x in range(len(filter_key))):
                     if begin_date:
                         for y in range(timespan.days + 1):
                             day = begin_date + relativedelta(days=y)
-                            if is_current(a, now=day):
-                                appts.append(a)
-                                appts[-1].update({'person': p.get('_id')})
+                            if is_current(p_appts[a], now=day):
+                                appts.append(p_appts[a])
+                                appts[-1].update({'person': p.get('_id'), '_id': a})
                                 break
                     else:
-                        appts.append(a)
-                        appts[-1].update({'person': p.get('_id')})
+                        appts.append(p_appts[a])
+                        appts[-1].update({'person': p.get('_id'), '_id': a})
             elif timespan:
                     for y in range(timespan.days + 1):
                         day = begin_date + relativedelta(days=y)
-                        if is_current(a, now=day):
-                            appts.append(a)
-                            appts[-1].update({'person': p.get('_id')})
+                        if is_current(p_appts[a], now=day):
+                            appts.append(p_appts[a])
+                            appts[-1].update({'person': p.get('_id'), '_id': a})
                             break
             else:
-                appts.append(a)
-                appts[-1].update({'person': p.get('_id')})
+                appts.append(p_appts[a])
+                appts[-1].update({'person': p.get('_id'), '_id': a})
     return appts
 
 
@@ -1507,7 +1507,7 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     ----------
     grant: dict
         The grant object whose burn needs to be retrieved
-    appts: collection (list of dicts)
+    appts: collection (list of dicts), dict
         The collection of appointments made on assorted grants
     begin_date: datetime, string, optional
         The start date of the interval of time to retrieve the grant burn for, either a date object or a string
@@ -1519,8 +1519,8 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     Returns
     -------
     list:
-        A list of dictionaries, each containing the date and the corresponding student_months, postdoc_months and
-        ss_months on that date
+        A list of dictionaries, each containing the date and the corresponding student_days, postdoc_days and
+        ss_days on that date
     """
 
     if not grant.get('budget'):
@@ -1543,6 +1543,8 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
             pd_val += b.get('postdoc_months') * 30.5
         if b.get('ss_months'):
             ss_val += b.get('ss_months') * 30.5
+    if isinstance(appts, dict):
+        appts = collect_appts([{"appointments": appts}])
     for x in range(timespan.days + 1):
         day = grant_begin + relativedelta(days=x)
         for a in appts:
