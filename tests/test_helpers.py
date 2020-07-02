@@ -201,6 +201,7 @@ helper_map = [
     (["helper", "u_institutions", "columbiau",
       "--aka", "ucolumbia", "Columbia University in the City of New York",
       "--dept_id", "mathematics", "--dept_aka", "dept. of mathematics", "math department",
+      "--school", "Columbia College","--school_id", "cc", "--school_aka", "CC",
       "--date", "2020-01-01"],
      "columbiau has been updated/added in institutions\n"
      ),

@@ -36,6 +36,10 @@ columbiau:
         - SEAS
         - Columbia Engineering
         - Fu Foundation School of Engineering and Applied Science
+    cc:
+      name: Columbia College
+      aka:
+        - CC
   state: NY
   street: 500 W 120th St
   updated: '2020-01-01'

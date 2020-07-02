@@ -40,6 +40,13 @@ def subparser(subpi):
     subpi.add_argument("--dept_aka",
                        nargs='+',
                        help="Department aliases. e.g.: dept. of physics")
+    subpi.add_argument("--school",
+                       help="Full canonical name. e.g.: School of Engineering and Applied Science")
+    subpi.add_argument("--school_id",
+                       help="Short name for the school. e.g.: SEAS")
+    subpi.add_argument("--school_aka",
+                       nargs='+',
+                       help="School aliases.")
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -82,12 +89,17 @@ class InstitutionsUpdaterHelper(DbHelperBase):
         target_inst = rc.client.find_one(rc.database, rc.coll, filterid)
         now = dt.datetime.today()
         pdoc = {}
+        departments = {}
+        schools = {}
         if target_inst:
             if rc.aka:
                 current_aka = target_inst.get('aka')
                 current_aka.extend(rc.aka)
                 pdoc.update({'aka': current_aka})
-            pdoc.update({'departments': target_inst.get('departments', {})})
+            departments = target_inst.get('departments', {})
+            schools = target_inst.get('schools', {})
+            # pdoc.update({'departments': target_inst.get('departments', {})})
+            # pdoc.update({'schools': target_inst.get('schools', {})})
         else:
             inst = fragment_retrieval(self.gtx["institutions"], ["_id"], rc.institution_id)
             inst.sort(key=lambda x: x['_id'], reverse=False)
@@ -101,7 +113,7 @@ class InstitutionsUpdaterHelper(DbHelperBase):
                 raise RuntimeError("Sorry, you picked an invalid number.")
             if rc.index == 1:
                 if not rc.name or not rc.city or not rc.country:
-                    raise RuntimeError("Name, city, and country are required for a new milestone")
+                    raise RuntimeError("Name, city, and country are required for a new institutions")
                 pdoc.update({'name': rc.name, 'uuid': str(uuid.uuid4())})
                 if rc.aka:
                     pdoc.update({'aka':rc.aka})
@@ -110,13 +122,22 @@ class InstitutionsUpdaterHelper(DbHelperBase):
                 else:
                     pdoc.update({'date': now.date()})
             else:
-                chosen_inst = inst[rc.index+2]
+                chosen_inst = inst[rc.index-2]
                 key = chosen_inst.get('_id')
                 if rc.aka:
                     current_aka = chosen_inst.get('aka')
                     current_aka.extend(rc.aka)
                     pdoc.update({'aka': current_aka})
-                pdoc.update({'departments': chosen_inst.get('departments', {})})
+                current_departments = chosen_inst.get('departments')
+                departments = {}
+                for k, v in current_departments.items():
+                    info_department = {'name':v.get('name'), 'aka':v.get('aka')}
+                    departments.update({k:info_department})
+                current_schools = chosen_inst.get('schools')
+                schools = {}
+                for k, v in current_schools.items():
+                    info_school = {'name': v.get('name'), 'aka': v.get('aka')}
+                    schools.update({k: info_school})
         if rc.city:
             pdoc.update({'city': rc.city})
         if rc.state:
@@ -134,21 +155,38 @@ class InstitutionsUpdaterHelper(DbHelperBase):
             dep = {'name': f'Department of {rc.dept_id.capitalize()}'}
             if rc.dept_name:
                 dep.update({'name': rc.dept_name})
-            current_dep = pdoc.get('departments', {})
-            if rc.dept_id not in current_dep:
-                if rc.dept_aka:
-                    dep.update({'aka': rc.dept_aka})
-                current_dep[rc.dept_id] = dep
-                pdoc.update({'departments': current_dep})
-            else:
-                doc = current_dep.get(rc.dept_id)
-                if rc.dept_name:
-                    doc.update({'name':rc.dept_name})
+            if rc.dept_id in departments:
+                doc = departments.get(rc.dept_id)
                 current_dept_aka = doc.get('aka')
                 if rc.dept_aka:
                     current_dept_aka.extend(rc.dept_aka)
                     doc.update({'aka': current_dept_aka})
-                current_dep.update({rc.dept_id: doc})
+                departments.update({rc.dept_id: doc})
+            else:
+                if rc.dept_aka:
+                    dep.update({'aka': rc.dept_aka})
+                departments[rc.dept_id] = dep
+            pdoc.update({'departments': departments})
+        #schools
+        if rc.school:
+            school = {}
+            if rc.school_id in schools:
+                doc = schools.get(rc.school_id)
+                if rc.school:
+                    doc.update({'name': rc.school})
+                current_sc_aka = doc.get('aka')
+                if rc.dept_aka:
+                    current_sc_aka.extend(rc.school_aka)
+                    doc.update({'aka': current_sc_aka})
+                schools.update({rc.school_id: doc})
+            else:
+                if not rc.school:
+                    RuntimeError("Name is required for a new school. ")
+                school.update({'name': rc.school})
+                if rc.school_aka:
+                    school.update({'aka': rc.school_aka})
+                schools[rc.school_id] = school
+                pdoc.update({'schools': schools})
         rc.client.update_one(rc.database, rc.coll, {'_id': key}, pdoc)
         print(f"{key} has been updated/added in institutions")
         return
