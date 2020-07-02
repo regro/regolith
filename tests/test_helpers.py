@@ -198,14 +198,16 @@ helper_map = [
      "1. columbia  as a new institution\n"
      "2. Columbia University\n"
     (["helper", "u_institutions", "columbiau", "--aka", "ucolumbia", "Columbia University in the City of New York",
+    (["helper", "u_institutions", "columbiau",
+      "--aka", "ucolumbia", "Columbia University in the City of New York",
+      "--dept_id", "mathematics", "--dept_aka", "dept. of mathematics", "math department",
       "--date", "2020-01-01"],
-     "columbiau has been updated in institutions\n"
+     "columbiau has been updated/added in institutions\n"
      ),
     (["helper", "u_institutions", "col"],
-     "Institution not found. Institutions with similar id:\n"
-     "columbiau\n"
-     "Please rerun the helper specifying the complete ID. If it is a new institution use '--new'\n"
-     ),
+     "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
+     "1. col as a new institution.\n"
+     "2. columbiau      Columbia University.\n"),
 ]
 
 

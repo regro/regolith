@@ -22,6 +22,11 @@ columbiau:
       name: Department of Applied Physics and Applied Mathematics
       aka:
         - APAM
+    mathematics:
+      name: Department of Mathematics
+      aka:
+        - dept. of mathematics
+        - math department
   month: May
   name: Columbia University
   schools:
