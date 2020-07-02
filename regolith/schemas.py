@@ -1044,6 +1044,23 @@ EXEMPLARS = {
             },
         ],
         "title": "Dr.",
+        "todos": [
+            {"description": "read paper",
+             "due_date": "2020-07-19",
+             "begin_date": "2020-06-15",
+             "duration": 60.0,
+             "importance": 2,
+             "status": "started",
+             },
+            {"description": "prepare the presentation",
+             "due_date": "2020-07-29",
+             "begin_date": "2020-06-22",
+             "duration": 30.0,
+             "importance": 0,
+             "status": "started",
+             "notes": ["about 10 minutes", "don't forget to upload to the website"],
+             }
+        ],
     },
     ],
     "presentations": [
@@ -1419,28 +1436,6 @@ EXEMPLARS = {
         "aka": ["H. A. Person"],
         "email": "haperson@uni.edu",
         "university_id": "HAP42",
-    },
-    "todolist": {
-        "_id": "sbillinge",
-        "todos": [
-            {"description": "read paper",
-             "due_date": "2020-07-19",
-             "begin_date": "2020-06-15",
-             "duration": 60.0,
-             "importance": 2,
-             "status": "started",
-             "mark": 0
-             },
-            {"description": "prepare the presentation",
-             "due_date": "2020-07-29",
-             "begin_date": "2020-06-22",
-             "duration": 30.0,
-             "importance": 0,
-             "status": "started",
-             "notes": ["about 10 minutes", "don't forget to upload to the website"],
-             "mark": 1
-             }
-        ],
     },
 
 }
@@ -2860,6 +2855,45 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
+        "todos": {
+            "description": "a list of the todo tasks",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "description": {"description": "the description of the to-do task",
+                                    "required": True,
+                                    "type": "string"},
+                    "due_date": {"description": "the due date",
+                                 "required": False,
+                                 "type": "string"},
+                    "begin_date": {"description": "the begin date",
+                                   "required": False,
+                                   "type": "string"},
+                    "end_date": {"description": "the end date",
+                                 "required": False,
+                                 "type": "string"},
+                    "duration": {
+                        "description": "the size of the task/ the estimated duration it will take to finish the task. Unit: miniutes.",
+                        "required": False,
+                        "type": "float"},
+                    "importance": {
+                        "description": "the importance, from 0 to 2",
+                        "required": False,
+                        "type": "integer"},
+                    "status": {"description": "the status: proposed/started/finished",
+                               "required": True,
+                               "type": "string"},
+                    "notes": {"description": "additional notes for this task",
+                              "required": False,
+                              "type": "list",
+                              "schema": {"type": "string"}
+                              },
+
+                }
+            }
+        },
     },
     "presentations": {
         "_description": {
@@ -3541,58 +3575,6 @@ SCHEMAS = {
             "description": "The university identifier for the student",
             "required": False,
             "type": "string",
-        },
-    },
-    "todolist": {
-        "_description": {
-            "description": "This collection lists the to-do tasks for everyone. "
-        },
-        "_id": {
-            "description": "Unique project identifier.",
-            "required": True,
-            "type": "string",
-        },
-        "todos": {
-            "description": "a list of the todo tasks",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "description": {"description": "the description of the to-do task",
-                                    "required": True,
-                                    "type": "string"},
-                    "due_date": {"description": "the due date",
-                                 "required": False,
-                                 "type": "string"},
-                    "begin_date": {"description": "the begin date",
-                                   "required": False,
-                                   "type": "string"},
-                    "end_date": {"description": "the end date",
-                                 "required": False,
-                                 "type": "string"},
-                    "duration": {
-                        "description": "the size of the task/ the estimated duration it will take to finish the task. Unit: miniutes.",
-                        "required": False,
-                        "type": "float"},
-                    "importance": {
-                        "description": "the importance, from 0 to 2",
-                        "required": False,
-                        "type": "integer"},
-                    "status": {"description": "the status: proposed/started/finished",
-                               "required": True,
-                               "type": "string"},
-                    "notes": {"description": "additional notes for this task",
-                               "required": False,
-                               "type": "list",
-                              "schema": {"type": "string"}
-                              },
-                    "mark": {"description": "use this mark to update the task",
-                             "required": True,
-                             "type": "integer"},
-
-                }
-            }
         },
     },
 }
