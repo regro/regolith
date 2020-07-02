@@ -14,7 +14,7 @@ HELPER_TARGET = "lister"
 def subparser(subpi):
     subpi.add_argument(
         "coll",
-        help='Collection where the lister is going to run.')
+        help='Collection that the lister is going to list from.')
     subpi.add_argument(
         "-f","--kv_filter",
         nargs="+",
@@ -33,12 +33,6 @@ def subparser(subpi):
         action="store_true",
         help="List of the available keys in the collection.")
     return subpi
-
-def check_key(keys, list_keys):
-    for item in list_keys:
-        if item not in keys:
-            raise ValueError(f"{item} is not a valid key. Please choose a valid key from: {keys}")
-    return list_keys
 
 class GeneralListerHelper(SoutHelperBase):
     """Helper for listing filtered data from collections in the database.
@@ -76,21 +70,28 @@ class GeneralListerHelper(SoutHelperBase):
         rc = self.rc
         coll = self.gtx[rc.coll]
         keys = sorted(set([i for k in coll for i in k.keys()]))
+        list_keys = []
+        if rc.kv_filter:
+            list_keys.extend([rc.kv_filter[n] for n in range(len(rc.kv_filter)) if n % 2 == 0])
+        if rc.return_fields:
+            list_keys.extend(rc.return_fields)
+        for i in list_keys:
+            if i not in keys:
+                raise ValueError(f"{i} is not a valid key. Please choose a valid key from: {keys}")
         if len(coll) == 0:
             raise RuntimeError('This collection is empty or does not exist. Please inform a valid collection.')
         if rc.kv_filter:
-            if (check_key(keys, [rc.kv_filter[n] for n in range(len(rc.kv_filter)) if n % 2 == 0])):
-                filter_result = search_collection(coll, rc.kv_filter).strip()
-                if filter_result == '':
-                    print("There are no results that match your search.")
+            filter_result = search_collection(coll, rc.kv_filter).strip()
+            if filter_result == '':
+                print("There are no results that match your search.")
+            else:
+                if rc.return_fields:
+                    print("Results of your search:\n"
+                            f"{(search_collection(coll, rc.kv_filter, rc.return_fields).strip())}")
                 else:
-                    if rc.return_fields:
-                        print("Results of your search:\n"
-                              f"{(search_collection(coll, rc.kv_filter, check_key(keys, rc.return_fields)).strip())}")
-                    else:
-                        print(f"Results of your search:\n{filter_result}")
+                    print(f"Results of your search:\n{filter_result}")
         if rc.return_fields and not rc.kv_filter:
-            print(f"Results of your search:\n{collection_str(coll, check_key(keys, rc.return_fields)).strip()}")
+            print(f"Results of your search:\n{collection_str(coll, rc.return_fields).strip()}")
         if rc.keys:
             print(f"Available keys:\n{keys}")
             return
