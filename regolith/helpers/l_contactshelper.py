@@ -14,7 +14,8 @@ from regolith.tools import (
     get_pi_id,
     fragment_retrieval,
     search_collection,
-    key_value_pair_filter
+    key_value_pair_filter,
+    collection_str
 )
 
 TARGET_COLL = "contacts"
@@ -149,6 +150,10 @@ class ContactsListerHelper(SoutHelperBase):
         else:
             datel = def_l
         res_l = set.intersection(namel, instl, notel, datel)
+        if rc.keys:
+            results = (collection_str(res_l, rc.keys))
+            print(results, end="")
+            return
         for item in res_l:
             print(item)
         return
