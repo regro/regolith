@@ -46,8 +46,17 @@ def prep_figure():
 
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 @pytest.mark.parametrize("bm", builder_map)
-def test_builder(bm, make_db):
-    repo = make_db
+@pytest.mark.parametrize("db_src", db_srcs)
+def test_builder(bm, db_src, make_db, make_mongodb):
+    # FIXME: Somehow the mongo backend failed to build figure
+    if db_src == "mongo" and bm == "figure":
+        return
+    if db_src == "fs":
+        repo = make_db
+    elif db_src == "mongo":
+        repo = make_mongodb
+    else:
+        raise ValueError("Unknown database source: {}".format(db_src))
     os.chdir(repo)
     if bm == "figure":
         prep_figure()
@@ -55,7 +64,7 @@ def test_builder(bm, make_db):
         os.makedirs("templates/static", exist_ok=True)
     if bm == "reimb" or bm == "recent-collabs":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
-                        "scopatz"], check=True, cwd=repo )
+                        "scopatz"], check=True, cwd=repo)
     elif bm == "annual-activity":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
                         "sbillinge", "--from", "2017-04-01"], check=True, cwd=repo)
@@ -107,17 +116,8 @@ def test_builder(bm, make_db):
 
 
 @pytest.mark.parametrize("bm", builder_map)
-@pytest.mark.parametrize("db_src", db_srcs)
-def test_builder_python(bm, db_src, make_db, make_mongodb):
-    if db_src == "fs":
-        repo = make_db
-    elif db_src == "mongo":
-        repo = make_mongodb
-    else:
-        raise ValueError("Unknown database source: {}".format(db_src))
-    # FIXME: Somehow the mongo backend failed to build figure
-    if db_src == "mongo" and bm == "figure":
-        return
+def test_builder_python(bm, make_db):
+    repo = make_db
     os.chdir(repo)
     if bm == "figure":
         prep_figure()
