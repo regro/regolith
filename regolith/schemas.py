@@ -2857,7 +2857,7 @@ SCHEMAS = {
         },
         "todos": {
             "description": "a list of the todo tasks",
-            "required": True,
+            "required": False,
             "type": "list",
             "schema": {
                 "type": "dict",

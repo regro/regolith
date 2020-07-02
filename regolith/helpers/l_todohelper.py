@@ -153,17 +153,27 @@ class TodoListerHelper(SoutHelperBase):
             for t in gather_todos:
                 if t.get('status') not in ["finished", "cancelled"]:
                     print(
-                        f"{num + 1}. {t.get('description')}; notes: {t.get('notes')}")
-                    print(f"     --(due: {t.get('due_date')}, {t.get('duration')} min, importance:"
-                          f"{t.get('importance')}, start date: {t.get('begin_date')})")
+                        f"{num + 1}. {t.get('description')}")
+                    if t.get('notes') :
+                        print(f"     --notes: {t.get('notes')}")
+                    print(f"     --due: {t.get('due_date')}, importance:{t.get('importance')},",
+                          f"{t['duration']} min," if 'duration' in t else "",
+                          f"start date: {t['begin_date']}" if 'begin_date' in t else "")
+                    # use many if Statements, so duration or begin_date won't be printed if they are unassigned.
+
                     num += 1
             # print finished tasks:
             for t in todolist_tasks["todos"]:
                 if t.get('status') == "finished":
                     print(
-                        f"finished: {t.get('description')}; notes: {t.get('notes')}")
-                    print(f"     --(due: {t.get('due_date')}, {t.get('duration')} min, importance:"
-                          f"{t.get('importance')}, start date: {t.get('begin_date')}, end date: {t.get('end_date')})")
+                        f"finished: {t.get('description')}")
+                    if t.get('notes'):
+                        print(f"     --notes: {t.get('notes')}")
+                    print(f"     --due: {t.get('due_date')}, importance:{t.get('importance')},",
+                          f"{t['duration']} min," if 'duration' in t else "",
+                          f"start date: {t['begin_date']}" if 'begin_date' in t else ""
+                          f"end date: {t['end_date']}" if 'end_date' in t else "")
+                    # use many if Statements, so duration or begin_date won't be printed if they are unassigned.
 
 
         else:
