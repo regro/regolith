@@ -61,12 +61,13 @@
   abstract: the earth is round as seen from mars
   authors:
     - sbillinge
+    - ashaaban
   begin_date: 2020-06-26
   end_date: 2020-06-26
   location: Mars
   meeting_name: flat earth
   project:
     - all
-  status: accepted
+  status: pending
   title: On the roundness of the Earth
   type: contributed_oral

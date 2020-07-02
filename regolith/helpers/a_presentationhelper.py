@@ -118,20 +118,17 @@ class PresentationAdderHelper(DbHelperBase):
                 authors = [rc.default_user_id]
             except AttributeError:
                 raise RuntimeError(
-                    "Please set default user ID and user first name in config.json file"
+                    "WARNING: no authors have been set. please rerun specifying authors,"
+                    "or add your id, e.g., sbillinge, to the config.json file in ~/.config/regolith"
                 )
         else:
             authors = rc.authors
-
-
-
         pdoc.update({'_id': key,
                      'abstract': rc.abstract,
                      'authors': authors,
                      'begin_date': begin_date,
                      'end_date': end_date,
                      })
-
         if rc.type in ['seminar', 'colloquium']:
             pdoc.update({"institution": rc.place,
                         "department": rc.name})
@@ -145,7 +142,6 @@ class PresentationAdderHelper(DbHelperBase):
                      })
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
-
 
         print(f"{key} has been added in {TARGET_COLL}")
 
