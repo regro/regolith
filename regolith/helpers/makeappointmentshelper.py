@@ -99,28 +99,31 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 a_end = get_dates(a)['end_date']
                 total_burn = grant_burn(g, all_appts, begin_date=begin_date, end_date=end_date)
                 timespan = end_date - begin_date
-                bad_period = False
+                outdated_period, depleted_period = False, False
                 for x in range (timespan.days + 1):
-                    day = begin_date + relativedelta(days=x)
-                    if not is_current(g, now=day):
-                        outdated.append("person: {}, appointment: {}, grant: {}, date: {}".format(
-                            p.get('_id'), a.get('_id'), g.get('_id'), str(day)))
-                    day_burn = 0
-                    if a.get('type') == 'gra':
-                        day_burn = total_burn[x+1].get('student_days')
-                    elif a.get('type') == 'pd':
-                        day_burn = total_burn[x+1].get('postdoc_days')
-                    elif a.get('type') == 'ss':
-                        day_burn = total_burn[x+1].get('ss_days')
-                    if day_burn <= 0 and not bad_period:
-                        depleted.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
-                            p.get('_id'), a.get('_id'), g.get('_id'), str(day), str(a_end)))
-                        bad_period = True
+                    if not outdated_period:
+                        day = begin_date + relativedelta(days=x)
+                        if not is_current(g, now=day):
+                            outdated.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
+                                p.get('_id'), a.get('_id'), g.get('_id'), str(day), str(a_end)))
+                            outdated_period = True
+                    if not depleted_period:
+                        day_burn = 0
+                        if a.get('type') == 'gra':
+                            day_burn = total_burn[x+1].get('student_days')
+                        elif a.get('type') == 'pd':
+                            day_burn = total_burn[x+1].get('postdoc_days')
+                        elif a.get('type') == 'ss':
+                            day_burn = total_burn[x+1].get('ss_days')
+                        if day_burn < 0:
+                            depleted.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
+                                p.get('_id'), a.get('_id'), g.get('_id'), str(day), str(a_end)))
+                            depleted_period = True
 
 
         for g in self.gtx["grants"]:
             g_end = get_dates(g)['end_date']
-            g_amt = grant_burn(g, all_appts, g_end, g_end)[1]
+            g_amt = grant_burn(g, all_appts, begin_date=g_end, end_date=g_end)[1]
             g_amt = g_amt.get('student_days') + g_amt.get('postdoc_days') + g_amt.get('ss_days')
             if g_amt > 30.5:
                 underspent.append("{}: grant: {}, underspend amount: {} months".format(
@@ -130,11 +133,11 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     str(g_end), g.get('_id'), g_amt/30.5))
 
         if outdated:
-            print("appointments  on outdated grants:")
+            print("appointments on outdated grants:")
             for appt in outdated:
                 print(appt)
         if depleted:
-            print("appointments  on depleted grants:")
+            print("appointments on depleted grants:")
             for appt in depleted:
                 print(appt)
         if underspent:

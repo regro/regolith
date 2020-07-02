@@ -486,7 +486,16 @@ EXEMPLARS = {
                 "loading": 0.75,
                 "status": "finalized",
                 "notes": ["forgetmenot"]
+            },
+            "s20":{
+                "begin_date": "2020-01-01",
+                "end_date": "2020-05-15",
+                "grant": "SymPy-1.1",
+                "loading": 1.0,
+                "status": "finalized",
+                "notes": ["fully appointed", "outdated grant"]
             }
+
         },
         "bio": "Anthony Scopatz is currently an Assistant Professor",
         "bios": ["Anthony Scopatz is currently an Assistant Professor but will go on to do great things"],
