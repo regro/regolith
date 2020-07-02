@@ -88,33 +88,34 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         for p in self.gtx["people"]:
             appts = collect_appts([p])
-            if appts:
-                is_fully_appointed(p, begin_date, end_date)
-                for a in appts:
-                    g = rc.client.find_one(rc.database, "grants", {"_id": a.get("grant")})
-                    if not g:
-                        raise RuntimeError("grant: {}, person: {}, appointment: {}, grant not found in grants database".format
-                                         (a.get("grant"), p.get("_id"), a.get("_id")))
-                    a_end = get_dates(a)['end_date']
-                    total_burn = grant_burn(g, all_appts, begin_date=begin_date, end_date=end_date)
-                    timespan = end_date - begin_date
-                    bad_period = False
-                    for x in range (timespan.days + 1):
-                        day = begin_date + relativedelta(days=x)
-                        if not is_current(g, now=day):
-                            outdated.append("person: {}, appointment: {}, grant: {}, date: {}".format(
-                                p.get('_id'), a.get('_id'), g.get('_id'), str(day)))
-                        day_burn = 0
-                        if a.get('type') == 'gra':
-                            day_burn = total_burn[x+1].get('student_days')
-                        elif a.get('type') == 'pd':
-                            day_burn = total_burn[x+1].get('postdoc_days')
-                        elif a.get('type') == 'ss':
-                            day_burn = total_burn[x+1].get('ss_days')
-                        if day_burn <= 0 and not bad_period:
-                            depleted.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
-                                p.get('_id'), a.get('_id'), g.get('_id'), str(day), str(a_end)))
-                            bad_period = True
+            if not appts:
+                continue
+            is_fully_appointed(p, begin_date, end_date)
+            for a in appts:
+                g = rc.client.find_one(rc.database, "grants", {"_id": a.get("grant")})
+                if not g:
+                    raise RuntimeError("grant: {}, person: {}, appointment: {}, grant not found in grants database".format
+                                     (a.get("grant"), p.get("_id"), a.get("_id")))
+                a_end = get_dates(a)['end_date']
+                total_burn = grant_burn(g, all_appts, begin_date=begin_date, end_date=end_date)
+                timespan = end_date - begin_date
+                bad_period = False
+                for x in range (timespan.days + 1):
+                    day = begin_date + relativedelta(days=x)
+                    if not is_current(g, now=day):
+                        outdated.append("person: {}, appointment: {}, grant: {}, date: {}".format(
+                            p.get('_id'), a.get('_id'), g.get('_id'), str(day)))
+                    day_burn = 0
+                    if a.get('type') == 'gra':
+                        day_burn = total_burn[x+1].get('student_days')
+                    elif a.get('type') == 'pd':
+                        day_burn = total_burn[x+1].get('postdoc_days')
+                    elif a.get('type') == 'ss':
+                        day_burn = total_burn[x+1].get('ss_days')
+                    if day_burn <= 0 and not bad_period:
+                        depleted.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
+                            p.get('_id'), a.get('_id'), g.get('_id'), str(day), str(a_end)))
+                        bad_period = True
 
 
         for g in self.gtx["grants"]:
