@@ -2150,6 +2150,21 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "budget": {
+            "description": "budget periods of grant",
+            "required": False,
+            "schema": {
+                "schema": {
+                    "begin_date": {"required": False, "type": "string"},
+                    "end_date": {"required": False, "type": "string"},
+                    "student_months": {"required": False, "anyof_type": ["float", "integer"]},
+                    "postdoc_months": {"required": False, "anyof_type": ["float", "integer"]},
+                    "ss_months": {"required": False, "anyof_type": ["float", "integer"]},
+                },
+                "type": "dict",
+            },
+            "type": "list",
+        }
     },
     "groups": {
         "_description": {
