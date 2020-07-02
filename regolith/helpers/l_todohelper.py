@@ -15,10 +15,9 @@ from regolith.tools import (
     document_by_value,
 )
 
-TARGET_COLL = "todolist"
+TARGET_COLL = "people"
 TARGET_COLL2 = "projecta"
 TARGET_COLL3 = "meetings"
-TARGET_COLL4 = "people"
 HELPER_TARGET = "l_todo"
 Importance = [0, 1, 2]
 ALLOWED_STATI = ["started", "finished"]
@@ -40,7 +39,7 @@ class TodoListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}', f'{TARGET_COLL2}', f'{TARGET_COLL3}', f'{TARGET_COLL4}']
+    needed_dbs = [f'{TARGET_COLL}', f'{TARGET_COLL2}', f'{TARGET_COLL3}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -88,11 +87,11 @@ class TodoListerHelper(SoutHelperBase):
                 "The id you entered can't be found in people.yml.")
             return
 
-        # gather to-do tasks in todolist.yml
+        # gather to-do tasks in people.yml
         try:
-            todolist_tasks = document_by_value(all_docs_from_collection(rc.client, "todolist"), "_id", rc.id)
+            todolist_tasks = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.id)
             gather_todos = todolist_tasks["todos"]
-        # if there is no document with this id in todolist.yml:
+        # if there is no document with this id or that id doesn't have the key "todos" in people.yml:
         except:
             gather_todos = []
 
@@ -112,7 +111,7 @@ class TodoListerHelper(SoutHelperBase):
                             'id': projectum.get('_id'),
                             'due_date': due_date,
                         })
-                        ms.update({'description': f'{ms.get("id")}, {ms.get("name")}', 'mark': 'no mark'})
+                        ms.update({'description': f'{ms.get("id")}, {ms.get("name")}'})
 
                         gather_todos.append(ms)
 
@@ -132,7 +131,6 @@ class TodoListerHelper(SoutHelperBase):
                     gather_todos.append({
                         'description': a,
                         'due_date': due_date,
-                        'mark': 'no mark',
                         'status': 'started'
                     })
 
@@ -146,29 +144,38 @@ class TodoListerHelper(SoutHelperBase):
 
         gather_todos = sorted(gather_todos, key=lambda k: (k['due_date'], -k['importance']))
 
+        if rc.short_tasks:
+            for t in gather_todos[::-1]:
+                if t.get('duration') is None or float(t.get('duration')) > float(rc.short_tasks):
+                    gather_todos.remove(t)
+
         if rc.verbose:
             for t in gather_todos:
                 if t.get('status') not in ["finished", "cancelled"]:
                     print(
-                        f"{num + 1}. {t.get('description')}; notes: {t.get('notes')}")
-                    print(f"     --({t.get('mark')}, due: {t.get('due_date')}, {t.get('duration')} min, importance:"
-                          f"{t.get('importance')}, start date: {t.get('begin_date')})")
+                        f"{num + 1}. {t.get('description')}")
+                    if t.get('notes') :
+                        print(f"     --notes: {t.get('notes')}")
+                    print(f"     --due: {t.get('due_date')}, importance:{t.get('importance')},",
+                          f"{t['duration']} min," if 'duration' in t else "",
+                          f"start date: {t['begin_date']}" if 'begin_date' in t else "")
+                    # use many if Statements, so duration or begin_date won't be printed if they are unassigned.
+
                     num += 1
             # print finished tasks:
-            num = 0
             for t in todolist_tasks["todos"]:
                 if t.get('status') == "finished":
                     print(
-                        f"finished: {num + 1}. {t.get('description')}")
-                    print(f"     --({t.get('mark')}, due: {t.get('due_date')}, {t.get('duration')} min, importance:"
-                          f"{t.get('importance')}, start date: {t.get('begin_date')})")
+                        f"finished: {t.get('description')}")
+                    if t.get('notes'):
+                        print(f"     --notes: {t.get('notes')}")
+                    print(f"     --due: {t.get('due_date')}, importance:{t.get('importance')},",
+                          f"{t['duration']} min," if 'duration' in t else "",
+                          f"start date: {t['begin_date']}" if 'begin_date' in t else ""
+                          f"end date: {t['end_date']}" if 'end_date' in t else "")
+                    # use many if Statements, so duration or begin_date won't be printed if they are unassigned.
 
-        elif rc.short_tasks:
-            for t in gather_todos:
-                if t.get('status') not in ["finished", "cancelled"]:
-                    if t.get('duration') and float(t.get('duration')) <= float(rc.short_tasks):
-                        print(f"{num + 1}. {t.get('description')}")
-                        num += 1
+
         else:
             for t in gather_todos:
                 if t.get('status') not in ["finished", "cancelled"]:
