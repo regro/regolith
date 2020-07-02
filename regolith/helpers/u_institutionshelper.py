@@ -98,8 +98,6 @@ class InstitutionsUpdaterHelper(DbHelperBase):
                 pdoc.update({'aka': current_aka})
             departments = target_inst.get('departments', {})
             schools = target_inst.get('schools', {})
-            # pdoc.update({'departments': target_inst.get('departments', {})})
-            # pdoc.update({'schools': target_inst.get('schools', {})})
         else:
             inst = fragment_retrieval(self.gtx["institutions"], ["_id"], rc.institution_id)
             inst.sort(key=lambda x: x['_id'], reverse=False)
