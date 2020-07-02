@@ -175,7 +175,7 @@ helper_map = [
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
-     "'title']\n"),
+     "'title', 'todos']\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
      "Results of your search:\nsbillinge\n"
      "Available keys:\n"
@@ -184,7 +184,7 @@ helper_map = [
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
-     "'title']\n"
+     "'title', 'todos']\n"
      ),
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
      "There are no results that match your search.\n"
