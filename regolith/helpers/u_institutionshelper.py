@@ -66,7 +66,7 @@ class InstitutionsUpdaterHelper(DbHelperBase):
     Helper for updating/adding  to the projecta collection.
     """
     # btype must be the same as helper target in helper.py
-    btype = "u_institutions"
+    btype = "u_institution"
     needed_dbs = [f'{TARGET_COLL}']
 
     def construct_global_ctx(self):
@@ -102,7 +102,7 @@ class InstitutionsUpdaterHelper(DbHelperBase):
             departments = target_inst.get('departments', {})
             schools = target_inst.get('schools', {})
         else:
-            inst = fragment_retrieval(self.gtx["institutions"], ["_id"], rc.institution_id)
+            inst = fragment_retrieval(self.gtx["institutions"], ["_id", "name", "aka"], rc.institution_id)
             inst.sort(key=lambda x: x['_id'], reverse=False)
             if not rc.index:
                 print("Please rerun the helper specifying '-n list-index' to update item number 'list-index':")
