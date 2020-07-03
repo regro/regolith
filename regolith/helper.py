@@ -37,7 +37,7 @@ HELPERS = {
     "l_todo": (l_todo.TodoListerHelper, l_todo.subparser),
     "finish_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
-    "u_institutions": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser)
+    "u_institutions": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
 }
 
 
