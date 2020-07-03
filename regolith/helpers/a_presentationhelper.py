@@ -28,12 +28,12 @@ def subparser(subpi):
                                     "department if seminar",
                        )
     subpi.add_argument("begin_date",
-                       help="Input begin date for this expense "
+                       help="Input begin date for this presentation "
                             "in YYYY-MM-DD format",
                        )
     subpi.add_argument("end_date",
-                       help="Input end date for this expense"
-                            "in YYYY-MM-DD format" ,
+                       help="Input end date for this presentation"
+                            "in YYYY-MM-DD format",
                        )
     subpi.add_argument("-p", "--person",
                        help="the person submitting the presentation, used for presentation name,"
@@ -51,7 +51,7 @@ def subparser(subpi):
                        help=f"status, from {ALLOWED_STATI}, default is accepted",
                        default="accepted"
                        )
-    subpi.add_argument("-y", "--type", help=f"types, from {ALLOWED_TYPES}. Default is other",
+    subpi.add_argument("-y", "--type", help=f"types, from {ALLOWED_TYPES}. Default",
                        default="invited"
                        )
     subpi.add_argument("-u", "--authors", nargs="+",
