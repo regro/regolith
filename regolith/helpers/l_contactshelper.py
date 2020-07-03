@@ -13,7 +13,9 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     fragment_retrieval,
-    search_collection
+    search_collection,
+    key_value_pair_filter,
+    collection_str
 )
 
 TARGET_COLL = "contacts"
@@ -101,22 +103,22 @@ class ContactsListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         if rc.filter:
-            results = search_collection(self.gtx["contacts"], rc.filter, rc.keys)
-            print(results, end="")
-            return
+            collection = key_value_pair_filter(self.gtx["contacts"], rc.filter)
+        else:
+            collection = self.gtx["contacts"]
         def_l = set(stringify(i) for i in
                     self.gtx['contacts'])
         if rc.name:
             namel = set(stringify(i) for i in
                         fragment_retrieval(
-                            self.gtx['contacts'], [
+                            collection, [
                                 "_id", "aka", "name"], rc.name))
         else:
             namel = def_l
         if rc.inst:
             instl = set(stringify(i) for i in
                         fragment_retrieval(
-                            self.gtx['contacts'],
+                            collection,
                             ["institution"],
                             rc.inst))
         else:
@@ -124,7 +126,7 @@ class ContactsListerHelper(SoutHelperBase):
         if rc.notes:
             notel = set(stringify(i) for i in
                         fragment_retrieval(
-                            self.gtx['contacts'], [
+                            collection, [
                                 "notes"], rc.notes))
         else:
             notel = def_l
@@ -140,7 +142,7 @@ class ContactsListerHelper(SoutHelperBase):
                              dateutil.relativedelta.relativedelta(
                                  months=int(
                                      rc.range))).isoformat()}
-            for contact in self.gtx["contacts"]:
+            for contact in collection:
                 curr_d = get_dates(contact)['date']
                 if is_current(temp_dict, now=curr_d):
                     date_list.append(stringify(contact))
@@ -148,6 +150,10 @@ class ContactsListerHelper(SoutHelperBase):
         else:
             datel = def_l
         res_l = set.intersection(namel, instl, notel, datel)
+        if rc.keys:
+            results = (collection_str(res_l, rc.keys))
+            print(results, end="")
+            return
         for item in res_l:
             print(item)
         return

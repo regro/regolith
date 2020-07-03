@@ -14,7 +14,9 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    search_collection
+    search_collection,
+    key_value_pair_filter,
+    collection_str
 )
 
 TARGET_COLL = "projecta"
@@ -98,11 +100,11 @@ class ProjectaListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         if rc.filter:
-            results = search_collection(self.gtx["projecta"], rc.filter, rc.keys)
-            print(results, end="")
-            return
+            collection = key_value_pair_filter(self.gtx["projecta"], rc.filter)
+        else:
+            collection = self.gtx["projecta"]
 
-        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead):
+        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter):
             return
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
@@ -120,7 +122,7 @@ class ProjectaListerHelper(SoutHelperBase):
         grouped_projecta = {}
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")
-        for projectum in self.gtx["projecta"]:
+        for projectum in collection:
             if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
             if rc.lead and projectum.get('lead') != rc.lead:
@@ -166,6 +168,8 @@ class ProjectaListerHelper(SoutHelperBase):
                                                                                           p.get("description"),
                                                                                           p.get("lead"), members,
                                                                                           collaborators))
+            return
+
         if rc.grp_by_lead:
             for p in projecta:
                 if p.get('lead') not in grouped_projecta:
@@ -179,6 +183,11 @@ class ProjectaListerHelper(SoutHelperBase):
             return
 
         projecta.sort(key=lambda prum: prum.get("_id"))
+        if rc.keys:
+            results = (collection_str(projecta, rc.keys))
+            print(results, end="")
+            return
+
         for i in projecta:
             print(i.get("_id"))
         return

@@ -11,7 +11,8 @@ from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id, search_collection
+    get_pi_id, search_collection,
+    key_value_pair_filter, collection_str
 )
 
 TARGET_COLL = "people"
@@ -68,16 +69,21 @@ class MembersListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         if rc.filter:
-            results = search_collection(self.gtx["people"], rc.filter, rc.keys)
-            print(results, end="")
-            return
+            collection = key_value_pair_filter(self.gtx["people"], rc.filter)
+        else:
+            collection = self.gtx["people"]
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
-        for person in self.gtx["people"]:
+        for person in collection:
             if rc.current and not person.get('active'):
                 continue
             people.append(person)
-        #people.sort()
+
+        if rc.filter and not rc.verbose:
+            results = (collection_str(people, rc.keys))
+            print(results, end="")
+            return
+
         for i in people:
             if rc.verbose:
                 print("{}, {} | group_id: {}".format(i.get('name'), i.get('position'), i.get('_id')))
