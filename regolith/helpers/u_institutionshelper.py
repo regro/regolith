@@ -24,26 +24,29 @@ def subparser(subpi):
     subpi.add_argument("--country",
                        help="The country where the institution is. "
                             "Required for a new institution")
+    subpi.add_argument("--state",
+                       help="The state where the institution is. "
+                            "Required for a new institution if institution's country is US.")
+    subpi.add_argument("--zip",
+                       help="zipcode of the institution. "
+                            "Required for a new institution if institution's country is US.")
     subpi.add_argument("-a", "--aka",
                        nargs='+',
                        help="List of all the different names this "
                             "institution is known by.")
-    subpi.add_argument("--state",
-                       help="The state where the institution is.")
-    subpi.add_argument("--zip",
-                       help="zipcode of the institution.")
     subpi.add_argument("--dept_id",
                        help="e.g. physics.")
     subpi.add_argument("--dept_name",
                        help="Department canonical name, e.g., Department of Physics. "
-                            "Defaults to 'Department of {department id.}'")
+                            "Required if --dept_id supplied and it is a new department")
     subpi.add_argument("--dept_aka",
                        nargs='+',
                        help="Department aliases, e.g., dept. of physics.")
-    subpi.add_argument("--school",
-                       help="Full canonical name, e.g., School of Engineering and Applied Science.")
     subpi.add_argument("--school_id",
                        help="Short name for the school, e.g., SEAS.")
+    subpi.add_argument("--school_name",
+                       help="Full canonical name, e.g., School of Engineering and Applied Science. "
+                            "Required if --school_id supplied and it is a new school")
     subpi.add_argument("--school_aka",
                        nargs='+',
                        help="School aliases.")
@@ -111,7 +114,11 @@ class InstitutionsUpdaterHelper(DbHelperBase):
                 raise RuntimeError("Sorry, you picked an invalid number.")
             if rc.index == 1:
                 if not rc.name or not rc.city or not rc.country:
-                    raise RuntimeError("Name, city, and country are required for a new institutions")
+                    raise RuntimeError("Name, city, and country are required for a new institution.")
+                if rc.country == 'US':
+                    if not rc.zip or not rc.state:
+                        raise RuntimeError("Zip and state are required for a new institution "
+                                           "if institutions is in the US.")
                 pdoc.update({'name': rc.name, 'uuid': str(uuid.uuid4())})
                 if rc.aka:
                     pdoc.update({'aka':rc.aka})
@@ -148,37 +155,40 @@ class InstitutionsUpdaterHelper(DbHelperBase):
             pdoc.update({'updated': now})
         # departments:
         if rc.dept_id:
-            dep = {'name': f'Department of {rc.dept_id.capitalize()}'}
-            if rc.dept_name:
-                dep.update({'name': rc.dept_name})
+            dep = {}
             if rc.dept_id in departments:
                 doc = departments.get(rc.dept_id)
                 current_dept_aka = doc.get('aka')
+                if rc.dept_name:
+                    dep.update({'name': rc.dept_name})
                 if rc.dept_aka:
                     current_dept_aka.extend(rc.dept_aka)
                     doc.update({'aka': current_dept_aka})
                 departments.update({rc.dept_id: doc})
             else:
+                if not rc.dept_name:
+                    raise RuntimeError("Name is required for a new department.")
+                dep.update({'name':rc.dept_name})
                 if rc.dept_aka:
                     dep.update({'aka': rc.dept_aka})
                 departments[rc.dept_id] = dep
             pdoc.update({'departments': departments})
         #schools
-        if rc.school:
+        if rc.school_id:
             school = {}
             if rc.school_id in schools:
                 doc = schools.get(rc.school_id)
-                if rc.school:
-                    doc.update({'name': rc.school})
+                if rc.school_name:
+                    doc.update({'name': rc.school_name})
                 current_sc_aka = doc.get('aka')
                 if rc.dept_aka:
                     current_sc_aka.extend(rc.school_aka)
                     doc.update({'aka': current_sc_aka})
                 schools.update({rc.school_id: doc})
             else:
-                if not rc.school:
-                    RuntimeError("Name is required for a new school. ")
-                school.update({'name': rc.school})
+                if not rc.school_name:
+                    raise RuntimeError("Name is required for a new school.")
+                school.update({'name': rc.school_name})
                 if rc.school_aka:
                     school.update({'aka': rc.school_aka})
                 schools[rc.school_id] = school

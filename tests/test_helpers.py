@@ -163,8 +163,6 @@ helper_map = [
      "20sb_firstprojectum     status:finished\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
-
-    #UC1
     (["helper", "lister", "people"],
      "Results of your search:\nsbillinge    \nscopatz\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon"],
@@ -195,8 +193,9 @@ helper_map = [
      ),
     (["helper", "u_institutions", "columbiau",
       "--aka", "ucolumbia", "Columbia University in the City of New York",
-      "--dept_id", "mathematics", "--dept_aka", "dept. of mathematics", "math department",
-      "--school", "Columbia College","--school_id", "cc", "--school_aka", "CC",
+      "--dept_id", "mathematics", "--dept_name","Department of Mathematics",
+      "--dept_aka", "dept. of mathematics", "math department",
+      "--school_id", "cc", "--school_name", "Columbia College","--school_aka", "CC",
       "--date", "2020-01-01"],
      "columbiau has been updated/added in institutions\n"
      ),
