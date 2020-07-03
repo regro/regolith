@@ -230,10 +230,6 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
-]
-    (["helper", "makeappointments"], "People with gaps in their appointments:\nAnthony Scopatz\nnot fully appointed on 2020-06-15\n"
-    (["helper", "makeappointments", "2019-08-31", "2019-10-31",], "People with gaps in their appointments:\nAnthony Scopatz\nnot fully appointed on 2020-06-15\n"
-     ),
     (["helper", "makeappointments", "2019-08-31", "2019-10-31",],
      "WARNING: appointment gap for scopatz from 2019-08-31 to 2019-10-31\n"
      "appointments on outdated grants:\n"
