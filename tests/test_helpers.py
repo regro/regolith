@@ -191,7 +191,7 @@ helper_map = [
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
      "There are no results that match your search.\n"
      ),
-    (["helper", "u_institutions", "columbiau",
+    (["helper", "u_institution", "columbiau",
       "--aka", "ucolumbia", "Columbia University in the City of New York",
       "--dept_id", "mathematics", "--dept_name","Department of Mathematics",
       "--dept_aka", "dept. of mathematics", "math department",
@@ -199,7 +199,7 @@ helper_map = [
       "--date", "2020-01-01"],
      "columbiau has been updated/added in institutions\n"
      ),
-    (["helper", "u_institutions", "col"],
+    (["helper", "u_institution", "col"],
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
