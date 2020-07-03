@@ -243,7 +243,7 @@ class GradeReportBuilder(LatexBuilderBase):
         return sorted(totals), wtotal
 
     def plot_letter_grades(self, students_kwargs, scale):
-        """Plots the letter grades in a historgram"""
+        """Plots the letter grades in a histogram"""
         try:
             import matplotlib.pyplot as plt
         except ImportError:
