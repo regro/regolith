@@ -15,7 +15,8 @@ from regolith.tools import (
 TARGET_COLL = "presentations"
 ALLOWED_TYPES = ["award", "keynote", "plenary", "invited", "contributed_oral",
                  "poster", "colloquium", "seminar","other"]
-ALLOWED_STATI = ["accepted"]
+ALLOWED_STATI = ["in-prep", "submitted", "accepted", "declined",
+                         "cancelled"]
 
 
 def subparser(subpi):
@@ -29,36 +30,36 @@ def subparser(subpi):
     subpi.add_argument("name", help="name of the presentation, meeting name if meeting,"
                                     "department if seminar",
                        )
-    subpi.add_argument("-t","--type", help=f"types, from {ALLOWED_TYPES}. Default is other",
-                       default="invited"
+    subpi.add_argument("begin_date",
+                       help="Input begin date for this expense "
+                            "in YYYY-MM-DD format",
                        )
-    subpi.add_argument("-d", "--begin_date",
-                       help="Input begin date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date",
-                       )
-    subpi.add_argument("-e,", "--end_date",
-                       help="Input end date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date",
+    subpi.add_argument("end_date",
+                       help="Input end date for this expense"
+                            "in YYYY-MM-DD format" ,
                        )
     subpi.add_argument("-p", "--person",
-                       help="the person submitting the presentation, used for presentation name",
-                       default="sbillinge"
+                       help="the person submitting the presentation, used for presentation name,"
+                            " defaults to name in user.config",
                        )
-    subpi.add_argument("-a", "--abstract",
-                       help="abstract description, defaults to tbd",
-                       default='tbd'
-                       ) #isn't an abstract a description?
-    subpi.add_argument("-s", "--status",
-                       help="status of the presentation, default is accepted",
-                       default="accepted"
-                       )
-    subpi.add_argument("-x", "--title",
+    subpi.add_argument("-t", "--title",
                        help="the title of the presentation, default is tbd",
                        default='tbd'
                        )
-    subpi.add_argument("-y", "--authors", nargs="+",
+    subpi.add_argument("-a", "--abstract",
+                       help="abstract of the presentation, defaults to tbd",
+                       default='tbd'
+                       )
+    subpi.add_argument("-s", "--status",
+                       help=f"status, from {ALLOWED_STATI}, default is accepted",
+                       default="accepted"
+                       )
+    subpi.add_argument("-y", "--type", help=f"types, from {ALLOWED_TYPES}. Default is other",
+                       default="invited"
+                       )
+    subpi.add_argument("-u", "--authors", nargs="+",
                        help="specify the authors of this presentation, "
-                            "default is empty list",
+                            "defaults to person submitting the presentation",
                        )
     return subpi
 
@@ -93,16 +94,19 @@ class PresentationAdderHelper(DbHelperBase):
         gtx = self.gtx
         rc = self.rc
         # dates
-        if rc.begin_date:
-            begin_date = date_parser.parse(rc.begin_date).date()
-        else:
-            begin_date = dt.date.today()
-        if rc.end_date:
-            end_date = date_parser.parse(rc.end_date).date()
-        else:
-            end_date = dt.date.today()
 
-        # code for authors.
+        begin_date = date_parser.parse(rc.begin_date).date()
+        end_date = date_parser.parse(rc.end_date).date()
+
+        # User specifies person in CL or in config.json
+        if not rc.person:
+            try:
+                rc.person = rc.default_user_id
+            except AttributeError:
+                raise RuntimeError(
+                    "WARNING: no person been set. please rerun specifying authors,"
+                    "or add your id, e.g., sbillinge, to the config.json file in ~/.config/regolith"
+                )
 
         key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{rc.person[0:2]}_{''.join(rc.place.casefold().split()).strip()}"
         coll = self.gtx[rc.coll]
@@ -113,16 +117,12 @@ class PresentationAdderHelper(DbHelperBase):
         else:
             pdoc = {}
 
+
         if not rc.authors:
-            try:
-                authors = [rc.default_user_id]
-            except AttributeError:
-                raise RuntimeError(
-                    "WARNING: no authors have been set. please rerun specifying authors,"
-                    "or add your id, e.g., sbillinge, to the config.json file in ~/.config/regolith"
-                )
+            authors = [rc.person]
         else:
             authors = rc.authors
+
         pdoc.update({'_id': key,
                      'abstract': rc.abstract,
                      'authors': authors,
