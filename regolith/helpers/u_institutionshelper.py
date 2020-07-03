@@ -12,7 +12,7 @@ TARGET_COLL = "institutions"
 
 def subparser(subpi):
     subpi.add_argument("institution_id",
-                       help="id of the institution. e.g.columbiau.")
+                       help="id of the institution, e.g., columbiau.")
     subpi.add_argument("-n","--name",
                         help="Full name of the institution")
     subpi.add_argument("-i","--index",
@@ -33,17 +33,17 @@ def subparser(subpi):
     subpi.add_argument("--zip",
                        help="zipcode of the institution.")
     subpi.add_argument("--dept_id",
-                       help="e.g.: physics, apam.")
+                       help="e.g. physics.")
     subpi.add_argument("--dept_name",
-                       help="Department canonical name. e.g. Department of Physics. "
+                       help="Department canonical name, e.g., Department of Physics. "
                             "Defaults to 'Department of {department id.}'")
     subpi.add_argument("--dept_aka",
                        nargs='+',
-                       help="Department aliases. e.g. dept. of physics.")
+                       help="Department aliases, e.g., dept. of physics.")
     subpi.add_argument("--school",
-                       help="Full canonical name. e.g. School of Engineering and Applied Science.")
+                       help="Full canonical name, e.g., School of Engineering and Applied Science.")
     subpi.add_argument("--school_id",
-                       help="Short name for the school. e.g. SEAS.")
+                       help="Short name for the school, e.g., SEAS.")
     subpi.add_argument("--school_aka",
                        nargs='+',
                        help="School aliases.")
