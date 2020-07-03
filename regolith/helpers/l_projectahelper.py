@@ -24,6 +24,9 @@ HELPER_TARGET = "l_projecta"
 
 
 def subparser(subpi):
+    subpi.add_argument("--all", action="store_true",
+                       help="Lists all projecta that have not ended"
+                       )
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-l", "--lead",
                        help="Filter milestones for this project lead"
@@ -99,7 +102,7 @@ class ProjectaListerHelper(SoutHelperBase):
         else:
             collection = self.gtx["projecta"]
 
-        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter):
+        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter) and (not rc.all):
             return
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
@@ -117,6 +120,9 @@ class ProjectaListerHelper(SoutHelperBase):
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")
         for projectum in collection:
+            if rc.all and projectum.get('status') != "finished":
+                projecta.append(projectum)
+                continue
             if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
             if rc.lead and projectum.get('lead') != rc.lead:

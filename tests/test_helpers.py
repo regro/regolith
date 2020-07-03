@@ -46,6 +46,9 @@ helper_map = [
     (["helper", "l_projecta", "--grp_by_lead"],
      "lyang:\n    20ly_newprojectum\nascopatz:\n    20sb_firstprojectum\n"
      ),
+    (["helper", "l_projecta", "--all"],
+     "20ly_newprojectum\n20sb_firstprojectum\n"
+     ),
     (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"],
      "ascopatz:\n    20sb_firstprojectum\n"
      ),
