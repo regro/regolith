@@ -367,7 +367,33 @@ EXEMPLARS = {
               "ss_months": 1.0,
              }
          ]
-        }
+        },
+        {"_id": "ta",
+         "amount": 0.0,
+         "begin_date": "2020-06-01",
+         "end_date": "2020-12-31",
+         "funder": "Life",
+         "program": "Underground Grants",
+         "team": [
+             {"institution": "Ministry of Magic",
+              "name": "Chief Witch",
+              "position": "pi"
+             },
+            {"institution": "Ministry of Magic",
+              "name": "Chief Wizard",
+              "position": "co-pi"
+             },
+         ],
+         "title": "Support for teaching assistants",
+         "budget": [
+             {"begin_date": "2020-06-01",
+              "end_date": "2020-08-30",
+              "student_months": 0.0,
+              "postdoc_months": 0.0,
+              "ss_months": 0.0,
+             }
+         ]
+        },
     ],
     "groups": {
         "_id": "ergs",

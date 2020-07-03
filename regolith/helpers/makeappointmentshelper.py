@@ -31,6 +31,8 @@ import textwrap
 
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
+BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
+             'zurabSNF16']
 ALLOWED_TYPES = ["gra", "pd", "ss"]
 
 
@@ -92,11 +94,10 @@ class MakeAppointmentsHelper(SoutHelperBase):
         rc = self.rc
         outdated, depleted, underspent, overspent, ppl_coll = [], [], [], [], []
 
-
         if not rc.check:
-            ppl_coll = self.gtx["people"]
+            ppl_coll = self.gtx[rc.coll]
         else:
-            ppl_coll = deepcopy(self.gtx["people"])
+            ppl_coll = deepcopy(self.gtx[rc.coll])
             p = rc.client.find_one(rc.database, "people", {"_id": rc.person})
             if p:
                 pdocl = list(filter(lambda doc: doc["_id"] == rc.appointment, collect_appts([p])))
@@ -135,6 +136,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 continue
             is_fully_appointed(person, appts_begin, appts_end)
             for appt in appts:
+                if appt.get("grant") in BLACKLIST:
+                    continue
                 grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
                 if not grant:
                     raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".format
@@ -166,8 +169,9 @@ class MakeAppointmentsHelper(SoutHelperBase):
                                 person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(appt_end)))
                             depleted_period = True
 
-
         for grant in self.gtx["grants"]:
+            if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
+                continue
             g_end = get_dates(grant)['end_date']
             g_amt = grant_burn(grant, all_appts, begin_date=g_end, end_date=g_end)[1]
             g_amt = g_amt.get('student_days') + g_amt.get('postdoc_days') + g_amt.get('ss_days')
@@ -182,7 +186,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
             print("appointments on outdated grants:")
             for appt in outdated:
                print(appt)
-
         if depleted:
             print("appointments on depleted grants:")
             for appt in depleted:
