@@ -8,6 +8,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
+from regolith.schemas import ALLOWED_MILESTONES_TYPES
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
