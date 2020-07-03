@@ -25,9 +25,12 @@ from regolith.dates import (
     is_current,
     get_dates,
 )
+from copy import deepcopy
+import yaml
 
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
+ALLOWED_TYPES = ["gra", "pd", "ss"]
 
 
 def subparser(subpi):
@@ -36,15 +39,16 @@ def subparser(subpi):
     subpi.add_argument("begin_date", help='begin date of interval to check appointment, to specify')
     subpi.add_argument("end_date", help='end date of interval to check appointments')
     subpi.add_argument("-c", "--check", action="store_true", help="appointment adding mode")
-    subpi.add_argument("-p", "-person", help='id of person to add appointment for', nargs="+")
-    subpi.add_argument("-a", "--appointment",  help='id of appointment')
-    subpi.add_argument("-b", "--a_begin", help='start date of appointment')
-    subpi.add_argument("-e", "--a_end", help='end date of appointment')
-    subpi.add_argument("-l", "--loading", help='loading of appointment')
-    subpi.add_argument("-g", "--grant", help='grant of appointment')
-    subpi.add_argument("-s", "--status", help='status of appointment')
-    subpi.add_argument("-n", "--notes", help='any notes for appointment', nargs="+")
-    
+    subpi.add_argument("-p", "-person", help='id of person to add appointment for', nargs="+", default="pseudo_person")
+    subpi.add_argument("-a", "--appointment",  help='id of appointment', default="pseudo_appointment")
+    subpi.add_argument("-b", "--a_begin", help='start date of appointment, defaults to entered begin date')
+    subpi.add_argument("-e", "--a_end", help='end date of appointment, defaults to entered end date')
+    subpi.add_argument("-t", "--type", help=f'type of appointment can be {ALLOWED_TYPES}', default='')
+    subpi.add_argument("-l", "--loading", help='loading of appointment', default=1.0)
+    subpi.add_argument("-g", "--grant", help='grant of appointment', default="pseudogrant")
+    subpi.add_argument("-s", "--status", help='status of appointment', default="proposed")
+    subpi.add_argument("-n", "--notes", help='any notes for appointment', nargs="+", default=[])
+
     return subpi
 
 
@@ -86,14 +90,46 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        outdated, depleted, underspent, overspent = [], [], [], []
+        outdated, depleted, underspent, overspent, ppl_coll = [], [], [], [], []
         begin_date = date_parser.parse(rc.begin_date).date()
         end_date = date_parser.parse(rc.end_date).date()
 
-        all_appts = collect_appts(self.gtx["people"])
+        if not rc.check:
+            ppl_coll = self.gtx["people"]
+        else:
+            ppl_coll = deepcopy(self.gtx["people"])
+            p = rc.client.find_one(rc.database, "people", {"_id": rc.person})
+            if p:
+                appts = collect_appts([p])
+                pdocl = list(filter(lambda doc: doc["_id"] == rc.appointment, appts))
+                if len(pdocl) > 0:
+                    raise RuntimeError(
+                        "This entry appears to already exist in the collection")
+                else:
+                    pdoc = {}
+            if rc.type and rc.type not in ALLOWED_TYPES:
+                raise RuntimeError(f"appointment type must be one of {ALLOWED_TYPES}")
+            pdoc.update({'_id': rc.appointment,
+                         'begin_date': rc.a_begin if rc.a_begin else str(begin_date),
+                         'end_date': rc.a_end if rc.a_end else str(end_date),
+                         'grant': rc.grant,
+                         'type': rc.type,
+                         'loading': rc.loading,
+                         'status': rc.status,
+                         'notes': rc.notes,
+                         }
+                        )
+            if p:
+                # write an appointments updater for the fake ppl_coll
+                pass
+            else:
+                person = [{rc.person: {"appointments": pdoc}}]
+                with open('person.yaml', 'w') as f:
+                    ppl_coll = yaml.dump(person, f)
 
+        all_appts = collect_appts(ppl_coll)
 
-        for p in self.gtx["people"]:
+        for p in ppl_coll:
             appts = collect_appts([p])
             if not appts:
                 continue
