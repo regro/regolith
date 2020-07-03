@@ -1315,15 +1315,15 @@ def is_fully_appointed(person, begin_date, end_date):
                 good_period = False
         else:
             if not good_period:
-                print("appointment gap for {} from {} to {}".format(person.get('_id'),
+                print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
                                                                      str(start_gap), str(day - relativedelta(days=1))))
             good_period = True
         if x == timespan.days and not good_period:
             if day != start_gap:
-                print("appointment gap for {} from {} to {}".format(person.get('_id'),
+                print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
                                                                      str(start_gap), str(day - relativedelta(days=1))))
             else:
-                print("appointment gap for {} on {}".format(person.get('_id'), str(day)))
+                print("WARNING: appointment gap for {} on {}".format(person.get('_id'), str(day)))
     return status
 
 def key_value_pair_filter(collection, arguments):
