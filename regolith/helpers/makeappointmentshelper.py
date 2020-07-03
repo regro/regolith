@@ -100,8 +100,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
             ppl_coll = deepcopy(self.gtx["people"])
             p = rc.client.find_one(rc.database, "people", {"_id": rc.person})
             if p:
-                appts = collect_appts([p])
-                pdocl = list(filter(lambda doc: doc["_id"] == rc.appointment, appts))
+                pdocl = list(filter(lambda doc: doc["_id"] == rc.appointment, collect_appts([p])))
                 if len(pdocl) > 0:
                     raise RuntimeError(
                         "This entry appears to already exist in the collection")
@@ -123,57 +122,57 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 # write an appointments updater for the fake ppl_coll
                 pass
             else:
-                person = [{rc.person: {"appointments": pdoc}}]
-                with open('person.yaml', 'w') as f:
-                    ppl_coll = yaml.dump(person, f)
+                new_person = [{rc.person: {"appointments": pdoc}}]
+                with open('new_person.yaml', 'w') as f:
+                    ppl_coll = yaml.dump(new_person, f)
 
         all_appts = collect_appts(ppl_coll)
 
-        for p in ppl_coll:
-            appts = collect_appts([p])
+        for person in ppl_coll:
+            appts = collect_appts([person])
             if not appts:
                 continue
-            is_fully_appointed(p, begin_date, end_date)
-            for a in appts:
-                g = rc.client.find_one(rc.database, "grants", {"_id": a.get("grant")})
-                if not g:
+            is_fully_appointed(person, begin_date, end_date)
+            for appt in appts:
+                grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
+                if not grant:
                     raise RuntimeError("grant: {}, person: {}, appointment: {}, grant not found in grants database".format
-                                     (a.get("grant"), p.get("_id"), a.get("_id")))
-                a_end = get_dates(a)['end_date']
-                total_burn = grant_burn(g, all_appts, begin_date=begin_date, end_date=end_date)
+                                     (appt.get("grant"), person.get("_id"), apptt.get("_id")))
+                a_end = get_dates(appt)['end_date']
+                total_burn = grant_burn(grant, all_appts, begin_date=begin_date, end_date=end_date)
                 timespan = end_date - begin_date
                 outdated_period, depleted_period = False, False
                 for x in range (timespan.days + 1):
                     if not outdated_period:
                         day = begin_date + relativedelta(days=x)
-                        if not is_current(g, now=day):
+                        if not is_current(grant, now=day):
                             outdated.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
-                                p.get('_id'), a.get('_id'), g.get('_id'), str(day), str(a_end)))
+                                person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(a_end)))
                             outdated_period = True
                     if not depleted_period:
                         day_burn = 0
-                        if a.get('type') == 'gra':
+                        if appt.get('type') == 'gra':
                             day_burn = total_burn[x+1].get('student_days')
-                        elif a.get('type') == 'pd':
+                        elif appt.get('type') == 'pd':
                             day_burn = total_burn[x+1].get('postdoc_days')
-                        elif a.get('type') == 'ss':
+                        elif appt.get('type') == 'ss':
                             day_burn = total_burn[x+1].get('ss_days')
                         if day_burn < 0:
                             depleted.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
-                                p.get('_id'), a.get('_id'), g.get('_id'), str(day), str(a_end)))
+                                person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(a_end)))
                             depleted_period = True
 
 
-        for g in self.gtx["grants"]:
-            g_end = get_dates(g)['end_date']
-            g_amt = grant_burn(g, all_appts, begin_date=g_end, end_date=g_end)[1]
+        for grant in self.gtx["grants"]:
+            g_end = get_dates(grant)['end_date']
+            g_amt = grant_burn(grant, all_appts, begin_date=g_end, end_date=g_end)[1]
             g_amt = g_amt.get('student_days') + g_amt.get('postdoc_days') + g_amt.get('ss_days')
             if g_amt > 30.5:
                 underspent.append("{}: grant: {}, underspend amount: {} months".format(
-                    str(g_end), g.get('_id'), g_amt/30.5))
+                    str(g_end), grant.get('_id'), g_amt/30.5))
             elif g_amt < -30.5:
                 overspent.append("{}: grant: {}, overspend amount: {} months".format(
-                    str(g_end), g.get('_id'), g_amt/30.5))
+                    str(g_end), grant.get('_id'), g_amt/30.5))
 
         if outdated:
             print("appointments on outdated grants:")
