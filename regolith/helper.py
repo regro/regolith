@@ -16,6 +16,7 @@ from regolith.helpers import u_milestonehelper as u_milestone
 from regolith.helpers import u_contacthelper as u_contact
 from regolith.helpers import l_todohelper as l_todo
 from regolith.helpers import u_finishprumhelper as u_finishprum
+from regolith.helpers import l_generalhelper as l_general
 
 HELPERS = {
     "hello": (hello.HelloHelper, hello.subparser),
@@ -34,6 +35,7 @@ HELPERS = {
     "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
     "l_todo": (l_todo.TodoListerHelper, l_todo.subparser),
     "finish_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
+    "lister": (l_general.GeneralListerHelper, l_general.subparser),
 }
 
 

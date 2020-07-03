@@ -163,6 +163,36 @@ helper_map = [
      "20sb_firstprojectum     status:finished\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
+
+    #UC1
+    (["helper", "lister", "people"],
+     "Results of your search:\nsbillinge    \nscopatz\n"),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon"],
+     "Results of your search:\n"
+     "sbillinge\n"),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--return_fields", "name", "position"],
+     "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n"),
+    (["helper", "lister", "people", "--keys"],
+     "Available keys:\n"
+     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
+     "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
+     "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
+     "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
+     "'title', 'todos']\n"),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
+     "Results of your search:\nsbillinge\n"
+     "Available keys:\n"
+     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
+     "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
+     "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
+     "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
+     "'title', 'todos']\n"
+     ),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
+     "There are no results that match your search.\n"
+     ),
 ]
 
 

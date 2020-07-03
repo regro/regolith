@@ -1468,7 +1468,7 @@ SCHEMAS = {
             "type": "string",
         },
         "institution": {
-            "description": "name of the inistitution",
+            "description": "name of the institution",
             "required": True,
             "type": "string",
         },
