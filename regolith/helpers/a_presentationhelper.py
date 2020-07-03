@@ -20,10 +20,7 @@ ALLOWED_STATI = ["in-prep", "submitted", "accepted", "declined",
 
 
 def subparser(subpi):
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
-                       )
+
     subpi.add_argument("place", help="the place of the presentation, location if conference,"
                                      "institution for seminars"
                        )
@@ -60,6 +57,10 @@ def subparser(subpi):
     subpi.add_argument("-u", "--authors", nargs="+",
                        help="specify the authors of this presentation, "
                             "defaults to person submitting the presentation",
+                       )
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file."
                        )
     return subpi
 
