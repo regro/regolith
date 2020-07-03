@@ -6,16 +6,11 @@ import os
 import openpyxl
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import month_to_int
+from regolith.dates import month_to_int, get_dates
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, month_and_year, \
     fuzzy_retrieval
 
-
-def mdy_date(month, day, year, **kwargs):
-    if isinstance(month, str):
-        month = month_to_int(month)
-    return datetime.date(year, month, day)
 
 
 def mdy(month, day, year, **kwargs):
@@ -74,7 +69,10 @@ class ReimbursementBuilder(BuilderBase):
             ) for one in rc.people]
             if ex["payee"] != "direct_billed":
                 for chosen_one in chosen_ones:
-                    if payee.get("name") != chosen_one.get("name"):
+                    if not payee:
+                        print(f"WARNING: payee {ex['payee']} not found in "
+                              f"people coll")
+                    elif payee.get("name") != chosen_one.get("name"):
                         continue
                     # open the template
                     if isinstance(ex["grants"], str):
@@ -110,6 +108,7 @@ class ReimbursementBuilder(BuilderBase):
                     dates = []
                     for i, item in enumerate(ex["itemized_expenses"]):
                         r = j + i
+                        expdates = get_dates(item)
                         if r > 49:
                             item_ws = wb["Extra_Page"]
                             j = 0
@@ -117,9 +116,11 @@ class ReimbursementBuilder(BuilderBase):
                             purpose_column = 5
                             ue_column = 12
                             se_column = 14
-                        dates.append(mdy_date(**item))
+                        dates.append(expdates.get("date"))
                         item_ws.cell(row=r, column=2, value=i)
-                        item_ws.cell(row=r, column=3, value=mdy(**item))
+                        item_ws.cell(row=r, column=3, value=mdy(expdates.get("date").month,
+                                              expdates.get("date").day,
+                                              expdates.get("date").year))
                         item_ws.cell(row=r, column=purpose_column,
                                      value=item["purpose"])
                         item_ws.cell(
