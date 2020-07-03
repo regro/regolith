@@ -12,11 +12,6 @@ from regolith.tools import all_docs_from_collection, month_and_year, \
     fuzzy_retrieval
 
 
-def mdy_date(month, day, year, **kwargs):
-    if isinstance(month, str):
-        month = month_to_int(month)
-    return datetime.date(year, month, day)
-
 
 def mdy(month, day, year, **kwargs):
     return "{}/{}/{}".format(
