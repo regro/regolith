@@ -7,6 +7,7 @@ from cerberus import Validator
 from .sorters import POSITION_LEVELS
 
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
+ALLOWED_MILESTONE_TYPES = ["meeting", "pr", "deliverable", "approved_file"]
 
 EXEMPLARS = {
     "abstracts": {
@@ -1168,14 +1169,14 @@ EXEMPLARS = {
                           'initial project plan',
              'audience': ['lead', 'pi', 'group_members'],
              'status': 'proposed',
-             'type': 'meeting'
+             'type': ALLOWED_MILESTONE_TYPES,
              },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
              'objective': 'develop a detailed plan with dates',
              'audience': ['lead', 'pi', 'group_members'],
              'status': 'proposed',
-             'type': 'pr',
+             'type': ALLOWED_MILESTONE_TYPES,
              }],
         "name": "First Projectum",
         "pi_id": "scopatz",
