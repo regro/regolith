@@ -27,6 +27,7 @@ from regolith.dates import (
 )
 from copy import deepcopy
 import yaml
+import textwrap
 
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
@@ -136,8 +137,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
             for appt in appts:
                 grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
                 if not grant:
-                    raise RuntimeError("grant: {}, person: {}, appointment: {}, grant not found in grants database".format
-                                     (appt.get("grant"), person.get("_id"), apptt.get("_id")))
+                    raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".format
+                                     (appt.get("grant"), person.get("_id"), appt.get("_id")))
                 a_end = get_dates(appt)['end_date']
                 total_burn = grant_burn(grant, all_appts, begin_date=begin_date, end_date=end_date)
                 timespan = end_date - begin_date
@@ -146,7 +147,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     if not outdated_period:
                         day = begin_date + relativedelta(days=x)
                         if not is_current(grant, now=day):
-                            outdated.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
+                            outdated.append("    person: {}, appointment: {}, grant: {},\n"
+                                            "            from {} until {}".format(
                                 person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(a_end)))
                             outdated_period = True
                     if not depleted_period:
@@ -158,7 +160,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
                         elif appt.get('type') == 'ss':
                             day_burn = total_burn[x+1].get('ss_days')
                         if day_burn < 0:
-                            depleted.append("person: {}, appointment: {}, grant: {}, from {} until {}".format(
+                            depleted.append("    person: {}, appointment: {}, grant: {},\n"
+                                            "            from {} until {}".format(
                                 person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(a_end)))
                             depleted_period = True
 
@@ -168,27 +171,28 @@ class MakeAppointmentsHelper(SoutHelperBase):
             g_amt = grant_burn(grant, all_appts, begin_date=g_end, end_date=g_end)[1]
             g_amt = g_amt.get('student_days') + g_amt.get('postdoc_days') + g_amt.get('ss_days')
             if g_amt > 30.5:
-                underspent.append("{}: grant: {}, underspend amount: {} months".format(
+                underspent.append("    {}: grant: {}, underspend amount: {} months".format(
                     str(g_end), grant.get('_id'), g_amt/30.5))
             elif g_amt < -30.5:
-                overspent.append("{}: grant: {}, overspend amount: {} months".format(
+                overspent.append("    {}: grant: {}, overspend amount: {} months".format(
                     str(g_end), grant.get('_id'), g_amt/30.5))
 
         if outdated:
             print("appointments on outdated grants:")
             for appt in outdated:
-                print(appt)
+               print(appt)
+
         if depleted:
             print("appointments on depleted grants:")
             for appt in depleted:
                 print(appt)
         if underspent:
             print("underspent grants:")
-            for g in underspent:
-                print(g)
+            for grant in underspent:
+                print(grant)
         if overspent:
             print("overspent grants:")
-            for g in overspent:
-                print(g)
+            for grant in overspent:
+                print(gramtt)
 
         return

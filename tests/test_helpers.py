@@ -237,13 +237,15 @@ helper_map = [
     (["helper", "makeappointments", "2019-08-31", "2019-10-31",],
      "appointment gap for scopatz from 2019-08-31 to 2019-10-30\n"
      "appointments on outdated grants:\n"
-     "person: scopatz, appointment: s20, grant: SymPy-1.1, from 2019-08-31 until 2020-05-15\n"
+     "    person: scopatz, appointment: s20, grant: SymPy-1.1,\n"
+     "            from 2019-08-31 until 2020-05-15\n"
      "appointments on depleted grants:\n"
-     "person: scopatz, appointment: f19, grant: dmref15, from 2019-09-01 until 2019-10-31\n"
+     "    person: scopatz, appointment: f19, grant: dmref15,\n"
+     "            from 2019-09-01 until 2019-10-31\n"
      "underspent grants:\n"
-     "2030-12-31: grant: SymPy-1.1, underspend amount: 8.0 months\n"
-     "2030-12-31: grant: SymPy-2.0, underspend amount: 86.0 months\n"
-     "2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
+     "    2030-12-31: grant: SymPy-1.1, underspend amount: 8.0 months\n"
+     "    2030-12-31: grant: SymPy-2.0, underspend amount: 86.0 months\n"
+     "    2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
      )
 ]
 
