@@ -121,9 +121,7 @@ class ReimbursementBuilder(BuilderBase):
                             purpose_column = 5
                             ue_column = 12
                             se_column = 14
-                        dates.append(mdy_date(expdates.get("date").month,
-                                              expdates.get("date").day,
-                                              expdates.get("date").year))
+                        dates.append(expdates.get("date"))
                         item_ws.cell(row=r, column=2, value=i)
                         item_ws.cell(row=r, column=3, value=mdy(expdates.get("date").month,
                                               expdates.get("date").day,
