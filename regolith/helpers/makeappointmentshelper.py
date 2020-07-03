@@ -139,19 +139,20 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 if not grant:
                     raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".format
                                      (appt.get("grant"), person.get("_id"), appt.get("_id")))
-                a_end = get_dates(appt)['end_date']
-                total_burn = grant_burn(grant, all_appts, begin_date=begin_date, end_date=end_date)
-                timespan = end_date - begin_date
+                a_begin, a_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
+                total_burn = grant_burn(grant, all_appts, begin_date=a_begin, end_date=a_end)
+                timespan = a_end - a_begin
                 outdated_period, depleted_period = False, False
                 for x in range (timespan.days + 1):
                     if not outdated_period:
-                        day = begin_date + relativedelta(days=x)
+                        day = a_begin + relativedelta(days=x)
                         if not is_current(grant, now=day):
                             outdated.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
-                                person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(a_end)))
+                                person.get('_id'), appt.get('_id'), grant.get('_id'), str(day),
+                                str(min(a_end, get_dates(grant)['begin_date']))))
                             outdated_period = True
-                    if not depleted_period:
+                    if not depleted_period and not outdated_period:
                         day_burn = 0
                         if appt.get('type') == 'gra':
                             day_burn = total_burn[x+1].get('student_days')
@@ -172,10 +173,10 @@ class MakeAppointmentsHelper(SoutHelperBase):
             g_amt = g_amt.get('student_days') + g_amt.get('postdoc_days') + g_amt.get('ss_days')
             if g_amt > 30.5:
                 underspent.append("    {}: grant: {}, underspend amount: {} months".format(
-                    str(g_end), grant.get('_id'), g_amt/30.5))
+                    str(g_end), grant.get('_id'), round(g_amt/30.5, 2)))
             elif g_amt < -30.5:
                 overspent.append("    {}: grant: {}, overspend amount: {} months".format(
-                    str(g_end), grant.get('_id'), g_amt/30.5))
+                    str(g_end), grant.get('_id'), round(g_amt/30.5, 2)))
 
         if outdated:
             print("appointments on outdated grants:")
@@ -193,6 +194,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
         if overspent:
             print("overspent grants:")
             for grant in overspent:
-                print(gramtt)
+                print(grant)
 
         return

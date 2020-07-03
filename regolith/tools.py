@@ -1321,7 +1321,7 @@ def is_fully_appointed(person, begin_date, end_date):
         if x == timespan.days and not good_period:
             if day != start_gap:
                 print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
-                                                                     str(start_gap), str(day - relativedelta(days=1))))
+                                                                     str(start_gap), str(day)))
             else:
                 print("WARNING: appointment gap for {} on {}".format(person.get('_id'), str(day)))
     return status

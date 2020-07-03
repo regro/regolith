@@ -342,6 +342,32 @@ EXEMPLARS = {
                  "ss_months": 6.0,},
             ]
         },
+        {"_id": "abc42",
+         "amount": 42000,
+         "begin_date": "2020-06-01",
+         "end_date": "2020-12-31",
+         "funder": "Life",
+         "program": "Metaphysical Grants",
+         "team": [
+             {"institution": "University of Pedagogy",
+              "name": "Chief Pedagogue",
+              "position": "pi"
+             },
+            {"institution": "University of Pedagogy",
+              "name": "Pedagogue Jr.",
+              "position": "co-pi"
+             },
+         ],
+         "title": "The answer to life, the universe, and everything",
+         "budget": [
+             {"begin_date": "2020-06-01",
+              "end_date": "2020-08-30",
+              "student_months": 0.0,
+              "postdoc_months": 0.0,
+              "ss_months": 1.0,
+             }
+         ]
+        }
     ],
     "groups": {
         "_id": "ergs",
@@ -487,13 +513,23 @@ EXEMPLARS = {
                 "status": "finalized",
                 "notes": ["forgetmenot"]
             },
-            "s20":{
+            "s20": {
                 "begin_date": "2020-01-01",
                 "end_date": "2020-05-15",
                 "grant": "SymPy-1.1",
+                "type": "pd",
                 "loading": 1.0,
                 "status": "finalized",
                 "notes": ["fully appointed", "outdated grant"]
+            },
+            "ss20": {
+                "begin_date": "2020-06-01",
+                "end_date": "2020-08-31",
+                "grant": "abc42",
+                "type": "ss",
+                "loading": 0.8,
+                "status": "proposed",
+                "notes": []
             }
 
         },
