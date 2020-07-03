@@ -235,7 +235,7 @@ helper_map = [
     (["helper", "makeappointments", "2019-08-31", "2019-10-31",], "People with gaps in their appointments:\nAnthony Scopatz\nnot fully appointed on 2020-06-15\n"
      ),
     (["helper", "makeappointments", "2019-08-31", "2019-10-31",],
-     "appointment gap for scopatz from 2019-08-31 to 2019-10-30\n"
+     "WARNING: appointment gap for scopatz from 2019-08-31 to 2019-10-30\n"
      "appointments on outdated grants:\n"
      "    person: scopatz, appointment: s20, grant: SymPy-1.1,\n"
      "            from 2019-08-31 until 2020-05-15\n"
