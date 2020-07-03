@@ -36,9 +36,8 @@ ALLOWED_TYPES = ["gra", "pd", "ss"]
 
 def subparser(subpi):
 
+    subpi.add_argument("-r", "--run", action="store_true", help='run the helper')
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
-    subpi.add_argument("begin_date", help='begin date of interval to check appointment, to specify')
-    subpi.add_argument("end_date", help='end date of interval to check appointments')
     subpi.add_argument("-c", "--check", action="store_true", help="appointment adding mode")
     subpi.add_argument("-p", "-person", help='id of person to add appointment for', nargs="+", default="pseudo_person")
     subpi.add_argument("-a", "--appointment",  help='id of appointment', default="pseudo_appointment")
@@ -92,8 +91,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         outdated, depleted, underspent, overspent, ppl_coll = [], [], [], [], []
-        begin_date = date_parser.parse(rc.begin_date).date()
-        end_date = date_parser.parse(rc.end_date).date()
+
 
         if not rc.check:
             ppl_coll = self.gtx["people"]
@@ -110,8 +108,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
             if rc.type and rc.type not in ALLOWED_TYPES:
                 raise RuntimeError(f"appointment type must be one of {ALLOWED_TYPES}")
             pdoc.update({'_id': rc.appointment,
-                         'begin_date': rc.a_begin if rc.a_begin else str(begin_date),
-                         'end_date': rc.a_end if rc.a_end else str(end_date),
+                         'begin_date': rc.a_begin if rc.a_begin else str(dt.date.today()),
+                         'end_date': rc.a_end if rc.a_end else str(dt.date.today() + relativedelta(months=4)),
                          'grant': rc.grant,
                          'type': rc.type,
                          'loading': rc.loading,
@@ -128,29 +126,31 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     ppl_coll = yaml.dump(new_person, f)
 
         all_appts = collect_appts(ppl_coll)
+        appts_begin = min(get_dates(appt)['begin_date'] for appt in all_appts)
+        appts_end = max(get_dates(appt)['end_date'] for appt in all_appts)
 
         for person in ppl_coll:
             appts = collect_appts([person])
             if not appts:
                 continue
-            is_fully_appointed(person, begin_date, end_date)
+            is_fully_appointed(person, appts_begin, appts_end)
             for appt in appts:
                 grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
                 if not grant:
                     raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".format
                                      (appt.get("grant"), person.get("_id"), appt.get("_id")))
-                a_begin, a_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
-                total_burn = grant_burn(grant, all_appts, begin_date=a_begin, end_date=a_end)
-                timespan = a_end - a_begin
+                appt_begin, appt_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
+                total_burn = grant_burn(grant, all_appts, begin_date=appt_begin, end_date=appt_end)
+                timespan = appt_end - appt_begin
                 outdated_period, depleted_period = False, False
                 for x in range (timespan.days + 1):
                     if not outdated_period:
-                        day = a_begin + relativedelta(days=x)
+                        day = appt_begin + relativedelta(days=x)
                         if not is_current(grant, now=day):
                             outdated.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
                                 person.get('_id'), appt.get('_id'), grant.get('_id'), str(day),
-                                str(min(a_end, get_dates(grant)['begin_date']))))
+                                str(min(appt_end, get_dates(grant)['begin_date']))))
                             outdated_period = True
                     if not depleted_period and not outdated_period:
                         day_burn = 0
@@ -163,7 +163,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                         if day_burn < 0:
                             depleted.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
-                                person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(a_end)))
+                                person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(appt_end)))
                             depleted_period = True
 
 
