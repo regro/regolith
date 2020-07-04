@@ -1,23 +1,14 @@
 """Builder for Resumes."""
 
-import datetime
 import os
 
 import openpyxl
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import month_to_int, get_dates
+from regolith.dates import get_dates, mdy
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, month_and_year, \
     fuzzy_retrieval
-
-
-
-def mdy(month, day, year, **kwargs):
-    return "{}/{}/{}".format(
-        str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
-    )
-
 
 class ReimbursementBuilder(BuilderBase):
     """Build reimbursement from database entries"""

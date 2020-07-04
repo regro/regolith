@@ -420,3 +420,28 @@ def is_between(thing, start=None, end=None):
     if is_after(thing, start) and is_before(thing, end):
         between = True
     return between
+
+def mdy(month, day, year, **kwargs):
+    """
+    Given a month, day, and year, returns a string with the date
+    in the following format: MM/DD/YY
+
+    Parameters
+    ----------
+    month: integer or string
+         the month.  if a string should be resolvable using regolith month_to_int
+
+    day: integer or string
+        the day.
+
+    year: integer or strin
+        the year.
+
+    Returns
+    -------
+    A string with the date in format 'MM/DD/YY'
+
+        """
+    return "{}/{}/{}".format(
+        str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
+    )
