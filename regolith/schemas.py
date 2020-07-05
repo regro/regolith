@@ -2103,6 +2103,11 @@ SCHEMAS = {
             "required": True,
             "type": ("integer", "float"),
         },
+        "begin_date": {
+            "description": "start date of the grant (if string, in format YYYY-MM-DD)",
+            "required": False,
+            "anyof_type": ["string", "date"]
+        },
         "begin_day": {
             "description": "start day of the grant",
             "required": False,
@@ -2130,6 +2135,11 @@ SCHEMAS = {
             "description": "typically '$' or 'USD'",
             "required": False,
             "type": "string",
+        },
+        "end_date": {
+            "description": "end date of the grant (if string, in format YYYY-MM-DD)",
+            "required": False,
+            "anyof_type": ["string", "date"]
         },
         "end_day": {
             "description": "end day of the grant",
