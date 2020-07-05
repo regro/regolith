@@ -40,7 +40,7 @@ def subparser(subpi):
 
 
 class MakeAppointmentsHelper(SoutHelperBase):
-    """Helper for managing appointments.
+    """Helper for managing appointments on grants and studying the burn of grants over time.
     """
 
     # btype must be the same as helper target in helper.py
