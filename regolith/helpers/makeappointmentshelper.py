@@ -22,7 +22,6 @@ from regolith.dates import (
     is_current,
     get_dates,
 )
-import matplotlib
 import matplotlib.pyplot as plt
 
 TARGET_COLL = "people"
@@ -35,6 +34,7 @@ ALLOWED_TYPES = ["gra", "pd", "ss"]
 def subparser(subpi):
 
     subpi.add_argument("-r", "--run", action="store_true", help='run the helper')
+    subpi.add_argument("--no_plot", action="store_true", help='suppress plotting feature')
 
     return subpi
 
@@ -50,6 +50,7 @@ def plotter(datearray, student=None, pd=None, ss=None, title=None):
     plt.title(title)
     plt.legend(loc='best')
     plt.show()
+    return "plotting mode is on"
 
 
 class MakeAppointmentsHelper(SoutHelperBase):
@@ -91,23 +92,23 @@ class MakeAppointmentsHelper(SoutHelperBase):
         rc = self.rc
         outdated, depleted, underspent, overspent = [], [], [], []
         all_appts = collect_appts(self.gtx['people'])
-        appts_begin = min(get_dates(appt)['begin_date'] for appt in all_appts)
-        appts_end = max(get_dates(appt)['end_date'] for appt in all_appts)
 
         for person in self.gtx['people']:
             appts = collect_appts([person])
             if not appts:
                 continue
-            is_fully_appointed(person, appts_begin, appts_end)
+            this_begin = min(get_dates(appt)['begin_date'] for appt in appts)
+            this_end = max(get_dates(appt)['end_date'] for appt in appts)
+            is_fully_appointed(person, this_begin, this_end)
             for appt in appts:
                 if appt.get("grant") in BLACKLIST:
                     continue
                 grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
                 if not grant:
-                    raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".format
-                                     (appt.get("grant"), person.get("_id"), appt.get("_id")))
+                    raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".
+                                       format(appt.get("grant"), person.get("_id"), appt.get("_id")))
                 appt_begin, appt_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
-                total_burn = grant_burn(grant, all_appts, begin_date=appt_begin, end_date=appt_end)
+                this_burn = grant_burn(grant, all_appts, begin_date=appt_begin, end_date=appt_end)
                 timespan = appt_end - appt_begin
                 outdated_period, depleted_period = False, False
                 for x in range (timespan.days + 1):
@@ -122,54 +123,55 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     if not depleted_period and not outdated_period:
                         day_burn = 0
                         if appt.get('type') == 'gra':
-                            day_burn = total_burn[x].get('student_days')
+                            day_burn = this_burn[x].get('student_days')
                         elif appt.get('type') == 'pd':
-                            day_burn = total_burn[x].get('postdoc_days')
+                            day_burn = this_burn[x].get('postdoc_days')
                         elif appt.get('type') == 'ss':
-                            day_burn = total_burn[x].get('ss_days')
+                            day_burn = this_burn[x].get('ss_days')
                         if day_burn < 0:
                             depleted.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
                                 person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(appt_end)))
                             depleted_period = True
 
-        grants_begin = min(get_dates(grant)['begin_date'] for grant in self.gtx["grants"])
-        grants_end = max(get_dates(grant)['end_date'] for grant in self.gtx["grants"])
-        grants_timespan = grants_end - grants_begin
-        datearray = []
-
-        for x in range(grants_timespan.days + 1):
-            datearray.append(grants_begin + relativedelta(days=x))
-        cum_student, cum_pd, cum_ss = [0.0] * len(datearray), [0.0] * len(datearray), [0.0] * len(datearray)
+        datearray, cum_student, cum_pd, cum_ss = [], None, None, None
+        if not rc.no_plot:
+            grants_begin = min(get_dates(grant)['begin_date'] for grant in self.gtx["grants"])
+            grants_end = max(get_dates(grant)['end_date'] for grant in self.gtx["grants"])
+            grants_timespan = grants_end - grants_begin
+            for x in range(grants_timespan.days + 1):
+                datearray.append(grants_begin + relativedelta(days=x))
+            cum_student, cum_pd, cum_ss = [0.0] * len(datearray), [0.0] * len(datearray), [0.0] * len(datearray)
 
         for grant in self.gtx["grants"]:
             if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
                 continue
-            grt_begin, grt_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
-            grt_duration = (grt_end - grt_begin).days + 1
-            grant_dates = []
-            this_student, this_pd, this_ss = [0.0] * grt_duration, [0.0] * grt_duration, [0.0] * grt_duration
-            grant_amts = grant_burn(grant, all_appts, begin_date=grt_begin, end_date=grt_end)
-            grant_amt = grant_amts[-1].get('student_days') + grant_amts[-1].get('postdoc_days') + grant_amts[-1].get('ss_days')
-            if grant_amt > 30.5:
+            grant_begin, grant_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
+            grant_amounts = grant_burn(grant, all_appts)
+            end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
+                        grant_amounts[-1].get('ss_days')
+            if end_amount > 30.5:
                 underspent.append("    {}: grant: {}, underspend amount: {} months".format(
-                    str(grt_end), grant.get('_id'), round(grant_amt/30.5, 2)))
-            elif grant_amt < -30.5:
+                    str(grant_end), grant.get('_id'), round(end_amount/30.5, 2)))
+            elif end_amount < -30.5:
                 overspent.append("    {}: grant: {}, overspend amount: {} months".format(
-                    str(grt_end), grant.get('_id'), round(grant_amt/30.5, 2)))
-            counter = 0
-            for x in range (grants_timespan.days + 1):
-                if is_current(grant, now=datearray[x]):
-                    grant_dates.append(datearray[x])
-                    this_student[counter] = grant_amts[counter].get('student_days')
-                    cum_student[x] += grant_amts[counter].get('student_days')
-                    this_pd[counter] = grant_amts[counter].get('postdoc_days')
-                    cum_pd[x] += grant_amts[counter].get('postdoc_days')
-                    this_ss[counter] = grant_amts[counter].get('ss_days')
-                    cum_ss[x] += grant_amts[counter].get('ss_days')
-                    counter += 1
-            plotter(grant_dates, student=this_student, pd=this_pd, ss=this_ss, title=f"{grant.get('_id')}")
-        plotter(datearray, student=cum_student, pd=cum_pd, ss=cum_ss, title="Cumulative burn")
+                    str(grant_end), grant.get('_id'), round(end_amount/30.5, 2)))
+            if not rc.no_plot:
+                grant_dates = []
+                grant_duration = (grant_end - grant_begin).days + 1
+                this_student, this_pd, this_ss = [0.0] * grant_duration, [0.0] * grant_duration, [0.0] * grant_duration
+                counter = 0
+                for x in range(len(datearray)):
+                    if is_current(grant, now=datearray[x]):
+                        grant_dates.append(datearray[x])
+                        this_student[counter] = grant_amounts[counter].get('student_days')
+                        cum_student[x] += grant_amounts[counter].get('student_days')
+                        this_pd[counter] = grant_amounts[counter].get('postdoc_days')
+                        cum_pd[x] += grant_amounts[counter].get('postdoc_days')
+                        this_ss[counter] = grant_amounts[counter].get('ss_days')
+                        cum_ss[x] += grant_amounts[counter].get('ss_days')
+                        counter += 1
+                plotter(grant_dates, student=this_student, pd=this_pd, ss=this_ss, title=f"{grant.get('_id')}")
 
         if outdated:
             print("appointments on outdated grants:")
@@ -187,5 +189,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
             print("overspent grants:")
             for grant in overspent:
                 print(grant)
+
+        if not rc.no_plot:
+            print(plotter(datearray, student=cum_student, pd=cum_pd, ss=cum_ss, title="Cumulative burn"))
 
         return

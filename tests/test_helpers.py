@@ -247,7 +247,26 @@ helper_map = [
      "    2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
      "overspent grants:\n"
      "    2020-12-31: grant: abc42, overspend amount: -1.41 months\n"
-     )
+     "plotting mode is on\n"
+     ),
+    (["helper", "makeappointments", "-r", "--no_plot",],
+     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+     "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
+     "appointments on outdated grants:\n"
+     "    person: scopatz, appointment: s20, grant: SymPy-1.1,\n"
+     "            from 2020-01-01 until 2020-05-15\n"
+     "appointments on depleted grants:\n"
+     "    person: scopatz, appointment: f19, grant: dmref15,\n"
+     "            from 2019-09-01 until 2019-10-31\n"
+     "    person: scopatz, appointment: ss20, grant: abc42,\n"
+     "            from 2020-07-09 until 2020-08-31\n"
+     "underspent grants:\n"
+     "    2030-12-31: grant: SymPy-1.1, underspend amount: 8.0 months\n"
+     "    2030-12-31: grant: SymPy-2.0, underspend amount: 86.0 months\n"
+     "    2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
+     "overspent grants:\n"
+     "    2020-12-31: grant: abc42, overspend amount: -1.41 months\n"
+     ),
 ]
 
 
