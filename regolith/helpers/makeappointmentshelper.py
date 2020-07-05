@@ -22,6 +22,8 @@ from regolith.dates import (
     is_current,
     get_dates,
 )
+import matplotlib
+import matplotlib.pyplot as plt
 
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
@@ -96,8 +98,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 timespan = appt_end - appt_begin
                 outdated_period, depleted_period = False, False
                 for x in range (timespan.days + 1):
+                    day = appt_begin + relativedelta(days=x)
                     if not outdated_period:
-                        day = appt_begin + relativedelta(days=x)
                         if not is_current(grant, now=day):
                             outdated.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
@@ -118,18 +120,56 @@ class MakeAppointmentsHelper(SoutHelperBase):
                                 person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(appt_end)))
                             depleted_period = True
 
+        grants_begin = min(get_dates(grant)['begin_date'] for grant in self.gtx["grants"])
+        grants_end = max(get_dates(grant)['end_date'] for grant in self.gtx["grants"])
+        grants_timespan = grants_end - grants_begin
+        datearray = []
+
+        for x in range(grants_timespan.days + 1):
+            datearray.append(grants_begin + relativedelta(days=x))
+        dates = matplotlib.dates.date2num(datearray)
+        cum_student, cum_pd, cum_ss = [0.0] * len(datearray), [0.0] * len(datearray), [0.0] * len(datearray)
+
         for grant in self.gtx["grants"]:
             if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
                 continue
-            g_end = get_dates(grant)['end_date']
-            g_amt = grant_burn(grant, all_appts, begin_date=g_end, end_date=g_end)[1]
-            g_amt = g_amt.get('student_days') + g_amt.get('postdoc_days') + g_amt.get('ss_days')
-            if g_amt > 30.5:
+            this_student, this_pd, this_ss = [0.0] * len(datearray), [0.0] * len(datearray), [0.0] * len(datearray)
+            grt_begin, grt_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
+            grant_amts = grant_burn(grant, all_appts, begin_date=grt_begin, end_date=grt_end)
+            grant_amt = grant_amts[-1].get('student_days') + grant_amts[-1].get('postdoc_days') + grant_amts[-1].get('ss_days')
+            if grant_amt > 30.5:
                 underspent.append("    {}: grant: {}, underspend amount: {} months".format(
-                    str(g_end), grant.get('_id'), round(g_amt/30.5, 2)))
-            elif g_amt < -30.5:
+                    str(grt_end), grant.get('_id'), round(grant_amt/30.5, 2)))
+            elif grant_amt < -30.5:
                 overspent.append("    {}: grant: {}, overspend amount: {} months".format(
-                    str(g_end), grant.get('_id'), round(g_amt/30.5, 2)))
+                    str(grt_end), grant.get('_id'), round(grant_amt/30.5, 2)))
+            counter = 1
+            for x in range (grants_timespan.days + 1):
+                if is_current(grant, now=datearray[x]):
+                    this_student[x] = grant_amts[counter].get('student_days')
+                    cum_student[x] += grant_amts[counter].get('student_days')
+                    this_pd[x] = grant_amts[counter].get('postdoc_days')
+                    cum_pd[x] += grant_amts[counter].get('postdoc_days')
+                    this_ss[x] = grant_amts[counter].get('ss_days')
+                    cum_ss[x] += grant_amts[counter].get('ss_days')
+                    counter += 1
+            plt.plot_date(dates, this_student, ls='-', marker="", label="student days")
+            plt.plot_date(dates, this_pd, ls='-', marker="", label="postdoc days")
+            plt.plot_date(dates, this_ss, ls='-', marker="", label="ss days")
+            plt.xlabel('date')
+            plt.ylabel('budget days remaining')
+            plt.title(f"{grant.get('_id')}")
+            plt.legend(loc='best')
+            plt.show()
+
+        plt.plot_date(dates, cum_student, ls='-', marker="", label="student days")
+        plt.plot_date(dates, cum_pd, ls='-', marker="", label="postdoc days")
+        plt.plot_date(dates, cum_ss, ls='-', marker="", label="ss days")
+        plt.xlabel('date')
+        plt.ylabel('budget days remaining')
+        plt.title("Cumulative burn")
+        plt.legend(loc='best')
+        plt.show()
 
         if outdated:
             print("appointments on outdated grants:")
