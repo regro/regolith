@@ -3514,8 +3514,12 @@ SCHEMAS = {
             "description": "Your publication recommendation",
             "required": True,
             "type": "string",
-            "eallowed": ["reject", "asis", "smalledits", "diffjournal",
-                         "majoredits"],
+            "eallowed": ["invited"],
+        },
+        "requester": {
+            "description": "Name of the program officer who requested the review",
+            "required": True,
+            "type": "string",
         },
         "reviewer": {
             "description": "name of person reviewing the paper",
