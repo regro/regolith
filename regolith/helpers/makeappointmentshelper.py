@@ -38,6 +38,19 @@ def subparser(subpi):
 
     return subpi
 
+def plotter(datearray, student=None, pd=None, ss=None, title=None):
+    if student:
+        plt.plot_date(datearray, student, ls='-', marker="", label="student days")
+    if pd:
+        plt.plot_date(datearray, pd, ls='-', marker="", label="postdoc days")
+    if ss:
+        plt.plot_date(datearray, ss, ls='-', marker="", label="ss days")
+    plt.xlabel('date')
+    plt.ylabel('budget days remaining')
+    plt.title(title)
+    plt.legend(loc='best')
+    plt.show()
+
 
 class MakeAppointmentsHelper(SoutHelperBase):
     """Helper for managing appointments on grants and studying the burn of grants over time.
@@ -127,7 +140,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         for x in range(grants_timespan.days + 1):
             datearray.append(grants_begin + relativedelta(days=x))
-        dates = matplotlib.dates.date2num(datearray)
         cum_student, cum_pd, cum_ss = [0.0] * len(datearray), [0.0] * len(datearray), [0.0] * len(datearray)
 
         for grant in self.gtx["grants"]:
@@ -156,23 +168,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     this_ss[counter] = grant_amts[counter].get('ss_days')
                     cum_ss[x] += grant_amts[counter].get('ss_days')
                     counter += 1
-            plt.plot_date(grant_dates, this_student, ls='-', marker="", label="student days")
-            plt.plot_date(grant_dates, this_pd, ls='-', marker="", label="postdoc days")
-            plt.plot_date(grant_dates, this_ss, ls='-', marker="", label="ss days")
-            plt.xlabel('date')
-            plt.ylabel('budget days remaining')
-            plt.title(f"{grant.get('_id')}")
-            plt.legend(loc='best')
-            plt.show()
-
-        plt.plot_date(dates, cum_student, ls='-', marker="", label="student days")
-        plt.plot_date(dates, cum_pd, ls='-', marker="", label="postdoc days")
-        plt.plot_date(dates, cum_ss, ls='-', marker="", label="ss days")
-        plt.xlabel('date')
-        plt.ylabel('budget days remaining')
-        plt.title("Cumulative burn")
-        plt.legend(loc='best')
-        plt.show()
+            plotter(grant_dates, student=this_student, pd=this_pd, ss=this_ss, title=f"{grant.get('_id')}")
+        plotter(datearray, student=cum_student, pd=cum_pd, ss=cum_ss, title="Cumulative burn")
 
         if outdated:
             print("appointments on outdated grants:")
