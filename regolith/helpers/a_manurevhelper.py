@@ -1,19 +1,14 @@
 """Builder for manuscript reviews."""
 import datetime as dt
 import sys
-import time
-from argparse import RawTextHelpFormatter
 
 import nameparser
 
-from regolith.helpers.basehelper import SoutHelperBase, DbHelperBase
-from regolith.dates import month_to_int, month_to_str_int
+from regolith.helpers.basehelper import DbHelperBase
+from regolith.dates import month_to_str_int
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_grants,
-    fuzzy_retrieval,
 )
 
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
@@ -27,20 +22,22 @@ def subparser(subpi):
                        )
     subpi.add_argument("journal", help="journal to be published on", default=''
                        )
-    subpi.add_argument("--title", help="the title of the Manuscript", default=''
+    subpi.add_argument("title", help="the title of the Manuscript", default=''
                        )
-    subpi.add_argument("-d", "--database",
-                       help="The database that will be updated. Defaults to "
-                            "first database in the regolithrc.json file."
+    subpi.add_argument("-d", "--submitted_date", help="submitted date in ISO YYYY-MM-DD format in quotes"
                        )
     subpi.add_argument("-q", "--requester",
-                       help="Name of the Program officer requesting"
+                       help="name, or id in contacts, of the editor requesting the review"
                        )
     subpi.add_argument("-r", "--reviewer",
                        help="name of the reviewer. Defaults to sbillinge"
                        )
     subpi.add_argument("-s", "--status",
-                       help=f"status, from {ALLOWED_STATI}. default is submitted"
+                       help=f"status, from {ALLOWED_STATI}. default is accepted"
+                       )
+    subpi.add_argument("--database",
+                       help="The database that will be updated. Defaults to "
+                            "first database in the regolithrc.json file."
                        )
     return subpi
 
@@ -94,7 +91,6 @@ class ManuRevAdderHelper(DbHelperBase):
                      'final_assessment': [],
                      'freewrite': '',
                      'journal': rc.journal,
-                     'month': month,
                      'recommendation': '',
                      'title': rc.title,
                      'validity_assessment': [],
@@ -105,6 +101,10 @@ class ManuRevAdderHelper(DbHelperBase):
             pdoc.update({'reviewer': rc.reviewer})
         else:
             pdoc.update({'reviewer': 'sbillinge'})
+        if rc.submitted_date:
+            pdoc.update({'submitted_date': rc.submitted_date})
+        else:
+            pdoc.update({'submitted_date': 'tbd'})
         if rc.name:
             if name.last == '':
                 pdoc.update({'first_author_last_name': name.first})
@@ -121,7 +121,7 @@ class ManuRevAdderHelper(DbHelperBase):
             else:
                 pdoc.update({'status': rc.status})
         else:
-            pdoc.update({'status': 'invited'})
+            pdoc.update({'status': 'accepted'})
 
         pdoc.update({"_id": key})
         rc.client.insert_one(rc.database, rc.coll, pdoc)

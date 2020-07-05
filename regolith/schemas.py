@@ -1423,11 +1423,11 @@ EXEMPLARS = {
         "first_author_last_name": "Wingit",
         "freewrite": "this comment didn't fit anywhere above",
         "journal": "Nature",
-        "month": 2,
         "recommendation": "reject",
         "requester": "Max Planck",
         "reviewer": "sbillinge",
         "status": "submitted",
+        "submitted_date": "2019-01-01",
         "title": "a ruler approach to measuring gravity waves",
         "validity_assessment": ["complete rubbish"],
         "year": 2019,
@@ -3506,11 +3506,6 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
-        "month": {
-            "description": "month when the review is being written",
-            "required": True,
-            "anyof_type": ["string", "integer"],
-        },
         "recommendation": {
             "description": "Your publication recommendation",
             "required": True,
@@ -3541,6 +3536,11 @@ SCHEMAS = {
                 "submitted",
                 "cancelled"
             ],
+        },
+        "submitted_date": {
+            "description": "submitted date in ISO YYYY-MM-DD format in quotes",
+            "required": True,
+            "anyof_type": "string",
         },
         "title": {
             "description": "title of the paper under review",

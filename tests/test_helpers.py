@@ -10,7 +10,7 @@ helper_map = [
       "Tess Guebre", "--status", "downloaded", "--title", "A flat world theory"],
      "A. Einstein proposal has been added/updated in proposal reviews\n"),
     (["helper", "a_manurev", "Einstein", "2020-09-15", "Nature", "On the Quantum Theory of Radiation",
-      "--requester", "Niels Bohr", "--reviewer", "zcliu"],
+      "--requester", "Niels Bohr", "--reviewer", "zcliu", "--status", "submitted", "--submitted_date", "2019-01-01"],
      "Einstein manuscript has been added/updated in manuscript reviews\n"),
     (["helper", "a_grppub_readlist", "test the lister",
       "A list to test the lister", "pdf", "--purpose", "Test the lister"],

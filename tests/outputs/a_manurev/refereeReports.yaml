@@ -14,11 +14,11 @@
   first_author_last_name: Wingit
   freewrite: this comment didn't fit anywhere above
   journal: Nature
-  month: 2
   recommendation: reject
   requester: Max Planck
   reviewer: sbillinge
   status: submitted
+  submitted_date: '2019-01-01'
   title: a ruler approach to measuring gravity waves
   validity_assessment:
     - complete rubbish
@@ -34,11 +34,11 @@
   first_author_last_name: Einstein
   freewrite: ''
   journal: Nature
-  month: 7
   recommendation: ''
   requester: Niels Bohr
   reviewer: zcliu
-  status: invited
-  title: ''
+  status: submitted
+  submitted_date: '2019-01-01'
+  title: On the Quantum Theory of Radiation
   validity_assessment: []
   year: 2020
