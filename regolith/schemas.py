@@ -1424,7 +1424,7 @@ EXEMPLARS = {
         "freewrite": "this comment didn't fit anywhere above",
         "journal": "Nature",
         "month": 2,
-        "recommendation": "invited",
+        "recommendation": "reject",
         "requester": "Max Planck",
         "reviewer": "sbillinge",
         "status": "submitted",
@@ -3515,7 +3515,8 @@ SCHEMAS = {
             "description": "Your publication recommendation",
             "required": True,
             "type": "string",
-            "eallowed": ["invited"],
+            "eallowed": ["reject", "asis", "smalledits", "diffjournal",
+                         "majoredits"],
         },
         "requester": {
             "description": "Name of the program officer who requested the review",

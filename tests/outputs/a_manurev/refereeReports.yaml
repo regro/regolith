@@ -15,7 +15,7 @@
   freewrite: this comment didn't fit anywhere above
   journal: Nature
   month: 2
-  recommendation: invited
+  recommendation: reject
   requester: Max Planck
   reviewer: sbillinge
   status: submitted
@@ -23,7 +23,7 @@
   validity_assessment:
     - complete rubbish
   year: 2019
-2007_einstein_a:
+2007_einstein:
   claimed_found_what: []
   claimed_why_important: []
   did_how: []
@@ -33,9 +33,9 @@
   final_assessment: []
   first_author_last_name: Einstein
   freewrite: ''
-  journal: ''
+  journal: Nature
   month: 7
-  recommendation: invited
+  recommendation: ''
   requester: Niels Bohr
   reviewer: zcliu
   status: invited

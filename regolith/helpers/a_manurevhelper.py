@@ -21,9 +21,13 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 
 
 def subparser(subpi):
-    subpi.add_argument("name", help="Full name of the first author",
+    subpi.add_argument("name", help="Full name, or last name, of the first author",
                        )
     subpi.add_argument("due_date", help="due date in form YYYY-MM-DD in quotes", default=''
+                       )
+    subpi.add_argument("journal", help="journal to be published on", default=''
+                       )
+    subpi.add_argument("--title", help="the title of the Manuscript", default=''
                        )
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated. Defaults to "
@@ -37,9 +41,6 @@ def subparser(subpi):
                        )
     subpi.add_argument("-s", "--status",
                        help=f"status, from {ALLOWED_STATI}. default is submitted"
-                       )
-    subpi.add_argument("-t", "--title",
-                       help="the title of the Manuscript", default=''
                        )
     return subpi
 
@@ -69,9 +70,14 @@ class ManuRevAdderHelper(DbHelperBase):
         name = nameparser.HumanName(rc.name)
         month = dt.datetime.today().month
         year = dt.datetime.today().year
-        key = "{}{}_{}_{}".format(
-            str(year)[-2:], month_to_str_int(month), name.last.casefold(),
-            name.first.casefold().strip("."))
+        if name.last == '':
+            key = "{}{}_{}".format(
+                str(year)[-2:], month_to_str_int(month),
+                name.first.casefold().strip("."))
+        else:
+            key = "{}{}_{}_{}".format(
+                str(year)[-2:], month_to_str_int(month), name.last.casefold(),
+                name.first.casefold().strip("."))
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
@@ -86,11 +92,10 @@ class ManuRevAdderHelper(DbHelperBase):
                      'due_date': rc.due_date,
                      'editor_eyes_only': '',
                      'final_assessment': [],
-                     'first_author_last_name': name.last,
                      'freewrite': '',
-                     'journal': '',
+                     'journal': rc.journal,
                      'month': month,
-                     'recommendation': 'invited',
+                     'recommendation': '',
                      'title': rc.title,
                      'validity_assessment': [],
                      'year': year
@@ -100,6 +105,11 @@ class ManuRevAdderHelper(DbHelperBase):
             pdoc.update({'reviewer': rc.reviewer})
         else:
             pdoc.update({'reviewer': 'sbillinge'})
+        if rc.name:
+            if name.last == '':
+                pdoc.update({'first_author_last_name': name.first})
+            else:
+                pdoc.update({'first_author_last_name': name.last})
         if rc.requester:
             pdoc.update({'requester': rc.requester})
         else:
