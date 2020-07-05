@@ -12,9 +12,12 @@ helper_map = [
     (["helper", "a_grppub_readlist", "test the lister",
       "A list to test the lister", "pdf", "--purpose", "Test the lister"],
      "test_the_lister has been added in reading_lists\n"),
+<<<<<<< HEAD
     (["helper", "a_manurev", "A. Einstein", "2020-09-15", "--requester", "Niels Bohr", "--reviewer",
       "zcliu", "--status", "invited"],
      "A. Einstein manuscript has been added/updated in manuscript reviews\n"),
+=======
+>>>>>>> parent of d5de906... Merge branch 'master' of https://github.com/zichengliu1997/regolith
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "-c", "afriend", "-d", "more work",
       "-m", "ascopatz", "-g", "SymPy-1.1", "-u", "2021-01-01"],
