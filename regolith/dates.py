@@ -173,12 +173,12 @@ def get_dates(thing, date_field_prefix=None):
     If a date field prefix is passed in this function will search for prefix_year as
     well as prefix_month, prefix_day, and prefix_date. For example, is the prefix string
     passed in is "submitted" then this function will look for submitted_date instead of
-    just date. 
+    just date.
     '''
 
     datenames = ["day", "month", "year", "date"]
     if date_field_prefix:
-        datenames = [date_field_prefix + "_" + datename for datename in datenames]
+        datenames = [f"{date_field_prefix}_{datename}" for datename in datenames]
 
     if thing.get("end_year") and not thing.get("begin_year"):
         print('WARNING: end_year specified without begin_year')
