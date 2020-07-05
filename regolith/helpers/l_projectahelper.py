@@ -21,20 +21,18 @@ from regolith.tools import (
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
 
 
 def subparser(subpi):
+    subpi.add_argument("--all", action="store_true",
+                       help="Lists all projecta that have not ended"
+                       )
     subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-l", "--lead",
                        help="Filter milestones for this project lead"
                        )
     subpi.add_argument("-p", "--person",
                        help="Filter milestones for this person whether lead or not"
-                       )
-    subpi.add_argument("-s", "--stati", nargs="+",
-                       help=f"List of stati for the project that you want returned,"
-                            f"from {ALLOWED_STATI}.  Default is proposed and started"
                        )
     subpi.add_argument("-e", "--ended", action="store_true",
                        help="Lists projects that have ended. Use the -d and -r flags to specify"
@@ -104,7 +102,7 @@ class ProjectaListerHelper(SoutHelperBase):
         else:
             collection = self.gtx["projecta"]
 
-        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter):
+        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter) and (not rc.all):
             return
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
@@ -116,13 +114,15 @@ class ProjectaListerHelper(SoutHelperBase):
         else:
             num_of_days = 7
 
-        bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         projecta = []
         end_projecta = []
         grouped_projecta = {}
         if rc.lead and rc.person:
             raise RuntimeError(f"please specify either lead or person, not both")
         for projectum in collection:
+            if rc.all and projectum.get('status') != "finished":
+                projecta.append(projectum)
+                continue
             if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
             if rc.lead and projectum.get('lead') != rc.lead:
@@ -139,10 +139,6 @@ class ProjectaListerHelper(SoutHelperBase):
                 if len(good_p) == 0:
                     continue
             if rc.grant and rc.grant not in projectum.get('grants'):
-                continue
-            if not rc.ended and not rc.stati and projectum.get('status') in bad_stati:
-                continue
-            if rc.stati and projectum.get('status') not in rc.stati:
                 continue
             if rc.ended and not projectum.get('end_date'):
                 continue
