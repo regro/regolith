@@ -133,8 +133,10 @@ class MakeAppointmentsHelper(SoutHelperBase):
         for grant in self.gtx["grants"]:
             if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
                 continue
-            this_student, this_pd, this_ss = [0.0] * len(datearray), [0.0] * len(datearray), [0.0] * len(datearray)
             grt_begin, grt_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
+            grt_duration = (grt_end - grt_begin).days + 1
+            grant_dates = []
+            this_student, this_pd, this_ss = [0.0] * grt_duration, [0.0] * grt_duration, [0.0] * grt_duration
             grant_amts = grant_burn(grant, all_appts, begin_date=grt_begin, end_date=grt_end)
             grant_amt = grant_amts[-1].get('student_days') + grant_amts[-1].get('postdoc_days') + grant_amts[-1].get('ss_days')
             if grant_amt > 30.5:
@@ -143,19 +145,21 @@ class MakeAppointmentsHelper(SoutHelperBase):
             elif grant_amt < -30.5:
                 overspent.append("    {}: grant: {}, overspend amount: {} months".format(
                     str(grt_end), grant.get('_id'), round(grant_amt/30.5, 2)))
-            counter = 1
+            a, b = 0, 1
             for x in range (grants_timespan.days + 1):
                 if is_current(grant, now=datearray[x]):
-                    this_student[x] = grant_amts[counter].get('student_days')
-                    cum_student[x] += grant_amts[counter].get('student_days')
-                    this_pd[x] = grant_amts[counter].get('postdoc_days')
-                    cum_pd[x] += grant_amts[counter].get('postdoc_days')
-                    this_ss[x] = grant_amts[counter].get('ss_days')
-                    cum_ss[x] += grant_amts[counter].get('ss_days')
-                    counter += 1
-            plt.plot_date(dates, this_student, ls='-', marker="", label="student days")
-            plt.plot_date(dates, this_pd, ls='-', marker="", label="postdoc days")
-            plt.plot_date(dates, this_ss, ls='-', marker="", label="ss days")
+                    grant_dates.append(datearray[x])
+                    this_student[a] = grant_amts[b].get('student_days')
+                    cum_student[x] += grant_amts[b].get('student_days')
+                    this_pd[a] = grant_amts[b].get('postdoc_days')
+                    cum_pd[x] += grant_amts[b].get('postdoc_days')
+                    this_ss[a] = grant_amts[b].get('ss_days')
+                    cum_ss[x] += grant_amts[b].get('ss_days')
+                    a += 1
+                    b += 1
+            plt.plot_date(grant_dates, this_student, ls='-', marker="", label="student days")
+            plt.plot_date(grant_dates, this_pd, ls='-', marker="", label="postdoc days")
+            plt.plot_date(grant_dates, this_ss, ls='-', marker="", label="ss days")
             plt.xlabel('date')
             plt.ylabel('budget days remaining')
             plt.title(f"{grant.get('_id')}")

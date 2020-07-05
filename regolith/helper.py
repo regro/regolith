@@ -42,6 +42,7 @@ HELPERS = {
     "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
     "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser)
     "u_institutions": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
+    "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
     "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
 }
 
