@@ -6,12 +6,9 @@
    - Suggests appointments to make for these members
    - Suggests new appointments
 """
-import datetime as dt
-import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -25,9 +22,6 @@ from regolith.dates import (
     is_current,
     get_dates,
 )
-from copy import deepcopy
-import yaml
-import textwrap
 
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
@@ -39,26 +33,14 @@ ALLOWED_TYPES = ["gra", "pd", "ss"]
 def subparser(subpi):
 
     subpi.add_argument("-r", "--run", action="store_true", help='run the helper')
-    subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
-    subpi.add_argument("-c", "--check", action="store_true", help="appointment adding mode")
-    subpi.add_argument("-p", "-person", help='id of person to add appointment for', nargs="+", default="pseudo_person")
-    subpi.add_argument("-a", "--appointment",  help='id of appointment', default="pseudo_appointment")
-    subpi.add_argument("-b", "--a_begin", help='start date of appointment, defaults to entered begin date')
-    subpi.add_argument("-e", "--a_end", help='end date of appointment, defaults to entered end date')
-    subpi.add_argument("-t", "--type", help=f'type of appointment can be {ALLOWED_TYPES}', default='')
-    subpi.add_argument("-l", "--loading", help='loading of appointment', default=1.0)
-    subpi.add_argument("-g", "--grant", help='grant of appointment', default="pseudogrant")
-    subpi.add_argument("-s", "--status", help='status of appointment', default="proposed")
-    subpi.add_argument("-n", "--notes", help='any notes for appointment', nargs="+", default=[])
 
     return subpi
 
 
 class MakeAppointmentsHelper(SoutHelperBase):
     """Helper for managing appointments.
-
-       Appointments are...
     """
+
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
     needed_dbs = [f'{TARGET_COLL}', "grants"]
@@ -92,45 +74,12 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        outdated, depleted, underspent, overspent, ppl_coll = [], [], [], [], []
-
-        if not rc.check:
-            ppl_coll = self.gtx[rc.coll]
-        else:
-            ppl_coll = deepcopy(self.gtx[rc.coll])
-            p = rc.client.find_one(rc.database, "people", {"_id": rc.person})
-            if p:
-                pdocl = list(filter(lambda doc: doc["_id"] == rc.appointment, collect_appts([p])))
-                if len(pdocl) > 0:
-                    raise RuntimeError(
-                        "This entry appears to already exist in the collection")
-                else:
-                    pdoc = {}
-            if rc.type and rc.type not in ALLOWED_TYPES:
-                raise RuntimeError(f"appointment type must be one of {ALLOWED_TYPES}")
-            pdoc.update({'_id': rc.appointment,
-                         'begin_date': rc.a_begin if rc.a_begin else str(dt.date.today()),
-                         'end_date': rc.a_end if rc.a_end else str(dt.date.today() + relativedelta(months=4)),
-                         'grant': rc.grant,
-                         'type': rc.type,
-                         'loading': rc.loading,
-                         'status': rc.status,
-                         'notes': rc.notes,
-                         }
-                        )
-            if p:
-                # write an appointments updater for the fake ppl_coll
-                pass
-            else:
-                new_person = [{rc.person: {"appointments": pdoc}}]
-                with open('new_person.yaml', 'w') as f:
-                    ppl_coll = yaml.dump(new_person, f)
-
-        all_appts = collect_appts(ppl_coll)
+        outdated, depleted, underspent, overspent = [], [], [], []
+        all_appts = collect_appts(self.gtx['people'])
         appts_begin = min(get_dates(appt)['begin_date'] for appt in all_appts)
         appts_end = max(get_dates(appt)['end_date'] for appt in all_appts)
 
-        for person in ppl_coll:
+        for person in self.gtx['people']:
             appts = collect_appts([person])
             if not appts:
                 continue
