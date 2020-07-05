@@ -174,6 +174,18 @@ def get_dates(thing, date_field_prefix=None):
     well as prefix_month, prefix_day, and prefix_date. For example, is the prefix string
     passed in is "submitted" then this function will look for submitted_date instead of
     just date.
+
+    Examples
+    --------
+    >>> get_dates({'submission_day': 10, 'submission_year': 2020, 'submission_month': 'Feb'}, "submission")
+
+    This would return a dictionary consisting of the begin date, end, date, and date for the given input.
+    Instead of searching for "day" in the thing, it would search for "submission_day" since a prefix was
+    given. The following dictionary is returned:
+    {'begin_date': datetime.date(2020, 2, 10),
+     'end_date': datetime.date(2020, 2, 10),
+     'date': datetime.date(2020, 2, 10)
+    } 
     '''
 
     datenames = ["day", "month", "year", "date"]
