@@ -837,8 +837,7 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
     "grant,appointments,start,end,expected",
     [
         (grant1, appts, None, None,
-         ['values for grant grant1 from 2019-09-01 to 2019-09-10:',
-          {'date': '2019-09-01', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 136.25},
+         [{'date': '2019-09-01', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 136.25},
           {'date': '2019-09-02', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 135.25},
           {'date': '2019-09-03', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 134.25},
           {'date': '2019-09-04', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 133.25},
@@ -850,8 +849,7 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
           {'date': '2019-09-10', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 127.25}]
         ),
         (grant2, appts, '2019-12-15', '2019-12-31',
-         ['values for grant grant2 from 2019-12-15 to 2019-12-31:',
-          {'date': '2019-12-15', 'postdoc_days': 76.25, 'ss_days': 9.5, 'student_days': 122.0},
+         [{'date': '2019-12-15', 'postdoc_days': 76.25, 'ss_days': 9.5, 'student_days': 122.0},
           {'date': '2019-12-16', 'postdoc_days': 75.35, 'ss_days': 8.5, 'student_days': 122.0},
           {'date': '2019-12-17', 'postdoc_days': 74.45, 'ss_days': 7.5, 'student_days': 122.0},
           {'date': '2019-12-18', 'postdoc_days': 73.55, 'ss_days': 6.5, 'student_days': 122.0},
@@ -870,12 +868,10 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
           {'date': '2019-12-31', 'postdoc_days': 61.85, 'ss_days': -2.5, 'student_days': 122.0}]
         ),
         (grant3, appts, '2019-12-31', '2019-12-31',
-        ['values for grant grant3 from 2019-12-31 to 2019-12-31:',
-         {'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
+        [{'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
         ),
         (grant4, appts, None, None,
-        ['values for grant grant4 from 2019-09-01 to 2019-09-07:',
-         {'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+        [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 29.5, 'student_days': 30.5},
          {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 28.5, 'student_days': 30.5},
          {'date': '2019-09-04', 'postdoc_days': 30.5, 'ss_days': 27.5, 'student_days': 30.5},
@@ -891,8 +887,7 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
          None, None, 'invalid  type imaginary for appointment A of magical person'
          ),
          (grant4, appointed_people[0].get('appointments'), None, None,
-        ['values for grant grant4 from 2019-09-01 to 2019-09-07:',
-         {'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
+        [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-04', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},

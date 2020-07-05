@@ -109,11 +109,11 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     if not depleted_period and not outdated_period:
                         day_burn = 0
                         if appt.get('type') == 'gra':
-                            day_burn = total_burn[x+1].get('student_days')
+                            day_burn = total_burn[x].get('student_days')
                         elif appt.get('type') == 'pd':
-                            day_burn = total_burn[x+1].get('postdoc_days')
+                            day_burn = total_burn[x].get('postdoc_days')
                         elif appt.get('type') == 'ss':
-                            day_burn = total_burn[x+1].get('ss_days')
+                            day_burn = total_burn[x].get('ss_days')
                         if day_burn < 0:
                             depleted.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
@@ -145,18 +145,17 @@ class MakeAppointmentsHelper(SoutHelperBase):
             elif grant_amt < -30.5:
                 overspent.append("    {}: grant: {}, overspend amount: {} months".format(
                     str(grt_end), grant.get('_id'), round(grant_amt/30.5, 2)))
-            a, b = 0, 1
+            counter = 0
             for x in range (grants_timespan.days + 1):
                 if is_current(grant, now=datearray[x]):
                     grant_dates.append(datearray[x])
-                    this_student[a] = grant_amts[b].get('student_days')
-                    cum_student[x] += grant_amts[b].get('student_days')
-                    this_pd[a] = grant_amts[b].get('postdoc_days')
-                    cum_pd[x] += grant_amts[b].get('postdoc_days')
-                    this_ss[a] = grant_amts[b].get('ss_days')
-                    cum_ss[x] += grant_amts[b].get('ss_days')
-                    a += 1
-                    b += 1
+                    this_student[counter] = grant_amts[counter].get('student_days')
+                    cum_student[x] += grant_amts[counter].get('student_days')
+                    this_pd[counter] = grant_amts[counter].get('postdoc_days')
+                    cum_pd[x] += grant_amts[counter].get('postdoc_days')
+                    this_ss[counter] = grant_amts[counter].get('ss_days')
+                    cum_ss[x] += grant_amts[counter].get('ss_days')
+                    counter += 1
             plt.plot_date(grant_dates, this_student, ls='-', marker="", label="student days")
             plt.plot_date(grant_dates, this_pd, ls='-', marker="", label="postdoc days")
             plt.plot_date(grant_dates, this_ss, ls='-', marker="", label="ss days")

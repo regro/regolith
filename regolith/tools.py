@@ -1535,7 +1535,7 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     if begin_date > end_date:
         raise ValueError("begin date is after end date")
     timespan, grad_val, pd_val, ss_val = grant_end - grant_begin, 0.0, 0.0, 0.0
-    grant_amounts = ["values for grant {} from {} to {}:".format(grant.get('_id'), str(begin_date), str(end_date))]
+    grant_amounts = []
     for b in grant.get('budget'):
         if b.get('student_months'):
             grad_val += b.get('student_months') * 30.5
