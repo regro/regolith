@@ -166,6 +166,29 @@ class ProjectaListerHelper(SoutHelperBase):
                                                                                           collaborators))
             return
 
+        if rc.verbose:
+            for p in projecta:
+                grants = None
+                if p.get('grants'):
+                    if isinstance(p.get('grants'), list):
+                        grants = ' ,'.join(p.get('grants'))
+                    else:
+                        grants = p.get('grants')
+                print(p.get('_id'))
+                print(f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}, end_date: {p.get('end_date')}, grant: {grants}")
+                print(f"    description: {p.get('description')}")
+                print("    team:")
+                print(f"        lead: {p.get('lead')}")
+                grp_members = None
+                if p.get('group_members'):
+                    grp_members = ', '.join(p.get('group_members'))
+                collaborators = None
+                if p.get('collaborators'):
+                    collaborators = ', '.join(p.get('collaborators'))
+                print(f"        group_members: {grp_members}")
+                print(f"        collaborators: {collaborators}")
+            return
+
         if rc.grp_by_lead:
             for p in projecta:
                 if p.get('lead') not in grouped_projecta:
