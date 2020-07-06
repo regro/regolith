@@ -17,7 +17,6 @@ from regolith.tools import (
     is_fully_appointed,
     collect_appts,
     grant_burn,
-    fuzzy_retrieval,
 )
 from regolith.dates import (
     is_current,
