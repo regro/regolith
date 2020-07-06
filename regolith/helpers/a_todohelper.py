@@ -27,12 +27,12 @@ def subparser(subpi):
                             "integer. Integer 5 means 5 days from the "
                             "begin_date. "
                        )
-    subpi.add_argument("-i", "--id", help="ID of the to-do list's owner. The default id is saved in user.json. ")
+    subpi.add_argument("-i", "--id", help="ID of the member to whom the task is assigned. The default id is saved in user.json. ")
     subpi.add_argument("-b", "--begin_date",
                        help="Begin date of the task in format YYYY-MM-DD. Default is today."
                        )
     subpi.add_argument("-d", "--duration",
-                       help="The estimated duration of the task in minutes. Default is 60 ",
+                       help="The estimated duration the task will take in minutes. Default is 60 ",
                        default=60
                        )
     subpi.add_argument("-p", "--importance",
@@ -77,81 +77,44 @@ class TodoAdderHelper(DbHelperBase):
                 rc.id = rc.default_user_id
             except AttributeError:
                 print(
-                    "Please set default_user_id in '~/.config/regolith/user.json',\
-                     or you need to enter your group id in the command line")
+                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
+                    "in the command line")
                 return
-        try:
-            person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.id)["name"]
-        except TypeError:
-            print(
-                "The id you entered can't be found in people.yml.")
-            return
-
+        filterid = {'_id': rc.id}
+        person = rc.client.find_one(rc.database, rc.coll, filterid)
+        if person is None:
+            raise TypeError(f"The id {rc.id} can't be found in the people collection")
         now = dt.date.today()
         if not rc.begin_date:
             begin_date = now
         else:
             begin_date = date_parser.parse(rc.begin_date).date()
-
         try:
-            # if the entered rc.due_date is an integer:
             relative_day = int(rc.due_date)
             due_date = begin_date + relativedelta(days=relative_day)
         except ValueError:
             due_date = date_parser.parse(rc.due_date).date()
-
         if begin_date > due_date:
             raise ValueError("begin_date can not be after due_date")
-
         importance = int(rc.importance)
         if importance not in ALLOWED_IMPORTANCE:
             raise ValueError(f"importance should be chosen from {ALLOWED_IMPORTANCE}")
-
-        person = rc.client.find_one(rc.database, rc.coll, {'_id': rc.id})
-        if person:
-            # if this person exists in the database
-            if person.get("todos"):
-                # if this person has key "todos", just append this new task to todos:
-                person["todos"].append({
-                    'description': rc.description,
-                    'due_date': due_date,
-                    'begin_date': begin_date,
-                    'duration': float(rc.duration),
-                    'importance': importance,
-                    'status': "started"})
-            else:
-                # if this person doesn't has key "todos", "todos" will be created
-                person.update({"todos": [{
-                    'description': rc.description,
-                    'due_date': due_date,
-                    'begin_date': begin_date,
-                    'duration': float(rc.duration),
-                    'importance': importance,
-                    'status': "started"}]
-                })
-                if rc.notes:
-                    person["todos"][-1].update({'notes': rc.notes})
-
-                rc.client.update_one(rc.database, rc.coll, {'_id': rc.id}, {"todos": person["todos"]},
-                                     upsert=True)
+        if person.get("todos") is None:
+            todolist = []
         else:
-            # if this person doesn't exist in the database:
-            person = {}
-            person.update({
-                "_id": rc.id,
-            })
-            person.update({"todos": [{
-                'description': rc.description,
-                'due_date': due_date,
-                'begin_date': begin_date,
-                'duration': float(rc.duration),
-                'importance': importance,
-                'status': "started"}]
-            })
-            if rc.notes:
-                person["todos"][0].update({'notes': rc.notes})
-            rc.client.insert_one(rc.database, rc.coll, person)
+            todolist = person.get("todos")
+        todolist.append({
+            'description': rc.description,
+            'due_date': due_date,
+            'begin_date': begin_date,
+            'duration': float(rc.duration),
+            'importance': importance,
+            'status': "started"})
+        if rc.notes:
+            todolist[-1]['notes'] = rc.notes
 
-        print(f"The task \"{rc.description}\" has been added in {TARGET_COLL} collection.")
+        rc.client.update_one(rc.database, rc.coll, {'_id': rc.id}, {"todos": todolist},
+                             upsert=True)
+        print(f"The task \"{rc.description}\" for {rc.id} has been added in {TARGET_COLL} collection.")
 
         return
