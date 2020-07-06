@@ -1526,6 +1526,8 @@ EXEMPLARS = {
             "end_date": "2030-12-31",
             "currency": "USD",
             "pi": "sbillinge",
+            "status": "submitted",
+            "title": "SymPy 1.1 Release Support",
         },
         {
             "_id": "SymPy-2.0",
@@ -1534,6 +1536,8 @@ EXEMPLARS = {
             "end_date": "2030-12-31",
             "currency": "USD",
             "pi": "sbillinge",
+            "status": "submitted",
+            "title": "SymPy 1.1 Release Support",
         },
         {
             "_id": "abc42",
@@ -1542,6 +1546,8 @@ EXEMPLARS = {
             "end_date": "2020-12-31",
             "currency": "USD",
             "pi": "sbillinge",
+            "status": "submitted",
+            "title": "The answer to life, the universe, and everything",
         }
     ],
     "reading_lists": {
