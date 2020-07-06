@@ -79,6 +79,12 @@ helper_map = [
       "--notes", "coffee", "--date", "2019-01-15", "--range", "2"],
      ""
      ),
+    (["helper", "l_contacts", "run", "--verbose"],
+     "id: afriend    name: Anthony B Friend    email: friend@deed.com\n"
+     "institution: columbiau    department: physics\n"
+     "notes: ['The guy I meet for coffee sometimes']\n"
+     "aka: ['A. B. Friend', 'AB Friend', 'Tony Friend']\n"
+     ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--index", "5",
       "--status", "converged","--due_date", "2020-06-01"],
      "20sb_firstprojectum has been updated in projecta\n"
