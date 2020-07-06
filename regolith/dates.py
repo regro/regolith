@@ -159,7 +159,9 @@ def get_dates(thing, date_field_prefix=None):
     year.
 
     If "year", "month" and "day" are found the function will return these in the
-    "date" field and begin_date and end_date will be None
+    "date" field and begin_date and end_date will match the "date" field. If only
+    a "year" is found, then the date attribute will be none but the begin and end
+    dates will be the first and last day of that respective year. 
 
     If year is found but no month or day are found the function will return
     begin_date and end_date with the beginning and the end of the given year/month.
