@@ -2293,6 +2293,11 @@ SCHEMAS = {
                 "type": "dict",
             },
             "type": "list",
+        },
+        "proposal_id": {
+            "description": "initial proposal made for grant",
+            "required": False,
+            "type": "string",
         }
     },
     "groups": {
