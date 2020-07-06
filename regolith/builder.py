@@ -18,6 +18,7 @@ from regolith.builders.activitylogbuilder import ActivitylogBuilder
 from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
 from regolith.builders.readinglistsbuilder import ReadingListsBuilder
 from regolith.builders.proposalreportbuilder import PropReportBuilder
+from regolith.builders.grantreportbuilder import GrantReportBuilder
 
 
 BUILDERS = {
@@ -39,7 +40,7 @@ BUILDERS = {
     "resume": ResumeBuilder,
     "review-man": ManRevBuilder,
     "review-prop": PropRevBuilder,
-    "propreport": PropReportBuilder
+    "grantreport": GrantReportBuilder
 }
 
 

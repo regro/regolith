@@ -14,9 +14,9 @@ from regolith.tools import (
 )
 
 
-class PropReportBuilder(LatexBuilderBase):
+class GrantReportBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
-    btype = "propreport"
+    btype = "grantreport"
     needed_dbs = ['presentations', 'projecta', 'people']
 
     def construct_global_ctx(self):
