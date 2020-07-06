@@ -153,6 +153,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
             if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
                 continue
             prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
+            if prop.get('year'):
+                del prop['year']
             grant_begin, grant_end = get_dates(prop)['begin_date'], get_dates(prop)['end_date']
             grant_amounts = grant_burn(grant, all_appts, grant_begin, grant_end)
             end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
