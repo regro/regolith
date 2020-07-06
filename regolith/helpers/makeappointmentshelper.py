@@ -17,6 +17,7 @@ from regolith.tools import (
     is_fully_appointed,
     collect_appts,
     grant_burn,
+    fuzzy_retrieval,
 )
 from regolith.dates import (
     is_current,
@@ -59,7 +60,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}', "grants"]
+    needed_dbs = [f'{TARGET_COLL}', "grants", "proposals"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -102,13 +103,16 @@ class MakeAppointmentsHelper(SoutHelperBase):
             is_fully_appointed(person, this_begin, this_end)
             for appt in appts:
                 if appt.get("grant") in BLACKLIST:
+                    print(appt.get("grant"))
                     continue
                 grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
+                prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
+                grant_begin, grant_end = get_dates(prop)['begin_date'], get_dates(prop)['end_date']
                 if not grant:
                     raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".
                                        format(appt.get("grant"), person.get("_id"), appt.get("_id")))
                 appt_begin, appt_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
-                this_burn = grant_burn(grant, all_appts, begin_date=appt_begin, end_date=appt_end)
+                this_burn = grant_burn(grant, all_appts, grant_begin, grant_end, begin_date=appt_begin, end_date=appt_end)
                 timespan = appt_end - appt_begin
                 outdated_period, depleted_period = False, False
                 for x in range (timespan.days + 1):
@@ -146,8 +150,9 @@ class MakeAppointmentsHelper(SoutHelperBase):
         for grant in self.gtx["grants"]:
             if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
                 continue
-            grant_begin, grant_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
-            grant_amounts = grant_burn(grant, all_appts)
+            prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
+            grant_begin, grant_end = get_dates(prop)['begin_date'], get_dates(prop)['end_date']
+            grant_amounts = grant_burn(grant, all_appts, grant_begin, grant_end)
             end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
                         grant_amounts[-1].get('ss_days')
             if end_amount > 30.5:

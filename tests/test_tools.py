@@ -819,24 +819,24 @@ def test_collect_appts(people, key, value, start, end, expected):
 
 
 appts = collect_appts(appointed_people)
-grant1 = {'_id': 'grant1', 'alias': 'grant_one', 'begin_date': '2019-09-01', 'end_date': '2019-09-10', 'budget': [
+grant1 = {'_id': 'grant1', 'alias': 'grant_one', 'budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-09-03',  'student_months': 1, 'postdoc_months': 0.5, 'ss_months': 0},
     {'begin_date': '2019-09-04', 'end_date': '2019-09-07',  'student_months': 1.5, 'postdoc_months': 0, 'ss_months': 0},
     {'begin_date': '2019-09-08', 'end_date': '2019-09-10',  'student_months': 2, 'postdoc_months': 1.5, 'ss_months': 0},
 ]}
-grant2 = {'_id': 'grant2', 'alias': 'grant_two', 'begin_date': '2019-09-01', 'end_date': '2019-12-31','budget': [
+grant2 = {'_id': 'grant2', 'alias': 'grant_two', 'budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-12-31',  'student_months': 4, 'postdoc_months': 2.5, 'ss_months': 1}
 ]}
-grant3 = {'_id': 'grant3', 'begin_date': '2019-09-01', 'end_date': '2019-12-31','budget': [
+grant3 = {'_id': 'grant3', 'budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-10-31',  'student_months': 0, 'postdoc_months': 1, 'ss_months': 2},
     {'begin_date': '2019-11-01', 'end_date': '2019-12-31',  'student_months': 2, 'postdoc_months': 0.5, 'ss_months': 0}
 ]}
-grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'end_date': '2019-09-07','budget': [
+grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-09-07',  'student_months': 1, 'postdoc_months': 1, 'ss_months': 1}]}
 @pytest.mark.parametrize(
-    "grant,appointments,start,end,expected",
+    "grant,appointments,grant_begin,grant_end,start,end,expected",
     [
-        (grant1, appts, None, None,
+        (grant1, appts, '2019-09-01', '2019-09-10', None, None,
          [{'date': '2019-09-01', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 136.25},
           {'date': '2019-09-02', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 135.25},
           {'date': '2019-09-03', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 134.25},
@@ -848,7 +848,7 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
           {'date': '2019-09-09', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 128.25},
           {'date': '2019-09-10', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 127.25}]
         ),
-        (grant2, appts, '2019-12-15', '2019-12-31',
+        (grant2, appts, '2019-09-01', '2019-12-31', '2019-12-15', '2019-12-31',
          [{'date': '2019-12-15', 'postdoc_days': 76.25, 'ss_days': 9.5, 'student_days': 122.0},
           {'date': '2019-12-16', 'postdoc_days': 75.35, 'ss_days': 8.5, 'student_days': 122.0},
           {'date': '2019-12-17', 'postdoc_days': 74.45, 'ss_days': 7.5, 'student_days': 122.0},
@@ -867,10 +867,10 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
           {'date': '2019-12-30', 'postdoc_days': 62.75, 'ss_days': -1.5, 'student_days': 122.0},
           {'date': '2019-12-31', 'postdoc_days': 61.85, 'ss_days': -2.5, 'student_days': 122.0}]
         ),
-        (grant3, appts, '2019-12-31', '2019-12-31',
+        (grant3, appts, '2019-09-01', '2019-12-31', '2019-12-31', '2019-12-31',
         [{'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
         ),
-        (grant4, appts, None, None,
+        (grant4, appts, '2019-09-01', '2019-09-07', None, None,
         [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 29.5, 'student_days': 30.5},
          {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 28.5, 'student_days': 30.5},
@@ -879,14 +879,14 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
          {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5},
          {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5}]
          ),
-        ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts, '2012-12-23', '2013-01-24',
-          'magical_grant has no specified budget'
+        ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts, '2012-12-23', '2012-12-23',
+         '2012-12-23', '2013-01-24', 'magical_grant has no specified budget'
          ),
         (grant1, [{'person': 'magical person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
-                   'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}],
+                   'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}], '2019-09-01', '2019-09-10',
          None, None, 'invalid  type imaginary for appointment A of magical person'
          ),
-         (grant4, appointed_people[0].get('appointments'), None, None,
+         (grant4, appointed_people[0].get('appointments'), '2019-09-01', '2019-09-07', None, None,
         [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
@@ -897,11 +897,11 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'begin_date': '2019-09-01', 'e
         )
     ]
 )
-def test_grant_burn(grant, appointments, start, end, expected):
+def test_grant_burn(grant, appointments, grant_begin, grant_end, start, end, expected):
     try:
-        actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
+        actual = grant_burn(grant, appointments, grant_begin, grant_end, begin_date=start, end_date=end)
         assert actual == expected
     except ValueError:
         with pytest.raises(ValueError) as excinfo:
-            actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
+            actual = grant_burn(grant, appointments, grant_begin, grant_end, begin_date=start, end_date=end)
         assert str(excinfo.value) == expected

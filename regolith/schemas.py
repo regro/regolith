@@ -234,7 +234,8 @@ EXEMPLARS = {
                  "student_months": 3.0,
                  "postdoc_months": 0.0,
                  "ss_months": 0.0,},
-            ]
+            ],
+            "proposal_id": "SymPy-1.1"
         },
         {
             "_id": "SymPy-2.0",
@@ -279,7 +280,8 @@ EXEMPLARS = {
                  "student_months": 12.0,
                  "postdoc_months": 24.0,
                  "ss_months": 0.0,},
-            ]
+            ],
+            "proposal_id": "SymPy-2.0",
         },
         {
             "_id": "dmref15",
@@ -340,10 +342,11 @@ EXEMPLARS = {
                  "student_months": 12.0,
                  "postdoc_months": 0.0,
                  "ss_months": 6.0,},
-            ]
+            ],
+            "proposal_id": "dmref15"
         },
         {"_id": "abc42",
-         "amount": 42000,
+         "amount": 42000.0,
          "begin_date": "2020-06-01",
          "end_date": "2020-12-31",
          "funder": "Life",
@@ -366,7 +369,8 @@ EXEMPLARS = {
               "postdoc_months": 0.0,
               "ss_months": 1.0,
              }
-         ]
+         ],
+         "proposal_id": "abc42",
         },
         {"_id": "ta",
          "amount": 0.0,
@@ -1434,7 +1438,7 @@ EXEMPLARS = {
             "begin_month": "May",
             "begin_year": 2030,
             "currency": "USD",
-            "day": 18,
+            #"day": 18,
             "duration": 3,
             "end_day": 31,
             "end_month": "December",
@@ -1446,7 +1450,7 @@ EXEMPLARS = {
                        "http://pdf.com/flanagan-cv"],
                 "narrative": "http://some.com/pdf",
             },
-            "month": "Aug",
+            #"month": "Aug",
             "notes": "Quite an idea",
             "pi": "Anthony Scopatz",
             "pre": {
@@ -1461,7 +1465,7 @@ EXEMPLARS = {
             },
             "status": "submitted",
             "title": "A very fine proposal indeed",
-            "year": 1999,
+            #"year": 1999,
         },
         {
             "_id": "dmref15",
@@ -1470,8 +1474,8 @@ EXEMPLARS = {
             "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/"
                                   "nsf14591.htm",
             "begin_day": 1,
-            "begin_month": "May",
-            "begin_year": 2018,
+            "begin_month": "october",
+            "begin_year": 2015,
             "cpp_info": {
                 "cppflag": True,
                 "other_agencies_submitted": "None",
@@ -1482,13 +1486,13 @@ EXEMPLARS = {
                                  "other of my grants"
             },
             "currency": "USD",
-            "day": 2,
+            #"day": 2,
             "duration": 3,
-            "end_day": 1,
-            "end_month": "May",
-            "end_year": 2019,
+            "end_day": 30,
+            "end_month": "september",
+            "end_year": 2025,
             "funder": "NSF",
-            "month": "february",
+            #"month": "february",
             "notes": "Quite an idea",
             "pi": "Simon Billinge",
             "status": "accepted",
@@ -1513,8 +1517,32 @@ EXEMPLARS = {
             "title": "DMREF: Novel, data validated, nanostructure determination "
                      "methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure",
-            "year": 2015,
+            #"year": 2015,
         },
+        {
+            "_id": "SymPy-1.1",
+            "amount": 3000.0,
+            "begin_date": "2030-05-01",
+            "end_date": "2030-12-31",
+            "currency": "USD",
+            "pi": "sbillinge",
+        },
+        {
+            "_id": "SymPy-2.0",
+            "amount": 3000.0,
+            "begin_date": "2019-06-01",
+            "end_date": "2030-12-31",
+            "currency": "USD",
+            "pi": "sbillinge",
+        },
+        {
+            "_id": "abc42",
+            "amount": 42000.0,
+            "begin_date": "2020-06-01",
+            "end_date": "2020-12-31",
+            "currency": "USD",
+            "pi": "sbillinge",
+        }
     ],
     "reading_lists": {
         "_id": "getting_started_with_pdf",
@@ -2137,7 +2165,7 @@ SCHEMAS = {
             "type": "string",
         },
         "end_date": {
-            "description": "end date of the grant (if string, in format YYYY-MM-DD)",
+            "description": "start date of the grant (if string, in format YYYY-MM-DD)",
             "required": False,
             "anyof_type": ["string", "date"]
         },

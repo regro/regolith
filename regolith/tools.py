@@ -1498,7 +1498,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     return appts
 
 
-def grant_burn(grant, appts, begin_date=None, end_date=None):
+def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=None):
     """
     Retrieves the total burn of a grant over an interval of time by integrating over all appointments
     made on the grant.
@@ -1527,7 +1527,8 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
         raise ValueError("{} has no specified budget".format(grant.get('_id')))
     if bool(begin_date) ^ bool(end_date):
         raise RuntimeError("please enter both begin date and end date or neither")
-    grant_begin, grant_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
+    grant_begin = date_parser.parse(grant_begin).date() if isinstance(grant_begin, str) else grant_begin
+    grant_end = date_parser.parse(grant_end).date() if isinstance(grant_end, str) else grant_end
     begin_date = grant_begin if not begin_date else begin_date
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
     end_date = grant_end if not end_date else end_date
