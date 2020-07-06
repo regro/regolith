@@ -1539,6 +1539,14 @@ EXEMPLARS = {
             "amount": 3000.0,
             "begin_date": "2030-05-01",
             "end_date": "2030-12-31",
+            "cpp_info": {
+                "cppflag": True,
+                "other_agencies_submitted": "None",
+                "institution": "Columbia University",
+                "person_months_academic": 0,
+                "person_months_summer": 1,
+                "project_scope": ""
+            },
             "currency": "USD",
             "pi": "sbillinge",
             "status": "submitted",
@@ -1549,6 +1557,14 @@ EXEMPLARS = {
             "amount": 3000.0,
             "begin_date": "2019-06-01",
             "end_date": "2030-12-31",
+            "cpp_info": {
+                "cppflag": True,
+                "other_agencies_submitted": "None",
+                "institution": "Columbia University",
+                "person_months_academic": 0,
+                "person_months_summer": 1,
+                "project_scope": ""
+            },
             "currency": "USD",
             "pi": "sbillinge",
             "status": "submitted",
@@ -1559,6 +1575,14 @@ EXEMPLARS = {
             "amount": 42000.0,
             "begin_date": "2020-06-01",
             "end_date": "2020-12-31",
+            "cpp_info": {
+                "cppflag": True,
+                "other_agencies_submitted": "None",
+                "institution": "Columbia University",
+                "person_months_academic": 0,
+                "person_months_summer": 1,
+                "project_scope": ""
+            },
             "currency": "USD",
             "pi": "sbillinge",
             "status": "submitted",
