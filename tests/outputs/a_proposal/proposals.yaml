@@ -30,18 +30,24 @@ SymPy-1.1:
   currency: USD
   end_date: '2030-12-31'
   pi: sbillinge
+  status: submitted
+  title: SymPy 1.1 Release Support
 SymPy-2.0:
   amount: 3000.0
   begin_date: '2019-06-01'
   currency: USD
   end_date: '2030-12-31'
   pi: sbillinge
+  status: submitted
+  title: SymPy 1.1 Release Support
 abc42:
   amount: 42000.0
   begin_date: '2020-06-01'
   currency: USD
   end_date: '2020-12-31'
   pi: sbillinge
+  status: submitted
+  title: The answer to life, the universe, and everything
 dmref15:
   amount: 982785.0
   authors:
