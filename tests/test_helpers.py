@@ -132,12 +132,19 @@ helper_map = [
      "afriend has been added/updated in contacts\n"
      ),
     (["helper", "u_contact", "Anthony", "--date", "2020-01-02"],
-     "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
+     "Please rerun the helper by hitting up arrow and adding '-i list-index' to "
+     "update the list item 'list-index', e.g., 'regolith helper eins -i 2'. For "
+     "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Anthony as a new contact\n"
-     "2. Anthony B Friend    id: afriend\n"
+     "2. Anthony B Friend    id: afriend    email: friend@deed.com\n"
+     "   institution: columbiau    department: physics\n"
+     "   notes: ['The guy I meet for coffee sometimes', 'Test note']\n"
+     "   aliases: ['A. B. Friend', 'AB Friend', 'Tony Friend', 'Friend']\n"
      ),
     (["helper", "u_contact", "Maria", "--date", "2020-01-02"],
-     "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
+     "Please rerun the helper by hitting up arrow and adding '-i list-index' to "
+     "update the list item 'list-index', e.g., 'regolith helper eins -i 2'. For "
+     "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
      ),
     (["helper", "l_todo", "--id", "sbillinge", "--short_tasks"],
