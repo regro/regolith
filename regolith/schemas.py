@@ -1438,7 +1438,7 @@ EXEMPLARS = {
             "begin_month": "May",
             "begin_year": 2030,
             "currency": "USD",
-            #"day": 18,
+            "day": 18,
             "duration": 3,
             "end_day": 31,
             "end_month": "December",
@@ -1450,7 +1450,7 @@ EXEMPLARS = {
                        "http://pdf.com/flanagan-cv"],
                 "narrative": "http://some.com/pdf",
             },
-            #"month": "Aug",
+            "month": "Aug",
             "notes": "Quite an idea",
             "pi": "Anthony Scopatz",
             "pre": {
@@ -1465,7 +1465,7 @@ EXEMPLARS = {
             },
             "status": "submitted",
             "title": "A very fine proposal indeed",
-            #"year": 1999,
+            "year": 1999,
         },
         {
             "_id": "dmref15",
@@ -1486,13 +1486,13 @@ EXEMPLARS = {
                                  "other of my grants"
             },
             "currency": "USD",
-            #"day": 2,
+            "day": 2,
             "duration": 3,
             "end_day": 30,
             "end_month": "september",
             "end_year": 2025,
             "funder": "NSF",
-            #"month": "february",
+            "month": "february",
             "notes": "Quite an idea",
             "pi": "Simon Billinge",
             "status": "accepted",
@@ -1517,7 +1517,7 @@ EXEMPLARS = {
             "title": "DMREF: Novel, data validated, nanostructure determination "
                      "methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure",
-            #"year": 2015,
+            "year": 2015,
         },
         {
             "_id": "SymPy-1.1",

@@ -107,6 +107,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     continue
                 grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
                 prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
+                if prop.get('year'):
+                    del prop['year']
                 grant_begin, grant_end = get_dates(prop)['begin_date'], get_dates(prop)['end_date']
                 if not grant:
                     raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".
