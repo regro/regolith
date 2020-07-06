@@ -27,6 +27,8 @@ TEST_END_DATE = date(2019, 2, 5)
 )
 def test_month_to_str(input, expected):
     assert month_to_str_int(input) == expected
+
+
 import datetime
 from regolith.dates import date_to_float, month_to_int
 
@@ -67,11 +69,12 @@ def test_month_to_int(input, expected):
 def test_date_to_float(input, expected):
     assert date_to_float(input[0], input[1], d=input[2]) == expected
 
+
 @pytest.mark.parametrize(
     "input,expected",
     [
-            (1, "01"),
-    (10, "10"),
+        (1, "01"),
+        (10, "10"),
     ],
 )
 def test_day_to_str(input, expected):
@@ -108,9 +111,9 @@ def test_find_gaps_overlaps(input, flag, expected):
     "input,expected",
     [
         (({'year': 2020}, None), {'begin_date': datetime.date(2020, 1, 1),
-                          'end_date': datetime.date(2020, 12, 31),
-                          'date': None
-                          }
+                                  'end_date': datetime.date(2020, 12, 31),
+                                  'date': None
+                                  }
          ),
         (({'year': 2020, 'month': 9}, None),
          {'begin_date': datetime.date(2020, 9, 1),
@@ -161,53 +164,55 @@ def test_find_gaps_overlaps(input, flag, expected):
           }
          ),
         (({'begin_date': '2020-05-09', 'begin_year': 2019, 'end_year': 2020, 'end_month': 'Feb',
-          'end_day': 10}, None),
+           'end_day': 10}, None),
          {'begin_date': datetime.date(2020, 5, 9),
           'end_date': datetime.date(2020, 2, 10),
           'date': None
           }
          ),
         (({'end_date': '2020-5-20', 'begin_year': 2019, 'end_year': 2020, 'end_month': 'Feb',
-          'end_day': 10}, None),
+           'end_day': 10}, None),
          {'begin_date': datetime.date(2019, 1, 1),
           'end_date': datetime.date(2020, 5, 20),
           'date': None
           }
          ),
         (({'date': '2020-5-20', 'begin_year': 2019, 'end_year': 2020,
-          'end_month': 'Feb',
-          'end_day': 10}, None),
+           'end_month': 'Feb',
+           'end_day': 10}, None),
          {'begin_date': datetime.date(2019, 1, 1),
           'end_date': datetime.date(2020, 2, 10),
           'date': datetime.date(2020, 5, 20)
           }
          ),
         (({'date': datetime.date(2020, 5, 20), 'begin_year': 2019, 'end_year': 2020,
-          'end_month': 'Feb',
-          'end_day': 10}, None),
+           'end_month': 'Feb',
+           'end_day': 10}, None),
          {'begin_date': datetime.date(2019, 1, 1),
           'end_date': datetime.date(2020, 2, 10),
           'date': datetime.date(2020, 5, 20)
           }
          ),
         (({'date': datetime.date(2020, 5, 20), 'begin_date': datetime.date(2015, 6, 8),
-          'end_date': datetime.date(2025, 10, 4)}, None),
+           'end_date': datetime.date(2025, 10, 4)}, None),
          {'begin_date': datetime.date(2015, 6, 8),
           'end_date': datetime.date(2025, 10, 4),
           'date': datetime.date(2020, 5, 20)
           }
          ),
         (({'submission_day': 10, 'submission_year': 2020,
-          'submission_month': 'Feb'}, "submission"),
+           'submission_month': 'Feb'}, "submission"),
          {'begin_date': datetime.date(2020, 2, 10),
           'end_date': datetime.date(2020, 2, 10),
+          'submission_date': datetime.date(2020, 2, 10),
           'date': datetime.date(2020, 2, 10)
           }
          ),
         (({'year': 2020, 'submission_year': 2019}, "submission"), {'begin_date': datetime.date(2019, 1, 1),
-                          'end_date': datetime.date(2019, 12, 31),
-                          'date': None
-                          }
+                                                                   'end_date': datetime.date(2019, 12, 31),
+                                                                   'submission_date': None,
+                                                                   'date': None
+                                                                   }
          ),
     ],
 )

@@ -171,7 +171,7 @@ def get_dates(thing, date_field_prefix=None):
     1 and 1, respectively
 
     If a date field prefix is passed in this function will search for prefix_year as
-    well as prefix_month, prefix_day, and prefix_date. For example, is the prefix string
+    well as prefix_month, prefix_day, and prefix_date. For example, if the prefix string
     passed in is "submitted" then this function will look for submitted_date instead of
     just date.
 
@@ -248,7 +248,11 @@ def get_dates(thing, date_field_prefix=None):
             date = date_parser.parse(thing.get(datenames[3])).date()
         else:
             date = thing.get(datenames[3])
-    dates = {'begin_date': begin_date, 'end_date': end_date, 'date': date}
+
+    if date_field_prefix:
+        dates = {'begin_date': begin_date, 'end_date': end_date, datenames[3]: date, 'date': date}
+    else:
+        dates = {'begin_date': begin_date, 'end_date': end_date, 'date': date}
     return dates
 
 
