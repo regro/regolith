@@ -131,7 +131,7 @@ def last_day(year, month):
     """
     return calendar.monthrange(year, month_to_int(month))[1]
 
-def get_dates(thing):
+def get_dates(thing, date_field_prefix=None):
     '''
     given a dict like thing, return the items
 
@@ -139,10 +139,14 @@ def get_dates(thing):
     ----------
     thing: dict
       the dict that contains the dates
+    date_field_prefix: string (optional)
+      the prefix to look for before the date parameter. For example given "submission"
+      the function will search for submission_day, submission_year, etc.
 
     Returns
     -------
-       dict containing datetime.date objects for begin_date end_date and date
+       dict containing datetime.date objects for begin_date end_date and date, and
+       prefix_date if a prefix string was passed
 
     Description
     -----------
@@ -155,7 +159,9 @@ def get_dates(thing):
     year.
 
     If "year", "month" and "day" are found the function will return these in the
-    "date" field and begin_date and end_date will be None
+    "date" field and begin_date and end_date will match the "date" field. If only
+    a "year" is found, then the date attribute will be none but the begin and end
+    dates will be the first and last day of that respective year. 
 
     If year is found but no month or day are found the function will return
     begin_date and end_date with the beginning and the end of the given year/month.
@@ -166,49 +172,82 @@ def get_dates(thing):
 
     If begin_year is found, the begin month and begin day are missing they are set to
     1 and 1, respectively
+
+    If a date field prefix is passed in this function will search for prefix_year as
+    well as prefix_month, prefix_day, and prefix_date. For example, if the prefix string
+    passed in is "submitted" then this function will look for submitted_date instead of
+    just date.
+
+    Examples
+    --------
+    >>> get_dates({'submission_day': 10, 'submission_year': 2020, 'submission_month': 'Feb'}, "submission")
+
+    This would return a dictionary consisting of the begin date, end, date, and date for the given input.
+    Instead of searching for "day" in the thing, it would search for "submission_day" since a prefix was
+    given. The following dictionary is returned (note that a submission_date and a date key are in the
+    dictionary):
+    {'begin_date': datetime.date(2020, 2, 10),
+     'end_date': datetime.date(2020, 2, 10),
+     'submission_date': datetime.date(2020, 2, 10),
+     'date': datetime.date(2020, 2, 10)
+    }
+
+    >>> get_dates({'begin_year': 2019, 'end_year': 2020, 'end_month': 'Feb'})
+
+    This will return a dictionary consisting of the begin date, end date, and date for the given input.
+    Because no prefix string was passed in, the function will search for "date" in the input instead of
+    prefix_input. The following dictionary is returned:
+    {'begin_date': datetime.date(2019, 1, 1),
+     'end_date': datetime.date(2020, 2, 29),
+     'date': None
+    }
     '''
+
+    datenames = ["day", "month", "year", "date"]
+    if date_field_prefix:
+        datenames = [f"{date_field_prefix}_{datename}" for datename in datenames]
 
     if thing.get("end_year") and not thing.get("begin_year"):
         print('WARNING: end_year specified without begin_year')
     begin_date, end_date, date = None, None, None
-    if thing.get('begin_year'):
-        if not thing.get('begin_month'):
-            thing['begin_month'] = 1
-        if not thing.get('begin_day'):
-            thing['begin_day'] = 1
-        begin_date = datetime.date(thing['begin_year'],month_to_int(thing['begin_month']),
-                                   thing['begin_day'])
-    if thing.get('end_year'):
-        if not thing.get('end_month'):
-            thing['end_month'] = 12
-        if not thing.get('end_day'):
-            thing['end_day'] = last_day(thing['end_year'], thing['end_month'])
-        end_date = datetime.date(thing['end_year'],month_to_int(thing['end_month']),
-                                   thing['end_day'])
-    if thing.get('year'):
-        if not thing.get('month'):
-            if thing.get('begin_year'):
+    if thing.get("begin_year"):
+        if not thing.get("begin_month"):
+            thing["begin_month"] = 1
+        if not thing.get("begin_day"):
+            thing["begin_day"] = 1
+        begin_date = datetime.date(thing["begin_year"],month_to_int(thing["begin_month"]),
+                                   thing["begin_day"])
+    if thing.get("end_year"):
+        if not thing.get("end_month"):
+            thing["end_month"] = 12
+        if not thing.get("end_day"):
+            thing["end_day"] = last_day(thing["end_year"], thing["end_month"])
+        end_date = datetime.date(thing["end_year"],month_to_int(thing["end_month"]),
+                                   thing["end_day"])
+    if thing.get(datenames[2]):
+        if not thing.get(datenames[1]):
+            if thing.get("begin_year"):
                 print("WARNING: both year and begin_year specified.  Year info will be used")
-            begin_date = datetime.date(thing['year'],1,1)
-            end_date = datetime.date(thing['year'],12,31)
-        elif not thing.get('day'):
-            if thing.get('begin_year'):
+            begin_date = datetime.date(thing[datenames[2]],1,1)
+            end_date = datetime.date(thing[datenames[2]],12,31)
+        elif not thing.get(datenames[0]):
+            if thing.get("begin_year"):
                 print("WARNING: both year and begin_year specified.  Year info will be used")
-            begin_date = datetime.date(thing['year'],month_to_int(thing['month']),
+            begin_date = datetime.date(thing[datenames[2]],month_to_int(thing[datenames[1]]),
                                    1)
-            end_date = datetime.date(thing['year'],
-                                       month_to_int(thing['month']),
-                                       last_day(thing['year'], thing['month']))
+            end_date = datetime.date(thing[datenames[2]],
+                                       month_to_int(thing[datenames[1]]),
+                                       last_day(thing[datenames[2]], thing[datenames[1]]))
         else:
-            date = datetime.date(thing['year'],
-                                       month_to_int(thing['month']),
-                                       thing['day'])
-            begin_date = datetime.date(thing['year'],
-                                       month_to_int(thing['month']),
-                                       thing['day'])
-            end_date = datetime.date(thing['year'],
-                                       month_to_int(thing['month']),
-                                       thing['day'])
+            date = datetime.date(thing[datenames[2]],
+                                       month_to_int(thing[datenames[1]]),
+                                       thing[datenames[0]])
+            begin_date = datetime.date(thing[datenames[2]],
+                                       month_to_int(thing[datenames[1]]),
+                                       thing[datenames[0]])
+            end_date = datetime.date(thing[datenames[2]],
+                                       month_to_int(thing[datenames[1]]),
+                                       thing[datenames[0]])
     if thing.get('begin_date'):
         if isinstance(thing.get('begin_date'), str):
             begin_date = date_parser.parse(thing.get('begin_date')).date()
@@ -219,12 +258,16 @@ def get_dates(thing):
             end_date = date_parser.parse(thing.get('end_date')).date()
         else:
             end_date = thing.get('end_date')
-    if thing.get('date'):
-        if isinstance(thing.get('date'), str):
-            date = date_parser.parse(thing.get('date')).date()
+    if thing.get(datenames[3]):
+        if isinstance(thing.get(datenames[3]), str):
+            date = date_parser.parse(thing.get(datenames[3])).date()
         else:
-            date = thing.get('date')
-    dates = {'begin_date': begin_date, 'end_date': end_date, 'date': date}
+            date = thing.get(datenames[3])
+
+    if date_field_prefix:
+        dates = {'begin_date': begin_date, 'end_date': end_date, datenames[3]: date, 'date': date}
+    else:
+        dates = {'begin_date': begin_date, 'end_date': end_date, 'date': date}
     return dates
 
 
