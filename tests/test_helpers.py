@@ -164,6 +164,9 @@ helper_map = [
     (["helper", "l_todo", "--verbose", "--id", "sbillinge"],
      "1. Simon: test\n     --due: 2020-06-18, importance:1,  \n2. Everyone: Clear out-of-date prums milestones.\n     --due: 2020-06-18, importance:1,  \n3. read paper\n     --due: 2020-07-19, importance:2, 60.0 min, start date: 2020-06-15\n4. prepare the presentation\n     --notes: ['about 10 minutes', \"don't forget to upload to the website\"]\n     --due: 2020-07-29, importance:0, 30.0 min, start date: 2020-06-22\n"
      ),
+    (["helper", "a_todo", "test a_todo", "10", "--id", "sbillinge", "--begin_date", "2020-07-06",  "--duration", "50", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
+     "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
+     ),
     (["helper", "finish_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"
      ),

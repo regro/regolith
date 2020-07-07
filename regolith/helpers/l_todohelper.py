@@ -1,4 +1,4 @@
-"""Helper for listing the to-do tasks. Tasks are gathered from todolist.yml, milestones, and group meeting actions.
+"""Helper for listing the to-do tasks. Tasks are gathered from people.yml, milestones, and group meeting actions.
 
 """
 import datetime as dt
@@ -35,7 +35,7 @@ def subparser(subpi):
 
 
 class TodoListerHelper(SoutHelperBase):
-    """Helper for listing the to-do tasks. Tasks are gathered from todolist.yml, milestones, and group meeting actions.
+    """Helper for listing the to-do tasks. Tasks are gathered from people.yml, milestones, and group meeting actions.
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
