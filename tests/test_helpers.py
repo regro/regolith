@@ -31,14 +31,11 @@ helper_map = [
     (["helper", "l_milestones", "--verbose", "--lead", "lyang"],
      "2021-01-01: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
-    (["helper", "l_projecta", "--verbose"],
-     "20ly_newprojectum\n20sb_firstprojectum\n"
-     ),
     (["helper", "l_projecta", "--verbose", "--lead", "ascopatz"],
-     "20sb_firstprojectum\n"
+     "20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
-    (["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
-     "20ly_newprojectum\n20sb_firstprojectum\n"
+     (["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
+     "20ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--grant", "SymPy-1.1"],
      "20ly_newprojectum\n20sb_firstprojectum\n"
@@ -51,6 +48,9 @@ helper_map = [
      ),
     (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"],
      "ascopatz:\n    20sb_firstprojectum\n"
+     ),
+    (["helper", "l_projecta", "--verbose"],
+     "20ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--ended", "--date", "2020-06-02"],
      "20sb_firstprojectum    My first projectum\n    Lead: ascopatz    Members: ascopatz    Collaborators: aeinstein, pdirac\n"
@@ -80,7 +80,7 @@ helper_map = [
      ""
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--index", "5",
-      "--status", "converged","--due_date", "2020-06-01"],
+      "--status", "converged", "--due_date", "2020-06-01"],
      "20sb_firstprojectum has been updated in projecta\n"
      ),
     (["helper", "u_milestone", "20sb"],
@@ -146,7 +146,7 @@ helper_map = [
     (["helper", "l_todo", "--id", "sbillinge", "--short_tasks", "65"],
      "1. read paper\n2. prepare the presentation\n"
      ),
-    (["helper", "l_todo", "--verbose", "--id", "sbillinge","--short_tasks"],
+    (["helper", "l_todo", "--verbose", "--id", "sbillinge", "--short_tasks"],
      "1. prepare the presentation\n     --notes: ['about 10 minutes', \"don't forget to upload to the website\"]\n     --due: 2020-07-29, importance:0, 30.0 min, start date: 2020-06-22\n"
      ),
     (["helper", "l_todo", "--id", "sbillinge"],
@@ -196,9 +196,9 @@ helper_map = [
      ),
     (["helper", "u_institution", "columbiau",
       "--aka", "ucolumbia", "Columbia University in the City of New York",
-      "--dept_id", "mathematics", "--dept_name","Department of Mathematics",
+      "--dept_id", "mathematics", "--dept_name", "Department of Mathematics",
       "--dept_aka", "dept. of mathematics", "math department",
-      "--school_id", "cc", "--school_name", "Columbia College","--school_aka", "CC",
+      "--school_id", "cc", "--school_name", "Columbia College", "--school_aka", "CC",
       "--date", "2020-01-01"],
      "columbiau has been updated/added in institutions\n"
      ),
