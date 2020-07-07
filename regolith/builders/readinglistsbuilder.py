@@ -20,7 +20,7 @@ from regolith.dates import month_to_int
 class ReadingListsBuilder(LatexBuilderBase):
     """Build reading lists from database entries"""
 
-    btype = "readinglists"
+    btype = "reading-lists"
     needed_dbs = ['people', 'reading_lists']
 
     def construct_global_ctx(self):
