@@ -19,7 +19,7 @@ builder_map = [
     "reimb",
     "figure",
     "recent-collabs",
-    "beamplan"
+    "beamplan",
     "reading-lists"
 ]
 db_srcs = ["mongo", "fs"]
