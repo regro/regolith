@@ -12,7 +12,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id, search_collection,
-    key_value_pair_filter, collection_str
+    key_value_pair_filter, collection_str,
     get_pi_id,
     fuzzy_retrieval,
 )
