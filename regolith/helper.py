@@ -18,6 +18,7 @@ from regolith.helpers import l_todohelper as l_todo
 from regolith.helpers import u_finishprumhelper as u_finishprum
 from regolith.helpers import l_generalhelper as l_general
 from regolith.helpers import u_institutionshelper as u_institutions
+from regolith.helpers import a_todohelper as a_todo
 
 HELPERS = {
     "hello": (hello.HelloHelper, hello.subparser),
@@ -38,6 +39,7 @@ HELPERS = {
     "finish_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
     "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
+    "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser)
 }
 
 
