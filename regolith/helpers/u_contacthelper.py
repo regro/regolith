@@ -29,6 +29,7 @@ def subparser(subpi):
                         help="Notes.  As many notes as you like, each one in "
                              "quotes and separated by a space, such as where "
                              "and when met, what discussed.")
+    subpi.add_argument("-d", "--department", help="Department at the institution.")
     subpi.add_argument("--id", help="id of the person, e.g., first letter first name "
                                           "plus last name, but unique.")
     subpi.add_argument("--aliases", nargs='+',
@@ -81,8 +82,11 @@ class ContactUpdaterHelper(DbHelperBase):
                   "For new contacts --name (-n) and --institution (-o) are required:")
             print(f"{1}. {rc.fragmentname} as a new contact")
             for i, j in zip(index_list, found_contacts):
-                print(f"{i}. {j.get('name')}    id: {j.get('_id')}    email: {j.get('email')}\n"
-                      f"   institution: {j.get('institution')}    department: {j.get('department')}\n"
+                print(f"{i}. {j.get('name')}\n"
+                      f"   id: {j.get('_id')}\n"
+                      f"   email: {j.get('email')}\n"
+                      f"   institution: {j.get('institution')}\n"
+                      f"   department: {j.get('department')}\n"
                       f"   notes: {j.get('notes')}\n"
                       f"   aliases: {j.get('aka')}")
             return
@@ -117,6 +121,8 @@ class ContactUpdaterHelper(DbHelperBase):
             if isinstance(rc.notes, str):
                 rc.notes.list()
             notes.extend(rc.notes)
+        if rc.department:
+            pdoc.update({"department":rc.department})
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
         pdoc.update({'updated': now})

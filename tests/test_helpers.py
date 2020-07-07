@@ -136,8 +136,11 @@ helper_map = [
      "update the list item 'list-index', e.g., 'regolith helper eins -i 2'. For "
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Anthony as a new contact\n"
-     "2. Anthony B Friend    id: afriend    email: friend@deed.com\n"
-     "   institution: columbiau    department: physics\n"
+     "2. Anthony B Friend\n"
+     "   id: afriend\n"
+     "   email: friend@deed.com\n"
+     "   institution: columbiau\n"
+     "   department: physics\n"
      "   notes: ['The guy I meet for coffee sometimes', 'Test note']\n"
      "   aliases: ['A. B. Friend', 'AB Friend', 'Tony Friend', 'Friend']\n"
      ),
