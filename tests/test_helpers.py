@@ -73,17 +73,22 @@ helper_map = [
      ),
     (["helper", "l_contacts", "run", "--name", "ny", "--inst", "col",
       "--notes", "coffee", "--date", "2020-01-15", "--range", "2"],
-     "name: Anthony B Friend, institution: columbiau, email: friend@deed.com\n"
+     "Anthony B Friend\n    institution: columbiau\n    email: friend@deed.com\n"
      ),
     (["helper", "l_contacts", "run", "--name", "ny", "--inst", "col",
       "--notes", "coffee", "--date", "2019-01-15", "--range", "2"],
      ""
      ),
     (["helper", "l_contacts", "run", "--verbose"],
-     "id: afriend    name: Anthony B Friend    email: friend@deed.com\n"
-     "institution: columbiau    department: physics\n"
-     "notes: ['The guy I meet for coffee sometimes']\n"
-     "aka: ['A. B. Friend', 'AB Friend', 'Tony Friend']\n"
+     "Anthony B Friend\n"
+     "    id: afriend\n"
+     "    email: friend@deed.com\n"
+     "    institution: columbiau\n"
+     "    department: physics\n"
+     "    notes:\n"
+     "        -The guy I meet for coffee sometimes\n"
+     "    aka:\n"
+     "        -A. B. Friend\n        -AB Friend\n        -Tony Friend\n"
      ),
     (["helper", "u_milestone", "20sb_firstprojectum", "--index", "5",
       "--status", "converged", "--due_date", "2020-06-01"],
