@@ -3540,7 +3540,7 @@ SCHEMAS = {
         "submitted_date": {
             "description": "submitted date in ISO YYYY-MM-DD format in quotes",
             "required": True,
-            "anyof_type": "string",
+            "type": "string",
         },
         "title": {
             "description": "title of the paper under review",

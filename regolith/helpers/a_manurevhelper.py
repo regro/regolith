@@ -35,7 +35,7 @@ def subparser(subpi):
     subpi.add_argument("-s", "--status",
                        help=f"status, from {ALLOWED_STATI}. default is accepted"
                        )
-    subpi.add_argument("--database",
+    subpi.add_argument("-t", "--database",
                        help="The database that will be updated. Defaults to "
                             "first database in the regolithrc.json file."
                        )
