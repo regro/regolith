@@ -13,6 +13,7 @@ from regolith.helpers import l_membershelper as l_members
 from regolith.helpers import l_contactshelper as l_contacts
 from regolith.helpers import u_logurlhelper as u_logurl
 from regolith.helpers import u_milestonehelper as u_milestone
+from regolith.helpers import makeappointmentshelper as makeappointments
 from regolith.helpers import u_contacthelper as u_contact
 from regolith.helpers import l_todohelper as l_todo
 from regolith.helpers import u_finishprumhelper as u_finishprum
@@ -39,7 +40,8 @@ HELPERS = {
     "finish_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
     "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
-    "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser)
+    "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser),
+    "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
 }
 
 

@@ -217,6 +217,30 @@ EXEMPLARS = {
             ],
             "status": "pending",
             "title": "SymPy 1.1 Release Support",
+            "budget": [
+                {"begin_date": "2030-05-01",
+                 "end_date": "2030-06-30",
+                 "student_months": 0.5,
+                 "postdoc_months": 0.0,
+                 "ss_months": 1.0,
+                 "amount": 1000.0,
+                 },
+                {"begin_date": "2030-07-01",
+                 "end_date": "2030-09-30",
+                 "student_months": 1.5,
+                 "postdoc_months": 0.0,
+                 "ss_months": 2.0,
+                 "amount": 1000.0,
+                 },
+                {"begin_date": "2030-10-01",
+                 "end_date": "2030-12-31",
+                 "student_months": 3.0,
+                 "postdoc_months": 0.0,
+                 "ss_months": 0.0,
+                 "amount": 1000.0,
+                 },
+            ],
+            "proposal_id": "SymPy-1.1"
         },
         {
             "_id": "SymPy-2.0",
@@ -249,6 +273,23 @@ EXEMPLARS = {
             ],
             "status": "pending",
             "title": "SymPy 1.1 Release Support",
+            "budget": [
+                {"begin_date": "2019-06-01",
+                 "end_date": "2024-12-31",
+                 "student_months": 12.0,
+                 "postdoc_months": 24.0,
+                 "ss_months": 14.0,
+                 "amount": 1500.0,
+                 },
+                {"begin_date": "2025-01-01",
+                 "end_date": "2030-12-31",
+                 "student_months": 12.0,
+                 "postdoc_months": 24.0,
+                 "ss_months": 0.0,
+                 "amount": 1500.0,
+                 },
+            ],
+            "proposal_id": "SymPy-2.0",
         },
         {
             "_id": "dmref15",
@@ -292,6 +333,85 @@ EXEMPLARS = {
             ],
             "title": "DMREF: Novel, data validated, nanostructure determination "
                      "methods for accelerating materials discovery",
+            "budget": [
+                {"begin_date": "2015-10-01",
+                 "end_date": "2018-09-30",
+                 "student_months": 12.0,
+                 "postdoc_months": 0.0,
+                 "ss_months": 6.0,
+                 "amount": 327595.0,
+                 },
+                {"begin_date": "2018-10-01",
+                 "end_date": "2020-09-30",
+                 "student_months": 8.0,
+                 "postdoc_months": 0.0,
+                 "ss_months": 12.0,
+                 "amount": 327595.0,
+                 },
+                {"begin_date": "2020-10-01",
+                 "end_date": "2025-09-30",
+                 "student_months": 12.0,
+                 "postdoc_months": 0.0,
+                 "ss_months": 6.0,
+                 "amount": 327595.0,
+                 },
+            ],
+            "proposal_id": "dmref15"
+        },
+        {"_id": "abc42",
+         "amount": 42000.0,
+         "begin_date": "2020-06-01",
+         "end_date": "2020-12-31",
+         "funder": "Life",
+         "program": "Metaphysical Grants",
+         "team": [
+             {"institution": "University of Pedagogy",
+              "name": "Chief Pedagogue",
+              "position": "pi"
+             },
+            {"institution": "University of Pedagogy",
+              "name": "Pedagogue Jr.",
+              "position": "co-pi"
+             },
+         ],
+         "title": "The answer to life, the universe, and everything",
+         "budget": [
+             {"begin_date": "2020-06-01",
+              "end_date": "2020-08-30",
+              "student_months": 0.0,
+              "postdoc_months": 0.0,
+              "ss_months": 1.0,
+              "amount": 42000.0,
+             }
+         ],
+         "proposal_id": "abc42",
+        },
+        {"_id": "ta",
+         "amount": 0.0,
+         "begin_date": "2020-06-01",
+         "end_date": "2020-12-31",
+         "funder": "Life",
+         "program": "Underground Grants",
+         "team": [
+             {"institution": "Ministry of Magic",
+              "name": "Chief Witch",
+              "position": "pi"
+             },
+            {"institution": "Ministry of Magic",
+              "name": "Chief Wizard",
+              "position": "co-pi"
+             },
+         ],
+         "title": "Support for teaching assistants",
+         "budget": [
+             {"begin_date": "2020-06-01",
+              "end_date": "2020-08-30",
+              "student_months": 0.0,
+              "postdoc_months": 0.0,
+              "ss_months": 0.0,
+              "amount": 0.0,
+             }
+         ]
         },
     ],
     "groups": {
@@ -432,11 +552,31 @@ EXEMPLARS = {
                 "end_year": 2019,
                 "end_month": 10,
                 "end_day": 31,
-                "grant": "mrsec14",
+                "grant": "dmref15",
+                "type": "pd",
                 "loading": 0.75,
                 "status": "finalized",
                 "notes": ["forgetmenot"]
+            },
+            "s20": {
+                "begin_date": "2020-01-01",
+                "end_date": "2020-05-15",
+                "grant": "SymPy-1.1",
+                "type": "pd",
+                "loading": 1.0,
+                "status": "finalized",
+                "notes": ["fully appointed", "outdated grant"]
+            },
+            "ss20": {
+                "begin_date": "2020-06-01",
+                "end_date": "2020-08-31",
+                "grant": "abc42",
+                "type": "ss",
+                "loading": 0.8,
+                "status": "proposed",
+                "notes": []
             }
+
         },
         "bio": "Anthony Scopatz is currently an Assistant Professor",
         "bios": ["Anthony Scopatz is currently an Assistant Professor but will go on to do great things"],
@@ -1394,6 +1534,60 @@ EXEMPLARS = {
             "title_short": "DMREF nanostructure",
             "year": 2015,
         },
+        {
+            "_id": "SymPy-1.1",
+            "amount": 3000.0,
+            "begin_date": "2030-05-01",
+            "end_date": "2030-12-31",
+            "cpp_info": {
+                "cppflag": True,
+                "other_agencies_submitted": "None",
+                "institution": "Columbia University",
+                "person_months_academic": 0,
+                "person_months_summer": 1,
+                "project_scope": ""
+            },
+            "currency": "USD",
+            "pi": "sbillinge",
+            "status": "submitted",
+            "title": "SymPy 1.1 Release Support",
+        },
+        {
+            "_id": "SymPy-2.0",
+            "amount": 3000.0,
+            "begin_date": "2019-06-01",
+            "end_date": "2030-12-31",
+            "cpp_info": {
+                "cppflag": True,
+                "other_agencies_submitted": "None",
+                "institution": "Columbia University",
+                "person_months_academic": 0,
+                "person_months_summer": 1,
+                "project_scope": ""
+            },
+            "currency": "USD",
+            "pi": "sbillinge",
+            "status": "submitted",
+            "title": "SymPy 1.1 Release Support",
+        },
+        {
+            "_id": "abc42",
+            "amount": 42000.0,
+            "begin_date": "2020-06-01",
+            "end_date": "2020-12-31",
+            "cpp_info": {
+                "cppflag": True,
+                "other_agencies_submitted": "None",
+                "institution": "Columbia University",
+                "person_months_academic": 0,
+                "person_months_summer": 1,
+                "project_scope": ""
+            },
+            "currency": "USD",
+            "pi": "sbillinge",
+            "status": "submitted",
+            "title": "The answer to life, the universe, and everything",
+        }
     ],
     "reading_lists": {
         "_id": "getting_started_with_pdf",
@@ -1982,6 +2176,11 @@ SCHEMAS = {
             "required": True,
             "type": ("integer", "float"),
         },
+        "begin_date": {
+            "description": "start date of the grant (if string, in format YYYY-MM-DD)",
+            "required": False,
+            "anyof_type": ["string", "date"]
+        },
         "begin_day": {
             "description": "start day of the grant",
             "required": False,
@@ -2009,6 +2208,11 @@ SCHEMAS = {
             "description": "typically '$' or 'USD'",
             "required": False,
             "type": "string",
+        },
+        "end_date": {
+            "description": "start date of the grant (if string, in format YYYY-MM-DD)",
+            "required": False,
+            "anyof_type": ["string", "date"]
         },
         "end_day": {
             "description": "end day of the grant",
@@ -2100,6 +2304,51 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "budget": {
+            "description": "budget periods of grant",
+            "required": False,
+            "schema": {
+                "schema": {
+                    "begin_date": {
+                        "description": "start date of the budget period in format YYYY-MM-DD",
+                        "required": False,
+                        "type": "string"
+                    },
+                    "end_date": {
+                        "description": "end date of the budget period in format YYYY-MM-DD",
+                        "required": False,
+                        "type": "string"
+                    },
+                    "student_months": {
+                        "description": "number of months of funding for student members during the academic year",
+                        "required": False,
+                        "anyof_type": ["float", "integer"]
+                    },
+                    "postdoc_months": {
+                        "description": "number of months of funding for postdoc members during the academic year",
+                        "required": False,
+                        "anyof_type": ["float", "integer"]
+                    },
+                    "ss_months": {
+                        "description": "number of months of funding for the summer",
+                        "required": False,
+                        "anyof_type": ["float", "integer"]
+                    },
+                    "amount": {
+                        "description": "subaward for this budget period",
+                        "required": False,
+                        "anyof_type": ["float", "integer"]
+                    }
+                },
+                "type": "dict",
+            },
+            "type": "list",
+        },
+        "proposal_id": {
+            "description": "initial proposal made for grant",
+            "required": False,
+            "type": "string",
+        }
     },
     "groups": {
         "_description": {

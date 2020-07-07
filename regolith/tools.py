@@ -1315,15 +1315,15 @@ def is_fully_appointed(person, begin_date, end_date):
                 good_period = False
         else:
             if not good_period:
-                print("appointment gap for {} from {} to {}".format(person.get('_id'),
+                print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
                                                                      str(start_gap), str(day - relativedelta(days=1))))
             good_period = True
         if x == timespan.days and not good_period:
             if day != start_gap:
-                print("appointment gap for {} from {} to {}".format(person.get('_id'),
-                                                                     str(start_gap), str(day - relativedelta(days=1))))
+                print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
+                                                                     str(start_gap), str(day)))
             else:
-                print("appointment gap for {} on {}".format(person.get('_id'), str(day)))
+                print("WARNING: appointment gap for {} on {}".format(person.get('_id'), str(day)))
     return status
 
 def key_value_pair_filter(collection, arguments):
@@ -1498,7 +1498,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     return appts
 
 
-def grant_burn(grant, appts, begin_date=None, end_date=None):
+def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=None):
     """
     Retrieves the total burn of a grant over an interval of time by integrating over all appointments
     made on the grant.
@@ -1527,7 +1527,8 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
         raise ValueError("{} has no specified budget".format(grant.get('_id')))
     if bool(begin_date) ^ bool(end_date):
         raise RuntimeError("please enter both begin date and end date or neither")
-    grant_begin, grant_end = get_dates(grant)['begin_date'], get_dates(grant)['end_date']
+    grant_begin = date_parser.parse(grant_begin).date() if isinstance(grant_begin, str) else grant_begin
+    grant_end = date_parser.parse(grant_end).date() if isinstance(grant_end, str) else grant_end
     begin_date = grant_begin if not begin_date else begin_date
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
     end_date = grant_end if not end_date else end_date
@@ -1535,7 +1536,7 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     if begin_date > end_date:
         raise ValueError("begin date is after end date")
     timespan, grad_val, pd_val, ss_val = grant_end - grant_begin, 0.0, 0.0, 0.0
-    grant_amounts = ["values for grant {} from {} to {}:".format(grant.get('_id'), str(begin_date), str(end_date))]
+    grant_amounts = []
     for b in grant.get('budget'):
         if b.get('student_months'):
             grad_val += b.get('student_months') * 30.5
