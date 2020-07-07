@@ -33,7 +33,7 @@ ALLOWED_TYPES = ["gra", "pd", "ss"]
 
 def subparser(subpi):
 
-    subpi.add_argument("run", action="store_true", help='run the helper')
+    subpi.add_argument("run", help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
     subpi.add_argument("--no_plot", action="store_true", help='suppress plotting feature')
 
     return subpi
