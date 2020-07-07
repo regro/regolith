@@ -305,11 +305,30 @@ scopatz:
       end_year: 2019
       end_month: 10
       end_day: 31
-      grant: mrsec14
+      grant: dmref15
+      type: pd
       loading: 0.75
       status: finalized
       notes:
         - forgetmenot
+    s20:
+      begin_date: '2020-01-01'
+      end_date: '2020-05-15'
+      grant: SymPy-1.1
+      type: pd
+      loading: 1.0
+      status: finalized
+      notes:
+        - fully appointed
+        - outdated grant
+    ss20:
+      begin_date: '2020-06-01'
+      end_date: '2020-08-31'
+      grant: abc42
+      type: ss
+      loading: 0.8
+      status: proposed
+      notes: []
   avatar: https://avatars1.githubusercontent.com/u/320553?v=3&s=200
   bio: Anthony Scopatz is currently an Assistant Professor
   bios:

@@ -40,9 +40,7 @@ HELPERS = {
     "finish_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
     "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
-    "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser)
-    "u_institutions": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
-    "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
+    "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser),
     "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
 }
 
