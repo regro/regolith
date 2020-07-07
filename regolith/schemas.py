@@ -448,7 +448,7 @@ EXEMPLARS = {
             "day": 1,
             "level": "department",
             "unit": "apam"
-        },
+            },
             {"name": "Heather Stanford",
              "type": "promotion",
              "year": 2020,
@@ -473,7 +473,7 @@ EXEMPLARS = {
              "day": 1,
              "unit": "columbiau",
              "level": "university",
-             }],
+        }],
         "education": [
             {
                 "advisor": "ascopatz",
@@ -612,7 +612,7 @@ EXEMPLARS = {
             "year": 2020,
             "month": 2,
             "day": 19
-        }],
+            }],
         "home_address": {
             "street": "123 Wallabe Ln",
             "city": "The big apple",
@@ -646,14 +646,14 @@ EXEMPLARS = {
             "year": 2020,
             "month": 3,
             "notes": ["something"],
-        }, {
+            },{
             "name": "National Steering Committee",
             "type": "profession",
             "begin_year": 2018,
             "end_year": 2021,
             "notes": "something",
-        },
-        ],
+            },
+            ],
         "skills": [
             {"category": "Programming Languages", "level": "expert",
              "name": "Python"},
@@ -699,369 +699,369 @@ EXEMPLARS = {
                             "-PxiboYdM/edit?usp=sharing",
                 "year": 2017,
             },
-        ],
+       ],
         "title": "Dr.",
     },
-        {
-            "_id": "sbillinge",
-            "activities": [{
-                "type": "teaching",
-                "name": "course development",
-                "year": 2018,
-                "other": "Developed a new course for Materials Science"
+    {
+        "_id": "sbillinge",
+        "activities": [{
+            "type": "teaching",
+            "name": "course development",
+            "year": 2018,
+            "other": "Developed a new course for Materials Science"
+        }],
+        "aka": [
+            "Billinge",
+        ],
+        "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
+        "bio": "Simon teaches and does research",
+        "committees": [{
+            "name": "Same Old",
+            "type": "phddefense",
+            "year": 2018,
+            "unit": "Materials Science",
+            "level": "department",
+            "notes": "something"
             }],
-            "aka": [
-                "Billinge",
-            ],
-            "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
-            "bio": "Simon teaches and does research",
-            "committees": [{
-                "name": "Same Old",
-                "type": "phddefense",
-                "year": 2018,
-                "unit": "Materials Science",
-                "level": "department",
-                "notes": "something"
-            }],
-            "education": [
-                {
-                    "begin_year": 2008,
-                    "degree": "Ph.D. Mechanical Engineering, "
-                              "Nuclear and Radiation Engineering "
-                              "Program",
-                    "end_year": 2011,
-                    "group": "ergs",
-                    "institution": "The University of Texas at Austin",
-                    "department": "apam",
-                    "location": "Austin, TX",
-                    "other": [
-                        "Adviser: Erich A. Schneider",
-                        "Dissertation: Essential Physics for Fuel Cycle "
-                        "Modeling & Analysis",
-                    ],
-                },
-            ],
-            "email": "sb2896@columbia.edu",
-            "employment": [
-                {
-                    "begin_year": 2015,
-                    "group": "ergs",
-                    "location": "Columbia, SC",
-                    "organization": "The University of South Carolina",
-                    "other": [
-                        "Cyclus: An agent-based, discrete time nuclear fuel "
-                        "cycle simulator.",
-                        "PyNE: The Nuclear Engineering Toolkit.",
-                        "Website: http://www.ergs.sc.edu/",
-                    ],
-                    "position": "assistant professor",
-                },
-            ],
-            "facilities": [{
-                "type": "other",
-                "name": "Shared {Habanero} compute cluster",
-                "begin_year": 2015
-            },
-                {
-                    "type": "research_wish",
-                    "name": "Shared access to wet lab",
-                    "begin_year": 2015
-                },
-                {
-                    "type": "teaching",
-                    "name": "Courseworks2",
-                    "begin_year": 2017
-                },
-                {
-                    "type": "teaching_wish",
-                    "name": "nothing right now",
-                    "begin_year": 2019
-                },
-                {
-                    "type": "research",
-                    "name": "I don't have one",
-                    "begin_year": 2008
-                },
-            ],
-            "funding": [
-                {
-                    "name": "Omega Laser User's Group Travel Award",
-                    "value": 1100,
-                    "year": 2013,
-                },
-                {"name": "NIF User's Group Travel Award", "value": 1150,
-                 "year": 2013},
-            ],
-            "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
-            "hindex": [{
-                "h": 65,
-                "h_last_five": 43,
-                "citations": 17890,
-                "citations_last_five": 8817,
-                "origin": "Google Scholar",
-                "since": 1991,
-                "year": 2019,
-                "month": "May",
-                "day": 12,
-            }],
-            "office": "1105 Seely W. Mudd Building (inner office)",
-            "home_address": {
-                "street": "123 Wallabe Ln",
-                "city": "The big apple",
-                "state": "plasma",
-                "zip": "007",
-            },
-            "initials": "SJLB",
-            "membership": [
-                {
-                    "begin_year": 2006,
-                    "organization": "American Nuclear Society",
-                    "position": "Member",
-                },
-            ],
-            "miscellaneous": {
-                "metrics_for_success": [
-                    "publications(quality, quantity)",
-                    "invite talks",
-                    "funding",
-                    "citations",
+        "education": [
+            {
+                "begin_year": 2008,
+                "degree": "Ph.D. Mechanical Engineering, "
+                          "Nuclear and Radiation Engineering "
+                          "Program",
+                "end_year": 2011,
+                "group": "ergs",
+                "institution": "The University of Texas at Austin",
+                "department": "apam",
+                "location": "Austin, TX",
+                "other": [
+                    "Adviser: Erich A. Schneider",
+                    "Dissertation: Essential Physics for Fuel Cycle "
+                    "Modeling & Analysis",
                 ],
             },
-            "name": "Simon J. L. Billinge",
-            "orcid_id": "0000-0002-9432-4248",
-            "position": "professor",
-            "publicity": [{
-                "type": "online",
-                "publication": "Brookhaven National Laboratory Web Story",
-                "topic": "LDRD Provenance project",
-                "title": "An awesome project and well worth the money",
-                "day": 24,
-                "month": "Jul",
-                "year": 2019,
-                "grant": "bnlldrd18",
-                "url": "http://www.google.com"
+        ],
+        "email": "sb2896@columbia.edu",
+        "employment": [
+            {
+                "begin_year": 2015,
+                "group": "ergs",
+                "location": "Columbia, SC",
+                "organization": "The University of South Carolina",
+                "other": [
+                    "Cyclus: An agent-based, discrete time nuclear fuel "
+                    "cycle simulator.",
+                    "PyNE: The Nuclear Engineering Toolkit.",
+                    "Website: http://www.ergs.sc.edu/",
+                ],
+                "position": "assistant professor",
             },
-            ],
-            "research_focus_areas": [
-                {"begin_year": 2010, "description": "software applied to materials "
-                                                    "engineering and life"}
-            ],
-            "service": [
-                {
-                    "type": "profession",
-                    "name": "Master of Ceremonies and Organizer Brown University "
-                            '"Chemistry: Believe it or Not" public chemistry '
-                            "demonstration",
-                    "year": 2017,
-                    "month": "August"
-                },
-                {
-                    "type": "department",
-                    "name": "Applied Physics program committee",
-                    "year": 2018,
-                    "month": 1
-                },
-                {
-                    "type": "school",
-                    "name": "Ad hoc tenure committee",
-                    "year": 2017,
-                    "month": 6,
-                    "notes": "Albert Einstein"
-                },
-                {
-                    "type": "profession",
-                    "name": "Co-organizer JUAMI",
-                    "year": 2017,
-                    "month": 12,
-                    "role": "co-organizer",
-                    "other": "great way to meet people",
-                },
-            ],
-            "skills": [
-                {"category": "Programming Languages", "level": "expert",
-                 "name": "Python"},
-            ],
-            "teaching": [
-                {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "f17-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
-                    "enrollment": 18,
-                    "evaluation": {
-                        "response_rate": 58.33,
-                        "amount_learned": 4.57,
-                        "appropriateness_workload": 4.29,
-                        "fairness_grading": 4.57,
-                        "course_overall": 4.43,
-                        "organization": 4.0,
-                        "classroom_delivery": 4.29,
-                        "approachability": 4.86,
-                        "instructor_overall": 4.43,
-                        "comments": [
-                            "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ]},
-                    "month": "August",
-                    "organization": "Columbia University",
-                    "position": "professor",
-                    "semester": "Fall",
-                    "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2016,
-                },
-                {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "f17-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
-                    "enrollment": 18,
-                    "evaluation": {
-                        "response_rate": 58.33,
-                        "amount_learned": 4.57,
-                        "appropriateness_workload": 4.29,
-                        "fairness_grading": 4.57,
-                        "course_overall": 4.43,
-                        "organization": 4.0,
-                        "classroom_delivery": 4.29,
-                        "approachability": 4.86,
-                        "instructor_overall": 4.43,
-                        "comments": [
-                            "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ]},
-                    "month": "August",
-                    "organization": "Columbia University",
-                    "position": "professor",
-                    "semester": "Fall",
-                    "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2017,
-                },
-                {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "s17-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
-                    "enrollment": 18,
-                    "evaluation": {
-                        "response_rate": 58.33,
-                        "amount_learned": 4.57,
-                        "appropriateness_workload": 4.29,
-                        "fairness_grading": 4.57,
-                        "course_overall": 4.43,
-                        "organization": 4.0,
-                        "classroom_delivery": 4.29,
-                        "approachability": 4.86,
-                        "instructor_overall": 4.43,
-                        "comments": [
-                            "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ]},
-                    "month": "Jan",
-                    "organization": "Columbia University",
-                    "position": "professor",
-                    "semester": "Spring",
-                    "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2018,
-                },
-                {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "s17-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
-                    "enrollment": 18,
-                    "evaluation": {
-                        "response_rate": 58.33,
-                        "amount_learned": 4.57,
-                        "appropriateness_workload": 4.29,
-                        "fairness_grading": 4.57,
-                        "course_overall": 4.43,
-                        "organization": 4.0,
-                        "classroom_delivery": 4.29,
-                        "approachability": 4.86,
-                        "instructor_overall": 4.43,
-                        "comments": [
-                            "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ]},
-                    "month": "Jan",
-                    "organization": "Columbia University",
-                    "position": "professor",
-                    "semester": "Spring",
-                    "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2017,
-                },
-                {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "s17-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
-                    "enrollment": 18,
-                    "month": "Jan",
-                    "organization": "Columbia University",
-                    "position": "professor",
-                    "semester": "Spring",
-                    "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2019,
-                },
-                {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "f18-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
-                    "enrollment": 18,
-                    "evaluation": {
-                        "response_rate": 58.33,
-                        "amount_learned": 4.57,
-                        "appropriateness_workload": 4.29,
-                        "fairness_grading": 4.57,
-                        "course_overall": 4.43,
-                        "organization": 4.0,
-                        "classroom_delivery": 4.29,
-                        "approachability": 4.86,
-                        "instructor_overall": 4.43,
-                        "comments": [
-                            "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ]},
-                    "month": "August",
-                    "organization": "Columbia University",
-                    "position": "professor",
-                    "semester": "Fall",
-                    "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2018,
-                },
-                {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "f19-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
-                    "month": "August",
-                    "organization": "Columbia University",
-                    "position": "professor",
-                    "semester": "Fall",
-                    "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2019,
-                },
-            ],
-            "title": "Dr.",
-            "todos": [
-                {"description": "read paper",
-                 "due_date": "2020-07-19",
-                 "begin_date": "2020-06-15",
-                 "duration": 60.0,
-                 "importance": 2,
-                 "status": "started",
-                 },
-                {"description": "prepare the presentation",
-                 "due_date": "2020-07-29",
-                 "begin_date": "2020-06-22",
-                 "duration": 30.0,
-                 "importance": 0,
-                 "status": "started",
-                 "notes": ["about 10 minutes", "don't forget to upload to the website"],
-                 }
-            ],
+        ],
+        "facilities": [{
+            "type": "other",
+            "name": "Shared {Habanero} compute cluster",
+            "begin_year": 2015
         },
+        {
+            "type": "research_wish",
+            "name": "Shared access to wet lab",
+            "begin_year": 2015
+        },
+        {
+            "type": "teaching",
+            "name": "Courseworks2",
+            "begin_year": 2017
+            },
+        {
+            "type": "teaching_wish",
+            "name": "nothing right now",
+            "begin_year": 2019
+            },
+        {
+            "type": "research",
+            "name": "I don't have one",
+            "begin_year": 2008
+            },
+        ],
+        "funding": [
+            {
+                "name": "Omega Laser User's Group Travel Award",
+                "value": 1100,
+                "year": 2013,
+            },
+            {"name": "NIF User's Group Travel Award", "value": 1150,
+             "year": 2013},
+        ],
+        "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
+        "hindex": [{
+             "h": 65,
+             "h_last_five": 43,
+             "citations": 17890,
+             "citations_last_five": 8817,
+             "origin": "Google Scholar",
+             "since": 1991,
+             "year": 2019,
+             "month": "May",
+             "day": 12,
+         }],
+        "office": "1105 Seely W. Mudd Building (inner office)",
+        "home_address": {
+            "street": "123 Wallabe Ln",
+            "city": "The big apple",
+            "state": "plasma",
+            "zip": "007",
+        },
+        "initials": "SJLB",
+        "membership": [
+            {
+                "begin_year": 2006,
+                "organization": "American Nuclear Society",
+                "position": "Member",
+            },
+        ],
+        "miscellaneous": {
+            "metrics_for_success": [
+                "publications(quality, quantity)",
+                "invite talks",
+                "funding",
+                "citations",
+                ],
+        },
+        "name": "Simon J. L. Billinge",
+        "orcid_id": "0000-0002-9432-4248",
+        "position": "professor",
+        "publicity": [{
+            "type": "online",
+            "publication": "Brookhaven National Laboratory Web Story",
+            "topic": "LDRD Provenance project",
+            "title": "An awesome project and well worth the money",
+            "day": 24,
+            "month": "Jul",
+            "year": 2019,
+            "grant": "bnlldrd18",
+            "url": "http://www.google.com"
+            },
+        ],
+        "research_focus_areas": [
+            {"begin_year": 2010, "description": "software applied to materials "
+                                                "engineering and life" }
+        ],
+        "service": [
+            {
+                "type": "profession",
+                "name": "Master of Ceremonies and Organizer Brown University "
+                        '"Chemistry: Believe it or Not" public chemistry '
+                        "demonstration",
+                "year": 2017,
+                "month": "August"
+            },
+            {
+                "type": "department",
+                "name": "Applied Physics program committee",
+                "year": 2018,
+                "month": 1
+            },
+            {
+                "type": "school",
+                "name": "Ad hoc tenure committee",
+                "year": 2017,
+                "month": 6,
+                "notes": "Albert Einstein"
+            },
+            {
+                "type": "profession",
+                "name": "Co-organizer JUAMI",
+                "year": 2017,
+                "month": 12,
+                "role": "co-organizer",
+                "other": "great way to meet people",
+            },
+        ],
+        "skills": [
+            {"category": "Programming Languages", "level": "expert",
+             "name": "Python"},
+        ],
+        "teaching": [
+            {
+                "course": 'MSAE-3010: Introduction to Materials Science',
+                "courseid": "f17-3010",
+                "description": "This course is an introduction to nuclear " "physics.",
+                "enrollment": 18,
+                "evaluation": {
+                    "response_rate": 58.33,
+                    "amount_learned": 4.57,
+                    "appropriateness_workload": 4.29,
+                    "fairness_grading": 4.57,
+                    "course_overall": 4.43,
+                    "organization": 4.0,
+                    "classroom_delivery": 4.29,
+                    "approachability": 4.86,
+                    "instructor_overall": 4.43,
+                    "comments": [
+                        "Great teacher but disorganized",
+                        "Wears pink pants.  Why?",
+                    ]},
+                "month": "August",
+                "organization": "Columbia University",
+                "position": "professor",
+                "semester": "Fall",
+                "syllabus": "https://drive.google.com/open?id"
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                "year": 2016,
+            },
+            {
+                "course": 'MSAE-3010: Introduction to Materials Science',
+                "courseid": "f17-3010",
+                "description": "This course is an introduction to nuclear " "physics.",
+                "enrollment": 18,
+                "evaluation": {
+                    "response_rate": 58.33,
+                    "amount_learned": 4.57,
+                    "appropriateness_workload": 4.29,
+                    "fairness_grading": 4.57,
+                    "course_overall": 4.43,
+                    "organization": 4.0,
+                    "classroom_delivery": 4.29,
+                    "approachability": 4.86,
+                    "instructor_overall": 4.43,
+                    "comments": [
+                        "Great teacher but disorganized",
+                        "Wears pink pants.  Why?",
+                    ]},
+                "month": "August",
+                "organization": "Columbia University",
+                "position": "professor",
+                "semester": "Fall",
+                "syllabus": "https://drive.google.com/open?id"
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                "year": 2017,
+            },
+            {
+                "course": 'MSAE-3010: Introduction to Materials Science',
+                "courseid": "s17-3010",
+                "description": "This course is an introduction to nuclear " "physics.",
+                "enrollment": 18,
+                "evaluation": {
+                    "response_rate": 58.33,
+                    "amount_learned": 4.57,
+                    "appropriateness_workload": 4.29,
+                    "fairness_grading": 4.57,
+                    "course_overall": 4.43,
+                    "organization": 4.0,
+                    "classroom_delivery": 4.29,
+                    "approachability": 4.86,
+                    "instructor_overall": 4.43,
+                    "comments": [
+                       "Great teacher but disorganized",
+                       "Wears pink pants.  Why?",
+                    ]},
+                "month": "Jan",
+                "organization": "Columbia University",
+                "position": "professor",
+                "semester": "Spring",
+                "syllabus": "https://drive.google.com/open?id"
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                "year": 2018,
+            },
+            {
+                "course": 'MSAE-3010: Introduction to Materials Science',
+                "courseid": "s17-3010",
+                "description": "This course is an introduction to nuclear " "physics.",
+                "enrollment": 18,
+                "evaluation": {
+                    "response_rate": 58.33,
+                    "amount_learned": 4.57,
+                    "appropriateness_workload": 4.29,
+                    "fairness_grading": 4.57,
+                    "course_overall": 4.43,
+                    "organization": 4.0,
+                    "classroom_delivery": 4.29,
+                    "approachability": 4.86,
+                    "instructor_overall": 4.43,
+                    "comments": [
+                       "Great teacher but disorganized",
+                       "Wears pink pants.  Why?",
+                    ]},
+                "month": "Jan",
+                "organization": "Columbia University",
+                "position": "professor",
+                "semester": "Spring",
+                "syllabus": "https://drive.google.com/open?id"
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                "year": 2017,
+            },
+            {
+                "course": 'MSAE-3010: Introduction to Materials Science',
+                "courseid": "s17-3010",
+                "description": "This course is an introduction to nuclear " "physics.",
+                "enrollment": 18,
+                "month": "Jan",
+                "organization": "Columbia University",
+                "position": "professor",
+                "semester": "Spring",
+                "syllabus": "https://drive.google.com/open?id"
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                "year": 2019,
+            },
+            {
+                "course": 'MSAE-3010: Introduction to Materials Science',
+                "courseid": "f18-3010",
+                "description": "This course is an introduction to nuclear " "physics.",
+                "enrollment": 18,
+                "evaluation": {
+                    "response_rate": 58.33,
+                    "amount_learned": 4.57,
+                    "appropriateness_workload": 4.29,
+                    "fairness_grading": 4.57,
+                    "course_overall": 4.43,
+                    "organization": 4.0,
+                    "classroom_delivery": 4.29,
+                    "approachability": 4.86,
+                    "instructor_overall": 4.43,
+                    "comments": [
+                        "Great teacher but disorganized",
+                        "Wears pink pants.  Why?",
+                    ]},
+                "month": "August",
+                "organization": "Columbia University",
+                "position": "professor",
+                "semester": "Fall",
+                "syllabus": "https://drive.google.com/open?id"
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                "year": 2018,
+            },
+            {
+                "course": 'MSAE-3010: Introduction to Materials Science',
+                "courseid": "f19-3010",
+                "description": "This course is an introduction to nuclear " "physics.",
+                "month": "August",
+                "organization": "Columbia University",
+                "position": "professor",
+                "semester": "Fall",
+                "syllabus": "https://drive.google.com/open?id"
+                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                "year": 2019,
+            },
+        ],
+        "title": "Dr.",
+        "todos": [
+            {"description": "read paper",
+             "due_date": "2020-07-19",
+             "begin_date": "2020-06-15",
+             "duration": 60.0,
+             "importance": 2,
+             "status": "started",
+             },
+            {"description": "prepare the presentation",
+             "due_date": "2020-07-29",
+             "begin_date": "2020-06-22",
+             "duration": 30.0,
+             "importance": 0,
+             "status": "started",
+             "notes": ["about 10 minutes", "don't forget to upload to the website"],
+             }
+        ],
+    },
     ],
     "presentations": [
         {
@@ -1163,13 +1163,13 @@ EXEMPLARS = {
         "log_url": "https://docs.google.com/document/d/1YC_wtW5Q",
         "milestones": [{
             'due_date': '2020-05-20',
-            'name': 'Project lead presentation',
-            'objective': 'lead presents background reading and '
-                         'initial project plan',
-            'audience': ['lead', 'pi', 'group_members'],
-            'status': 'proposed',
-            'type': 'meeting'
-        },
+             'name': 'Project lead presentation',
+             'objective': 'lead presents background reading and '
+                          'initial project plan',
+             'audience': ['lead', 'pi', 'group_members'],
+             'status': 'proposed',
+             'type': 'meeting'
+             },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
              'objective': 'develop a detailed plan with dates',
@@ -2315,7 +2315,7 @@ SCHEMAS = {
                     "month": {
                         "required": False,
                         "description": "the month the activity took place",
-                        "anyof_type": ["integer", "string"],
+                        "anyof_type": ["integer","string"],
                     },
                     "name": {
                         "required": True,
@@ -2345,7 +2345,7 @@ SCHEMAS = {
         "bios": {
             "description": "longer biographical text if needed",
             "required": False,
-            "anyof_type": ["string", "list"]
+            "anyof_type": ["string","list"]
         },
         "collab": {
             "description": "If the person is a collaborator, default False.",
@@ -2364,17 +2364,17 @@ SCHEMAS = {
                     "day": {"required": False, "type": "integer"},
                     "month": {"required": False,
                               "anyof_type": ["string", "integer"],
-                              },
+                                    },
                     "notes": {"required": False,
                               "description": "extra things you want to record about the thing",
                               "anyof_type": ["string", "list"],
-                              },
+                                    },
                     "year": {"required": True, "type": "integer"},
                     "unit": {"required": False, "type": "string",
                              "description": "name of department or school etc."},
                     "type": {"required": False, "type": "string",
                              "description": "type of committee, department, school, university, external",
-                             "eallowed": ["phdoral", "phddefense", "phdproposal", "promotion"]},
+                             "eallowed": ["phdoral", "phddefense", "phdproposal","promotion"]},
                     "level": {
                         "required": True,
                         "type": "string",
@@ -2491,7 +2491,7 @@ SCHEMAS = {
                         "postdoc",
                         "visitor-supported",
                         "visitor-unsupported"],
-                               },
+                    },
                 },
             },
         },
@@ -2525,12 +2525,12 @@ SCHEMAS = {
                     "begin_month": {
                         "required": False,
                         "description": "the month the facility (or wish) started",
-                        "anyof_type": ["integer", "string"],
+                        "anyof_type": ["integer","string"],
                     },
                     "end_month": {
                         "required": False,
                         "description": "the month the faclity went away",
-                        "anyof_type": ["integer", "string"],
+                        "anyof_type": ["integer","string"],
                     },
                     "name": {
                         "required": True,
@@ -2590,22 +2590,22 @@ SCHEMAS = {
                     "h": {"description": "the value of the h index",
                           "required": True, "type": "integer"},
                     "h_last_five": {"description": "h index over past 5 years",
-                                    "required": False, "type": "integer"},
+                          "required": False, "type": "integer"},
                     "citations": {"description": "total number of citations",
-                                  "required": False, "type": "integer"},
+                          "required": False, "type": "integer"},
                     "citations_last_five": {"description": "number of citations"
-                                                           "in the past 5 years",
-                                            "required": False, "type": "integer"},
+                                  "in the past 5 years",
+                                  "required": False, "type": "integer"},
                     "origin": {"description": "where the numbers came from",
-                               "required": False, "type": "string"},
+                                  "required": False, "type": "string"},
                     "since": {"description": "year of first citation",
-                              "required": False, "type": "integer"},
+                                  "required": False, "type": "integer"},
                     "year": {"description": "year when the data were pulled",
-                             "required": False, "type": "integer"},
+                                  "required": False, "type": "integer"},
                     "month": {"description": "month when the data were pulled",
-                              "required": False, "anyof_type": ["string", "integer"]},
+                               "required": False, "anyof_type": ["string","integer"]},
                     "day": {"description": "day when the data were pulled",
-                            "required": False, "type": "integer"},
+                                  "required": False, "type": "integer"},
                 }
             },
             "type": "list",
@@ -2769,18 +2769,18 @@ SCHEMAS = {
                     "begin_year": {"required": False, "type": "integer"},
                     "begin_day": {"required": False, "type": "integer"},
                     "begin_month": {"description": "Use month and year if the service"
-                                                   "doesn't extend more than one year."
-                                                   "Otherwise use begin_year/month and end_year/month",
-                                    "required": False,
-                                    "anyof_type": ["string", "integer"]
-                                    },
+                                             "doesn't extend more than one year."
+                                             "Otherwise use begin_year/month and end_year/month",
+                              "required": False,
+                              "anyof_type": ["string", "integer"]
+                              },
                     "end_year": {"required": False, "type": "integer"},
                     "end_month": {"description": "Use month and year if the service"
-                                                 "doesn't extend more than one year."
-                                                 "Otherwise use begin_year and end_year",
-                                  "required": False,
-                                  "anyof_type": ["string", "integer"]
-                                  },
+                                             "doesn't extend more than one year."
+                                             "Otherwise use begin_year and end_year",
+                              "required": False,
+                              "anyof_type": ["string", "integer"]
+                              },
                     "end_day": {"required": False, "type": "integer"},
                     "other": {"required": False,
                               "anyof_type": ["string", "list"]},
@@ -2818,7 +2818,7 @@ SCHEMAS = {
                     "end_month": {"required": False,
                                   "anyof_type": ["string", "integer"]},
                     "end_year": {"required": False, "type": "integer"},
-                    "enrollment": {"required": False, "anyof_type": ["integer", "string"]},
+                    "enrollment": {"required": False, "anyof_type": ["integer","string"]},
                     "evaluation": {
                         "type": "dict",
                         "required": False,
@@ -2832,10 +2832,10 @@ SCHEMAS = {
                             "classroom_delivery": {"type": "number", "required": True},
                             "approachability": {"type": "number", "required": True},
                             "instructor_overall": {"type": "number", "required": True},
-                            "comments": {"type": "list", "required": False,
+                            "comments": {"type": "list","required": False,
                                          "description": "student comments"},
+                            },
                         },
-                    },
                     "materials": {"required": False, "type": "string"},
                     "month": {"required": False,
                               "anyof_type": ["string", "integer"],
