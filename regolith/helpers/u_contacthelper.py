@@ -22,8 +22,9 @@ def subparser(subpi):
                                                    "institution id or anything in the "
                                                    "aka or name from institutions collection. "
                                                    "It is required to create a new contact.")
-    subpi.add_argument("-e", "--email",
-                       help="email address")
+    #FIXME
+    # subpi.add_argument("-e", "--email",
+    #                    help="email address")
     subpi.add_argument("-t","--notes", nargs='+',
                         help="Notes.  As many notes as you like, each one in "
                              "quotes and separated by a space, such as where "
@@ -116,8 +117,6 @@ class ContactUpdaterHelper(DbHelperBase):
             if isinstance(rc.notes, str):
                 rc.notes.list()
             notes.extend(rc.notes)
-        if rc.email:
-            pdoc.update({"email":rc.email})
         pdoc.update({"aka": aliases})
         pdoc.update({"notes": notes})
         pdoc.update({'updated': now})
