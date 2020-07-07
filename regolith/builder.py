@@ -15,6 +15,7 @@ from regolith.builders.figurebuilder import FigureBuilder
 from regolith.builders.coabuilder import RecentCollaboratorsBuilder
 from regolith.builders.beamplanbuilder import BeamPlanBuilder
 from regolith.builders.activitylogbuilder import ActivitylogBuilder
+from regolith.builders.readinglistsbuilder import ReadingListsBuilder
 
 
 BUILDERS = {
@@ -34,6 +35,10 @@ BUILDERS = {
     "resume": ResumeBuilder,
     "review-man": ManRevBuilder,
     "review-prop": PropRevBuilder,
+    "preslist": PresListBuilder,
+    "reimb": ReimbursementBuilder,
+    "figure": FigureBuilder,
+    "reading-lists": ReadingListsBuilder,
 }
 
 
