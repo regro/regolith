@@ -33,7 +33,7 @@ ALLOWED_TYPES = ["gra", "pd", "ss"]
 
 def subparser(subpi):
 
-    subpi.add_argument("-r", "--run", action="store_true", help='run the helper')
+    subpi.add_argument("run", action="store_true", help='run the helper')
     subpi.add_argument("--no_plot", action="store_true", help='suppress plotting feature')
 
     return subpi
