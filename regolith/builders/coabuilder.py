@@ -15,8 +15,7 @@ from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.chained_db import _convert_to_dict
-from regolith.dates import month_to_int, is_after, get_dates, has_started
+from regolith.dates import has_started
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     fuzzy_retrieval

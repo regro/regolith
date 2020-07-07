@@ -3,9 +3,8 @@
 import os
 
 import openpyxl
-import datetime as dt
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import get_dates, month_to_int
+from regolith.dates import get_dates
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, month_and_year, \
     fuzzy_retrieval
