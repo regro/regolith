@@ -1489,8 +1489,8 @@ EXEMPLARS = {
             "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/"
                                   "nsf14591.htm",
             "begin_day": 1,
-            "begin_month": "october",
-            "begin_year": 2015,
+            "begin_month": "May",
+            "begin_year": 2018,
             "cpp_info": {
                 "cppflag": True,
                 "other_agencies_submitted": "None",
@@ -1503,9 +1503,9 @@ EXEMPLARS = {
             "currency": "USD",
             "day": 2,
             "duration": 3,
-            "end_day": 30,
-            "end_month": "september",
-            "end_year": 2025,
+            "end_day": 1,
+            "end_month": "May",
+            "end_year": 2019,
             "funder": "NSF",
             "month": "february",
             "notes": "Quite an idea",

@@ -105,13 +105,17 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     print(appt.get("grant"))
                     continue
                 grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
-                prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
-                if prop.get('year'):
-                    del prop['year']
-                grant_begin, grant_end = get_dates(prop)['begin_date'], get_dates(prop)['end_date']
                 if not grant:
                     raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".
                                        format(appt.get("grant"), person.get("_id"), appt.get("_id")))
+                prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
+                if prop.get('year'):
+                    del prop['year']
+                grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
+                    else get_dates(prop)['begin_date']
+                grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
+                    else get_dates(prop)['end_date']
+                grant.update({'begin_date': grant_begin, 'end_date': grant_end})
                 appt_begin, appt_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
                 this_burn = grant_burn(grant, all_appts, grant_begin, grant_end, begin_date=appt_begin, end_date=appt_end)
                 timespan = appt_end - appt_begin
@@ -141,8 +145,21 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         datearray, cum_student, cum_pd, cum_ss = [], None, None, None
         if not rc.no_plot:
-            grants_begin = min(get_dates(grant)['begin_date'] for grant in self.gtx["grants"])
-            grants_end = max(get_dates(grant)['end_date'] for grant in self.gtx["grants"])
+            grants_begin, grants_end =  None, None
+            for grant in self.gtx['grants']:
+                if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
+                    continue
+                prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
+                if prop.get('year'):
+                    del prop['year']
+                grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
+                    else get_dates(prop)['begin_date']
+                grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
+                    else get_dates(prop)['end_date']
+                if not grants_begin or grant_begin < grants_begin:
+                    grants_begin = grant_begin
+                if not grants_end or grant_end > grants_end:
+                    grants_end = grant_end
             grants_timespan = grants_end - grants_begin
             for x in range(grants_timespan.days + 1):
                 datearray.append(grants_begin + relativedelta(days=x))
@@ -154,7 +171,11 @@ class MakeAppointmentsHelper(SoutHelperBase):
             prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
             if prop.get('year'):
                 del prop['year']
-            grant_begin, grant_end = get_dates(prop)['begin_date'], get_dates(prop)['end_date']
+            grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
+                else get_dates(prop)['begin_date']
+            grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
+                else get_dates(prop)['end_date']
+            grant.update({'begin_date': grant_begin, 'end_date': grant_end})
             grant_amounts = grant_burn(grant, all_appts, grant_begin, grant_end)
             end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
                         grant_amounts[-1].get('ss_days')
