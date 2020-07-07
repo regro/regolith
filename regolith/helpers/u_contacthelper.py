@@ -15,16 +15,13 @@ TARGET_COLL = "contacts"
 
 def subparser(subpi):
     subpi.add_argument("fragmentname", help="Fragment of name, id, or aliases to search for contacts.")
+    subpi.add_argument("-i", "--index", help="Index of the item in the enumerated list chosen to update.",
+                       type=int)
     subpi.add_argument("-n","--name", help= "Full name. Required if new contact.")
-    subpi.add_argument("-i","--index", help="Index of the item in the enumerated list chosen to update.",
-                                  type = int)
     subpi.add_argument("-o", "--institution", help="Person's institution. It can be "
                                                    "institution id or anything in the "
                                                    "aka or name from institutions collection. "
                                                    "It is required to create a new contact.")
-    #FIXME
-    # subpi.add_argument("-e", "--email",
-    #                    help="email address")
     subpi.add_argument("-t","--notes", nargs='+',
                         help="Notes.  As many notes as you like, each one in "
                              "quotes and separated by a space, such as where "
@@ -45,6 +42,9 @@ def subparser(subpi):
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
+    # FIXME
+    # subpi.add_argument("-e", "--email",
+    #                    help="email address")
 
     return subpi
 
