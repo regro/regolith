@@ -346,17 +346,3 @@ def test_is_after(thing, expected, now=TEST_DATE):
 )
 def test_is_between(thing, expected, start=TEST_START_DATE, end=TEST_END_DATE):
     assert is_between(thing, start=start, end=end) == expected
-
-@pytest.mark.parametrize(
-    "thing,expected",
-    [
-        (['Jan', 10, 2021], '01/10/21'),
-        (['February', 18, '2015'], '02/18/15'),
-        (['February', 8, 2016], '02/08/16'),
-        ([5, '08', '2015'], '05/08/15'),
-        ([6, 25, '2018'], '06/25/18'),
-        ([7, 25, 2000], '07/25/00'),
-    ]
-)
-def test_mdy(thing, expected):
-    assert mdy(thing[0], thing[1], thing[2]) == expected
