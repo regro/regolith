@@ -70,12 +70,16 @@ def subparser(subpi):
     return subpi
 
 
-def stringify(con, verbose):
+def stringify(contact, verbose):
     if verbose ==True:
-        return f"id: {con.get('_id')}    name: {con.get('name')}    email: {con.get('email')}\n" \
-               f"institution: {con.get('institution')}    department: {con.get('department')}\n" \
-               f"notes: {con.get('notes')}\naka: {con.get('aka')}"
-    return f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email', 'missing')}"
+        notes = '\n        -'.join(map(str, contact.get('notes', [])))
+        aka = '\n        -'.join(map(str, contact.get('aka', [])))
+        return f"{contact.get('name')}\n    id: {contact.get('_id')}\n    email: {contact.get('email', 'missing')}\n" \
+               f"    institution: {contact.get('institution')}\n    department: {contact.get('department')}\n" \
+               f"    notes:\n        -{notes}\n    aka:\n        -{aka}"
+    return f"{contact.get('name')}\n" \
+           f"    institution: {contact.get('institution')}\n" \
+           f"    email: {contact.get('email', 'missing')}"
 
 
 class ContactsListerHelper(SoutHelperBase):
