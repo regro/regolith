@@ -24,19 +24,6 @@ from regolith.tools import all_docs_from_collection, filter_publications, \
 NUM_COAUTHOR_MONTHS = 48
 NUM_POSTDOC_MONTHS = 60
 
-def mdy_date(month, day, year):
-    """Make a date object."""
-    if isinstance(month, str):
-        month = month_to_int(month)
-    return dt.date(year, month, day)
-
-
-def mdy(month, day, year):
-    """Format the date to a string mm/dd/yy."""
-    return "{}/{}/{}".format(
-        str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
-    )
-
 
 def get_advisors_name_inst(advisee, rc):
     """Get the advisee's advisor. Yield (last name, first name, institution name)."""
