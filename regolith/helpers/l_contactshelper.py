@@ -25,45 +25,56 @@ HELPER_TARGET = "l_contacts"
 def subparser(subpi):
     subpi.add_argument(
         "run",
-        help='run the lister. To see allowed optional arguments, type "regolith helper l_contacts"')
+        help='run the lister. To see allowed optional arguments, type "regolith helper l_contacts".')
+    subpi.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Increases the verbosity of the output.")
     subpi.add_argument(
         "-n",
         "--name",
-        help='name or name fragment (single argument only) to use to find contacts')
+        help='name or name fragment (single argument only) to use to find contacts.')
     subpi.add_argument(
         "-i",
         "--inst",
-        help='institution or an institution fragment (single argument only) to use to find contacts')
+        help='institution or an institution fragment (single argument only) to use to find contacts.')
     subpi.add_argument(
         "-d",
         "--date",
-        help='approximate date in ISO format (YYYY-MM-DD) corresponding to when the contact was entered in the database. Comes with a default range of 4 months centered around the date; change range using --range argument')
+        help='approximate date in ISO format (YYYY-MM-DD) corresponding to when the contact was entered in the database. '
+             'Comes with a default range of 4 months centered around the date; change range using --range argument.')
     subpi.add_argument(
         "-r",
         "--range",
-        help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2)',
+        help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2).',
         default=4)
     subpi.add_argument(
         "-o",
         "--notes",
-        help='fragment (single argument only) to be found in the notes section of a contact'
+        help='fragment (single argument only) to be found in the notes section of a contact.'
     )
     subpi.add_argument(
         "-f",
         "--filter",
         nargs="+",
-        help='Search this collection by giving key element pairs'
+        help='Search this collection by giving key element pairs.'
     )
     subpi.add_argument(
         "-k",
         "--keys",
         nargs="+",
-        help='Specify what keys to return values from when running --filter. If no argument is given the default is just the id.'
+        help='Specify what keys to return values from when running --filter. '
+             'If no argument is given the default is just the id.'
     )
     return subpi
 
 
-def stringify(con):
+def stringify(con, verbose):
+    if verbose ==True:
+        return f"id: {con.get('_id')}    name: {con.get('name')}    email: {con.get('email')}\n" \
+               f"institution: {con.get('institution')}    department: {con.get('department')}\n" \
+               f"notes: {con.get('notes')}\naka: {con.get('aka')}"
     return f"name: {con.get('name')}, institution: {con.get('institution')}, email: {con.get('email', 'missing')}"
 
 
@@ -102,21 +113,24 @@ class ContactsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        verbose = False
+        if rc.verbose:
+            verbose = True
         if rc.filter:
             collection = key_value_pair_filter(self.gtx["contacts"], rc.filter)
         else:
             collection = self.gtx["contacts"]
-        def_l = set(stringify(i) for i in
+        def_l = set(stringify(i, verbose) for i in
                     self.gtx['contacts'])
         if rc.name:
-            namel = set(stringify(i) for i in
+            namel = set(stringify(i, verbose) for i in
                         fragment_retrieval(
                             collection, [
                                 "_id", "aka", "name"], rc.name))
         else:
             namel = def_l
         if rc.inst:
-            instl = set(stringify(i) for i in
+            instl = set(stringify(i, verbose) for i in
                         fragment_retrieval(
                             collection,
                             ["institution"],
@@ -124,7 +138,7 @@ class ContactsListerHelper(SoutHelperBase):
         else:
             instl = def_l
         if rc.notes:
-            notel = set(stringify(i) for i in
+            notel = set(stringify(i, verbose) for i in
                         fragment_retrieval(
                             collection, [
                                 "notes"], rc.notes))
@@ -145,7 +159,7 @@ class ContactsListerHelper(SoutHelperBase):
             for contact in collection:
                 curr_d = get_dates(contact)['date']
                 if is_current(temp_dict, now=curr_d):
-                    date_list.append(stringify(contact))
+                    date_list.append(stringify(contact, verbose))
             datel = set(date_list)
         else:
             datel = def_l
