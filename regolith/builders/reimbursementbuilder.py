@@ -109,9 +109,7 @@ class ReimbursementBuilder(BuilderBase):
                             se_column = 14
                         dates.append(expdates.get("date"))
                         item_ws.cell(row=r, column=2, value=i)
-                        item_ws.cell(row=r, column=3, value=dt.datetime(int(expdates.get("date").year),
-                                                                month_to_int(expdates.get("date").day),
-                                                                int(expdates.get("date").day)).strftime('%x'))
+                        item_ws.cell(row=r, column=3, value=expdates.get("date").strftime('%x'))
                         item_ws.cell(row=r, column=purpose_column,
                                      value=item["purpose"])
                         item_ws.cell(
@@ -162,11 +160,7 @@ class ReimbursementBuilder(BuilderBase):
                         spots = ("G7", "L8", "O8")
 
                     ws[spots[0]] = "X"
-                    min_dates = {k: getattr(min(dates), k) for k in ["year", "day", "month"]}
-                    max_dates = {k: getattr(max(dates), k) for k in ["year", "day", "month"]}
-                    ws[spots[1]] = dt.datetime(int(min_dates["year"]), month_to_int(min_dates["month"]),
-                                               int(min_dates["day"])).strftime('%x')
-                    ws[spots[2]] = dt.datetime(int(max_dates["year"]), month_to_int(max_dates["month"]),
-                                               int(max_dates["day"])).strftime('%x')
+                    ws[spots[1]] = min(dates).strftime('%x')
+                    ws[spots[2]] = max(dates).strftime('%x')
 
                     wb.save(os.path.join(self.bldir, ex["_id"] + ".xlsx"))
