@@ -1,0 +1,12 @@
+Reading List
+
+A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.
+
+[1] Very basic, but brief, intro to powder diffraction in general:
+    Overview and principles of powder diffraction, R. E. Dinnebier, and S. J. L. Billinge, International Tables for Crystallography, pp.2-23, (2019).\\
+    DOI: 10.1107/97809553602060000935
+[2] Lightest weight overview of PDF analysis around.  Good starting point:
+    Chapter 16. Local Structure from Total Scattering and Atomic Pair Distribution Function (PDF) Analysis, Simon Billinge, Powder Diffraction, pp.464-493, (2008).\\
+    DOI: 10.1039/9781847558237-00464
+[3] Download and install PDFgui software and run through the step by step tutorial under the help tab:
+    URL: http://www.diffpy.org
