@@ -13,7 +13,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     fragment_retrieval,
-    search_collection,
+    fuzzy_retrieval,
     key_value_pair_filter,
     collection_str
 )
@@ -70,16 +70,22 @@ def subparser(subpi):
     return subpi
 
 
-def stringify(contact, verbose):
+def stringify(institutions_coll, contact, verbose):
+    institution_name = fuzzy_retrieval(institutions_coll, ['name', '_id', 'aka'], contact.get('institution'))
+    if institution_name:
+        contact['institution'] = institution_name.get('name')
     if verbose ==True:
-        notes = '\n        -'.join(map(str, contact.get('notes', [])))
-        aka = '\n        -'.join(map(str, contact.get('aka', [])))
-        return f"{contact.get('name')}\n    id: {contact.get('_id')}\n    email: {contact.get('email', 'missing')}\n" \
-               f"    institution: {contact.get('institution')}\n    department: {contact.get('department')}\n" \
-               f"    notes:\n        -{notes}\n    aka:\n        -{aka}"
-    return f"{contact.get('name')}\n" \
-           f"    institution: {contact.get('institution')}\n" \
-           f"    email: {contact.get('email', 'missing')}"
+        contact_str = f"{contact.get('name')}\n"
+        for k in ['_id', 'email', 'institution', 'department', 'notes', 'aka']:
+            if contact.get(k):
+                if isinstance(contact.get(k), list):
+                    lst_expanded = '\n        -'.join(map(str, contact.get(k)))
+                    contact_str += f"    {k}:\n        -{lst_expanded}\n"
+                else:
+                    contact_str += f"    {k}: {contact.get(k)}\n"
+        return contact_str.rstrip('\n')
+    return f"{contact.get('name')}  |  {contact.get('_id')}  |  institution: {contact.get('institution')}  |  " \
+           f"email: {contact.get('email', 'missing')}"
 
 
 class ContactsListerHelper(SoutHelperBase):
@@ -87,7 +93,7 @@ class ContactsListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_dbs = [f'{TARGET_COLL}', 'institutions']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -117,6 +123,7 @@ class ContactsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+        inst_collection = self.gtx["institutions"]
         verbose = False
         if rc.verbose:
             verbose = True
@@ -124,17 +131,17 @@ class ContactsListerHelper(SoutHelperBase):
             collection = key_value_pair_filter(self.gtx["contacts"], rc.filter)
         else:
             collection = self.gtx["contacts"]
-        def_l = set(stringify(i, verbose) for i in
+        def_l = set(stringify(inst_collection, i, verbose) for i in
                     self.gtx['contacts'])
         if rc.name:
-            namel = set(stringify(i, verbose) for i in
+            namel = set(stringify(inst_collection, i, verbose) for i in
                         fragment_retrieval(
                             collection, [
                                 "_id", "aka", "name"], rc.name))
         else:
             namel = def_l
         if rc.inst:
-            instl = set(stringify(i, verbose) for i in
+            instl = set(stringify(inst_collection, i, verbose) for i in
                         fragment_retrieval(
                             collection,
                             ["institution"],
@@ -142,7 +149,7 @@ class ContactsListerHelper(SoutHelperBase):
         else:
             instl = def_l
         if rc.notes:
-            notel = set(stringify(i, verbose) for i in
+            notel = set(stringify(inst_collection, i, verbose) for i in
                         fragment_retrieval(
                             collection, [
                                 "notes"], rc.notes))
@@ -163,7 +170,7 @@ class ContactsListerHelper(SoutHelperBase):
             for contact in collection:
                 curr_d = get_dates(contact)['date']
                 if is_current(temp_dict, now=curr_d):
-                    date_list.append(stringify(contact, verbose))
+                    date_list.append(stringify(inst_collection, contact, verbose))
             datel = set(date_list)
         else:
             datel = def_l
