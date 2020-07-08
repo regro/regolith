@@ -30,7 +30,7 @@ def subparser(subpi):
                        help="name, or id in contacts, of the editor requesting the review"
                        )
     subpi.add_argument("-r", "--reviewer",
-                       help="name of the reviewer. Defaults to sbillinge"
+                       help="name of the reviewer. Defaults to the one saved in user.json. "
                        )
     subpi.add_argument("-s", "--status",
                        help=f"status, from {ALLOWED_STATI}. default is accepted"
@@ -100,7 +100,13 @@ class ManuRevAdderHelper(DbHelperBase):
         if rc.reviewer:
             pdoc.update({'reviewer': rc.reviewer})
         else:
-            pdoc.update({'reviewer': 'sbillinge'})
+            try:
+                rc.reviewer = rc.default_user_id
+            except AttributeError:
+                print(
+                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
+                    "in the command line")
+                return
         if rc.submitted_date:
             pdoc.update({'submitted_date': rc.submitted_date})
         else:
