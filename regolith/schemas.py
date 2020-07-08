@@ -3252,6 +3252,7 @@ SCHEMAS = {
                 "poster",
                 "seminar",
                 "tutorial",
+                "webinae"
             ],
             "required": True,
             "type": "string",

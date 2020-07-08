@@ -20,7 +20,7 @@
 \item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
 sentencecase(pres['title']))-}} },
 {%-set inst = pres['institution'] %}
-{%-if pres['type'] in ['colloquium', 'seminar']%}
+{%-if pres['type'] in ['colloquium', 'seminar', 'webinar']%}
 {\it {{ latex_safe(pres['type']).title()-}} },
 {\it {{ latex_safe(pres['department']['name'])-}} },
 {\it {{ latex_safe(inst['name'])-}} },
