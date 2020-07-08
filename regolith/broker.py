@@ -2,11 +2,14 @@
 from regolith.database import dump_database, open_dbs
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.storage import store_client, push
+import os
 
 
 def load_db(rc_file="regolithrc.json"):
     """Create a Broker instance from an rc file"""
     rc = DEFAULT_RC
+    if os.path.exists(rc.user_config):
+        rc._update(load_rcfile(rc.user_config))
     rc._update(load_rcfile(rc_file))
     filter_databases(rc)
     return Broker(rc)
@@ -56,7 +59,7 @@ class Broker:
         document["files"][name] = output_path
         for db in self.rc.databases:
             dump_database(db, self.db_client, self.rc)
-        push(self.store.store, self.store.path)
+        push(self.store.store, self.store.path, self.rc)
 
     @classmethod
     def from_rc(cls, rc_file="regolithrc.json"):
