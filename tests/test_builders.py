@@ -27,6 +27,25 @@ xls_check = ("B17", "B20", "B36")
 recent_collabs_xlsx_check = ["A51", "B51", "C51"]
 
 
+def is_same(text0: str, text1: str, ignored: list):
+    """Compare the content of two text. If there are different words in text0 and text1 and the word in text0
+    does not contain ignored substring, return False. Else return True."""
+
+    def should_ignore(word):
+        for w in ignored:
+            if w in word:
+                return True
+        return False
+
+    words0, words1 = text0.split(), text1.split()
+    if len(words0) != len(words1):
+        return False
+    for word0, word1 in zip(words0, words1):
+        if not should_ignore(word0) and word0 != word1:
+            return False
+    return True
+
+
 def prep_figure():
     # Make latex file with some jinja2 in it
     text = r"""
@@ -106,11 +125,8 @@ def test_builder(bm, db_src, make_db, make_mongodb):
 
                 # Skip because of a date time in
                 if file != "rss.xml":
-                    # Fixme proper fix for testing hard coded filepaths on windows
-                    if os.name == "nt":
-                        if "tmp" not in expected:
-                            if "../.." not in expected:
-                                assert expected == actual
+                    if file.endswith('.html') or file.endswith('.tex'):
+                        assert is_same(expected, actual, ['../..', 'tmp'])
                     else:
                         assert expected == actual
 
@@ -166,10 +182,7 @@ def test_builder_python(bm, make_db):
 
                 # Skip because of a date time in
                 if file != "rss.xml":
-                    # Fixme proper fix for testing hard coded filepaths on windows
-                    if os.name == "nt":
-                        if "tmp" not in expected:
-                            if "../.." not in expected:
-                                assert expected == actual
+                    if file.endswith('.html') or file.endswith('.tex'):
+                        assert is_same(expected, actual, ['../..', 'tmp'])
                     else:
                         assert expected == actual
