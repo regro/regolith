@@ -23,10 +23,12 @@ Briefly, the approach was to carry out:
 {% endfor -%}
 {% endif %}
 
-The approach taken is summarized and discussed below.
+Some comments on the validity and areas for improvement are:
+{% if len(validityAssessment) > 0 -%}
 {%- for thing in validityAssessment %}
   - {{ thing -}}
 {% endfor %}
+{% endif %}
 
 To summarize my assessment of this manuscript:
 {%- for opinion in finalAssessment %}
