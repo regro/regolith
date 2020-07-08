@@ -1,23 +1,13 @@
 """Builder for Resumes."""
 
-import datetime
 import os
 
 import openpyxl
-
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import month_to_int, get_dates
+from regolith.dates import get_dates
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, month_and_year, \
     fuzzy_retrieval
-
-
-
-def mdy(month, day, year, **kwargs):
-    return "{}/{}/{}".format(
-        str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
-    )
-
 
 class ReimbursementBuilder(BuilderBase):
     """Build reimbursement from database entries"""
@@ -59,7 +49,7 @@ class ReimbursementBuilder(BuilderBase):
         gtx = self.gtx
         rc = self.rc
         if isinstance(rc.people, str):
-            rc.people == [rc.people]
+            rc.people = [rc.people]
         for ex in gtx["expenses"]:
             payee = fuzzy_retrieval(
                 gtx["people"], ["name", "aka", "_id"], ex["payee"]
@@ -118,9 +108,7 @@ class ReimbursementBuilder(BuilderBase):
                             se_column = 14
                         dates.append(expdates.get("date"))
                         item_ws.cell(row=r, column=2, value=i)
-                        item_ws.cell(row=r, column=3, value=mdy(expdates.get("date").month,
-                                              expdates.get("date").day,
-                                              expdates.get("date").year))
+                        item_ws.cell(row=r, column=3, value=expdates.get("date").strftime('%x'))
                         item_ws.cell(row=r, column=purpose_column,
                                      value=item["purpose"])
                         item_ws.cell(
@@ -171,13 +159,7 @@ class ReimbursementBuilder(BuilderBase):
                         spots = ("G7", "L8", "O8")
 
                     ws[spots[0]] = "X"
-                    ws[spots[1]] = mdy(
-                        **{k: getattr(min(dates), k) for k in
-                           ["month", "day", "year"]}
-                    )
-                    ws[spots[2]] = mdy(
-                        **{k: getattr(max(dates), k) for k in
-                           ["month", "day", "year"]}
-                    )
+                    ws[spots[1]] = min(dates).strftime('%x')
+                    ws[spots[2]] = max(dates).strftime('%x')
 
                     wb.save(os.path.join(self.bldir, ex["_id"] + ".xlsx"))

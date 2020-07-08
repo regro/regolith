@@ -9,7 +9,8 @@ from regolith.dates import (month_to_str_int,
                             get_dates, last_day,
                             is_current, get_due_date,
                             has_started, has_finished,
-                            is_before, is_after, is_between)
+                            is_before, is_after,
+                            is_between)
 
 TEST_DATE = date(2019, 6, 15)
 TEST_START_DATE = date(2019, 1, 1)

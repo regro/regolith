@@ -15,27 +15,13 @@ from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.chained_db import _convert_to_dict
-from regolith.dates import month_to_int, is_after, get_dates, has_started
+from regolith.dates import has_started
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     fuzzy_retrieval
 
 NUM_COAUTHOR_MONTHS = 48
 NUM_POSTDOC_MONTHS = 60
-
-def mdy_date(month, day, year):
-    """Make a date object."""
-    if isinstance(month, str):
-        month = month_to_int(month)
-    return dt.date(year, month, day)
-
-
-def mdy(month, day, year):
-    """Format the date to a string mm/dd/yy."""
-    return "{}/{}/{}".format(
-        str(month_to_int(month)).zfill(2), str(day).zfill(2), str(year)[-2:]
-    )
 
 
 def get_advisors_name_inst(advisee, rc):
