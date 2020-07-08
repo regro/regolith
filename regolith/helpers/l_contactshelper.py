@@ -12,10 +12,8 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    fragment_retrieval,
     fuzzy_retrieval,
-    key_value_pair_filter,
-    collection_str
+    search_collection,
 )
 
 TARGET_COLL = "contacts"
@@ -69,25 +67,6 @@ def subparser(subpi):
     )
     return subpi
 
-
-def stringify(institutions_coll, contact, verbose):
-    institution_name = fuzzy_retrieval(institutions_coll, ['name', '_id', 'aka'], contact.get('institution'))
-    if institution_name:
-        contact['institution'] = institution_name.get('name')
-    if verbose ==True:
-        contact_str = f"{contact.get('name')}\n"
-        for k in ['_id', 'email', 'institution', 'department', 'notes', 'aka']:
-            if contact.get(k):
-                if isinstance(contact.get(k), list):
-                    lst_expanded = '\n        -'.join(map(str, contact.get(k)))
-                    contact_str += f"    {k}:\n        -{lst_expanded}\n"
-                else:
-                    contact_str += f"    {k}: {contact.get(k)}\n"
-        return contact_str.rstrip('\n')
-    return f"{contact.get('name')}  |  {contact.get('_id')}  |  institution: {contact.get('institution')}  |  " \
-           f"email: {contact.get('email', 'missing')}"
-
-
 class ContactsListerHelper(SoutHelperBase):
     """Helper for finding and listing contacts from the contacts.yml file
     """
@@ -123,62 +102,53 @@ class ContactsListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        inst_collection = self.gtx["institutions"]
-        verbose = False
-        if rc.verbose:
-            verbose = True
-        if rc.filter:
-            collection = key_value_pair_filter(self.gtx["contacts"], rc.filter)
-        else:
-            collection = self.gtx["contacts"]
-        def_l = set(stringify(inst_collection, i, verbose) for i in
-                    self.gtx['contacts'])
+        list_search = []
+        collection = self.gtx["contacts"]
         if rc.name:
-            namel = set(stringify(inst_collection, i, verbose) for i in
-                        fragment_retrieval(
-                            collection, [
-                                "_id", "aka", "name"], rc.name))
-        else:
-            namel = def_l
+            list_search.extend(["name", rc.name])
         if rc.inst:
-            instl = set(stringify(inst_collection, i, verbose) for i in
-                        fragment_retrieval(
-                            collection,
-                            ["institution"],
-                            rc.inst))
-        else:
-            instl = def_l
+            list_search.extend(["institution", rc.inst])
         if rc.notes:
-            notel = set(stringify(inst_collection, i, verbose) for i in
-                        fragment_retrieval(
-                            collection, [
-                                "notes"], rc.notes))
-        else:
-            notel = def_l
+            list_search.extend(["notes", rc.notes])
+        if rc.filter:
+            list_search.extend(rc.filter)
+        filtered_contacts_id = (search_collection(collection, list_search)).strip('    \n')
+        filtered_contacts_id = list(filtered_contacts_id.split('    \n'))
         if rc.date:
             date_list = []
             temp_dat = date_parser.parse(rc.date).date()
-            temp_dict = {
-                "begin_date": (temp_dat -
-                               dateutil.relativedelta.relativedelta(
-                                   months=int(
-                                       rc.range))).isoformat(),
-                "end_date": (temp_dat +
-                             dateutil.relativedelta.relativedelta(
-                                 months=int(
-                                     rc.range))).isoformat()}
+            temp_dict = {"begin_date": (temp_dat - dateutil.relativedelta.relativedelta(
+                                        months=int(rc.range))).isoformat(),
+                         "end_date": (temp_dat + dateutil.relativedelta.relativedelta(
+                                     months=int(rc.range))).isoformat()}
             for contact in collection:
                 curr_d = get_dates(contact)['date']
                 if is_current(temp_dict, now=curr_d):
-                    date_list.append(stringify(inst_collection, contact, verbose))
-            datel = set(date_list)
-        else:
-            datel = def_l
-        res_l = set.intersection(namel, instl, notel, datel)
-        if rc.keys:
-            results = (collection_str(res_l, rc.keys))
-            print(results, end="")
-            return
-        for item in res_l:
-            print(item)
+                    date_list.append(contact.get('_id'))
+                filtered_contacts_id = [value for value in filtered_contacts_id if value in date_list]
+        filtered_contacts = []
+        string_contacts = ''
+        for contact in collection:
+            if contact.get('_id') in filtered_contacts_id:
+                filtered_contacts.append(contact)
+                institution = contact.get('institution')
+                institution_name = fuzzy_retrieval(self.gtx['institutions'],
+                                                   ['name', '_id', 'aka'], institution)
+                if institution_name:
+                    contact['institution'] = institution_name.get('name')
+                if rc.verbose:
+                    contact_str = f"{contact.get('name')}\n"
+                    for k in ['_id', 'email', 'institution', 'department', 'notes', 'aka']:
+                        if contact.get(k):
+                            if isinstance(contact.get(k), list):
+                                lst_expanded = '\n        -'.join(map(str, contact.get(k)))
+                                contact_str += f"    {k}:\n        -{lst_expanded}\n"
+                            else:
+                                contact_str += f"    {k}: {contact.get(k)}\n"
+                    string_contacts += contact_str
+                else:
+                    string_contacts += f"{contact.get('name')}  |  {contact.get('_id')}  |" \
+                                       f"  institution: {contact.get('institution')}  |" \
+                                       f"  email: {contact.get('email', 'missing')}\n"
+        print(string_contacts.strip('\n'))
         return

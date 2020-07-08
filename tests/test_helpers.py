@@ -77,7 +77,7 @@ helper_map = [
      ),
     (["helper", "l_contacts", "run", "--name", "ny", "--inst", "col",
       "--notes", "coffee", "--date", "2019-01-15", "--range", "2"],
-     ""
+     "\n"
      ),
     (["helper", "l_contacts", "run", "--verbose"],
      "Anthony B Friend\n"
