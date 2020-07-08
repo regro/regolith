@@ -9,4 +9,5 @@ openpyxl
 nameparser
 pandas
 pymongo
+matplotlib
 habanero
