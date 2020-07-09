@@ -102,6 +102,7 @@ class ManuRevAdderHelper(DbHelperBase):
         else:
             try:
                 rc.reviewer = rc.default_user_id
+                pdoc.update({'reviewer': rc.reviewer})
             except AttributeError:
                 print(
                     "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
