@@ -5,7 +5,7 @@ listed in groups.yml.  Group members are indicated in the employment and
 education sections of the individual in people.yml.
 
 There are a number of filtering options, i.e., for presentation-type (invited,
-colloquium, seminar, poster, contributed_oral, webinar) and for whether the invitation
+colloquium, seminar, poster, contributed_oral) and for whether the invitation
 was accepted or declined.  As of now, these filters can only be updated by
 editing this file but may appear as command-line options later.  It will also
 get institution and department information from institutions.yml if they are
