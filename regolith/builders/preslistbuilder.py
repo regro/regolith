@@ -211,6 +211,7 @@ class PresListBuilder(LatexBuilderBase):
                                 )
                         else:
                             pres["department"] = {"name": ""}
+
                 if len(presclean) > 0:
                     presclean = sorted(
                         presclean,

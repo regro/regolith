@@ -8,7 +8,7 @@ from .sorters import POSITION_LEVELS
 
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 PRESENTATIONS_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
-                      "plenary", "poster", "seminar", "tutorial", "webinar"]
+                      "plenary", "poster", "seminar", "tutorial"]
 EXEMPLARS = {
     "abstracts": {
         "_id": "Mouginot.Model",
@@ -1224,6 +1224,7 @@ EXEMPLARS = {
             "status": "accepted",
             "title": "Graphitic Dephenestration",
             "type": "award",
+            "webinar": False,
         },
         {
             "_id": "18sb_nslsii",
@@ -3249,10 +3250,9 @@ SCHEMAS = {
             "type": "string",
         },
         "webinar": {
-            "description": "true if a webinar",
+            "description": "true if a webinar. Default to False",
             "required": False,
             "type": "boolean",
-            "default": False,
         },
     },
     "projects": {
