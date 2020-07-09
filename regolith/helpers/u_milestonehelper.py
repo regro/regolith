@@ -129,7 +129,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
         if rc.type and rc.type not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_TYPES.items()))):
                 raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
         if rc.status and rc.status not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_STATI.items()))):
-                raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_STATI}")
+                raise KeyError(f"please rerun specifying --status with a value from {ALLOWED_STATI}")
         if rc.index == 1:
             mil = {}
             if not rc.due_date or not rc.name or not rc.objective:
@@ -161,7 +161,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
             doc = all_milestones[rc.index-2]
             identifier = doc['identifier']
             if not doc.get('type') and not rc.type and identifier=='milestones':
-                    raise RuntimeError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
+                    raise RuntimeError("ERROR: This milestone does not have a type set and this is required. "
+                                       "Please rerun your command adding '--type' "
+                                       f"and typing a type from this list: {ALLOWED_TYPES}")
             if rc.type:
                 if rc.type in ALLOWED_TYPES:
                     doc.update({'type': ALLOWED_TYPES.get(rc.type)})
