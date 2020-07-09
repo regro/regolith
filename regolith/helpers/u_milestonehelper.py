@@ -161,7 +161,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             doc = all_milestones[rc.index-2]
             identifier = doc['identifier']
             if not doc.get('type') and not rc.type and identifier=='milestones':
-                    raise RuntimeError("This milestone does not has 'type' specified in the database. "
+                    raise RuntimeError("Missing 'type' in the database for this milestone. "
                                        f"Please rerun specifying --type with a value from {ALLOWED_TYPES}")
             if rc.type:
                 if rc.type in ALLOWED_TYPES:
