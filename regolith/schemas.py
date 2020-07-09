@@ -7,7 +7,8 @@ from cerberus import Validator
 from .sorters import POSITION_LEVELS
 
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
-
+PRESENTATIONS_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
+                      "plenary", "poster", "seminar", "tutorial", "webinar"]
 EXEMPLARS = {
     "abstracts": {
         "_id": "Mouginot.Model",
@@ -1267,6 +1268,7 @@ EXEMPLARS = {
             "title": "Nanostructure challenges and successes from "
                      "16th Century warships to 21st Century energy",
             "type": "colloquium",
+            "webinar": True,
         },
     ],
     "projecta": {
@@ -3242,20 +3244,15 @@ SCHEMAS = {
         },
         "type": {
             "description": "type of presentation",
-            "eallowed": [
-                "award",
-                "colloquium",
-                "contributed_oral",
-                "invited",
-                "keynote",
-                "plenary",
-                "poster",
-                "seminar",
-                "tutorial",
-                "webinar"
-            ],
+            "eallowed": PRESENTATIONS_TYPE,
             "required": True,
             "type": "string",
+        },
+        "webinar": {
+            "description": "true if a webinar",
+            "required": False,
+            "type": "boolean",
+            "default": False,
         },
     },
     "projects": {

@@ -1,5 +1,5 @@
 **Added:**
-* 'webinar' as an allowed presentation type
+* 'webinar' as a boolean available. True if the presentation was a webinar.
 
 **Changed:** None
 
