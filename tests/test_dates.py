@@ -10,7 +10,7 @@ from regolith.dates import (month_to_str_int,
                             is_current, get_due_date,
                             has_started, has_finished,
                             is_before, is_after,
-                            is_between)
+                            is_between, year_to_int)
 
 TEST_DATE = date(2019, 6, 15)
 TEST_START_DATE = date(2019, 1, 1)
@@ -45,6 +45,18 @@ from regolith.dates import date_to_float, month_to_int
 def test_get_due_date(input, expected):
     with pytest.raises(Exception):
         assert get_due_date(input) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (2020, 2020),
+        ("2021", 2021),
+        ('1999', 1999)
+    ],
+)
+def test_year_to_int(input, expected):
+    assert year_to_int(input) == expected
 
 
 @pytest.mark.parametrize(
