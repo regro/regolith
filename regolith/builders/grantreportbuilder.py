@@ -40,3 +40,7 @@ class GrantReportBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
+        self.render(
+            "grantreport.txt"
+            "billinge_grant_report.txt"
+        )

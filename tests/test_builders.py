@@ -21,6 +21,8 @@ builder_map = [
     "preslist",
     "publist",
     "recent-collabs",
+    "beamplan",
+    "grantreport"
     "resume",
     "review-man",
     "reimb"
