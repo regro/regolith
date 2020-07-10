@@ -49,14 +49,6 @@ MONTHS = {
 }
 
 
-def year_to_int(y):
-    """Converts a year to an integer"""
-    try:
-        y = int(y)
-    except:
-        raise RuntimeError(f"Error: {y} is not of type int or str")
-    return y
-
 def month_to_int(m):
     """Converts a month to an integer."""
     try:
@@ -247,13 +239,13 @@ def get_dates(thing, date_field_prefix=None):
                                        month_to_int(thing[datenames[1]]),
                                        last_day(thing[datenames[2]], thing[datenames[1]]))
         else:
-            date = datetime.date(year_to_int(thing[datenames[2]]),
+            date = datetime.date(int(thing[datenames[2]]),
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
-            begin_date = datetime.date(year_to_int(thing[datenames[2]]),
+            begin_date = datetime.date(int(thing[datenames[2]]),
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
-            end_date = datetime.date(year_to_int(thing[datenames[2]]),
+            end_date = datetime.date(int(thing[datenames[2]]),
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
     if thing.get('begin_date'):
