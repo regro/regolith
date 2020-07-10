@@ -75,11 +75,11 @@ class MeetingsValidatorHelper(SoutHelperBase):
         for meeting in gtx['meetings']:
             #print(meeting)
             if meeting.get('journal_club'):
-                if isinstance(meeting.get('journal_club'), list) or meeting.get('journal_club').get('doi') == 'TBD':
-                    print(f'{meeting.get("_id")} does not have a journal club doi')
-            if isinstance(meeting.get('presentation'), list) or meeting.get('presentation').get('link') == 'TBD':
-                print(f'{meeting.get("_id")} does not have a presentation link')
-            if isinstance(meeting.get('presentation'), list) or meeting.get('presentation').get('title') == 'TBD':
-                print(f'{meeting.get("_id")} does not have a presentation title')
+                if isinstance(meeting.get('journal_club'), list) or meeting.get('journal_club').get('doi').lower() == 'tbd':
+                    raise ValueError(f'{meeting.get("_id")} does not have a journal club doi')
+            if isinstance(meeting.get('presentation'), list) or meeting.get('presentation').get('link').lower() == 'tbd':
+                raise ValueError(f'{meeting.get("_id")} does not have a presentation link')
+            if isinstance(meeting.get('presentation'), list) or meeting.get('presentation').get('title').lower() == 'tbd':
+                raise ValueError(f'{meeting.get("_id")} does not have a presentation title')
 
 

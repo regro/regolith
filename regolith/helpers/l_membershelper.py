@@ -88,7 +88,6 @@ class MembersListerHelper(SoutHelperBase):
             print(results, end="")
             return
 
-        for person in self.gtx["people"]:
         for person in gtx["people"]:
             if rc.current:
                 if not person.get('active'):
