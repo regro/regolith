@@ -2041,7 +2041,6 @@ SCHEMAS = {
                         "description": "Expense date",
                         "required": False,
                         "anyof_type": ["string", "date"],
-
                     },
                     "month": {
                         "description": "Expense month",
@@ -2423,11 +2422,6 @@ SCHEMAS = {
             "required": False,
             "type": "list",
         },
-        "day": {
-            "description": "the day the entry was created",
-            "required": False,
-            "type": "integer",
-        },
         "city": {
             "description": "the city where the institution is",
             "required": True,
@@ -2437,6 +2431,16 @@ SCHEMAS = {
             "description": "The country where the institution is",
             "required": True,
             "type": "string",
+        },
+        "date": {
+            "description": "Expense date",
+            "required": False,
+            "anyof_type": ["string", "date"],
+        },
+        "day": {
+            "description": "the day the entry was created",
+            "required": False,
+            "type": "integer",
         },
         "departments": {
             "description": "all the departments and centers and"
