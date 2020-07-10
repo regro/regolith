@@ -3782,6 +3782,11 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "month": {
+            "description": "the month the entry was created",
+            "required": False,
+            "anyof_type": ["string", "integer"]
+        },
         "recommendation": {
             "description": "Your publication recommendation",
             "required": True,
