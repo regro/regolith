@@ -1951,7 +1951,7 @@ SCHEMAS = {
         'month': {
             "description": "month when the entry was created",
             "required": False,
-            "anyof_type": ["string", "date"],
+            "anyof_type": ["string", "integer"],
         },
         "name": {
             "description": "the person's canonical name",
@@ -2041,7 +2041,6 @@ SCHEMAS = {
                         "description": "Expense date",
                         "required": False,
                         "anyof_type": ["string", "date"],
-
                     },
                     "month": {
                         "description": "Expense month",
@@ -2423,11 +2422,6 @@ SCHEMAS = {
             "required": False,
             "type": "list",
         },
-        "day": {
-            "description": "the day the entry was created",
-            "required": False,
-            "type": "integer",
-        },
         "city": {
             "description": "the city where the institution is",
             "required": True,
@@ -2437,6 +2431,16 @@ SCHEMAS = {
             "description": "The country where the institution is",
             "required": True,
             "type": "string",
+        },
+        "date": {
+            "description": "Expense date",
+            "required": False,
+            "anyof_type": ["string", "date"],
+        },
+        "day": {
+            "description": "the day the entry was created",
+            "required": False,
+            "type": "integer",
         },
         "departments": {
             "description": "all the departments and centers and"
@@ -2647,7 +2651,8 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "advisor": {"required": False, "type": "string"},
+                    "advisor": {"required": False, "type": "string",
+                                "description": "name or id of advisor for this degree"},
                     "begin_day": {"required": False,
                                   "type": "integer"},
                     "begin_month": {"required": False,
@@ -2694,7 +2699,9 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "advisor": {"required": False, "type": "string"},
+                    "advisor": {"required": False, "type": "string",
+                                "description": "name or id of "
+                                               "advisor/mentor/manager"},
                     "begin_day": {"required": False, "type": "integer"},
                     "begin_month": {"required": False,
                                     "anyof_type": ["string", "integer"],
@@ -2963,16 +2970,36 @@ SCHEMAS = {
                     "type": {"required": True, "type": "string",
                              "eallowed": ["online", "article"]},
                     "topic": {"required": False, "type": "string",
-                              "description": "short blurb about what it was"},
-                    "title": {"required": True, "type": "string"},
-                    "day": {"required": False, "type": "integer"},
+                              "description": "The short sentence of what the "
+                                             "publicity was about",
+                              },
+                    "title": {"required": True, "type": "string",
+                              "description": "The title of the piece",
+                              },
+                    "day": {"required": False, "type": "integer",
+                            "description": "The day the piece appeared"
+                            },
                     "month": {"required": False, "anyof_type": ["string",
-                                                                "integer"]},
-                    "publication": {"required": False, "type": "string"},
-                    "text": {"required": False, "type": "string"},
-                    "url": {"required": False, "type": "string"},
-                    "year": {"required": True, "type": "integer"},
-                    "grant": {"required": True, "type": "string"},
+                                                                "integer"],
+                              "description": "The month the piece appeared"
+                              },
+                    "publication": {"required": False, "type": "string",
+                                    "description": "The place where the "
+                                                   "publicity was placed"
+                                    },
+                    "text": {"required": False, "type": "string",
+                             "description": "The text of the publicity",
+                             },
+                    "url": {"required": False, "type": "string",
+                            "description": "The URL where the piece may be found"
+                            },
+                    "year": {"required": True, "type": "integer",
+                             "description": "The year the piece appeared"
+                             },
+                    "grant": {"required": True, "type": "string",
+                              "description": "The identifier of the grant "
+                                             "associated with the piece"
+                              },
                 },
             },
             "type": "list"
