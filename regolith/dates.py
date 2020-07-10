@@ -239,13 +239,13 @@ def get_dates(thing, date_field_prefix=None):
                                        month_to_int(thing[datenames[1]]),
                                        last_day(thing[datenames[2]], thing[datenames[1]]))
         else:
-            date = datetime.date(thing[datenames[2]],
+            date = datetime.date(int(thing[datenames[2]]),
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
-            begin_date = datetime.date(thing[datenames[2]],
+            begin_date = datetime.date(int(thing[datenames[2]]),
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
-            end_date = datetime.date(thing[datenames[2]],
+            end_date = datetime.date(int(thing[datenames[2]]),
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
     if thing.get('begin_date'):
