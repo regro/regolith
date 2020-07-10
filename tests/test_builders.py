@@ -19,7 +19,8 @@ builder_map = [
     "reimb",
     "figure",
     "recent-collabs",
-    "beamplan"
+    "beamplan",
+    "grantreport"
 ]
 db_srcs = ["mongo", "fs"]
 
