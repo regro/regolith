@@ -76,17 +76,17 @@ helper_map = [
      ),
     (["helper", "l_contacts", "run", "--name", "ny", "--inst", "col",
       "--notes", "coffee", "--date", "2020-01-15", "--range", "2"],
-     "Anthony B Friend\n    institution: columbiau\n    email: friend@deed.com\n"
+     "Anthony B Friend  |  afriend  |  institution: Columbia University  |  email: friend@deed.com\n"
      ),
     (["helper", "l_contacts", "run", "--name", "ny", "--inst", "col",
       "--notes", "coffee", "--date", "2019-01-15", "--range", "2"],
-     ""
+     "\n"
      ),
     (["helper", "l_contacts", "run", "--verbose"],
      "Anthony B Friend\n"
-     "    id: afriend\n"
+     "    _id: afriend\n"
      "    email: friend@deed.com\n"
-     "    institution: columbiau\n"
+     "    institution: Columbia University\n"
      "    department: physics\n"
      "    notes:\n"
      "        -The guy I meet for coffee sometimes\n"
