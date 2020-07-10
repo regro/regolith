@@ -2700,7 +2700,8 @@ SCHEMAS = {
                 "type": "dict",
                 "schema": {
                     "advisor": {"required": False, "type": "string",
-                                "name or id of advisor/mentor/manager"},
+                                "description": "name or id of "
+                                               "advisor/mentor/manager"},
                     "begin_day": {"required": False, "type": "integer"},
                     "begin_month": {"required": False,
                                     "anyof_type": ["string", "integer"],
