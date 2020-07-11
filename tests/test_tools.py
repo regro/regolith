@@ -1,5 +1,5 @@
 import pytest
-
+import datetime as dt
 from regolith.tools import (
     filter_publications,
     fuzzy_retrieval,
@@ -20,6 +20,7 @@ from regolith.tools import (
     search_collection,
     collect_appts,
     grant_burn,
+    validate_meeting
     )
 
 
@@ -904,4 +905,28 @@ def test_grant_burn(grant, appointments, grant_begin, grant_end, start, end, exp
     except ValueError:
         with pytest.raises(ValueError) as excinfo:
             actual = grant_burn(grant, appointments, grant_begin, grant_end, begin_date=start, end_date=end)
+        assert str(excinfo.value) == expected
+
+
+meeting1 = {'_id': 'grp2020-06-15', 'journal_club': {'doi': 'TBD'}}
+meeting2 = {'_id': 'grp2020-06-22', 'presentation': {'link': 'TBD'}}
+meeting3 = {'_id': 'grp2020-06-29', 'presentation': {'link': '2002ak_grmtg_presnetation', 'title': 'tbd'}}
+@pytest.mark.parametrize(
+    "meeting,date,expected",
+    [
+        (meeting1, dt.date(2020, 8, 15), 'grp2020-06-15 does not have a journal club doi'),
+        (meeting1, dt.date(2020, 5, 15), None),
+        (meeting2, dt.date(2020, 8, 15), 'grp2020-06-22 does not have a presentation link'),
+        (meeting2, dt.date(2020, 5, 15), None),
+        (meeting3, dt.date(2020, 8, 15), 'grp2020-06-29 does not have a presentation title'),
+        (meeting3, dt.date(2020, 5, 15), None),
+    ]
+)
+def test_validate_meeting(meeting, date, expected):
+    try:
+        actual = validate_meeting(meeting, date)
+        assert actual == expected
+    except ValueError:
+        with pytest.raises(ValueError) as excinfo:
+            actual = validate_meeting(meeting, date)
         assert str(excinfo.value) == expected
