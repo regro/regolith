@@ -2315,12 +2315,12 @@ SCHEMAS = {
                     "begin_date": {
                         "description": "start date of the budget period in format YYYY-MM-DD",
                         "required": False,
-                        "type": "string"
+                        "anyof_type": ["string", "date"],
                     },
                     "end_date": {
                         "description": "end date of the budget period in format YYYY-MM-DD",
                         "required": False,
-                        "type": "string"
+                        "anyof_type": ["string", "date"],
                     },
                     "student_months": {
                         "description": "number of months of funding for student members during the academic year",
@@ -3817,9 +3817,9 @@ SCHEMAS = {
             ],
         },
         "submitted_date": {
-            "description": "submitted date in ISO YYYY-MM-DD format in quotes",
+            "description": "submitted date in ISO YYYY-MM-DD format",
             "required": True,
-            "type": "string",
+            "anyof_type": ["string", "date"],
         },
         "title": {
             "description": "title of the paper under review",
