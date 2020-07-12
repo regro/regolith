@@ -21,6 +21,7 @@ from regolith.helpers import u_finishprumhelper as u_finishprum
 from regolith.helpers import l_generalhelper as l_general
 from regolith.helpers import u_institutionshelper as u_institutions
 from regolith.helpers import a_todohelper as a_todo
+from regolith.helpers import v_meetingshelper as v_meetings
 
 HELPERS = {
     "hello": (hello.HelloHelper, hello.subparser),
@@ -44,6 +45,7 @@ HELPERS = {
     "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
     "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser),
     "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
+    "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser)
 }
 
 

@@ -1567,3 +1567,25 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
                    "ss_days": round(ss_val, 2)}
             grant_amounts.append(gvals)
     return grant_amounts
+
+def validate_meeting(meeting, date):
+    """
+    Validates a meeting by checking is it has a journal club doi, a presentation link, and a presentation
+    title. This function will return nothing is the meeting is valid, otherwise it will raise a ValueError. 
+
+    Parameters
+    ----------
+    meeting: dict
+        The meeting object that needs to be validated
+    date: datetime object
+        The date we want to use to see if a meeting has happened or not
+
+    """
+    meeting_date = date_parser.parse(meeting.get('_id')[3:]).date()
+    if meeting.get('journal_club') and meeting_date < date:
+        if meeting.get('journal_club').get('doi').lower() == 'tbd':
+            raise ValueError(f'{meeting.get("_id")} does not have a journal club doi')
+    if meeting_date < date and meeting.get('presentation').get('link').lower() == 'tbd':
+        raise ValueError(f'{meeting.get("_id")} does not have a presentation link')
+    if meeting_date < date and meeting.get('presentation').get('title').lower() == 'tbd':
+        raise ValueError(f'{meeting.get("_id")} does not have a presentation title')
