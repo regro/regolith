@@ -270,6 +270,7 @@ helper_map = [
      "overspent grants:\n"
      "    2020-12-31: grant: abc42, overspend amount: -1.41 months\n"
      ),
+    (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
 ]
 
 

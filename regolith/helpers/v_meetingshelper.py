@@ -23,10 +23,10 @@ HELPER_TARGET = "v_meetings"
 
 def subparser(subpi):
     subpi.add_argument(
-        "-v",
-        "--verbose",
+        "-t",
+        "--test",
         action="store_true",
-        help="Increases the verbosity of the output.")
+        help="Testing flag for meeting validator")
     return subpi
 
 class MeetingsValidatorHelper(SoutHelperBase):
@@ -64,7 +64,9 @@ class MeetingsValidatorHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        list_search = []
+        if rc.test:
+            print('Meeting validator helper')
+            return
         date = dt.date.today()
         collection = self.gtx["meetings"]
         for meeting in collection:
