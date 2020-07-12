@@ -67,8 +67,8 @@
   <h2><a>{{mtg['datestr']}}</a></h2>
   <li>Meeting Lead: {{mtg.get('lead', '')}}</li>
   {% if mtg.get('journal_club') %}
-  <li>Presentation: {{mtg.get('journal_club').get('presenter','')}},
-    {{mtg.get('journal_club').get('title','')}}</li>
+  <li>Journal Club: {{mtg.get('journal_club').get('presenter','')}},
+    {{mtg.get('journal_club').get('doi','')}}</li>
   {% endif %}
   {% if mtg.get('presentation') %}
   <li>Presentation: {{mtg.get('presentation').get('presenter','')}},
