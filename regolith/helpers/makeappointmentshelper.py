@@ -22,6 +22,7 @@ from regolith.dates import (
     is_current,
     get_dates,
 )
+import matplotlib
 import matplotlib.pyplot as plt
 
 TARGET_COLL = "people"
@@ -35,6 +36,7 @@ def subparser(subpi):
 
     subpi.add_argument("run", help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
     subpi.add_argument("--no_plot", action="store_true", help='suppress plotting feature')
+    subpi.add_argument("--no_gui", action="store_true", help='suppress interactive matplotlib GUI')
 
     return subpi
 
@@ -92,6 +94,9 @@ class MakeAppointmentsHelper(SoutHelperBase):
         rc = self.rc
         outdated, depleted, underspent, overspent = [], [], [], []
         all_appts = collect_appts(self.gtx['people'])
+
+        if rc.no_gui:
+            matplotlib.use('agg')
 
         for person in self.gtx['people']:
             appts = collect_appts([person])
