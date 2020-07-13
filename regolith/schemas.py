@@ -508,8 +508,8 @@ EXEMPLARS = {
     "meetings": {
         "_id": "grp2020-06-12",
         "actions": [
-            "Simon: test",
-            "Everyone: Clear out-of-date prums milestones."
+            "(Simon) test",
+            "(Everyone) Clear out-of-date prums milestones."
         ],
         "agenda": ["Review actions", ],
         "buddies": [],
@@ -537,6 +537,7 @@ EXEMPLARS = {
     },
     "people": [{
         "_id": "scopatz",
+        "active": True,
         "aka": [
             "Scopatz",
             "Scopatz, A",
@@ -845,6 +846,7 @@ EXEMPLARS = {
     },
     {
         "_id": "sbillinge",
+        "active": True,
         "activities": [{
             "type": "teaching",
             "name": "course development",

@@ -291,6 +291,16 @@ sbillinge:
       notes:
         - test notes 1
         - test notes 2
+    - description: (Simon) test
+      begin_date: 2020-06-12
+      due_date: 2020-06-18
+      importance: 1
+      status: started
+    - description: (Everyone) Clear out-of-date prums milestones.
+      begin_date: 2020-06-12
+      due_date: 2020-06-18
+      importance: 1
+      status: started
 scopatz:
   active: true
   aka:
@@ -545,3 +555,9 @@ scopatz:
       syllabus: https://docs.google.com/document/d/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8-PxiboYdM/edit?usp=sharing
       year: 2017
   title: Dr.
+  todos:
+    - description: (Everyone) Clear out-of-date prums milestones.
+      begin_date: 2020-06-12
+      due_date: 2020-06-18
+      importance: 1
+      status: started

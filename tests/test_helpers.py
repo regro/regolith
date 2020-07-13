@@ -164,26 +164,23 @@ helper_map = [
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
      ),
-    (["helper", "l_todo", "--id", "sbillinge", "--short_tasks"],
-     "1. prepare the presentation\n"
+    (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65"],
+     "         |          | expected |       \n"
+     "days to  |importance| duration | action\n"
+     "due date |          |  (mins)  |       \n"
+     "------------------------------------------------------------------\n"
+     "    6    |    2     |   60.0   |read paper\n"
+     "   16    |    1     |   30.0   |prepare the presentation\n"
+     "                               |  notes:[\'about 10 minutes\', \"don't forget to upload to the website\"]\n"
      ),
-    (["helper", "l_todo", "--id", "sbillinge", "--short_tasks", "65"],
-     "1. read paper\n2. prepare the presentation\n"
-     ),
-    (["helper", "l_todo", "--verbose", "--id", "sbillinge", "--short_tasks"],
-     "1. prepare the presentation\n     --notes: ['about 10 minutes', \"don't forget to upload to the website\"]\n     --due: 2020-07-29, importance:0, 30.0 min, start date: 2020-06-22\n"
-     ),
-    (["helper", "l_todo", "--id", "sbillinge"],
-     "1. Simon: test\n2. Everyone: Clear out-of-date prums milestones.\n3. read paper\n4. prepare the presentation\n"
-     ),
-    (["helper", "l_todo", "-i", "wrong_id"],
+    (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
      ),
-    (["helper", "l_todo", "--verbose", "--id", "sbillinge"],
-     "1. Simon: test\n     --due: 2020-06-18, importance:1,  \n2. Everyone: Clear out-of-date prums milestones.\n     --due: 2020-06-18, importance:1,  \n3. read paper\n     --due: 2020-07-19, importance:2, 60.0 min, start date: 2020-06-15\n4. prepare the presentation\n     --notes: ['about 10 minutes', \"don't forget to upload to the website\"]\n     --due: 2020-07-29, importance:0, 30.0 min, start date: 2020-06-22\n"
-     ),
-    (["helper", "a_todo", "test a_todo", "10", "--id", "sbillinge", "--begin_date", "2020-07-06",  "--duration", "50", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
+    (["helper", "a_todo", "test a_todo", "10", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06",  "--duration", "50", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
      "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
+     ),
+    (["helper", "g_todo","--date", "2020-06-12"],
+     "Actions from group meeting(2020-06-12) have been added to todos in people collection.\n"
      ),
     (["helper", "finish_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"
@@ -202,7 +199,7 @@ helper_map = [
      "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n"),
     (["helper", "lister", "people", "--keys"],
      "Available keys:\n"
-     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
@@ -211,7 +208,7 @@ helper_map = [
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
      "Results of your search:\nsbillinge\n"
      "Available keys:\n"
-     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
