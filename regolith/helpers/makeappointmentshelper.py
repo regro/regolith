@@ -94,7 +94,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
         rc = self.rc
         outdated, depleted, underspent, overspent = [], [], [], []
         all_appts = collect_appts(self.gtx['people'])
-
         if rc.no_gui:
             matplotlib.use('agg')
 
