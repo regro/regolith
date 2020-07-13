@@ -67,7 +67,7 @@
       - not needed for paper submissions
     status: finished
   description: My first projectum
-  end_date: '2020-07-01'
+  end_date: 2020-07-01
   grants: SymPy-1.1
   group_members:
     - ascopatz

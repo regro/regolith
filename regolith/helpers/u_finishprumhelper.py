@@ -4,6 +4,7 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval, collection_str
 import datetime as dt
+from dateutil import parser as date_parser
 
 TARGET_COLL = "projecta"
 
@@ -59,7 +60,7 @@ class FinishprumUpdaterHelper(DbHelperBase):
                 print(f"{pra[i].get('_id')}     status:{pra[i].get('status')}")
             print("Please rerun the helper specifying the complete ID.")
             return
-        found_projectum.update({'status':'finished', 'end_date':rc.end_date})
+        found_projectum.update({'status':'finished', 'end_date': date_parser.parse(rc.end_date).date()})
         found_projectum['kickoff'].update({'status':'finished'})
         found_projectum['deliverable'].update({'status': 'finished'})
         for i in found_projectum:
