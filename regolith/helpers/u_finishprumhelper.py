@@ -4,6 +4,7 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval, collection_str
 import datetime as dt
+from dateutil import parser as date_parser
 
 TARGET_COLL = "projecta"
 
@@ -12,8 +13,7 @@ def subparser(subpi):
                        help="the ID or fragment of the ID of the projectum to be updated, e.g., 20sb")
     subpi.add_argument("--end_date",
                        help="End date of the projectum in ISO format (YYYY-MM-DD). "
-                            "Defaults to today.",
-                       default=dt.date.today())
+                            "Defaults to today.")
     # Do not delete --database arg
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated.  Defaults to "
@@ -59,7 +59,11 @@ class FinishprumUpdaterHelper(DbHelperBase):
                 print(f"{pra[i].get('_id')}     status:{pra[i].get('status')}")
             print("Please rerun the helper specifying the complete ID.")
             return
-        found_projectum.update({'status':'finished', 'end_date':rc.end_date})
+        found_projectum.update({'status':'finished'})
+        if rc.end_date:
+            found_projectum.update({'end_date': date_parser.parse(rc.end_date).date()})
+        else:
+            found_projectum.update({'end_date': dt.date.today()})
         found_projectum['kickoff'].update({'status':'finished'})
         found_projectum['deliverable'].update({'status': 'finished'})
         for i in found_projectum:
