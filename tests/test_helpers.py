@@ -233,7 +233,7 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
-    (["helper", "makeappointments", "run",],
+    (["helper", "makeappointments", "run", "--no_gui",],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
