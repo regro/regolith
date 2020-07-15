@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
-<channel>
- <title>ERGS Blog</title>
- <description>The official blog feed for ERGS</description>
- <link>http://</link>
- <pubDate>Wed, 31 Oct 2018 18:23:01 -0000</pubDate>
- <ttl>1800</ttl>
- 
- <item>
-  <title>My Vision</title>
-  <author>Anthony Scopatz</author>
-  <pubDate>Fri, 18 Sep 2015 00:00:00 -0000</pubDate>
-  <link>http:///blog/my-vision.html</link>
-  <description>I would like see things move forward. Deep, I know!</description>
- </item>
- 
-</channel>
+    <channel>
+        <title>ERGS Blog</title>
+        <description>The official blog feed for ERGS</description>
+        <link>http://</link>
+        <pubDate>Wed, 15 Jul 2020 19:33:32 -0000</pubDate>
+        <ttl>1800</ttl>
+
+        <item>
+            <title>My Vision</title>
+            <author>Anthony Scopatz</author>
+            <pubDate>Fri, 18 Sep 2015 00:00:00 -0000</pubDate>
+            <link>http:///blog/my-vision.html</link>
+            <description>I would like see things move forward. Deep, I know!</description>
+        </item>
+
+    </channel>
 </rss>
