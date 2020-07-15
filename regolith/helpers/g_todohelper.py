@@ -13,7 +13,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    document_by_value,
+    common_word_retrieval
 )
 
 TARGET_COLL = "people"
@@ -59,10 +59,6 @@ class MeetingActionsAdderHelper(DbHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-
-
-
-
     def db_updater(self):
         rc = self.rc
         if rc.date:
@@ -96,17 +92,18 @@ class MeetingActionsAdderHelper(DbHelperBase):
                 'importance': 1,
                 'status': 'started'
             }
-            for person in self.gtx["people"]:
-                if person["active"]:
-                    id = person["_id"]
-                    if "(everyone)" in action.casefold():
+            first_name = action.split(')', 1)[0].casefold()
+            if "everyone" in first_name:
+                for person in self.gtx["people"]:
+                    if person["active"]:
+                        id = person["_id"]
                         insert_todos[id].append(todo)
-                        continue
-                    else:
-                        first_name = person["name"].split()[0].casefold()
-                        if first_name in action.casefold():
-                            insert_todos[id].append(todo)
-                            break
+            else:
+                find_people = common_word_retrieval(self.gtx['people'], ['name'], first_name, case_sensitive=False)
+                if len(find_people) != 0:
+                    for person in find_people:
+                        id = person["_id"]
+                        insert_todos[id].append(todo)
 
         for person in self.gtx["people"]:
             if person["active"]:

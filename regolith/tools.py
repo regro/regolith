@@ -155,7 +155,7 @@ def filter_publications(citations, authors, reverse=False, bold=True,
         ):
             continue
         if not pub.get("month") or pub.get("month") == "tbd":
-#            print("WARNING: {} missing month will be ignored".format(pub.get("title")))
+            #            print("WARNING: {} missing month will be ignored".format(pub.get("title")))
             continue
         pub = deepcopy(pub)
         if bold:
@@ -315,10 +315,10 @@ def filter_service(ppl, begin_period, type, verbose=False):
             if i.get("type") == type:
                 if i.get('year'):
                     end_year = i.get('year')
-                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]),end_year))
+                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]), end_year))
                 elif i.get('end_year'):
                     end_year = i.get('end_year')
-                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]),end_year))
+                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]), end_year))
                 else:
                     end_year = date.today().year
                     if verbose: print("no end_year, using today = {}".format(end_year))
@@ -666,8 +666,8 @@ def filter_presentations(people, presentations, institutions, target, types=["al
                         "WARNING: department {} not found in"
                         " {} in institutions.yml.  Pres list will"
                         " build but please check this entry carefully and "
-                            "rerun to remove "
-                        "errors".format(pres["institution"],pres["_id"])
+                        "rerun to remove "
+                        "errors".format(pres["institution"], pres["_id"])
                     )
             except:
                 sys.exit(
@@ -1196,7 +1196,7 @@ def group_member_ids(ppl_coll, grpname):
     return grpmembers
 
 
-def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
+def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
     """Retrieves a list of all documents from the collection where the fragment
     appears in any one of the given fields
 
@@ -1249,8 +1249,70 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive = False):
     return ret_list
 
 
+def common_word_retrieval(coll, fields, sentence, case_sensitive=False):
+    """Retrieves a list of all documents from the collection if any word from the sentence
+    appears in any one of the given fields
+
+    Parameters
+    ----------
+    coll: generator
+        The collection containing the documents
+    fields: iterable
+        The fields of each document to check for the words
+    sentence:
+        Words in this sentence will be compared against to find the documents of interest
+    case_sensitive: Bool
+        When true will match case (Default = False)
+
+    Returns
+    -------
+    list:
+        A list of documents (that are dicts)
+
+    Examples
+    --------
+    >>> common_word_retrieval(people, ['aka', 'name'], '(Alice and Bob) for example,', case_sensitive = False)
+
+    This would get all people for which either the alias or the name included any words in the sentence '(Alice and Bo
+    b) for example,'.
+
+    """
+    sentence = re.sub(r'[^\w\s]', '', sentence)  # remove punctuation in the sentence
+    words = sentence.split()
+    ret_list = []
+    for doc in coll:
+        returns = []
+        for k in fields:
+            ret = doc.get(k, [])
+            if not isinstance(ret, list):
+                ret = [ret]
+            returns.extend(ret)
+        exit_flag = False
+        if not case_sensitive:
+            returns = [reti.lower() for reti in returns if
+                       isinstance(reti, str)]
+            for item in frozenset(returns):
+                for word in words:
+                    if word.lower() in item.split():
+                        ret_list.append(doc)
+                        exit_flag = True
+                        break
+                if exit_flag:
+                    break
+        else:
+            for item in frozenset(returns):
+                for word in words:
+                    if word in item.split():
+                        ret_list.append(doc)
+                        exit_flag = True
+                        break
+                if exit_flag:
+                    break
+    return ret_list
+
+
 def get_id_from_name(coll, name):
-    person = fuzzy_retrieval(coll,["name", "aka", "_id"], name,
+    person = fuzzy_retrieval(coll, ["name", "aka", "_id"], name,
                              case_sensitive=False)
     if person:
         return person["_id"]
@@ -1316,15 +1378,17 @@ def is_fully_appointed(person, begin_date, end_date):
         else:
             if not good_period:
                 print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
-                                                                     str(start_gap), str(day - relativedelta(days=1))))
+                                                                             str(start_gap),
+                                                                             str(day - relativedelta(days=1))))
             good_period = True
         if x == timespan.days and not good_period:
             if day != start_gap:
                 print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
-                                                                     str(start_gap), str(day)))
+                                                                             str(start_gap), str(day)))
             else:
                 print("WARNING: appointment gap for {} on {}".format(person.get('_id'), str(day)))
     return status
+
 
 def key_value_pair_filter(collection, arguments):
     """Retrieves a list of all documents from the collection where the fragment
@@ -1458,7 +1522,8 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
         raise RuntimeError("please enter both begin date and end date or neither")
     filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
     filter_value = [filter_value] if not isinstance(filter_value, list) else filter_value
-    if (bool(filter_key)^bool(filter_value)) or (filter_key and filter_value and len(filter_key) != len(filter_value)):
+    if (bool(filter_key) ^ bool(filter_value)) or (
+            filter_key and filter_value and len(filter_key) != len(filter_value)):
         raise RuntimeError("number of filter keys and filter values do not match")
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
     end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
@@ -1486,12 +1551,12 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
                         appts.append(p_appts[a])
                         appts[-1].update({'person': p.get('_id'), '_id': a})
             elif timespan:
-                    for y in range(timespan.days + 1):
-                        day = begin_date + relativedelta(days=y)
-                        if is_current(p_appts[a], now=day):
-                            appts.append(p_appts[a])
-                            appts[-1].update({'person': p.get('_id'), '_id': a})
-                            break
+                for y in range(timespan.days + 1):
+                    day = begin_date + relativedelta(days=y)
+                    if is_current(p_appts[a], now=day):
+                        appts.append(p_appts[a])
+                        appts[-1].update({'person': p.get('_id'), '_id': a})
+                        break
             else:
                 appts.append(p_appts[a])
                 appts[-1].update({'person': p.get('_id'), '_id': a})
@@ -1549,7 +1614,7 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
     for x in range(timespan.days + 1):
         day = grant_begin + relativedelta(days=x)
         for a in appts:
-            if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a,now=day):
+            if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a, now=day):
                 if a.get('type') == 'gra':
                     grad_val -= a.get('loading') * 1
                 elif a.get('type') == 'pd':
@@ -1559,14 +1624,15 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
                 else:
                     if a.get('person'):
                         raise ValueError("invalid  type {} for appointment {} of {}".format(a.get('type'), a.get('_id'),
-                                                                                                    a.get('person')))
+                                                                                            a.get('person')))
                     else:
                         raise ValueError("invalid  type for appointment {}".format(a))
         if begin_date <= day <= end_date:
             gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
-                   "ss_days": round(ss_val, 2)}
+                     "ss_days": round(ss_val, 2)}
             grant_amounts.append(gvals)
     return grant_amounts
+
 
 def validate_meeting(meeting, date):
     """

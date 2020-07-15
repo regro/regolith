@@ -28,6 +28,8 @@ def subparser(subpi):
                        help="Filter tasks that are assigned to this user id. Default is saved in user.json. ")
     subpi.add_argument("-s", "--short_tasks", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
+    subpi.add_argument("-c", "--certain_date",
+                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
     return subpi
 
 
@@ -81,6 +83,10 @@ class TodoListerHelper(SoutHelperBase):
             print(
                 "The id you entered can't be found in people.yml.")
             return
+        if not rc.certain_date:
+            today = dt.date.today()
+        else:
+            today = date_parser.parse(rc.certain_date).date()
 
         for projectum in self.gtx["projecta"]:
             if projectum.get('lead') != rc.assigned_to:
@@ -117,7 +123,7 @@ class TodoListerHelper(SoutHelperBase):
         print("-" * 66)
         for t in gather_todos:
             if t.get('status') not in ["finished", "cancelled"]:
-                days=(t.get('due_date')-dt.date.today()).days
+                days=(t.get('due_date')-today).days
                 print(f"{days: ^9}|{t.get('importance'): ^10}|{str(t.get('duration')):^10}|{t.get('description')}")
                 if t.get('notes'):
                     print(f"                               |  notes:{t.get('notes')}")

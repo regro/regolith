@@ -164,7 +164,7 @@ helper_map = [
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
      ),
-    (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65"],
+    (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
      "         |          | expected |       \n"
      "days to  |importance| duration | action\n"
      "due date |          |  (mins)  |       \n"
