@@ -13,7 +13,7 @@ from xonsh.lib.os import rmtree
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
 
-OUTPUT_FAKE_DB = True  # always turn it to false after you used it
+OUTPUT_FAKE_DB = False  # always turn it to false after you used it
 
 
 @pytest.fixture(scope="session")
