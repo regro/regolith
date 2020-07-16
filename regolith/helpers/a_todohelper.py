@@ -27,20 +27,20 @@ def subparser(subpi):
                             "integer. Integer 5 means 5 days from the "
                             "begin_date. "
                        )
-    subpi.add_argument("-i", "--id", help="ID of the member to whom the task is assigned. The default id is saved in user.json. ")
-    subpi.add_argument("-b", "--begin_date",
-                       help="Begin date of the task in format YYYY-MM-DD. Default is today."
-                       )
     subpi.add_argument("-d", "--duration",
                        help="The estimated duration the task will take in minutes. Default is 60 ",
                        default=60
                        )
-    subpi.add_argument("-p", "--importance",
+    subpi.add_argument("-i", "--importance",
                        help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1.",
                        default=1
                        )
     subpi.add_argument("-n", "--notes", nargs="+", help="Additional notes for this task. Each note should be enclosed "
                                                         "in quotation marks.")
+    subpi.add_argument("-a", "--assigned_to", help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
+    subpi.add_argument("-b", "--begin_date",
+                       help="Begin date of the task in format YYYY-MM-DD. Default is today."
+                       )
 
     return subpi
 
@@ -72,18 +72,18 @@ class TodoAdderHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        if not rc.id:
+        if not rc.assigned_to:
             try:
-                rc.id = rc.default_user_id
+                rc.assigned_to = rc.default_user_id
             except AttributeError:
                 print(
                     "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
                     "in the command line")
                 return
-        filterid = {'_id': rc.id}
+        filterid = {'_id': rc.assigned_to}
         person = rc.client.find_one(rc.database, rc.coll, filterid)
         if not person:
-            raise TypeError(f"The id {rc.id} can't be found in the people collection")
+            raise TypeError(f"The id {rc.assigned_to} can't be found in the people collection")
         now = dt.date.today()
         if not rc.begin_date:
             begin_date = now
@@ -99,10 +99,7 @@ class TodoAdderHelper(DbHelperBase):
         importance = int(rc.importance)
         if importance not in ALLOWED_IMPORTANCE:
             raise ValueError(f"importance should be chosen from {ALLOWED_IMPORTANCE}")
-        if not person.get("todos"):
-            todolist = []
-        else:
-            todolist = person.get("todos")
+        todolist = person.get("todos",[])
         todolist.append({
             'description': rc.description,
             'due_date': due_date,
@@ -113,8 +110,8 @@ class TodoAdderHelper(DbHelperBase):
         if rc.notes:
             todolist[-1]['notes'] = rc.notes
 
-        rc.client.update_one(rc.database, rc.coll, {'_id': rc.id}, {"todos": todolist},
+        rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist},
                              upsert=True)
-        print(f"The task \"{rc.description}\" for {rc.id} has been added in {TARGET_COLL} collection.")
+        print(f"The task \"{rc.description}\" for {rc.assigned_to} has been added in {TARGET_COLL} collection.")
 
         return

@@ -25,12 +25,14 @@ ALLOWED_STATI = ["started", "finished"]
 
 def subparser(subpi):
     subpi.add_argument("-v", "--verbose", action="store_true",
-                       help='increase verbosity of output')
-    subpi.add_argument("-i", "--id",
-                       help=f"Filter to-do tasks for this user id. Default is saved in user.json."
-                       )
+                       help="List both completed and uncompleted tasks. ")
     subpi.add_argument("-s", "--short_tasks", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
+    subpi.add_argument("-a", "--assigned_to",
+                       help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
+    subpi.add_argument("-c", "--certain_date",
+                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
+
     return subpi
 
 
@@ -69,35 +71,28 @@ class TodoListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        if not rc.id:
+        if not rc.assigned_to:
             try:
-                rc.id = rc.default_user_id
+                rc.assigned_to = rc.default_user_id
             except AttributeError:
                 print(
-                    "Please set default_user_id in '~/.config/regolith/user.json',\
-                     or you need to enter your group id in the command line")
+                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
+                    "in the command line")
                 return
-
-        # find fisrt name in people.yml:
         try:
-            person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.id)
-            first_name = person["name"].split()[0]
-        except TypeError:
+            person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
+            gather_todos = person.get("todos", [])
+        except:
             print(
                 "The id you entered can't be found in people.yml.")
             return
+        if not rc.certain_date:
+            today = dt.date.today()
+        else:
+            today = date_parser.parse(rc.certain_date).date()
 
-        # gather to-do tasks in people.yml
-        try:
-            todolist_tasks = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.id)
-            gather_todos = todolist_tasks["todos"]
-        # if there is no document with this id or that id doesn't have the key "todos" in people.yml:
-        except:
-            gather_todos = []
-
-        # gather to-do tasks in projecta.yml
         for projectum in self.gtx["projecta"]:
-            if projectum.get('lead') != rc.id:
+            if projectum.get('lead') != rc.assigned_to:
                 continue
             projectum["deliverable"].update({"name": "deliverable"})
             gather_miles = [projectum["kickoff"], projectum["deliverable"]]
@@ -111,75 +106,35 @@ class TodoListerHelper(SoutHelperBase):
                             'id': projectum.get('_id'),
                             'due_date': due_date,
                         })
-                        ms.update({'description': f'{ms.get("id")}, {ms.get("name")}'})
-
+                        ms.update({'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
                         gather_todos.append(ms)
 
-        mtgs = []
-        for mtg in self.gtx["meetings"]:
-            mtg['date']=get_dates(mtg)["date"]
-            if len(list(mtg.get('actions'))) != 0:
-                mtgs.append(mtg)
-        if len(mtgs) > 0:
-            mtgs = sorted(mtgs, key=lambda x: x.get('date'), reverse=True)
-            actions = mtgs[0].get('actions')
-
-            due_date = mtgs[0].get('date') + relativedelta(weekday=TH)
-            for a in actions:
-                ac = a.casefold()
-                if "everyone" in ac or "all" in ac or first_name.casefold() in ac:
-                    gather_todos.append({
-                        'description': a,
-                        'due_date': due_date,
-                        'status': 'started'
-                    })
-
-        num = 0
-
         for item in gather_todos:
-            if item.get('importance') is None:
+            if not item.get('importance'):
                 item['importance'] = 1
             if type(item["due_date"]) == str:
                 item["due_date"] = date_parser.parse(item["due_date"]).date()
-
         gather_todos = sorted(gather_todos, key=lambda k: (k['due_date'], -k['importance']))
 
         if rc.short_tasks:
             for t in gather_todos[::-1]:
                 if t.get('duration') is None or float(t.get('duration')) > float(rc.short_tasks):
                     gather_todos.remove(t)
-
+        num = 1
+        print("    action (days to due date|importance|expected duration(mins))")
+        for t in gather_todos:
+            if t.get('status') not in ["finished", "cancelled"]:
+                days=(t.get('due_date')-today).days
+                print(f"{num:>2}. {t.get('description')}({days}|{t.get('importance')}|{str(t.get('duration'))})")
+                if t.get('notes'):
+                    print(f"     --notes:{t.get('notes')}")
+                num+=1
         if rc.verbose:
-            for t in gather_todos:
-                if t.get('status') not in ["finished", "cancelled"]:
-                    print(
-                        f"{num + 1}. {t.get('description')}")
-                    if t.get('notes') :
-                        print(f"     --notes: {t.get('notes')}")
-                    print(f"     --due: {t.get('due_date')}, importance:{t.get('importance')},",
-                          f"{t['duration']} min," if 'duration' in t else "",
-                          f"start date: {t['begin_date']}" if 'begin_date' in t else "")
-                    # use many if Statements, so duration or begin_date won't be printed if they are unassigned.
-
-                    num += 1
-            # print finished tasks:
-            for t in todolist_tasks["todos"]:
+            for t in person.get("todos", []):
                 if t.get('status') == "finished":
-                    print(
-                        f"finished: {t.get('description')}")
+                    print(f"{num:>2}. (finished) {t.get('description')}")
                     if t.get('notes'):
-                        print(f"     --notes: {t.get('notes')}")
-                    print(f"     --due: {t.get('due_date')}, importance:{t.get('importance')},",
-                          f"{t['duration']} min," if 'duration' in t else "",
-                          f"start date: {t['begin_date']}" if 'begin_date' in t else ""
-                          f"end date: {t['end_date']}" if 'end_date' in t else "")
-                    # use many if Statements, so duration or begin_date won't be printed if they are unassigned.
-
-
-        else:
-            for t in gather_todos:
-                if t.get('status') not in ["finished", "cancelled"]:
-                    print(f"{num + 1}. {t.get('description')}")
-                    num += 1
+                        print(f"     --notes:{t.get('notes')}")
+                    num+=1
 
         return
