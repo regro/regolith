@@ -1,10 +1,12 @@
+NSF {{beginYear}}-{{endYear}} Annual Report by
+{{authorFullName}}, ({{ institution }})
+
 Accomplishments
 ------------------------------
 * What are the major goals of the project?
 
 * What was accomplished under these goals (you must provide information for
 at least one of the 4 categories below)?
-
 Major Activities:
 Specific Objectives:
 Significant Results:
