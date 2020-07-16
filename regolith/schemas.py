@@ -537,7 +537,6 @@ EXEMPLARS = {
     },
     "people": [{
         "_id": "scopatz",
-        "active": True,
         "aka": [
             "Scopatz",
             "Scopatz, A",
@@ -846,7 +845,6 @@ EXEMPLARS = {
     },
     {
         "_id": "sbillinge",
-        "active": True,
         "activities": [{
             "type": "teaching",
             "name": "course development",

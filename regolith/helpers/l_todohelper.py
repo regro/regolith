@@ -25,11 +25,14 @@ ALLOWED_STATI = ["started", "finished"]
 
 def subparser(subpi):
     subpi.add_argument("-a", "--assigned_to",
-                       help="Filter tasks that are assigned to this user id. Default is saved in user.json. ")
+                       help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-s", "--short_tasks", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
     subpi.add_argument("-c", "--certain_date",
                        help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
+    subpi.add_argument("-v", "--verbose", action="store_true",
+                       help="List both completed and uncompleted tasks. ")
+
     return subpi
 
 
@@ -117,15 +120,21 @@ class TodoListerHelper(SoutHelperBase):
             for t in gather_todos[::-1]:
                 if t.get('duration') is None or float(t.get('duration')) > float(rc.short_tasks):
                     gather_todos.remove(t)
-        print("         |          | expected |       ")
-        print("days to  |importance| duration | action")
-        print("due date |          |  (mins)  |       ")
-        print("-" * 66)
+        num = 1
+        print("(days to due date|importance|expected duration(mins))action")
         for t in gather_todos:
             if t.get('status') not in ["finished", "cancelled"]:
                 days=(t.get('due_date')-today).days
-                print(f"{days: ^9}|{t.get('importance'): ^10}|{str(t.get('duration')):^10}|{t.get('description')}")
+                print(f"{num:>2}. ({days}|{t.get('importance')}|{str(t.get('duration'))}) {t.get('description')}")
                 if t.get('notes'):
-                    print(f"                               |  notes:{t.get('notes')}")
+                    print(f"     --notes:{t.get('notes')}")
+                num+=1
+        if rc.verbose:
+            for t in person.get("todos", []):
+                if t.get('status') == "finished":
+                    print(f"{num:>2}. (finished) {t.get('description')}")
+                    if t.get('notes'):
+                        print(f"     --notes:{t.get('notes')}")
+                    num+=1
 
         return

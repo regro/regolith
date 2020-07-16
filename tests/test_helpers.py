@@ -165,19 +165,32 @@ helper_map = [
      "1. Maria as a new contact\n"
      ),
     (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
-     "         |          | expected |       \n"
-     "days to  |importance| duration | action\n"
-     "due date |          |  (mins)  |       \n"
-     "------------------------------------------------------------------\n"
-     "    6    |    2     |   60.0   |read paper\n"
-     "   16    |    1     |   30.0   |prepare the presentation\n"
-     "                               |  notes:[\'about 10 minutes\', \"don't forget to upload to the website\"]\n"
+     "(days to due date|importance|expected duration(mins))action\n"
+     " 1. (6|2|60.0) read paper\n"
+     " 2. (16|1|30.0) prepare the presentation\n"
+     "     --notes:[\'about 10 minutes\', \"don't forget to upload to the website\"]\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
      ),
     (["helper", "a_todo", "test a_todo", "10", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06",  "--duration", "50", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
      "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
+     ),
+    (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge"],
+     "The task \"test a_todo\" for sbillinge has been marked as finished in people collection.\n"
+     ),
+    (["helper", "f_todo", "--assigned_to", "sbillinge"],
+     "Please choose from one of the following to update:\n"
+     "1. read paper\n"
+     "2. prepare the presentation\n"
+     ),
+    (["helper", "l_todo", "--verbose","--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
+     "(days to due date|importance|expected duration(mins))action\n"
+     " 1. (6|2|60.0) read paper\n"
+     " 2. (16|1|30.0) prepare the presentation\n"
+     "     --notes:[\'about 10 minutes\', \"don't forget to upload to the website\"]\n"
+     " 3. (finished) test a_todo\n"
+     "     --notes:['test notes 1', 'test notes 2']\n"
      ),
     (["helper", "finish_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"

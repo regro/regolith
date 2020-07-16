@@ -286,7 +286,7 @@ sbillinge:
       begin_date: 2020-07-06
       duration: 50.0
       importance: 2
-      status: started
+      status: finished
       notes:
         - test notes 1
         - test notes 2
