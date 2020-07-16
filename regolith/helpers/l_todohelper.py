@@ -24,14 +24,14 @@ ALLOWED_STATI = ["started", "finished"]
 
 
 def subparser(subpi):
-    subpi.add_argument("-a", "--assigned_to",
-                       help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
-    subpi.add_argument("-s", "--short_tasks", nargs='?', const=30,
-                       help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
-    subpi.add_argument("-c", "--certain_date",
-                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help="List both completed and uncompleted tasks. ")
+    subpi.add_argument("-s", "--short_tasks", nargs='?', const=30,
+                       help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
+    subpi.add_argument("-a", "--assigned_to",
+                       help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
+    subpi.add_argument("-c", "--certain_date",
+                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
 
     return subpi
 
