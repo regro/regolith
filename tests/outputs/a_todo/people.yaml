@@ -1,4 +1,5 @@
 sbillinge:
+  active: true
   activities:
     - type: teaching
       name: course development
@@ -291,6 +292,7 @@ sbillinge:
         - test notes 1
         - test notes 2
 scopatz:
+  active: true
   aka:
     - Scopatz
     - Scopatz, A
