@@ -121,11 +121,11 @@ class TodoListerHelper(SoutHelperBase):
                 if t.get('duration') is None or float(t.get('duration')) > float(rc.short_tasks):
                     gather_todos.remove(t)
         num = 1
-        print("(days to due date|importance|expected duration(mins))action")
+        print("    action (days to due date|importance|expected duration(mins))")
         for t in gather_todos:
             if t.get('status') not in ["finished", "cancelled"]:
                 days=(t.get('due_date')-today).days
-                print(f"{num:>2}. ({days}|{t.get('importance')}|{str(t.get('duration'))}) {t.get('description')}")
+                print(f"{num:>2}. {t.get('description')}({days}|{t.get('importance')}|{str(t.get('duration'))})")
                 if t.get('notes'):
                     print(f"     --notes:{t.get('notes')}")
                 num+=1

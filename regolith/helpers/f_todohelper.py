@@ -67,7 +67,7 @@ class TodoFinisherHelper(DbHelperBase):
             raise TypeError(f"Id {rc.assigned_to} can't be found in people collection")
         todolist = person.get("todos",[])
         if len(todolist) ==0:
-            print(f"{rc.assigned_Todo} doesn't have todos in people collection.")
+            print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
         index = 1
         for t in todolist:
