@@ -2096,7 +2096,7 @@ SCHEMAS = {
             "schema": {
                 "schema": {
                     'amount': {"description": 'amount for reimbursements',
-                               "type": "integer",
+                               "type": "float",
                                },
                     'date': {"description": "date of reimbursement",
                              "anyof_type": ["string", "date"],
