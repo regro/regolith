@@ -294,6 +294,7 @@ EXEMPLARS = {
         },
         {
             "_id": "dmref15",
+            "alias": "dmref15",
             "account": "GG012345",
             "amount": 982785.0,
             "begin_day": 1,
@@ -360,6 +361,7 @@ EXEMPLARS = {
             "proposal_id": "dmref15"
         },
         {"_id": "abc42",
+         "alias": "abc42",
          "amount": 42000.0,
          "begin_date": "2020-06-01",
          "end_date": "2020-12-31",
@@ -562,7 +564,7 @@ EXEMPLARS = {
             "s20": {
                 "begin_date": "2020-01-01",
                 "end_date": "2020-05-15",
-                "grant": "SymPy-1.1",
+                "grant": "sym",
                 "type": "pd",
                 "loading": 1.0,
                 "status": "finalized",

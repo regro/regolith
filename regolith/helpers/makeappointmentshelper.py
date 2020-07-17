@@ -112,7 +112,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 if appt.get("grant") in BLACKLIST:
                     print(appt.get("grant"))
                     continue
-                grant = rc.client.find_one(rc.database, "grants", {"_id": appt.get("grant")})
+                grant = rc.client.find_one(rc.database, "grants", {"alias": appt.get("grant")})
                 if not grant:
                     raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".
                                        format(appt.get("grant"), person.get("_id"), appt.get("_id")))

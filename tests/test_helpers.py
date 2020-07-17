@@ -59,7 +59,7 @@ helper_map = [
      "20sb_firstprojectum    My first projectum\n    Lead: ascopatz    Members: ascopatz    Collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_grants", "--current", "--date", "2020-05-25"],
-     "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
+     "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\ndmref15, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
      ),
     (["helper", "l_members", "-v"],
      "Simon J. L. Billinge, professor | group_id: sbillinge\n"
