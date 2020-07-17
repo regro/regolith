@@ -33,7 +33,10 @@ ALLOWED_TYPES = ["gra", "pd", "ss"]
 
 
 def subparser(subpi):
-
+    # Do not delete --database arg
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file.")
     subpi.add_argument("run", help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
     subpi.add_argument("--no_plot", action="store_true", help='suppress plotting feature')
     subpi.add_argument("--no_gui", action="store_true", help='suppress interactive matplotlib GUI')
