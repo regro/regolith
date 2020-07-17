@@ -54,14 +54,21 @@ class GrantReportBuilder(LatexBuilderBase):
         begin_year, begin_month, begin_day = int(today[0])-1, int(today[1]), int(today[2])
         end_date = date(end_year, end_month, end_day)
         begin_date = date(begin_year, begin_month, begin_day)
+
+        # Get All Active Members
+        people = []
+        for p in self.gtx["people"]:
+            if p["active"]:
+                people.append(p)
+
         # Major Goals
 
         # Accomplishments
 
         # Opportunities for Training and Professional Development
         valid_presentations = []
-        for p in self.gtx["people"]:
-            if p["active"] and p["_id"] is not "sbillinge":
+        for p in people:
+            if p["_id"] is not "sbillinge":
                 valid_presentations.append(filter_presentations(
                     self.gtx["people"], self.gtx["presentations"], self.gtx["institutions"], p["_id"],
                     ["tutorial", "contributed_oral"], begin_date, end_date))
@@ -69,6 +76,12 @@ class GrantReportBuilder(LatexBuilderBase):
         # How have results been disseminated
 
         # Plans for Next Reporting Period to Accomplish Goals
+
+        # Individuals that have worked on project
+        individuals_data = []
+        for p in people:
+            individuals_data.append([p["_id"], p["position"]])
+
 
         self.render(
             "grantreport.txt",
@@ -79,5 +92,6 @@ class GrantReportBuilder(LatexBuilderBase):
             beginYear=begin_year,
             beginMonth=begin_month,
             beginDay=begin_day,
-            presentations=valid_presentations
+            presentations=valid_presentations,
+            individuals=individuals_data
         )
