@@ -13,7 +13,7 @@ class ReimbursementBuilder(BuilderBase):
     """Build reimbursement from database entries"""
 
     btype = "reimb"
-    needed_dbs = ['expenses', 'people', 'grants', 'projects']
+    needed_dbs = ['expenses', 'people', 'grants']
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -41,7 +41,7 @@ class ReimbursementBuilder(BuilderBase):
             key=position_key,
             reverse=True,
         )
-        for n in ["expenses", "projects", "grants"]:
+        for n in ["expenses", "grants"]:
             gtx[n] = list(all_docs_from_collection(rc.client, n))
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
