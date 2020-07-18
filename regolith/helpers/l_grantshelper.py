@@ -30,9 +30,10 @@ def subparser(subpi):
     subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when when running "
+                                                       "--filter. If no argument is given the default is just the id.")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='if set, outputs also hidden grants such as TA, '
-                            'matches etc.')                                                       "--filter. If no argument is given the default is just the id.")
+                            'matches etc.')
     return subpi
 
 
