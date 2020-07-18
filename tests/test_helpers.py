@@ -5,7 +5,6 @@ import pytest
 from regolith.main import main
 
 helper_map = [
-    (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
       "Tess Guebre", "--status", "downloaded", "--title", "A flat world theory"],
      "A. Einstein proposal has been added/updated in proposal reviews\n"),
@@ -192,10 +191,10 @@ helper_map = [
      " 3. (finished) test a_todo\n"
      "     --notes:['test notes 1', 'test notes 2']\n"
      ),
-    (["helper", "finish_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
+    (["helper", "f_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"
      ),
-    (["helper", "finish_prum", "20sb"],
+    (["helper", "f_prum", "20sb"],
      "Projectum not found. Projecta with similar names: \n"
      "20sb_firstprojectum     status:finished\n"
      "Please rerun the helper specifying the complete ID.\n"
