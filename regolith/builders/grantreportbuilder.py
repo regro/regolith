@@ -25,22 +25,10 @@ class GrantReportBuilder(LatexBuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx["projecta"] = sorted(
-            all_docs_from_collection(rc.client, "projecta"), key=_id_key
-        )
-        gtx["people"] = sorted(
-            all_docs_from_collection(rc.client, "people"), key=_id_key
-        )
-        gtx["presentations"] = sorted(
-            all_docs_from_collection(rc.client, "presentations"), key=_id_key
-        )
-        gtx["grants"] = sorted(
-            all_docs_from_collection(rc.client, "grants"), key=_id_key
-        )
-        gtx["institutions"] = sorted(
-            all_docs_from_collection(rc.client, "institutions"), key=_id_key
-        )
-
+        for dbs in rc.needed_dbs:
+            gtx[dbs] = sorted(
+                all_docs_from_collection(rc.client, dbs), key=_id_key
+            )
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -51,36 +39,31 @@ class GrantReportBuilder(LatexBuilderBase):
         # Get Dates
         today = str(date.today()).split("-")
         end_year, end_month, end_day = int(today[0]), int(today[1]), int(today[2])
-        begin_year, begin_month, begin_day = int(today[0])-1, int(today[1]), int(today[2])
+        begin_year, begin_month, begin_day = int(today[0]) - 1, int(today[1]), int(today[2])
         end_date = date(end_year, end_month, end_day)
         begin_date = date(begin_year, begin_month, begin_day)
 
         # Get All Active Members
-        people = []
-        for p in self.gtx["people"]:
-            if p["active"]:
-                people.append(p)
+        current_members = [person for person in self.gtx['people'] if person['active']]
 
         # Major Goals
 
         # Accomplishments
 
-        # Opportunities for Training and Professional Development
+        # Opportunities for Training and Professional Development and
+        # Individuals that have worked on project
         valid_presentations = []
-        for p in people:
-            if p["_id"] is not "sbillinge":
-                valid_presentations.append(filter_presentations(
-                    self.gtx["people"], self.gtx["presentations"], self.gtx["institutions"], p["_id"],
-                    ["tutorial", "contributed_oral"], begin_date, end_date))
+        individuals_data = []
+        for person in current_members:
+            valid_presentations.append(filter_presentations(
+                self.gtx["people"], self.gtx["presentations"], self.gtx["institutions"], person["_id"],
+                ["tutorial", "contributed_oral"], begin_date, end_date))
+            individuals_data.append([person["_id"], person["position"]])
 
         # How have results been disseminated
 
         # Plans for Next Reporting Period to Accomplish Goals
 
-        # Individuals that have worked on project
-        individuals_data = []
-        for p in people:
-            individuals_data.append([p["_id"], p["position"]])
 
 
         self.render(
