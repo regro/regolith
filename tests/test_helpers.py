@@ -191,6 +191,9 @@ helper_map = [
      " 3. (finished) test a_todo\n"
      "     --notes:['test notes 1', 'test notes 2']\n"
      ),
+    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07"],
+     "The task for sbillinge has been updated in people collection.\n"
+     ),
     (["helper", "f_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"
      ),

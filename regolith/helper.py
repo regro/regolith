@@ -22,6 +22,7 @@ from regolith.helpers import u_institutionshelper as u_institutions
 from regolith.helpers import a_todohelper as a_todo
 from regolith.helpers import v_meetingshelper as v_meetings
 from regolith.helpers import f_todohelper as f_todo
+from regolith.helpers import u_todohelper as u_todo
 
 HELPERS = {
     "a_expense": (a_expense.ExpenseAdderHelper, a_expense.subparser),
@@ -46,6 +47,7 @@ HELPERS = {
     "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser),
     "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
     "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
+    "u_todo": (u_todo.TodoUpdaterHelper, u_todo.subparser),
 }
 
 
