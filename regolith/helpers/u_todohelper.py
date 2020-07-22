@@ -106,9 +106,7 @@ class TodoUpdaterHelper(DbHelperBase):
         if not rc.index:
             print("-" * 50)
             print("Please choose from one of the following to update:")
-
             print("    action (due date|importance|expected duration(mins)|status|begin date|end date)")
-
             for t in todolist:
                 print(
                     f"{t.get('index'):>2}. {t.get('description')}({t.get('due_date')}|{t.get('importance')}|{str(t.get('duration'))}|{t.get('status')}|{t.get('begin_date')}|{t.get('end_date')})")
