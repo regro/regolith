@@ -23,6 +23,10 @@ def subparser(subpi):
     subpi.add_argument("-i", "--index",
                        help="Index of the item in the enumerated list to mark as finished.",
                        type=int)
+    subpi.add_argument("--all", action="store_true",
+                       help="List both finished and unfinished tasks. Without this flag, the helper will only display "
+                            "unfinished tasks. "
+                       )
     subpi.add_argument("-d", "--description",
                        help=" Change the description of the to_do task. If the description has more than one "
                             "word, please enclose it in quotation marks."
@@ -101,21 +105,35 @@ class TodoUpdaterHelper(DbHelperBase):
             return
         index = 1
         for t in todolist:
-            t["index"] = index
-            index += 1
+            if t.get('status') != "finished":
+                t["index"] = index
+                index += 1
+        for t in todolist:
+            if t.get('status') == "finished":
+                t["index"] = index
+                index += 1
         if not rc.index:
             print("-" * 50)
             print("Please choose from one of the following to update:")
-            print("    action (due date|importance|expected duration(mins)|status|begin date|end date)")
+            print("    action (due date|importance|expected duration(mins)|begin date|end date)")
+            print("started:")
             for t in todolist:
-                print(
-                    f"{t.get('index'):>2}. {t.get('description')}({t.get('due_date')}|{t.get('importance')}|{str(t.get('duration'))}|{t.get('status')}|{t.get('begin_date')}|{t.get('end_date')})")
-                if t.get('notes'):
-                    for note in t.get('notes'):
-                        print(f"     - {note}")
-                del t['index']
+                if t.get('status') != "finished":
+                    print(
+                        f"{t.get('index'):>2}. {t.get('description')}({t.get('due_date')}|{t.get('importance')}|{str(t.get('duration'))}|{t.get('begin_date')}|{t.get('end_date')})")
+                    if t.get('notes'):
+                        for note in t.get('notes'):
+                            print(f"     - {note}")
+            if rc.all:
+                print("finished:")
+                for t in todolist:
+                    if t.get('status') == "finished":
+                        print(
+                            f"{t.get('index'):>2}. {t.get('description')}({t.get('due_date')}|{t.get('importance')}|{str(t.get('duration'))}|{t.get('begin_date')}|{t.get('end_date')})")
+                        if t.get('notes'):
+                            for note in t.get('notes'):
+                                print(f"     - {note}")
             print("-" * 50)
-            return
         else:
             match_todo = [i for i in todolist if i.get("index") == rc.index]
             if len(match_todo) == 0:
@@ -151,12 +169,11 @@ class TodoUpdaterHelper(DbHelperBase):
                 if rc.end_date:
                     todo["end_date"] = date_parser.parse(rc.end_date).date()
                 todolist[idx] = todo
-
-            for t in todolist:
-                if t.get('index'):
-                    del t['index']
             rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist}, upsert=True)
             print(
                 f"The task for {rc.assigned_to} has been updated in {TARGET_COLL} collection.")
+
+        for t in todolist:
+            del t['index']
 
         return
