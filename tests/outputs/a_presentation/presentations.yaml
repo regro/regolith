@@ -17,6 +17,7 @@
   title: Nanostructure challenges and successes from 16th Century warships to 21st
     Century energy
   type: colloquium
+  webinar: true
 18sb_nslsii:
   abstract: We pulled apart graphite with tape
   authors:
@@ -57,6 +58,7 @@
   status: accepted
   title: Graphitic Dephenestration
   type: award
+  webinar: false
 2006as_mars:
   abstract: the earth is round as seen from mars
   authors:
