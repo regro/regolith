@@ -28,8 +28,8 @@ import matplotlib.pyplot as plt
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
 BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
-             'zurabSNF16']
-ALLOWED_TYPES = ["gra", "pd", "ss"]
+             'zurabSNF16', 'summer@seas']
+ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
 
 
 def subparser(subpi):
@@ -108,7 +108,9 @@ class MakeAppointmentsHelper(SoutHelperBase):
             this_begin = min(get_dates(appt)['begin_date'] for appt in appts)
             this_end = max(get_dates(appt)['end_date'] for appt in appts)
             is_fully_appointed(person, this_begin, this_end)
+            grants_with_appts = []
             for appt in appts:
+                grants_with_appts.append(appt.get("grant"))
                 if appt.get("grant") in BLACKLIST:
                     print(appt.get("grant"))
                     continue
@@ -145,17 +147,21 @@ class MakeAppointmentsHelper(SoutHelperBase):
                             day_burn = this_burn[x].get('postdoc_days')
                         elif appt.get('type') == 'ss':
                             day_burn = this_burn[x].get('ss_days')
+                        elif appt.get('type') == 'ug':
+                            pass
                         if day_burn < 0:
                             depleted.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
                                 person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(appt_end)))
                             depleted_period = True
-
+            grants_with_appts = list(set(grants_with_appts))
         datearray, cum_student, cum_pd, cum_ss = [], None, None, None
         if not rc.no_plot:
             grants_begin, grants_end =  None, None
             for grant in self.gtx['grants']:
                 if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
+                    continue
+                if grant.get('alias') not in grants_with_appts:
                     continue
                 prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
                 if prop.get('year'):
