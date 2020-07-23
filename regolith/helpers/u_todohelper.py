@@ -16,7 +16,7 @@ from regolith.tools import (
 
 TARGET_COLL = "people"
 ALLOWED_IMPORTANCE = [0, 1, 2]
-ALLOWED_STATUS = ["started", "finished"]
+ALLOWED_STATUS = ["started", "finished", "cancelled"]
 
 
 def subparser(subpi):
@@ -104,34 +104,34 @@ class TodoUpdaterHelper(DbHelperBase):
             print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
         index = 1
-        for t in todolist:
-            if t.get('status') != "finished":
-                t["index"] = index
+        for todo in todolist:
+            if todo.get('status') == "started":
+                todo["index"] = index
                 index += 1
-        for t in todolist:
-            if t.get('status') == "finished":
-                t["index"] = index
+        for todo in todolist:
+            if todo.get('status') in ["finished", "cancelled"]:
+                todo["index"] = index
                 index += 1
         if not rc.index:
             print("-" * 50)
             print("Please choose from one of the following to update:")
             print("    action (due date|importance|expected duration(mins)|begin date|end date)")
             print("started:")
-            for t in todolist:
-                if t.get('status') != "finished":
+            for todo in todolist:
+                if todo.get('status') == "started":
                     print(
-                        f"{t.get('index'):>2}. {t.get('description')}({t.get('due_date')}|{t.get('importance')}|{str(t.get('duration'))}|{t.get('begin_date')}|{t.get('end_date')})")
-                    if t.get('notes'):
-                        for note in t.get('notes'):
+                        f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))}|{todo.get('begin_date')}|{todo.get('end_date')})")
+                    if todo.get('notes'):
+                        for note in todo.get('notes'):
                             print(f"     - {note}")
             if rc.all:
-                print("finished:")
-                for t in todolist:
-                    if t.get('status') == "finished":
+                print("finished/cancelled:")
+                for todo in todolist:
+                    if todo.get('status') in ["finished", "cancelled"]:
                         print(
-                            f"{t.get('index'):>2}. {t.get('description')}({t.get('due_date')}|{t.get('importance')}|{str(t.get('duration'))}|{t.get('begin_date')}|{t.get('end_date')})")
-                        if t.get('notes'):
-                            for note in t.get('notes'):
+                            f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))}|{todo.get('begin_date')}|{todo.get('end_date')}|{todo.get('status')})")
+                        if todo.get('notes'):
+                            for note in todo.get('notes'):
                                 print(f"     - {note}")
             print("-" * 50)
         else:
@@ -173,7 +173,7 @@ class TodoUpdaterHelper(DbHelperBase):
             print(
                 f"The task for {rc.assigned_to} has been updated in {TARGET_COLL} collection.")
 
-        for t in todolist:
-            del t['index']
+        for todo in todolist:
+            del todo['index']
 
         return
