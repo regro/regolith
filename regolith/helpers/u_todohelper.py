@@ -16,13 +16,17 @@ from regolith.tools import (
 
 TARGET_COLL = "people"
 ALLOWED_IMPORTANCE = [0, 1, 2]
-ALLOWED_STATUS = ["started", "finished"]
+ALLOWED_STATUS = ["started", "finished", "cancelled"]
 
 
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
                        help="Index of the item in the enumerated list to mark as finished.",
                        type=int)
+    subpi.add_argument("--all", action="store_true",
+                       help="List both finished and unfinished tasks. Without this flag, the helper will only display "
+                            "unfinished tasks. "
+                       )
     subpi.add_argument("-d", "--description",
                        help=" Change the description of the to_do task. If the description has more than one "
                             "word, please enclose it in quotation marks."
@@ -100,22 +104,36 @@ class TodoUpdaterHelper(DbHelperBase):
             print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
         index = 1
-        for t in todolist:
-            t["index"] = index
-            index += 1
+        for todo in todolist:
+            if todo.get('status') == "started":
+                todo["index"] = index
+                index += 1
+        for todo in todolist:
+            if todo.get('status') in ["finished", "cancelled"]:
+                todo["index"] = index
+                index += 1
         if not rc.index:
             print("-" * 50)
             print("Please choose from one of the following to update:")
-            print("    action (due date|importance|expected duration(mins)|status|begin date|end date)")
-            for t in todolist:
-                print(
-                    f"{t.get('index'):>2}. {t.get('description')}({t.get('due_date')}|{t.get('importance')}|{str(t.get('duration'))}|{t.get('status')}|{t.get('begin_date')}|{t.get('end_date')})")
-                if t.get('notes'):
-                    for note in t.get('notes'):
-                        print(f"     - {note}")
-                del t['index']
+            print("    action (due date|importance|expected duration(mins)|begin date|end date)")
+            print("started:")
+            for todo in todolist:
+                if todo.get('status') == "started":
+                    print(
+                        f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))}|{todo.get('begin_date')}|{todo.get('end_date')})")
+                    if todo.get('notes'):
+                        for note in todo.get('notes'):
+                            print(f"     - {note}")
+            if rc.all:
+                print("finished/cancelled:")
+                for todo in todolist:
+                    if todo.get('status') in ["finished", "cancelled"]:
+                        print(
+                            f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))}|{todo.get('begin_date')}|{todo.get('end_date')}|{todo.get('status')})")
+                        if todo.get('notes'):
+                            for note in todo.get('notes'):
+                                print(f"     - {note}")
             print("-" * 50)
-            return
         else:
             match_todo = [i for i in todolist if i.get("index") == rc.index]
             if len(match_todo) == 0:
@@ -151,12 +169,11 @@ class TodoUpdaterHelper(DbHelperBase):
                 if rc.end_date:
                     todo["end_date"] = date_parser.parse(rc.end_date).date()
                 todolist[idx] = todo
-
-            for t in todolist:
-                if t.get('index'):
-                    del t['index']
             rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist}, upsert=True)
             print(
                 f"The task for {rc.assigned_to} has been updated in {TARGET_COLL} collection.")
+
+        for todo in todolist:
+            del todo['index']
 
         return

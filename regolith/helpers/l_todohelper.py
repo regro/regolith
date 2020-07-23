@@ -20,7 +20,7 @@ TARGET_COLL2 = "projecta"
 TARGET_COLL3 = "meetings"
 HELPER_TARGET = "l_todo"
 Importance = [0, 1, 2]
-ALLOWED_STATI = ["started", "finished"]
+ALLOWED_STATI = ["started", "finished", "cancelled"]
 
 
 def subparser(subpi):
@@ -117,24 +117,24 @@ class TodoListerHelper(SoutHelperBase):
         gather_todos = sorted(gather_todos, key=lambda k: (k['due_date'], -k['importance']))
 
         if rc.short_tasks:
-            for t in gather_todos[::-1]:
-                if t.get('duration') is None or float(t.get('duration')) > float(rc.short_tasks):
+            for todo in gather_todos[::-1]:
+                if todo.get('duration') is None or float(todo.get('duration')) > float(rc.short_tasks):
                     gather_todos.remove(t)
         num = 1
         print("    action (days to due date|importance|expected duration(mins))")
-        for t in gather_todos:
-            if t.get('status') not in ["finished", "cancelled"]:
-                days=(t.get('due_date')-today).days
-                print(f"{num:>2}. {t.get('description')}({days}|{t.get('importance')}|{str(t.get('duration'))})")
-                if t.get('notes'):
-                    print(f"     --notes:{t.get('notes')}")
+        for todo in gather_todos:
+            if todo.get('status') not in ["finished", "cancelled"]:
+                days=(todo.get('due_date')-today).days
+                print(f"{num:>2}. {todo.get('description')}({days}|{todo.get('importance')}|{str(todo.get('duration'))})")
+                if todo.get('notes'):
+                    print(f"     --notes:{todo.get('notes')}")
                 num+=1
         if rc.verbose:
-            for t in person.get("todos", []):
-                if t.get('status') == "finished":
-                    print(f"{num:>2}. (finished) {t.get('description')}")
-                    if t.get('notes'):
-                        print(f"     --notes:{t.get('notes')}")
+            for todo in person.get("todos", []):
+                if todo.get('status') in ["finished", "cancelled"]:
+                    print(f"{num:>2}. ({todo.get('status')}) {todo.get('description')}")
+                    if todo.get('notes'):
+                        print(f"     --notes:{todo.get('notes')}")
                     num+=1
 
         return

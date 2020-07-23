@@ -199,6 +199,21 @@ helper_map = [
     (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07"],
      "The task for sbillinge has been updated in people collection.\n"
      ),
+    (["helper", "u_todo", "--assigned_to", "sbillinge", "--all"],
+     "--------------------------------------------------\n"
+     "Please choose from one of the following to update:\n"
+     "    action (due date|importance|expected duration(mins)|begin date|end date)\n"
+     "started:\n"
+     " 1. read paper(2020-07-19|2|60.0|2020-06-15|None)\n"
+     " 2. prepare the presentation(2020-07-29|0|30.0|2020-06-22|None)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "finished/cancelled:\n"
+     " 3. update the description(2020-07-06|2|35.0|2020-06-06|2020-07-07|finished)\n"
+     "     - some new notes\n"
+     "     - notes2\n"
+     "--------------------------------------------------\n"
+     ),
     (["helper", "f_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"
      ),

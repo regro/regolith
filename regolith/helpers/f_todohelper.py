@@ -70,17 +70,17 @@ class TodoFinisherHelper(DbHelperBase):
             print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
         index = 1
-        for t in todolist:
-            if t.get('status') not in ["finished"]:
-                t["index"] = index
+        for todo in todolist:
+            if todo.get('status') not in ["finished"]:
+                todo["index"] = index
                 index+=1
 
         if not rc.index:
             print("Please choose from one of the following to update:")
-            for t in todolist:
-                if t.get('status') not in ["finished"]:
-                    print(f"{t.get('index')}. {t.get('description')}")
-                    del t['index']
+            for todo in todolist:
+                if todo.get('status') not in ["finished"]:
+                    print(f"{todo.get('index')}. {todo.get('description')}")
+                    del todo['index']
             return
         else:
             match_todo = [i for i in todolist if i.get("index") == rc.index]
@@ -92,9 +92,9 @@ class TodoFinisherHelper(DbHelperBase):
                 todo["status"] = "finished"
                 todolist[idx] = todo
 
-            for t in todolist:
-                if t.get('index'):
-                    del t['index']
+            for todo in todolist:
+                if todo.get('index'):
+                    del todo['index']
             rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist},upsert=True)
             print(f"The task \"{todo['description']}\" for {rc.assigned_to} has been marked as finished in {TARGET_COLL} collection.")
 
