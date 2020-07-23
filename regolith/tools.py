@@ -1556,6 +1556,8 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
                     pd_val -= a.get('loading') * 1
                 elif a.get('type') == 'ss':
                     ss_val -= a.get('loading') * 1
+                elif a.get('type') == 'ug':
+                    pass
                 else:
                     if a.get('person'):
                         raise ValueError("invalid  type {} for appointment {} of {}".format(a.get('type'), a.get('_id'),
