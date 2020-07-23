@@ -3198,12 +3198,20 @@ SCHEMAS = {
             "required": True,
             "anyof_type": ["string", "list"],
         },
+        "begin_date": {
+            "description": "begin date in YYYY-MM-DD",
+            "anyof_type": ["date", "string"],
+        },
+        "end_date": {
+            "description": "end_date in YYYY-MM-DD",
+            "anyof_type": ["date", "string"],
+        },
         "begin_year": {
             "description": "year the conference or trip begins.",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
-        "begin_month": {"required": True,
+        "begin_month": {"required": False,
                         "anyof_type": ["string", "integer"],
                         },
         "begin_day": {"required": False, "type": "integer"},
