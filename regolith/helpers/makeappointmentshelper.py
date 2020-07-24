@@ -249,11 +249,12 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         if not rc.no_plot:
             for plot in plots:
-                plt.draw()
+                plt.show()
             cum_plot, cum_ax, outp =  plotter(datearray, student=cum_student,
                                              pd=cum_pd, ss=cum_ss,
                                              title="Cumulative burn")
-            plt.draw()
+            plt.show()
+
             print(outp)
 
         return
