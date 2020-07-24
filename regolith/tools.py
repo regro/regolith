@@ -17,6 +17,7 @@ from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int, date_to_float, get_dates, last_day, is_current
 from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
 from regolith.chained_db import ChainDB
+from regolith.schemas import APPOINTMENTS_TYPE
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -1473,6 +1474,8 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
         if not p_appts:
             continue
         for a in p_appts:
+            if p_appts[a].get('type') not in APPOINTMENTS_TYPE:
+                raise ValueError("invalid  type {} for appointment {} of {}".format(p_appts[a].get('type'), a, p.get('_id')))
             if filter_key:
                 if all(p_appts[a].get(filter_key[x]) == filter_value[x] for x in range(len(filter_key))):
                     if begin_date:
@@ -1556,14 +1559,6 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
                     pd_val -= a.get('loading') * 1
                 elif a.get('type') == 'ss':
                     ss_val -= a.get('loading') * 1
-                elif a.get('type') == 'ug':
-                    pass
-                else:
-                    if a.get('person'):
-                        raise ValueError("invalid  type {} for appointment {} of {}".format(a.get('type'), a.get('_id'),
-                                                                                                    a.get('person')))
-                    else:
-                        raise ValueError("invalid  type for appointment {}".format(a))
         if begin_date <= day <= end_date:
             gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
                    "ss_days": round(ss_val, 2)}

@@ -803,6 +803,10 @@ appointed_people = [
      (appointed_people, 'type', 'ss', '2019-10-21', '2019-09-01', 'begin date is after end date'),
      (appointed_people, ['type', 'loading'], None, None, None, 'number of filter keys and filter values do not match'),
      (appointed_people, 'type', 'pd', '2019-12-10', None, 'please enter both begin date and end date or neither'),
+     ([{'name': 'Magical Person', '_id': 'mperson', 'appointments': {"A": {'begin_date': '2019-09-01', 'end_date': '2019-09-05',
+                   'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}}}], None, None,
+         None, None, 'invalid  type imaginary for appointment A of mperson'
+         ),
     ]
 )
 def test_collect_appts(people, key, value, start, end, expected):
@@ -882,10 +886,6 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
          ),
         ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts, '2012-12-23', '2012-12-23',
          '2012-12-23', '2013-01-24', 'magical_grant has no specified budget'
-         ),
-        (grant1, [{'person': 'magical person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
-                   'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}], '2019-09-01', '2019-09-10',
-         None, None, 'invalid  type imaginary for appointment A of magical person'
          ),
          (grant4, appointed_people[0].get('appointments'), '2019-09-01', '2019-09-07', None, None,
         [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},

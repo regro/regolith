@@ -9,7 +9,7 @@ from .sorters import POSITION_LEVELS
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 PRESENTATIONS_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
                       "plenary", "poster", "seminar", "tutorial"]
-APPOINTMENTS_TYPE = ["gra", "ss", "pd", "cl"]
+APPOINTMENTS_TYPE = ["gra", "ss", "pd", "ug"]
 
 EXEMPLARS = {
     "abstracts": {
