@@ -6,6 +6,7 @@
    - Suggests appointments to make for these members
    - Suggests new appointments
 """
+import numpy
 from dateutil.relativedelta import relativedelta
 import sys
 
@@ -37,6 +38,7 @@ def subparser(subpi):
     subpi.add_argument("run", help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
     subpi.add_argument("--no_plot", action="store_true", help='suppress plotting feature')
     subpi.add_argument("--no_gui", action="store_true", help='suppress interactive matplotlib GUI (used for running tests)')
+    subpi.add_argument("-v", "--verbose", action="store_true", help='increase chatter')
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -45,12 +47,17 @@ def subparser(subpi):
     return subpi
 
 def plotter(datearray, student=None, pd=None, ss=None, title=None):
+    sta = numpy.array(student)/30.5
+    pda = numpy.array(pd)/30.5
+    ssa = numpy.array(ss)/30.5
     if student:
-        plt.plot_date(datearray, student, ls='-', marker="", label="student days")
+        plt.plot_date(datearray, sta, ls='-', marker="", label="student days")
     if pd:
-        plt.plot_date(datearray, pd, ls='-', marker="", label="postdoc days")
+        plt.plot_date(datearray, pda, ls='-', marker="", label="postdoc days")
     if ss:
-        plt.plot_date(datearray, ss, ls='-', marker="", label="ss days")
+        plt.plot_date(datearray, ssa, ls='-', marker="", label="ss days")
+    if student and pd:
+        plt.plot_date(datearray, sta+pda, ls='-', marker="", label="student+postdoc days")
     plt.xlabel('date')
     plt.ylabel('budget days remaining')
     plt.title(title)
@@ -112,7 +119,12 @@ class MakeAppointmentsHelper(SoutHelperBase):
             for appt in appts:
                 grants_with_appts.append(appt.get("grant"))
                 if appt.get("grant") in BLACKLIST:
-                    print(appt.get("grant"))
+                    if rc.verbose:
+                        print(f"skipping {appt.get('grant')} since it is in the blacklist")
+                    continue
+                if appt.get("grant") not in grants_with_appts:
+                    if rc.verbose:
+                        print(f"skipping {appt.get('grant')} since it has no appointments assigned to it")
                     continue
                 grant = rc.client.find_one(rc.database, "grants", {"alias": appt.get("grant")})
                 if not grant:
@@ -122,9 +134,11 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 if prop.get('year'):
                     del prop['year']
                 grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
-                    else get_dates(prop)['begin_date']
-                grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
-                    else get_dates(prop)['end_date']
+                else get_dates(prop)['begin_date']
+                if grant.get('end_date') or grant.get('end_year'):
+                    grant_end = get_dates(grant)['end_date']
+                else:
+                    get_dates(prop)['end_date']
                 grant.update({'begin_date': grant_begin, 'end_date': grant_end})
                 appt_begin, appt_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
                 this_burn = grant_burn(grant, all_appts, grant_begin, grant_end, begin_date=appt_begin, end_date=appt_end)
@@ -181,6 +195,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         for grant in self.gtx["grants"]:
             if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
+                continue
+            if grant.get('alias') not in grants_with_appts:
                 continue
             prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
             if prop.get('year'):
