@@ -3,6 +3,7 @@
 """
 import datetime as dt
 import dateutil.parser as date_parser
+import math
 import sys
 from dateutil.relativedelta import *
 
@@ -24,7 +25,7 @@ ALLOWED_STATI = ["started", "finished", "cancelled"]
 
 
 def subparser(subpi):
-    subpi.add_argument("-v", "--verbose", action="store_true",
+    subpi.add_argument("--all", action="store_true",
                        help="List both completed and uncompleted tasks. ")
     subpi.add_argument("-s", "--short_tasks", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
@@ -109,32 +110,38 @@ class TodoListerHelper(SoutHelperBase):
                         ms.update({'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
                         gather_todos.append(ms)
 
-        for item in gather_todos:
-            if not item.get('importance'):
-                item['importance'] = 1
-            if type(item["due_date"]) == str:
-                item["due_date"] = date_parser.parse(item["due_date"]).date()
-        gather_todos = sorted(gather_todos, key=lambda k: (k['due_date'], -k['importance']))
+        for todo in gather_todos:
+            if not todo.get('importance'):
+                todo['importance'] = 1
+            if type(todo["due_date"]) == str:
+                todo["due_date"] = date_parser.parse(todo["due_date"]).date()
+            todo["days_to_due"] = (todo.get('due_date') - today).days
+            todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"])))
+
+        gather_todos = sorted(gather_todos, key=lambda k: (-k['order']))
 
         if rc.short_tasks:
             for todo in gather_todos[::-1]:
                 if todo.get('duration') is None or float(todo.get('duration')) > float(rc.short_tasks):
                     gather_todos.remove(t)
         num = 1
+        print("-" * 50)
         print("    action (days to due date|importance|expected duration(mins))")
         for todo in gather_todos:
             if todo.get('status') not in ["finished", "cancelled"]:
-                days=(todo.get('due_date')-today).days
-                print(f"{num:>2}. {todo.get('description')}({days}|{todo.get('importance')}|{str(todo.get('duration'))})")
+                print(
+                    f"{num:>2}. {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
                 if todo.get('notes'):
-                    print(f"     --notes:{todo.get('notes')}")
-                num+=1
-        if rc.verbose:
+                    for note in todo.get('notes'):
+                        print(f"     - {note}")
+                num += 1
+        if rc.all:
             for todo in person.get("todos", []):
                 if todo.get('status') in ["finished", "cancelled"]:
                     print(f"{num:>2}. ({todo.get('status')}) {todo.get('description')}")
                     if todo.get('notes'):
-                        print(f"     --notes:{todo.get('notes')}")
-                    num+=1
-
+                        for note in todo.get('notes'):
+                            print(f"     - {note}")
+                    num += 1
+        print("-" * 50)
         return
