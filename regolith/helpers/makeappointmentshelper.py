@@ -23,7 +23,6 @@ from regolith.dates import (
     is_current,
     get_dates,
 )
-from regolith.schemas import APPOINTMENTS_TYPE
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -135,11 +134,9 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 if prop.get('year'):
                     del prop['year']
                 grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
-                else get_dates(prop)['begin_date']
-                if grant.get('end_date') or grant.get('end_year'):
-                    grant_end = get_dates(grant)['end_date']
-                else:
-                    get_dates(prop)['end_date']
+                    else get_dates(prop)['begin_date']
+                grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
+                    else get_dates(prop)['end_date']
                 grant.update({'begin_date': grant_begin, 'end_date': grant_end})
                 appt_begin, appt_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
                 this_burn = grant_burn(grant, all_appts, grant_begin, grant_end, begin_date=appt_begin, end_date=appt_end)
@@ -162,8 +159,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
                             day_burn = this_burn[x].get('postdoc_days')
                         elif appt.get('type') == 'ss':
                             day_burn = this_burn[x].get('ss_days')
-                        elif appt.get('type') == 'ug':
-                            pass
                         if day_burn < 0:
                             depleted.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
