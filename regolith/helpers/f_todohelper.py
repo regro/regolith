@@ -22,6 +22,8 @@ def subparser(subpi):
     subpi.add_argument("-i", "--index",
                         help="Index of the item in the enumerated list to mark as finished.",
                         type = int)
+    subpi.add_argument("-e", "--end_date",
+                       help="End date of the task. Default is today.")
     subpi.add_argument("-a", "--assigned_to", help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
     return subpi
 
@@ -61,6 +63,11 @@ class TodoFinisherHelper(DbHelperBase):
                     "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
                     "in the command line")
                 return
+        now = dt.date.today()
+        if not rc.end_date:
+            end_date = now
+        else:
+            end_date = date_parser.parse(rc.end_date).date()
         filterid = {'_id': rc.assigned_to}
         person = rc.client.find_one(rc.database, rc.coll, filterid)
         if not person:
@@ -83,19 +90,20 @@ class TodoFinisherHelper(DbHelperBase):
                     del todo['index']
             return
         else:
-            match_todo = [i for i in todolist if i.get("index") == rc.index]
-            if len(match_todo) ==0:
+            match_todos = [i for i in todolist if i.get("index") == rc.index]
+            if len(match_todos) ==0:
                 raise RuntimeError("Please enter a valid index.")
             else:
-                todo=match_todo[0]
-                idx = todolist.index(todo)
-                todo["status"] = "finished"
-                todolist[idx] = todo
+                match_todo = match_todos[0]
+                idx = todolist.index(match_todo)
+                match_todo["status"] = "finished"
+                match_todo["end_date"] = end_date
+                todolist[idx] = match_todo
 
             for todo in todolist:
                 if todo.get('index'):
                     del todo['index']
             rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist},upsert=True)
-            print(f"The task \"{todo['description']}\" for {rc.assigned_to} has been marked as finished in {TARGET_COLL} collection.")
+            print(f"The task \"{match_todo['description']}\" for {rc.assigned_to} has been marked as finished in {TARGET_COLL} collection.")
 
         return
