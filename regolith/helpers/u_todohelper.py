@@ -115,12 +115,12 @@ class TodoUpdaterHelper(DbHelperBase):
         if not rc.index:
             print("-" * 50)
             print("Please choose from one of the following to update:")
-            print("    action (due date|importance|expected duration(mins)|begin date|end date)")
+            print("    action (due date|importance|expected duration(mins))")
             print("started:")
             for todo in todolist:
                 if todo.get('status') == "started":
                     print(
-                        f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))}|{todo.get('begin_date')}|{todo.get('end_date')})")
+                        f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))})")
                     if todo.get('notes'):
                         for note in todo.get('notes'):
                             print(f"     - {note}")
@@ -129,7 +129,7 @@ class TodoUpdaterHelper(DbHelperBase):
                 for todo in todolist:
                     if todo.get('status') in ["finished", "cancelled"]:
                         print(
-                            f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))}|{todo.get('begin_date')}|{todo.get('end_date')}|{todo.get('status')})")
+                            f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))})")
                         if todo.get('notes'):
                             for note in todo.get('notes'):
                                 print(f"     - {note}")

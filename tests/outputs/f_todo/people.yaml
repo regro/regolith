@@ -290,6 +290,7 @@ sbillinge:
       notes:
         - test notes 1
         - test notes 2
+      end_date: 2020-07-20
 scopatz:
   aka:
     - Scopatz

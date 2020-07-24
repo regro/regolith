@@ -169,10 +169,13 @@ helper_map = [
      "1. Maria as a new contact\n"
      ),
     (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
+     "--------------------------------------------------\n"
      "    action (days to due date|importance|expected duration(mins))\n"
      " 1. read paper(6|2|60.0)\n"
      " 2. prepare the presentation(16|1|30.0)\n"
-     "     --notes:[\'about 10 minutes\', \"don't forget to upload to the website\"]\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "--------------------------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
@@ -180,7 +183,7 @@ helper_map = [
     (["helper", "a_todo", "test a_todo", "10", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06",  "--duration", "50", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
      "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
      ),
-    (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge"],
+    (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge", "--end_date", "2020-07-20"],
      "The task \"test a_todo\" for sbillinge has been marked as finished in people collection.\n"
      ),
     (["helper", "f_todo", "--assigned_to", "sbillinge"],
@@ -188,13 +191,17 @@ helper_map = [
      "1. read paper\n"
      "2. prepare the presentation\n"
      ),
-    (["helper", "l_todo", "--verbose","--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
+    (["helper", "l_todo", "--all","--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
+     "--------------------------------------------------\n"
      "    action (days to due date|importance|expected duration(mins))\n"
      " 1. read paper(6|2|60.0)\n"
      " 2. prepare the presentation(16|1|30.0)\n"
-     "     --notes:[\'about 10 minutes\', \"don't forget to upload to the website\"]\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
      " 3. (finished) test a_todo\n"
-     "     --notes:['test notes 1', 'test notes 2']\n"
+     "     - test notes 1\n"
+     "     - test notes 2\n"
+     "--------------------------------------------------\n"
      ),
     (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07"],
      "The task for sbillinge has been updated in people collection.\n"
@@ -202,14 +209,14 @@ helper_map = [
     (["helper", "u_todo", "--assigned_to", "sbillinge", "--all"],
      "--------------------------------------------------\n"
      "Please choose from one of the following to update:\n"
-     "    action (due date|importance|expected duration(mins)|begin date|end date)\n"
+     "    action (due date|importance|expected duration(mins))\n"
      "started:\n"
-     " 1. read paper(2020-07-19|2|60.0|2020-06-15|None)\n"
-     " 2. prepare the presentation(2020-07-29|0|30.0|2020-06-22|None)\n"
+     " 1. read paper(2020-07-19|2|60.0)\n"
+     " 2. prepare the presentation(2020-07-29|0|30.0)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
      "finished/cancelled:\n"
-     " 3. update the description(2020-07-06|2|35.0|2020-06-06|2020-07-07|finished)\n"
+     " 3. update the description(2020-07-06|2|35.0)\n"
      "     - some new notes\n"
      "     - notes2\n"
      "--------------------------------------------------\n"
