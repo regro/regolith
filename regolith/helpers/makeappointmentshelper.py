@@ -22,6 +22,7 @@ from regolith.dates import (
     is_current,
     get_dates,
 )
+from regolith.schemas import APPOINTMENTS_TYPE
 import matplotlib
 import matplotlib.pyplot as plt
 
