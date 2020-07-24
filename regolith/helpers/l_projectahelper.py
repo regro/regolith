@@ -25,9 +25,14 @@ HELPER_TARGET = "l_projecta"
 
 def subparser(subpi):
     subpi.add_argument("--all", action="store_true",
-                       help="Lists all projecta that have not ended"
+                       help="Lists all projecta in general"
                        )
-    subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
+    subpi.add_argument("-c", "--current", action="store_true",
+                       help='List ongoing projecta'
+                       )
+    subpi.add_argument("-v", "--verbose", action="store_true",
+                       help='Increase verbosity of output'
+                       )
     subpi.add_argument("-l", "--lead",
                        help="Filter milestones for this project lead"
                        )
@@ -102,7 +107,7 @@ class ProjectaListerHelper(SoutHelperBase):
         else:
             collection = self.gtx["projecta"]
 
-        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter) and (not rc.all):
+        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter) and (not rc.all) and (not rc.current):
             return
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
@@ -118,13 +123,17 @@ class ProjectaListerHelper(SoutHelperBase):
         end_projecta = []
         grouped_projecta = {}
         if rc.lead and rc.person:
-            raise RuntimeError(f"please specify either lead or person, not both")
+            raise RuntimeError(
+                f"please specify either lead or person, not both")
         for projectum in collection:
-            if rc.all and projectum.get('status') != "finished":
-                projecta.append(projectum)
-                continue
             if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
+            if rc.all and (projectum.get('status') == True):
+                projecta.append(projectum)
+                continue
+            if rc.current and (projectum.get('status') == "proposed" or "started"):
+                projecta.append(projectum)
+                continue
             if rc.lead and projectum.get('lead') != rc.lead:
                 continue
             if rc.person:
@@ -161,8 +170,10 @@ class ProjectaListerHelper(SoutHelperBase):
                 if p.get("collaborators"):
                     collaborators = ', '.join(p.get("collaborators"))
                 print("{}    {}\n    Lead: {}    Members: {}    Collaborators: {}".format(p.get("_id"),
-                                                                                          p.get("description"),
-                                                                                          p.get("lead"), members,
+                                                                                          p.get(
+                                                                                              "description"),
+                                                                                          p.get(
+                                                                                              "lead"), members,
                                                                                           collaborators))
             return
 
@@ -175,7 +186,8 @@ class ProjectaListerHelper(SoutHelperBase):
                     else:
                         grants = p.get('grants')
                 print(p.get('_id'))
-                print(f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}, end_date: {p.get('end_date')}, grant: {grants}")
+                print(
+                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}, end_date: {p.get('end_date')}, grant: {grants}")
                 print(f"    description: {p.get('description')}")
                 print("    team:")
                 print(f"        lead: {p.get('lead')}")
