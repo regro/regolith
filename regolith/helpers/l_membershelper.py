@@ -80,27 +80,32 @@ class MembersListerHelper(SoutHelperBase):
             collection = self.gtx["people"]
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
-        for person in collection:
-            if rc.current and not person.get('active'):
-                continue
-            people.append(person)
 
-        if rc.filter and not rc.verbose:
-            results = (collection_str(people, rc.keys))
-            print(results, end="")
-            return
-
-        for person in gtx["people"]:
-            if rc.current:
-                if not person.get('active'):
-                    continue
-                people.append(person)
-            elif rc.prior:
-                if person.get('active'):
-                    continue
-                people.append(person)
+        if rc.filter:
+            if not rc.verbose:
+                results = (collection_str(collection, rc.keys))
+                # "scopatz"
+                print(results, end="")
+                return
             else:
-                people.append(person)
+                for person in collection:
+                    print("{}, {} | group_id: {}".format(person.get('name'), person.get('position'), person.get('_id')))
+                    print("    orcid: {} | github_id: {}".format(person.get('orcid_id'), person.get('github_id')))
+                pass
+            #code to print verbosely on filtering
+        if not rc.filter:
+            for person in gtx["people"]:
+                if rc.current:
+                    if not person.get('active'):
+                        continue
+                    people.append(person)
+                elif rc.prior:
+                    if person.get('active'):
+                        continue
+                    people.append(person)
+                else:
+                    people.append(person)
+
 
         for i in people:
             if rc.verbose:

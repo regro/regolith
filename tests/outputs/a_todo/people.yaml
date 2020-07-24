@@ -1,4 +1,5 @@
 sbillinge:
+  active: true
   activities:
     - type: teaching
       name: course development

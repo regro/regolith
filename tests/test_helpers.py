@@ -240,7 +240,7 @@ helper_map = [
      "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n"),
     (["helper", "lister", "people", "--keys"],
      "Available keys:\n"
-     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
@@ -249,7 +249,7 @@ helper_map = [
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
      "Results of your search:\nsbillinge\n"
      "Available keys:\n"
-     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
