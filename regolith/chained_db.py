@@ -34,6 +34,9 @@ class ChainDB(ChainMap):
         # Try to get all the data from all the mappings
         for mapping in self.maps:
             results.append(mapping.get(key, Singleton))
+        for result in results[::-1]:
+            if isinstance(result, ChainDBSingleton):
+                results.remove(result)
         # if all the results are mapping create a ChainDB
         if all([isinstance(result, MutableMapping) for result in results]):
             for result in results:
