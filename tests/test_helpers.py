@@ -194,8 +194,12 @@ helper_map = [
      "1. read paper\n"
      "2. prepare the presentation\n"
      ),
+<<<<<<< HEAD
     (["helper", "l_todo", "--all", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
      "--------------------------------------------------\n"
+=======
+    (["helper", "l_todo", "--verbose", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
+>>>>>>> 573fba7dd600e57f0d34f62153a3ded5d80faaf9
      "    action (days to due date|importance|expected duration(mins))\n"
      " 1. read paper(6|2|60.0)\n"
      " 2. prepare the presentation(16|1|30.0)\n"
