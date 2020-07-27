@@ -10,7 +10,7 @@ from itertools import chain
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
-ALLOWED_STATI = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burner","c":"converged"}
+ALLOWED_STATI = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burner","c":"converged", "d": "cancelled"}
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="The id of the projectum.")
