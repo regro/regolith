@@ -27,9 +27,8 @@ def subparser(subpi):
                             "integer. Integer 5 means 5 days from the "
                             "begin_date. "
                        )
-    subpi.add_argument("-d", "--duration",
-                       help="The estimated duration the task will take in minutes. Default is 60 ",
-                       default=60
+    subpi.add_argument("duration",
+                       help="The estimated duration the task will take in minutes.",
                        )
     subpi.add_argument("-i", "--importance",
                        help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1.",
@@ -109,7 +108,8 @@ class TodoAdderHelper(DbHelperBase):
             'status': "started"})
         if rc.notes:
             todolist[-1]['notes'] = rc.notes
-
+        indices = [todo.get("running_index", 0) for todo in todolist]
+        todolist[-1]['running_index'] = max(indices) + 1
         rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist},
                              upsert=True)
         print(f"The task \"{rc.description}\" for {rc.assigned_to} has been added in {TARGET_COLL} collection.")
