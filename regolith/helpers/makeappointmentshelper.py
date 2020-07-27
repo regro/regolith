@@ -52,11 +52,11 @@ def plotter(datearray, student=None, pd=None, ss=None, title=None):
     pda = numpy.array(pd)/30.5
     ssa = numpy.array(ss)/30.5
     if student:
-        ax.plot_date(datearray, sta, ls='-', marker="", label="student days")
+        ax.plot_date(datearray, sta, ls='-', marker="", label="student months")
     if pd:
-        ax.plot_date(datearray, pda, ls='-', marker="", label="postdoc days")
+        ax.plot_date(datearray, pda, ls='-', marker="", label="postdoc months")
     if ss:
-        ax.plot_date(datearray, ssa, ls='-', marker="", label="ss days")
+        ax.plot_date(datearray, ssa, ls='-', marker="", label="ss months")
     if student and pd:
         ax.plot_date(datearray, sta+pda, ls='-', marker="", label="student+postdoc days")
     ax.set_xlabel('date')
@@ -105,9 +105,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
         rc = self.rc
         outdated, depleted, underspent, overspent = [], [], [], []
         all_appts = collect_appts(self.gtx['people'])
-        if rc.no_gui:
-            matplotlib.use('agg')
 
+        grants_with_appts = []
         for person in self.gtx['people']:
             appts = collect_appts([person])
             if not appts:
@@ -115,7 +114,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
             this_begin = min(get_dates(appt)['begin_date'] for appt in appts)
             this_end = max(get_dates(appt)['end_date'] for appt in appts)
             is_fully_appointed(person, this_begin, this_end)
-            grants_with_appts = []
             for appt in appts:
                 grants_with_appts.append(appt.get("grant"))
                 if appt.get("grant") in BLACKLIST:
@@ -249,11 +247,13 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         if not rc.no_plot:
             for plot in plots:
-                plt.show()
+                if not rc.no_gui:
+                    plt.show()
             cum_plot, cum_ax, outp =  plotter(datearray, student=cum_student,
                                              pd=cum_pd, ss=cum_ss,
                                              title="Cumulative burn")
-            plt.show()
+            if not rc.no_gui:
+                plt.show()
 
             print(outp)
 
