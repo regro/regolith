@@ -109,7 +109,10 @@ class TodoUpdaterHelper(DbHelperBase):
             for i in range(0, len(rc.databases)):
                 db_name = rc.databases[i]["name"]
                 person_idx = rc.client.find_one(db_name, rc.coll, filterid)
-                todolist_idx = person_idx.get("todos", [])
+                if isinstance(person_idx,dict):
+                    todolist_idx = person_idx.get("todos", [])
+                else:
+                    continue
                 if len(todolist_idx) == 0:
                     continue
                 else:
@@ -150,7 +153,10 @@ class TodoUpdaterHelper(DbHelperBase):
                 for i in range(0, len(rc.databases)):
                     db_name = rc.databases[i]["name"]
                     person_idx = rc.client.find_one(db_name, rc.coll, filterid)
-                    todolist_idx = person_idx.get("todos", [])
+                    if isinstance(person_idx, dict):
+                        todolist_idx = person_idx.get("todos", [])
+                    else:
+                        continue
                     if len(todolist_idx) != 0:
                         for todo in todolist_idx:
                             if todo.get('status') == "started":
