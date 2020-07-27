@@ -13,6 +13,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
+    print_task
 )
 
 TARGET_COLL = "people"
@@ -29,7 +30,7 @@ def subparser(subpi):
                             "unfinished tasks. "
                        )
     subpi.add_argument("-r", "--running_index", action="store_true",
-                       help="Reorder and update the running_index."
+                       help="Reorder and update the indices."
                        )
     subpi.add_argument("-d", "--description",
                        help=" Change the description of the to_do task. If the description has more than one "
@@ -101,14 +102,7 @@ class TodoUpdaterHelper(DbHelperBase):
                     "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
                     "in the command line")
                 return
-        person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
         filterid = {'_id': rc.assigned_to}
-        if not person:
-            raise TypeError(f"Id {rc.assigned_to} can't be found in people collection")
-        todolist = person.get("todos", [])
-        if len(todolist) == 0:
-            print(f"{rc.assigned_to} doesn't have todos in people collection.")
-            return
         if rc.running_index:
             index = 1
             index_finished = -1
@@ -126,9 +120,12 @@ class TodoUpdaterHelper(DbHelperBase):
                         if todo.get('status') in ["finished", "cancelled"]:
                             todo["running_index"] = index_finished
                             index_finished += -1
-                    rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist_idx},
-                                         upsert=True)
-                    print(f"running_index in {db_name} for {rc.assigned_to} have been updated.")
+        person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
+        if not person:
+            raise TypeError(f"Id {rc.assigned_to} can't be found in people collection")
+        todolist = person.get("todos", [])
+        if len(todolist) == 0:
+            print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
         if not rc.index:
             if not rc.certain_date:
@@ -142,31 +139,38 @@ class TodoUpdaterHelper(DbHelperBase):
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
                 todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"])))
-            todolist = sorted(todolist, key=lambda k: (-k['order'], k.get('duration', 10000)))
-            print("-" * 50)
+            todolist = sorted(todolist, key=lambda k: (-k['order'], k.get('duration', 10000), k['status']))
+            index_match={}
+            if rc.running_index:
+                new_index = 1
+                for todo in todolist:
+                    if todo["status"] == 'started':
+                        index_match[todo["running_index"]] = new_index
+                        new_index += 1
+                for i in range(0, len(rc.databases)):
+                    db_name = rc.databases[i]["name"]
+                    person_idx = rc.client.find_one(db_name, rc.coll, filterid)
+                    todolist_idx = person_idx.get("todos", [])
+                    if len(todolist_idx) != 0:
+                        for todo in todolist_idx:
+                            if todo.get('status') == "started":
+                                index = index_match[todo["running_index"]]
+                                todo["running_index"] = index
+                        rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist_idx},
+                                             upsert=True)
+                        print(f"Indices in {db_name} for {rc.assigned_to} have been updated.")
+                return
+            print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
-            print("  (running_index) action (days to due date|importance|expected duration(mins))")
-            print("started:")
-            num = 1
+            print("(index) action (days to due date|importance|expected duration (mins))")
+            print("-" * 70)
             for todo in todolist:
-                if todo.get('status') == "started":
-                    print(
-                        f"{num:>2}. ({todo.get('running_index')}) {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
-                    if todo.get('notes'):
-                        for note in todo.get('notes'):
-                            print(f"     - {note}")
-                    num += 1
+                print_task(todo, status=['started'])
             if rc.all:
                 print("finished/cancelled:")
                 for todo in todolist:
-                    if todo.get('status') in ["finished", "cancelled"]:
-                        print(
-                            f"{num:>2}. ({todo.get('running_index')}) {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
-                        if todo.get('notes'):
-                            for note in todo.get('notes'):
-                                print(f"     - {note}")
-                                num += 1
-            print("-" * 50)
+                    print_task(todo, status=['finished', 'cancelled'])
+            print("-" * 70)
 
         else:
             match_todo = [i for i in todolist if i.get("running_index") == rc.index]
