@@ -52,13 +52,13 @@ def plotter(datearray, student=None, pd=None, ss=None, title=None):
     pda = numpy.array(pd)/30.5
     ssa = numpy.array(ss)/30.5
     if student:
-        ax.plot_date(datearray, sta, ls='-', marker="", label="student days")
+        ax.plot_date(datearray, sta, ls='-', marker="", label="student months")
     if pd:
-        ax.plot_date(datearray, pda, ls='-', marker="", label="postdoc days")
+        ax.plot_date(datearray, pda, ls='-', marker="", label="postdoc months")
     if ss:
-        ax.plot_date(datearray, ssa, ls='-', marker="", label="ss days")
+        ax.plot_date(datearray, ssa, ls='-', marker="", label="ss months")
     if student and pd:
-        ax.plot_date(datearray, sta+pda, ls='-', marker="", label="student+postdoc days")
+        ax.plot_date(datearray, sta+pda, ls='-', marker="", label="student+postdoc months")
     ax.set_xlabel('date')
     ax.set_ylabel('budget months remaining')
     ax.set_title(title)
@@ -108,6 +108,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
         if rc.no_gui:
             matplotlib.use('agg')
 
+        grants_with_appts = []
         for person in self.gtx['people']:
             appts = collect_appts([person])
             if not appts:
@@ -115,7 +116,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
             this_begin = min(get_dates(appt)['begin_date'] for appt in appts)
             this_end = max(get_dates(appt)['end_date'] for appt in appts)
             is_fully_appointed(person, this_begin, this_end)
-            grants_with_appts = []
             for appt in appts:
                 grants_with_appts.append(appt.get("grant"))
                 if appt.get("grant") in BLACKLIST:
