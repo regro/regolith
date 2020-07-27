@@ -108,7 +108,6 @@ class TodoUpdaterHelper(DbHelperBase):
             index_finished = -1
             for i in range(0, len(rc.databases)):
                 db_name = rc.databases[i]["name"]
-                print(db_name, rc.coll, filterid)
                 person_idx = rc.client.find_one(db_name, rc.coll, filterid)
                 if isinstance(person_idx,dict):
                     todolist_idx = person_idx.get("todos", [])
