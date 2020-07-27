@@ -1196,6 +1196,7 @@ EXEMPLARS = {
              "duration": 60.0,
              "importance": 2,
              "status": "started",
+             "running_index": 1
              },
             {"description": "prepare the presentation",
              "due_date": "2020-07-29",
@@ -1204,6 +1205,7 @@ EXEMPLARS = {
              "importance": 0,
              "status": "started",
              "notes": ["about 10 minutes", "don't forget to upload to the website"],
+             "running_index": 2
              }
         ],
     },
@@ -3166,7 +3168,7 @@ SCHEMAS = {
                         "description": "the importance, from 0 to 2",
                         "required": False,
                         "type": "integer"},
-                    "status": {"description": "the status: proposed/started/finished",
+                    "status": {"description": "the status: started/finished/cancelled",
                                "required": True,
                                "type": "string"},
                     "notes": {"description": "additional notes for this task",
@@ -3174,6 +3176,9 @@ SCHEMAS = {
                               "type": "list",
                               "schema": {"type": "string"}
                               },
+                    "running_index": {"description": "Index of a certain task used to update that task in the enumerated todo list.",
+                               "required": False,
+                               "type": "integer"},
 
                 }
             }

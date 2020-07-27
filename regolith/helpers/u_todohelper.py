@@ -4,6 +4,7 @@
 import datetime as dt
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
+import math
 import sys
 
 from regolith.helpers.basehelper import DbHelperBase
@@ -21,11 +22,14 @@ ALLOWED_STATUS = ["started", "finished", "cancelled"]
 
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
-                       help="Index of the item in the enumerated list to mark as finished.",
+                       help="Enter the running_index of a certain task in the enumerated list to update that task.",
                        type=int)
     subpi.add_argument("--all", action="store_true",
                        help="List both finished and unfinished tasks. Without this flag, the helper will only display "
                             "unfinished tasks. "
+                       )
+    subpi.add_argument("-r", "--running_index", action="store_true",
+                       help="Reorder and update the running_index."
                        )
     subpi.add_argument("-d", "--description",
                        help=" Change the description of the to_do task. If the description has more than one "
@@ -56,6 +60,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("-a", "--assigned_to",
                        help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
+    subpi.add_argument("-c", "--certain_date",
+                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
 
     return subpi
 
@@ -95,52 +101,79 @@ class TodoUpdaterHelper(DbHelperBase):
                     "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
                     "in the command line")
                 return
+        person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
         filterid = {'_id': rc.assigned_to}
-        person = rc.client.find_one(rc.database, rc.coll, filterid)
         if not person:
             raise TypeError(f"Id {rc.assigned_to} can't be found in people collection")
         todolist = person.get("todos", [])
         if len(todolist) == 0:
             print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
-        index = 1
-        for todo in todolist:
-            if todo.get('status') == "started":
-                todo["index"] = index
-                index += 1
-        for todo in todolist:
-            if todo.get('status') in ["finished", "cancelled"]:
-                todo["index"] = index
-                index += 1
+        if rc.running_index:
+            index = 1
+            index_finished = -1
+            for i in range(0, len(rc.databases)):
+                db_name = rc.databases[i]["name"]
+                person_idx = rc.client.find_one(db_name, rc.coll, filterid)
+                todolist_idx = person_idx.get("todos", [])
+                if len(todolist_idx) == 0:
+                    continue
+                else:
+                    for todo in todolist_idx:
+                        if todo.get('status') == "started":
+                            todo["running_index"] = index
+                            index += 1
+                        if todo.get('status') in ["finished", "cancelled"]:
+                            todo["running_index"] = index_finished
+                            index_finished += -1
+                    rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist_idx},
+                                         upsert=True)
+                    print(f"running_index in {db_name} for {rc.assigned_to} have been updated.")
+            return
         if not rc.index:
+            if not rc.certain_date:
+                today = dt.date.today()
+            else:
+                today = date_parser.parse(rc.certain_date).date()
+            for todo in todolist:
+                if not todo.get('importance'):
+                    todo['importance'] = 1
+                if type(todo["due_date"]) == str:
+                    todo["due_date"] = date_parser.parse(todo["due_date"]).date()
+                todo["days_to_due"] = (todo.get('due_date') - today).days
+                todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"])))
+            todolist = sorted(todolist, key=lambda k: (-k['order'], k.get('duration', 10000)))
             print("-" * 50)
             print("Please choose from one of the following to update:")
-            print("    action (due date|importance|expected duration(mins))")
+            print("  (running_index) action (days to due date|importance|expected duration(mins))")
             print("started:")
+            num = 1
             for todo in todolist:
                 if todo.get('status') == "started":
                     print(
-                        f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))})")
+                        f"{num:>2}. ({todo.get('running_index')}) {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
                     if todo.get('notes'):
                         for note in todo.get('notes'):
                             print(f"     - {note}")
+                    num += 1
             if rc.all:
                 print("finished/cancelled:")
                 for todo in todolist:
                     if todo.get('status') in ["finished", "cancelled"]:
                         print(
-                            f"{todo.get('index'):>2}. {todo.get('description')}({todo.get('due_date')}|{todo.get('importance')}|{str(todo.get('duration'))})")
+                            f"{num:>2}. ({todo.get('running_index')}) {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
                         if todo.get('notes'):
                             for note in todo.get('notes'):
                                 print(f"     - {note}")
+                                num += 1
             print("-" * 50)
+
         else:
-            match_todo = [i for i in todolist if i.get("index") == rc.index]
+            match_todo = [i for i in todolist if i.get("running_index") == rc.index]
             if len(match_todo) == 0:
                 raise RuntimeError("Please enter a valid index.")
             else:
                 todo = match_todo[0]
-                idx = todolist.index(todo)
                 if rc.description:
                     todo["description"] = rc.description
                 if rc.due_date:
@@ -168,12 +201,18 @@ class TodoUpdaterHelper(DbHelperBase):
                     todo["begin_date"] = date_parser.parse(rc.begin_date).date()
                 if rc.end_date:
                     todo["end_date"] = date_parser.parse(rc.end_date).date()
-                todolist[idx] = todo
-            rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist}, upsert=True)
-            print(
-                f"The task for {rc.assigned_to} has been updated in {TARGET_COLL} collection.")
 
-        for todo in todolist:
-            del todo['index']
-
+                for i in range(0, len(rc.databases)):
+                    db_name = rc.databases[i]["name"]
+                    person_update = rc.client.find_one(db_name, rc.coll, filterid)
+                    todolist_update = person_update.get("todos", [])
+                    if len(todolist_update) != 0:
+                        for i, todo_u in enumerate(todolist_update):
+                            if rc.index == todo_u.get("running_index"):
+                                todolist_update[i] = todo
+                                rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to},
+                                                     {"todos": todolist_update}, upsert=True)
+                                print(
+                                    f"The task with running_index {todo_u['running_index']} in {db_name} for {rc.assigned_to} has been updated.")
+                                return
         return

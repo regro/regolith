@@ -272,6 +272,7 @@ sbillinge:
       duration: 60.0
       importance: 2
       status: started
+      running_index: 1
     - description: prepare the presentation
       due_date: '2020-07-29'
       begin_date: '2020-06-22'
@@ -281,6 +282,7 @@ sbillinge:
       notes:
         - about 10 minutes
         - don't forget to upload to the website
+      running_index: 2
     - description: update the description
       due_date: 2020-07-06
       begin_date: 2020-06-06
@@ -290,6 +292,7 @@ sbillinge:
       notes:
         - some new notes
         - notes2
+      running_index: 3
       end_date: 2020-07-07
 scopatz:
   aka:

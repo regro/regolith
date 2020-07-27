@@ -5,6 +5,7 @@ import datetime as dt
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
+import math
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -25,6 +26,8 @@ def subparser(subpi):
     subpi.add_argument("-e", "--end_date",
                        help="End date of the task. Default is today.")
     subpi.add_argument("-a", "--assigned_to", help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
+    subpi.add_argument("-c", "--certain_date",
+                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
     return subpi
 
 
@@ -63,47 +66,63 @@ class TodoFinisherHelper(DbHelperBase):
                     "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
                     "in the command line")
                 return
-        now = dt.date.today()
-        if not rc.end_date:
-            end_date = now
-        else:
-            end_date = date_parser.parse(rc.end_date).date()
+        person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
         filterid = {'_id': rc.assigned_to}
-        person = rc.client.find_one(rc.database, rc.coll, filterid)
         if not person:
             raise TypeError(f"Id {rc.assigned_to} can't be found in people collection")
-        todolist = person.get("todos",[])
-        if len(todolist) ==0:
+        todolist = person.get("todos", [])
+        if len(todolist) == 0:
             print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
-        index = 1
-        for todo in todolist:
-            if todo.get('status') not in ["finished"]:
-                todo["index"] = index
-                index+=1
-
+        now = dt.date.today()
         if not rc.index:
-            print("Please choose from one of the following to update:")
+            if not rc.certain_date:
+                today = now
+            else:
+                today = date_parser.parse(rc.certain_date).date()
             for todo in todolist:
-                if todo.get('status') not in ["finished"]:
-                    print(f"{todo.get('index')}. {todo.get('description')}")
-                    del todo['index']
-            return
+                if not todo.get('importance'):
+                    todo['importance'] = 1
+                if type(todo["due_date"]) == str:
+                    todo["due_date"] = date_parser.parse(todo["due_date"]).date()
+                todo["days_to_due"] = (todo.get('due_date') - today).days
+                todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"])))
+            todolist = sorted(todolist, key=lambda k: (-k['order'], k.get('duration', 10000)))
+            print("-" * 50)
+            print("Please choose from one of the following to update:")
+            print("  (running_index) action (days to due date|importance|expected duration(mins))")
+            print("started:")
+            num = 1
+            for todo in todolist:
+                if todo.get('status') == "started":
+                    print(
+                        f"{num:>2}. ({todo.get('running_index')}) {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
+                    if todo.get('notes'):
+                        for note in todo.get('notes'):
+                            print(f"     - {note}")
+                    num += 1
+            print("-" * 50)
         else:
-            match_todos = [i for i in todolist if i.get("index") == rc.index]
-            if len(match_todos) ==0:
+            match_todo = [i for i in todolist if i.get("running_index") == rc.index]
+            if len(match_todo) == 0:
                 raise RuntimeError("Please enter a valid index.")
             else:
-                match_todo = match_todos[0]
-                idx = todolist.index(match_todo)
-                match_todo["status"] = "finished"
-                match_todo["end_date"] = end_date
-                todolist[idx] = match_todo
-
-            for todo in todolist:
-                if todo.get('index'):
-                    del todo['index']
-            rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist},upsert=True)
-            print(f"The task \"{match_todo['description']}\" for {rc.assigned_to} has been marked as finished in {TARGET_COLL} collection.")
-
+                todo = match_todo[0]
+                todo["status"] = "finished"
+                if not rc.end_date:
+                    end_date = now
+                else:
+                    end_date = date_parser.parse(rc.end_date).date()
+                todo["end_date"] = end_date
+                for i in range(0, len(rc.databases)):
+                    db_name = rc.databases[i]["name"]
+                    person_update = rc.client.find_one(db_name, rc.coll, filterid)
+                    todolist_update = person_update.get("todos", [])
+                    if len(todolist_update) != 0:
+                        for i, todo_u in enumerate(todolist_update):
+                            if rc.index == todo_u.get("running_index"):
+                                todolist_update[i]= todo
+                                rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist_update}, upsert=True)
+                                print(f"The task \"{todo['description']}\" in {db_name} for {rc.assigned_to} has been marked as finished.")
+                                return
         return

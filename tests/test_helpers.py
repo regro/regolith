@@ -170,53 +170,51 @@ helper_map = [
      ),
     (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
      "--------------------------------------------------\n"
-     "    action (days to due date|importance|expected duration(mins))\n"
-     " 1. read paper(6|2|60.0)\n"
-     " 2. prepare the presentation(16|1|30.0)\n"
+     "  (running_index) action (days to due date|importance|expected duration(mins))\n"
+     "tasks from people collection:\n"
+     "started:\n"
+     " 1. (1) read paper(6|2|60.0)\n"
+     " 2. (2) prepare the presentation(16|1|30.0)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
+     "--------------------------------------------------\n"
+     "tasks from projecta and other collections:\n"
      "--------------------------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
      ),
-    (["helper", "a_todo", "test a_todo", "10", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06",  "--duration", "50", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
+    (["helper", "a_todo", "test a_todo", "10", "50", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
      "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
      ),
-    (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge", "--end_date", "2020-07-20"],
-     "The task \"test a_todo\" for sbillinge has been marked as finished in people collection.\n"
+    (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge", "--end_date", "2020-07-20", "--certain_date", "2020-07-13"],
+     "The task \"test a_todo\" in test for sbillinge has been marked as finished.\n"
      ),
-    (["helper", "f_todo", "--assigned_to", "sbillinge"],
-     "Please choose from one of the following to update:\n"
-     "1. read paper\n"
-     "2. prepare the presentation\n"
-     ),
-    (["helper", "l_todo", "--all","--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
+    (["helper", "f_todo", "--assigned_to", "sbillinge", "--certain_date", "2020-07-13"],
      "--------------------------------------------------\n"
-     "    action (days to due date|importance|expected duration(mins))\n"
-     " 1. read paper(6|2|60.0)\n"
-     " 2. prepare the presentation(16|1|30.0)\n"
+     "Please choose from one of the following to update:\n"
+     "  (running_index) action (days to due date|importance|expected duration(mins))\n"
+     "started:\n"
+     " 1. (1) read paper(6|2|60.0)\n"
+     " 2. (2) prepare the presentation(16|1|30.0)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     " 3. (finished) test a_todo\n"
-     "     - test notes 1\n"
-     "     - test notes 2\n"
      "--------------------------------------------------\n"
      ),
-    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07"],
-     "The task for sbillinge has been updated in people collection.\n"
+    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07", "--certain_date", "2020-07-13"],
+     "The task with running_index 3 in test for sbillinge has been updated.\n"
      ),
-    (["helper", "u_todo", "--assigned_to", "sbillinge", "--all"],
+    (["helper", "u_todo", "--assigned_to", "sbillinge", "--all", "--certain_date", "2020-07-13"],
      "--------------------------------------------------\n"
      "Please choose from one of the following to update:\n"
-     "    action (due date|importance|expected duration(mins))\n"
+     "  (running_index) action (days to due date|importance|expected duration(mins))\n"
      "started:\n"
-     " 1. read paper(2020-07-19|2|60.0)\n"
-     " 2. prepare the presentation(2020-07-29|0|30.0)\n"
+     " 1. (1) read paper(6|2|60.0)\n"
+     " 2. (2) prepare the presentation(16|1|30.0)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
      "finished/cancelled:\n"
-     " 3. update the description(2020-07-06|2|35.0)\n"
+     " 3. (3) update the description(-7|2|35.0)\n"
      "     - some new notes\n"
      "     - notes2\n"
      "--------------------------------------------------\n"
