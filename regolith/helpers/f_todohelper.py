@@ -13,6 +13,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
+    print_task
 )
 
 TARGET_COLL = "people"
@@ -88,20 +89,13 @@ class TodoFinisherHelper(DbHelperBase):
                 todo["days_to_due"] = (todo.get('due_date') - today).days
                 todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"])))
             todolist = sorted(todolist, key=lambda k: (-k['order'], k.get('duration', 10000)))
-            print("-" * 50)
+            print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
-            print("  (running_index) action (days to due date|importance|expected duration(mins))")
-            print("started:")
-            num = 1
+            print("(index) action (days to due date|importance|expected duration (mins))")
+            print("-" * 70)
             for todo in todolist:
-                if todo.get('status') == "started":
-                    print(
-                        f"{num:>2}. ({todo.get('running_index')}) {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
-                    if todo.get('notes'):
-                        for note in todo.get('notes'):
-                            print(f"     - {note}")
-                    num += 1
-            print("-" * 50)
+                print_task(todo, status=['started'])
+            print("-" * 70)
         else:
             match_todo = [i for i in todolist if i.get("running_index") == rc.index]
             if len(match_todo) == 0:

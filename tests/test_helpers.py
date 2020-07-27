@@ -169,17 +169,19 @@ helper_map = [
      "1. Maria as a new contact\n"
      ),
     (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
-     "--------------------------------------------------\n"
-     "  (running_index) action (days to due date|importance|expected duration(mins))\n"
+     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins))\n"
+     "----------------------------------------------------------------------\n"
      "tasks from people collection:\n"
-     "started:\n"
-     " 1. (1) read paper(6|2|60.0)\n"
-     " 2. (2) prepare the presentation(16|1|30.0)\n"
+     "------------------------------\n"
+     "(1) read paper (6|2|60.0)\n"
+     "(2) prepare the presentation (16|1|30.0)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "--------------------------------------------------\n"
+     "------------------------------------------\n"
      "tasks from projecta and other collections:\n"
-     "--------------------------------------------------\n"
+     "------------------------------------------\n"
+     "----------------------------------------------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
@@ -191,33 +193,33 @@ helper_map = [
      "The task \"test a_todo\" in test for sbillinge has been marked as finished.\n"
      ),
     (["helper", "f_todo", "--assigned_to", "sbillinge", "--certain_date", "2020-07-13"],
-     "--------------------------------------------------\n"
+     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
-     "  (running_index) action (days to due date|importance|expected duration(mins))\n"
-     "started:\n"
-     " 1. (1) read paper(6|2|60.0)\n"
-     " 2. (2) prepare the presentation(16|1|30.0)\n"
+     "(index) action (days to due date|importance|expected duration (mins))\n"
+     "----------------------------------------------------------------------\n"
+     "(1) read paper (6|2|60.0)\n"
+     "(2) prepare the presentation (16|1|30.0)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "--------------------------------------------------\n"
+     "----------------------------------------------------------------------\n"
      ),
     (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07", "--certain_date", "2020-07-13"],
      "The task with running_index 3 in test for sbillinge has been updated.\n"
      ),
     (["helper", "u_todo", "--assigned_to", "sbillinge", "--all", "--certain_date", "2020-07-13"],
-     "--------------------------------------------------\n"
+     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
-     "  (running_index) action (days to due date|importance|expected duration(mins))\n"
-     "started:\n"
-     " 1. (1) read paper(6|2|60.0)\n"
-     " 2. (2) prepare the presentation(16|1|30.0)\n"
+     "(index) action (days to due date|importance|expected duration (mins))\n"
+     "----------------------------------------------------------------------\n"
+     "(1) read paper (6|2|60.0)\n"
+     "(2) prepare the presentation (16|1|30.0)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
      "finished/cancelled:\n"
-     " 3. (3) update the description(-7|2|35.0)\n"
+     "(3) update the description (-7|2|35.0)\n"
      "     - some new notes\n"
      "     - notes2\n"
-     "--------------------------------------------------\n"
+     "----------------------------------------------------------------------\n"
      ),
     (["helper", "f_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"

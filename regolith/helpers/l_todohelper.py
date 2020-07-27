@@ -14,6 +14,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
+    print_task
 )
 
 TARGET_COLL = "people"
@@ -122,39 +123,21 @@ class TodoListerHelper(SoutHelperBase):
             for todo in gather_todos[::-1]:
                 if todo.get('duration') is None or float(todo.get('duration')) > float(rc.short_tasks):
                     gather_todos.remove(todo)
-        print("-" * 50)
-        print("  (running_index) action (days to due date|importance|expected duration(mins))")
+        print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
+        print("(index) action (days to due date|importance|expected duration (mins))")
+        print("-" * 70)
         print("tasks from people collection:")
-        print("started:")
-        num = 1
+        print("-" * 30)
         for todo in gather_todos[:len_of_tasks]:
-            if todo.get('status') == "started":
-                print(
-                    f"{num:>2}. ({todo.get('running_index')}) {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
-                if todo.get('notes'):
-                    for note in todo.get('notes'):
-                        print(f"     - {note}")
-                num += 1
+            print_task(todo, status=['started'])
         if rc.all:
             print("finished/cancelled:")
             for todo in gather_todos[:len_of_tasks]:
-                if todo.get('status') in ["finished", "cancelled"]:
-                    print(
-                        f"{num:>2}. ({todo.get('running_index')}) {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
-                    if todo.get('notes'):
-                        for note in todo.get('notes'):
-                            print(f"     - {note}")
-                            num += 1
-        print("-" * 50)
+                print_task(todo, status=['finished', 'cancelled'])
+        print("-" * 42)
         print("tasks from projecta and other collections:")
-        num = 1
+        print("-" * 42)
         for todo in gather_todos[len_of_tasks:]:
-            if todo.get('status') not in ["finished", "cancelled"]:
-                print(
-                    f"{num:>2}. {todo.get('description')}({todo.get('days_to_due')}|{todo.get('importance')}|{str(todo.get('duration'))})")
-                if todo.get('notes'):
-                    for note in todo.get('notes'):
-                        print(f"     - {note}")
-                num += 1
-        print("-" * 50)
+            print_task(todo, status=['started', 'proposed', 'converged'], index=False)
+        print("-" * 70)
         return
