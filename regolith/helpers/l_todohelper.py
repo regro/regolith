@@ -116,7 +116,7 @@ class TodoListerHelper(SoutHelperBase):
             if type(todo["due_date"]) == str:
                 todo["due_date"] = date_parser.parse(todo["due_date"]).date()
             todo["days_to_due"] = (todo.get('due_date') - today).days
-            todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"])))
+            todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
         gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks], key=lambda k: (-k['order'], k.get('duration', 10000)))
         gather_todos[len_of_tasks:] = sorted(gather_todos[len_of_tasks:], key=lambda k: (-k['order'], k.get('duration', 10000)))
         if rc.short_tasks:
