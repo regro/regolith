@@ -132,8 +132,9 @@ def test_builder(bm, db_src, make_db, make_mongodb):
                         assert expected == actual
 
 
+@pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("bm", builder_map)
-def test_builder_python(bm, make_db):
+def test_builder_python(bm, db_src, make_db, make_mongodb):
     repo = make_db
     os.chdir(repo)
     if bm == "figure":
