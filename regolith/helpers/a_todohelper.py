@@ -24,8 +24,7 @@ def subparser(subpi):
                        default=None)
     subpi.add_argument("due_date",
                        help="Due date of the task. Either enter a date in format YYYY-MM-DD or an "
-                            "integer. Integer 5 means 5 days from the "
-                            "begin_date. "
+                            "integer. Integer 5 means 5 days from today or from a certain date assigned by --certain_date."
                        )
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
@@ -40,6 +39,8 @@ def subparser(subpi):
     subpi.add_argument("-b", "--begin_date",
                        help="Begin date of the task in format YYYY-MM-DD. Default is today."
                        )
+    subpi.add_argument("-c", "--certain_date",
+                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
 
     return subpi
 
@@ -88,9 +89,13 @@ class TodoAdderHelper(DbHelperBase):
             begin_date = now
         else:
             begin_date = date_parser.parse(rc.begin_date).date()
+        if not rc.certain_date:
+            today = now
+        else:
+            today = date_parser.parse(rc.certain_date).date()
         try:
             relative_day = int(rc.due_date)
-            due_date = begin_date + relativedelta(days=relative_day)
+            due_date = today + relativedelta(days=relative_day)
         except ValueError:
             due_date = date_parser.parse(rc.due_date).date()
         if begin_date > due_date:

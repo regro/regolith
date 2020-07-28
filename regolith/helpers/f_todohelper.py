@@ -117,6 +117,6 @@ class TodoFinisherHelper(DbHelperBase):
                             if rc.index == todo_u.get("running_index"):
                                 todolist_update[i]= todo
                                 rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist_update}, upsert=True)
-                                print(f"The task \"{todo['description']}\" in {db_name} for {rc.assigned_to} has been marked as finished.")
+                                print(f"The task \"({todo_u['running_index']}) {todo_u['description'].strip()}\" in {db_name} for {rc.assigned_to} has been marked as finished.")
                                 return
         return
