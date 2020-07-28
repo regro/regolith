@@ -186,11 +186,11 @@ helper_map = [
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
      ),
-    (["helper", "a_todo", "test a_todo", "10", "50", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
+    (["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06", "--importance", "2", "--notes", "test notes 1", "test notes 2", "--certain_date", "2020-07-10"],
      "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
      ),
     (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge", "--end_date", "2020-07-20", "--certain_date", "2020-07-13"],
-     "The task \"test a_todo\" in test for sbillinge has been marked as finished.\n"
+     "The task \"(3) test a_todo\" in test for sbillinge has been marked as finished.\n"
      ),
     (["helper", "f_todo", "--assigned_to", "sbillinge", "--certain_date", "2020-07-13"],
      "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
@@ -204,7 +204,7 @@ helper_map = [
      "----------------------------------------------------------------------\n"
      ),
     (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07", "--certain_date", "2020-07-13"],
-     "The task with running_index 3 in test for sbillinge has been updated.\n"
+     "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
      ),
     (["helper", "u_todo", "--assigned_to", "sbillinge", "--all", "--certain_date", "2020-07-13"],
      "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"

@@ -36,15 +36,15 @@ def subparser(subpi):
                        help=" Change the description of the to_do task. If the description has more than one "
                             "word, please enclose it in quotation marks."
                        )
-    subpi.add_argument("-due", "--due_date",
+    subpi.add_argument("-u", "--due_date",
                        help="Change the due date of the task. Either enter a date in format YYYY-MM-DD or an "
-                            "integer. Integer 5 means 5 days from the begin_date. "
+                            "integer. Integer 5 means 5 days from today or from a certain date assigned by --certain_date. "
                        )
     subpi.add_argument("-e", "--estimated_duration",
                        help="Change the estimated duration the task will take in minutes. ",
                        type=float
                        )
-    subpi.add_argument("-im", "--importance",
+    subpi.add_argument("-p", "--importance",
                        help=f"Change the importance of the task from {ALLOWED_IMPORTANCE}.",
                        type=int
                        )
@@ -56,7 +56,7 @@ def subparser(subpi):
     subpi.add_argument("-b", "--begin_date",
                        help="Change the begin date of the task in format YYYY-MM-DD."
                        )
-    subpi.add_argument("-end", "--end_date",
+    subpi.add_argument("--end_date",
                        help="Change the end date of the task in format YYYY-MM-DD."
                        )
     subpi.add_argument("-a", "--assigned_to",
@@ -130,11 +130,11 @@ class TodoUpdaterHelper(DbHelperBase):
         if len(todolist) == 0:
             print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
+        if not rc.certain_date:
+            today = dt.date.today()
+        else:
+            today = date_parser.parse(rc.certain_date).date()
         if not rc.index:
-            if not rc.certain_date:
-                today = dt.date.today()
-            else:
-                today = date_parser.parse(rc.certain_date).date()
             for todo in todolist:
                 if not todo.get('importance'):
                     todo['importance'] = 1
@@ -189,7 +189,7 @@ class TodoUpdaterHelper(DbHelperBase):
                 if rc.due_date:
                     try:
                         relative_day = int(rc.due_date)
-                        due_date = todo.get("begin_date") + relativedelta(days=relative_day)
+                        due_date = today + relativedelta(days=relative_day)
                     except ValueError:
                         due_date = date_parser.parse(rc.due_date).date()
                     todo["due_date"] = due_date
@@ -223,6 +223,6 @@ class TodoUpdaterHelper(DbHelperBase):
                                 rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to},
                                                      {"todos": todolist_update}, upsert=True)
                                 print(
-                                    f"The task with running_index {todo_u['running_index']} in {db_name} for {rc.assigned_to} has been updated.")
+                                    f"The task \"({todo_u['running_index']}) {todo_u['description'].strip()}\" in {db_name} for {rc.assigned_to} has been updated.")
                                 return
         return
