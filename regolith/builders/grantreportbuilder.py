@@ -1,5 +1,5 @@
 """Builder for Proposal Reviews."""
-from datetime import datetime, date
+import datetime
 import time
 from nameparser import HumanName
 
@@ -13,6 +13,13 @@ from regolith.tools import (
     filter_presentations,
     fuzzy_retrieval
 )
+
+
+def subparser(subpi):
+    subpi.add_argument("start_date", help="start date of the reporting period, formatted as YYYY-MM-DD",
+                       default=None)
+    subpi.add_argument("end_date", help="end date of the reporting period, formatted as YYYY-MM-DD")
+    return subpi
 
 
 class GrantReportBuilder(LatexBuilderBase):
@@ -36,12 +43,23 @@ class GrantReportBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
+        rc = self.rc
         # Get Dates
-        today = str(date.today()).split("-")
-        end_year, end_month, end_day = int(today[0]), int(today[1]), int(today[2])
-        begin_year, begin_month, begin_day = int(today[0]) - 1, int(today[1]), int(today[2])
-        end_date = date(end_year, end_month, end_day)
-        begin_date = date(begin_year, begin_month, begin_day)
+        start_date = rc.start_date.split("-")
+        end_date = rc.end_date.split("-")
+        begin_year, begin_month, begin_day = int(start_date[0]), int(start_date[1]), int(start_date[2])
+        end_year, end_month, end_day = int(end_date[0]), int(end_date[1]), int(end_date[2])
+        end_date = datetime.datetime(end_year, end_month, end_day)
+        begin_date = datetime.datetime(begin_year, begin_month, begin_day)
+
+        # NSF Grant _id
+        grant_name = "dmref"
+        # Get people linked to grant and active during reporting period
+        people = [person for person in self.gtx['people']
+                  if grant_name in person['grant']]
+        # Get prums linked to grant and active/finished during the reporting period
+
+        # Accomplishments
 
         # Get All Active Members
         current_members = [person for person in self.gtx['people'] if person['active']]
@@ -64,8 +82,6 @@ class GrantReportBuilder(LatexBuilderBase):
 
         # Plans for Next Reporting Period to Accomplish Goals
 
-
-
         self.render(
             "grantreport.txt",
             "billinge_grant_report.txt",
@@ -76,5 +92,5 @@ class GrantReportBuilder(LatexBuilderBase):
             beginMonth=begin_month,
             beginDay=begin_day,
             presentations=valid_presentations,
-            individuals=individuals_data
+            individuals=individuals_data,
         )
