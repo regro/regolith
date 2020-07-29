@@ -1,9 +1,30 @@
-NSF {{beginYear}}-{{endYear}} Annual Report by
-{{authorFullName}}, ({{ institution }})
+NSF {{beginYear}}-{{endYear}} Annual Report by {{authorFullName}}, ({{ institution }})
 
 Accomplishments
 ------------------------------
 * What are the major goals of the project?
+
+In real-world applications, materials are rarely perfect crystals and their properties
+depend sensitively on defects, nanoscale structures, interfaces, surfaces and multi-scale
+heterogeneities. A major challenge is to gain a greater understanding of how such
+"imperfect" materials operate, including on different length and time-scales. In situations
+as complicated as this it is essential to validate theories against experiment, and vice versa.
+A more tightly coupled partnership between experiment and theory is needed, having its roots
+in information theory: the models need to capture all the physics of the problem become more
+complicated, while at the same time the information content of experimental data is reduced,
+due to lower resolution from finite size effects, defects, the presence of multiple components
+with overlapping problems, which yield unreliable and non-unique solutions, a bottleneck to
+predictive materials discovery. We will develop novel mathematical approaches to address this
+problem. We will study as a test case the nanostructure inverse problem (NIP), a well defined
+but generally ill-posed materials inverse problem; however, the methods that we develop will
+have much broader applicability in the world of materials discovery.
+
+Goal 1: Develop databases of nanostructure data from model systems
+Goal 2: Develop data analytic and stochastic optimization methodologies for robust
+nanostructure solutions
+Goal 3: Develop software infrastructure for nanostructure modeling that use the databases
+and the new methodologies for nanostructure solution
+Goal 4: Apply this to real scientific problems
 
 * What was accomplished under these goals (you must provide information for
 at least one of the 4 categories below)?
