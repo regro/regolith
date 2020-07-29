@@ -73,7 +73,10 @@ def test_builder(bm, db_src, make_db, make_mongodb):
     if db_src == "fs":
         repo = make_db
     elif db_src == "mongo":
-        repo = make_mongodb
+        if make_mongodb is False:
+            pytest.skip("Mongoclient failed to start")
+        else:
+            repo = make_mongodb
     else:
         raise ValueError("Unknown database source: {}".format(db_src))
     os.chdir(repo)

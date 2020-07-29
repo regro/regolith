@@ -73,6 +73,11 @@ def make_db():
         rmtree(repo)
 
 
+# @pytest.fixture(scope="session")
+# def mongodb_skip_flag():
+#     skip_flag = False
+#     return skip_flag
+
 @pytest.fixture(scope="session")
 def make_mongodb():
     """A test fixutre that creates and destroys a git repo in a temporary
@@ -117,6 +122,8 @@ def make_mongodb():
             f,
         )
     if os.name == 'nt':
+        # If on windows, the mongod command cannot be run with the fork or syslog options. Instead, it is installed as
+        # a service and the exceptions that would typically be log outputs are handled by the exception handlers below.
         cmd = ["mongostat", "--host", "localhost", "-n", "1"]
     else:
         cmd = ['mongod', '--fork', '--syslog', '--dbpath', mongodbpath]
@@ -126,14 +133,16 @@ def make_mongodb():
         print("If on linux or mac, Mongod command failed to execute. If on windows, mongod has not been installed as \n"
               "a service. In order to run mongodb tests, make sure to install the mongodb community edition\n"
               "for your OS with the following link: https://docs.mongodb.com/manual/installation/")
-        pytest.skip("Mongoclient failed to start")
+        yield False
+        return
     # Write collection docs
     for col_name, example in deepcopy(EXEMPLARS).items():
         try:
             client = MongoClient('localhost', serverSelectionTimeoutMS=2000)
             client.server_info()
         except Exception as e:
-            pytest.skip("Mongoclient failed to start")
+            yield False
+            return
         db = client['test']
         col = db[col_name]
         try:
