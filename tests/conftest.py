@@ -73,11 +73,6 @@ def make_db():
         rmtree(repo)
 
 
-# @pytest.fixture(scope="session")
-# def mongodb_skip_flag():
-#     skip_flag = False
-#     return skip_flag
-
 @pytest.fixture(scope="session")
 def make_mongodb():
     """A test fixutre that creates and destroys a git repo in a temporary
