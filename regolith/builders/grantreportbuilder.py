@@ -1,5 +1,5 @@
 """Builder for Proposal Reviews."""
-import datetime
+from datetime import datetime
 import time
 from nameparser import HumanName
 
@@ -45,19 +45,20 @@ class GrantReportBuilder(LatexBuilderBase):
         """Render latex template"""
         rc = self.rc
         # Get Dates
-        start_date = rc.start_date.split("-")
-        end_date = rc.end_date.split("-")
-        begin_year, begin_month, begin_day = int(start_date[0]), int(start_date[1]), int(start_date[2])
-        end_year, end_month, end_day = int(end_date[0]), int(end_date[1]), int(end_date[2])
-        end_date = datetime.datetime(end_year, end_month, end_day)
-        begin_date = datetime.datetime(begin_year, begin_month, begin_day)
+        start_date = datetime.strptime(rc.start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(rc.end_date, "%Y-%m-%d")
 
         # NSF Grant _id
         grant_name = "dmref"
-        # Get people linked to grant and active during reporting period
-        people = [person for person in self.gtx['people']
-                  if grant_name in person['grant']]
-        # Get prums linked to grant and active/finished during the reporting period
+        # Get people and prum linked to grant and active during reporting period
+        prums = [prum for prum in self.gtx['projecta']
+                 if grant_name in prum['grants']
+                 and
+                 ((start_date <= datetime.strptime(prum['end_date'], "%Y-%m-%d") <= end_date
+                   and prum['status'] is 'finished')
+                 or
+                 start_date <= datetime.strptime(prum['begin_date'], "%Y-%m-%d") <= end_date)]
+        people = list(set([prum['lead'] for prum in prums]))
 
         # Accomplishments
 
