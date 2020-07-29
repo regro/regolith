@@ -138,7 +138,13 @@ def test_builder(bm, db_src, make_db, make_mongodb):
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("bm", builder_map)
 def test_builder_python(bm, db_src, make_db, make_mongodb):
-    repo = make_db
+    if db_src == "fs":
+        repo = make_db
+    elif db_src == "mongo":
+        if make_mongodb is False:
+            pytest.skip("Mongoclient failed to start")
+        else:
+            repo = make_mongodb
     os.chdir(repo)
     if bm == "figure":
         prep_figure()
