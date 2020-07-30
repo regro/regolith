@@ -153,6 +153,8 @@ class TodoListerHelper(SoutHelperBase):
         print("-" * 42)
         print("tasks from projecta and other collections:")
         print("-" * 42)
+        if rc.stati == ["started"]:
+            rc.stati = ["started", "converged", "proposed"]
         print_task(gather_todos[len_of_tasks:], stati=rc.stati, index=False)
         print("-" * 81)
         return

@@ -180,6 +180,8 @@ helper_map = [
      "tasks from projecta and other collections:\n"
      "------------------------------------------\n"
      "started:\n"
+     "converged:\n"
+     "proposed:\n"
      "---------------------------------------------------------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
