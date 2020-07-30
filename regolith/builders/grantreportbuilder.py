@@ -2,9 +2,15 @@
 from datetime import datetime
 import time
 from nameparser import HumanName
+import dateutil.parser as date_parser
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import month_to_int
+from regolith.dates import (month_to_int,
+                            get_dates,
+                            get_due_date,
+                            is_current,
+                            is_after,
+                            is_before)
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (
@@ -25,7 +31,7 @@ def subparser(subpi):
 class GrantReportBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
     btype = "grantreport"
-    needed_dbs = ['presentations', 'projecta', 'people', 'grants', 'institutions']
+    needed_dbs = ['presentations', 'projecta', 'people', 'grants', 'institutions', 'expenses']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -44,41 +50,49 @@ class GrantReportBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         rc = self.rc
-        # Get Dates
-        start_date = datetime.strptime(rc.start_date, "%Y-%m-%d")
-        end_date = datetime.strptime(rc.end_date, "%Y-%m-%d")
+
+        # Convert Date Strings to Datetime Objects
+        rp_start_date = date_parser.parse(rc.start_date)
+        rp_end_date = date_parser.parse(rc.end_date)
 
         # NSF Grant _id
         grant_name = "dmref"
-        # Get people and prum linked to grant and active during reporting period
-        prums = [prum for prum in self.gtx['projecta']
-                 if grant_name in prum['grants']
-                 and
-                 ((start_date <= datetime.strptime(prum['end_date'], "%Y-%m-%d") <= end_date
-                   and prum['status'] is 'finished')
-                 or
-                 start_date <= datetime.strptime(prum['begin_date'], "%Y-%m-%d") <= end_date)]
-        people = list(set([prum['lead'] for prum in prums]))
+
+        # Get prum associated to grant and active during reporting period
+        grant_prums = []
+        for prum in self.gtx['projecta']:
+            if grant_name in prum['grants']:
+                begin_date = get_dates(prum).get('begin_date')
+                due_date = get_due_date(prum['deliverable'])
+                # if projectum was finished during reporting period or is still current
+                # some projectum don't have an "end date", but all projecta have a deliverable
+                # due_date
+                if (rp_start_date <= due_date <= rp_end_date and prum['status'] is "finished") or is_current(prum):
+                    grant_prums.append(prum)
+        # Get people associated with grant
+        grant_people = list(set([prum['lead'] for prum in grant_prums]))
 
         # Accomplishments
+        major_activities = []
+        significant_results = []
+        for prum in grant_prums:
+            if prum['status'] is "finished":
+                significant_results.append(prum)
+            else:
+                major_activities.append(prum)
 
-        # Get All Active Members
-        current_members = [person for person in self.gtx['people'] if person['active']]
-
-        # Major Goals
-
-        # Accomplishments
-
-        # Opportunities for Training and Professional Development and
-        # Individuals that have worked on project
-        valid_presentations = []
-        individuals_data = []
-        for person in current_members:
-            valid_presentations.append(filter_presentations(
-                self.gtx["people"], self.gtx["presentations"], self.gtx["institutions"], person["_id"],
-                ["tutorial", "contributed_oral"], begin_date, end_date))
-            individuals_data.append([person["_id"], person["position"]])
-
+        # Opportunities for Training and Professional Development
+        training_and_professional_development = []
+        # presentations
+        for id in grant_people:
+            training_and_professional_development.extend(
+                filter_presentations(self.gtx["people"], self.gtx["presentations"], self.gtx["institutions"], id,
+                                     types=["all"], since=rp_start_date, before=rp_end_date, statuses=["accepted"]))
+        # thesis defendings
+        # how do i access people.yml in rg-db-public vs the people.yml file in rg-db-group?
+        for id in grant_people:
+            person = self.gtx['people'][id]
+            if person['']
         # How have results been disseminated
 
         # Plans for Next Reporting Period to Accomplish Goals
@@ -86,12 +100,9 @@ class GrantReportBuilder(LatexBuilderBase):
         self.render(
             "grantreport.txt",
             "billinge_grant_report.txt",
-            endYear=end_year,
-            endMonth=end_month,
-            endDay=end_date,
-            beginYear=begin_year,
-            beginMonth=begin_month,
-            beginDay=begin_day,
-            presentations=valid_presentations,
-            individuals=individuals_data,
+            beginYear=rp_start_date.year,
+            endYear=rp_end_date.year,
+            majorActivities=major_activities,
+            significantResults=significant_results,
+            trainingAndProfessionalDevelopment=training_and_professional_development,
         )
