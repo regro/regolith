@@ -1,9 +1,8 @@
-NSF {{beginYear}}-{{endYear}} Annual Report by {{authorFullName}}, ({{ institution }})
+NSF {{beginYear}}-{{endYear}} Annual Report by Simon J. L. Billinge, (Columbia University)
 
 Accomplishments
-------------------------------
+------------------------------------------------------------------------------
 * What are the major goals of the project?
-
 In real-world applications, materials are rarely perfect crystals and their properties
 depend sensitively on defects, nanoscale structures, interfaces, surfaces and multi-scale
 heterogeneities. A major challenge is to gain a greater understanding of how such
@@ -28,17 +27,39 @@ Goal 4: Apply this to real scientific problems
 
 * What was accomplished under these goals (you must provide information for
 at least one of the 4 categories below)?
-Major Activities:
-Specific Objectives:
-Significant Results:
+------------------------------------------------------------------------------
+- Major Activities (currently worked on projecta):
+PDF in the cloud (PDFitc): Development of a web-based service for determining
+structures from measured PDFs given known structures in structural databases
+xpdTools, xpdAcq, xpdAn, xpdView: Software tools for streaming data analysis
+and visualization of diffraction data from the XPD diffractometer at NSLS-II
+synchrotron. The tools can also be used to analyze data from other diffraction
+beamlines.
+{%- for prum in majorActivities %}
+    {{ prum['name'] }}: {{ prum['description'] }}
+{% endfor -%}
+
+- Specific Objectives:
+PDF in the cloud (PDFitc): Development of a web-based service for determining
+structures from measured PDFs given known structures in structural databases
+
+- Significant Results (finished projecta):
+{%- for prum in significantResults %}
+    {{ prum['name'] }}: {{ prum['description'] }}
+{% endfor -%}
 
 Key outcomes or Other achievements:
 * What opportunities for training and professional development has the project provided?
-{%- for opportunity in presentations %}
-    - {{opportunity -}}
+{%- for opportunity in trainingAndProfessionalDevelopment %}
+    - Authors: {{ opportunity['authors'] }}
+    - Title: {{ opportunity['title'] }}
+    - Location: {{ opportunity['meeting_name'] }}
 {% endfor -%}}
 
 * How have the results been disseminated to communities of interest?
+1. Publications
+2. Software releases and deployment of software packages on conda-forge and pypi for ease of installation
+3. Presentations at conferences and seminars
 
 * What do you plan to do during the next reporting period to accomplish the goals?
 
