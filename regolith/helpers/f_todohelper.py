@@ -22,11 +22,14 @@ ALLOWED_IMPORTANCE = [0, 1, 2]
 
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
-                        help="Index of the item in the enumerated list to mark as finished.",
-                        type = int)
-    subpi.add_argument("-e", "--end_date",
-                       help="End date of the task. Default is today.")
-    subpi.add_argument("-a", "--assigned_to", help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
+                       help="Enter the index of a certain task in the enumerated list to mark as finished.",
+                       type=int)
+    subpi.add_argument("--end_date",
+                       help="Add the end date of the task. Default is today.")
+    subpi.add_argument("-t", "--assigned_to",
+                       help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
+    subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
+                       help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("-c", "--certain_date",
                        help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
     return subpi
@@ -88,14 +91,13 @@ class TodoFinisherHelper(DbHelperBase):
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
                 todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
-            todolist = sorted(todolist, key=lambda k: (-k['order'], k.get('duration', 10000)))
+            todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
             print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
-            print("(index) action (days to due date|importance|expected duration (mins))")
-            print("-" * 70)
-            for todo in todolist:
-                print_task(todo, status=['started'])
-            print("-" * 70)
+            print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
+            print("-" * 81)
+            print_task(todolist, stati=['started'])
+            print("-" * 81)
         else:
             match_todo = [i for i in todolist if i.get("running_index") == rc.index]
             if len(match_todo) == 0:

@@ -1196,6 +1196,7 @@ EXEMPLARS = {
              "duration": 60.0,
              "importance": 2,
              "status": "started",
+             "assigned_by": "scopatz",
              "running_index": 1
              },
             {"description": "prepare the presentation",
@@ -1205,6 +1206,7 @@ EXEMPLARS = {
              "importance": 0,
              "status": "started",
              "notes": ["about 10 minutes", "don't forget to upload to the website"],
+             "assigned_by": "sbillinge",
              "running_index": 2
              }
         ],
@@ -3179,6 +3181,10 @@ SCHEMAS = {
                     "running_index": {"description": "Index of a certain task used to update that task in the enumerated todo list.",
                                "required": False,
                                "type": "integer"},
+                    "assigned_by": {
+                        "description": "ID of the member that assigns the task",
+                        "required": False,
+                        "type": "string"},
 
                 }
             }

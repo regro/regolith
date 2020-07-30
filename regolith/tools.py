@@ -12,6 +12,7 @@ from copy import deepcopy
 from datetime import datetime, date, timedelta
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
+import math
 
 from regolith.chained_db import ChainDB
 from regolith.dates import month_to_int, date_to_float, get_dates, last_day, is_current
@@ -1589,33 +1590,37 @@ def validate_meeting(meeting, date):
         raise ValueError(f'{meeting.get("_id")} does not have a presentation title')
 
 
-def print_task(task, status, index = True):
+def print_task(task_list, stati, index = True):
     """
     Print tasks in a nice format.
 
     Parameters
     ----------
-    task: dict
-        The task object that will be printed
+    task_list: list
+        A list of tasks that will be printed.
     status:
         Filter status of the task
 
 
     """
-    if index:
-        if task.get('status') in status:
-            print(
-                f"({task.get('running_index')}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))})")
-            if task.get('notes'):
-                for note in task.get('notes'):
-                    print(f"     - {note}")
-    else:
-        if task.get('status') in status:
-            print(
-                f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))})")
-            if task.get('notes'):
-                for note in task.get('notes'):
-                    print(f"     - {note}")
+    for status in stati:
+        print(f"{status}:")
+        if index:
+            for task in task_list:
+                if task.get('status') == status:
+                    print(
+                        f"({task.get('running_index')}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{task.get('assigned_by')})")
+                    if task.get('notes'):
+                        for note in task.get('notes'):
+                            print(f"     - {note}")
+        else:
+            for task in task_list:
+                if task.get('status') == status:
+                    print(
+                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{task.get('assigned_by')})")
+                    if task.get('notes'):
+                        for note in task.get('notes'):
+                            print(f"     - {note}")
 
 
 
