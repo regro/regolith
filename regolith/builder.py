@@ -15,6 +15,7 @@ from regolith.builders.figurebuilder import FigureBuilder
 from regolith.builders.coabuilder import RecentCollaboratorsBuilder
 from regolith.builders.beamplanbuilder import BeamPlanBuilder
 from regolith.builders.activitylogbuilder import ActivitylogBuilder
+from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
 
 
 BUILDERS = {
@@ -26,6 +27,7 @@ BUILDERS = {
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,
     "html": HtmlBuilder,
+    "internalhtml": InternalHtmlBuilder,
     "postdocad": PostdocadBuilder,
     "preslist": PresListBuilder,
     "publist": PubListBuilder,
