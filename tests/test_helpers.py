@@ -176,12 +176,6 @@ helper_map = [
      "------------------------------\n"
      "started:\n"
      "(1) read paper (6|2|60.0|scopatz)\n"
-     "------------------------------------------\n"
-     "tasks from projecta and other collections:\n"
-     "------------------------------------------\n"
-     "started:\n"
-     "converged:\n"
-     "proposed:\n"
      "---------------------------------------------------------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
@@ -208,13 +202,12 @@ helper_map = [
     (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07", "--certain_date", "2020-07-13"],
      "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
      ),
-    (["helper", "u_todo", "--assigned_to", "sbillinge", "--stati", "started", "finished", "--certain_date", "2020-07-13"],
+    (["helper", "u_todo", "--assigned_to", "sbillinge", "--stati", "started", "finished", "--filter", "description", "the", "--certain_date", "2020-07-13"],
      "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
      "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
      "---------------------------------------------------------------------------------\n"
      "started:\n"
-     "(1) read paper (6|2|60.0|scopatz)\n"
      "(2) prepare the presentation (16|1|30.0|sbillinge)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"

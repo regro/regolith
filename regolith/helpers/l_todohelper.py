@@ -14,7 +14,8 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
-    print_task
+    print_task,
+    key_value_pair_filter
 )
 
 TARGET_COLL = "people"
@@ -22,11 +23,13 @@ TARGET_COLL2 = "projecta"
 HELPER_TARGET = "l_todo"
 Importance = [0, 1, 2]
 ALLOWED_STATI = ["started", "finished", "cancelled"]
+ACTIVE_STATI = ["started", "converged", "proposed"]
 
 
 def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs='+', help=f'Filter tasks with specific status from {ALLOWED_STATI}. '
                                                         f'Default is started.', default=["started"])
+    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("--short", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
     subpi.add_argument("-t", "--assigned_to",
@@ -93,6 +96,8 @@ class TodoListerHelper(SoutHelperBase):
             today = dt.date.today()
         else:
             today = date_parser.parse(rc.certain_date).date()
+        if rc.stati == ["started"]:
+            rc.stati = ACTIVE_STATI
         for projectum in self.gtx["projecta"]:
             if projectum.get('lead') != rc.assigned_to:
                 continue
@@ -111,6 +116,8 @@ class TodoListerHelper(SoutHelperBase):
                         })
                         ms.update({'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
                         gather_todos.append(ms)
+        if rc.filter:
+            gather_todos = key_value_pair_filter(gather_todos, rc.filter)
         if rc.short:
             for todo in gather_todos[::-1]:
                 if todo.get('duration') is None or float(todo.get('duration')) > float(rc.short):
@@ -147,14 +154,14 @@ class TodoListerHelper(SoutHelperBase):
         print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
         print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
         print("-" * 81)
-        print("tasks from people collection:")
-        print("-" * 30)
-        print_task(gather_todos[:len_of_tasks], stati=rc.stati)
-        print("-" * 42)
-        print("tasks from projecta and other collections:")
-        print("-" * 42)
-        if rc.stati == ["started"]:
-            rc.stati = ["started", "converged", "proposed"]
-        print_task(gather_todos[len_of_tasks:], stati=rc.stati, index=False)
+        if len_of_tasks != 0:
+            print("tasks from people collection:")
+            print("-" * 30)
+            print_task(gather_todos[:len_of_tasks], stati=rc.stati)
+        if milestones != 0:
+            print("-" * 42)
+            print("tasks from projecta and other collections:")
+            print("-" * 42)
+            print_task(gather_todos[len_of_tasks:], stati=rc.stati, index=False)
         print("-" * 81)
         return
