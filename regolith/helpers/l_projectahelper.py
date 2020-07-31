@@ -109,7 +109,7 @@ class ProjectaListerHelper(SoutHelperBase):
         else:
             collection = self.gtx["projecta"]
 
-        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter) and (not rc.all):
+        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter) and (not rc.current) and (not rc.all):
             return
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
