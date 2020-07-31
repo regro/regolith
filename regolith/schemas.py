@@ -545,7 +545,7 @@ EXEMPLARS = {
         "title": "Open Source Scientific Software Maintainer",
         "year": 2015,
     },
-    "meetings": {
+    "meetings": [{
         "_id": "grp2020-06-12",
         "actions": [
             "Simon: test",
@@ -555,18 +555,41 @@ EXEMPLARS = {
         "buddies": [],
         "day": 12,
         "journal_club": [],
-        "lead": "nthomas",
+        "lead": "scopatz",
         "minutes": [],
         "month": 6,
         "place": "Mudd 1106",
         "presentation": [],
-        "scribe": "hvuong",
+        "scribe": "scopatz",
         "time": '0',
         "updated": "",
         "uuid": "",
         "year": 2020
 
     },
+        {
+            "_id": "grp6000-01-01",
+            "actions": [
+                "Simon: test",
+                "Everyone: Clear out-of-date prums milestones."
+            ],
+            "agenda": ["Review actions", ],
+            "buddies": [],
+            "day": 1,
+            "journal_club": [],
+            "lead": "scopatz",
+            "minutes": [],
+            "month": 1,
+            "place": "Mudd 1106",
+            "presentation": [],
+            "scribe": "scopatz",
+            "time": '0',
+            "updated": "",
+            "uuid": "",
+            "year": 6000
+
+        }
+    ],
     "news": {
         "_id": "56b4eb6d421aa921504ef2a9",
         "author": "Anthony Scopatz",
