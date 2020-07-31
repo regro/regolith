@@ -41,7 +41,7 @@ helper_map = [
     (["helper", "l_projecta", "--verbose", "--lead", "ascopatz"],
      "20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
-     (["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
+    (["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
      "20ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--grant", "SymPy-1.1"],
@@ -51,6 +51,9 @@ helper_map = [
      "lyang:\n    20ly_newprojectum\nascopatz:\n    20sb_firstprojectum\n"
      ),
     (["helper", "l_projecta", "--all"],
+     "20ly_newprojectum\n20sb_firstprojectum\n"
+     ),
+    (["helper", "l_projecta", "--current"],
      "20ly_newprojectum\n20sb_firstprojectum\n"
      ),
     (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"],
@@ -203,7 +206,7 @@ helper_map = [
      "     - don't forget to upload to the website\n"
      "---------------------------------------------------------------------------------\n"
      ),
-    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07", "--certain_date", "2020-07-13"],
+    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished", "--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07", "--certain_date", "2020-07-13"],
      "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
      ),
     (["helper", "u_todo", "--assigned_to", "sbillinge", "--stati", "started", "finished", "--certain_date", "2020-07-13"],
@@ -270,7 +273,7 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
-    (["helper", "makeappointments", "run", "--no_gui",],
+    (["helper", "makeappointments", "run", "--no_gui", ],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
@@ -288,7 +291,7 @@ helper_map = [
      "    2020-12-31: grant: abc42, overspend amount: -1.41 months\n"
      "plotting mode is on\n"
      ),
-    (["helper", "makeappointments", "run", "--no_plot",],
+    (["helper", "makeappointments", "run", "--no_plot", ],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
