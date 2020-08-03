@@ -17,7 +17,8 @@ from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
     filter_presentations,
-    fuzzy_retrieval
+    fuzzy_retrieval,
+    filter_publications
 )
 
 
@@ -31,7 +32,7 @@ def subparser(subpi):
 class GrantReportBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
     btype = "grantreport"
-    needed_dbs = ['presentations', 'projecta', 'people', 'grants', 'institutions', 'expenses']
+    needed_dbs = ['presentations', 'projecta', 'people', 'grants', 'institutions', 'expenses', 'citations']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -90,13 +91,32 @@ class GrantReportBuilder(LatexBuilderBase):
                                      types=["all"], since=rp_start_date, before=rp_end_date, statuses=["accepted"]))
         # thesis defendings
         # how do i access people.yml in rg-db-public vs the people.yml file in rg-db-group?
+        defended_theses = []
         for id in grant_people:
             person = self.gtx['people'][id]
-            if person['']
-        # How have results been disseminated
+            for education in person['education']:
+                if 'phd' in education['degree'].lower() and 'columbia' in education['institution'].lower() and \
+                        rp_start_date.year <= education['end_year'] <= rp_end_date.year:
+                    defended_theses.append(id)
 
-        # Plans for Next Reporting Period to Accomplish Goals
+        # Products
+        # need rg-db-public's citation.yml... how to access that instead of the rg-db-group's citation.yml file
+        publications = filter_publications(self.gtx["citations"], grant_people, since=rp_start_date, before=rp_end_date)
 
+        # Participants/Organizations
+        participants = {}
+        for person in grant_people:
+            p = self.gtx["people"].get(person)
+            months = 0
+            if p['active']:
+                difference = datetime.today() - rp_start_date
+                if difference.day > 15:
+                    months = months + 1
+                months = difference.year * 12 + difference.month
+            else:
+
+                end_date = datetime.date(p['year'])
+            info = [p.get('position'), months]
         self.render(
             "grantreport.txt",
             "billinge_grant_report.txt",
@@ -105,4 +125,7 @@ class GrantReportBuilder(LatexBuilderBase):
             majorActivities=major_activities,
             significantResults=significant_results,
             trainingAndProfessionalDevelopment=training_and_professional_development,
+            defendedTheses=defended_theses,
+            products=publications,
+            grantPeople=grant_people
         )

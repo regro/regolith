@@ -1,4 +1,4 @@
-NSF {{beginYear}}-{{endYear}} Annual Report by Simon J. L. Billinge, (Columbia University)
+NSF {{beginYear}}-{{endYear}} Annual Report
 
 Accomplishments
 ------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ and visualization of diffraction data from the XPD diffractometer at NSLS-II
 synchrotron. The tools can also be used to analyze data from other diffraction
 beamlines.
 {%- for prum in majorActivities %}
-    {{ prum['name'] }}: {{ prum['description'] }}
+    {{ prum.get('name') }}: {{ prum.get('description') }}
 {% endfor -%}
 
 - Specific Objectives:
@@ -45,15 +45,18 @@ structures from measured PDFs given known structures in structural databases
 
 - Significant Results (finished projecta):
 {%- for prum in significantResults %}
-    {{ prum['name'] }}: {{ prum['description'] }}
+    {{ prum.get('name') }}: {{ prum.get('description') }}
 {% endfor -%}
 
 Key outcomes or Other achievements:
 * What opportunities for training and professional development has the project provided?
 {%- for opportunity in trainingAndProfessionalDevelopment %}
-    - Authors: {{ opportunity['authors'] }}
-    - Title: {{ opportunity['title'] }}
-    - Location: {{ opportunity['meeting_name'] }}
+    - Authors: {{ opportunity.get('authors') }}
+    - Title: {{ opportunity.get('title') }}
+    - Location: {{ opportunity.get('meeting_name') }}
+{% endfor -%}}
+{%- for thesis in defendedTheses %}
+    {{thesis}} wrote and successfully defended their thesis.
 {% endfor -%}}
 
 * How have the results been disseminated to communities of interest?
@@ -62,39 +65,28 @@ Key outcomes or Other achievements:
 3. Presentations at conferences and seminars
 
 * What do you plan to do during the next reporting period to accomplish the goals?
+#############################################################
+##                                                         ##
+##                                                         ##
+##      FILL THIS PART IN !!! FILL THIS PART IN !!!        ##
+##                                                         ##
+##                                                         ##
+#############################################################
 
 Products
 ------------------------------
-Books
-
-Book Chapters
-
-Inventions
-
-Journals or Juried Conference Papers
-
-Licenses
-
-Other Conference Presentations / Papers
-
-Other Products
-
-Other Publications
-
-Patents
-
-Technologies or Techniques
-
-Thesis/Dissertations
-
-Websites
+{%- for doi in products %}
+    - {{doi.get('doi')}}
+{% endfor -%}}
 
 Participants/Organizations
 ------------------------------
 What individuals have worked on the project?
 
 Name, Most Senior Project Role, Nearest Person Month Worked
-
+{%- for person in grantPeople %}
+    - {{person.get('_id')}}, {{person.get(''}}
+{% endfor -%}}
 Full details of individuals who have worked on the project:
 
 Name:
