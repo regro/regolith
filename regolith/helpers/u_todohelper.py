@@ -13,13 +13,14 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
-    print_task
+    print_task,
+    key_value_pair_filter
 )
 
 TARGET_COLL = "people"
 ALLOWED_IMPORTANCE = [0, 1, 2]
 ALLOWED_STATI = ["started", "finished", "cancelled"]
-
+ACTIVE_STATI = ["started", "converged", "proposed"]
 
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
@@ -27,6 +28,7 @@ def subparser(subpi):
                        type=int)
     subpi.add_argument("-s", "--stati", nargs='+', help=f'Filter tasks with specific status from {ALLOWED_STATI}. '
                                                         f'Default is started.', default=["started"])
+    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("-r", "--running_index", action="store_true",
                        help="Reorder and update the indices."
                        )
@@ -179,6 +181,10 @@ class TodoUpdaterHelper(DbHelperBase):
                         todolist.remove(todo)
                     elif rc.assigned_to == rc.assigned_by:
                         todolist.remove(todo)
+            if rc.filter:
+                todolist = key_value_pair_filter(todolist, rc.filter)
+            if rc.stati == ["started"]:
+                rc.stati = ACTIVE_STATI
             print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
             print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
