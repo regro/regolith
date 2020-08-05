@@ -13,7 +13,8 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
-    print_task
+    print_task,
+    key_value_pair_filter
 )
 
 TARGET_COLL = "people"
@@ -22,11 +23,15 @@ ALLOWED_IMPORTANCE = [0, 1, 2]
 
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
-                        help="Index of the item in the enumerated list to mark as finished.",
-                        type = int)
-    subpi.add_argument("-e", "--end_date",
-                       help="End date of the task. Default is today.")
-    subpi.add_argument("-a", "--assigned_to", help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
+                       help="Enter the index of a certain task in the enumerated list to mark as finished.",
+                       type=int)
+    subpi.add_argument("--end_date",
+                       help="Add the end date of the task. Default is today.")
+    subpi.add_argument("-t", "--assigned_to",
+                       help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
+    subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
+                       help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
+    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("-c", "--certain_date",
                        help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
     return subpi
@@ -81,6 +86,8 @@ class TodoFinisherHelper(DbHelperBase):
                 today = now
             else:
                 today = date_parser.parse(rc.certain_date).date()
+            if rc.filter:
+                todolist = key_value_pair_filter(todolist, rc.filter)
             for todo in todolist:
                 if not todo.get('importance'):
                     todo['importance'] = 1
@@ -88,14 +95,13 @@ class TodoFinisherHelper(DbHelperBase):
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
                 todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
-            todolist = sorted(todolist, key=lambda k: (-k['order'], k.get('duration', 10000)))
+            todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
             print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
-            print("(index) action (days to due date|importance|expected duration (mins))")
-            print("-" * 70)
-            for todo in todolist:
-                print_task(todo, status=['started'])
-            print("-" * 70)
+            print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
+            print("-" * 81)
+            print_task(todolist, stati=['started'])
+            print("-" * 81)
         else:
             match_todo = [i for i in todolist if i.get("running_index") == rc.index]
             if len(match_todo) == 0:

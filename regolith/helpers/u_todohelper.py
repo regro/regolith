@@ -13,22 +13,22 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
-    print_task
+    print_task,
+    key_value_pair_filter
 )
 
 TARGET_COLL = "people"
 ALLOWED_IMPORTANCE = [0, 1, 2]
-ALLOWED_STATUS = ["started", "finished", "cancelled"]
-
+ALLOWED_STATI = ["started", "finished", "cancelled"]
+ACTIVE_STATI = ["started", "converged", "proposed"]
 
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
-                       help="Enter the running_index of a certain task in the enumerated list to update that task.",
+                       help="Enter the index of a certain task in the enumerated list to update that task.",
                        type=int)
-    subpi.add_argument("--all", action="store_true",
-                       help="List both finished and unfinished tasks. Without this flag, the helper will only display "
-                            "unfinished tasks. "
-                       )
+    subpi.add_argument("-s", "--stati", nargs='+', help=f'Filter tasks with specific status from {ALLOWED_STATI}. '
+                                                        f'Default is started.', default=["started"])
+    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("-r", "--running_index", action="store_true",
                        help="Reorder and update the indices."
                        )
@@ -48,19 +48,21 @@ def subparser(subpi):
                        help=f"Change the importance of the task from {ALLOWED_IMPORTANCE}.",
                        type=int
                        )
-    subpi.add_argument("-s", "--status",
-                       help=f"Change the status of the task from {ALLOWED_STATUS}."
+    subpi.add_argument("--status",
+                       help=f"Change the status of the task from {ALLOWED_STATI}."
                        )
     subpi.add_argument("-n", "--notes", nargs="+", help="Change the notes for this task. Each note should be enclosed "
                                                         "in quotation marks.")
-    subpi.add_argument("-b", "--begin_date",
+    subpi.add_argument("--begin_date",
                        help="Change the begin date of the task in format YYYY-MM-DD."
                        )
     subpi.add_argument("--end_date",
                        help="Change the end date of the task in format YYYY-MM-DD."
                        )
-    subpi.add_argument("-a", "--assigned_to",
-                       help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
+    subpi.add_argument("-t", "--assigned_to",
+                       help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
+    subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
+                       help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("-c", "--certain_date",
                        help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
 
@@ -105,7 +107,6 @@ class TodoUpdaterHelper(DbHelperBase):
         filterid = {'_id': rc.assigned_to}
         if rc.running_index:
             index = 1
-            index_finished = -1
             for i in range(0, len(rc.databases)):
                 db_name = rc.databases[i]["name"]
                 person_idx = rc.client.find_one(db_name, rc.coll, filterid)
@@ -117,12 +118,8 @@ class TodoUpdaterHelper(DbHelperBase):
                     continue
                 else:
                     for todo in todolist_idx:
-                        if todo.get('status') == "started":
-                            todo["running_index"] = index
-                            index += 1
-                        if todo.get('status') in ["finished", "cancelled"]:
-                            todo["running_index"] = index_finished
-                            index_finished += -1
+                        todo["running_index"] = index
+                        index += 1
         person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
         if not person:
             raise TypeError(f"Id {rc.assigned_to} can't be found in people collection")
@@ -135,21 +132,31 @@ class TodoUpdaterHelper(DbHelperBase):
         else:
             today = date_parser.parse(rc.certain_date).date()
         if not rc.index:
+            started_todo = 0
             for todo in todolist:
+                if todo["status"] == 'started':
+                    started_todo += 1
                 if not todo.get('importance'):
                     todo['importance'] = 1
                 if type(todo["due_date"]) == str:
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
+                if type(todo.get("end_date")) == str:
+                    todo["end_date"] = date_parser.parse(todo["end_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
+                todo["sort_finished"] = (todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1, 1)).days
                 todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
-            todolist = sorted(todolist, key=lambda k: (-k['order'], k.get('duration', 10000), k['status']))
-            index_match={}
+            todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
+            todolist[started_todo:] = sorted(todolist[started_todo:], key=lambda k: (-k["sort_finished"]))
+            index_match = {}
             if rc.running_index:
-                new_index = 1
-                for todo in todolist:
-                    if todo["status"] == 'started':
-                        index_match[todo["running_index"]] = new_index
-                        new_index += 1
+                new_index_started = 1
+                new_index_finished = -1
+                for todo in todolist[:started_todo]:
+                    index_match[todo["running_index"]] = new_index_started
+                    new_index_started += 1
+                for todo in todolist[started_todo:]:
+                    index_match[todo["running_index"]] = new_index_finished
+                    new_index_finished += -1
                 for i in range(0, len(rc.databases)):
                     db_name = rc.databases[i]["name"]
                     person_idx = rc.client.find_one(db_name, rc.coll, filterid)
@@ -159,25 +166,31 @@ class TodoUpdaterHelper(DbHelperBase):
                         continue
                     if len(todolist_idx) != 0:
                         for todo in todolist_idx:
-                            if todo.get('status') == "started":
-                                index = index_match[todo["running_index"]]
-                                todo["running_index"] = index
+                            index = index_match[todo["running_index"]]
+                            todo["running_index"] = index
                         rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist_idx},
                                              upsert=True)
                         print(f"Indices in {db_name} for {rc.assigned_to} have been updated.")
                 return
+            if rc.assigned_by:
+                if rc.assigned_by == "default_id":
+                    rc.assigned_by = rc.default_user_id
+                for todo in todolist[::-1]:
+                    if todo.get('assigned_by') != rc.assigned_by:
+                        print(todo.get('assigned_by'))
+                        todolist.remove(todo)
+                    elif rc.assigned_to == rc.assigned_by:
+                        todolist.remove(todo)
+            if rc.filter:
+                todolist = key_value_pair_filter(todolist, rc.filter)
+            if rc.stati == ["started"]:
+                rc.stati = ACTIVE_STATI
             print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
-            print("(index) action (days to due date|importance|expected duration (mins))")
-            print("-" * 70)
-            for todo in todolist:
-                print_task(todo, status=['started'])
-            if rc.all:
-                print("finished/cancelled:")
-                for todo in todolist:
-                    print_task(todo, status=['finished', 'cancelled'])
-            print("-" * 70)
-
+            print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
+            print("-" * 81)
+            print_task(todolist, stati=rc.stati)
+            print("-" * 81)
         else:
             match_todo = [i for i in todolist if i.get("running_index") == rc.index]
             if len(match_todo) == 0:
@@ -201,10 +214,10 @@ class TodoUpdaterHelper(DbHelperBase):
                     else:
                         raise ValueError(f"Importance should be chosen from{ALLOWED_IMPORTANCE}.")
                 if rc.status:
-                    if rc.status in ALLOWED_STATUS:
+                    if rc.status in ALLOWED_STATI:
                         todo["status"] = rc.status
                     else:
-                        raise ValueError(f"Status should be chosen from{ALLOWED_STATUS}.")
+                        raise ValueError(f"Status should be chosen from {ALLOWED_STATI}.")
                 if rc.notes:
                     todo["notes"] = rc.notes
                 if rc.begin_date:

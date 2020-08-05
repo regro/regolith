@@ -168,25 +168,20 @@ helper_map = [
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
      ),
-    (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
+    (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13", "--assigned_by", "scopatz"],
      "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins))\n"
-     "----------------------------------------------------------------------\n"
+     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
+     "---------------------------------------------------------------------------------\n"
      "tasks from people collection:\n"
      "------------------------------\n"
-     "(1) read paper (6|2|60.0)\n"
-     "(2) prepare the presentation (16|1|30.0)\n"
-     "     - about 10 minutes\n"
-     "     - don't forget to upload to the website\n"
-     "------------------------------------------\n"
-     "tasks from projecta and other collections:\n"
-     "------------------------------------------\n"
-     "----------------------------------------------------------------------\n"
+     "started:\n"
+     "(1) read paper (6|2|60.0|scopatz)\n"
+     "---------------------------------------------------------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
      ),
-    (["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06", "--importance", "2", "--notes", "test notes 1", "test notes 2", "--certain_date", "2020-07-10"],
+    (["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to", "sbillinge", "--assigned_by", "sbillinge", "--begin_date", "2020-07-06", "--importance", "2", "--notes", "test notes 1", "test notes 2", "--certain_date", "2020-07-10"],
      "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
      ),
     (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge", "--end_date", "2020-07-20", "--certain_date", "2020-07-13"],
@@ -195,31 +190,32 @@ helper_map = [
     (["helper", "f_todo", "--assigned_to", "sbillinge", "--certain_date", "2020-07-13"],
      "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
-     "(index) action (days to due date|importance|expected duration (mins))\n"
-     "----------------------------------------------------------------------\n"
-     "(1) read paper (6|2|60.0)\n"
-     "(2) prepare the presentation (16|1|30.0)\n"
+     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
+     "---------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(1) read paper (6|2|60.0|scopatz)\n"
+     "(2) prepare the presentation (16|1|30.0|sbillinge)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "----------------------------------------------------------------------\n"
+     "---------------------------------------------------------------------------------\n"
      ),
     (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished","--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07", "--certain_date", "2020-07-13"],
      "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
      ),
-    (["helper", "u_todo", "--assigned_to", "sbillinge", "--all", "--certain_date", "2020-07-13"],
+    (["helper", "u_todo", "--assigned_to", "sbillinge", "--stati", "started", "finished", "--filter", "description", "the", "--certain_date", "2020-07-13"],
      "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
-     "(index) action (days to due date|importance|expected duration (mins))\n"
-     "----------------------------------------------------------------------\n"
-     "(1) read paper (6|2|60.0)\n"
-     "(2) prepare the presentation (16|1|30.0)\n"
+     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
+     "---------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(2) prepare the presentation (16|1|30.0|sbillinge)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "finished/cancelled:\n"
-     "(3) update the description (-7|2|35.0)\n"
+     "finished:\n"
+     "(3) update the description (-7|2|35.0|sbillinge)\n"
      "     - some new notes\n"
      "     - notes2\n"
-     "----------------------------------------------------------------------\n"
+     "---------------------------------------------------------------------------------\n"
      ),
     (["helper", "f_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"
