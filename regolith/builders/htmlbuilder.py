@@ -67,7 +67,8 @@ class HtmlBuilder(BuilderBase):
         stdst = os.path.join(self.bldir, "static")
         if os.path.isdir(stdst):
             shutil.rmtree(stdst)
-        shutil.copytree(stsrc, stdst)
+        if os.path.isdir(stsrc):
+            shutil.copytree(stsrc, stdst)
 
     def root_index(self):
         """Render root index"""

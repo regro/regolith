@@ -1598,13 +1598,14 @@ def print_task(task_list, stati, index = True):
     ----------
     task_list: list
         A list of tasks that will be printed.
-    status:
+    stati:
         Filter status of the task
 
 
     """
     for status in stati:
-        print(f"{status}:")
+        if f"'status': '{status}'" in str(task_list):
+            print(f"{status}:")
         if index:
             for task in task_list:
                 if task.get('status') == status:
