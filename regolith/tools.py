@@ -1544,11 +1544,14 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
     grant_amounts = []
     for b in grant.get('budget'):
         if b.get('student_months'):
-            grad_val += b.get('student_months') * 30.5
+            grad_val += (b.get('student_months') -
+                         b.get('student_writeoff', 0)) * 30.5
         if b.get('postdoc_months'):
-            pd_val += b.get('postdoc_months') * 30.5
+            pd_val += (b.get('postdoc_months') -
+                         b.get('postdoc_writeoff', 0)) * 30.5
         if b.get('ss_months'):
-            ss_val += b.get('ss_months') * 30.5
+            ss_val += (b.get('ss_months') -
+                         b.get('ss_writeoff', 0)) * 30.5
     if isinstance(appts, dict):
         appts = collect_appts([{"appointments": appts}])
     for x in range(timespan.days + 1):

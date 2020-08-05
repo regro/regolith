@@ -202,7 +202,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
             grant.update({'begin_date': grant_begin, 'end_date': grant_end})
             grant_amounts = grant_burn(grant, all_appts, grant_begin, grant_end)
             end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
-                        grant_amounts[-1].get('ss_days')
+                        grant_amounts[-1].get('ss_days') - grant_amounts[-1].get('ss_writeoff', 0) - \
+                        grant_amounts[-1].get('student_writeoff', 0) - grant_amounts[-1].get('postdoc_writeoff', 0)
             if end_amount > 30.5:
                 underspent.append("    {}: grant: {}, underspend amount: {} months".format(
                     str(grant_end), grant.get('alias'), round(end_amount/30.5, 2)))
