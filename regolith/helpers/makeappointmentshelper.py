@@ -63,6 +63,7 @@ def plotter(datearray, student=None, pd=None, ss=None, title=None):
     ax.set_ylabel('budget months remaining')
     ax.set_title(title)
     ax.legend(loc='best')
+    fig.autofmt_xdate()
     return fig, ax, "plotting mode is on"
 
 
