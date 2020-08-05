@@ -105,20 +105,7 @@ class MembersListerHelper(SoutHelperBase):
                     people.append(person)
                 else:
                     people.append(person)
-
-
-        for person in gtx["people"]:
-            if rc.current:
-                if not person.get('active'):
-                    continue
-                people.append(person)
-            elif rc.prior:
-                if person.get('active'):
-                    continue
-                people.append(person)
-            else:
-                people.append(person)
-
+                    
         for i in people:
             if rc.verbose:
                 print("{}, {} | group_id: {}".format(i.get('name'), i.get('position'), i.get('_id')))
