@@ -27,42 +27,33 @@ ACTIVE_STATI = ["proposed", "started"]
 
 def subparser(subpi):
     subpi.add_argument("--all", action="store_true",
-                       help="Lists all projecta in general"
-                       )
+                       help="Lists all projecta in general")
     subpi.add_argument("-c", "--current", action="store_true",
                        help="Lists all active projecta")
     subpi.add_argument("-v", "--verbose", action="store_true",
-                       help='increase verbosity of output'
-                       )
+                       help="increase verbosity of output")
     subpi.add_argument("-l", "--lead",
-                       help="Filter milestones for this project lead"
-                       )
+                       help="Filter milestones for this project lead")
     subpi.add_argument("-p", "--person",
-                       help="Filter milestones for this person whether lead or not"
-                       )
+                       help="Filter milestones for this person whether lead or not")
     subpi.add_argument("-e", "--ended", action="store_true",
-                       help="Lists projecta that have ended. Use the -d and -r flags to specify"
-                            " up to what date and how many days around that"
-                       )
+                       help="Lists projecta that have ended. Use the -d and -r flags to specify up to "
+                            "what date and how many days before then. The default is 7 days before today.")
     subpi.add_argument("-d", "--date",
-                       help="projecta with end_date within RANGE before this date will be listed."
-                            " Default is today"
-                            " Be wary some projecta do not have a specified end date"
-                       )
+                       help="projecta with end_date within RANGE before this date will be listed. "
+                            "The default is today. Some projecta don't have an end date and won't appear in a search")
     subpi.add_argument("-r", "--range",
-                       help="date range back from DATE to search over in days. If no "
-                            "range is specified, search will be 0 days"
-                       )
+                       help="date range back from DATE to search over in days. "
+                       "If no range is specified, search range will be 7 days")
     subpi.add_argument("-g", "--grant",
-                       help="Filter projecta by a grant ID"
-                       )
+                       help="Filter projecta by a grant ID")
     subpi.add_argument("--grp_by_lead", action='store_true',
                        help="Lists all projecta by their lead")
     subpi.add_argument("-f", "--filter", nargs="+",
-                       help="Search this collection by giving key element pairs"
-                       )
-    subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when running "
-                                                       "--filter. If no argument is given the default is just the id.")
+                       help="Search this collection by giving key element pairs")
+    subpi.add_argument("-k", "--keys", nargs="+",
+                       help="Specify what keys to return values from when running --filter. "
+                            "If no argument is given the default is just the id.")
     return subpi
 
 
@@ -119,10 +110,11 @@ class ProjectaListerHelper(SoutHelperBase):
         if rc.range:
             num_of_days = int(rc.range)
         else:
-            num_of_days = 0
+            num_of_days = 7
 
         projecta = []
         end_projecta = []
+        error_projecta = []
         grouped_projecta = {}
         if rc.lead and rc.person:
             raise RuntimeError(
@@ -154,24 +146,17 @@ class ProjectaListerHelper(SoutHelperBase):
                 continue
             if rc.ended:
                 if projectum.get('status') not in ACTIVE_STATI:
-                    if desired_date == dt.date.today() and num_of_days == 0:
-                        projecta.append(projectum)
+                    if projectum.get('status') != 'finished' or projectum.get('end_date') == None or type(projectum.get('end_date')) != dt.date:
+                        error_projecta.append(projectum)
                     else:
-                        if projectum.get('end_date') != None:
-                            end_date = projectum.get('end_date')
-                            if isinstance(end_date, str):
-                                end_date = date_parser.parse(
-                                    end_date).date()
-                            low_range = desired_date - \
-                                dt.timedelta(days=num_of_days)
-                            high_range = desired_date + \
-                                dt.timedelta(days=num_of_days)
-                            if num_of_days != 0:
-                                if low_range <= end_date <= high_range:
-                                    end_projecta.append(projectum)
-                            else:
-                                if end_date <= high_range:
-                                    end_projecta.append(projectum)
+                        end_date = projectum.get('end_date')
+                        if isinstance(end_date, str):
+                            end_date = date_parser.parse(
+                                end_date).date()
+                        low_range = desired_date - \
+                            dt.timedelta(days=num_of_days)
+                        if low_range <= end_date:
+                            end_projecta.append(projectum)
                 if end_projecta != []:
                     projecta = end_projecta
                 continue
@@ -219,6 +204,25 @@ class ProjectaListerHelper(SoutHelperBase):
             print(results, end="")
             return
 
+        if end_projecta != []:
+            if desired_date == dt.date.today() and num_of_days == 7:
+                print("\nProjecta finished this past week! o(*^▽^*)o")
+            else:
+                print(
+                    f"\nProjecta finished within the {num_of_days} days leading up to {desired_date}")
+        elif end_projecta == [] and rc.ended:
+            if desired_date == dt.date.today() and num_of_days == 7:
+                print("\nNo projecta finished this week ¯\\_(ツ)_/¯")
+            else:
+                print(
+                    f"\nNo projecta finished within the {num_of_days} days leading up to {desired_date}")
+
         for i in projecta:
-            print(i.get("_id"))
-        return
+            if projecta != []:
+                print(i.get("_id"))
+
+        if error_projecta != []:
+            print("\nWARNING: These projecta have an issue with the end date and/or status, "
+                  "please run f_prum to set status to finished and add an end date")
+            for i in error_projecta:
+                print(i.get("_id"))
