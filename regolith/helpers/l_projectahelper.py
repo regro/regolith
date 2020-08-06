@@ -146,7 +146,9 @@ class ProjectaListerHelper(SoutHelperBase):
                 continue
             if rc.ended:
                 if projectum.get('status') not in ACTIVE_STATI:
-                    if projectum.get('status') != 'finished' or projectum.get('end_date') == None or type(projectum.get('end_date')) != dt.date:
+                    if projectum.get('status') == 'cancelled':
+                        continue
+                    elif projectum.get('status') != 'finished' or projectum.get('end_date') == None or type(projectum.get('end_date')) != dt.date:
                         error_projecta.append(projectum)
                     else:
                         end_date = projectum.get('end_date')
