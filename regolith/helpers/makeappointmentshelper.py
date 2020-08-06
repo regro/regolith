@@ -8,6 +8,7 @@
 """
 import numpy
 from dateutil.relativedelta import relativedelta
+from datetime import timedelta, date
 import sys
 
 from regolith.helpers.basehelper import SoutHelperBase
@@ -31,6 +32,7 @@ HELPER_TARGET = "makeappointments"
 BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
               'summer@seas']
 ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
+project_from_date = date.today()
 
 
 def subparser(subpi):
@@ -158,10 +160,10 @@ class MakeAppointmentsHelper(SoutHelperBase):
                             day_burn = this_burn[x].get('postdoc_days')
                         elif appt.get('type') == 'ss':
                             day_burn = this_burn[x].get('ss_days')
-                        if day_burn < 0:
+                        if day_burn < 5:
                             depleted.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
-                                person.get('_id'), appt.get('_id'), grant.get('_id'), str(day), str(appt_end)))
+                                person.get('_id'), appt.get('_id'), grant.get('alias'), str(day), str(appt_end)))
                             depleted_period = True
             grants_with_appts = list(set(grants_with_appts))
         datearray, cum_student, cum_pd, cum_ss = [], None, None, None
@@ -200,28 +202,32 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 else get_dates(prop)['begin_date']
             grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
                 else get_dates(prop)['end_date']
+            days_to_go = (grant_end - project_from_date).days
             grant.update({'begin_date': grant_begin, 'end_date': grant_end})
             grant_amounts = grant_burn(grant, all_appts, grant_begin, grant_end)
             end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
-                        grant_amounts[-1].get('ss_days') - grant_amounts[-1].get('ss_writeoff', 0) - \
-                        grant_amounts[-1].get('student_writeoff', 0) - grant_amounts[-1].get('postdoc_writeoff', 0)
+                        grant_amounts[-1].get('ss_days')
             if end_amount > 30.5:
-                underspent.append("    {}: grant: {}, underspend amount: {} months".format(
-                    str(grant_end), grant.get('alias'), round(end_amount/30.5, 2)))
+                underspent.append("    End: {}: grant: {}, underspend: {} months, required ss+gra burn: {}".format(
+                    str(grant_end), grant.get('alias'), round(end_amount/30.5, 2),
+                    round(end_amount / days_to_go, 2)))
             elif end_amount < -30.5:
                 overspent.append("    {}: grant: {}, overspend amount: {} months".format(
                     str(grant_end), grant.get('alias'), round(end_amount/30.5, 2)))
             if not rc.no_plot:
                 grant_dates = []
                 grant_duration = (grant_end - grant_begin).days + 1
-                this_student, this_pd, this_ss = [0.0] * grant_duration, [0.0] * grant_duration, [0.0] * grant_duration
+                this_student, this_pd, this_ss = [0.0] * grant_duration, [
+                    0.0] * grant_duration, [0.0] * grant_duration
                 counter = 0
                 for x in range(len(datearray)):
                     if is_current(grant, now=datearray[x]):
                         grant_dates.append(datearray[x])
-                        this_student[counter] = grant_amounts[counter].get('student_days')
+                        this_student[counter] = grant_amounts[counter].get(
+                            'student_days')
                         cum_student[x] += grant_amounts[counter].get('student_days')
-                        this_pd[counter] = grant_amounts[counter].get('postdoc_days')
+                        this_pd[counter] = grant_amounts[counter].get(
+                            'postdoc_days')
                         cum_pd[x] += grant_amounts[counter].get('postdoc_days')
                         this_ss[counter] = grant_amounts[counter].get('ss_days')
                         cum_ss[x] += grant_amounts[counter].get('ss_days')
@@ -247,11 +253,12 @@ class MakeAppointmentsHelper(SoutHelperBase):
             for grant in overspent:
                 print(grant)
 
+
         if not rc.no_plot:
             for plot in plots:
                 if not rc.no_gui:
                     plt.show()
-            cum_plot, cum_ax, outp =  plotter(datearray, student=cum_student,
+            cum_plot, cum_ax, outp = plotter(datearray, student=cum_student,
                                              pd=cum_pd, ss=cum_ss,
                                              title="Cumulative burn")
             if not rc.no_gui:
