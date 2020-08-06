@@ -155,7 +155,7 @@ class ProjectaListerHelper(SoutHelperBase):
                                 end_date).date()
                         low_range = desired_date - \
                             dt.timedelta(days=num_of_days)
-                        if low_range <= end_date:
+                        if low_range <= end_date <= desired_date:
                             end_projecta.append(projectum)
                 if end_projecta != []:
                     projecta = end_projecta
