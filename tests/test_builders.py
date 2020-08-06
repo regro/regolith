@@ -126,7 +126,8 @@ def test_builder(bm, db_src, make_db, make_mongodb):
                 # Skip because of a date time in
                 if file != "rss.xml":
                     if file.endswith('.html') or file.endswith('.tex'):
-                        assert is_same(expected, actual, ['../..', 'tmp'])
+                        if not is_same(expected, actual, ['../..', 'tmp']):
+                            assert actual == expected
                     else:
                         assert expected == actual
 
@@ -183,6 +184,7 @@ def test_builder_python(bm, make_db):
                 # Skip because of a date time in
                 if file != "rss.xml":
                     if file.endswith('.html') or file.endswith('.tex'):
-                        assert is_same(expected, actual, ['../..', 'tmp'])
+                        if not is_same(expected, actual, ['../..', 'tmp']):
+                            assert actual == expected
                     else:
                         assert expected == actual

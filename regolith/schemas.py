@@ -442,7 +442,7 @@ EXEMPLARS = {
     """,
         "email": "<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>",
     },
-    "institutions": {
+    "institutions": [{
         "_id": "columbiau",
         "aka": ["Columbia University", "Columbia"],
         "city": "New York",
@@ -481,6 +481,49 @@ EXEMPLARS = {
         "year": 2020,
         "zip": "10027",
     },
+    {
+        "_id": "usouthcarolina",
+        "aka": ["The University of South Carolina"],
+        "city": "Columbia",
+        "country": "USA",
+        "day": 30,
+        "departments": {
+            "physics": {
+                "name": "Department of Physics",
+                "aka": ["Dept. of Physics", "Physics"],
+            },
+            "chemistry": {
+                "name": "Department of Chemistry",
+                "aka": ["Chemistry", "Dept. of Chemistry"],
+            },
+            "apam": {
+                "name": "Department of Applied Physics" "and Applied Mathematics",
+                "aka": ["APAM"],
+            },
+            "mechanical engineering": {
+                "name": "Department of Mechanical Engineering",
+                "aka":["Mechanical", "Dept. of Mechanical"],
+            }
+        },
+        "month": "May",
+        "name": "The University of South Carolina",
+        "schools": {
+            "cec": {
+                "name": "College of Engineering and" "Computing",
+                "aka": [
+                    "CEC",
+                    "College of Engineering and Computing",
+                ],
+            }
+        },
+        "state": "SC",
+        "street": "1716 College Street",
+        "updated": "2020-06-30",
+        "uuid": "4E89A0DD-19AE-45CC-BCB4-83A2D84545E3",
+        "year": 2020,
+        "zip": "29208",
+    },
+    ],
     "jobs": {
         "_id": "0004",
         "background_fields": [
@@ -849,6 +892,7 @@ EXEMPLARS = {
     },
     {
         "_id": "sbillinge",
+        "active": True,
         "activities": [{
             "type": "teaching",
             "name": "course development",
