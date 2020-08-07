@@ -5,18 +5,14 @@ import os
 import platform
 import re
 import sys
-import time
-from copy import deepcopy, copy
-from calendar import monthrange
+from copy import copy
 from copy import deepcopy
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
-import math
 
-from regolith.chained_db import ChainDB
-from regolith.dates import month_to_int, date_to_float, get_dates, last_day, is_current
-from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
+from regolith.dates import month_to_int, date_to_float, get_dates, is_current
+from regolith.sorters import doc_date_key, id_key, ene_date_key
 from regolith.chained_db import ChainDB
 from regolith.schemas import APPOINTMENTS_TYPE
 
@@ -1197,6 +1193,32 @@ def group_member_ids(ppl_coll, grpname):
                     grpmembers.add(person["_id"])
     return grpmembers
 
+def group_member_employment_start_end(person, grpname):
+    """
+    Get start and end dates of group member employment
+
+    Parameters
+    ----------
+    person dict
+      The person whose dates we want
+    grpname
+      The code for the group we want the dates of employment from
+
+    Returns
+    -------
+    list of dicts
+       The employment periods, with person id, begin and end dates
+
+    """
+    grpmember = []
+    for k in ["employment"]:
+        for position in person.get(k, {}):
+            if position.get("group", None) == grpname:
+                dates = get_dates(position)
+                grpmember.append({"_id": person["_id"],
+                                 "begin_date": dates.get("begin_date"),
+                                 "end_date": dates.get("end_date")})
+    return grpmember
 
 def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
     """Retrieves a list of all documents from the collection where the fragment
@@ -1485,7 +1507,8 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
                             day = begin_date + relativedelta(days=y)
                             if is_current(p_appts[a], now=day):
                                 appts.append(p_appts[a])
-                                appts[-1].update({'person': p.get('_id'), '_id': a})
+                                appts[-1].update({'person': p.get('_id'),
+                                                  '_id': a})
                                 break
                     else:
                         appts.append(p_appts[a])
@@ -1500,6 +1523,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
             else:
                 appts.append(p_appts[a])
                 appts[-1].update({'person': p.get('_id'), '_id': a})
+
     return appts
 
 
@@ -1573,7 +1597,7 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
 def validate_meeting(meeting, date):
     """
     Validates a meeting by checking is it has a journal club doi, a presentation link, and a presentation
-    title. This function will return nothing is the meeting is valid, otherwise it will raise a ValueError. 
+    title. This function will return nothing is the meeting is valid, otherwise it will raise a ValueError.
 
     Parameters
     ----------
