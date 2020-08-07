@@ -63,7 +63,7 @@ helper_map = [
      "20ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--ended", "--date", "2020-06-02"],
-     "No projecta finished within the 7 days leading up to 2020-06-02\n"
+     "\nNo projecta finished within the 7 days leading up to 2020-06-02\n"
      ),
     (["helper", "l_grants", "--current", "--date", "2020-05-25"],
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\ndmref15, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
