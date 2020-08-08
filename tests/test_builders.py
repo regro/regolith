@@ -73,7 +73,10 @@ def test_builder(bm, db_src, make_db, make_mongodb):
     if db_src == "fs":
         repo = make_db
     elif db_src == "mongo":
-        repo = make_mongodb
+        if make_mongodb is False:
+            pytest.skip("Mongoclient failed to start")
+        else:
+            repo = make_mongodb
     else:
         raise ValueError("Unknown database source: {}".format(db_src))
     os.chdir(repo)
@@ -132,9 +135,16 @@ def test_builder(bm, db_src, make_db, make_mongodb):
                         assert expected == actual
 
 
+@pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("bm", builder_map)
-def test_builder_python(bm, make_db):
-    repo = make_db
+def test_builder_python(bm, db_src, make_db, make_mongodb):
+    if db_src == "fs":
+        repo = make_db
+    elif db_src == "mongo":
+        if make_mongodb is False:
+            pytest.skip("Mongoclient failed to start")
+        else:
+            repo = make_mongodb
     os.chdir(repo)
     if bm == "figure":
         prep_figure()
