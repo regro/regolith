@@ -23,6 +23,8 @@ TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"
 
 ACTIVE_STATI = ["proposed", "started"]
+INACTIVE_STATI = ["back_burner", "cancelled"]
+FINISHED_STATI = ["finished"]
 
 
 def subparser(subpi):
@@ -112,9 +114,7 @@ class ProjectaListerHelper(SoutHelperBase):
         else:
             num_of_days = 7
 
-        projecta = []
-        end_projecta = []
-        error_projecta = []
+        projecta, end_projecta, error_projecta = [], [], []
         grouped_projecta = {}
         if rc.lead and rc.person:
             raise RuntimeError(
@@ -146,9 +146,10 @@ class ProjectaListerHelper(SoutHelperBase):
                 continue
             if rc.ended:
                 if projectum.get('status') not in ACTIVE_STATI:
-                    if projectum.get('status') == 'cancelled':
+                    if projectum.get('status') in INACTIVE_STATI:
                         continue
-                    elif projectum.get('status') != 'finished' or projectum.get('end_date') == None or type(projectum.get('end_date')) != dt.date:
+                    elif projectum.get('status') not in FINISHED_STATI \
+                            or not isinstance(projectum.get('end_date'), dt.date):
                         error_projecta.append(projectum)
                     else:
                         end_date = projectum.get('end_date')
@@ -214,16 +215,15 @@ class ProjectaListerHelper(SoutHelperBase):
                     f"\nProjecta finished within the {num_of_days} days leading up to {desired_date}")
         elif end_projecta == [] and rc.ended:
             if desired_date == dt.date.today() and num_of_days == 7:
-                print("\nNo projecta finished this week ¯\\_(ツ)_/¯")
+                print("\nNo projecta finished this week")
             else:
                 print(
                     f"\nNo projecta finished within the {num_of_days} days leading up to {desired_date}")
 
         for i in projecta:
-            if projecta != []:
-                print(i.get("_id"))
+            print(i.get("_id"))
 
-        if error_projecta != []:
+        if error_projecta:
             print("\nWARNING: These projecta have an issue with the end date and/or status, "
                   "please run f_prum to set status to finished and add an end date")
             for i in error_projecta:
