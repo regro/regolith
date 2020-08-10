@@ -159,7 +159,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     else get_dates(prop)['end_date']
                 grant.update({'begin_date': grant_begin, 'end_date': grant_end})
                 appt_begin, appt_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
-                this_burn = grant_burn(grant, all_appts, grant_begin, grant_end, begin_date=appt_begin, end_date=appt_end)
+                this_burn = grant_burn(grant, all_appts, begin_date=appt_begin, end_date=appt_end)
                 timespan = appt_end - appt_begin
                 outdated_period, depleted_period = False, False
                 for x in range (timespan.days + 1):
@@ -222,9 +222,17 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 else get_dates(prop)['begin_date']
             grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
                 else get_dates(prop)['end_date']
+            budget_begin = min(get_dates(period)['begin_date'] for period in grant.get('budget'))
+            budget_end = max(get_dates(period)['end_date'] for period in grant.get('budget'))
+            if grant_begin < budget_begin:
+                raise RuntimeError(f"grant does not have a complete budget. grant begin: {grant_begin} "
+                                   f"budget begin: {budget_begin}")
+            elif grant_end > budget_end:
+                raise RuntimeError(f"grant {grant.get('alias')} does not have a complete budget. grant end: {grant_end} "
+                                   f"budget end: {budget_end}")
             days_to_go = (grant_end - projection_from_date).days
             grant.update({'begin_date': grant_begin, 'end_date': grant_end})
-            grant_amounts = grant_burn(grant, all_appts, grant_begin, grant_end)
+            grant_amounts = grant_burn(grant, all_appts)
             end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
                         grant_amounts[-1].get('ss_days')
             if end_amount > 15.25:

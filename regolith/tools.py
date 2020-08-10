@@ -1591,10 +1591,6 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
                 gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
                          "ss_days": round(ss_val, 2)}
                 grant_amounts.append(gvals)
-    if begin_date and begin_date < budget_begin:
-        raise ValueError(f"given begin date is before the begin date of the grant budget {b_begin}")
-    elif end_date and end_date > budget_end:
-        raise ValueError(f"given end date is before the end date of the grant budget {b_end}")
     return grant_amounts
 
 

@@ -382,7 +382,7 @@ EXEMPLARS = {
          "title": "The answer to life, the universe, and everything",
          "budget": [
              {"begin_date": "2020-06-01",
-              "end_date": "2020-08-30",
+              "end_date": "2020-12-31",
               "student_months": 0.0,
               "postdoc_months": 0.0,
               "ss_months": 1.0,
