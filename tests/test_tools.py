@@ -11,6 +11,7 @@ from regolith.tools import (
     group,
     is_fully_appointed,
     group_member_ids,
+    group_member_employment_start_end,
     month_and_year,
     awards_grants_honors,
     get_id_from_name,
@@ -743,12 +744,23 @@ appointed_people = [
      'appointments': {
      "A": {"begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
      "B": {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
-     "C": {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}}},
+     "C": {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}},
+     "employment": [
+         {'group': 'permutation', 'begin_date': '2014-06-01', 'end_date': '2015-06-01'},
+         {'group': 'matrix', 'begin_year': '2020', 'end_day': '5', 'end_month': '12', 'end_year': '2020'},
+         {'group': 'permutation', 'begin_day': 4, 'begin_month': 9, 'begin_year': 2012, 'end_day': 5,
+          'end_month': 9, 'end_year': 2012}
+     ]},
     {'name': 'MC Escher', '_id': 'mcescher',
      'appointments':{
      "A": {"begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
      "B": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
-     "C": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},}},
+     "C": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},},
+     'employment': [
+         {'group': 'transformation', 'begin_date': '2018-07-24', 'end_date': dt.date(2020, 8, 1)},
+         {'group': 'abstract', 'begin_year': 2010, 'end_day': 5, 'end_month': 12, 'end_year': 2020},
+         {'group': 'abstract', 'begin_date': '2012-06-30', 'end_date': '2012-09-05'}
+     ]},
     {'name': 'Johann Sebastian Bach', '_id': 'jsbach',
      'appointments': {
      "A": {"begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
@@ -930,3 +942,22 @@ def test_validate_meeting(meeting, date, expected):
         with pytest.raises(ValueError) as excinfo:
             actual = validate_meeting(meeting, date)
         assert str(excinfo.value) == expected
+
+
+@pytest.mark.parametrize(
+    "person,grpname,expected",
+    [
+        (appointed_people[0], 'permutation',
+         [{'_id': 'kgodel', 'begin_date': dt.date(2014, 6, 1), 'end_date': dt.date(2015, 6, 1)},
+          {'_id': 'kgodel', 'begin_date': dt.date(2012, 9, 4), 'end_date': dt.date(2012, 9, 5)}]
+         ),
+        (appointed_people[1], 'transformation',
+         [{'_id': 'mcescher', 'begin_date': dt.date(2018, 7, 24), 'end_date': dt.date(2020, 8, 1)}]
+        ),
+        (appointed_people[2], 'abstract', [])
+    ]
+)
+def test_group_member_employment_start_end(person, grpname, expected):
+    actual = group_member_employment_start_end(person, grpname)
+    assert actual == expected
+
