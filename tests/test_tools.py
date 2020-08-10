@@ -854,21 +854,21 @@ grant3 = {'_id': 'grant3', 'budget': [
 grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-09-07',  'student_months': 1, 'postdoc_months': 1, 'ss_months': 1}]}
 @pytest.mark.parametrize(
-    "grant,appointments,grant_begin,grant_end,start,end,expected",
+    "grant,appointments,start,end,expected",
     [
-        (grant1, appts, '2019-09-01', '2019-09-10', None, None,
-         [{'date': '2019-09-01', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 136.25},
-          {'date': '2019-09-02', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 135.25},
-          {'date': '2019-09-03', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 134.25},
-          {'date': '2019-09-04', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 133.25},
-          {'date': '2019-09-05', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 132.25},
-          {'date': '2019-09-06', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 131.25},
-          {'date': '2019-09-07', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 130.25},
+        (grant1, appts, None, None,
+         [{'date': '2019-09-01', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 29.5},
+          {'date': '2019-09-02', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 28.5},
+          {'date': '2019-09-03', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 27.5},
+          {'date': '2019-09-04', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 72.25},
+          {'date': '2019-09-05', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 71.25},
+          {'date': '2019-09-06', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 70.25},
+          {'date': '2019-09-07', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 69.25},
           {'date': '2019-09-08', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 129.25},
           {'date': '2019-09-09', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 128.25},
           {'date': '2019-09-10', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 127.25}]
         ),
-        (grant2, appts, '2019-09-01', '2019-12-31', '2019-12-15', '2019-12-31',
+        (grant2, appts, '2019-12-15', '2019-12-31',
          [{'date': '2019-12-15', 'postdoc_days': 76.25, 'ss_days': 9.5, 'student_days': 122.0},
           {'date': '2019-12-16', 'postdoc_days': 75.35, 'ss_days': 8.5, 'student_days': 122.0},
           {'date': '2019-12-17', 'postdoc_days': 74.45, 'ss_days': 7.5, 'student_days': 122.0},
@@ -887,10 +887,10 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
           {'date': '2019-12-30', 'postdoc_days': 62.75, 'ss_days': -1.5, 'student_days': 122.0},
           {'date': '2019-12-31', 'postdoc_days': 61.85, 'ss_days': -2.5, 'student_days': 122.0}]
         ),
-        (grant3, appts, '2019-09-01', '2019-12-31', '2019-12-31', '2019-12-31',
+        (grant3, appts, '2019-12-31', '2019-12-31',
         [{'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
         ),
-        (grant4, appts, '2019-09-01', '2019-09-07', None, None,
+        (grant4, appts, None, None,
         [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 29.5, 'student_days': 30.5},
          {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 28.5, 'student_days': 30.5},
@@ -899,10 +899,10 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
          {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5},
          {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5}]
          ),
-        ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts, '2012-12-23', '2012-12-23',
+        ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts,
          '2012-12-23', '2013-01-24', 'magical_grant has no specified budget'
          ),
-         (grant4, appointed_people[0].get('appointments'), '2019-09-01', '2019-09-07', None, None,
+         (grant4, appointed_people[0].get('appointments'), None, None,
         [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
@@ -913,13 +913,13 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
         )
     ]
 )
-def test_grant_burn(grant, appointments, grant_begin, grant_end, start, end, expected):
+def test_grant_burn(grant, appointments, start, end, expected):
     try:
-        actual = grant_burn(grant, appointments, grant_begin, grant_end, begin_date=start, end_date=end)
+        actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
         assert actual == expected
     except ValueError:
         with pytest.raises(ValueError) as excinfo:
-            actual = grant_burn(grant, appointments, grant_begin, grant_end, begin_date=start, end_date=end)
+            actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
         assert str(excinfo.value) == expected
 
 
