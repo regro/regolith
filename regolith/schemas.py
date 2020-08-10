@@ -1255,6 +1255,26 @@ EXEMPLARS = {
              }
         ],
     },
+        {"_id": "abeing",
+         "active": False,
+         "aka": ["being", "human", "person"],
+         "avatar": "https://xkcd.com/1221/",
+         "bio": "Abstract Being is an exemplar human existence",
+         "education": [
+             {"degree": "bachelors", "institution": "University of Laughs", "begin_year": 2010},
+         ],
+         "employment": [
+             {"group": "bg", "begin_date": "2015-06-01", "end_date": "2015-08-31", "organization": "columbiau",
+              "position": "Moral Supporter"},
+             {"group": "agroup", "begin_date": "2020-01-01", "end_date": "2030-12-31", "organization": "usouthcarolina",
+              "position": "Enthusiastic Member"},
+             {"group": "bg", "begin_date": "2010-06-01", "end_date": "2012-08-31", "organization": "columbiau",
+              "position": "Content Creator"},
+             {"group": "bg", "begin_date": "2017-06-01", "end_date": "2019-08-31", "organization": "columbiau",
+              "position": "Undercover Scientist"},
+         ],
+         "name": "Abstract Being"
+        }
     ],
     "presentations": [
         {
@@ -2771,7 +2791,6 @@ SCHEMAS = {
                     "department": {"required": False, "type": "string"},
                     "end_day": {"required": False, "type": "integer"},
                     "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"],
                                   },
                     "end_year": {"required": False, "type": "integer"},
                     "group": {

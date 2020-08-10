@@ -120,23 +120,22 @@ class MakeAppointmentsHelper(SoutHelperBase):
         grants_with_appts = []
         cum_months_to_cover = 0
         for person in self.gtx['people']:
+            person_dates = group_member_employment_start_end(person, "bg")
+            last_emp, months_to_cover = 0, 0
+            if person_dates:
+                last_emp = max([emp.get('end_date', 0) for emp in person_dates])
+            if last_emp:
+                months_to_cover = round((last_emp - projection_from_date).days / 30.5, 2)
+            if months_to_cover > 0:
+                print(
+                    f"{person['_id']} needs to be covered for {months_to_cover} months")
+                cum_months_to_cover += months_to_cover
             appts = collect_appts([person])
             if not appts:
                 continue
             this_begin = min(get_dates(appt)['begin_date'] for appt in appts)
             this_end = max(get_dates(appt)['end_date'] for appt in appts)
             is_fully_appointed(person, this_begin, this_end)
-            person_dates = group_member_employment_start_end(person, "bg")
-            last_emp = max([emp.get('end_date',0) for emp in person_dates])
-            if not last_emp:
-                print(
-                    f"WARNING: {person['_id']} has no end date in their employment")
-            else:
-                months_to_cover = round((last_emp - projection_from_date).days / 30.5, 2)
-            if months_to_cover > 0:
-                print(
-                    f"{person['_id']} needs to be covered for {months_to_cover} months")
-                cum_months_to_cover += months_to_cover
             for appt in appts:
                 grants_with_appts.append(appt.get("grant"))
                 if appt.get("grant") in BLACKLIST:
@@ -229,12 +228,12 @@ class MakeAppointmentsHelper(SoutHelperBase):
             end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
                         grant_amounts[-1].get('ss_days')
             if end_amount > 15.25:
-                underspent.append("    End: {}: grant: {}, underspend: {} months, required ss+gra burn: {}".format(
-                    str(grant_end), grant.get('alias'), round(end_amount/30.5, 2),
+                underspent.append("    end: {}, grant: {}, underspend amount: {} months,\n      required ss+gra burn: {}".
+                    format(str(grant_end), grant.get('alias'), round(end_amount/30.5, 2),
                     round(end_amount / days_to_go, 2)))
                 cum_underspend += end_amount
             elif end_amount < -30.5:
-                overspent.append("    {}: grant: {}, overspend amount: {} months".format(
+                overspent.append("    end: {}, grant: {}, overspend amount: {} months".format(
                     str(grant_end), grant.get('alias'), round(end_amount/30.5, 2)))
             if not rc.no_plot:
                 grant_dates = []

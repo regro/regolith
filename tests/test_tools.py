@@ -765,7 +765,10 @@ appointed_people = [
      'appointments': {
      "A": {"begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
      "B": {"begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
-     "C": {"begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}}},
+     "C": {"begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}},
+     'employment': [
+         {'group': 'bg', 'begin_date': '2019-02-03'}
+     ]},
     {'name': 'Ludwig Wittgenstein', '_id': 'lwittgenstein',
      'appointments': {
      "A": {'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}}},
@@ -954,10 +957,18 @@ def test_validate_meeting(meeting, date, expected):
         (appointed_people[1], 'transformation',
          [{'_id': 'mcescher', 'begin_date': dt.date(2018, 7, 24), 'end_date': dt.date(2020, 8, 1)}]
         ),
-        (appointed_people[2], 'abstract', [])
+        (appointed_people[2], 'bg', "WARNING: jsbach has no end date in employment for bg starting 2019-02-03"
+        ),
+        (appointed_people[3], 'abstract', [])
     ]
 )
 def test_group_member_employment_start_end(person, grpname, expected):
-    actual = group_member_employment_start_end(person, grpname)
-    assert actual == expected
+    try:
+        actual = group_member_employment_start_end(person, grpname)
+        assert actual == expected
+    except:
+        with pytest.raises(ValueError) as excinfo:
+            actual = group_member_employment_start_end(person, grpname)
+        assert str(excinfo.value) == expected
+
 
