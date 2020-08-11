@@ -967,7 +967,7 @@ def test_group_member_employment_start_end(person, grpname, expected):
         actual = group_member_employment_start_end(person, grpname)
         assert actual == expected
     except:
-        with pytest.raises(ValueError) as excinfo:
+        with pytest.raises(RuntimeError) as excinfo:
             actual = group_member_employment_start_end(person, grpname)
         assert str(excinfo.value) == expected
 
