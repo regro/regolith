@@ -77,11 +77,11 @@ helper_map = [
     (["helper", "l_members", "-p", "-v"],
      "Abstract Being, None | group_id: abeing\n"
       "    orcid: None | github_id: None\n"
-      "    billinge group position: Content Creator\n"
-      "    billinge group position: Moral Supporter\n"
-      "    billinge group position: Undercover Scientist\n"
+      "    billinge group position: intern\n"
+      "    billinge group position: intern\n"
+      "    billinge group position: intern\n"
       "    current organization: The University of South Carolina\n"
-      "    current position: Enthusiastic Member\n"
+      "    current position: Intern\n"
       "Anthony Scopatz, professor | group_id: scopatz\n"
       "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
       "    current organization: The University of South Carolina\n"
@@ -281,7 +281,7 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
-    (["helper", "makeappointments", "run",],
+    (["helper", "makeappointments", "run", "--no-gui",],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"

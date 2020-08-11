@@ -15,22 +15,22 @@ abeing:
       begin_date: '2015-06-01'
       end_date: '2015-08-31'
       organization: columbiau
-      position: Moral Supporter
+      position: intern
     - group: agroup
       begin_date: '2020-01-01'
       end_date: '2030-12-31'
       organization: usouthcarolina
-      position: Enthusiastic Member
+      position: intern
     - group: bg
       begin_date: '2010-06-01'
       end_date: '2012-08-31'
       organization: columbiau
-      position: Content Creator
+      position: intern
     - group: bg
       begin_date: '2017-06-01'
       end_date: '2019-08-31'
       organization: columbiau
-      position: Undercover Scientist
+      position: intern
   name: Abstract Being
 sbillinge:
   active: true

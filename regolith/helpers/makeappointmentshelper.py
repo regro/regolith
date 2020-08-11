@@ -283,7 +283,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
             for grant in overspent:
                 print(grant)
 
-
         if not rc.no_plot:
             for plot in plots:
                 if not rc.no_gui:
