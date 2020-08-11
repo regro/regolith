@@ -1215,6 +1215,9 @@ def group_member_employment_start_end(person, grpname):
         for position in person.get(k, {}):
             if position.get("group", None) == grpname:
                 dates = get_dates(position)
+                if not dates.get('end_date'):
+                    raise ValueError("WARNING: {} has no end date in employment for {} starting {}".
+                          format(person["_id"], grpname, dates.get("begin_date")))
                 grpmember.append({"_id": person["_id"],
                                  "begin_date": dates.get("begin_date"),
                                  "end_date": dates.get("end_date")})
@@ -1527,7 +1530,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     return appts
 
 
-def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=None):
+def grant_burn(grant, appts, begin_date=None, end_date=None):
     """
     Retrieves the total burn of a grant over an interval of time by integrating over all appointments
     made on the grant.
@@ -1556,43 +1559,40 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
         raise ValueError("{} has no specified budget".format(grant.get('_id')))
     if bool(begin_date) ^ bool(end_date):
         raise RuntimeError("please enter both begin date and end date or neither")
-    grant_begin = date_parser.parse(grant_begin).date() if isinstance(grant_begin, str) else grant_begin
-    grant_end = date_parser.parse(grant_end).date() if isinstance(grant_end, str) else grant_end
-    begin_date = grant_begin if not begin_date else begin_date
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
-    end_date = grant_end if not end_date else end_date
     end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
-    if begin_date > end_date:
-        raise ValueError("begin date is after end date")
-    timespan, grad_val, pd_val, ss_val = grant_end - grant_begin, 0.0, 0.0, 0.0
-    grant_amounts = []
-    for b in grant.get('budget'):
-        if b.get('student_months'):
-            grad_val += (b.get('student_months') -
-                         b.get('student_writeoff', 0)) * 30.5
-        if b.get('postdoc_months'):
-            pd_val += (b.get('postdoc_months') -
-                         b.get('postdoc_writeoff', 0)) * 30.5
-        if b.get('ss_months'):
-            ss_val += (b.get('ss_months') -
-                         b.get('ss_writeoff', 0)) * 30.5
     if isinstance(appts, dict):
         appts = collect_appts([{"appointments": appts}])
-    for x in range(timespan.days + 1):
-        day = grant_begin + relativedelta(days=x)
-        for a in appts:
-            if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a, now=day):
-                if a.get('type') == 'gra':
-                    grad_val -= a.get('loading') * 1
-                elif a.get('type') == 'pd':
-                    pd_val -= a.get('loading') * 1
-                elif a.get('type') == 'ss':
-                    ss_val -= a.get('loading') * 1
-        if begin_date <= day <= end_date:
-            gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
-                     "ss_days": round(ss_val, 2)}
-            grant_amounts.append(gvals)
+    grad_val, pd_val, ss_val = 0.0, 0.0, 0.0
+    grant_amounts = []
+    budget_dates = get_dates(grant.get('budget')[0])
+    budget_begin, budget_end = budget_dates['begin_date'], budget_dates['end_date']
+    for period in grant.get('budget'):
+        period_dates = get_dates(period)
+        period_begin, period_end = period_dates['begin_date'], period_dates['end_date']
+        budget_begin = period_begin if period_begin < budget_begin else budget_begin
+        budget_end = period_end if period_end > budget_end else budget_end
+        grad_val += (period.get('student_months', 0) - period.get('student_writeoff', 0)) * 30.5
+        pd_val += (period.get('postdoc_months', 0) - period.get('postdoc_writeoff', 0)) * 30.5
+        ss_val += (period.get('ss_months', 0) - period.get('ss_writeoff', 0)) * 30.5
+        span = period_end - period_begin
+        for x in range(span.days + 1):
+            day = period_begin + relativedelta(days=x)
+            for a in appts:
+                if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a,
+                                                                                                               now=day):
+                    if a.get('type') == 'gra':
+                        grad_val -= a.get('loading') * 1
+                    elif a.get('type') == 'pd':
+                        pd_val -= a.get('loading') * 1
+                    elif a.get('type') == 'ss':
+                        ss_val -= a.get('loading') * 1
+            if (not begin_date) or (begin_date <= day <= end_date):
+                gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
+                         "ss_days": round(ss_val, 2)}
+                grant_amounts.append(gvals)
     return grant_amounts
+
 
 def validate_meeting(meeting, date):
     """

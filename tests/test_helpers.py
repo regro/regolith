@@ -75,10 +75,17 @@ helper_map = [
      "    current position: Assistant Professor\n"
      ),
     (["helper", "l_members", "-p", "-v"],
-     "Anthony Scopatz, professor | group_id: scopatz\n"
-     "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
-     "    current organization: The University of South Carolina\n"
-     "    current position: Assistant Professor\n"
+     "Abstract Being, None | group_id: abeing\n"
+      "    orcid: None | github_id: None\n"
+      "    billinge group position: Content Creator\n"
+      "    billinge group position: Moral Supporter\n"
+      "    billinge group position: Undercover Scientist\n"
+      "    current organization: The University of South Carolina\n"
+      "    current position: Enthusiastic Member\n"
+      "Anthony Scopatz, professor | group_id: scopatz\n"
+      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
+      "    current organization: The University of South Carolina\n"
+      "    current position: Assistant Professor\n"
      ),
     (["helper", "l_members", "--filter", "name", "sco"],
      "scopatz    \n"
@@ -235,7 +242,7 @@ helper_map = [
      "Please rerun the helper specifying the complete ID.\n"
      ),
     (["helper", "lister", "people"],
-     "Results of your search:\nsbillinge    \nscopatz\n"),
+     "Results of your search:\nabeing    \nsbillinge    \nscopatz\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon"],
      "Results of your search:\n"
      "sbillinge\n"),
@@ -282,14 +289,17 @@ helper_map = [
      "            from 2020-01-01 until 2020-05-15\n"
      "appointments on depleted grants:\n"
      "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-09-01 until 2019-10-31\n"
+     "            from 2019-09-07 until 2019-10-31\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
-     "            from 2020-07-09 until 2020-08-31\n"
+     "            from 2020-07-15 until 2020-08-31\n"
      "underspent grants:\n"
-     "    2030-12-31: grant: sym, underspend amount: 8.0 months\n"
-     "    2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
+     "    end: 2030-12-31, grant: sym, underspend amount: 8.0 months,\n"
+     "      required ss+gra burn: 0.06\n"
+     "    end: 2025-09-30, grant: dmref15, underspend amount: 54.5 months,\n"
+     "      required ss+gra burn: 0.89\n"
+     "cumulative underspend = 62.5 months, cumulative months to support = 0\n"
      "overspent grants:\n"
-     "    2020-12-31: grant: abc42, overspend amount: -1.41 months\n"
+     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "plotting mode is on\n"
      ),
     (["helper", "makeappointments", "run", "--no-plot",],
@@ -300,14 +310,17 @@ helper_map = [
      "            from 2020-01-01 until 2020-05-15\n"
      "appointments on depleted grants:\n"
      "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-09-01 until 2019-10-31\n"
+     "            from 2019-09-07 until 2019-10-31\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
-     "            from 2020-07-09 until 2020-08-31\n"
+     "            from 2020-07-15 until 2020-08-31\n"
      "underspent grants:\n"
-     "    2030-12-31: grant: sym, underspend amount: 8.0 months\n"
-     "    2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
+     "    end: 2030-12-31, grant: sym, underspend amount: 8.0 months,\n"
+     "      required ss+gra burn: 0.06\n"
+     "    end: 2025-09-30, grant: dmref15, underspend amount: 54.5 months,\n"
+     "      required ss+gra burn: 0.89\n"
+     "cumulative underspend = 62.5 months, cumulative months to support = 0\n"
      "overspent grants:\n"
-     "    2020-12-31: grant: abc42, overspend amount: -1.41 months\n"
+     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      ),
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
 ]
