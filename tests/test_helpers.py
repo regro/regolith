@@ -75,7 +75,7 @@ helper_map = [
      "    current position: Assistant Professor\n"
      ),
     (["helper", "l_members", "-p", "-v"],
-     "Abstract Being, None | group_id: abeing\n"
+     "Abstract Being, intern | group_id: abeing\n"
       "    orcid: None | github_id: None\n"
       "    billinge group position: intern\n"
       "    billinge group position: intern\n"
