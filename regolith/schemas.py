@@ -2783,8 +2783,8 @@ SCHEMAS = {
                                     "anyof_type": ["string", "integer"],
                                     },
                     "begin_year": {"required": False, "type": "integer"},
-                    "begin_date": {"required": False, "type": "integer", "description": "begin date of employment in"
-                                                                                        "format YYYY-MM-DD"},
+                    "begin_date": {"required": False, "anyof_type": ["string", "date", "datetime"],
+                                   "description": "begin date of employment in format YYYY-MM-DD"},
                     "coworkers": {"required": False, "type": "list",
                                   "description": "list of coworkers.  If"
                                                  "position is editor, these are "
@@ -2795,8 +2795,8 @@ SCHEMAS = {
                     "end_month": {"required": False,
                                   },
                     "end_year": {"required": False, "type": "integer"},
-                    "end_date": {"required": False, "type": "integer", "description": "end date of employment in"
-                                                                                        "format YYYY-MM-DD"},
+                    "end_date": {"required": False, "anyof_type": ["string", "date", "datetime"],
+                                 "description": "end date of employment in format YYYY-MM-DD"},
                     "group": {
                         "required": False,
                         "type": "string",
