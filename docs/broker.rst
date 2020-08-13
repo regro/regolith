@@ -8,16 +8,17 @@ Sharing figures (and other files) among various group members can be
 difficult, as everyone has slightly different file systems.
 Regolith has a system to help with this by providing file storage which can
 be addressed to various documents in the database. In order to do so, the user
-must clone the regolith-storage github directory into their dbs folder, and run
-python in a terminal in that (regolith-storage) directory with their
-regolith_env conda environment activated. The user must also have push rights to the
+must clone the rg-db-remote-storage github repository into their dbs folder (at
+the same level as their other regolith database directories), and run
+python in a terminal in that (e.g., ~/dbs/rg-db-remote-storage) directory within
+a conda environment that can run regolith. The user must also have push rights to the
 regolith-storage git directory, and an SSH connection established.
 
 Loading the broker
 ******************
 
-To load the broker you need a ``regolithrc.json`` file. This file should
-be present in the regolith-storage directory that the user has cloned. The following
+To load the broker you need a ``regolithrc.json`` file. This file is
+present in the rg-db-remote-storage directory that the user has cloned. The following
 block of code should be run in the user's python terminal, in the cloned storage
 directory, with the regolith_env conda environment activated. If you intend to
 add a file to the heap, do not put the file in the cloned directory before loading the
