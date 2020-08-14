@@ -5,18 +5,14 @@ import os
 import platform
 import re
 import sys
-import time
-from copy import deepcopy, copy
-from calendar import monthrange
+from copy import copy
 from copy import deepcopy
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
-import math
 
-from regolith.chained_db import ChainDB
-from regolith.dates import month_to_int, date_to_float, get_dates, last_day, is_current
-from regolith.sorters import doc_date_key, id_key, ene_date_key, date_key
+from regolith.dates import month_to_int, date_to_float, get_dates, is_current
+from regolith.sorters import doc_date_key, id_key, ene_date_key
 from regolith.chained_db import ChainDB
 from regolith.schemas import APPOINTMENTS_TYPE
 
@@ -1197,6 +1193,35 @@ def group_member_ids(ppl_coll, grpname):
                     grpmembers.add(person["_id"])
     return grpmembers
 
+def group_member_employment_start_end(person, grpname):
+    """
+    Get start and end dates of group member employment
+
+    Parameters
+    ----------
+    person dict
+      The person whose dates we want
+    grpname
+      The code for the group we want the dates of employment from
+
+    Returns
+    -------
+    list of dicts
+       The employment periods, with person id, begin and end dates
+
+    """
+    grpmember = []
+    for k in ["employment"]:
+        for position in person.get(k, {}):
+            if position.get("group", None) == grpname:
+                dates = get_dates(position)
+                if not dates.get('end_date'):
+                    raise RuntimeError("WARNING: {} has no end date in employment for {} starting {}".
+                          format(person["_id"], grpname, dates.get("begin_date")))
+                grpmember.append({"_id": person["_id"],
+                                 "begin_date": dates.get("begin_date"),
+                                 "end_date": dates.get("end_date")})
+    return grpmember
 
 def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
     """Retrieves a list of all documents from the collection where the fragment
@@ -1485,7 +1510,8 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
                             day = begin_date + relativedelta(days=y)
                             if is_current(p_appts[a], now=day):
                                 appts.append(p_appts[a])
-                                appts[-1].update({'person': p.get('_id'), '_id': a})
+                                appts[-1].update({'person': p.get('_id'),
+                                                  '_id': a})
                                 break
                     else:
                         appts.append(p_appts[a])
@@ -1500,10 +1526,11 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
             else:
                 appts.append(p_appts[a])
                 appts[-1].update({'person': p.get('_id'), '_id': a})
+
     return appts
 
 
-def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=None):
+def grant_burn(grant, appts, begin_date=None, end_date=None):
     """
     Retrieves the total burn of a grant over an interval of time by integrating over all appointments
     made on the grant.
@@ -1532,45 +1559,45 @@ def grant_burn(grant, appts, grant_begin, grant_end, begin_date=None, end_date=N
         raise ValueError("{} has no specified budget".format(grant.get('_id')))
     if bool(begin_date) ^ bool(end_date):
         raise RuntimeError("please enter both begin date and end date or neither")
-    grant_begin = date_parser.parse(grant_begin).date() if isinstance(grant_begin, str) else grant_begin
-    grant_end = date_parser.parse(grant_end).date() if isinstance(grant_end, str) else grant_end
-    begin_date = grant_begin if not begin_date else begin_date
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
-    end_date = grant_end if not end_date else end_date
     end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
-    if begin_date > end_date:
-        raise ValueError("begin date is after end date")
-    timespan, grad_val, pd_val, ss_val = grant_end - grant_begin, 0.0, 0.0, 0.0
-    grant_amounts = []
-    for b in grant.get('budget'):
-        if b.get('student_months'):
-            grad_val += b.get('student_months') * 30.5
-        if b.get('postdoc_months'):
-            pd_val += b.get('postdoc_months') * 30.5
-        if b.get('ss_months'):
-            ss_val += b.get('ss_months') * 30.5
     if isinstance(appts, dict):
         appts = collect_appts([{"appointments": appts}])
-    for x in range(timespan.days + 1):
-        day = grant_begin + relativedelta(days=x)
-        for a in appts:
-            if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a, now=day):
-                if a.get('type') == 'gra':
-                    grad_val -= a.get('loading') * 1
-                elif a.get('type') == 'pd':
-                    pd_val -= a.get('loading') * 1
-                elif a.get('type') == 'ss':
-                    ss_val -= a.get('loading') * 1
-        if begin_date <= day <= end_date:
-            gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
-                     "ss_days": round(ss_val, 2)}
-            grant_amounts.append(gvals)
+    grad_val, pd_val, ss_val = 0.0, 0.0, 0.0
+    grant_amounts = []
+    budget_dates = get_dates(grant.get('budget')[0])
+    budget_begin, budget_end = budget_dates['begin_date'], budget_dates['end_date']
+    for period in grant.get('budget'):
+        period_dates = get_dates(period)
+        period_begin, period_end = period_dates['begin_date'], period_dates['end_date']
+        budget_begin = period_begin if period_begin < budget_begin else budget_begin
+        budget_end = period_end if period_end > budget_end else budget_end
+        grad_val += (period.get('student_months', 0) - period.get('student_writeoff', 0)) * 30.5
+        pd_val += (period.get('postdoc_months', 0) - period.get('postdoc_writeoff', 0)) * 30.5
+        ss_val += (period.get('ss_months', 0) - period.get('ss_writeoff', 0)) * 30.5
+        span = period_end - period_begin
+        for x in range(span.days + 1):
+            day = period_begin + relativedelta(days=x)
+            for a in appts:
+                if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a,
+                                                                                                               now=day):
+                    if a.get('type') == 'gra':
+                        grad_val -= a.get('loading') * 1
+                    elif a.get('type') == 'pd':
+                        pd_val -= a.get('loading') * 1
+                    elif a.get('type') == 'ss':
+                        ss_val -= a.get('loading') * 1
+            if (not begin_date) or (begin_date <= day <= end_date):
+                gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
+                         "ss_days": round(ss_val, 2)}
+                grant_amounts.append(gvals)
     return grant_amounts
+
 
 def validate_meeting(meeting, date):
     """
     Validates a meeting by checking is it has a journal club doi, a presentation link, and a presentation
-    title. This function will return nothing is the meeting is valid, otherwise it will raise a ValueError. 
+    title. This function will return nothing is the meeting is valid, otherwise it will raise a ValueError.
 
     Parameters
     ----------

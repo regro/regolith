@@ -88,6 +88,7 @@ class HtmlBuilder(BuilderBase):
         os.makedirs(peeps_dir, exist_ok=True)
         os.makedirs(former_peeps_dir, exist_ok=True)
         peeps = self.gtx["people"]
+        #peeps = all_docs_from_collection(rc.client), "people")
         for p in peeps:
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
