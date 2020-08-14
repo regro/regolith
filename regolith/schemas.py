@@ -1273,7 +1273,8 @@ EXEMPLARS = {
              {"group": "bg", "begin_date": "2017-06-01", "end_date": "2019-08-31", "organization": "columbiau",
               "position": "intern"},
          ],
-         "name": "Abstract Being"
+         "position": "intern",
+         "name": "Abstract Being",
         }
     ],
     "presentations": [
