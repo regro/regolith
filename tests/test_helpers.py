@@ -17,7 +17,7 @@ helper_map = [
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group_members", "ascopatz", "--grants", "SymPy-1.1", "--due_date", "2021-01-01"],
-     "20ly_newprojectum has been added in projecta\n"),
+     "ly_newprojectum has been added in projecta\n"),
     (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
       "--begin_date", "2020-09-15", "--end_date", "2022-02-14", "--duration", "16.89",
       "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "--currency", "Bitcoin",
