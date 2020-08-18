@@ -23,6 +23,7 @@ from regolith.tools import (
 
 
 def subparser(subpi):
+    subpi.add_argument("authorFullName", help="full name of the author of this grant report")
     subpi.add_argument("start_date", help="start date of the reporting period, formatted as YYYY-MM-DD",
                        default=None)
     subpi.add_argument("end_date", help="end date of the reporting period, formatted as YYYY-MM-DD")
@@ -32,7 +33,7 @@ def subparser(subpi):
 class GrantReportBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
     btype = "grantreport"
-    needed_dbs = ['presentations', 'projecta', 'people', 'grants', 'institutions', 'expenses', 'citations']
+    needed_dbs = ['presentations', 'projecta', 'people', 'grants', 'institutions', 'expenses', 'citations', 'contacts']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -100,26 +101,41 @@ class GrantReportBuilder(LatexBuilderBase):
                     defended_theses.append(id)
 
         # Products
-        # need rg-db-public's citation.yml... how to access that instead of the rg-db-group's citation.yml file
+        # need rg-db-public's citation.yml
         publications = filter_publications(self.gtx["citations"], grant_people, since=rp_start_date, before=rp_end_date)
 
         # Participants/Organizations
         participants = {}
-        for person in grant_people:
-            p = self.gtx["people"].get(person)
-            months = 0
-            if p['active']:
-                difference = datetime.today() - rp_start_date
-                if difference.day > 15:
-                    months = months + 1
-                months = difference.year * 12 + difference.month
-            else:
+        for name in grant_people:
+            person = self.gtx["people"].get(name)
+            months_on_grant, months_left = self.months_on(grant_name, person, rp_start_date, rp_end_date)
+            participants[name] = [person.get('position'), months_on_grant]
 
-                end_date = datetime.date(p['year'])
-            info = [p.get('position'), months]
+        # Other Collaborators
+        collaborator_ids = []
+        for prum in grant_prums:
+            collabs = prum.get("collaborators")
+            if collabs:
+                for id in collabs:
+                    collaborator_ids.append(id)
+        collaborator_ids = set(collaborator_ids)
+
+        collaborators = {}
+        for id in collaborator_ids:
+            contact = self.gtx["contacts"].get(id)
+            aka = contact.get("aka")
+            institution = contact.get("institution")
+            collaborators[id] = {
+                "aka": aka,
+                "institution": institution
+            }
+
+        # Impacts
+
         self.render(
             "grantreport.txt",
             "billinge_grant_report.txt",
+            authorFullName=rc.authorFullName,
             beginYear=rp_start_date.year,
             endYear=rp_end_date.year,
             majorActivities=major_activities,
@@ -127,5 +143,36 @@ class GrantReportBuilder(LatexBuilderBase):
             trainingAndProfessionalDevelopment=training_and_professional_development,
             defendedTheses=defended_theses,
             products=publications,
-            grantPeople=grant_people
+            grantPeople=grant_people,
+            participants=participants,
+            collaborators=collaborators
         )
+
+    def months_on(self, grant, person, since=datetime(1970, 1, 1), before=datetime.today()):
+        #    print('Looking at months on grant {} in period since {} until {}'.format(
+        #        grant, since, before), )
+        total_months = 0
+        appts = person.get('appointments')
+        if appts:
+            months = 0
+            for k1, v1 in appts.items():
+                if grant in v1.get('grant'):
+                    dates = get_dates(v1)
+                    startdate = dates.get('start_date')
+                    enddate = dates.get('end_date')
+                    loading = v1.get('loading')
+                    if startdate >= since and enddate <= before:
+                        months = months + (
+                                enddate - startdate).days * loading / 30.4
+                    elif startdate >= since and enddate > before:
+                        months = months + (
+                                before - startdate).days * loading / 30.4
+                    elif startdate < since and enddate <= before:
+                        months = months + (
+                                enddate - since).days * loading / 30.4
+                    elif startdate < since and enddate > before:
+                        months = months + (before - since).days * loading / 30.4
+            if months > 0:
+                total_months = total_months + months
+        months_left = (before - datetime.today())
+        return total_months, months_left
