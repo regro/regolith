@@ -1,4 +1,4 @@
-NSF {{beginYear}}-{{endYear}} Annual Report
+NSF {{beginYear}}-{{endYear}} Annual Report by {{authorFullName}}
 
 Accomplishments
 ------------------------------------------------------------------------------
@@ -84,22 +84,14 @@ Participants/Organizations
 What individuals have worked on the project?
 
 Name, Most Senior Project Role, Nearest Person Month Worked
-{%- for person in grantPeople %}
-    - {{person.get('_id')}}, {{person.get(''}}
+{%- for person, info in participants.items() %}
+    - {{person}}: {{info[0]}}, {{info[1]}}
 {% endfor -%}}
-Full details of individuals who have worked on the project:
 
-Name:
-Email:
-Most Senior Project Role:
-Nearest Person Month Worked:
-Contribution to the Project:
-Funding Support:
-International Collaboration:
-International Travel:
-
-What other organizations have been involved as partners?
-What other collaborators or contacts have been involved?
+What other organizations have been involved as partners?/What other collaborators or contacts have been involved?
+{%- for contact, info in collaborators.items() %}
+    - {{contact}}: aka: {{info["aka"]}}, institution: {{info["institution"]}}
+{% endfor -%}}
 
 Impacts
 ------------------------------

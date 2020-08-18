@@ -1,4 +1,4 @@
-NSF 2019-2020 Annual Report
+NSF 2019-2020 Annual Report by Simon J. L. Billinge
 
 Accomplishments
 ------------------------------------------------------------------------------
@@ -69,19 +69,7 @@ What individuals have worked on the project?
 
 Name, Most Senior Project Role, Nearest Person Month Worked
 
-Full details of individuals who have worked on the project:
-
-Name:
-Email:
-Most Senior Project Role:
-Nearest Person Month Worked:
-Contribution to the Project:
-Funding Support:
-International Collaboration:
-International Travel:
-
-What other organizations have been involved as partners?
-What other collaborators or contacts have been involved?
+What other organizations have been involved as partners?/What other collaborators or contacts have been involved?
 
 Impacts
 ------------------------------
