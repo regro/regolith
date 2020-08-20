@@ -11,6 +11,7 @@ from regolith.tools import (
     awards_grants_honors,
     latex_safe,
     make_bibtex_file,
+    merge_collections,
 )
 
 
@@ -58,6 +59,8 @@ class ResumeBuilder(LatexBuilderBase):
                 all_docs_from_collection(rc.client, "projects"), names
             )
             grants = list(all_docs_from_collection(rc.client, "grants"))
+            proposals = list(all_docs_from_collection(rc.client, "proposals"))
+            grants = merge_collections(proposals, grants, "proposal_id")
             pi_grants, pi_amount, _ = filter_grants(grants, names, pi=True)
             coi_grants, coi_amount, coi_sub_amount = filter_grants(
                 grants, names, pi=False
