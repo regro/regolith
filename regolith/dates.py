@@ -209,7 +209,9 @@ def get_dates(thing, date_field_prefix=None):
 
     minimal_set = ["end_year", "begin_year", "year", "begin_date", "end_date",
                    "date"]
-    minimal_things = list(set([thing.get(i) for i in minimal_set]))
+    minimal_things = list(set([thing.get(i) for i in datenames])) if date_field_prefix \
+        else list(set([thing.get(i) for i in minimal_set]))
+    print("len", len(minimal_things))
     if len(minimal_things) == 1 and not minimal_things[0]:
         print("WARNING: cannot find any dates")
         dates = {'begin_date': None, 'end_date': None, 'date': None}
