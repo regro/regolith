@@ -3,6 +3,7 @@
 """
 import datetime as dt
 import dateutil.parser as date_parser
+import math
 import sys
 from dateutil.relativedelta import *
 
@@ -13,23 +14,28 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
+    print_task,
+    key_value_pair_filter
 )
 
 TARGET_COLL = "people"
 TARGET_COLL2 = "projecta"
-TARGET_COLL3 = "meetings"
 HELPER_TARGET = "l_todo"
 Importance = [0, 1, 2]
-ALLOWED_STATI = ["started", "finished"]
+ALLOWED_STATI = ["started", "finished", "cancelled"]
+ACTIVE_STATI = ["started", "converged", "proposed"]
 
 
 def subparser(subpi):
-    subpi.add_argument("-v", "--verbose", action="store_true",
-                       help="List both completed and uncompleted tasks. ")
-    subpi.add_argument("-s", "--short_tasks", nargs='?', const=30,
+    subpi.add_argument("-s", "--stati", nargs='+', help=f'Filter tasks with specific status from {ALLOWED_STATI}. '
+                                                        f'Default is started.', default=["started"])
+    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
+    subpi.add_argument("--short", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
-    subpi.add_argument("-a", "--assigned_to",
+    subpi.add_argument("-t", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
+    subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
+                       help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("-c", "--certain_date",
                        help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
 
@@ -41,7 +47,7 @@ class TodoListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}', f'{TARGET_COLL2}', f'{TARGET_COLL3}']
+    needed_dbs = [f'{TARGET_COLL}', f'{TARGET_COLL2}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -90,7 +96,8 @@ class TodoListerHelper(SoutHelperBase):
             today = dt.date.today()
         else:
             today = date_parser.parse(rc.certain_date).date()
-
+        if rc.stati == ["started"]:
+            rc.stati = ACTIVE_STATI
         for projectum in self.gtx["projecta"]:
             if projectum.get('lead') != rc.assigned_to:
                 continue
@@ -105,36 +112,56 @@ class TodoListerHelper(SoutHelperBase):
                         ms.update({
                             'id': projectum.get('_id'),
                             'due_date': due_date,
+                            'assigned_by': projectum.get('pi_id')
                         })
                         ms.update({'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
                         gather_todos.append(ms)
-
-        for item in gather_todos:
-            if not item.get('importance'):
-                item['importance'] = 1
-            if type(item["due_date"]) == str:
-                item["due_date"] = date_parser.parse(item["due_date"]).date()
-        gather_todos = sorted(gather_todos, key=lambda k: (k['due_date'], -k['importance']))
-
-        if rc.short_tasks:
-            for t in gather_todos[::-1]:
-                if t.get('duration') is None or float(t.get('duration')) > float(rc.short_tasks):
-                    gather_todos.remove(t)
-        num = 1
-        print("    action (days to due date|importance|expected duration(mins))")
-        for t in gather_todos:
-            if t.get('status') not in ["finished", "cancelled"]:
-                days=(t.get('due_date')-today).days
-                print(f"{num:>2}. {t.get('description')}({days}|{t.get('importance')}|{str(t.get('duration'))})")
-                if t.get('notes'):
-                    print(f"     --notes:{t.get('notes')}")
-                num+=1
-        if rc.verbose:
-            for t in person.get("todos", []):
-                if t.get('status') == "finished":
-                    print(f"{num:>2}. (finished) {t.get('description')}")
-                    if t.get('notes'):
-                        print(f"     --notes:{t.get('notes')}")
-                    num+=1
-
+        if rc.filter:
+            gather_todos = key_value_pair_filter(gather_todos, rc.filter)
+        if rc.short:
+            for todo in gather_todos[::-1]:
+                if todo.get('duration') is None or float(todo.get('duration')) > float(rc.short):
+                    gather_todos.remove(todo)
+        if rc.assigned_by:
+            if rc.assigned_by == "default_id":
+                rc.assigned_by = rc.default_user_id
+            for todo in gather_todos[::-1]:
+                if todo.get('assigned_by') != rc.assigned_by:
+                    gather_todos.remove(todo)
+                elif rc.assigned_to == rc.assigned_by:
+                    gather_todos.remove(todo)
+        len_of_started_tasks=0
+        milestones = 0
+        for todo in gather_todos:
+            if 'milestone: ' in todo['description']:
+                milestones += 1
+            elif todo["status"] == 'started':
+                len_of_started_tasks += 1
+        len_of_tasks = len(gather_todos) - milestones
+        for todo in gather_todos:
+            if not todo.get('importance'):
+                todo['importance'] = 1
+            if type(todo["due_date"]) == str:
+                todo["due_date"] = date_parser.parse(todo["due_date"]).date()
+            if type(todo.get("end_date")) == str:
+                todo["end_date"] = date_parser.parse(todo["end_date"]).date()
+            todo["days_to_due"] = (todo.get('due_date') - today).days
+            todo["sort_finished"] = (todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1, 1)).days
+            todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
+        gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks], key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
+        gather_todos[len_of_started_tasks: len_of_tasks] = sorted(gather_todos[len_of_started_tasks: len_of_tasks], key=lambda k: (-k["sort_finished"]))
+        gather_todos[len_of_tasks:] = sorted(gather_todos[len_of_tasks:], key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
+        print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
+        print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
+        print("-" * 81)
+        if len_of_tasks != 0:
+            print("tasks from people collection:")
+            print("-" * 30)
+            print_task(gather_todos[:len_of_tasks], stati=rc.stati)
+        if milestones != 0:
+            print("-" * 42)
+            print("tasks from projecta and other collections:")
+            print("-" * 42)
+            print_task(gather_todos[len_of_tasks:], stati=rc.stati, index=False)
+        print("-" * 81)
         return

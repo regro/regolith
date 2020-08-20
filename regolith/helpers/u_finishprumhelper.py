@@ -26,7 +26,7 @@ class FinishprumUpdaterHelper(DbHelperBase):
     Helper for finishing prum in the projecta collection
     """
     # btype must be the same as helper target in helper.py
-    btype = "finish_prum"
+    btype = "f_prum"
     needed_dbs = [f'{TARGET_COLL}']
 
     def construct_global_ctx(self):

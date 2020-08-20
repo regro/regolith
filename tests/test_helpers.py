@@ -5,7 +5,6 @@ import pytest
 from regolith.main import main
 
 helper_map = [
-    (["helper", "hello", "--person", "Simon"], "hello Simon\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
       "Tess Guebre", "--status", "downloaded", "--title", "A flat world theory"],
      "A. Einstein proposal has been added/updated in proposal reviews\n"),
@@ -28,6 +27,11 @@ helper_map = [
       "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
       "--where", "bank", "--begin_date", "2020-06-20", "--end_date", "2020-06-25"],
      "2006as_timbuktoo has been added in expenses\n"),
+    (["helper", "a_presentation", "Mars", "flat earth", "2020-06-26", "2020-06-26",
+      "--type", "contributed_oral", "--person", "ashaaban",
+      "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
+      "--title", "On the roundness of the Earth", "--status", "in-prep"],
+     "2006as_mars has been added in presentations\n"),
     (["helper", "l_milestones", "--verbose"],
      "2021-01-01: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
@@ -37,7 +41,7 @@ helper_map = [
     (["helper", "l_projecta", "--verbose", "--lead", "ascopatz"],
      "20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
-     (["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
+    (["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
      "20ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--grant", "SymPy-1.1"],
@@ -49,6 +53,9 @@ helper_map = [
     (["helper", "l_projecta", "--all"],
      "20ly_newprojectum\n20sb_firstprojectum\n"
      ),
+    (["helper", "l_projecta", "--current"],
+     "20ly_newprojectum\n20sb_firstprojectum\n"
+     ),
     (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"],
      "ascopatz:\n    20sb_firstprojectum\n"
      ),
@@ -56,16 +63,29 @@ helper_map = [
      "20ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--ended", "--date", "2020-06-02"],
-     "20sb_firstprojectum    My first projectum\n    Lead: ascopatz    Members: ascopatz    Collaborators: aeinstein, pdirac\n"
+     "\nNo projecta finished within the 7 days leading up to 2020-06-02\n"
      ),
     (["helper", "l_grants", "--current", "--date", "2020-05-25"],
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\ndmref15, awardnr: , acctn: GG012345, 2015-10-01 to 2025-09-30\n"
      ),
-    (["helper", "l_members", "-v"],
+    (["helper", "l_members", "-c", "-v"],
      "Simon J. L. Billinge, professor | group_id: sbillinge\n"
      "    orcid: 0000-0002-9432-4248 | github_id: None\n"
-     "Anthony Scopatz, professor | group_id: scopatz\n"
-     "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: Assistant Professor\n"
+     ),
+    (["helper", "l_members", "-p", "-v"],
+     "Abstract Being, intern | group_id: abeing\n"
+      "    orcid: None | github_id: None\n"
+      "    billinge group position: intern\n"
+      "    billinge group position: intern\n"
+      "    billinge group position: intern\n"
+      "    current organization: The University of South Carolina\n"
+      "    current position: Intern\n"
+      "Anthony Scopatz, professor | group_id: scopatz\n"
+      "    orcid: 0000-0002-9432-4248 | github_id: ascopatz\n"
+      "    current organization: The University of South Carolina\n"
+      "    current position: Assistant Professor\n"
      ),
     (["helper", "l_members", "--filter", "name", "sco"],
      "scopatz    \n"
@@ -164,44 +184,65 @@ helper_map = [
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
      ),
-    (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
-     "    action (days to due date|importance|expected duration(mins))\n"
-     " 1. read paper(6|2|60.0)\n"
-     " 2. prepare the presentation(16|1|30.0)\n"
-     "     --notes:[\'about 10 minutes\', \"don't forget to upload to the website\"]\n"
+    (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13", "--assigned_by", "scopatz"],
+     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
+     "---------------------------------------------------------------------------------\n"
+     "tasks from people collection:\n"
+     "------------------------------\n"
+     "started:\n"
+     "(1) read paper (6|2|60.0|scopatz)\n"
+     "---------------------------------------------------------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
      ),
-    (["helper", "a_todo", "test a_todo", "10", "--assigned_to", "sbillinge", "--begin_date", "2020-07-06",  "--duration", "50", "--importance", "2", "--notes", "test notes 1", "test notes 2"],
+    (["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to", "sbillinge", "--assigned_by", "sbillinge", "--begin_date", "2020-07-06", "--importance", "2", "--notes", "test notes 1", "test notes 2", "--certain_date", "2020-07-10"],
      "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
      ),
-    (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge"],
-     "The task \"test a_todo\" for sbillinge has been marked as finished in people collection.\n"
+    (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge", "--end_date", "2020-07-20", "--certain_date", "2020-07-13"],
+     "The task \"(3) test a_todo\" in test for sbillinge has been marked as finished.\n"
      ),
-    (["helper", "f_todo", "--assigned_to", "sbillinge"],
+    (["helper", "f_todo", "--assigned_to", "sbillinge", "--certain_date", "2020-07-13"],
+     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
-     "1. read paper\n"
-     "2. prepare the presentation\n"
+     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
+     "---------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(1) read paper (6|2|60.0|scopatz)\n"
+     "(2) prepare the presentation (16|1|30.0|sbillinge)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "---------------------------------------------------------------------------------\n"
      ),
-    (["helper", "l_todo", "--verbose","--assigned_to", "sbillinge", "--short_tasks", "65", "--certain_date", "2020-07-13"],
-     "    action (days to due date|importance|expected duration(mins))\n"
-     " 1. read paper(6|2|60.0)\n"
-     " 2. prepare the presentation(16|1|30.0)\n"
-     "     --notes:[\'about 10 minutes\', \"don't forget to upload to the website\"]\n"
-     " 3. (finished) test a_todo\n"
-     "     --notes:['test notes 1', 'test notes 2']\n"
+    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge", "--description", "update the description", "--due_date", "2020-07-06", "--estimated_duration", "35", "--importance", "2", "--status", "finished", "--notes", "some new notes", "notes2", "--begin_date", "2020-06-06", "--end_date", "2020-07-07", "--certain_date", "2020-07-13"],
+     "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
      ),
-    (["helper", "finish_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
+    (["helper", "u_todo", "--assigned_to", "sbillinge", "--stati", "started", "finished", "--filter", "description", "the", "--certain_date", "2020-07-13"],
+     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
+     "Please choose from one of the following to update:\n"
+     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
+     "---------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(2) prepare the presentation (16|1|30.0|sbillinge)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "finished:\n"
+     "(3) update the description (-7|2|35.0|sbillinge)\n"
+     "     - some new notes\n"
+     "     - notes2\n"
+     "---------------------------------------------------------------------------------\n"
+     ),
+    (["helper", "f_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
      "20sb_firstprojectum status has been updated to finished\n"
      ),
-    (["helper", "finish_prum", "20sb"],
+    (["helper", "f_prum", "20sb"],
      "Projectum not found. Projecta with similar names: \n"
      "20sb_firstprojectum     status:finished\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
     (["helper", "lister", "people"],
-     "Results of your search:\nsbillinge    \nscopatz\n"),
+     "Results of your search:\nabeing    \nsbillinge    \nscopatz\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon"],
      "Results of your search:\n"
      "sbillinge\n"),
@@ -209,7 +250,7 @@ helper_map = [
      "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n"),
     (["helper", "lister", "people", "--keys"],
      "Available keys:\n"
-     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
@@ -218,7 +259,7 @@ helper_map = [
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
      "Results of your search:\nsbillinge\n"
      "Available keys:\n"
-     "['_id', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
      "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
@@ -240,7 +281,7 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
-    (["helper", "makeappointments", "run", "--no_gui",],
+    (["helper", "makeappointments", "run", "--no-gui",],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
@@ -248,18 +289,20 @@ helper_map = [
      "            from 2020-01-01 until 2020-05-15\n"
      "appointments on depleted grants:\n"
      "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-09-01 until 2019-10-31\n"
+     "            from 2019-09-07 until 2019-10-31\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
-     "            from 2020-07-09 until 2020-08-31\n"
+     "            from 2020-07-15 until 2020-08-31\n"
      "underspent grants:\n"
-     "    2030-12-31: grant: SymPy-1.1, underspend amount: 8.0 months\n"
-     "    2030-12-31: grant: SymPy-2.0, underspend amount: 86.0 months\n"
-     "    2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
+     "    end: 2030-12-31, grant: sym, underspend amount: 8.0 months,\n"
+     "      required ss+gra burn: 0.06\n"
+     "    end: 2025-09-30, grant: dmref15, underspend amount: 54.5 months,\n"
+     "      required ss+gra burn: 0.89\n"
+     "cumulative underspend = 62.5 months, cumulative months to support = 0\n"
      "overspent grants:\n"
-     "    2020-12-31: grant: abc42, overspend amount: -1.41 months\n"
+     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "plotting mode is on\n"
      ),
-    (["helper", "makeappointments", "run", "--no_plot",],
+    (["helper", "makeappointments", "run", "--no-plot",],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
@@ -267,15 +310,17 @@ helper_map = [
      "            from 2020-01-01 until 2020-05-15\n"
      "appointments on depleted grants:\n"
      "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-09-01 until 2019-10-31\n"
+     "            from 2019-09-07 until 2019-10-31\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
-     "            from 2020-07-09 until 2020-08-31\n"
+     "            from 2020-07-15 until 2020-08-31\n"
      "underspent grants:\n"
-     "    2030-12-31: grant: SymPy-1.1, underspend amount: 8.0 months\n"
-     "    2030-12-31: grant: SymPy-2.0, underspend amount: 86.0 months\n"
-     "    2025-09-30: grant: dmref15, underspend amount: 54.5 months\n"
+     "    end: 2030-12-31, grant: sym, underspend amount: 8.0 months,\n"
+     "      required ss+gra burn: 0.06\n"
+     "    end: 2025-09-30, grant: dmref15, underspend amount: 54.5 months,\n"
+     "      required ss+gra burn: 0.89\n"
+     "cumulative underspend = 62.5 months, cumulative months to support = 0\n"
      "overspent grants:\n"
-     "    2020-12-31: grant: abc42, overspend amount: -1.41 months\n"
+     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      ),
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
 ]

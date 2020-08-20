@@ -11,6 +11,7 @@ from regolith.tools import (
     group,
     is_fully_appointed,
     group_member_ids,
+    group_member_employment_start_end,
     month_and_year,
     awards_grants_honors,
     get_id_from_name,
@@ -743,17 +744,31 @@ appointed_people = [
      'appointments': {
      "A": {"begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.5, 'type': 'gra'},
      "B": {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
-     "C": {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}}},
+     "C": {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}},
+     "employment": [
+         {'group': 'permutation', 'begin_date': '2014-06-01', 'end_date': '2015-06-01'},
+         {'group': 'matrix', 'begin_year': '2020', 'end_day': '5', 'end_month': '12', 'end_year': '2020'},
+         {'group': 'permutation', 'begin_day': 4, 'begin_month': 9, 'begin_year': 2012, 'end_day': 5,
+          'end_month': 9, 'end_year': 2012}
+     ]},
     {'name': 'MC Escher', '_id': 'mcescher',
      'appointments':{
      "A": {"begin_date": '2019-10-01', "end_date": '2019-10-31', 'grant': 'grant1', 'loading': 1.0, 'type': 'ss'},
      "B": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
-     "C": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},}},
+     "C": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},},
+     'employment': [
+         {'group': 'transformation', 'begin_date': '2018-07-24', 'end_date': dt.date(2020, 8, 1)},
+         {'group': 'abstract', 'begin_year': 2010, 'end_day': 5, 'end_month': 12, 'end_year': 2020},
+         {'group': 'abstract', 'begin_date': '2012-06-30', 'end_date': '2012-09-05'}
+     ]},
     {'name': 'Johann Sebastian Bach', '_id': 'jsbach',
      'appointments': {
      "A": {"begin_date": '2019-12-01', "end_date": '2020-12-15', 'grant': 'grant1', 'loading': 0.9, 'type': 'pd'},
      "B": {"begin_date": '2019-12-16', "end_date": '2020-12-31', 'grant': 'grant2', 'loading': 0.9, 'type': 'pd'},
-     "C": {"begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}}},
+     "C": {"begin_date": '2019-12-01', "end_date": '2020-12-31', 'grant': 'grant3', 'loading': 0.1, 'type': 'pd'}},
+     'employment': [
+         {'group': 'bg', 'begin_date': '2019-02-03'}
+     ]},
     {'name': 'Ludwig Wittgenstein', '_id': 'lwittgenstein',
      'appointments': {
      "A": {'begin_date': '2019-12-10', 'end_date': '2019-12-20', 'grant': 'grant2', 'loading': 1.0, 'type': 'ss'}}},
@@ -803,6 +818,10 @@ appointed_people = [
      (appointed_people, 'type', 'ss', '2019-10-21', '2019-09-01', 'begin date is after end date'),
      (appointed_people, ['type', 'loading'], None, None, None, 'number of filter keys and filter values do not match'),
      (appointed_people, 'type', 'pd', '2019-12-10', None, 'please enter both begin date and end date or neither'),
+     ([{'name': 'Magical Person', '_id': 'mperson', 'appointments': {"A": {'begin_date': '2019-09-01', 'end_date': '2019-09-05',
+                   'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}}}], None, None,
+         None, None, 'invalid  type imaginary for appointment A of mperson'
+         ),
     ]
 )
 def test_collect_appts(people, key, value, start, end, expected):
@@ -835,21 +854,21 @@ grant3 = {'_id': 'grant3', 'budget': [
 grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
     {'begin_date': '2019-09-01', 'end_date': '2019-09-07',  'student_months': 1, 'postdoc_months': 1, 'ss_months': 1}]}
 @pytest.mark.parametrize(
-    "grant,appointments,grant_begin,grant_end,start,end,expected",
+    "grant,appointments,start,end,expected",
     [
-        (grant1, appts, '2019-09-01', '2019-09-10', None, None,
-         [{'date': '2019-09-01', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 136.25},
-          {'date': '2019-09-02', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 135.25},
-          {'date': '2019-09-03', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 134.25},
-          {'date': '2019-09-04', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 133.25},
-          {'date': '2019-09-05', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 132.25},
-          {'date': '2019-09-06', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 131.25},
-          {'date': '2019-09-07', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 130.25},
+        (grant1, appts, None, None,
+         [{'date': '2019-09-01', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 29.5},
+          {'date': '2019-09-02', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 28.5},
+          {'date': '2019-09-03', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 27.5},
+          {'date': '2019-09-04', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 72.25},
+          {'date': '2019-09-05', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 71.25},
+          {'date': '2019-09-06', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 70.25},
+          {'date': '2019-09-07', 'postdoc_days': 15.25, 'ss_days': 0.0, 'student_days': 69.25},
           {'date': '2019-09-08', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 129.25},
           {'date': '2019-09-09', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 128.25},
           {'date': '2019-09-10', 'postdoc_days': 61.0, 'ss_days': 0.0, 'student_days': 127.25}]
         ),
-        (grant2, appts, '2019-09-01', '2019-12-31', '2019-12-15', '2019-12-31',
+        (grant2, appts, '2019-12-15', '2019-12-31',
          [{'date': '2019-12-15', 'postdoc_days': 76.25, 'ss_days': 9.5, 'student_days': 122.0},
           {'date': '2019-12-16', 'postdoc_days': 75.35, 'ss_days': 8.5, 'student_days': 122.0},
           {'date': '2019-12-17', 'postdoc_days': 74.45, 'ss_days': 7.5, 'student_days': 122.0},
@@ -868,10 +887,10 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
           {'date': '2019-12-30', 'postdoc_days': 62.75, 'ss_days': -1.5, 'student_days': 122.0},
           {'date': '2019-12-31', 'postdoc_days': 61.85, 'ss_days': -2.5, 'student_days': 122.0}]
         ),
-        (grant3, appts, '2019-09-01', '2019-12-31', '2019-12-31', '2019-12-31',
+        (grant3, appts, '2019-12-31', '2019-12-31',
         [{'date': '2019-12-31', 'postdoc_days': 42.65, 'ss_days': 46.0, 'student_days': 61.0}]
         ),
-        (grant4, appts, '2019-09-01', '2019-09-07', None, None,
+        (grant4, appts, None, None,
         [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 29.5, 'student_days': 30.5},
          {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 28.5, 'student_days': 30.5},
@@ -880,14 +899,10 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
          {'date': '2019-09-06', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5},
          {'date': '2019-09-07', 'postdoc_days': 30.5, 'ss_days': 25.5, 'student_days': 30.5}]
          ),
-        ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts, '2012-12-23', '2012-12-23',
+        ({'_id': 'magical_grant', 'alias': 'very_magical_grant'}, appts,
          '2012-12-23', '2013-01-24', 'magical_grant has no specified budget'
          ),
-        (grant1, [{'person': 'magical person', '_id': 'A', 'begin_date': '2019-09-01', 'end_date': '2019-09-05',
-                   'loading': 1.0, 'grant': 'grant1', 'type': 'imaginary'}], '2019-09-01', '2019-09-10',
-         None, None, 'invalid  type imaginary for appointment A of magical person'
-         ),
-         (grant4, appointed_people[0].get('appointments'), '2019-09-01', '2019-09-07', None, None,
+         (grant4, appointed_people[0].get('appointments'), None, None,
         [{'date': '2019-09-01', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-02', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
          {'date': '2019-09-03', 'postdoc_days': 30.5, 'ss_days': 30.5, 'student_days': 30.5},
@@ -898,13 +913,13 @@ grant4 = {'_id': 'grant4', 'alias': 'grant_four', 'budget': [
         )
     ]
 )
-def test_grant_burn(grant, appointments, grant_begin, grant_end, start, end, expected):
+def test_grant_burn(grant, appointments, start, end, expected):
     try:
-        actual = grant_burn(grant, appointments, grant_begin, grant_end, begin_date=start, end_date=end)
+        actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
         assert actual == expected
     except ValueError:
         with pytest.raises(ValueError) as excinfo:
-            actual = grant_burn(grant, appointments, grant_begin, grant_end, begin_date=start, end_date=end)
+            actual = grant_burn(grant, appointments, begin_date=start, end_date=end)
         assert str(excinfo.value) == expected
 
 
@@ -930,3 +945,30 @@ def test_validate_meeting(meeting, date, expected):
         with pytest.raises(ValueError) as excinfo:
             actual = validate_meeting(meeting, date)
         assert str(excinfo.value) == expected
+
+
+@pytest.mark.parametrize(
+    "person,grpname,expected",
+    [
+        (appointed_people[0], 'permutation',
+         [{'_id': 'kgodel', 'begin_date': dt.date(2014, 6, 1), 'end_date': dt.date(2015, 6, 1)},
+          {'_id': 'kgodel', 'begin_date': dt.date(2012, 9, 4), 'end_date': dt.date(2012, 9, 5)}]
+         ),
+        (appointed_people[1], 'transformation',
+         [{'_id': 'mcescher', 'begin_date': dt.date(2018, 7, 24), 'end_date': dt.date(2020, 8, 1)}]
+        ),
+        (appointed_people[2], 'bg', "WARNING: jsbach has no end date in employment for bg starting 2019-02-03"
+        ),
+        (appointed_people[3], 'abstract', [])
+    ]
+)
+def test_group_member_employment_start_end(person, grpname, expected):
+    try:
+        actual = group_member_employment_start_end(person, grpname)
+        assert actual == expected
+    except:
+        with pytest.raises(RuntimeError) as excinfo:
+            actual = group_member_employment_start_end(person, grpname)
+        assert str(excinfo.value) == expected
+
+

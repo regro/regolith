@@ -1,4 +1,40 @@
+abeing:
+  active: false
+  aka:
+    - being
+    - human
+    - person
+  avatar: https://xkcd.com/1221/
+  bio: Abstract Being is an exemplar human existence
+  education:
+    - degree: bachelors
+      institution: University of Laughs
+      begin_year: 2010
+  employment:
+    - group: bg
+      begin_date: '2015-06-01'
+      end_date: '2015-08-31'
+      organization: columbiau
+      position: intern
+    - group: agroup
+      begin_date: '2020-01-01'
+      end_date: '2030-12-31'
+      organization: usouthcarolina
+      position: intern
+    - group: bg
+      begin_date: '2010-06-01'
+      end_date: '2012-08-31'
+      organization: columbiau
+      position: intern
+    - group: bg
+      begin_date: '2017-06-01'
+      end_date: '2019-08-31'
+      organization: columbiau
+      position: intern
+  name: Abstract Being
+  position: intern
 sbillinge:
+  active: true
   activities:
     - type: teaching
       name: course development
@@ -272,6 +308,8 @@ sbillinge:
       duration: 60.0
       importance: 2
       status: started
+      assigned_by: scopatz
+      running_index: 1
     - description: prepare the presentation
       due_date: '2020-07-29'
       begin_date: '2020-06-22'
@@ -281,15 +319,19 @@ sbillinge:
       notes:
         - about 10 minutes
         - don't forget to upload to the website
+      assigned_by: sbillinge
+      running_index: 2
     - description: test a_todo
       due_date: 2020-07-16
       begin_date: 2020-07-06
       duration: 50.0
       importance: 2
       status: started
+      assigned_by: sbillinge
       notes:
         - test notes 1
         - test notes 2
+      running_index: 3
 scopatz:
   aka:
     - Scopatz

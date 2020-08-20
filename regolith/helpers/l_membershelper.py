@@ -6,14 +6,17 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_due_date
+from regolith.dates import get_due_date, is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id, search_collection,
-    key_value_pair_filter, collection_str
+    key_value_pair_filter, collection_str,
+    get_pi_id,
+    fuzzy_retrieval,
 )
+from regolith.dates import get_dates
 
 TARGET_COLL = "people"
 HELPER_TARGET = "l_members"
@@ -28,6 +31,7 @@ def subparser(subpi):
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when running "
                                                        "--filter. If no argument is given the default is just the id.")
 
+    subpi.add_argument("-p", "--prior", action="store_true", help='get only former group members ')
     return subpi
 
 
@@ -37,7 +41,7 @@ class MembersListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_dbs = [f'{TARGET_COLL}','institutions']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -66,7 +70,9 @@ class MembersListerHelper(SoutHelperBase):
         gtx["zip"] = zip
 
 
+
     def sout(self):
+        gtx = self.gtx
         rc = self.rc
         if rc.filter:
             collection = key_value_pair_filter(self.gtx["people"], rc.filter)
@@ -74,21 +80,51 @@ class MembersListerHelper(SoutHelperBase):
             collection = self.gtx["people"]
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
-        for person in collection:
-            if rc.current and not person.get('active'):
-                continue
-            people.append(person)
 
-        if rc.filter and not rc.verbose:
-            results = (collection_str(people, rc.keys))
-            print(results, end="")
-            return
-
+        if rc.filter:
+            if not rc.verbose:
+                results = (collection_str(collection, rc.keys))
+                # "scopatz"
+                print(results, end="")
+                return
+            else:
+                for person in collection:
+                    print("{}, {} | group_id: {}".format(person.get('name'), person.get('position'), person.get('_id')))
+                    print("    orcid: {} | github_id: {}".format(person.get('orcid_id'), person.get('github_id')))
+                pass
+            #code to print verbosely on filtering
+        if not rc.filter:
+            for person in gtx["people"]:
+                if rc.current:
+                    if not person.get('active'):
+                        continue
+                    people.append(person)
+                elif rc.prior:
+                    if person.get('active'):
+                        continue
+                    people.append(person)
+                else:
+                    people.append(person)
+                    
         for i in people:
             if rc.verbose:
                 print("{}, {} | group_id: {}".format(i.get('name'), i.get('position'), i.get('_id')))
                 print("    orcid: {} | github_id: {}".format(i.get('orcid_id'), i.get('github_id')))
+                not_current_positions = [emp for emp in i.get('employment') if not is_current(emp)]
+                not_current_positions.sort(key=lambda x: get_dates(x)["end_date"])
+                current_positions = [emp for emp in i.get('employment') if is_current(emp)]
+                current_positions.sort(
+                    key=lambda x: get_dates(x)["begin_date"])
+                positions = not_current_positions + current_positions
+                for position in positions:
+                    if is_current(position):
+                        inst = fuzzy_retrieval(gtx["institutions"], ["aka", "name", "_id"],
+                                               position.get("organization")).get("name")
+                        print("    current organization: {}".format(inst))
+                        print("    current position: {}".format(position.get('full_position', position.get('position').title())))
+                    if not i.get('active'):
+                        if position.get('group') == "bg":
+                            print("    billinge group position: {}".format(position.get('position')))
             else:
                 print("{}".format(i.get('name')))
         return
-

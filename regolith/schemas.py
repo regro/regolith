@@ -9,6 +9,8 @@ from .sorters import POSITION_LEVELS
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 PRESENTATIONS_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
                       "plenary", "poster", "seminar", "tutorial"]
+APPOINTMENTS_TYPE = ["gra", "ss", "pd", "ug"]
+
 EXEMPLARS = {
     "abstracts": {
         "_id": "Mouginot.Model",
@@ -376,7 +378,7 @@ EXEMPLARS = {
          "title": "The answer to life, the universe, and everything",
          "budget": [
              {"begin_date": "2020-06-01",
-              "end_date": "2020-08-30",
+              "end_date": "2020-12-31",
               "student_months": 0.0,
               "postdoc_months": 0.0,
               "ss_months": 1.0,
@@ -436,7 +438,7 @@ EXEMPLARS = {
     """,
         "email": "<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>",
     },
-    "institutions": {
+    "institutions": [{
         "_id": "columbiau",
         "aka": ["Columbia University", "Columbia"],
         "city": "New York",
@@ -475,6 +477,49 @@ EXEMPLARS = {
         "year": 2020,
         "zip": "10027",
     },
+    {
+        "_id": "usouthcarolina",
+        "aka": ["The University of South Carolina"],
+        "city": "Columbia",
+        "country": "USA",
+        "day": 30,
+        "departments": {
+            "physics": {
+                "name": "Department of Physics",
+                "aka": ["Dept. of Physics", "Physics"],
+            },
+            "chemistry": {
+                "name": "Department of Chemistry",
+                "aka": ["Chemistry", "Dept. of Chemistry"],
+            },
+            "apam": {
+                "name": "Department of Applied Physics" "and Applied Mathematics",
+                "aka": ["APAM"],
+            },
+            "mechanical engineering": {
+                "name": "Department of Mechanical Engineering",
+                "aka":["Mechanical", "Dept. of Mechanical"],
+            }
+        },
+        "month": "May",
+        "name": "The University of South Carolina",
+        "schools": {
+            "cec": {
+                "name": "College of Engineering and" "Computing",
+                "aka": [
+                    "CEC",
+                    "College of Engineering and Computing",
+                ],
+            }
+        },
+        "state": "SC",
+        "street": "1716 College Street",
+        "updated": "2020-06-30",
+        "uuid": "4E89A0DD-19AE-45CC-BCB4-83A2D84545E3",
+        "year": 2020,
+        "zip": "29208",
+    },
+    ],
     "jobs": {
         "_id": "0004",
         "background_fields": [
@@ -843,6 +888,7 @@ EXEMPLARS = {
     },
     {
         "_id": "sbillinge",
+        "active": True,
         "activities": [{
             "type": "teaching",
             "name": "course development",
@@ -1190,6 +1236,8 @@ EXEMPLARS = {
              "duration": 60.0,
              "importance": 2,
              "status": "started",
+             "assigned_by": "scopatz",
+             "running_index": 1
              },
             {"description": "prepare the presentation",
              "due_date": "2020-07-29",
@@ -1198,9 +1246,32 @@ EXEMPLARS = {
              "importance": 0,
              "status": "started",
              "notes": ["about 10 minutes", "don't forget to upload to the website"],
+             "assigned_by": "sbillinge",
+             "running_index": 2
              }
         ],
     },
+        {"_id": "abeing",
+         "active": False,
+         "aka": ["being", "human", "person"],
+         "avatar": "https://xkcd.com/1221/",
+         "bio": "Abstract Being is an exemplar human existence",
+         "education": [
+             {"degree": "bachelors", "institution": "University of Laughs", "begin_year": 2010},
+         ],
+         "employment": [
+             {"group": "bg", "begin_date": "2015-06-01", "end_date": "2015-08-31", "organization": "columbiau",
+              "position": "intern"},
+             {"group": "agroup", "begin_date": "2020-01-01", "end_date": "2030-12-31", "organization": "usouthcarolina",
+              "position": "intern"},
+             {"group": "bg", "begin_date": "2010-06-01", "end_date": "2012-08-31", "organization": "columbiau",
+              "position": "intern"},
+             {"group": "bg", "begin_date": "2017-06-01", "end_date": "2019-08-31", "organization": "columbiau",
+              "position": "intern"},
+         ],
+         "position": "intern",
+         "name": "Abstract Being",
+        }
     ],
     "presentations": [
         {
@@ -2708,7 +2779,9 @@ SCHEMAS = {
                     "begin_month": {"required": False,
                                     "anyof_type": ["string", "integer"],
                                     },
-                    "begin_year": {"required": True, "type": "integer"},
+                    "begin_year": {"required": False, "type": "integer"},
+                    "begin_date": {"required": False, "anyof_type": ["string", "date", "datetime"],
+                                   "description": "begin date of employment in format YYYY-MM-DD"},
                     "coworkers": {"required": False, "type": "list",
                                   "description": "list of coworkers.  If"
                                                  "position is editor, these are "
@@ -2717,9 +2790,10 @@ SCHEMAS = {
                     "department": {"required": False, "type": "string"},
                     "end_day": {"required": False, "type": "integer"},
                     "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"],
                                   },
                     "end_year": {"required": False, "type": "integer"},
+                    "end_date": {"required": False, "anyof_type": ["string", "date", "datetime"],
+                                 "description": "end date of employment in format YYYY-MM-DD"},
                     "group": {
                         "required": False,
                         "type": "string",
@@ -3160,7 +3234,7 @@ SCHEMAS = {
                         "description": "the importance, from 0 to 2",
                         "required": False,
                         "type": "integer"},
-                    "status": {"description": "the status: proposed/started/finished",
+                    "status": {"description": "the status: started/finished/cancelled",
                                "required": True,
                                "type": "string"},
                     "notes": {"description": "additional notes for this task",
@@ -3168,6 +3242,13 @@ SCHEMAS = {
                               "type": "list",
                               "schema": {"type": "string"}
                               },
+                    "running_index": {"description": "Index of a certain task used to update that task in the enumerated todo list.",
+                               "required": False,
+                               "type": "integer"},
+                    "assigned_by": {
+                        "description": "ID of the member that assigns the task",
+                        "required": False,
+                        "type": "string"},
 
                 }
             }
@@ -3194,12 +3275,20 @@ SCHEMAS = {
             "required": True,
             "anyof_type": ["string", "list"],
         },
+        "begin_date": {
+            "description": "begin date in YYYY-MM-DD",
+            "anyof_type": ["date", "string"],
+        },
+        "end_date": {
+            "description": "end_date in YYYY-MM-DD",
+            "anyof_type": ["date", "string"],
+        },
         "begin_year": {
             "description": "year the conference or trip begins.",
-            "required": True,
+            "required": False,
             "type": "integer",
         },
-        "begin_month": {"required": True,
+        "begin_month": {"required": False,
                         "anyof_type": ["string", "integer"],
                         },
         "begin_day": {"required": False, "type": "integer"},

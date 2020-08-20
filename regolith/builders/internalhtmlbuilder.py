@@ -1,10 +1,11 @@
 """Builder for websites."""
 import os
 import shutil
+import datetime as dt
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.fsclient import _id_key
-from regolith.sorters import ene_date_key, position_key
+from regolith.sorters import doc_date_key, position_key, ene_date_key
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
@@ -12,27 +13,27 @@ from regolith.tools import (
     make_bibtex_file,
     document_by_value,
     dereference_institution,
+    fuzzy_retrieval
 )
 
 
-class HtmlBuilder(BuilderBase):
+PROJ_URL_BASE = 'https://gitlab.thebillingegroup.com/talks/'
+
+
+class InternalHtmlBuilder(BuilderBase):
     """Build HTML files for website"""
 
-    btype = "html"
+    btype = "internalhtml"
+    needed_dbs = ["people", "meetings"]
 
     def __init__(self, rc):
         super().__init__(rc)
         # TODO: get this from the RC
         self.cmds = [
             "root_index",
-            "people",
-            "projects",
-            "blog",
-            "jobs",
-            "abstracts",
+            "meetings",
             "nojekyll",
             "cname",
-            "finish",
         ]
 
     def construct_global_ctx(self):
@@ -46,8 +47,8 @@ class HtmlBuilder(BuilderBase):
             key=position_key,
             reverse=True,
         )
-        gtx["abstracts"] = list(
-            all_docs_from_collection(rc.client, "abstracts")
+        gtx["meetings"] = list(
+            all_docs_from_collection(rc.client, "meetings")
         )
         gtx["group"] = document_by_value(
             all_docs_from_collection(rc.client, "groups"), "name", rc.groupname
@@ -67,18 +68,92 @@ class HtmlBuilder(BuilderBase):
         stdst = os.path.join(self.bldir, "static")
         if os.path.isdir(stdst):
             shutil.rmtree(stdst)
-        if os.path.isdir(stsrc):
-            shutil.copytree(stsrc, stdst)
+        shutil.copytree(stsrc, stdst)
 
     def root_index(self):
         """Render root index"""
-        self.render("root_index.html", "index.html", title="Home")
-        make_bibtex_file(list(all_docs_from_collection(self.rc.client,
-                                                       "citations")),
-                         pid='group',
-                         person_dir=self.bldir,
-                         )
+        self.render("introot_index.html", "intindex.html", title="Home")
 
+    def meetings(self):
+        """Render projects"""
+        rc = self.rc
+        mtgsi = all_docs_from_collection(rc.client, "meetings")
+        peeps = all_docs_from_collection(rc.client, "people")
+        pp_mtgs, f_mtgs = [], []
+
+
+        for mtg in mtgsi:
+            if not mtg.get('lead'):
+                print("{} missing a meeting lead".format(mtg["_id"]))
+            if not mtg.get('scribe'):
+                print("{} missing a meeting scribe".format(mtg["_id"]))
+            lead = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "people"),
+                ["_id", "name", "aka"],
+                mtg.get("lead"))
+            if not lead:
+                print("{} lead {} not found in people".format(mtg["_id"],mtg.get("lead")))
+            mtg["lead"] = lead["name"]
+            scribe = fuzzy_retrieval(
+                all_docs_from_collection(rc.client, "people"),
+                ["_id", "name", "aka"],
+                mtg.get("scribe"))
+            if not scribe:
+                print("{} scribe {} not found in people".format(mtg["_id"],mtg.get("scribe")))
+            mtg["scribe"] = scribe["name"]
+            if mtg.get("journal_club"):
+                prsn = fuzzy_retrieval(
+                    all_docs_from_collection(rc.client, "people"),
+                    ["_id", "name", "aka"],
+                    mtg["journal_club"].get("presenter"))
+                if not prsn:
+                    print(
+                    "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
+                mtg["journal_club"]["presenter"] = prsn["name"]
+            if mtg.get("presentation"):
+                prsn = fuzzy_retrieval(
+                    all_docs_from_collection(rc.client, "people"),
+                    ["_id", "name", "aka"],
+                    mtg["presentation"].get("presenter"))
+                if mtg["presentation"].get("presenter") == "hold":
+                    prsn = {}
+                    prsn["name"] = "Hold"
+                if not prsn:
+                    print(
+                    "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
+                mtg["presentation"]["presenter"] = prsn["name"]
+                mtg["presentation"]["link"] = PROJ_URL_BASE + \
+                                              mtg["presentation"].get("link","tbd")
+            mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
+                                  mtg.get("day"))
+            mtg['datestr'] = mtg['date'].strftime('%m/%d/%Y')
+            today = dt.date.today()
+            if mtg['date'] >= today:
+                f_mtgs.append(mtg)
+            else:
+                pp_mtgs.append(mtg)
+
+        pp_mtgs = sorted(pp_mtgs, key=lambda x: x.get('date'), reverse=True)
+        f_mtgs = sorted(f_mtgs, key=lambda x: x.get('date'))
+        self.render(
+            "grpmeetings.html", "grpmeetings.html", title="Group Meetings",
+            ppmeetings=pp_mtgs, fmeetings=f_mtgs
+        )
+
+    def nojekyll(self):
+        """Touches a nojekyll file in the build dir"""
+        with open(os.path.join(self.bldir, ".nojekyll"), "a+"):
+            pass
+
+    def cname(self):
+        """Add CNAME"""
+        rc = self.rc
+        if not hasattr(rc, "cname"):
+            return
+        with open(
+                os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
+        ) as f:
+            f.write(rc.cname)
 
     def people(self):
         """Render people, former members, and each person"""
@@ -88,7 +163,6 @@ class HtmlBuilder(BuilderBase):
         os.makedirs(peeps_dir, exist_ok=True)
         os.makedirs(former_peeps_dir, exist_ok=True)
         peeps = self.gtx["people"]
-        #peeps = all_docs_from_collection(rc.client), "people")
         for p in peeps:
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
@@ -104,9 +178,7 @@ class HtmlBuilder(BuilderBase):
             ene = p.get("employment", []) + p.get("education", [])
             ene.sort(key=ene_date_key, reverse=True)
             for e in ene:
-                dereference_institution(e,
-                                        all_docs_from_collection(
-                                            rc.client, "institutions"))
+                dereference_institution(e, self.gtx["institutions"])
             projs = filter_projects(
                 all_docs_from_collection(rc.client, "projects"), names
             )
@@ -189,18 +261,3 @@ class HtmlBuilder(BuilderBase):
                     ab["firstname"], ab["lastname"], ab["title"]
                 ),
             )
-
-    def nojekyll(self):
-        """Touches a nojekyll file in the build dir"""
-        with open(os.path.join(self.bldir, ".nojekyll"), "a+"):
-            pass
-
-    def cname(self):
-        """Add CNAME"""
-        rc = self.rc
-        if not hasattr(rc, "cname"):
-            return
-        with open(
-            os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
-        ) as f:
-            f.write(rc.cname)
