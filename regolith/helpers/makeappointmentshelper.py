@@ -183,6 +183,12 @@ class MakeAppointmentsHelper(SoutHelperBase):
                                 else str(day)))
                     if not (depleted_period or outdated_period):
                         day_burn, this_burn = 0, this_grant['burn']
+                                person.get('_id'), appt.get('_id'), appt.get('grant'),
+                                str(day) if day < grant_begin else grant_end + relativedelta(days=1),
+                                str(min(appt_end, grant_begin)) if day < grant_begin else str(day)))
+                            outdated_period = True
+                    if not depleted_period and not outdated_period:
+                        day_burn = 0
                         if appt.get('type') == 'gra':
                             day_burn = this_burn[day]['student_days']
                         elif appt.get('type') == 'pd':
