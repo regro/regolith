@@ -1550,9 +1550,17 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
 
     Returns
     -------
-    list:
-        A list of dictionaries, each containing the date and the corresponding student_days, postdoc_days and
-        ss_days on that date
+    dict:
+        A dictionaries whose keys are the dates and values are a dict containing the corresponding grant amounts
+        on that date
+
+    Examples
+    --------
+    >>> grant_burn(mygrant, myappts, begin_date="2020-09-01", end_date="2020-09-03")
+    returns
+    >>> {datetime.date(2020, 9, 1): {'student_days': 5.0, 'postdoc_days': 12.0, 'ss_days': 20.0}, \
+         datetime.date(2020, 9, 2): {'student_days': 4.0, 'postdoc_days': 11.5, 'ss_days': 15.0}, \
+         datetime.date(2020, 9, 3): {'student_days': 3.0, 'postdoc_days': 11.0, 'ss_days': 10.0}}
     """
 
     if not grant.get('budget'):
@@ -1564,7 +1572,7 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     if isinstance(appts, dict):
         appts = collect_appts([{"appointments": appts}])
     grad_val, pd_val, ss_val = 0.0, 0.0, 0.0
-    grant_amounts = []
+    grant_amounts = {}
     budget_dates = get_dates(grant.get('budget')[0])
     budget_begin, budget_end = budget_dates['begin_date'], budget_dates['end_date']
     for period in grant.get('budget'):
@@ -1588,9 +1596,8 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
                     elif a.get('type') == 'ss':
                         ss_val -= a.get('loading') * 1
             if (not begin_date) or (begin_date <= day <= end_date):
-                gvals = {"date": str(day), "student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2),
-                         "ss_days": round(ss_val, 2)}
-                grant_amounts.append(gvals)
+                gvals = {"student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2), "ss_days": round(ss_val, 2)}
+                grant_amounts.update({day: gvals})
     return grant_amounts
 
 
