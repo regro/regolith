@@ -242,7 +242,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
                                                  [0.0] * len(grant_dates)
                 counter = 0
                 for x in range(len(datearray)):
-                    if day_burn := this_burn.get(datearray[x]):
+                    day_burn = this_burn.get(datearray[x])
+                    if day_burn:
                         this_student[counter] = day_burn['student_days']
                         this_pd[counter] = day_burn['postdoc_days']
                         this_ss[counter] = day_burn['ss_days']
