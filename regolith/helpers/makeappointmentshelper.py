@@ -117,6 +117,31 @@ class MakeAppointmentsHelper(SoutHelperBase):
         else:
             projection_from_date = date.today()
 
+        # collecting amounts and time interval for all grants
+        all_grants = {}
+        grants_end, grants_begin = None, None
+        for grant in self.gtx['grants']:
+            if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
+                if rc.verbose:
+                 print(f"skipping {grant.get('alias')} since it is in the blacklist")
+                continue
+            prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
+            if prop.get('year'):
+                del prop['year']
+            grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
+                else get_dates(prop)['begin_date']
+            grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
+                else get_dates(prop)['end_date']
+            all_grants.update({grant.get('alias'): {'begin_date': grant_begin,
+                                                    'end_date': grant_end,
+                                                    'budget': grant.get('budget'),
+                                                    'burn': grant_burn(grant, all_appts)}})
+            if not grants_begin or grant_begin < grants_begin:
+                grants_begin = grant_begin
+            if not grants_end or grant_end > grants_end:
+                grants_end = grant_end
+
+        # checking appointments
         grants_with_appts = []
         cum_months_to_cover = 0
         for person in self.gtx['people']:
@@ -133,137 +158,102 @@ class MakeAppointmentsHelper(SoutHelperBase):
             appts = collect_appts([person])
             if not appts:
                 continue
-            this_begin = min(get_dates(appt)['begin_date'] for appt in appts)
-            this_end = max(get_dates(appt)['end_date'] for appt in appts)
-            is_fully_appointed(person, this_begin, this_end)
+            is_fully_appointed(person, min(get_dates(appt)['begin_date'] for appt in appts),
+                               max(get_dates(appt)['end_date'] for appt in appts))
             for appt in appts:
-                grants_with_appts.append(appt.get("grant"))
                 if appt.get("grant") in BLACKLIST:
-                    if rc.verbose:
-                        print(f"skipping {appt.get('grant')} since it is in the blacklist")
                     continue
-                if appt.get("grant") not in grants_with_appts:
-                    if rc.verbose:
-                        print(f"skipping {appt.get('grant')} since it has no appointments assigned to it")
-                    continue
-                grant = rc.client.find_one(rc.database, "grants", {"alias": appt.get("grant")})
-                if not grant:
+                grants_with_appts.append(appt.get("grant"))
+                this_grant = all_grants.get(appt.get('grant'))
+                if not this_grant:
                     raise RuntimeError("    grant: {}, person: {}, appointment: {}, grant not found in grants database".
                                        format(appt.get("grant"), person.get("_id"), appt.get("_id")))
-                prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
-                if prop.get('year'):
-                    del prop['year']
-                grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
-                    else get_dates(prop)['begin_date']
-                grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
-                    else get_dates(prop)['end_date']
-                grant.update({'begin_date': grant_begin, 'end_date': grant_end})
                 appt_begin, appt_end = get_dates(appt)['begin_date'], get_dates(appt)['end_date']
-                this_burn = grant_burn(grant, all_appts, begin_date=appt_begin, end_date=appt_end)
-                timespan = appt_end - appt_begin
                 outdated_period, depleted_period = False, False
-                for x in range (timespan.days + 1):
+                for x in range((appt_end - appt_begin).days + 1):
                     day = appt_begin + relativedelta(days=x)
                     if not outdated_period:
-                        if not is_current(grant, now=day):
+                        if not this_grant.get('burn').get(day):
+                            outdated_period = True
                             outdated.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
-                                person.get('_id'), appt.get('_id'), grant.get('_id'), str(day),
-                                str(min(appt_end, get_dates(grant)['begin_date']))))
-                            outdated_period = True
-                    if not depleted_period and not outdated_period:
-                        day_burn = 0
+                                person.get('_id'), appt.get('_id'), appt.get('grant'), str(day)
+                                if day < this_grant['begin_date'] else this_grant['end_date'] + relativedelta(days=1),
+                                str(min(appt_end, this_grant['begin_date'])) if day < this_grant['begin_date']
+                                else str(day)))
+                    if not (depleted_period or outdated_period):
+                        day_burn, this_burn = 0, this_grant['burn']
                         if appt.get('type') == 'gra':
-                            day_burn = this_burn[x].get('student_days')
+                            day_burn = this_burn[day]['student_days']
                         elif appt.get('type') == 'pd':
-                            day_burn = this_burn[x].get('postdoc_days')
+                            day_burn = this_burn[day]['postdoc_days']
                         elif appt.get('type') == 'ss':
-                            day_burn = this_burn[x].get('ss_days')
+                            day_burn = this_burn[day]['ss_days']
                         if day_burn < - 5:
+                            # change to display depleted until next >-5 amt instead of appt_end
                             depleted.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
-                                person.get('_id'), appt.get('_id'), grant.get('alias'), str(day), str(appt_end)))
+                                person['_id'], appt['_id'], appt.get('grant'), str(day), str(appt_end)))
                             depleted_period = True
-            grants_with_appts = list(set(grants_with_appts))
+
+        # setup for plotting grants
+        grants_with_appts = list(set(grants_with_appts))
         datearray, cum_student, cum_pd, cum_ss = [], None, None, None
         if not rc.no_plot:
-            grants_begin, grants_end =  None, None
-            for grant in self.gtx['grants']:
-                if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
-                    continue
-                if grant.get('alias') not in grants_with_appts:
-                    continue
-                prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
-                if prop.get('year'):
-                    del prop['year']
-                grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
-                    else get_dates(prop)['begin_date']
-                grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
-                    else get_dates(prop)['end_date']
-                if not grants_begin or grant_begin < grants_begin:
-                    grants_begin = grant_begin
-                if not grants_end or grant_end > grants_end:
-                    grants_end = grant_end
-            grants_timespan = grants_end - grants_begin
-            for x in range(grants_timespan.days + 1):
+            for x in range((grants_end - grants_begin).days + 1):
                 datearray.append(grants_begin + relativedelta(days=x))
             cum_student, cum_pd, cum_ss = [0.0] * len(datearray), [0.0] * len(datearray), [0.0] * len(datearray)
         plots = []
+
+        # calculating grant surplus and deficit
         cum_underspend = 0
-        for grant in self.gtx["grants"]:
-            if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
+        for grant in all_grants:
+            if grant not in grants_with_appts:
+                if rc.verbose:
+                    print(f"skipping {grant} since it it does not support any appointments")
                 continue
-            if grant.get('alias') not in grants_with_appts:
-                continue
-            prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
-            if prop.get('year'):
-                del prop['year']
-            grant_begin = get_dates(grant)['begin_date'] if grant.get('begin_date') or grant.get('begin_year') \
-                else get_dates(prop)['begin_date']
-            grant_end = get_dates(grant)['end_date'] if grant.get('end_date') or grant.get('end_year') \
-                else get_dates(prop)['end_date']
-            budget_begin = min(get_dates(period)['begin_date'] for period in grant.get('budget'))
-            budget_end = max(get_dates(period)['end_date'] for period in grant.get('budget'))
-            if grant_begin < budget_begin:
-                raise RuntimeError(f"grant does not have a complete budget. grant begin: {grant_begin} "
-                                   f"budget begin: {budget_begin}")
-            elif grant_end > budget_end:
-                raise RuntimeError(f"grant {grant.get('alias')} does not have a complete budget. grant end: {grant_end} "
-                                   f"budget end: {budget_end}")
-            days_to_go = (grant_end - projection_from_date).days
-            grant.update({'begin_date': grant_begin, 'end_date': grant_end})
-            grant_amounts = grant_burn(grant, all_appts)
-            end_amount = grant_amounts[-1].get('student_days') + grant_amounts[-1].get('postdoc_days') + \
-                        grant_amounts[-1].get('ss_days')
+            budget_begin = min(get_dates(period)['begin_date'] for period in all_grants[grant].get('budget'))
+            budget_end = max(get_dates(period)['end_date'] for period in all_grants[grant].get('budget'))
+            if all_grants[grant]['begin_date'] != budget_begin:
+                raise RuntimeError(f"grant does not have a correct budget begin date. "
+                                   f"grant begin: {all_grants[grant]['begin_date']} budget begin: {budget_begin}")
+            elif all_grants[grant]['end_date'] != budget_end:
+                raise RuntimeError(f"grant {grant.get('alias')} does not have a correct budget end date."
+                                   f" grant end: {all_grants[grant]['end_date']} budget end: {budget_end}")
+            days_to_go = (all_grants[grant]['end_date'] - projection_from_date).days
+            this_burn = all_grants[grant]['burn']
+            end_amount = this_burn.get(all_grants[grant]['end_date'])['student_days'] + \
+                         this_burn.get(all_grants[grant]['end_date'])['ss_days'] + \
+                        this_burn.get(all_grants[grant]['end_date'])['postdoc_days']
             if end_amount > 15.25:
-                underspent.append("    end: {}, grant: {}, underspend amount: {} months,\n      required ss+gra burn: {}".
-                    format(str(grant_end), grant.get('alias'), round(end_amount/30.5, 2),
+                underspent.append("    end: {}, grant: {}, underspend amount: {} months,\n"
+                                  "      required ss+gra burn: {}".
+                    format(str(all_grants[grant]['end_date']), grant, round(end_amount/30.5, 2),
                     round(end_amount / days_to_go, 2)))
                 cum_underspend += end_amount
             elif end_amount < -30.5:
                 overspent.append("    end: {}, grant: {}, overspend amount: {} months".format(
-                    str(grant_end), grant.get('alias'), round(end_amount/30.5, 2)))
+                    str(all_grants[grant]['end_date']), grant, round(end_amount/30.5, 2)))
+            # values for individual and cumulative grant burn plots
             if not rc.no_plot:
-                grant_dates = []
-                grant_duration = (grant_end - grant_begin).days + 1
-                this_student, this_pd, this_ss = [0.0] * grant_duration, [
-                    0.0] * grant_duration, [0.0] * grant_duration
+                grant_dates = [all_grants[grant]['begin_date'] + relativedelta(days=x) for x in
+                              range((all_grants[grant]['end_date'] - all_grants[grant]['begin_date']).days + 1)]
+                this_student, this_pd, this_ss = [0.0] * len(grant_dates), [0.0] * len(grant_dates), \
+                                                 [0.0] * len(grant_dates)
                 counter = 0
                 for x in range(len(datearray)):
-                    if is_current(grant, now=datearray[x]):
-                        grant_dates.append(datearray[x])
-                        this_student[counter] = grant_amounts[counter].get(
-                            'student_days')
-                        cum_student[x] += grant_amounts[counter].get('student_days')
-                        this_pd[counter] = grant_amounts[counter].get(
-                            'postdoc_days')
-                        cum_pd[x] += grant_amounts[counter].get('postdoc_days')
-                        this_ss[counter] = grant_amounts[counter].get('ss_days')
-                        cum_ss[x] += grant_amounts[counter].get('ss_days')
+                    day_burn = this_burn.get(datearray[x])
+                    if day_burn:
+                        this_student[counter] = day_burn['student_days']
+                        this_pd[counter] = day_burn['postdoc_days']
+                        this_ss[counter] = day_burn['ss_days']
+                        cum_student[x] += day_burn['student_days']
+                        cum_pd[x] += day_burn['postdoc_days']
+                        cum_ss[x] += day_burn['ss_days']
                         counter += 1
                 plots.append(plotter(grant_dates, student=this_student,
                                      pd=this_pd, ss=this_ss,
-                                     title=f"{grant.get('alias')}")[0])
+                                     title=grant)[0])
 
         if outdated:
             print("appointments on outdated grants:")
