@@ -2177,6 +2177,30 @@ SCHEMAS = {
                     'submission_date': {"description": "date of submission",
                                         "anyof_type": ["string", "date"],
                                         },
+                    'submission_day': {"description": "day of submission. deprecated but here for "
+                                                      "backwards compatibility",
+                                        "type": "integer",
+                                        },
+                    'submission_month': {"description": "month of submission. deprecated but here for "
+                                                      "backwards compatibility",
+                                        "anyof_type": ["integer", "string"],
+                                        },
+                    'submission_year': {"description": "year of submission. deprecated but here for "
+                                                      "backwards compatibility",
+                                        "type": "integer",
+                                        },
+                    'day': {"description": "day of reimbursement. deprecated but here for "
+                                                      "backwards compatibility",
+                                        "type": "integer",
+                                        },
+                    'month': {"description": "month of reimbursement. deprecated but here for "
+                                                      "backwards compatibility",
+                                        "anyof_type": ["string", "integer"],
+                                        },
+                    'year': {"description": "year of reimbursement. deprecated but here for "
+                                                      "backwards compatibility",
+                                        "type": "integer",
+                                        },
                     'where': {"description": 'where the reimbursement has been sent',
                               "type": 'string',
                               },
