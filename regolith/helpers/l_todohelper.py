@@ -21,7 +21,7 @@ from regolith.tools import (
 TARGET_COLL = "people"
 TARGET_COLL2 = "projecta"
 HELPER_TARGET = "l_todo"
-Importance = [0, 1, 2]
+Importance = [0, 1, 2, -1, -2]
 ALLOWED_STATI = ["started", "finished", "cancelled"]
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
