@@ -18,7 +18,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "people"
-ALLOWED_IMPORTANCE = [0, 1, 2]
+ALLOWED_IMPORTANCE = [0, 1, 2, -1, -2]
 ALLOWED_STATI = ["started", "finished", "cancelled"]
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
@@ -208,7 +208,7 @@ class TodoUpdaterHelper(DbHelperBase):
                     todo["due_date"] = due_date
                 if rc.estimated_duration:
                     todo["duration"] = rc.estimated_duration
-                if rc.importance:
+                if rc.importance or rc.importance == 0:
                     if rc.importance in ALLOWED_IMPORTANCE:
                         todo["importance"] = rc.importance
                     else:
