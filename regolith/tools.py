@@ -1215,7 +1215,7 @@ def group_member_employment_start_end(person, grpname):
         for position in person.get(k, {}):
             if position.get("group", None) == grpname:
                 dates = get_dates(position)
-                if not dates.get('end_date'):
+                if not dates.get('end_date') and position.get("status") != 'pi':
                     raise RuntimeError("WARNING: {} has no end date in employment for {} starting {}".
                           format(person["_id"], grpname, dates.get("begin_date")))
                 grpmember.append({"_id": person["_id"],

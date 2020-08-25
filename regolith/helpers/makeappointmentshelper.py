@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
 BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
-              'summer@seas']
+              'summer@seas', 'frap', 'fwp08', 'startup']
 ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
 
 
@@ -134,7 +134,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 else get_dates(prop)['end_date']
             all_grants.update({grant.get('alias'): {'begin_date': grant_begin,
                                                     'end_date': grant_end,
-                                                    'budget': grant.get('budget'),
+                                                    'budget': grant.get('budget',[{'begin_date':grant_begin,'end_date':grant_end}]),
                                                     'burn': grant_burn(grant, all_appts)}})
             if not grants_begin or grant_begin < grants_begin:
                 grants_begin = grant_begin
