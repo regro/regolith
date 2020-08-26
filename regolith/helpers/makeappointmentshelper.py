@@ -35,6 +35,7 @@ HELPER_TARGET = "makeappointments"
 BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
               'summer@seas', 'frap',  'startup']
 ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
+TRACKED_TYPES = ["gra", "pd", "ss", "ug"]
 
 
 
@@ -111,7 +112,12 @@ class MakeAppointmentsHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         outdated, depleted, underspent, overspent = [], [], [], []
-        all_appts = collect_appts(self.gtx['people'])
+        people = list(self.gtx['people'])
+        all_appts = collect_appts(people, filter_key='type', filter_value='gra')
+        all_appts.extend(
+            collect_appts(people, filter_key='type', filter_value='ss'))
+        all_appts.extend(
+            collect_appts(people, filter_key='type', filter_value='pd'))
         if rc.projection_from_date:
             projection_from_date = date_parser.parse(rc.projection_from_date).date()
         else:
@@ -148,14 +154,21 @@ class MakeAppointmentsHelper(SoutHelperBase):
             person_dates = group_member_employment_start_end(person, "bg")
             last_emp, months_to_cover = 0, 0
             if person_dates:
-                last_emp = max([emp.get('end_date', 0) for emp in person_dates])
+                emps = [emp.get('end_date', 0) for emp in person_dates if
+                 emp.get('type') in TRACKED_TYPES]
+                if emps:
+                    last_emp = max(emps)
             if last_emp:
                 months_to_cover = round((last_emp - projection_from_date).days / 30.5, 2)
             if months_to_cover > 0:
                 print(
                     f"{person['_id']} needs to be covered for {months_to_cover} months")
                 cum_months_to_cover += months_to_cover
-            appts = collect_appts([person])
+
+
+            appts = collect_appts([person],filter_key='type',filter_value = 'gra')
+            appts.extend(collect_appts([person],filter_key='type',filter_value = 'ss'))
+            appts.extend(collect_appts([person],filter_key='type',filter_value = 'pd'))
             if not appts:
                 continue
             is_fully_appointed(person, min(get_dates(appt)['begin_date'] for appt in appts),
@@ -207,7 +220,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
 
         # calculating grant surplus and deficit
         cum_underspend = 0
-        for grant in all_grants:
+        for grant in all_grants.keys():
             if grant not in grants_with_appts:
                 if rc.verbose:
                     print(f"skipping {grant} since it it does not support any appointments")
@@ -215,10 +228,10 @@ class MakeAppointmentsHelper(SoutHelperBase):
             budget_begin = min(get_dates(period)['begin_date'] for period in all_grants[grant].get('budget'))
             budget_end = max(get_dates(period)['end_date'] for period in all_grants[grant].get('budget'))
             if all_grants[grant]['begin_date'] != budget_begin:
-                raise RuntimeError(f"grant does not have a correct budget begin date. "
+                raise RuntimeError(f"grant {grant} does not have a correct budget begin date. "
                                    f"grant begin: {all_grants[grant]['begin_date']} budget begin: {budget_begin}")
             elif all_grants[grant]['end_date'] != budget_end:
-                raise RuntimeError(f"grant {grant.get('alias')} does not have a correct budget end date."
+                raise RuntimeError(f"grant {grant} does not have a correct budget end date."
                                    f" grant end: {all_grants[grant]['end_date']} budget end: {budget_end}")
             days_to_go = (all_grants[grant]['end_date'] - projection_from_date).days
             this_burn = all_grants[grant]['burn']
