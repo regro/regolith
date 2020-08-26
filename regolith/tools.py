@@ -1220,7 +1220,8 @@ def group_member_employment_start_end(person, grpname):
                           format(person["_id"], grpname, dates.get("begin_date")))
                 grpmember.append({"_id": person["_id"],
                                  "begin_date": dates.get("begin_date"),
-                                 "end_date": dates.get("end_date")})
+                                 "end_date": dates.get("end_date"),
+                                  "type": position.get("type")})
     return grpmember
 
 def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
