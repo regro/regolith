@@ -81,7 +81,6 @@ class ReimbursementBuilder(BuilderBase):
                     for grant_label in ex["grants"]:
                         grant = fuzzy_retrieval(gtx["grants"], ["alias", "name", "_id"],
                                             grant_label)
-                        print(grant.get("_id"))
                         if not grant:
                             raise ValueError (f"no grant found with label {grant_label}")
                         else:
