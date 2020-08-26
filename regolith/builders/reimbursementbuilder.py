@@ -77,11 +77,15 @@ class ReimbursementBuilder(BuilderBase):
                     wb = openpyxl.load_workbook(self.template)
                     ws = wb["T&B"]
 
-                    grants = [
-                        fuzzy_retrieval(gtx["grants"], ["alias", "name", "_id"],
-                                        grant)
-                        for grant in ex["grants"]
-                    ]
+                    grants = []
+                    for grant_label in ex["grants"]:
+                        grant = fuzzy_retrieval(gtx["grants"], ["alias", "name", "_id"],
+                                            grant_label)
+                        print(grant.get("_id"))
+                        if not grant:
+                            raise ValueError (f"no grant found with label {grant_label}")
+                        else:
+                            grants.append(grant)
                     ha = payee["home_address"]
                     ws["B17"] = payee["name"]
                     ws["B20"] = ha["street"]
