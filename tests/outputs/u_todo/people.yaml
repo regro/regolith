@@ -457,6 +457,7 @@ scopatz:
         - 'Cyclus: An agent-based, discrete time nuclear fuel cycle simulator.'
         - 'PyNE: The Nuclear Engineering Toolkit.'
         - 'Website: http://www.ergs.sc.edu/'
+      permanent: true
       position: assistant professor
       position_full: Assistant Professor, Mechanical Engineering Department
     - begin_year: 2013

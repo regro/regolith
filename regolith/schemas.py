@@ -2832,7 +2832,7 @@ SCHEMAS = {
                     "location": {"required": False, "type": "string"},
                     "organization": {"required": True, "type": "string"},
                     "other": {"required": False, "type": "list"},
-                    "permanent": {"required": False, "type": "bool",
+                    "permanent": {"required": False, "type": "boolean",
                                   "description": "true if the position is open " \
                                                  "ended and has no fixed end-date"},
                     "position": {"required": True, "type": "string",
