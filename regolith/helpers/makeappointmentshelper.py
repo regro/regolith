@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
 BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
-              'summer@seas', 'frap', 'fwp08', 'startup']
+              'summer@seas', 'frap',  'startup']
 ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
 
 

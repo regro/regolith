@@ -731,6 +731,7 @@ EXEMPLARS = {
                     "PyNE: The Nuclear Engineering Toolkit.",
                     "Website: http://www.ergs.sc.edu/",
                 ],
+                "permanent": True,
                 "position": "assistant professor",
                 "position_full": "Assistant Professor, Mechanical Engineering " "Department",
             },
@@ -2831,6 +2832,9 @@ SCHEMAS = {
                     "location": {"required": False, "type": "string"},
                     "organization": {"required": True, "type": "string"},
                     "other": {"required": False, "type": "list"},
+                    "permanent": {"required": False, "type": "bool",
+                                  "description": "true if the position is open " \
+                                                 "ended and has no fixed end-date"},
                     "position": {"required": True, "type": "string",
                                  "eallowed": list(SORTED_POSITION)},
                     "position_full": {
