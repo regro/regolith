@@ -36,12 +36,12 @@ POSITION_LEVELS = {
     "unknown": -1,
     "undergraduate research assistant": 1,
     "intern": 1,
-    "masters research assistant": 1,
+    "masters research assistant": 2,
     "visiting student": 1,
-    "graduate research assistant": 2,
-    "teaching assistant": 2,
+    "graduate research assistant": 3,
+    "teaching assistant": 3,
     "research assistant": 2,
-    "post-doctoral scholar": 3,
+    "post-doctoral scholar": 4,
     "research fellow": 4,
     "assistant scientist": 4,
     "assistant lecturer": 4,
@@ -70,9 +70,9 @@ POSITION_LEVELS = {
     "scientist": 10,
     "engineer": 10,
     "physicist": 10,
-    "professor": 10,
+    "professor": 11,
     "president": 10,
-    "distinguished professor": 11
+    "distinguished professor": 12
 }
 
 
