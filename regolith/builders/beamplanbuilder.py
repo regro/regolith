@@ -2,9 +2,10 @@
 beamtime and details about how to carry out the experiments. """
 from datetime import datetime
 
+import pandas as pd
+
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.tools import all_docs_from_collection, group, id_key
-import pandas as pd
 
 
 class BeamPlanBuilder(LatexBuilderBase):
@@ -102,11 +103,12 @@ class BeamPlanBuilder(LatexBuilderBase):
             # gather information of the plan.
             plan = {
                 "serial_id": serial_id,
-                "samples": ', '.join(doc.get("samples", [])),
+                "samples": doc.get("samples", []),
                 "objective": doc.get("objective", ""),
                 "prep_plan": doc.get("prep_plan", []),
                 "ship_plan": doc.get("ship_plan", []),
-                "exp_plan": doc.get("exp_plan", [])
+                "exp_plan": doc.get("exp_plan", []),
+                "scanplan": doc.get("scanplan", [])
             }
             plans.append(plan)
             # gather info of the task

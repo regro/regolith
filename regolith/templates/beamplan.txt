@@ -22,7 +22,13 @@ Experiment {{plan["serial_id"]}}
 Objective:
     {{plan["objective"]}}
 Samples:
-    {{plan["samples"]}}
+{% for sample in plan["samples"] -%}
+ - {{sample}}
+{% endfor -%}
+Scanplan:
+{% for step in plan["scanplan"] -%}
+ - {{step}}
+{% endfor -%}
 {% if len(plan["prep_plan"]) > 0 -%}
 Preparation:
 {% for step in plan["prep_plan"] -%}
@@ -38,6 +44,10 @@ Shipment:
 {% if len(plan["exp_plan"]) > 0 -%}
 Measurement:
 {% for step in plan["exp_plan"] -%}
+ - {{step}}
+{% endfor -%}
+Scanplan:
+{% for step in plan["scanplan"] -%}
  - {{step}}
 {% endfor -%}
 {% endif -%}

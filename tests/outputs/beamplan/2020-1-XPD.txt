@@ -19,7 +19,10 @@ Experiment 1
 Objective:
     temperature ramping PDF of one WO3 film (100, 300K, 10K)
 Samples:
-    WO3 film, glass subtrate
+- WO3 film
+- glass subtrate
+Scanplan:
+- Scanplan(bt, Tramp, 30, 80, 500, 10)
 Preparation:
 - films will be made by kriti
 Shipment:
@@ -31,3 +34,5 @@ Measurement:
 - take room temperature measurement of sample and the subtrate
 - ramp down temperature to 100K
 - ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure
+Scanplan:
+- Scanplan(bt, Tramp, 30, 80, 500, 10)
