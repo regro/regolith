@@ -746,10 +746,10 @@ appointed_people = [
      "B": {'_id': 'B', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'},
      "C": {'_id': 'C', "begin_date": '2019-09-01', "end_date": '2019-09-10', 'grant': 'grant1', 'loading': 0.25, 'type': 'gra'}},
      "employment": [
-         {'group': 'permutation', 'begin_date': '2014-06-01', 'end_date': '2015-06-01'},
+         {'group': 'permutation', 'begin_date': '2014-06-01', 'end_date': '2015-06-01', 'status': 'phd'},
          {'group': 'matrix', 'begin_year': '2020', 'end_day': '5', 'end_month': '12', 'end_year': '2020'},
          {'group': 'permutation', 'begin_day': 4, 'begin_month': 9, 'begin_year': 2012, 'end_day': 5,
-          'end_month': 9, 'end_year': 2012}
+          'end_month': 9, 'end_year': 2012, 'permanent': 'true'}
      ]},
     {'name': 'MC Escher', '_id': 'mcescher',
      'appointments':{
@@ -757,7 +757,7 @@ appointed_people = [
      "B": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant2', 'loading': 0.5, 'type': 'ss'},
      "C": {"begin_date": '2019-11-01', "end_date": '2019-11-30', 'grant': 'grant3', 'loading': 0.5, 'type': 'ss'},},
      'employment': [
-         {'group': 'transformation', 'begin_date': '2018-07-24', 'end_date': dt.date(2020, 8, 1)},
+         {'group': 'transformation', 'begin_date': '2018-07-24', 'end_date': dt.date(2020, 8, 1), 'status': 'postdoc'},
          {'group': 'abstract', 'begin_year': 2010, 'end_day': 5, 'end_month': 12, 'end_year': 2020},
          {'group': 'abstract', 'begin_date': '2012-06-30', 'end_date': '2012-09-05'}
      ]},
@@ -951,11 +951,14 @@ def test_validate_meeting(meeting, date, expected):
     "person,grpname,expected",
     [
         (appointed_people[0], 'permutation',
-         [{'_id': 'kgodel', 'begin_date': dt.date(2014, 6, 1), 'end_date': dt.date(2015, 6, 1)},
-          {'_id': 'kgodel', 'begin_date': dt.date(2012, 9, 4), 'end_date': dt.date(2012, 9, 5)}]
+         [{'_id': 'kgodel', 'begin_date': dt.date(2014, 6, 1),
+           'end_date': dt.date(2015, 6, 1), 'status': 'phd', 'permanent': None},
+          {'_id': 'kgodel', 'begin_date': dt.date(2012, 9, 4),
+           'end_date': dt.date(2012, 9, 5), 'status': None, 'permanent': 'true'}]
          ),
         (appointed_people[1], 'transformation',
-         [{'_id': 'mcescher', 'begin_date': dt.date(2018, 7, 24), 'end_date': dt.date(2020, 8, 1)}]
+         [{'_id': 'mcescher', 'begin_date': dt.date(2018, 7, 24),
+           'end_date': dt.date(2020, 8, 1), 'status': 'postdoc', 'permanent': None}]
         ),
         (appointed_people[2], 'bg', "WARNING: jsbach has no end date in employment for bg starting 2019-02-03"
         ),
