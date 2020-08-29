@@ -9,16 +9,16 @@ from regolith.broker import load_db
 from regolith.main import main
 
 builder_map = [
-    #    "annual-activity",
-    #    "cv",
-    #    "html",
-    #    "resume",
-    #    "publist",
-    #    "current-pending",
-    #    "preslist",
-    #    "reimb",
-    #    "figure",
-    #    "recent-collabs",
+    "annual-activity",
+    "cv",
+    "html",
+    "resume",
+    "publist",
+    "current-pending",
+    "preslist",
+    "reimb",
+    "figure",
+    "recent-collabs",
     "beamplan"
 ]
 db_srcs = ["mongo", "fs"]
