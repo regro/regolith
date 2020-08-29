@@ -202,7 +202,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                         elif appt.get('type') == 'ss':
                             day_burn = this_burn[day]['ss_days']
                         if day_burn < - 5:
-                            # change to display depleted until next >-5 amt instead of appt_end
+                            # FIXME change to display depleted until next >-5 amt instead of appt_end
                             depleted.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
                                 person['_id'], appt['_id'], appt.get('grant'), str(day), str(appt_end)))

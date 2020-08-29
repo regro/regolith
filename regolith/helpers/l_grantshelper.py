@@ -14,12 +14,14 @@ from regolith.tools import (
     get_pi_id,
     search_collection,
     key_value_pair_filter,
-    collection_str
+    collection_str,
+    merge_collections
 )
 
 TARGET_COLL = "grants"
 HELPER_TARGET = "l_grants"
-
+BLACKLIST = ["frap", "they_pay", "collgf", "physmatch", "ta", "chemmatch",
+             "summer@seas", "startup"]
 
 def subparser(subpi):
     subpi.add_argument("-d", "--date",
@@ -29,6 +31,9 @@ def subparser(subpi):
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when when running "
                                                        "--filter. If no argument is given the default is just the id.")
+    subpi.add_argument("-v", "--verbose", action="store_true",
+                       help='if set, outputs also hidden grants such as TA, '
+                            'matches etc.')
     return subpi
 
 
@@ -38,7 +43,7 @@ class GrantsListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_dbs = [f'{TARGET_COLL}', 'proposals']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -61,6 +66,8 @@ class GrantsListerHelper(SoutHelperBase):
         ]
         for db, coll in zip(self.needed_dbs, colls):
             gtx[db] = coll
+        gtx["grants"] = merge_collections(gtx["proposals"], gtx["grants"],
+                                   "proposal_id")
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -78,9 +85,16 @@ class GrantsListerHelper(SoutHelperBase):
         else:
             desired_date = dt.date.today()
         for grant in collection:
+            # fixme maybe change this logic and change the name of "year" in proposal to "submitted_year" or sthg
+            if grant.get('year'):    # year is used for prop submission but breaks get_dates
+                del grant['year']
             if rc.current and not is_current(grant, now=desired_date):
                 continue
-            grants.append(grant)
+            if not rc.verbose:
+                if grant.get("alias") not in BLACKLIST:
+                    grants.append(grant)
+            else:
+                grants.append(grant)
 
         # Sort the grants by end date in reverse chronological order
         grants.sort(key=lambda k: get_dates(k).get('end_date'), reverse=True)
