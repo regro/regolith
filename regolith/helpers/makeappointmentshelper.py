@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
 BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
-              'summer@seas', 'frap',  'startup']
+              'summer@seas', 'frap',  'startup', 'they_pay']
 ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
 TRACKED_TYPES = ["gra", "pd", "ss", "ug"]
 
@@ -153,13 +153,13 @@ class MakeAppointmentsHelper(SoutHelperBase):
         for person in self.gtx['people']:
             person_dates = group_member_employment_start_end(person, "bg")
             last_emp, months_to_cover = 0, 0
-            if person_dates:
-                emps = [emp.get('end_date', 0) for emp in person_dates]
-                if emps:
-                    last_emp = max(emps)
-            if last_emp:
-                months_to_cover = round((last_emp - projection_from_date).days / 30.5, 2)
-            if months_to_cover > 0:
+            emps = [person_date for person_date in person_dates
+                    if not person_date.get("permanent")]
+            emps.sort(key=lambda x: x.get('end_date', 0))
+            if emps:
+                date_last_emp = emps[-1].get('end_date', 0)
+                months_to_cover = round((date_last_emp - projection_from_date).days / 30.5, 2)
+            if months_to_cover > 0 and emps[-1].get("status") in ["phd", "postdoc"]:
                 print(
                     f"{person['_id']} needs to be covered for {months_to_cover} months")
                 cum_months_to_cover += months_to_cover
