@@ -154,8 +154,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
             person_dates = group_member_employment_start_end(person, "bg")
             last_emp, months_to_cover = 0, 0
             if person_dates:
-                emps = [emp.get('end_date', 0) for emp in person_dates if
-                 emp.get('type') in TRACKED_TYPES]
+                emps = [emp.get('end_date', 0) for emp in person_dates]
                 if emps:
                     last_emp = max(emps)
             if last_emp:
