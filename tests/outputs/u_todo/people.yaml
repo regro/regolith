@@ -329,6 +329,8 @@ sbillinge:
       status: finished
       assigned_by: sbillinge
       notes:
+        - test notes 1
+        - test notes 2
         - some new notes
         - notes2
       running_index: 3

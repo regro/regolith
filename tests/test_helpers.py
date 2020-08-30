@@ -229,6 +229,8 @@ helper_map = [
      "     - don't forget to upload to the website\n"
      "finished:\n"
      "(3) update the description (-7|2|35.0|sbillinge)\n"
+     "     - test notes 1\n"
+     "     - test notes 2\n"
      "     - some new notes\n"
      "     - notes2\n"
      "---------------------------------------------------------------------------------\n"
