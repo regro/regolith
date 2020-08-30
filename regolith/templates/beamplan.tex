@@ -34,12 +34,19 @@ The TABLE.~\ref{tab:exps} shows the summary of the experiment plans for this bea
 {% endif -%}
 
 \section{Details}
+
 {% for plan in plans %}
+
 \subsection{Experiment {{plan["serial_id"]}}}
+
 \subsubsection{Objective}
 {{plan["objective"]}}
+
 \subsubsection{Samples}
-{{plan["samples"]}}
+{% for sample in plan["samples"] -%}
+\item {{sample}}
+{% endfor -%}
+
 {% if len(plan["prep_plan"]) > 0 -%}
 \subsubsection{Preparation}
 \begin{enumerate}
@@ -48,6 +55,7 @@ The TABLE.~\ref{tab:exps} shows the summary of the experiment plans for this bea
 {% endfor -%}
 \end{enumerate}
 {% endif -%}
+
 {% if len(plan["ship_plan"]) > 0 -%}
 \subsubsection{Shipment}
 \begin{enumerate}
@@ -56,6 +64,7 @@ The TABLE.~\ref{tab:exps} shows the summary of the experiment plans for this bea
 {% endfor -%}
 \end{enumerate}
 {% endif -%}
+
 {% if len(plan["exp_plan"]) > 0 -%}
 \subsubsection{Measurement}
 \begin{enumerate}
@@ -64,5 +73,15 @@ The TABLE.~\ref{tab:exps} shows the summary of the experiment plans for this bea
 {% endfor -%}
 \end{enumerate}
 {% endif -%}
+
+{% if len(plan["scanplan"]) > 0 -%}
+\subsubsection{Measurement}
+\begin{enumerate}
+{% for p in plan["scanplan"] -%}
+\item {{p}}
+{% endfor -%}
+\end{enumerate}
+{% endif -%}
+
 {% endfor %}
 \end{document}
