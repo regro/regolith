@@ -219,7 +219,11 @@ class TodoUpdaterHelper(DbHelperBase):
                     else:
                         raise ValueError(f"Status should be chosen from {ALLOWED_STATI}.")
                 if rc.notes:
-                    todo["notes"].extend(rc.notes)
+                    try:
+                        todo["notes"].extend(rc.notes)
+                    except KeyError:
+                        todo["notes"] = []
+                        todo["notes"].extend(rc.notes)
                 if rc.begin_date:
                     todo["begin_date"] = date_parser.parse(rc.begin_date).date()
                 if rc.end_date:
