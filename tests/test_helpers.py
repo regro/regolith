@@ -283,7 +283,7 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
-    (["helper", "makeappointments", "run", "--no-gui", ],
+    (["helper", "makeappointments", "run", "--no-gui", "--projection_from_date", "2020-08-31",],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
@@ -294,19 +294,17 @@ helper_map = [
      "appointments on depleted grants:\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
      "            from 2020-07-15 until 2020-08-31\n"
-     "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-09-07 until 2019-10-31\n"
      "underspent grants:\n"
      "    end: 2030-12-31, grant: sym, underspend amount: 8.0 months,\n"
      "      required ss+gra burn: 0.06\n"
      "    end: 2019-05-01, grant: dmref15, underspend amount: 56.0 months,\n"
-     "      required ss+gra burn: -3.54\n"
+     "      required ss+gra burn: -3.5\n"
      "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
      "overspent grants:\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "plotting mode is on\n"
      ),
-    (["helper", "makeappointments", "run", "--no-plot", ],
+    (["helper", "makeappointments", "run", "--no-plot", "--projection_from_date", "2020-08-31",],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
@@ -317,13 +315,11 @@ helper_map = [
      "appointments on depleted grants:\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
      "            from 2020-07-15 until 2020-08-31\n"
-     "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-09-07 until 2019-10-31\n"
      "underspent grants:\n"
      "    end: 2030-12-31, grant: sym, underspend amount: 8.0 months,\n"
      "      required ss+gra burn: 0.06\n"
      "    end: 2019-05-01, grant: dmref15, underspend amount: 56.0 months,\n"
-     "      required ss+gra burn: -3.54\n"
+     "      required ss+gra burn: -3.5\n"
      "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
      "overspent grants:\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
