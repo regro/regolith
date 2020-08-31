@@ -41,15 +41,19 @@ TRACKED_TYPES = ["gra", "pd", "ss", "ug"]
 
 def subparser(subpi):
 
-    subpi.add_argument("run", help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
-    subpi.add_argument("-p", "--projection-from-date", help='the date from which projections into the future will be calculated')
-    subpi.add_argument("--no-plot", action="store_true", help='suppress plotting feature')
-    subpi.add_argument("--no-gui", action="store_true", help='suppress interactive matplotlib GUI (used for running tests)')
-    subpi.add_argument("-v", "--verbose", action="store_true", help='increase chatter')
+    subpi.add_argument("run",
+                       help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
+    subpi.add_argument("-p", "--projection-from-date",
+                       help='the date from which projections into the future will be calculated')
+    subpi.add_argument("--no-plot", action="store_true",
+                       help='suppress plotting feature')
+    subpi.add_argument("--no-gui", action="store_true",
+                       help='suppress interactive matplotlib GUI (used for running tests)')
+    subpi.add_argument("-v", "--verbose", action="store_true",
+                       help='increase chatter')
     # Do not delete --database arg
     subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file.")
+                       help="The database that will be updated. Defaults to first database in regolithrc.json")
 
     return subpi
 
