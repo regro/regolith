@@ -189,7 +189,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 for x in range((appt_end - appt_begin).days + 1):
                     day = appt_begin + relativedelta(days=x)
                     if not outdated_period:
-                        if not this_grant.get('burn').get(day):
+                        if not this_grant['burn'].get(day):
                             outdated_period = True
                             outdated.append("    person: {}, appointment: {}, grant: {},\n"
                                             "            from {} until {}".format(
@@ -197,6 +197,9 @@ class MakeAppointmentsHelper(SoutHelperBase):
                                 if day < this_grant['begin_date'] else this_grant['end_date'] + relativedelta(days=1),
                                 str(min(appt_end, this_grant['begin_date'])) if day < this_grant['begin_date']
                                 else str(day)))
+                    else:
+                        if this_grant['burn'].get(day):
+                            outdated_period = False
                     if not (depleted_period or outdated_period):
                         day_burn, this_burn = 0, this_grant['burn']
                         if appt.get('type') == 'gra':
