@@ -133,7 +133,7 @@ def last_day(year, month):
 
 def get_dates(thing, date_field_prefix=None):
     '''
-    given a dict like thing, return the items
+    given a dict like thing, return the date items
 
     Parameters
     ----------
@@ -146,7 +146,8 @@ def get_dates(thing, date_field_prefix=None):
     Returns
     -------
        dict containing datetime.date objects for begin_date end_date and date, and
-       prefix_date if a prefix string was passed
+       prefix_date if a prefix string was passed.  Missing and empty dates and
+       date items that contain the string 'tbd' return None.
 
     Description
     -----------
@@ -215,6 +216,10 @@ def get_dates(thing, date_field_prefix=None):
         print("WARNING: cannot find any dates")
         dates = {'begin_date': None, 'end_date': None, 'date': None}
         return dates
+    for key, value in thing.items():
+        if isinstance(value, str):
+            if value.strip() == 'tbd':
+                thing[key] = None
     if thing.get("end_year") and not thing.get("begin_year"):
         print('WARNING: end_year specified without begin_year')
     begin_date, end_date, date = None, None, None
