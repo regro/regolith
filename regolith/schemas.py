@@ -2690,37 +2690,37 @@ SCHEMAS = {
         "actions": {
             "description": "action items expected from the group members for that particular meeting week",
             "required": False,
-            "type": "list",
+            "type": "string",
         },
         "agenda": {
             "description": "schedule of the current meeting",
             "required": False,
-            "type": "list",
+            "type": "string",
         },
         "buddies": {
             "description": "list of pairs of group members that are selected for the buddy round robin",
             "required": False,
-            "type": "list",
+            "type": "string",
         },
         "day": {
             "description": "day of the group meeting",
             "required": False,
             "type": "integer",
         },
-        "journal_club": {
+        "journal club": {
             "description": "indicating the doi of the journal and the presenting group member as the presenter",
             "required": False,
-            "type": "dict",
+            "type": ["integer", "string"],
         },
         "lead": {
             "description": "person who will be leading the meeting of the current week",
             "required": False,
-            "type": "string",
+            "type":"string",
         },
         "minutes": {
             "description": "meeting notes in a chronological order according to comments made by the group members",
             "required": False,
-            "type": "list",
+            "type": "string",
         },
         "month": {
             "description": "month in which the meeting is taking place",
@@ -2735,7 +2735,7 @@ SCHEMAS = {
         "presentation": {
             "description": "indicating the title of the presentation along with the link and the presenter ",
             "required": False,
-            "type": "dict",
+            "type": "string",
         },
         "scribe": {
             "description": "person who will be taking notes and updating minutes accordingly",
@@ -2761,7 +2761,6 @@ SCHEMAS = {
             "description": "person who will be taking notes and updating minutes accordingly",
             "required": False,
             "type": "integer",
-        },
     },
     "people": {
         "_description": {
