@@ -584,7 +584,7 @@ EXEMPLARS = {
             "doi: 10.1107/S2053273319005606",
             "presenter: sstao",
         ],
-        "lead": "jumana",
+        "lead": "sbillinge",
         "minutes": [
             "Talked about eyesight and prescription lenses",
             "Professor Billinge tells everyone a Logician/Mathematician joke",
@@ -2690,17 +2690,17 @@ SCHEMAS = {
         "actions": {
             "description": "action items expected from the group members for that particular meeting week",
             "required": False,
-            "type": "string",
+            "type": "list",
         },
         "agenda": {
             "description": "schedule of the current meeting",
             "required": False,
-            "type": "string",
+            "type": "list",
         },
         "buddies": {
             "description": "list of pairs of group members that are selected for the buddy round robin",
             "required": False,
-            "type": "string",
+            "type": "list",
         },
         "day": {
             "description": "day of the group meeting",
@@ -2710,7 +2710,7 @@ SCHEMAS = {
         "journal club": {
             "description": "indicating the doi of the journal and the presenting group member as the presenter",
             "required": False,
-            "type": ["integer", "string"],
+            "type": "list",
         },
         "lead": {
             "description": "person who will be leading the meeting of the current week",
@@ -2735,7 +2735,7 @@ SCHEMAS = {
         "presentation": {
             "description": "indicating the title of the presentation along with the link and the presenter ",
             "required": False,
-            "type": "string",
+            "type": "list",
         },
         "scribe": {
             "description": "person who will be taking notes and updating minutes accordingly",
@@ -4123,6 +4123,7 @@ SCHEMAS = {
             "type": "string",
         },
     },
+},
 }
 
 for s in SCHEMAS:
