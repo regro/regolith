@@ -2681,6 +2681,87 @@ SCHEMAS = {
             "anyof_type": ["integer", "string"],
         },
     },
+    "meetings": {
+        "_id": {
+            "description": "unique identifier for the date of the group meeting",
+            "required": True,
+            "type": "string",
+        },
+        "actions": {
+            "description": "action items expected from the group members for that particular meeting week",
+            "required": False,
+            "type": "string",
+        },
+        "agenda": {
+            "description": "schedule of the current meeting",
+            "required": False,
+            "type": "string",
+        },
+        "buddies": {
+            "description": "list of pairs of group members that are selected for the buddy round robin",
+            "required": False,
+            "type": "string",
+        },
+        "day": {
+            "description": "day of the group meeting",
+            "required": False,
+            "type": "integer",
+        },
+        "journal club": {
+            "description": "indicating the doi of the journal and the presenting group member as the presenter",
+            "required": False,
+            "type": ["integer", "string"],
+        },
+        "lead": {
+            "description": "person who will be leading the meeting of the current week",
+            "required": False,
+            "type":"string",
+        },
+        "minutes": {
+            "description": "meeting notes in a chronological order according to comments made by the group members",
+            "required": False,
+            "type": "string",
+        },
+        "month": {
+            "description": "month in which the meeting is taking place",
+            "required": False,
+            "anyof_type": ["string", "integer"]
+        },
+        "place": {
+            "description": "location where the meeting is taking place on campus",
+            "required": False,
+            "type": "string",
+        },
+        "presentation": {
+            "description": "indicating the title of the presentation along with the link and the presenter ",
+            "required": False,
+            "type": "string",
+        },
+        "scribe": {
+            "description": "person who will be taking notes and updating minutes accordingly",
+            "required": False,
+            "type": "string",
+        },
+        "time": {
+            "description": "person who will be taking notes and updating minutes accordingly",
+            "required": False,
+            "type": "string",
+        },
+        "updated": {
+            "description": "person who will be taking notes and updating minutes accordingly",
+            "required": False,
+            "anyof_type": ["string", "datetime", "date"],
+        },
+        "uuid": {
+            "description": "person who will be taking notes and updating minutes accordingly",
+            "required": False,
+            "type": "string",
+        },
+        "year": {
+            "description": "person who will be taking notes and updating minutes accordingly",
+            "required": False,
+            "type": "integer",
+    },
     "people": {
         "_description": {
             "description": "This collection describes the members of the "
