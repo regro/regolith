@@ -9,9 +9,19 @@ from regolith.broker import load_db
 from regolith.main import main
 
 builder_map = [
-    "internalhtml"
+    "annual-activity",
+    "cv",
+    "html",
+    "resume",
+    "publist",
+    "current-pending",
+    "preslist",
+    "reimb",
+    "figure",
+    "recent-collabs",
+    "beamplan"
 ]
-db_srcs = ["fs"]
+db_srcs = ["mongo", "fs"]
 
 xls_check = ("B17", "B20", "B36")
 recent_collabs_xlsx_check = ["A51", "B51", "C51"]
