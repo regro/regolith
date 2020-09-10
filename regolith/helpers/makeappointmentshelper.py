@@ -36,6 +36,7 @@ BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
               'summer@seas', 'frap',  'startup', 'they_pay']
 ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
 TRACKED_TYPES = ["gra", "pd", "ss", "ug"]
+MONTHLY_COST_QUANTUM = 3262
 
 
 
@@ -43,7 +44,7 @@ def subparser(subpi):
 
     subpi.add_argument("run",
                        help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
-    subpi.add_argument("-p", "--projection-from-date",
+    subpi.add_argument("-d", "--projection-from-date",
                        help='the date from which projections into the future will be calculated')
     subpi.add_argument("--no-plot", action="store_true",
                        help='suppress plotting feature')
@@ -231,6 +232,16 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 if rc.verbose:
                     print(f"skipping {grant} since it it does not support any appointments")
                 continue
+            if all_grants[grant]:
+                tracking = [balance for balance in all_grants[grant].get('tracking',[]) if balance]
+            else:
+                tracking = []
+            if len(tracking) > 0:
+                tracking.sort(key=lambda x: x[0])
+                recent_balance = tracking[-1]
+                recent_balance[1] = recent_balance[1]/MONTHLY_COST_QUANTUM
+            else:
+                recent_balance = [projection_from_date, 0]
             budget_begin = min(get_dates(period)['begin_date'] for period in all_grants[grant].get('budget'))
             budget_end = max(get_dates(period)['end_date'] for period in all_grants[grant].get('budget'))
             if all_grants[grant]['begin_date'] != budget_begin:
@@ -245,10 +256,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
                          this_burn.get(all_grants[grant]['end_date'])['ss_days'] + \
                         this_burn.get(all_grants[grant]['end_date'])['postdoc_days']
             if end_amount > 15.25:
-                underspent.append("    end: {}, grant: {}, underspend amount: {} months,\n"
-                                  "      required ss+gra burn: {}".
-                    format(str(all_grants[grant]['end_date']), grant, round(end_amount/30.5, 2),
-                    round(end_amount / days_to_go, 2)))
+                underspent.append((all_grants[grant]['end_date'],grant, round(end_amount/30.5, 2), round(end_amount / days_to_go, 2)))
                 cum_underspend += end_amount
             elif end_amount < -30.5:
                 overspent.append("    end: {}, grant: {}, overspend amount: {} months".format(
@@ -283,9 +291,13 @@ class MakeAppointmentsHelper(SoutHelperBase):
             for appt in depleted:
                 print(appt)
         if underspent:
+            underspent.sort(key=lambda x: x[0])
             print("underspent grants:")
-            for grant in underspent:
-                print(grant)
+            for grant_info in underspent:
+                print(f"    {grant_info[1]}: end: {grant_info[0]}\n"
+                      f"      projected underspend: {grant_info[2]} months, "
+                      f"balance as of {recent_balance[0]}: {recent_balance[1]}\n"
+                      f"      required ss+gra burn: {grant_info[3]}")
             print(f"cumulative underspend = {round(cum_underspend/30.5, 2)} months, cumulative months to support = {round(cum_months_to_cover, 2)}")
         if overspent:
             print("overspent grants:")
