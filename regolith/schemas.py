@@ -580,10 +580,10 @@ EXEMPLARS = {
             "   Shomik Ghose",
         ],
         "day": 31,
-        "journal_club": [
-            "doi: 10.1107/S2053273319005606",
-            "presenter: sstao",
-        ],
+        "journal_club": {
+            "doi": "10.1107/S2053273319005606",
+            "presenter": "sbillinge",
+        },
         "lead": "sbillinge",
         "minutes": [
             "Talked about eyesight and prescription lenses",
@@ -601,12 +601,12 @@ EXEMPLARS = {
         ],
         "month": 7,
         "place": "Mudd 1106",
-        "presentation": [
-            "title: PDF Distance Extraction",
-            "link: 2007ac_grpmtg",
-            "presenter: achoudhry",
-        ],
-        "scribe": "ashaaban",
+        "presentation": {
+            "title": "PDF Distance Extraction",
+            "link": "2007ac_grpmtg",
+            "presenter": "sbillinge",
+        },
+        "scribe": "sbillinge",
         "time": '0',
         "updated": "2020-07-31 23:27:50.764475",
         "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
