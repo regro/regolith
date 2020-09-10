@@ -546,7 +546,7 @@ EXEMPLARS = {
         "year": 2015,
     },
     "meetings": [{
-        "_id": "grp2020-07-31",
+        "_id": "grp1000-01-01",
         "actions": [
             "(Everyone) Update overdue milestones",
             "(Professor Billinge) Explore, and plan a machine learning project for DSI"
@@ -581,7 +581,7 @@ EXEMPLARS = {
             "   Michael Winitch",
             "   Shomik Ghose",
         ],
-        "day": 31,
+        "day": 1,
         "journal_club": {
             "doi": "10.1107/S2053273319005606",
             "presenter": "sbillinge",
@@ -601,7 +601,7 @@ EXEMPLARS = {
             "Discussed real space versus reciprocal space",
             "Finished journal club, had to postpone Akshay's presentation, and the Yoga session to next week",
         ],
-        "month": 7,
+        "month": 1,
         "place": "Mudd 1106",
         "presentation": {
             "title": "PDF Distance Extraction",
@@ -612,9 +612,80 @@ EXEMPLARS = {
         "time": '0',
         "updated": "2020-07-31 23:27:50.764475",
         "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
-        "year": 2020
+        "year": 1000
 
-    }],
+    },
+        {
+            "_id": "grp2020-07-31",
+            "actions": [
+                "(Everyone) Update overdue milestones",
+                "(Professor Billinge) Explore, and plan a machine learning project for DSI"
+                "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
+                "(Emil) Set up the slack channel for the DSI project"
+            ],
+            "agenda": ["Review actions", "Fargo is not free on any streaming platforms",
+                       "Review Airtable for deliverables and celebrate",
+                       "Mention diversity action initiative", "Songsheng's journal club presentation",
+                       "(Vivian and Zicheng) Finish rest of crystallography presentation next week",
+                       "Emil's 7th inning Yoga Stretch", "Crystallography talk", "Presentation"],
+            "buddies": [
+                "   Jaylyn C. Umana, "
+                "   Simon J. L. Billinge",
+                "   Long Yang, "
+                "   Emil Kjaer",
+                "   Sani Harouna-Mayer,"
+                "   Akshay Choudhry",
+                "   Vivian Lin, "
+                "   Songsheng Tao",
+                "   Ran Gu, "
+                "   Adiba Ejaz",
+                "   Zach Thatcher, "
+                "   Yevgeny Rakita",
+                "   Zicheng 'Taylor' Liu, "
+                "   Eric Shen ",
+                "   Hung Vuong, "
+                "   Daniela Hikari Yano",
+                "   Ahmed Shaaban, "
+                "   Jiawei Zang",
+                "   Berrak Ozer, "
+                "   Michael Winitch",
+                "   Shomik Ghose",
+            ],
+            "day": 1,
+            "journal_club": {
+                "doi": "10.1107/S2053273319005606",
+                "presenter": "sbillinge",
+            },
+            "lead": "sbillinge",
+            "minutes": [
+                "Talked about eyesight and prescription lenses",
+                "Professor Billinge tells everyone a Logician/Mathematician joke",
+                "Mentioned pyjokes, a package in Python that lists bad jokes",
+                "Jaylyn greets everyone",
+                "Reviewed action items from last time",
+                "Talked about fargo, and the merits (or lack thereof) of the Dakotas",
+                "Celebrated finished prums",
+                "Songhsheng holds journal club presentation on Machine Learning techniques",
+                "Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution and other ML topics",
+                "Discussed how we can derive scientific meaning from ML algorithms",
+                "Discussed real space versus reciprocal space",
+                "Finished journal club, had to postpone Akshay's presentation, and the Yoga session to next week",
+            ],
+            "month": 1,
+            "place": "Mudd 1106",
+            "presentation": {
+                "title": "PDF Distance Extraction",
+                "link": "2007ac_grpmtg",
+                "presenter": "sbillinge",
+            },
+            "scribe": "sbillinge",
+            "time": '0',
+            "updated": "2020-07-31 23:27:50.764475",
+            "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
+            "year": 7000
+
+        }
+    ],
     "news": {
         "_id": "56b4eb6d421aa921504ef2a9",
         "author": "Anthony Scopatz",
