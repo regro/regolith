@@ -553,9 +553,11 @@ EXEMPLARS = {
             "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
             "(Emil) Set up the slack channel for the DSI project"
         ],
-        "agenda": ["Review actions","Fargo is not free on any streaming platforms","Review Airtable for deliverables and celebrate",
-                   "Mention diversity action initiative","Songsheng's journal club presentation","(Vivian and Zicheng) Finish rest of crystallography presentation next week",
-                   "Emil's 7th inning Yoga Stretch","Crystallography talk","Presentation"],
+        "agenda": ["Review actions", "Fargo is not free on any streaming platforms",
+                   "Review Airtable for deliverables and celebrate",
+                   "Mention diversity action initiative", "Songsheng's journal club presentation",
+                   "(Vivian and Zicheng) Finish rest of crystallography presentation next week",
+                   "Emil's 7th inning Yoga Stretch", "Crystallography talk", "Presentation"],
         "buddies": [
             "   Jaylyn C. Umana, "
             "   Simon J. L. Billinge",
@@ -2692,7 +2694,7 @@ SCHEMAS = {
         "lead": {
             "description": "person who will be leading the meeting of the current week",
             "required": False,
-            "type":"string",
+            "type": "string",
         },
         "minutes": {
             "description": "meeting notes in a chronological order according to comments made by the group members",
