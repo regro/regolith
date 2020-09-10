@@ -612,30 +612,7 @@ EXEMPLARS = {
         "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
         "year": 2020
 
-    },
-        {
-            "_id": "grp6000-01-01",
-            "actions": [
-                "Simon: test",
-                "Everyone: Clear out-of-date prums milestones."
-            ],
-            "agenda": ["Review actions", ],
-            "buddies": [],
-            "day": 1,
-            "journal_club": [],
-            "lead": "scopatz",
-            "minutes": [],
-            "month": 1,
-            "place": "Mudd 1106",
-            "presentation": [],
-            "scribe": "scopatz",
-            "time": '0',
-            "updated": "",
-            "uuid": "",
-            "year": 6000
-
-        }
-    ],
+    }],
     "news": {
         "_id": "56b4eb6d421aa921504ef2a9",
         "author": "Anthony Scopatz",
@@ -2707,10 +2684,10 @@ SCHEMAS = {
             "required": False,
             "type": "integer",
         },
-        "journal club": {
+        "journal_club": {
             "description": "indicating the doi of the journal and the presenting group member as the presenter",
             "required": False,
-            "type": "list",
+            "type": "dict",
         },
         "lead": {
             "description": "person who will be leading the meeting of the current week",
@@ -2720,7 +2697,7 @@ SCHEMAS = {
         "minutes": {
             "description": "meeting notes in a chronological order according to comments made by the group members",
             "required": False,
-            "type": "string",
+            "type": "list",
         },
         "month": {
             "description": "month in which the meeting is taking place",
@@ -2735,7 +2712,7 @@ SCHEMAS = {
         "presentation": {
             "description": "indicating the title of the presentation along with the link and the presenter ",
             "required": False,
-            "type": "list",
+            "type": "dict",
         },
         "scribe": {
             "description": "person who will be taking notes and updating minutes accordingly",
@@ -2761,6 +2738,7 @@ SCHEMAS = {
             "description": "person who will be taking notes and updating minutes accordingly",
             "required": False,
             "type": "integer",
+        },
     },
     "people": {
         "_description": {
@@ -4123,7 +4101,6 @@ SCHEMAS = {
             "type": "string",
         },
     },
-},
 }
 
 for s in SCHEMAS:
