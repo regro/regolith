@@ -2737,6 +2737,9 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "_description": {
+            "description": "the group meeting."
+        },
         "actions": {
             "description": "action items expected from the group members for that particular meeting week",
             "required": False,
