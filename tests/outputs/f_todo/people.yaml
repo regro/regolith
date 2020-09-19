@@ -97,6 +97,7 @@ sbillinge:
       value: 1150
       year: 2013
   google_scholar_url: https://scholar.google.com/citations?user=dRm8f
+  grp_mtg_active: true
   hindex:
     - h: 65
       h_last_five: 43
