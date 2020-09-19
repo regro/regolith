@@ -976,6 +976,7 @@ EXEMPLARS = {
                  "year": 2013},
             ],
             "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
+            "grp_mtg_active": True,
             "hindex": [{
                 "h": 65,
                 "h_last_five": 43,
@@ -2936,6 +2937,9 @@ SCHEMAS = {
         "google_scholar_url": {"required": False, "type": "string",
                                "description": "URL of your Google Scholar "
                                               "rofile"},
+        "grp_mtg_active": {"required": False, "type": "boolean",
+                      "description": "Whether to schedule tasks at group meeting "
+                                     "or not"},
         "hindex": {
             "description": "details of hindex pulled on a certain date",
             "required": False,

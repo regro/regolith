@@ -254,7 +254,7 @@ helper_map = [
      "Available keys:\n"
      "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
-     "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
+     "'github_id', 'google_scholar_url', 'grp_mtg_active', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
      "'title', 'todos']\n"),
@@ -263,7 +263,7 @@ helper_map = [
      "Available keys:\n"
      "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
      "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
-     "'github_id', 'google_scholar_url', 'hindex', 'home_address', 'initials', "
+     "'github_id', 'google_scholar_url', 'grp_mtg_active', 'hindex', 'home_address', 'initials', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
      "'title', 'todos']\n"
