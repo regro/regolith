@@ -109,8 +109,8 @@ class MembersListerHelper(SoutHelperBase):
         for i in people:
             if rc.verbose:
                 print("{}, {}".format(i.get('name'), i.get('position')))
-                print("    group_id: {} | email: {}".format(i.get('_id'),i.get('email')))
-                print("    github_id: {} | orcid: {}".format(i.get('github_id'),i.get('orcid_id')))
+                print("    email: {} | group_id: {}".format(i.get('email'), i.get('_id')))
+                print("    github_id: {} | orcid: {}".format(i.get('github_id'), i.get('orcid_id')))
                 not_current_positions = [emp for emp in i.get('employment') if not is_current(emp)]
                 not_current_positions.sort(key=lambda x: get_dates(x)["end_date"])
                 current_positions = [emp for emp in i.get('employment') if is_current(emp)]
@@ -123,6 +123,8 @@ class MembersListerHelper(SoutHelperBase):
                                                position.get("organization"))
                         if inst:
                             instname = inst.get("name")
+                        else:
+                            print(f"WARNING: {position.get('organization')} not in institutions collection")
                         print("    current organization: {}".format(instname))
                         print("    current position: {}".format(position.get('full_position', position.get('position').title())))
                     if not i.get('active'):
