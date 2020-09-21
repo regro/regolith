@@ -2797,9 +2797,11 @@ SCHEMAS = {
             "type": "string",
         },
         "time": {
-            "description": "person who will be taking notes and updating minutes accordingly",
+            "description": "person who will be taking notes and updating minutes accordingly"
+                           "If an integer is minutes past midnight, so 13:30 is 810 for"
+                           "example.",
             "required": False,
-            "type": "string",
+            "anyof_type": ["string", "integer"]
         },
         "updated": {
             "description": "person who will be taking notes and updating minutes accordingly",
