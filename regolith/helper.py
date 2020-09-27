@@ -8,6 +8,7 @@ from regolith.helpers import a_proposalhelper as a_proposal
 from regolith.helpers import a_expensehelper as a_expense
 from regolith.helpers import a_presentationhelper as a_presentation
 from regolith.helpers import l_milestoneshelper as l_milestone
+from regolith.helpers import l_progressreporthelper as l_progress
 from regolith.helpers import l_projectahelper as l_projecta
 from regolith.helpers import l_grantshelper as l_grants
 from regolith.helpers import l_membershelper as l_members
@@ -39,6 +40,7 @@ HELPERS = {
     "a_expense": (a_expense.ExpenseAdderHelper, a_expense.subparser),
     "a_presentation": (a_presentation.PresentationAdderHelper, a_presentation.subparser),
     "l_milestones": (l_milestone.MilestonesListerHelper, l_milestone.subparser),
+    "l_progress": (l_progress.ProgressReportHelper, l_progress.subparser),
     "l_projecta": (l_projecta.ProjectaListerHelper, l_projecta.subparser),
     "l_grants": (l_grants.GrantsListerHelper, l_grants.subparser),
     "l_members": (l_members.MembersListerHelper, l_members.subparser),

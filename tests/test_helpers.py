@@ -32,6 +32,27 @@ helper_map = [
       "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
       "--title", "On the roundness of the Earth", "--status", "in-prep"],
      "2006as_mars has been added in presentations\n"),
+    (["helper", "l_progress", "-l", "ascopatz"],
+     "*************************[Proposed Projecta]*************************\n"
+      "20sb_firstprojectum\n"
+      "    status: proposed, begin_date: 2020-04-28, due_date: 2021-05-05\n"
+     ),
+    (["helper", "l_progress", "-v", "-l", "ascopatz"],
+     "*************************[Proposed Projecta]*************************\n"
+      "20sb_firstprojectum\n"
+      "    status: proposed, begin_date: 2020-04-28, due_date: 2021-05-05\n"
+      "    description: My first projectum\n"
+      "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+      "    team:\n"
+      "        lead: ascopatz\n"
+      "        group_members: ascopatz\n"
+      "        collaborators: aeinstein, pdirac\n"
+      "    milestones:\n"
+      "        Project lead presentation\n"
+      "            status: proposed, due_date: 2020-05-20\n"
+      "        planning meeting\n"
+      "            status: proposed, due_date: 2020-05-27\n"
+     ),
     (["helper", "l_milestones", "--verbose"],
      "2021-01-01: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
