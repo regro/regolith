@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 import pytest
 
 from regolith.main import main
@@ -327,7 +328,8 @@ helper_map = [
      "overspent grants:\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      ),
-    (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
+    (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
+    (["helper", "u_prum", "--projectum_id", "20sb_firstprojectum", "--idea", "something", "--sample", "something"], "")
 ]
 
 
