@@ -1,5 +1,5 @@
 **Added:**
-* a helper that lists progress by person from their projecta
+ * a helper that lists progress by person from their projecta
 
 **Changed:** None
 
