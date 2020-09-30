@@ -68,7 +68,6 @@ def print_projectum(selected_projecta,rc):
             print(f"        collaborators: {collaborators}")
             d = p.get('deliverable')
             print("    deliverable:")
-            print(f"        due_date: {d.get('due_date')}")
             audience = None
             if d.get('audience'):
                 audience = ', '.join(d.get('audience'))
@@ -188,4 +187,4 @@ class ProgressReportHelper(SoutHelperBase):
             selected_projecta.append(p)
         if selected_projecta:
             print(f"*************************[Others]************************************")
-            print_projectum(selected_projecta,rc)
+            print_projectum(selected_projecta, rc)

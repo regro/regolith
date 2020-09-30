@@ -48,7 +48,6 @@ helper_map = [
       "        group_members: ascopatz\n"
       "        collaborators: aeinstein, pdirac\n"
       "    deliverable:\n"
-      "        due_date: 2021-05-05\n"
       "        audience: beginning grad in chemistry\n"
       "        scope: 1. UCs that are supported or some other scope description if it is software\n"
       "               2. sketch of science story if it is paper\n"
