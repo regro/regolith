@@ -58,7 +58,6 @@ def print_projectum(selected_projecta,rc):
             print(f"    description: {p.get('description')}")
             print(f"    log_url: {p.get('log_url')}")
             print("    team:")
-            print(f"        lead: {p.get('lead')}")
             grp_members = None
             if p.get('group_members'):
                 grp_members = ', '.join(p.get('group_members'))
@@ -67,19 +66,39 @@ def print_projectum(selected_projecta,rc):
                 collaborators = ', '.join(p.get('collaborators'))
             print(f"        group_members: {grp_members}")
             print(f"        collaborators: {collaborators}")
+            d = p.get('deliverable')
+            print("    deliverable:")
+            print(f"        due_date: {d.get('due_date')}")
+            audience = None
+            if d.get('audience'):
+                audience = ', '.join(d.get('audience'))
+            print(f"        audience: {audience}")
+            scope = None
+            if d.get('scope'):
+                scope = d.get('scope')
+            if len(scope) == 1:
+                print(f"        scope: {scope}")
+            if len(scope) > 1:
+                print(f"        scope: 1. {scope[0]}")
+                for num in range(2, len(scope)+1):
+                    print(f"               {str(num)}. {scope[num-1]}")
+            print(f"        platform: {d.get('platform')}")
             print("    milestones:")
             for m in p.get('milestones'):
-                print(f"        {m.get('name')}")
-                print(f"            status: {m.get('status')}, due_date: {m.get('due_date')}")
+                print(f"        {m.get('due_date')}: {m.get('name')}")
+                print(f"            objective: {m.get('objective')}")
+                print(f"            status: {m.get('status')}")
 
         else:
             print(f"{p.get('_id')}")
             if p.get("deliverable"):
                 print(
                     f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
+                print(f"    description: {p.get('description')}")
             else:
                 print(
                     f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
+                print(f"    description: {p.get('description')}")
 
 class ProgressReportHelper(SoutHelperBase):
     """Helper for listing upcoming (and past) projectum milestones.
@@ -140,7 +159,7 @@ class ProgressReportHelper(SoutHelperBase):
             if p.get('status') != "proposed":
                 continue
             selected_projecta.append(p)
-        if selected_projecta != []:
+        if selected_projecta:
             print(f"*************************[Proposed Projecta]*************************")
             print_projectum(selected_projecta, rc)
 
@@ -149,7 +168,7 @@ class ProgressReportHelper(SoutHelperBase):
             if p.get('status') != "started":
                 continue
             selected_projecta.append(p)
-        if selected_projecta != []:
+        if selected_projecta:
             print(f"*************************[Started Projecta]**************************")
             print_projectum(selected_projecta, rc)
 
@@ -158,7 +177,7 @@ class ProgressReportHelper(SoutHelperBase):
             if p.get('status') != "finished":
                 continue
             selected_projecta.append(p)
-        if selected_projecta != []:
+        if selected_projecta:
             print(f"*************************[Finished Projecta]*************************")
             print_projectum(selected_projecta, rc)
 
@@ -167,6 +186,6 @@ class ProgressReportHelper(SoutHelperBase):
             if p.get('status') not in ["back_burner", "paused", "cancelled"]:
                 continue
             selected_projecta.append(p)
-        if selected_projecta != []:
+        if selected_projecta:
             print(f"*************************[Others]************************************")
             print_projectum(selected_projecta,rc)
