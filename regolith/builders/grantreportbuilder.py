@@ -21,26 +21,30 @@ from regolith.tools import (
     filter_publications
 )
 
-
-def subparser(subpi):
-    subpi.add_argument("authorFullName", help="full name of the author of this grant report")
-    subpi.add_argument("start_date", help="start date of the reporting period, formatted as YYYY-MM-DD",
-                       default=None)
-    subpi.add_argument("end_date", help="end date of the reporting period, formatted as YYYY-MM-DD")
-    return subpi
+#def subparser(subpi):
+#    subpi.add_argument("authorFullName", help="full name of the author of this grant report")
+#    subpi.add_argument("start_date", help="start date of the reporting period, formatted as YYYY-MM-DD",
+#                       default=None)
+#    subpi.add_argument("end_date", help="end date of the reporting period, formatted as YYYY-MM-DD")
+#    return subpi
 
 
 class GrantReportBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
     btype = "grantreport"
-    needed_dbs = ['presentations', 'projecta', 'people', 'grants', 'institutions', 'expenses', 'citations', 'contacts']
+    needed_dbs = ['presentations', 'projecta', 'people', 'grants',
+                  'institutions', 'expenses', 'citations', 'contacts']
+
+#    def __init__(self, rc):
+#        super().__init__(rc)
+#        self.needed_dbs = needed_dbs
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        for dbs in rc.needed_dbs:
+        for dbs in self.needed_dbs:
             gtx[dbs] = sorted(
                 all_docs_from_collection(rc.client, dbs), key=_id_key
             )
@@ -54,13 +58,16 @@ class GrantReportBuilder(LatexBuilderBase):
         rc = self.rc
 
         # Convert Date Strings to Datetime Objects
-        rp_start_date = date_parser.parse(rc.start_date)
-        rp_end_date = date_parser.parse(rc.end_date)
+        rp_start_date = date_parser.parse(rc.from_date).date()
+        rp_end_date = date_parser.parse(rc.to_date).date()
 
         # NSF Grant _id
-        grant_name = "dmref"
+        if isinstance(rc.grants, str):
+            rc.grants = [rc.grants]
+        grant_name = rc.grants[0]
 
         # Get prum associated to grant and active during reporting period
+        institutions_coll = [inst for inst in self.gtx["institutions"]]
         grant_prums = []
         for prum in self.gtx['projecta']:
             if grant_name in prum['grants']:
@@ -88,28 +95,36 @@ class GrantReportBuilder(LatexBuilderBase):
         # presentations
         for id in grant_people:
             training_and_professional_development.extend(
-                filter_presentations(self.gtx["people"], self.gtx["presentations"], self.gtx["institutions"], id,
+                filter_presentations(self.gtx["people"], self.gtx["presentations"], institutions_coll, id,
                                      types=["all"], since=rp_start_date, before=rp_end_date, statuses=["accepted"]))
         # thesis defendings
         # how do i access people.yml in rg-db-public vs the people.yml file in rg-db-group?
-        defended_theses = []
-        for id in grant_people:
-            person = self.gtx['people'][id]
-            for education in person['education']:
-                if 'phd' in education['degree'].lower() and 'columbia' in education['institution'].lower() and \
-                        rp_start_date.year <= education['end_year'] <= rp_end_date.year:
-                    defended_theses.append(id)
+#        defended_theses = []
+#        for id in grant_people:
+#            for prsn in self.gtx['people']:
+#                if prsn["_id"] != id:
+#                    continue
+#                else:
+#                    person = prsn
+#            for education in person['education']:
+#                edu_dates = get_dates(education)
+#                if 'phd' in education['degree'].lower() and 'columbia' in education['institution'].lower() and \
+#                        rp_start_date.year <= edu_dates.get('end_date', edu_dates['date']).year <= rp_end_date.year:
+#                    defended_theses.append(id)
 
         # Products
         # need rg-db-public's citation.yml
-        publications = filter_publications(self.gtx["citations"], grant_people, since=rp_start_date, before=rp_end_date)
+        publications = filter_publications(self.gtx["citations"], set(grant_people), since=rp_start_date, before=rp_end_date)
 
         # Participants/Organizations
         participants = {}
-        for name in grant_people:
-            person = self.gtx["people"].get(name)
-            months_on_grant, months_left = self.months_on(grant_name, person, rp_start_date, rp_end_date)
-            participants[name] = [person.get('position'), months_on_grant]
+        for id in grant_people:
+            for person in self.gtx["people"]:
+                if person.get(id) != id:
+                    continue
+                else:
+                    months_on_grant, months_left = self.months_on(grant_name, person, rp_start_date, rp_end_date)
+                    participants[id] = [person.get('position'), months_on_grant]
 
         # Other Collaborators
         collaborator_ids = []
@@ -122,26 +137,41 @@ class GrantReportBuilder(LatexBuilderBase):
 
         collaborators = {}
         for id in collaborator_ids:
-            contact = self.gtx["contacts"].get(id)
-            aka = contact.get("aka")
-            institution = contact.get("institution")
-            collaborators[id] = {
-                "aka": aka,
-                "institution": institution
+            for contact in self.gtx["contacts"]:
+                if contact["_id"] == id:
+                    name = contact.get("name")
+                    aka = contact.get("aka")
+                    institution_id = contact.get("institution")
+                    institution = fuzzy_retrieval(institutions_coll,
+                                                  ["name","aka", "_id"],
+                                                  institution_id)
+                    if institution:
+                        inst_name = institution.get("name")
+                    else:
+                        print(f"WARNING: institution {institution_id} not found "
+                              f"in institutions collection")
+                        inst_name = institution_id
+                    collaborators[id] = {
+                "aka": aka, "name": name,
+                "institution": inst_name
             }
+        for person in self.gtx["people"]:
+            if isinstance(rc.people,str):
+                rc.people = [rc.people]
+            if person["_id"] == rc.people[0]:
+                authorFullName = HumanName(person["name"]).full_name
 
         # Impacts
-
         self.render(
             "grantreport.txt",
             "billinge_grant_report.txt",
-            authorFullName=rc.authorFullName,
+            authorFullName=authorFullName,
             beginYear=rp_start_date.year,
             endYear=rp_end_date.year,
             majorActivities=major_activities,
             significantResults=significant_results,
             trainingAndProfessionalDevelopment=training_and_professional_development,
-            defendedTheses=defended_theses,
+#            defendedTheses=defended_theses,
             products=publications,
             grantPeople=grant_people,
             participants=participants,
@@ -158,7 +188,7 @@ class GrantReportBuilder(LatexBuilderBase):
             for k1, v1 in appts.items():
                 if grant in v1.get('grant'):
                     dates = get_dates(v1)
-                    startdate = dates.get('start_date')
+                    startdate = dates.get('begin_date')
                     enddate = dates.get('end_date')
                     loading = v1.get('loading')
                     if startdate >= since and enddate <= before:
@@ -174,5 +204,5 @@ class GrantReportBuilder(LatexBuilderBase):
                         months = months + (before - since).days * loading / 30.4
             if months > 0:
                 total_months = total_months + months
-        months_left = (before - datetime.today())
+        months_left = (before - datetime.today().date())
         return total_months, months_left

@@ -84,13 +84,13 @@ Participants/Organizations
 What individuals have worked on the project?
 
 Name, Most Senior Project Role, Nearest Person Month Worked
-{%- for person, info in participants.items() %}
+{%- for person, info in participants.items() -%}
     - {{person}}: {{info[0]}}, {{info[1]}}
-{% endfor -%}}
+{%- endfor -%}}
 
 What other organizations have been involved as partners?/What other collaborators or contacts have been involved?
 {%- for contact, info in collaborators.items() %}
-    - {{contact}}: aka: {{info["aka"]}}, institution: {{info["institution"]}}
+    - {{ info["name"] }} ({{ info["institution"] }})
 {% endfor -%}}
 
 Impacts
