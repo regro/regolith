@@ -13,11 +13,11 @@ def subparser(subpi):
         "projectum_id",
         help="the ID or fragment of the ID of the projectum to be updated, e.g., 20sb")
     subpi.add_argument(
-        "--idea",
-        help=".")
+        "--summary",
+        help="Summary of the beamline experiment and any conditions that might need to be accounted for, e.g. temperature ramp")
     subpi.add_argument(
         "--sample",
-        help="."
+        help="Chemical composition and type of sample, e.g. film, powder, etc."
     )
     subpi.add_argument(
         "-s", "--database",
@@ -65,6 +65,7 @@ class PrumUpdaterHelper(DbHelperBase):
         key = rc.projectum_id
         filterid = {'_id': key}
         found_projectum = rc.client.find_one(rc.database, rc.coll, filterid)
-        found_projectum = process(found_projectum, summary=rc.idea, sample=rc.sample)
+        found_projectum = process(
+            found_projectum, summary=rc.summary, sample=rc.sample)
         rc.client.update_one(rc.database, rc.coll, filterid, found_projectum)
         return
