@@ -229,6 +229,68 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Email Simon", "Email Simon if finish the above."),
         ]
 
+        resubmission_checklist = [
+            ("Work on the changes", "Make changes to the manuscript in the repo. You don't need to save it to a new name or anything because we can recover the old version by checking out the tagged version."),
+            ("Write rebuttal letter", "Write a proper rebuttal letter based on reviewers' comments and place in the repo. In this letter address all of the referee's points, one by one. Place a copy of the referee's comments in the repo. Give it a unique filename in case there are more referee comments from later submissions!"),
+            ("Check author list", "This is a good time to check that the author list is correct (don't need to add anyone or remove anyone) and that the acknowledgements have been done correctly, the figures are correct, the figure captions and table captions are correct and all the figures and tables are correctly referenced, and there are no compilation errors. Check all references for errors and update any 'unpublished' references if they have been published."),
+            ("Diff the changes", "create a diff.pdf file that shows changes to the manuscript between the version in the tag of the previous submission and the current version, and include this in the resubmission."),
+            ("Send to coauthors", "Send the final version to your coauthors. Tell them you will 'submit on' where is somewhere around 48 hours later and ask for any final corrections etc. from them. Offer them the chance to extend the deadline if they need more time, i.e., write 'if you need more time, lease let me know.' However, it is assumed that all the authors have been involved in the correction process up to this point so they only have to give it one final thought..."),
+            ("Git commit changes", "Commit all the changes to your local repo, then push the changes to gitlab."),
+            ("Resubmit", "Resubmit following the instructions of the journal."),
+            ("Commit any additional changes", "If during the submission process you need to make any changes, do it in your local repo and make another commit and push."),
+            ("Push a resubmission tag", "Make a new resubmission tag (see above for details)"),
+            ("Check db entry", "Check the entry in citations.yml doesn't need to be updated, and update if it does."),
+            ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
+            ("Email Simon", "Email Simon if finish the above."),
+        ]
+
+        accepted_checklist = [
+            ("Share the news", "Congratulations on the acceptance of the paper. Let all coauthors know the great news!"),
+            ("Share with BNL if needed", "If it is a BNL paper (check with Simon, but it should acknowledge BNL funding-not just beamtime), send a pdf copy of the accepted version of the paper from the repo to Arlene at BNL to get a BNL publication number.  If you are not sure what this means, ask Simon"),
+            ("Share the proof", "When you receive the proofs, share them quickly with all the authors. Request comments back in 24 hours. Proofs should be responded to within 48 hours in normal circumstances."),
+            ("Respond the editor", "Go through and answer any questions from the editor."),
+            ("Check author names", "Last chance to check that all the authors' names are correct and there are no missing authors."),
+            ("Check institutions", "Check all authors' institutions are correct."),
+            ("Check acknowledgement", "Make sure that all funding and all beamlines used are correctly acknowledged. Usually this is done by the bosses, but more eyes catch more mistakes."),
+            ("Update db entry", "In citations.yml, (the reference should have been added during the submission step) double check the grants{}, facilities{}, nb{} field entries. Any questions, ask Simon. Put 'to be published' in the note{} section. If it has not been submitted to arxiv before, move the entry from rg-db-group to rg-db-public github repo. Otherwise, it should be at rg-db-public already. Create a PR to merge to the billingeGroup repository for edits if necessary."),
+            ("Check db errors", " In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace lyang with your name) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually. If any problem about installing regolith and databases, please refer to [rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases)."),
+            ("Check figures and tables", "Are all the figures, tables in the paper correct (the ones you intended)?"),
+            ("Check the figure caption", "Check the Figure captions for errors. If they refer to a green line, is the relevant line green, and so on."),
+            ("Check figure axis labels", "Check that the figure axis labels are correctly labeled. Make sure it doesn't say G when F is plotted. Make sure the units are correct. Make sure it says 'G (A^-2)' and NOT 'G(r)' (common mistake)"),
+            ("Check table captions", "Check the table caption is correct. Are all the items in the table properly defined in the caption. If it is a crystal structure, are the space group and special positions mentioned in the caption? Is all the info correct?"),
+            ("Check numbers in the table", "Check all the numbers in the tables for errors."),
+            ("Check figure references", "Check references to the all figures and tables. Does reference to Figure 4 refer to the right figure for example"),
+            ("Check references", "Go through the references and find all the errors. Correct errors in the bibliographic database AS WELL AS on the proofs the manuscript. Did all the journal names compile correctly? Are they all consistently in abbreviated form (or full form if that is the style, though that is rare). Volume, year and page numbers appear for all references? Hard to find errors in these numbers, but when you do, definitely correct the database!"),
+            ("Check unpublished references", "If any references are listed as unpublished, on arXiv or submitted or something, check if they have appeared and give the full reference if at all possible. To do this, update the bibliographic database (e.g., citations.yml) with this information and then recompile the references, then copy paste the new bbl file back into the TeX source."),
+            ("Check reference titles if needed", "If the manuscript style has titles in the references, make sure there are no capitalization or other compilation errors. Again, correct these in the database using {braces} around words where you want to preserve the capitalization as well as on the proof."),
+            ("Read the paper", "Finally, after you have done all these 'mechanical' checks, read through the paper and try and find any typos or other problems. Resist the temptation to do any rewriting here...you are looking for mispellings and missing or extra words and so on."),
+            ("Apply corrections from coauthors", "Collect all the corrections from the other authors and add any additional ones to the proof and return it."),
+            ("Email coauthors", "Send an email to your coauthors that this was successfully resubmitted."),
+            ("Revisit talk slides", "Revisit the set of talk slides that summarize the result in a few slides if they need to be updated. Iterate with Simon to convergence."),
+            ("Create the highlight slide", "Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it in the 'highlight' folder. Iterate with Simon to convergence (highlight templates and examples can be found in http://gitlab.thebillingegroup.com/highlights/highlightTemplate)"),
+            ("Create web news", "Create a web news story for thebillingegroup.com site. Place it in the 'highlight' folder. Iterate with Simon to convergence"),
+            ("Revisit kudos", "Revisit the Kudos summary if it needs to be updated. Iterate with Simon to convergence."),
+            ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
+            ("Email Simon", "Email Simon if finish the above."),
+        ]
+
+        published_checklist = [
+            ("Congrats", "Phew, it is over! Pat yourself on the back and celebrate!"),
+            ("Let coauthors know", "Let your coauthors know the link to the final paper and the final reference."),
+            ("Update db entry", "Update citations.yml at rg-db-public github repo with the correct reference information. Commit your edited citations.yml and create a PR to merge to the billingeGroup repository."),
+            ("Check db entry", "CAREFULLY double and triple check the meta-data associated with the paper in citations.yml:"),
+            ("Check grants in the db entry", "grant{} lists just the billinge-group grants that appeared in the acknowledgement section. They have standard abbreviations that are listed at the top of the citations.yml file, e.g., fwp, EFRC10, etc.. Use the right standard or the whole system becomes broken! If not sure.....ask Simon. List all grants in a comma-separated list."),
+            ("Check the facility in the db entry", "facility{} is every beamline that was used for data collection. Again, use the standard abbreviations at the top of the file. Use two levels of granularity for each, so X17A would be: 'nsls, x17a', if X17A and X7B were used it would be 'nsls, x17a, x7b' and so on."),
+            ("Check the nb in the db entry", "nb{} is some other tags, also listed at the top of the file. 'art' for a regular article and 'hilite' if it is one of our top top papers are the most common."),
+            ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace lyang with your name) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually."),
+            ("Add to Zotero", "Add the published reference to the billinge-group-bib folder in our group Zotero account"),
+            ("Finish the highlight slide", "Make a highlight of your work and put it in gitlab/highlights (if not done already during the accepted paper checklist). Look in there for standards to work from. This is an important activity. Now you have done your great work, this is how you can advertise it to others. Top papers we send these highlights to the funding agencies.  Iterate the highlight with Simon till it is converged."),
+            ("Make figures and talk slides", "Make figures and talk slides that will be used in talks and place these on gitlab on talks/figures.  Iterate this with Simon till it is converged."),
+            ("Update arXiv if necessary", "If the paper was listed on a preprint server like arXiv, submit a note to arXiv that the paper has appeared and give the full reference. If the journal copyright allows you can post the published version here, but normally that is not alllowed! Still, it is important that people who find the paper on arXiv get directed to the correct reference."),
+            ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
+            ("Email Simon", "Email Simon if finish the above."),
+        ]
+
         checklistm_list = []
         for name, objective in submission_checklist:
             checklistm = {'due_date': now + relativedelta(days=14),
@@ -239,6 +301,38 @@ class ProjectumAdderHelper(DbHelperBase):
                        'type': 'pr'
                        }
             checklistm_list.append(checklistm)
-            pdoc.update({"milestones": checklistm_list})
+
+        for name, objective in resubmission_checklist:
+            checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=2),
+                       'name': name,
+                       'objective': objective,
+                       'audience': [],
+                       'status': 'converged',
+                       'type': 'pr'
+                       }
+            checklistm_list.append(checklistm)
+
+        for name, objective in accepted_checklist:
+            checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=4),
+                       'name': name,
+                       'objective': objective,
+                       'audience': [],
+                       'status': 'converged',
+                       'type': 'pr'
+                       }
+            checklistm_list.append(checklistm)
+
+        for name, objective in published_checklist:
+            checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=6),
+                       'name': name,
+                       'objective': objective,
+                       'audience': [],
+                       'status': 'converged',
+                       'type': 'pr'
+                       }
+            checklistm_list.append(checklistm)
+
+
+        pdoc.update({"milestones": checklistm_list})
 
         return pdoc
