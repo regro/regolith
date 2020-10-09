@@ -53,6 +53,9 @@ def subparser(subpi):
     subpi.add_argument("-u", "--due_date",
                        help="proposed due date for the deliverable"
                        )
+    subpi.add_argument("--checklist",
+                       help="Create manuscript checklist if True"
+                       )
     return subpi
 
 
@@ -177,8 +180,65 @@ class ProjectumAdderHelper(DbHelperBase):
                    }
         pdoc.update({"milestones": [secondm]})
 
+        if rc.checklist:
+            pdoc = self.insert_checklists(pdoc, now)
+
+
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print(f"{key} has been added in {TARGET_COLL}")
 
         return
+
+    def insert_checklists(self, pdoc, now):
+        """Create manuscript checklist, one item as one milestone."""
+        submission_checklist = [
+            ("Check the author list", " Check the author list. Last chance to check for missing authors. Does each author agree to submit to the specific journal? Make sure all authors have approved submission."),
+            ("Check publisher accounts", "Check that all of the authors have accounts for the publisher you are submitting to (if possible) and that they have their ORCID IDs associated with their accounts (ie. for ACS, authors need to link their Paragon accounts with their ORCID IDs)."),
+            ("Check institution", "Is author's name, institution correct? Last chance to avoid embarrassing typos."),
+            ("Check acknowledgement", "Are beamlines, grants, fundings properly acknowledged at the end of the paper? Double check this with Simon and use the ackno statements in the Group Google group."),
+            ("Check figures and tables", "Are all the figures, tables in the paper correct (the ones you intended)?"),
+            ("Check figure captions", "Check the Figure captions for errors. If they refer to a green line, is the relevant line green, and so on."),
+            ("Check figure axis labels", "Check that the figure axis labels are correctly labeled. Make sure it doesn't say G when F is plotted. Make sure the units are correct. Make sure it says 'G (A^-2)' and NOT 'G(r)' (common mistake)."),
+            ("Check table captions", "Check the table caption is correct. Are all the items in the table properly defined in the caption. If it is a crystal structure, are the space group and special positions mentioned in the caption? Is all the info correct?"),
+            ("Check numbers in the table", "Check all the numbers in the tables for errors."),
+            ("Check any question marks", "Check all the question marks in the text. Is there any 'FIG.???' or unrecognized character?"),
+            ("Check figure references", "Check references to the all figures and tables. Does reference to Figure 4 refer to the right figure for example."),
+            ("Check references", "Go through the references and find all the errors. Correct errors in the bibliographic database (citations.yml, or the Zotero collection, for example), not just in the local bib file. Did all the journal names compile correctly? Are they all consistently in abbreviated form (or full form if that is the style, though that is rare). Volume, year and page numbers appear for all references? Hard to find errors in these numbers, but when you do, definitely correct the database!"),
+            ("Check reference style", "Is reference's style in accordance with journal's requirement?"),
+            ("Check journal submission requirements", "Check the journal submission requirements for cover letters, table of contents pictures, list of referees, etc.."),
+            ("Check arxiv", "Check with Simon; will the paper be submitted to arXiv?"),
+            ("Get approval", "Get final approval from all authors for the final version of the manuscript, cover letter, referees list, etc., submission to arXiv if appropriate."),
+            ("Create slides", "Create a 'slides' folder in the paper repo and make a beamer latex skeleton for a series of talk slides. Iterate the slide skeleton with Simon to convergence. (The beamer template can be found at https://gitlab.thebillingegroup.com/talks/beamerTalkTemplate)."),
+            ("Create figures", "Create Inkscape graphics (Inkscape is preferrable over ppt) for the slides and place in a ``figures`` directory in the slides directory. These may then be used either in beamer or ppt. Iterate with Simon to convergence. (to get started with Inkscape download and install it, then run the program and navigate to Help-->Tutorials.  The first two ('Basic' and 'Shapes') should probably be enough for someone to get basic functionality.)."),
+            ("Create highlight", "Create a 'highlight' folder in the paper repo. Create a Kudos summary. Place it in the 'highlight' folder. Iterate with Simon to convergence. (The kudos template and example can be found in https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y/edit?usp=sharing)."),
+            ("Check cover letter", "In the cover letter, does it contain editor-in-chief's name and institution (usually at the top left of the letter) ? Is the content of letter concise and eye-catching? Are (three) suggested reviewers' information in the letter?"),
+            ("Inser bbl", "If it is LaTeX, insert the .bbl file into the main tex file and comment out the \\thebibliography and \\bibliographystyle lines."),
+            ("Commit and push", "Commit all the changes to your local repo, then push the changes to gitlab."),
+            ("Submit to journal", "Go ahead and make the submission, usually online."),
+            ("Push a tag", "If during the submission process you need to make any changes, do it in your local repo and make another commit and push. When the submission is finalized, tag the repo that points to THIS VERSION IS THE SUBMITTED VERSION. create the submission tag.  If the current version of your local repo is the submitted version, type, e.g., `git tag -l` to list previous tags (try and keep the tag name formatting consistent) `git tag -a 20180525PRLsubmitted -m <initial submission to PRL>` `git push origin <tag_name>`."),
+            ("Modify tag if needed", "If you forgot to tag and made some changes to the repo and  need to point the tag to an earlier version, or want to view all the different tags, or do some other complicated thing, more info about tagging git repos is here: https://git-scm.com/book/en/v2/Git-Basics-Tagging"),
+            ("Submit to arxiv if needed", "Submit to arxiv if appropriate."),
+            ("Push an arxiv tag", "Make a new tag of the version submitted to arXiv with the name arXivSubmitted20170610."),
+            ("Get arxiv reference", "Wait a day to get the full arXiv reference."),
+            ("Modify db for arxiv", "If submit to arxiv, create an entry of the paper in citations.yml at rg-db-public billingeGroup public github repository.  Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct. Fill in the arXiv citation information in citations.yml in the bibliography reference. Any questions, ask Simon. Create a PR to merge to the billingeGroup repository."),
+            ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace `lyang` with your own name ID in the group) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually. The complied tex and pdf files are located in the `_build` folder. If any problem about installing regolith and databases, please refer to [rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases)."),
+            ("Modify db if not submit to arxiv", "If not submit to arxiv, create an entry of the paper in citations.yml at rg-db-group billingeGroup private github repository.  Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct.  Any questions, ask Simon. Create a PR to merge to the billingeGroup repository."),
+            ("Email coauthors", "Send an email to coauthors letting them know the arXiv citation information."),
+            ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
+            ("Email Simon", "Email Simon if finish the above."),
+        ]
+
+        checklistm_list = []
+        for name, objective in submission_checklist:
+            checklistm = {'due_date': now + relativedelta(days=14),
+                       'name': name,
+                       'objective': objective,
+                       'audience': ['lead', 'pi', 'group_members'],
+                       'status': 'converged',
+                       'type': 'pr'
+                       }
+            checklistm_list.append(checklistm)
+            pdoc.update({"milestones": checklistm_list})
+
+        return pdoc
