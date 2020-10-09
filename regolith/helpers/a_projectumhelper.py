@@ -234,7 +234,7 @@ class ProjectumAdderHelper(DbHelperBase):
             checklistm = {'due_date': now + relativedelta(days=14),
                        'name': name,
                        'objective': objective,
-                       'audience': ['lead', 'pi', 'group_members'],
+                       'audience': [],
                        'status': 'converged',
                        'type': 'pr'
                        }
