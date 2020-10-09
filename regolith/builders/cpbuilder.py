@@ -1,11 +1,12 @@
 """Builder for Current and Pending Reports."""
-import datetime
+import datetime as dt
 import time
 from copy import copy
 from nameparser import HumanName
 
+
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import month_to_int, is_current, has_started
+from regolith.dates import is_current, get_dates
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (
@@ -65,6 +66,11 @@ class CPBuilder(LatexBuilderBase):
                                        self.gtx["grants"],
                                        "proposal_id")
             for g in grants:
+                print(g["_id"])
+                g['year'] = None
+                g['month'] = None
+                g['end_date'] = get_dates(g).get('end_date')
+                g['begin_date'] = get_dates(g).get('begin_date',dt.date(1900,1,2))
                 for person in g["team"]:
                     rperson = fuzzy_retrieval(
                         self.gtx["people"], ["aka", "name"], person["name"]
@@ -89,8 +95,7 @@ class CPBuilder(LatexBuilderBase):
                     g['subaward_amount'] = sum(amounts)
 
             pending_grants = [
-                g
-                for g in self.gtx["proposals"]
+                g for g in self.gtx["proposals"]
                 if is_pending(g["status"])
             ]
             for g in pending_grants:
@@ -103,18 +108,19 @@ class CPBuilder(LatexBuilderBase):
             pending_grants, _, _ = filter_grants(
                 pending_grants, {pi["name"]}, pi=False, multi_pi=True
             )
+            print([g.get('begin_date') for g in pending_grants])
             grants = pending_grants + current_grants
             for grant in grants:
                 grant.update(
-                    award_start_date="{2}/{1}/{0}".format(
-                        grant["begin_day"],
-                        month_to_int(grant["begin_month"]),
-                        grant["begin_year"],
+                    award_start_date="{}/{}/{}".format(
+                        grant.get("begin_date").month,
+                        grant.get("begin_date").day,
+                        grant.get("begin_date").year,
                     ),
-                    award_end_date="{2}/{1}/{0}".format(
-                        grant["end_day"],
-                        month_to_int(grant["end_month"]),
-                        grant["end_year"],
+                    award_end_date="{}/{}/{}".format(
+                        grant.get("end_date").month,
+                        grant.get("end_date").day,
+                        grant.get("end_date").year,
                     ),
                 )
             badids = [i["_id"] for i in current_grants if
@@ -125,6 +131,7 @@ class CPBuilder(LatexBuilderBase):
                     current_grants.remove(grant)
             piname = HumanName(pi["name"])
             outfile = "current-pending-{}-{}".format(grp, piname.last.lower())
+            print([grant["_id"] for grant in current_grants])
 
             self.render(
                 "current_pending.tex",
