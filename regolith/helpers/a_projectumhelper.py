@@ -175,13 +175,14 @@ class ProjectumAdderHelper(DbHelperBase):
                    'name': 'Project lead presentation',
                    'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
                    'audience': ['lead', 'pi', 'group_members'],
+                   'notes': [],
                    'status': 'proposed',
                    'type': 'meeting'
                    }
         pdoc.update({"milestones": [secondm]})
 
         if rc.checklist:
-            pdoc = self.insert_checklists(pdoc, now)
+            pdoc = self.insert_checklists(pdoc, now, due_date)
 
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
@@ -190,10 +191,16 @@ class ProjectumAdderHelper(DbHelperBase):
 
         return
 
-    def insert_checklists(self, pdoc, now):
+    def insert_checklists(self, pdoc, now, due_date):
         """Create manuscript checklist, one item as one milestone."""
+        presubmission_checklist = [
+            ("Create slides", "Create a 'slides' folder in the paper repo and make a beamer latex skeleton for a series of talk slides. Iterate the slide skeleton with Simon to convergence. (The beamer template can be found at https://gitlab.thebillingegroup.com/talks/beamerTalkTemplate)."),
+            ("Create slide figures", "Create Inkscape graphics (Inkscape is preferrable over ppt) for the slides and place in a ``figures`` directory in the slides directory. These may then be used either in beamer or ppt. Iterate with Simon to convergence. (to get started with Inkscape download and install it, then run the program and navigate to Help-->Tutorials.  The first two ('Basic' and 'Shapes') should probably be enough for someone to get basic functionality.)."),
+            ("Create highlight", "Create a 'highlight' folder in the paper repo. Create a Kudos summary. Place it in the 'highlight' folder. Iterate with Simon to convergence. (The kudos template and example can be found in https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y/edit?usp=sharing)."),
+        ]
+
         submission_checklist = [
-            ("Check the author list", " Check the author list. Last chance to check for missing authors. Does each author agree to submit to the specific journal? Make sure all authors have approved submission."),
+            ("Check the author list", "Check the author list. Last chance to check for missing authors. Does each author agree to submit to the specific journal? Make sure all authors have approved submission."),
             ("Check publisher accounts", "Check that all of the authors have accounts for the publisher you are submitting to (if possible) and that they have their ORCID IDs associated with their accounts (ie. for ACS, authors need to link their Paragon accounts with their ORCID IDs)."),
             ("Check institution", "Is author's name, institution correct? Last chance to avoid embarrassing typos."),
             ("Check acknowledgement", "Are beamlines, grants, fundings properly acknowledged at the end of the paper? Double check this with Simon and use the ackno statements in the Group Google group."),
@@ -209,9 +216,6 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Check journal submission requirements", "Check the journal submission requirements for cover letters, table of contents pictures, list of referees, etc.."),
             ("Check arxiv", "Check with Simon; will the paper be submitted to arXiv?"),
             ("Get approval", "Get final approval from all authors for the final version of the manuscript, cover letter, referees list, etc., submission to arXiv if appropriate."),
-            ("Create slides", "Create a 'slides' folder in the paper repo and make a beamer latex skeleton for a series of talk slides. Iterate the slide skeleton with Simon to convergence. (The beamer template can be found at https://gitlab.thebillingegroup.com/talks/beamerTalkTemplate)."),
-            ("Create figures", "Create Inkscape graphics (Inkscape is preferrable over ppt) for the slides and place in a ``figures`` directory in the slides directory. These may then be used either in beamer or ppt. Iterate with Simon to convergence. (to get started with Inkscape download and install it, then run the program and navigate to Help-->Tutorials.  The first two ('Basic' and 'Shapes') should probably be enough for someone to get basic functionality.)."),
-            ("Create highlight", "Create a 'highlight' folder in the paper repo. Create a Kudos summary. Place it in the 'highlight' folder. Iterate with Simon to convergence. (The kudos template and example can be found in https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y/edit?usp=sharing)."),
             ("Check cover letter", "In the cover letter, does it contain editor-in-chief's name and institution (usually at the top left of the letter) ? Is the content of letter concise and eye-catching? Are (three) suggested reviewers' information in the letter?"),
             ("Inser bbl", "If it is LaTeX, insert the .bbl file into the main tex file and comment out the \\thebibliography and \\bibliographystyle lines."),
             ("Commit and push", "Commit all the changes to your local repo, then push the changes to gitlab."),
@@ -292,11 +296,23 @@ class ProjectumAdderHelper(DbHelperBase):
         ]
 
         checklistm_list = []
-        for name, objective in submission_checklist:
-            checklistm = {'due_date': now + relativedelta(days=14),
-                       'name': name,
+        for name, objective in presubmission_checklist:
+            checklistm = {'due_date': now + relativedelta(days=7),
+                       'name': "presubmission - " + name,
                        'objective': objective,
                        'audience': [],
+                       'notes': [],
+                       'status': 'converged',
+                       'type': 'pr'
+                       }
+            checklistm_list.append(checklistm)
+
+        for name, objective in submission_checklist:
+            checklistm = {'due_date': now + relativedelta(days=14),
+                       'name': "submission - " + name,
+                       'objective': objective,
+                       'audience': [],
+                       'notes': [],
                        'status': 'converged',
                        'type': 'pr'
                        }
@@ -304,9 +320,10 @@ class ProjectumAdderHelper(DbHelperBase):
 
         for name, objective in resubmission_checklist:
             checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=2),
-                       'name': name,
+                       'name': "resubmission - " + name,
                        'objective': objective,
                        'audience': [],
+                       'notes': [],
                        'status': 'converged',
                        'type': 'pr'
                        }
@@ -314,9 +331,10 @@ class ProjectumAdderHelper(DbHelperBase):
 
         for name, objective in accepted_checklist:
             checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=4),
-                       'name': name,
+                       'name': "accepted - " + name,
                        'objective': objective,
                        'audience': [],
+                       'notes': [],
                        'status': 'converged',
                        'type': 'pr'
                        }
@@ -324,15 +342,36 @@ class ProjectumAdderHelper(DbHelperBase):
 
         for name, objective in published_checklist:
             checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=6),
-                       'name': name,
+                       'name': "published - " + name,
                        'objective': objective,
                        'audience': [],
+                       'notes': [],
                        'status': 'converged',
                        'type': 'pr'
                        }
             checklistm_list.append(checklistm)
 
-
         pdoc.update({"milestones": checklistm_list})
 
+        # update the deliverable to fit checklist prum
+        pdoc.update({"deliverable": {
+            "due_date": due_date,
+            "audience": ["simon"],
+            "success_def": "audience is happy",
+            "scope": [
+                "All publication data and metadata are correct and complete"],
+            "platform": "regolith publication collection in rg-db-public",
+            "roll_out": [
+                "simon merging PRs"],
+            "status": "converged"}
+        })
+
+        # update the kickoff to fit checklist prum
+        pdoc.update({"kickoff": {
+            "due_date": now,
+            "audience": ["lead", "pi", "group_members"],
+            "name": "Kick off meeting",
+            "objective": "introduce project to the lead",
+            "status": "finished"
+        }})
         return pdoc
