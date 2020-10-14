@@ -1,6 +1,7 @@
 """Builder for manuscript reviews."""
 import datetime as dt
 import sys
+from dateutil import parser as dateparser
 
 import nameparser
 
@@ -65,17 +66,16 @@ class ManuRevAdderHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         name = nameparser.HumanName(rc.name)
-        month = dt.datetime.today().month
-        year = dt.datetime.today().year
+        due_date = dateparser.parse(rc.due_date).date()
         if name.last == '':
             key = "{}{}_{}".format(
-                str(year)[-2:], month_to_str_int(month),
+                str(due_date.year)[-2:], month_to_str_int(due_date.month),
                 name.first.casefold().strip("."))
         else:
             key = "{}{}_{}_{}".format(
-                str(year)[-2:], month_to_str_int(month), name.last.casefold(),
+                str(due_date.year)[-2:], month_to_str_int(due_date.month),
+                name.last.casefold(),
                 name.first.casefold().strip("."))
-
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
@@ -86,7 +86,7 @@ class ManuRevAdderHelper(DbHelperBase):
                      'claimed_why_important': [],
                      'did_how': [],
                      'did_what': [],
-                     'due_date': rc.due_date,
+                     'due_date': due_date,
                      'editor_eyes_only': '',
                      'final_assessment': [],
                      'freewrite': '',
@@ -94,7 +94,7 @@ class ManuRevAdderHelper(DbHelperBase):
                      'recommendation': '',
                      'title': rc.title,
                      'validity_assessment': [],
-                     'year': year
+                     'year': due_date.year
                      })
 
         if rc.reviewer:
