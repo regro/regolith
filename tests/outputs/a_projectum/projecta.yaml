@@ -42,7 +42,6 @@
         - lead
         - pi
         - group_members
-      notes: []
       status: proposed
       type: meeting
   name: New projectum
@@ -92,7 +91,6 @@
         - lead
         - pi
         - group_members
-      notes: []
       status: proposed
       type: meeting
     - due_date: '2020-05-27'
@@ -102,7 +100,6 @@
         - lead
         - pi
         - group_members
-      notes: []
       status: proposed
       type: pr
   name: First Projectum

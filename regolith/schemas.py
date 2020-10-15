@@ -1497,7 +1497,6 @@ EXEMPLARS = {
             'objective': 'lead presents background reading and '
                          'initial project plan',
             'audience': ['lead', 'pi', 'group_members'],
-            'notes': [],
             'status': 'proposed',
             'type': 'meeting'
         },
@@ -1505,7 +1504,6 @@ EXEMPLARS = {
              'name': 'planning meeting',
              'objective': 'develop a detailed plan with dates',
              'audience': ['lead', 'pi', 'group_members'],
-             'notes': [],
              'status': 'proposed',
              'type': 'pr',
              }],

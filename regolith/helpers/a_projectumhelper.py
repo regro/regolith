@@ -175,7 +175,6 @@ class ProjectumAdderHelper(DbHelperBase):
                    'name': 'Project lead presentation',
                    'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
                    'audience': ['lead', 'pi', 'group_members'],
-                   'notes': [],
                    'status': 'proposed',
                    'type': 'meeting'
                    }
@@ -298,7 +297,7 @@ class ProjectumAdderHelper(DbHelperBase):
         checklistm_list = []
         for name, objective in presubmission_checklist:
             checklistm = {'due_date': now + relativedelta(days=7),
-                       'name': "presubmission - " + name,
+                       'name': f"presubmission - {name}",
                        'objective': objective,
                        'audience': [],
                        'notes': [],
@@ -309,7 +308,7 @@ class ProjectumAdderHelper(DbHelperBase):
 
         for name, objective in submission_checklist:
             checklistm = {'due_date': now + relativedelta(days=14),
-                       'name': "submission - " + name,
+                       'name': f"submission - {name}",
                        'objective': objective,
                        'audience': [],
                        'notes': [],
@@ -320,7 +319,7 @@ class ProjectumAdderHelper(DbHelperBase):
 
         for name, objective in resubmission_checklist:
             checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=2),
-                       'name': "resubmission - " + name,
+                       'name': f"resubmission - {name}",
                        'objective': objective,
                        'audience': [],
                        'notes': [],
@@ -331,7 +330,7 @@ class ProjectumAdderHelper(DbHelperBase):
 
         for name, objective in accepted_checklist:
             checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=4),
-                       'name': "accepted - " + name,
+                       'name': f"accepted - {name}",
                        'objective': objective,
                        'audience': [],
                        'notes': [],
@@ -342,7 +341,7 @@ class ProjectumAdderHelper(DbHelperBase):
 
         for name, objective in published_checklist:
             checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=6),
-                       'name': "published - " + name,
+                       'name': f"published - {name}",
                        'objective': objective,
                        'audience': [],
                        'notes': [],
