@@ -295,53 +295,11 @@ class ProjectumAdderHelper(DbHelperBase):
         ]
 
         checklistm_list = []
-        for name, objective in presubmission_checklist:
-            checklistm = {'due_date': now + relativedelta(days=7),
+        checklist_delay_days = [7*len(presubmission_checklist),14*len(submission_checklist),74*len(resubmission_checklist),134*len(accepted_checklist),194*len(published_checklist)]
+        checklists = presubmission_checklist + submission_checklist + accepted_checklist + published_checklist
+        for (name, objective), delay_days in zip(checklists, checklist_delay_days):
+            checklistm = {'due_date': now + relativedelta(days=delay_days),
                        'name': f"presubmission - {name}",
-                       'objective': objective,
-                       'audience': [],
-                       'notes': [],
-                       'status': 'converged',
-                       'type': 'pr'
-                       }
-            checklistm_list.append(checklistm)
-
-        for name, objective in submission_checklist:
-            checklistm = {'due_date': now + relativedelta(days=14),
-                       'name': f"submission - {name}",
-                       'objective': objective,
-                       'audience': [],
-                       'notes': [],
-                       'status': 'converged',
-                       'type': 'pr'
-                       }
-            checklistm_list.append(checklistm)
-
-        for name, objective in resubmission_checklist:
-            checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=2),
-                       'name': f"resubmission - {name}",
-                       'objective': objective,
-                       'audience': [],
-                       'notes': [],
-                       'status': 'converged',
-                       'type': 'pr'
-                       }
-            checklistm_list.append(checklistm)
-
-        for name, objective in accepted_checklist:
-            checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=4),
-                       'name': f"accepted - {name}",
-                       'objective': objective,
-                       'audience': [],
-                       'notes': [],
-                       'status': 'converged',
-                       'type': 'pr'
-                       }
-            checklistm_list.append(checklistm)
-
-        for name, objective in published_checklist:
-            checklistm = {'due_date': now + relativedelta(days=14) + relativedelta(months=6),
-                       'name': f"published - {name}",
                        'objective': objective,
                        'audience': [],
                        'notes': [],
