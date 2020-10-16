@@ -209,7 +209,7 @@ class ProjectaListerHelper(SoutHelperBase):
 
         if end_projecta != []:
             if desired_date == dt.date.today() and num_of_days == 7:
-                print("\nProjecta finished this past week! o(*^▽^*)o")
+                print("\nProjecta finished this past week! o(*^V^*)o")
             else:
                 print(
                     f"\nProjecta finished within the {num_of_days} days leading up to {desired_date}")
