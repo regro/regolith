@@ -450,6 +450,11 @@ def is_before(thing, now=None):
         if dates.get("date") < now:
             before = True
     except:
+        pass
+    try:
+        if now < dates.get('begin_date'):
+            before = True
+    except:
         raise RuntimeError(f"Cannot find date in document:\n {thing}")
     return before
 
@@ -478,7 +483,12 @@ def is_after(thing, now=None):
         if now < dates.get('date'):
             after = True
     except:
-        raise RuntimeError(f"Cannot find date in document:\n {thing}")
+        pass
+    try:
+        if now < dates.get('end_date'):
+            after = True
+    except:
+        raise RuntimeError(f"Cannot find date or end_date in document:\n {thing}")
     return after
 
 
@@ -497,6 +507,7 @@ def is_between(thing, start=None, end=None):
 
     Returns
     -------
+    object
     True if the thing is between the start and end
 
     """

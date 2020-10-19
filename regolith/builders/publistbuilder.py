@@ -164,6 +164,12 @@ class PubListBuilder(LatexBuilderBase):
         skip_keys = set(["ID", "ENTRYTYPE", "author"])
         self.bibdb.entries = ents = []
         for pub in pubs:
+            if isinstance(pub.get("day"), int):
+                pub["day"] = str(pub.get("day"))
+            if isinstance(pub.get("year"), int):
+                pub["year"] = str(pub.get("year"))
+            if isinstance(pub.get("volume"), int):
+                pub["volume"] = str(pub.get("volume"))
             ent = dict(pub)
             ent["ID"] = ent.pop("_id")
             ent["ENTRYTYPE"] = ent.pop("entrytype")
