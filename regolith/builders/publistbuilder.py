@@ -41,7 +41,7 @@ class PubListBuilder(LatexBuilderBase):
         if self.rc.from_date:
             fd = True
             from_date = self.rc.from_date
-            sy = from_date.split("-")[0]
+            sy = int(from_date.split("-")[0])
             sm = int(from_date.split("-")[1])
             sd = int(from_date.split("-")[2])
             filestub = filestub + "_from{}".format(from_date)
@@ -52,7 +52,7 @@ class PubListBuilder(LatexBuilderBase):
                 qualifiers = qualifiers + " to {}".format(to_date)
             else:
                 to_date = dt.datetime.date(dt.datetime.today()).isoformat()
-            by = to_date.split("-")[0]
+            by = int(to_date.split("-")[0])
             bm = int(to_date.split("-")[1])
             bd = int(to_date.split("-")[2])
         if self.rc.grants:
