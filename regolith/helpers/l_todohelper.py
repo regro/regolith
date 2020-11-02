@@ -147,7 +147,10 @@ class TodoListerHelper(SoutHelperBase):
                 todo["end_date"] = date_parser.parse(todo["end_date"]).date()
             todo["days_to_due"] = (todo.get('due_date') - today).days
             todo["sort_finished"] = (todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1, 1)).days
-            todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
+            try:
+                todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
+            except OverflowError:
+                todo["order"] = float('inf')
         gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks], key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
         gather_todos[len_of_started_tasks: len_of_tasks] = sorted(gather_todos[len_of_started_tasks: len_of_tasks], key=lambda k: (-k["sort_finished"]))
         gather_todos[len_of_tasks:] = sorted(gather_todos[len_of_tasks:], key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
