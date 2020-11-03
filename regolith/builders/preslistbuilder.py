@@ -28,10 +28,10 @@ from regolith.tools import (
     all_docs_from_collection,
     fuzzy_retrieval,
     number_suffix,
-    group_member_ids
+    group_member_ids, latex_safe
 )
 from regolith.stylers import sentencecase, month_fullnames
-from regolith.dates import month_to_int
+from regolith.dates import month_to_int, get_dates
 
 
 class PresListBuilder(LatexBuilderBase):
@@ -70,13 +70,6 @@ class PresListBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
-        # just a reminder placeholder how to access these.  These
-        # print statements will be removed when the builder is updated
-        # to use them!
-        print(self.rc.from_date)
-        print(self.rc.to_date)
-        print(self.rc.people)
-        print(self.rc.grants)
 
         for group in self.gtx["groups"]:
             grp = group["_id"]
@@ -147,22 +140,16 @@ class PresListBuilder(LatexBuilderBase):
                     ]
                     authorlist = ", ".join(pres["authors"])
                     pres["authors"] = authorlist
-                    # fixme: make this a more generic date loading function?
-                    if pres.get("begin_month"):
-                        pres["begin_month"] = month_to_int(pres["begin_month"])
-                    else:
-                        sys.exit("no begin_month in {}".format(pres["_id"]))
-                    if not pres.get("begin_year"):
-                        sys.exit("no begin_year in {}".format(pres["_id"]))
-                    if pres.get("begin_day"):
-                        pres["begin_day"] = pres["begin_day"]
-                    else:
-                        sys.exit("no begin_day in {}".format(pres["_id"]))
-                    pres["date"] = datetime.date(
-                        pres["begin_year"],
-                        pres["begin_month"],
-                        pres["begin_day"],
-                    )
+                    presdates = get_dates(pres)
+                    pres["date"] = presdates.get("begin_date")
+#                    all_date_objects = ['day', 'month', 'year']
+                    beg_end = ['begin', 'end']
+                    for be in beg_end:
+                        if presdates.get(f"{be}_date"):
+                            pres[f"{be}_day"] = presdates.get(f"{be}_date").day
+                            pres[f"{be}_month"] = presdates.get(f"{be}_date").month
+                            pres[f"{be}_year"] = presdates.get(f"{be}_date").year
+
                     for day in ["begin_day", "end_day"]:
                         pres["{}_suffix".format(day)] = number_suffix(
                             pres.get(day, None)
