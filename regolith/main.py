@@ -237,7 +237,7 @@ def create_parser():
         dest="format",
         default=None,
         help="file / school format to read information from. Current values are "
-             '"json" and "usc". Determined from extension if not available.',
+             '"json", "csv", and "usc". Determined from extension if not available.',
     )
     clp.add_argument(
         "-d",
