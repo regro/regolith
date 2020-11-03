@@ -88,6 +88,7 @@ class PresListBuilder(LatexBuilderBase):
                 # build the filtered collection
                 # only list the talk if the group member is an author
                 for pres in presentations:
+                    print(f"{pres['_id']}: {pres['title']}")
                     pauthors = pres["authors"]
                     if isinstance(pauthors, str):
                         pauthors = [pauthors]
@@ -140,19 +141,10 @@ class PresListBuilder(LatexBuilderBase):
                     ]
                     authorlist = ", ".join(pres["authors"])
                     pres["authors"] = authorlist
-                    # fixme: make this a more generic date loading function?
                     presdates = get_dates(pres)
-#                    if pres.get("begin_month"):
-#                        pres["begin_month"] = month_to_int(pres["begin_month"])
-#                    else:
-#                        sys.exit("no begin_month in {}".format(pres["_id"]))
-#                    if not pres.get("begin_year"):
-#                        sys.exit("no begin_year in {}".format(pres["_id"]))
-#                    if pres.get("begin_day"):
-#                        pres["begin_day"] = pres["begin_day"]
-#                    else:
-#                        sys.exit("no begin_day in {}".format(pres["_id"]))
                     pres["date"] = presdates.get("begin_date")
+                    for pres in presentations:
+                        print(f"{pres['_id']}: {pres['title']}")
                     for day in ["begin_day", "end_day"]:
                         pres["{}_suffix".format(day)] = number_suffix(
                             pres.get(day, None)
@@ -214,9 +206,6 @@ class PresListBuilder(LatexBuilderBase):
                         for person in self.gtx["people"]
                         if person["_id"] is member
                     ][0]
-                    for pres in presclean:
-                        if not pres.get('title'):
-                            pres['title'] = "tbd"
                     self.render(
                         "preslist.tex",
                         outfile + ".tex",

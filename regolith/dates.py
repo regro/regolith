@@ -217,8 +217,8 @@ def get_dates(thing, date_field_prefix=None):
         dates = {'begin_date': None, 'end_date': None, 'date': None}
         return dates
     for key, value in thing.items():
-        if isinstance(value, str):
-            if value.strip() == 'tbd':
+        if isinstance(value, str) and 'date' in key:
+            if value.strip().lower() == 'tbd':
                 thing[key] = None
     if thing.get("end_year") and not thing.get("begin_year"):
         print('WARNING: end_year specified without begin_year')
