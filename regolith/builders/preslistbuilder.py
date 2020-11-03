@@ -88,7 +88,6 @@ class PresListBuilder(LatexBuilderBase):
                 # build the filtered collection
                 # only list the talk if the group member is an author
                 for pres in presentations:
-                    print(f"{pres['_id']}: {pres['title']}")
                     pauthors = pres["authors"]
                     if isinstance(pauthors, str):
                         pauthors = [pauthors]
@@ -143,8 +142,14 @@ class PresListBuilder(LatexBuilderBase):
                     pres["authors"] = authorlist
                     presdates = get_dates(pres)
                     pres["date"] = presdates.get("begin_date")
-                    for pres in presentations:
-                        print(f"{pres['_id']}: {pres['title']}")
+#                    all_date_objects = ['day', 'month', 'year']
+                    beg_end = ['begin', 'end']
+                    for be in beg_end:
+                        if presdates.get(f"{be}_date"):
+                            pres[f"{be}_day"] = presdates.get(f"{be}_date").day
+                            pres[f"{be}_month"] = presdates.get(f"{be}_date").month
+                            pres[f"{be}_year"] = presdates.get(f"{be}_date").year
+
                     for day in ["begin_day", "end_day"]:
                         pres["{}_suffix".format(day)] = number_suffix(
                             pres.get(day, None)
