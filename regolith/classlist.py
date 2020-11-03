@@ -7,6 +7,8 @@ import sys
 from html.parser import HTMLParser
 from pprint import pprint, pformat
 
+from nameparser import HumanName
+
 
 def load_json(filename):
     """Returns students as a list of dicts from JSON file."""
@@ -18,25 +20,29 @@ def load_json(filename):
 def load_csv(filename, format="columbia"):
     """Returns students as a list of dicts from a csv from Columbia Courseworks
     """
-    if format == "columbia":
-        first_name = "First Name"
-        last_name = "Last name"
-        email = "Email"
-        university_id = "UNI"
-
     with open(filename, encoding='utf-8') as f:
         reader = csv.DictReader(f)
         students = []
         for row in reader:
             students.append(row)
 
+    if format == "columbia":
+        email_suffix = "@columbia.edu"
+        [stud.update({"first_name": HumanName(stud["Student"]).first,
+                      "last_name": HumanName(stud["Student"]).last,
+                      "email": f"{stud.get('SIS User ID').strip()}{email_suffix}",
+                      "university_id": stud.get('SIS User ID')
+                      })
+           for stud in students]
+
+
     for student in students:
-        student[first_name] = student[first_name].strip()
-        student[last_name] = student[last_name].strip()
-        student["_id"] = "{} {}".format(student.get(first_name),
-                                        student.get(last_name)).strip()
-        student["email"] = student.get(email).strip()
-        student["university_id"] = student[university_id]
+        student["first_name"] = student.get("first_name").strip()
+        student["last_name"] = student.get("last_name").strip()
+        student["_id"] = "{} {}".format(student.get("first_name"),
+                                        student.get("last_name")).strip()
+        student["email"] = student.get("email").strip()
+        student["university_id"] = student["university_id"].strip()
 
     return students
 
