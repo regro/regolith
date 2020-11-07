@@ -141,14 +141,14 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 mil.update({'audience': rc.audience})
             else:
                 mil.update({'audience': ['lead', 'pi', 'group_members']})
-            if rc.status:
+            if rc.type:
                 if rc.type in ALLOWED_TYPES:
                     mil.update({'type': ALLOWED_TYPES.get(rc.type)})
                 else:
                     mil.update({'type': rc.type})
             else:
                 mil.update({'status': 'proposed'})
-            if rc.type:
+            if rc.status:
                 if rc.status in ALLOWED_STATI:
                     mil.update({'status': ALLOWED_STATI.get(rc.status)})
                 else:
