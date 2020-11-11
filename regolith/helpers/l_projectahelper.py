@@ -46,7 +46,7 @@ def subparser(subpi):
                             "The default is today. Some projecta don't have an end date and won't appear in a search")
     subpi.add_argument("-r", "--range",
                        help="date range back from DATE to search over in days. "
-                       "If no range is specified, search range will be 7 days")
+                            "If no range is specified, search range will be 7 days")
     subpi.add_argument("-g", "--grant",
                        help="Filter projecta by a grant ID")
     subpi.add_argument("--grp_by_lead", action='store_true',
@@ -102,7 +102,9 @@ class ProjectaListerHelper(SoutHelperBase):
         else:
             collection = self.gtx["projecta"]
 
-        if (not rc.lead) and (not rc.person) and (not rc.ended) and (not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (not rc.filter) and (not rc.current) and (not rc.all):
+        if (not rc.lead) and (not rc.person) and (not rc.ended) and (
+        not rc.grant) and (not rc.verbose) and (not rc.grp_by_lead) and (
+        not rc.filter) and (not rc.current) and (not rc.all):
             return
         if rc.date:
             desired_date = date_parser.parse(rc.date).date()
@@ -120,15 +122,19 @@ class ProjectaListerHelper(SoutHelperBase):
             if rc.person:
                 raise RuntimeError(
                     f"please specify either lead or person, not both")
-            collection = [prum for prum in collection if prum.get('lead') == rc.lead]
+            collection = [prum for prum in collection if
+                          prum.get('lead') == rc.lead]
         if rc.person:
             if isinstance(rc.person, str):
                 rc.person = [rc.person]
             collection = [prum for prum in collection
                           if prum.get('lead') in rc.person
-                          or bool(set(prum.get('group_members',[])).intersection(set(rc.person)))]
+                          or bool(
+                    set(prum.get('group_members', [])).intersection(
+                        set(rc.person)))]
         if rc.current:
-            collection = [prum for prum in collection if prum.get('status') in ACTIVE_STATI]
+            collection = [prum for prum in collection if
+                          prum.get('status') in ACTIVE_STATI]
 
         for projectum in collection:
             if rc.all:
@@ -143,7 +149,8 @@ class ProjectaListerHelper(SoutHelperBase):
                     if projectum.get('status') in INACTIVE_STATI:
                         continue
                     elif projectum.get('status') not in FINISHED_STATI \
-                            or not isinstance(projectum.get('end_date'), dt.date):
+                            or not isinstance(projectum.get('end_date'),
+                                              dt.date):
                         error_projecta.append(projectum)
                     else:
                         end_date = projectum.get('end_date')
@@ -151,7 +158,7 @@ class ProjectaListerHelper(SoutHelperBase):
                             end_date = date_parser.parse(
                                 end_date).date()
                         low_range = desired_date - \
-                            dt.timedelta(days=num_of_days)
+                                    dt.timedelta(days=num_of_days)
                         if low_range <= end_date <= desired_date:
                             end_projecta.append(projectum)
                 if end_projecta != []:
@@ -218,7 +225,8 @@ class ProjectaListerHelper(SoutHelperBase):
             print(i.get("_id"))
 
         if error_projecta:
-            print("\nWARNING: These projecta have an issue with the end date and/or status, "
-                  "please run f_prum to set status to finished and add an end date")
+            print(
+                "\nWARNING: These projecta have an issue with the end date and/or status, "
+                "please run f_prum to set status to finished and add an end date")
             for i in error_projecta:
                 print(i.get("_id"))
