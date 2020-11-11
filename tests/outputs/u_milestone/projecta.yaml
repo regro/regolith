@@ -1,4 +1,4 @@
-20ly_newprojectum:
+ly_newprojectum:
   begin_date: 2020-04-29
   collaborators:
     - afriend
@@ -47,7 +47,7 @@
   name: New projectum
   pi_id: scopatz
   status: started
-20sb_firstprojectum:
+sb_firstprojectum:
   begin_date: '2020-04-28'
   collaborators:
     - aeinstein

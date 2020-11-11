@@ -17,7 +17,7 @@ helper_map = [
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group_members", "ascopatz", "--grants", "SymPy-1.1", "--due_date", "2021-01-01"],
-     "20ly_newprojectum has been added in projecta\n"),
+     "ly_newprojectum has been added in projecta\n"),
     (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
       "--begin_date", "2020-09-15", "--end_date", "2022-02-14", "--duration", "16.89",
       "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "--currency", "Bitcoin",
@@ -34,13 +34,13 @@ helper_map = [
      "2006as_mars has been added in presentations\n"),
     (["helper", "l_progress", "-l", "ascopatz"],
      "*************************[Proposed Projecta]*************************\n"
-      "20sb_firstprojectum\n"
+      "sb_firstprojectum\n"
       "    status: proposed, begin_date: 2020-04-28, due_date: 2021-05-05\n"
       "    description: My first projectum\n"
      ),
     (["helper", "l_progress", "-v", "-l", "ascopatz"],
      "*************************[Proposed Projecta]*************************\n"
-      "20sb_firstprojectum\n"
+      "sb_firstprojectum\n"
       "    status: proposed, begin_date: 2020-04-28, due_date: 2021-05-05\n"
       "    description: My first projectum\n"
       "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
@@ -61,34 +61,34 @@ helper_map = [
       "            status: proposed\n"
      ),
     (["helper", "l_milestones", "--verbose"],
-     "2021-01-01: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
+     "2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
     (["helper", "l_milestones", "--verbose", "--lead", "lyang"],
-     "2021-01-01: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, 20ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
+     "2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
     (["helper", "l_projecta", "--verbose", "--lead", "ascopatz"],
-     "20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
+     "sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
-     "20ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
+     "ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\nsb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--grant", "SymPy-1.1"],
-     "20ly_newprojectum\n20sb_firstprojectum\n"
+     "ly_newprojectum\nsb_firstprojectum\n"
      ),
     (["helper", "l_projecta", "--grp_by_lead"],
-     "lyang:\n    20ly_newprojectum\nascopatz:\n    20sb_firstprojectum\n"
+     "lyang:\n    ly_newprojectum\nascopatz:\n    sb_firstprojectum\n"
      ),
     (["helper", "l_projecta", "--all"],
-     "20ly_newprojectum\n20sb_firstprojectum\n"
+     "ly_newprojectum\nsb_firstprojectum\n"
      ),
     (["helper", "l_projecta", "--current"],
-     "20ly_newprojectum\n20sb_firstprojectum\n"
+     "ly_newprojectum\nsb_firstprojectum\n"
      ),
     (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"],
-     "ascopatz:\n    20sb_firstprojectum\n"
+     "ascopatz:\n    sb_firstprojectum\n"
      ),
     (["helper", "l_projecta", "--verbose"],
-     "20ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n20sb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
+     "ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: None, end_date: None, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\nsb_firstprojectum\n    status: proposed, begin_date: 2020-04-28, due_date: None, end_date: 2020-06-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--ended", "--date", "2020-06-02"],
      "\nNo projecta finished within the 7 days leading up to 2020-06-02\n"
@@ -144,16 +144,16 @@ helper_map = [
      "    aka:\n"
      "        -A. B. Friend\n        -AB Friend\n        -Tony Friend\n"
      ),
-    (["helper", "u_milestone", "20sb_firstprojectum", "--index", "5",
+    (["helper", "u_milestone", "sb_firstprojectum", "--index", "5",
       "--status", "converged", "--due_date", "2020-06-01"],
-     "20sb_firstprojectum has been updated in projecta\n"
+     "sb_firstprojectum has been updated in projecta\n"
      ),
-    (["helper", "u_milestone", "20sb"],
+    (["helper", "u_milestone", "sb"],
      "Projecta not found. Projecta with similar names: \n"
-     "20sb_firstprojectum\n"
+     "sb_firstprojectum\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
-    (["helper", "u_milestone", "20sb_firstprojectum"],
+    (["helper", "u_milestone", "sb_firstprojectum"],
      "Please choose from one of the following to update/add:\n"
      "1. new milestone\n"
      "2. kickoff    due date: 2020-05-06    status: finished\n"
@@ -161,7 +161,7 @@ helper_map = [
      "4. planning meeting    due date: 2020-05-27    status: proposed\n"
      "5. deliverable    due date: 2020-06-01    status: converged\n"
      ),
-    (["helper", "u_milestone", "20sb_firstprojectum", "--verbose"],
+    (["helper", "u_milestone", "sb_firstprojectum", "--verbose"],
      "Please choose from one of the following to update/add:\n"
      "1. new milestone\n"
      "2. kickoff    due date: 2020-05-06:\n"
@@ -181,13 +181,13 @@ helper_map = [
      "     audience: ['beginning grad in chemistry']\n"
      "     status: converged\n"
      ),
-    (["helper", "u_logurl", "20sb", "--number", "1", "https://docs.google.com/document/d/1pQMFpuI"],
-     "20sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
+    (["helper", "u_logurl", "sb", "--number", "1", "https://docs.google.com/document/d/1pQMFpuI"],
+     "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
      ),
-    (["helper", "u_logurl", "20ly", "https://docs.google.com/document/d/1pQMFpuI"],
+    (["helper", "u_logurl", "ly", "https://docs.google.com/document/d/1pQMFpuI"],
      "There does not seem to be a projectum with this exact name in this database.\n"
      "However, there are projecta with similar names: \n"
-     "1. 20ly_newprojectum     current url: \n"
+     "1. ly_newprojectum     current url: \n"
      "Please rerun the u_logurl helper with the same name as previously inputted, "
      "but with the addition of -n followed by a number corresponding to one of the "
      "above listed projectum ids that you would like to update.\n"
@@ -266,12 +266,12 @@ helper_map = [
      "     - notes2\n"
      "---------------------------------------------------------------------------------\n"
      ),
-    (["helper", "f_prum", "20sb_firstprojectum", "--end_date", "2020-07-01"],
-     "20sb_firstprojectum status has been updated to finished\n"
+    (["helper", "f_prum", "sb_firstprojectum", "--end_date", "2020-07-01"],
+     "sb_firstprojectum status has been updated to finished\n"
      ),
-    (["helper", "f_prum", "20sb"],
+    (["helper", "f_prum", "sb_"],
      "Projectum not found. Projecta with similar names: \n"
-     "20sb_firstprojectum     status:finished\n"
+     "sb_firstprojectum     status:finished\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
     (["helper", "lister", "people"],
