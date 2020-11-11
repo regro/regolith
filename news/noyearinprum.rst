@@ -4,6 +4,7 @@
  * Cleaned code in l_projecta for more readable filtering
  * a_projectum so that it doesn't automatically prepend a year to the id of new
    projecta.
+ * updated schema so it doesn't model id pattern with prepended date
 
 **Deprecated:** None
 

@@ -1460,7 +1460,7 @@ EXEMPLARS = {
         },
     ],
     "projecta": {
-        "_id": "20sb_firstprojectum",
+        "_id": "sb_firstprojectum",
         "begin_date": "2020-04-28",
         "collaborators": ["aeinstein", "pdirac"],
         "deliverable": {
