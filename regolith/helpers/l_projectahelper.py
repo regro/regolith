@@ -8,7 +8,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
-from regolith.dates import get_due_date, get_dates
+from regolith.dates import get_due_date, get_dates, is_current, has_finished
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -107,17 +107,18 @@ class ProjectaListerHelper(SoutHelperBase):
         not rc.filter) and (not rc.current) and (not rc.all):
             return
         if rc.date:
-            desired_date = date_parser.parse(rc.date).date()
+            now = date_parser.parse(rc.date).date()
         else:
-            desired_date = dt.date.today()
-
-        if rc.range:
-            num_of_days = int(rc.range)
-        else:
-            num_of_days = 7
+            now = dt.date.today()
+        if not rc.range:
+            rc.range = 7
+        since_date = now - dt.timedelta(days=int(rc.range))
 
         projecta, end_projecta, error_projecta = [], [], []
         grouped_projecta = {}
+        if rc.grant:
+            collection = [prum for prum in collection if
+                          rc.grant in prum.get('grants')]
         if rc.lead:
             if rc.person:
                 raise RuntimeError(
@@ -135,15 +136,12 @@ class ProjectaListerHelper(SoutHelperBase):
         if rc.current:
             collection = [prum for prum in collection if
                           prum.get('status') in ACTIVE_STATI]
+        if not rc.all:
+            collection = [prum for prum in collection if
+                          prum.get('status') not in INACTIVE_STATI
+                          ]
 
         for projectum in collection:
-            if rc.all:
-                projecta.append(projectum)
-                continue
-            if isinstance(projectum.get('group_members'), str):
-                projectum['group_members'] = [projectum.get('group_members')]
-            if rc.grant and rc.grant not in projectum.get('grants'):
-                continue
             if rc.ended:
                 if projectum.get('status') not in ACTIVE_STATI:
                     if projectum.get('status') in INACTIVE_STATI:
@@ -157,9 +155,7 @@ class ProjectaListerHelper(SoutHelperBase):
                         if isinstance(end_date, str):
                             end_date = date_parser.parse(
                                 end_date).date()
-                        low_range = desired_date - \
-                                    dt.timedelta(days=num_of_days)
-                        if low_range <= end_date <= desired_date:
+                        if since_date <= end_date <= now:
                             end_projecta.append(projectum)
                 if end_projecta != []:
                     projecta = end_projecta
@@ -209,17 +205,17 @@ class ProjectaListerHelper(SoutHelperBase):
             return
 
         if end_projecta != []:
-            if desired_date == dt.date.today() and num_of_days == 7:
-                print("\nProjecta finished this past week! o(*^V^*)o")
+            if now == dt.date.today() and rc.range == 7:
+                print("\nProjecta finished this past week! o(*^v^*)o")
             else:
                 print(
-                    f"\nProjecta finished within the {num_of_days} days leading up to {desired_date}")
+                    f"\nProjecta finished within the {rc.range} days leading up to {now}")
         elif end_projecta == [] and rc.ended:
-            if desired_date == dt.date.today() and num_of_days == 7:
+            if now == dt.date.today() and rc.range == 7:
                 print("\nNo projecta finished this week")
             else:
                 print(
-                    f"\nNo projecta finished within the {num_of_days} days leading up to {desired_date}")
+                    f"\nNo projecta finished within the {rc.range} days leading up to {now}")
 
         for i in projecta:
             print(i.get("_id"))
