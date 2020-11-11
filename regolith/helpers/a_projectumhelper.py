@@ -54,7 +54,7 @@ def subparser(subpi):
                        help="proposed due date for the deliverable"
                        )
     subpi.add_argument("--checklist", action='store_true',
-                       help="Create manuscript checklist if True"
+                       help="Create manuscript checklist if specified"
                        )
     return subpi
 
