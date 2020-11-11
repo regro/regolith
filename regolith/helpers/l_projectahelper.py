@@ -116,32 +116,26 @@ class ProjectaListerHelper(SoutHelperBase):
 
         projecta, end_projecta, error_projecta = [], [], []
         grouped_projecta = {}
-        if rc.lead and rc.person:
-            raise RuntimeError(
-                f"please specify either lead or person, not both")
+        if rc.lead:
+            if rc.person:
+                raise RuntimeError(
+                    f"please specify either lead or person, not both")
+            collection = [prum for prum in collection if prum.get('lead') == rc.lead]
+        if rc.person:
+            if isinstance(rc.person, str):
+                rc.person = [rc.person]
+            collection = [prum for prum in collection
+                          if prum.get('lead') in rc.person
+                          or bool(set(prum.get('group_members',[])).intersection(set(rc.person)))]
+        if rc.current:
+            collection = [prum for prum in collection if prum.get('status') in ACTIVE_STATI]
+
         for projectum in collection:
             if rc.all:
                 projecta.append(projectum)
                 continue
-            if rc.current:
-                if projectum.get('status') in ACTIVE_STATI:
-                    projecta.append(projectum)
-                continue
             if isinstance(projectum.get('group_members'), str):
                 projectum['group_members'] = [projectum.get('group_members')]
-            if rc.lead and projectum.get('lead') != rc.lead:
-                continue
-            if rc.person:
-                if isinstance(rc.person, str):
-                    rc.person = [rc.person]
-                good_p = []
-                for i in rc.person:
-                    if projectum.get('lead') == rc.person:
-                        good_p.append(i)
-                    if projectum.get('group_members') and i in projectum.get('group_members'):
-                        good_p.append(i)
-                if len(good_p) == 0:
-                    continue
             if rc.grant and rc.grant not in projectum.get('grants'):
                 continue
             if rc.ended:
