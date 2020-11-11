@@ -53,8 +53,8 @@ def subparser(subpi):
     subpi.add_argument("-u", "--due_date",
                        help="proposed due date for the deliverable"
                        )
-    subpi.add_argument("--checklist",
-                       help="Create manuscript checklist if True"
+    subpi.add_argument("--checklist", action='store_true',
+                       help="Create manuscript checklist if specified"
                        )
     return subpi
 
@@ -113,7 +113,7 @@ class ProjectumAdderHelper(DbHelperBase):
             'pi_id': rc.pi_id,
             'lead': rc.lead,
         })
-        if rc.lead is "tbd":
+        if rc.lead == "tbd":
             pdoc.update({
                 'status': 'proposed'
             })
@@ -181,7 +181,7 @@ class ProjectumAdderHelper(DbHelperBase):
         pdoc.update({"milestones": [secondm]})
 
         if rc.checklist:
-            pdoc = self.insert_checklists(pdoc, now, due_date)
+            pdoc = self.insert_checklists(pdoc, now)
 
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
@@ -190,7 +190,7 @@ class ProjectumAdderHelper(DbHelperBase):
 
         return
 
-    def insert_checklists(self, pdoc, now, due_date):
+    def insert_checklists(self, pdoc, now):
         """Create manuscript checklist, one item as one milestone."""
         presubmission_checklist = [
             ("Create slides", "Create a 'slides' folder in the paper repo and make a beamer latex skeleton for a series of talk slides. Iterate the slide skeleton with Simon to convergence. (The beamer template can be found at https://gitlab.thebillingegroup.com/talks/beamerTalkTemplate)."),
@@ -256,7 +256,7 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Check institutions", "Check all authors' institutions are correct."),
             ("Check acknowledgement", "Make sure that all funding and all beamlines used are correctly acknowledged. Usually this is done by the bosses, but more eyes catch more mistakes."),
             ("Update db entry", "In citations.yml, (the reference should have been added during the submission step) double check the grants{}, facilities{}, nb{} field entries. Any questions, ask Simon. Put 'to be published' in the note{} section. If it has not been submitted to arxiv before, move the entry from rg-db-group to rg-db-public github repo. Otherwise, it should be at rg-db-public already. Create a PR to merge to the billingeGroup repository for edits if necessary."),
-            ("Check db errors", " In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace lyang with your name) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually. If any problem about installing regolith and databases, please refer to [rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases)."),
+            ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace lyang with your name) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually. If any problem about installing regolith and databases, please refer to [rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases)."),
             ("Check figures and tables", "Are all the figures, tables in the paper correct (the ones you intended)?"),
             ("Check the figure caption", "Check the Figure captions for errors. If they refer to a green line, is the relevant line green, and so on."),
             ("Check figure axis labels", "Check that the figure axis labels are correctly labeled. Make sure it doesn't say G when F is plotted. Make sure the units are correct. Make sure it says 'G (A^-2)' and NOT 'G(r)' (common mistake)"),
@@ -295,11 +295,12 @@ class ProjectumAdderHelper(DbHelperBase):
         ]
 
         checklistm_list = []
-        checklist_delay_days = [7*len(presubmission_checklist),14*len(submission_checklist),74*len(resubmission_checklist),134*len(accepted_checklist),194*len(published_checklist)]
+        checklist_delay_days = [7]*len(presubmission_checklist) + [14]*len(submission_checklist) + [74]*len(resubmission_checklist) + [134]*len(accepted_checklist) + [194]*len(published_checklist)
+        checklist_names = ["presubmission"]*len(presubmission_checklist) + ["submission"]*len(submission_checklist) + ["resubmission"]*len(resubmission_checklist) + ["accepted"]*len(accepted_checklist) + ["published"]*len(published_checklist)
         checklists = presubmission_checklist + submission_checklist + accepted_checklist + published_checklist
-        for (name, objective), delay_days in zip(checklists, checklist_delay_days):
+        for (name, objective), checklist_name, delay_days in zip(checklists, checklist_names, checklist_delay_days):
             checklistm = {'due_date': now + relativedelta(days=delay_days),
-                       'name': f"presubmission - {name}",
+                       'name': f"{checklist_name} - {name}",
                        'objective': objective,
                        'audience': [],
                        'notes': [],
@@ -312,7 +313,7 @@ class ProjectumAdderHelper(DbHelperBase):
 
         # update the deliverable to fit checklist prum
         pdoc.update({"deliverable": {
-            "due_date": due_date,
+            "due_date": now + relativedelta(days=checklist_delay_days[-1]),
             "audience": ["simon"],
             "success_def": "audience is happy",
             "scope": [
