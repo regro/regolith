@@ -213,7 +213,7 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Check references", "Go through the references and find all the errors. Correct errors in the bibliographic database (citations.yml, or the Zotero collection, for example), not just in the local bib file. Did all the journal names compile correctly? Are they all consistently in abbreviated form (or full form if that is the style, though that is rare). Volume, year and page numbers appear for all references? Hard to find errors in these numbers, but when you do, definitely correct the database!"),
             ("Check reference style", "Is reference's style in accordance with journal's requirement?"),
             ("Check journal submission requirements", "Check the journal submission requirements for cover letters, table of contents pictures, list of referees, etc.."),
-            ("Check arxiv", "Check with Simon; will the paper be submitted to arXiv?"),
+            ("Check arxiv", "Check with PI; will the paper be submitted to arXiv?"),
             ("Get approval", "Get final approval from all authors for the final version of the manuscript, cover letter, referees list, etc., submission to arXiv if appropriate."),
             ("Check cover letter", "In the cover letter, does it contain editor-in-chief's name and institution (usually at the top left of the letter) ? Is the content of letter concise and eye-catching? Are (three) suggested reviewers' information in the letter?"),
             ("Inser bbl", "If it is LaTeX, insert the .bbl file into the main tex file and comment out the \\thebibliography and \\bibliographystyle lines."),
@@ -224,12 +224,12 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Submit to arxiv if needed", "Submit to arxiv if appropriate."),
             ("Push an arxiv tag", "Make a new tag of the version submitted to arXiv with the name arXivSubmitted20170610."),
             ("Get arxiv reference", "Wait a day to get the full arXiv reference."),
-            ("Modify db for arxiv", "If submit to arxiv, create an entry of the paper in citations.yml at rg-db-public billingeGroup public github repository.  Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct. Fill in the arXiv citation information in citations.yml in the bibliography reference. Any questions, ask Simon. Create a PR to merge to the billingeGroup repository."),
-            ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace `lyang` with your own name ID in the group) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually. The complied tex and pdf files are located in the `_build` folder. If any problem about installing regolith and databases, please refer to [rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases)."),
-            ("Modify db if not submit to arxiv", "If not submit to arxiv, create an entry of the paper in citations.yml at rg-db-group billingeGroup private github repository.  Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct.  Any questions, ask Simon. Create a PR to merge to the billingeGroup repository."),
+            ("Modify db if submit to arxiv", "If submit to arxiv, create an entry of the paper in citations.yml at rg-db-public billingeGroup public github repository.  Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct. Fill in the arXiv citation information in citations.yml in the bibliography reference. Any questions, ask PI. Create a PR to merge to the billingeGroup repository."),
+            ("Modify db if not submit to arxiv", "If not submit to arxiv, create an entry of the paper in citations.yml at rg-db-group billingeGroup private github repository.  Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct.  Any questions, ask PI. Create a PR to merge to the billingeGroup repository."),
+            ("Check db errors", "In your rg-db-group/local directory, run `regolith build publist --people lyang --no-pdf` (replace `lyang` with your own name ID in the group) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. This command yields the latex source but doesn't build it, please find your tex file such as `lyang.tex` and then build the latex manually. The complied tex and pdf files are located in the `_build` folder. If any problem about installing regolith and databases, please refer to [rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases)."),
             ("Email coauthors", "Send an email to coauthors letting them know the arXiv citation information."),
-            ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
-            ("Email Simon", "Email Simon if finish the above."),
+            ("Ask PI if anything unfinished", "Ask PI about any items unfinished."),
+            ("Notify PI", "Create a PR to the db and notify PI at github if finish the above."),
         ]
 
         resubmission_checklist = [
@@ -243,19 +243,19 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Commit any additional changes", "If during the submission process you need to make any changes, do it in your local repo and make another commit and push."),
             ("Push a resubmission tag", "Make a new resubmission tag (see above for details)"),
             ("Check db entry", "Check the entry in citations.yml doesn't need to be updated, and update if it does."),
-            ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
-            ("Email Simon", "Email Simon if finish the above."),
+            ("Ask PI if anything unfinished", "Ask PI about any items unfinished."),
+            ("Notify PI", "Create a PR to the db and notify PI at github if finish the above."),
         ]
 
         accepted_checklist = [
             ("Share the news", "Congratulations on the acceptance of the paper. Let all coauthors know the great news!"),
-            ("Share with BNL if needed", "If it is a BNL paper (check with Simon, but it should acknowledge BNL funding-not just beamtime), send a pdf copy of the accepted version of the paper from the repo to Arlene at BNL to get a BNL publication number.  If you are not sure what this means, ask Simon"),
+            ("Share with BNL if needed", "If it is a BNL paper (check with PI, but it should acknowledge BNL funding-not just beamtime), send a pdf copy of the accepted version of the paper from the repo to Arlene at BNL to get a BNL publication number.  If you are not sure what this means, ask PI"),
             ("Share the proof", "When you receive the proofs, share them quickly with all the authors. Request comments back in 24 hours. Proofs should be responded to within 48 hours in normal circumstances."),
             ("Respond the editor", "Go through and answer any questions from the editor."),
             ("Check author names", "Last chance to check that all the authors' names are correct and there are no missing authors."),
             ("Check institutions", "Check all authors' institutions are correct."),
             ("Check acknowledgement", "Make sure that all funding and all beamlines used are correctly acknowledged. Usually this is done by the bosses, but more eyes catch more mistakes."),
-            ("Update db entry", "In citations.yml, (the reference should have been added during the submission step) double check the grants{}, facilities{}, nb{} field entries. Any questions, ask Simon. Put 'to be published' in the note{} section. If it has not been submitted to arxiv before, move the entry from rg-db-group to rg-db-public github repo. Otherwise, it should be at rg-db-public already. Create a PR to merge to the billingeGroup repository for edits if necessary."),
+            ("Update db entry", "In citations.yml, (the reference should have been added during the submission step) double check the grants{}, facilities{}, nb{} field entries. Any questions, ask PI. Put 'to be published' in the note{} section. If it has not been submitted to arxiv before, move the entry from rg-db-group to rg-db-public github repo. Otherwise, it should be at rg-db-public already. Create a PR to merge to the billingeGroup repository for edits if necessary."),
             ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace lyang with your name) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually. If any problem about installing regolith and databases, please refer to [rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases)."),
             ("Check figures and tables", "Are all the figures, tables in the paper correct (the ones you intended)?"),
             ("Check the figure caption", "Check the Figure captions for errors. If they refer to a green line, is the relevant line green, and so on."),
@@ -269,12 +269,12 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Read the paper", "Finally, after you have done all these 'mechanical' checks, read through the paper and try and find any typos or other problems. Resist the temptation to do any rewriting here...you are looking for mispellings and missing or extra words and so on."),
             ("Apply corrections from coauthors", "Collect all the corrections from the other authors and add any additional ones to the proof and return it."),
             ("Email coauthors", "Send an email to your coauthors that this was successfully resubmitted."),
-            ("Revisit talk slides", "Revisit the set of talk slides that summarize the result in a few slides if they need to be updated. Iterate with Simon to convergence."),
-            ("Create the highlight slide", "Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it in the 'highlight' folder. Iterate with Simon to convergence (highlight templates and examples can be found in http://gitlab.thebillingegroup.com/highlights/highlightTemplate)"),
-            ("Create web news", "Create a web news story for thebillingegroup.com site. Place it in the 'highlight' folder. Iterate with Simon to convergence"),
-            ("Revisit kudos", "Revisit the Kudos summary if it needs to be updated. Iterate with Simon to convergence."),
-            ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
-            ("Email Simon", "Email Simon if finish the above."),
+            ("Revisit talk slides", "Revisit the set of talk slides that summarize the result in a few slides if they need to be updated. Iterate with PI to convergence."),
+            ("Revisit the highlight slide", "Revisit the single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it in the 'highlight' folder. Iterate with Simon to convergence (highlight templates and examples can be found in http://gitlab.thebillingegroup.com/highlights/highlightTemplate)"),
+            ("Create web news", "Create a web news story for thebillingegroup.com site. Place it in the 'highlight' folder. Iterate with PI to convergence"),
+            ("Revisit kudos", "Revisit the Kudos summary if it needs to be updated. Iterate with PI to convergence."),
+            ("Ask PI if anything unfinished", "Ask PI about any items unfinished."),
+            ("Notify PI", "Create a PR to the db and notify PI at github if finish the above."),
         ]
 
         published_checklist = [
@@ -282,45 +282,47 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Let coauthors know", "Let your coauthors know the link to the final paper and the final reference."),
             ("Update db entry", "Update citations.yml at rg-db-public github repo with the correct reference information. Commit your edited citations.yml and create a PR to merge to the billingeGroup repository."),
             ("Check db entry", "CAREFULLY double and triple check the meta-data associated with the paper in citations.yml:"),
-            ("Check grants in the db entry", "grant{} lists just the billinge-group grants that appeared in the acknowledgement section. They have standard abbreviations that are listed at the top of the citations.yml file, e.g., fwp, EFRC10, etc.. Use the right standard or the whole system becomes broken! If not sure.....ask Simon. List all grants in a comma-separated list."),
+            ("Check grants in the db entry", "grant{} lists just the billinge-group grants that appeared in the acknowledgement section. They have standard abbreviations that are listed at the top of the citations.yml file, e.g., fwp, EFRC10, etc.. Use the right standard or the whole system becomes broken! If not sure.....ask PI. List all grants in a comma-separated list."),
             ("Check the facility in the db entry", "facility{} is every beamline that was used for data collection. Again, use the standard abbreviations at the top of the file. Use two levels of granularity for each, so X17A would be: 'nsls, x17a', if X17A and X7B were used it would be 'nsls, x17a, x7b' and so on."),
             ("Check the nb in the db entry", "nb{} is some other tags, also listed at the top of the file. 'art' for a regular article and 'hilite' if it is one of our top top papers are the most common."),
             ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace lyang with your name) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually."),
             ("Add to Zotero", "Add the published reference to the billinge-group-bib folder in our group Zotero account"),
-            ("Finish the highlight slide", "Make a highlight of your work and put it in gitlab/highlights (if not done already during the accepted paper checklist). Look in there for standards to work from. This is an important activity. Now you have done your great work, this is how you can advertise it to others. Top papers we send these highlights to the funding agencies.  Iterate the highlight with Simon till it is converged."),
-            ("Make figures and talk slides", "Make figures and talk slides that will be used in talks and place these on gitlab on talks/figures.  Iterate this with Simon till it is converged."),
+            ("Finish the highlight slide", "Converge the highlight of your work, include the publication information in the highlight, and put it in gitlab/highlights (if not done already during the accepted paper checklist). Look in there for standards to work from. This is an important activity. Now you have done your great work, this is how you can advertise it to others. Top papers we send these highlights to the funding agencies.  Iterate the highlight with PI till it is converged."),
+            ("Finish figures and talk slides", "Converge the figures and talk slides that will be used in talks and place these on gitlab on talks/figures.  Iterate this with PI till it is converged."),
             ("Update arXiv if necessary", "If the paper was listed on a preprint server like arXiv, submit a note to arXiv that the paper has appeared and give the full reference. If the journal copyright allows you can post the published version here, but normally that is not alllowed! Still, it is important that people who find the paper on arXiv get directed to the correct reference."),
-            ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
-            ("Email Simon", "Email Simon if finish the above."),
+            ("Ask PI if anything unfinished", "Ask PI about any items unfinished."),
+            ("Notify PI", "Create a PR to the db and notify PI at github if finish the above."),
         ]
 
         checklistm_list = []
-        checklist_delay_days = [7]*len(presubmission_checklist) + [14]*len(submission_checklist) + [74]*len(resubmission_checklist) + [134]*len(accepted_checklist) + [194]*len(published_checklist)
+        checklist_delay_days = [3]*len(presubmission_checklist) + [7]*len(submission_checklist) + [74]*len(resubmission_checklist) + [134]*len(accepted_checklist) + [194]*len(published_checklist)
         checklist_names = ["presubmission"]*len(presubmission_checklist) + ["submission"]*len(submission_checklist) + ["resubmission"]*len(resubmission_checklist) + ["accepted"]*len(accepted_checklist) + ["published"]*len(published_checklist)
-        checklists = presubmission_checklist + submission_checklist + accepted_checklist + published_checklist
+        checklists = presubmission_checklist + submission_checklist + resubmission_checklist + accepted_checklist + published_checklist
+        order = 0 # to record the order number of the item
         for (name, objective), checklist_name, delay_days in zip(checklists, checklist_names, checklist_delay_days):
             checklistm = {'due_date': now + relativedelta(days=delay_days),
                        'name': f"{checklist_name} - {name}",
-                       'objective': objective,
+                       'objective': objective + " When done, run `regolith helper f_milestone <your_projectum_id> -i {} -s f`".format(order+3),
                        'audience': [],
                        'notes': [],
                        'status': 'converged',
                        'type': 'pr'
                        }
             checklistm_list.append(checklistm)
+            order += 1
 
         pdoc.update({"milestones": checklistm_list})
 
         # update the deliverable to fit checklist prum
         pdoc.update({"deliverable": {
-            "due_date": now + relativedelta(days=checklist_delay_days[-1]),
-            "audience": ["simon"],
+            "due_date": now + relativedelta(days=checklist_delay_days[-1]+1),
+            "audience": ["pi"],
             "success_def": "audience is happy",
             "scope": [
                 "All publication data and metadata are correct and complete"],
             "platform": "regolith publication collection in rg-db-public",
             "roll_out": [
-                "simon merging PRs"],
+                "pi merging PRs"],
             "status": "converged"}
         })
 
