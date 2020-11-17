@@ -21,9 +21,9 @@ from regolith.tools import (
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
-ALLOWED_STATI = ["all", "proposed", "started", "finished", "back_burner",
+ALLOWED_STATI = ["all", "proposed", "converged", "started", "finished", "back_burner",
                  "paused", "cancelled"]
-ACTIVE_STATI = ["proposed", "started"]
+ACTIVE_STATI = ["proposed", "converged", "started"]
 INACTIVE_STATI = ["back_burner",
                  "paused", "cancelled"]
 FINISHED_STATI = ["finished"]
