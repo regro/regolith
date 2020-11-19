@@ -116,7 +116,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 if j['identifier'] == 'milestones':
                     print(f"{i}. {j.get('name')}    due date: {j.get('due_date')}:\n"
                           f"     audience: {j.get('audience')}\n"
-                          f"     objetive: {j.get('objective')}\n"
+                          f"     objective: {j.get('objective')}\n"
                           f"     status: {j.get('status')}\n"
                           f"     type: {j.get('type')}")
                 else:
