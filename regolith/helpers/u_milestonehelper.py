@@ -16,8 +16,9 @@ def subparser(subpi):
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
                         help="Increases the verbosity of the output.")
-    subpi.add_argument("-i", "--index",
-                        help="Index of the item in the enumerated list to update.",
+    subpi.add_argument("-i", "--index", nargs='+',
+                        help="Index of the item in the enumerated list to update. "
+                             "If multiple indexes, separate by space",
                         type = int)
     subpi.add_argument("-d", "--due_date",
                        help="New due date of the milestone in ISO format(YYYY-MM-DD). "
@@ -125,76 +126,77 @@ class MilestoneUpdaterHelper(DbHelperBase):
                           f"     status: {j.get('status')}")
                 del j['identifier']
             return
-        pdoc = {}
         if rc.type and rc.type not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_TYPES.items()))):
                 raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
         if rc.status and rc.status not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_STATI.items()))):
                 raise KeyError(f"please rerun specifying --status with a value from {ALLOWED_STATI}")
-        if rc.index == 1:
-            mil = {}
-            if not rc.due_date or not rc.name or not rc.objective:
-                raise RuntimeError("name, objective, and due date are required for a new milestone")
-            mil.update({'due_date': rc.due_date})
-            mil['due_date'] = get_due_date(mil)
-            mil.update({'objective': rc.objective, 'name': rc.name})
-            if rc.audience:
-                mil.update({'audience': rc.audience})
-            else:
-                mil.update({'audience': ['lead', 'pi', 'group_members']})
-            if rc.type:
-                if rc.type in ALLOWED_TYPES:
-                    mil.update({'type': ALLOWED_TYPES.get(rc.type)})
+        for idx in rc.index:
+            pdoc = {}
+            if idx == 1:
+                mil = {}
+                if not rc.due_date or not rc.name or not rc.objective:
+                    raise RuntimeError("name, objective, and due date are required for a new milestone")
+                mil.update({'due_date': rc.due_date})
+                mil['due_date'] = get_due_date(mil)
+                mil.update({'objective': rc.objective, 'name': rc.name})
+                if rc.audience:
+                    mil.update({'audience': rc.audience})
                 else:
-                    mil.update({'type': rc.type})
-            else:
-                mil.update({'status': 'proposed'})
-            if rc.status:
-                if rc.status in ALLOWED_STATI:
-                    mil.update({'status': ALLOWED_STATI.get(rc.status)})
+                    mil.update({'audience': ['lead', 'pi', 'group_members']})
+                if rc.type:
+                    if rc.type in ALLOWED_TYPES:
+                        mil.update({'type': ALLOWED_TYPES.get(rc.type)})
+                    else:
+                        mil.update({'type': rc.type})
                 else:
-                    mil.update({'status': rc.status})
-            else:
-                mil.update({'type': 'meeting'})
-            milestones.append(mil)
-            pdoc = {'milestones':milestones}
-        if rc.index > 1:
-            doc = all_milestones[rc.index-2]
-            identifier = doc['identifier']
-            if not doc.get('type') and not rc.type and identifier=='milestones':
-                    raise RuntimeError("ERROR: This milestone does not have a type set and this is required. "
-                                       "Please rerun your command adding '--type' "
-                                       f"and typing a type from this list: {ALLOWED_TYPES}")
-            if rc.type:
-                if rc.type in ALLOWED_TYPES:
-                    doc.update({'type': ALLOWED_TYPES.get(rc.type)})
+                    mil.update({'status': 'proposed'})
+                if rc.status:
+                    if rc.status in ALLOWED_STATI:
+                        mil.update({'status': ALLOWED_STATI.get(rc.status)})
+                    else:
+                        mil.update({'status': rc.status})
                 else:
-                    doc.update({'type': rc.type})
-            if rc.status:
-                if rc.status in ALLOWED_STATI:
-                    doc.update({'status': ALLOWED_STATI.get(rc.status)})
+                    mil.update({'type': 'meeting'})
+                milestones.append(mil)
+                pdoc = {'milestones':milestones}
+            if idx > 1:
+                doc = all_milestones[idx-2]
+                identifier = doc['identifier']
+                if not doc.get('type') and not rc.type and identifier=='milestones':
+                        raise RuntimeError("ERROR: This milestone does not have a type set and this is required. "
+                                           "Please rerun your command adding '--type' "
+                                           f"and typing a type from this list: {ALLOWED_TYPES}")
+                if rc.type:
+                    if rc.type in ALLOWED_TYPES:
+                        doc.update({'type': ALLOWED_TYPES.get(rc.type)})
+                    else:
+                        doc.update({'type': rc.type})
+                if rc.status:
+                    if rc.status in ALLOWED_STATI:
+                        doc.update({'status': ALLOWED_STATI.get(rc.status)})
+                    else:
+                        doc.update({'status': rc.status})
+                if rc.audience:
+                    doc.update({'audience': rc.audience})
+                if rc.due_date:
+                    doc.update({'due_date': rc.due_date})
+                doc['due_date'] = get_due_date(doc)
+                if identifier == 'milestones':
+                    if rc.name:
+                        doc.update({'name': rc.name})
+                    if rc.objective:
+                        doc.update({'objective': rc.objective})
+                    new_mil = []
+                    for i, j in zip(index_list, all_milestones):
+                        if j['identifier'] == 'milestones' and i != idx:
+                            new_mil.append(j)
+                    new_mil.append(doc)
+                    pdoc.update({'milestones':new_mil})
                 else:
-                    doc.update({'status': rc.status})
-            if rc.audience:
-                doc.update({'audience': rc.audience})
-            if rc.due_date:
-                doc.update({'due_date': rc.due_date})
-            doc['due_date'] = get_due_date(doc)
-            if identifier == 'milestones':
-                if rc.name:
-                    doc.update({'name': rc.name})
-                if rc.objective:
-                    doc.update({'objective': rc.objective})
-                new_mil = []
-                for i, j in zip(index_list, all_milestones):
-                    if j['identifier'] == 'milestones' and i != rc.index:
-                        new_mil.append(j)
-                new_mil.append(doc)
-                pdoc.update({'milestones':new_mil})
-            else:
-                pdoc.update({identifier:doc})
+                    pdoc.update({identifier:doc})
+            rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         for i in all_milestones:
             del i['identifier']
-        rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         print("{} has been updated in projecta".format(key))
 
         return
