@@ -33,11 +33,11 @@
 <h1>Last time ({{ppmeetings[0]['datestr']}})</h1>
   <li>Meeting Lead: {{ppmeetings[0].get('lead', '')}}</li>
   <li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
-  {% if fmeetings[0].get('journal_club') %}
+  {% if ppmeetings[0].get('journal_club') %}
   <li>Journal club presenter: {{ppmeetings[0].get('journal_club').get('presenter','')}},
     {{ppmeetings[0].get('journal_club').get('title','')}}</li>
   {% endif %}
-  {% if fmeetings[0].get('presentation') %}
+  {% if ppmeetings[0].get('presentation') %}
   <li>Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
     {{ppmeetings[0].get('presentation').get('title','')}}</li>
 <li>Repo: <a href="{{- ppmeetings[0].get('presentation', '').get('link','tbd')-}}">"Presentation" </a></li>
