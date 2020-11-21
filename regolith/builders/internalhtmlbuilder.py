@@ -108,7 +108,7 @@ class InternalHtmlBuilder(BuilderBase):
                     mtg["journal_club"].get("presenter"))
                 if not prsn:
                     print(
-                    "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
+                    "{} Jclub presenter {} not found in people".format(mtg["_id"],mtg["journal_club"].get("presenter")))
                 mtg["journal_club"]["presenter"] = prsn["name"]
             if mtg.get("presentation"):
                 prsn = fuzzy_retrieval(
