@@ -29,7 +29,7 @@ def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs='+', help=f'Update tasks with specific status from {ALLOWED_STATI}. '
                                                         f'Default is started.', default=["started"])
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
-    subpi.add_argument("-r", "--running_index", action="store_true",
+    subpi.add_argument("-r", "--reorder", action="store_true",
                        help="Reorder and update the indices."
                        )
     subpi.add_argument("-d", "--description",
@@ -105,7 +105,7 @@ class TodoUpdaterHelper(DbHelperBase):
                     "in the command line")
                 return
         filterid = {'_id': rc.assigned_to}
-        if rc.running_index:
+        if rc.reorder:
             index = 1
             for i in range(0, len(rc.databases)):
                 db_name = rc.databases[i]["name"]
@@ -148,7 +148,7 @@ class TodoUpdaterHelper(DbHelperBase):
             todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
             todolist[started_todo:] = sorted(todolist[started_todo:], key=lambda k: (-k["sort_finished"]))
             index_match = {}
-            if rc.running_index:
+            if rc.reorder:
                 new_index_started = 1
                 new_index_finished = -1
                 for todo in todolist[:started_todo]:
