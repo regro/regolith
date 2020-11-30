@@ -16,7 +16,6 @@ from regolith.tools import (
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.dates import month_to_int
 
-
 class ReadingListsBuilder(LatexBuilderBase):
     """Build reading lists from database entries"""
 
@@ -52,7 +51,6 @@ class ReadingListsBuilder(LatexBuilderBase):
 
             n = 1
             for paper in rlist['papers']:
-                # fixme: code here to get info from crossref
                 doi = paper.get('doi')
                 url = paper.get('url')
 #                if doi == 'tbd':
@@ -60,44 +58,7 @@ class ReadingListsBuilder(LatexBuilderBase):
 #                    print(
 #                        "  doi needed for paper: {}".format(paper.get('text')))
                 if doi and doi != 'tbd':
-                    article = self.cr.works(ids=doi)
-                    authorlist = [
-                        "{} {}".format(a['given'].strip(), a['family'].strip())
-                        for a in article.get('message').get('author')]
-                    try:
-                        journal = \
-                        article.get('message').get('short-container-title')[0]
-                    except IndexError:
-                        journal = article.get('message').get('container-title')[
-                            0]
-                    if article.get('message').get('volume'):
-                        if len(authorlist) > 1:
-                            authorlist[-1] = "and {}".format(authorlist[-1])
-                        sauthorlist = ", ".join(authorlist)
-                        ref = "{}, {}, {}, v.{}, pp.{}, ({}).".format(
-                            article.get('message').get('title')[0],
-                            sauthorlist,
-                            journal,
-                            article.get('message').get('volume'),
-                            article.get('message').get('page'),
-                            article.get('message').get('issued').get(
-                                'date-parts')[
-                                0][
-                                0],
-                        )
-                    else:
-                        if len(authorlist) > 1:
-                            authorlist[-1] = "and {}".format(authorlist[-1])
-                        sauthorlist = ", ".join(authorlist)
-                        ref = "{}, {}, {}, pp.{}, ({}).".format(
-                            article.get('message').get('title')[0],
-                            sauthorlist,
-                            journal,
-                            article.get('message').get('page'),
-                            article.get('message').get('issued').get('date-parts')[
-                                0][
-                                0],
-                        )
+                    ref = get_crossref_reference(doi)
                     paper.update({'reference': ref, 'n': n, 'label': 'DOI'})
                     n += 1
                 elif url:

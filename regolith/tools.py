@@ -10,6 +10,7 @@ from copy import deepcopy
 from datetime import datetime, date
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
+from habanero import Crossref
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import doc_date_key, id_key, ene_date_key
@@ -1795,3 +1796,45 @@ def print_task(task_list, stati, index = True):
 
     return
 
+
+def get_crossref_reference(doi):
+    cr = Crossref()
+    article = cr.works(ids=doi)
+    authorlist = [
+        "{} {}".format(a['given'].strip(), a['family'].strip())
+        for a in article.get('message').get('author')]
+    try:
+        journal = \
+            article.get('message').get('short-container-title')[0]
+    except IndexError:
+        journal = article.get('message').get('container-title')[
+            0]
+    if article.get('message').get('volume'):
+        if len(authorlist) > 1:
+            authorlist[-1] = "and {}".format(authorlist[-1])
+        sauthorlist = ", ".join(authorlist)
+        ref = "{}, {}, {}, v.{}, pp.{}, ({}).".format(
+            article.get('message').get('title')[0],
+            sauthorlist,
+            journal,
+            article.get('message').get('volume'),
+            article.get('message').get('page'),
+            article.get('message').get('issued').get(
+                'date-parts')[
+                0][
+                0],
+        )
+    else:
+        if len(authorlist) > 1:
+            authorlist[-1] = "and {}".format(authorlist[-1])
+        sauthorlist = ", ".join(authorlist)
+        ref = "{}, {}, {}, pp.{}, ({}).".format(
+            article.get('message').get('title')[0],
+            sauthorlist,
+            journal,
+            article.get('message').get('page'),
+            article.get('message').get('issued').get('date-parts')[
+                0][
+                0],
+        )
+    return ref
