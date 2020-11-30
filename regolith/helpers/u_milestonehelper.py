@@ -7,6 +7,8 @@ from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
 from regolith.dates import get_due_date
 from itertools import chain
+import datetime as dt
+
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
@@ -41,6 +43,11 @@ def subparser(subpi):
                        nargs = '+',
                        help="Audience of the milestone. "
                             "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
+                       )
+    subpi.add_argument("-f", "--finish",
+                       help="Finish milestone. "
+                            "It takes a string argument for `report_summary` field.",
+                       type = str,
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",
@@ -171,6 +178,11 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         doc.update({'type': ALLOWED_TYPES.get(rc.type)})
                     else:
                         doc.update({'type': rc.type})
+                if rc.finish:
+                    now = dt.date.today()
+                    rc.status = "f"
+                    doc.update({'end_date': now})
+                    doc.update({'report_summary': rc.finish})
                 if rc.status:
                     if rc.status in ALLOWED_STATI:
                         doc.update({'status': ALLOWED_STATI.get(rc.status)})
