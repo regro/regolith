@@ -44,10 +44,8 @@ def subparser(subpi):
                        help="Audience of the milestone. "
                             "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
                        )
-    subpi.add_argument("-f", "--finish",
+    subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
-                            "It takes a string argument for `report_summary` field.",
-                       type = str,
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",
@@ -182,7 +180,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     now = dt.date.today()
                     rc.status = "f"
                     doc.update({'end_date': now})
-                    doc.update({'report_summary': rc.finish})
                 if rc.status:
                     if rc.status in ALLOWED_STATI:
                         doc.update({'status': ALLOWED_STATI.get(rc.status)})
