@@ -18,9 +18,9 @@ def subparser(subpi):
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
-    subpi.add_argument("pub_sum", type = str,
+    subpi.add_argument("--pub_sum", type = str,
                        help="The public summary that is mandatory for finishing a prum.")
-    subpi.add_argument("pro_sum", type = str,
+    subpi.add_argument("--pro_sum", type = str,
                        help="The professional summary that is mandatory for finishing a prum.")
     return subpi
 
@@ -66,13 +66,13 @@ class FinishprumUpdaterHelper(DbHelperBase):
         found_projectum.update({'status':'finished'})
         if rc.pub_sum:
             found_projectum['deliverable'].update({'public_summary': rc.pub_sum})
-        else:
-            print("Please enter the public summary by specifying pub_sum argument.")
+        elif found_projectum['deliverable'].get('public_summary') is not None:
+            print("Error: please enter the public summary by specifying pub_sum argument.")
             return
         if rc.pro_sum:
             found_projectum['deliverable'].update({'professional_summary': rc.pro_sum})
-        else:
-            print("Please enter the professional summary by specifying pro_sum argument.")
+        elif found_projectum['deliverable'].get('professional_summary') is not None:
+            print("Error: please enter the professional summary by specifying pro_sum argument.")
             return
         if rc.end_date:
             found_projectum.update({'end_date': date_parser.parse(rc.end_date).date()})
