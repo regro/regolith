@@ -186,6 +186,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     now = dt.date.today()
                     rc.status = "f"
                     doc.update({'end_date': now})
+                    print("The milestone {} has been marked as finished in prum {}".format(doc['name'],key))
                 if rc.status:
                     if rc.status in ALLOWED_STATI:
                         doc.update({'status': ALLOWED_STATI.get(rc.status)})
