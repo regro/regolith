@@ -19,9 +19,15 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
     subpi.add_argument("--pub_sum", type = str,
-                       help="The public summary that is mandatory for finishing a prum.")
+                       help="The public summary. This will be used in, for example, as web news items. "
+                            "It should capture in a single paragraph the main context, result and importance "
+                            "without jargon in words that a member of the general public can understand. "
+                            "This is required to finish a prum.")
     subpi.add_argument("--pro_sum", type = str,
-                       help="The professional summary that is mandatory for finishing a prum.")
+                       help="he professional summary. This may be used in, for example, a progress report to"
+                            " a funding agency, or in your cv, etc.. It should capture in a single paragraph the"
+                            " main context, result and importance in more technical language with the target"
+                            " audience of an expert in an adjacent field. This is required to finish a prum.")
     return subpi
 
 
@@ -65,15 +71,15 @@ class FinishprumUpdaterHelper(DbHelperBase):
             return
         found_projectum.update({'status':'finished'})
         if rc.pub_sum:
-            found_projectum['deliverable'].update({'public_summary': rc.pub_sum})
-        elif found_projectum['deliverable'].get('public_summary') is not None:
-            print("Error: please enter the public summary by specifying pub_sum argument.")
-            return
+            found_projectum['public_summary'] = rc.pub_sum
+        elif found_projectum.get('public_summary') is not None:
+            raise RuntimeError(
+                "ERROR: please rerun with a professional summary in field --pro_sum and public summary in --pub_sum")
         if rc.pro_sum:
-            found_projectum['deliverable'].update({'professional_summary': rc.pro_sum})
-        elif found_projectum['deliverable'].get('professional_summary') is not None:
-            print("Error: please enter the professional summary by specifying pro_sum argument.")
-            return
+            found_projectum['professional_summary'] = rc.pro_sum
+        elif found_projectum['professional_summary'] is not None:
+            raise RuntimeError(
+                "ERROR: please rerun with a professional summary in field --pro_sum and public summary in --pub_sum")
         if rc.end_date:
             found_projectum.update({'end_date': date_parser.parse(rc.end_date).date()})
         else:
