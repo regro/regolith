@@ -18,10 +18,10 @@ def subparser(subpi):
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
                         help="Increases the verbosity of the output.")
-    subpi.add_argument("-i", "--index", nargs='+',
+    subpi.add_argument("-i", "--index",
                         help="Index of the item in the enumerated list to update. "
-                             "If multiple indexes, separate by space",
-                        type = int)
+                             "Please enter in the format of `2,5,7` or `3-7`",
+                        type = str)
     subpi.add_argument("-d", "--due_date",
                        help="New due date of the milestone in ISO format(YYYY-MM-DD). "
                             "Required for a new milestone.")
@@ -135,7 +135,13 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
         if rc.status and rc.status not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_STATI.items()))):
                 raise KeyError(f"please rerun specifying --status with a value from {ALLOWED_STATI}")
-        for idx in rc.index:
+        if "-" in rc.index:
+            idx_parsed = [i for i in range(int(rc.index.split('-')[0]), int(rc.index.split('-')[1])+1)]
+        elif "," in rc.index:
+            idx_parsed = [int(i) for i in rc.index.split(',')]
+        else:
+            idx_parsed = [int(rc.index)]
+        for idx in idx_parsed:
             pdoc = {}
             if idx == 1:
                 mil = {}
