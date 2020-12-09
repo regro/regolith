@@ -1,6 +1,6 @@
-**Added:** None
+**Added:**
  * A finish argument to finish milestone and record the end datetime.
- * A list of indexes can be specified for the u_milestone helper.
+ * Multiple indices can be specified for the u_milestone helper.
 
 **Changed:** None
 

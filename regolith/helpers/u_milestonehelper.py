@@ -20,7 +20,7 @@ def subparser(subpi):
                         help="Increases the verbosity of the output.")
     subpi.add_argument("-i", "--index",
                         help="Index of the item in the enumerated list to update. "
-                             "Please enter in the format of `2,5,7` or `3-7`",
+                             "Please enter in the format of 2,5,7 or 3-7 for multiple indices, or just enter one index.",
                         type = str)
     subpi.add_argument("-d", "--due_date",
                        help="New due date of the milestone in ISO format(YYYY-MM-DD). "
@@ -135,6 +135,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
         if rc.status and rc.status not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_STATI.items()))):
                 raise KeyError(f"please rerun specifying --status with a value from {ALLOWED_STATI}")
+        rc.index = rc.index.replace(" ", "")
         if "-" in rc.index:
             idx_parsed = [i for i in range(int(rc.index.split('-')[0]), int(rc.index.split('-')[1])+1)]
         elif "," in rc.index:
