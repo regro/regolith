@@ -7,6 +7,8 @@ from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
 from regolith.dates import get_due_date
 from itertools import chain
+import datetime as dt
+
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
@@ -16,10 +18,10 @@ def subparser(subpi):
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
                         help="Increases the verbosity of the output.")
-    subpi.add_argument("-i", "--index", nargs='+',
+    subpi.add_argument("-i", "--index",
                         help="Index of the item in the enumerated list to update. "
-                             "If multiple indexes, separate by space",
-                        type = int)
+                             "Please enter in the format of 2,5,7 or 3-7 for multiple indices, or just enter one index.",
+                        type = str)
     subpi.add_argument("-d", "--due_date",
                        help="New due date of the milestone in ISO format(YYYY-MM-DD). "
                             "Required for a new milestone.")
@@ -41,6 +43,9 @@ def subparser(subpi):
                        nargs = '+',
                        help="Audience of the milestone. "
                             "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
+                       )
+    subpi.add_argument("-f", "--finish", action="store_true",
+                       help="Finish milestone. "
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",
@@ -130,7 +135,14 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
         if rc.status and rc.status not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_STATI.items()))):
                 raise KeyError(f"please rerun specifying --status with a value from {ALLOWED_STATI}")
-        for idx in rc.index:
+        rc.index = rc.index.replace(" ", "")
+        if "-" in rc.index:
+            idx_parsed = [i for i in range(int(rc.index.split('-')[0]), int(rc.index.split('-')[1])+1)]
+        elif "," in rc.index:
+            idx_parsed = [int(i) for i in rc.index.split(',')]
+        else:
+            idx_parsed = [int(rc.index)]
+        for idx in idx_parsed:
             pdoc = {}
             if idx == 1:
                 mil = {}
@@ -171,6 +183,11 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         doc.update({'type': ALLOWED_TYPES.get(rc.type)})
                     else:
                         doc.update({'type': rc.type})
+                if rc.finish:
+                    now = dt.date.today()
+                    rc.status = "f"
+                    doc.update({'end_date': now})
+                    print("The milestone {} has been marked as finished in prum {}".format(doc['name'],key))
                 if rc.status:
                     if rc.status in ALLOWED_STATI:
                         doc.update({'status': ALLOWED_STATI.get(rc.status)})

@@ -2,6 +2,7 @@
 
 from regolith.builders.cvbuilder import CVBuilder
 from regolith.builders.htmlbuilder import HtmlBuilder
+from regolith.builders.bghtmlbuilder import BGhtmlBuilder
 from regolith.builders.postdocadbuilder import PostdocadBuilder
 from regolith.builders.preslistbuilder import PresListBuilder
 from regolith.builders.publistbuilder import PubListBuilder
@@ -21,6 +22,7 @@ from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
 BUILDERS = {
     "annual-activity": ActivitylogBuilder,
     "beamplan": BeamPlanBuilder,
+    "bghtml": BGhtmlBuilder,
     "current-pending": CPBuilder,
     "cv": CVBuilder,
     "figure": FigureBuilder,

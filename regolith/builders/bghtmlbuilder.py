@@ -15,24 +15,24 @@ from regolith.tools import (
 )
 
 
-class HtmlBuilder(BuilderBase):
+class BGhtmlBuilder(BuilderBase):
     """Build HTML files for website"""
 
-    btype = "html"
+    btype = "bghtml"
 
     def __init__(self, rc):
         super().__init__(rc)
         # TODO: get this from the RC
         self.cmds = [
             "root_index",
-            "people",
-            "projects",
-            "blog",
-            "jobs",
-            "abstracts",
-            "nojekyll",
-            "cname",
-            "finish",
+#            "people",
+#            "projects",
+#            "blog",
+#$            "jobs",
+#            "abstracts",
+#            "nojekyll",
+#            "cname",
+#            "finish",
         ]
 
     def construct_global_ctx(self):
@@ -57,6 +57,16 @@ class HtmlBuilder(BuilderBase):
             all_docs_from_collection(rc.client, "institutions"), key=_id_key
         )
 
+    def root_index(self):
+        """Render root index"""
+        headerinfo = {"title": "BillingeLongGroup"}
+        self.render("bghtmltemplate.html", "bgindex.html", headerinfo=headerinfo)
+#        make_bibtex_file(list(all_docs_from_collection(self.rc.client,
+#                                                       "citations")),
+#                         pid='group',
+#                         person_dir=self.bldir,
+#                         )
+'''
     def finish(self):
         """Move files over to their destination and remove them from the
         source"""
@@ -207,3 +217,4 @@ class HtmlBuilder(BuilderBase):
             os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
         ) as f:
             f.write(rc.cname)
+'''
