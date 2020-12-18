@@ -76,7 +76,7 @@ class FinishprumUpdaterHelper(DbHelperBase):
                 raise RuntimeError(
                     "ERROR: please input the professional summary either in field --pro_sum or manually type in the yaml file.")
         elif rc.pro_sum:
-            found_projectum['public_summary'] = rc.pro_sum
+            found_projectum['professional_summary'] = rc.pro_sum
         else:
             raise RuntimeError(
                 "ERROR: please input the professional summary either in field --pro_sum or manually type in the yaml file.")
