@@ -96,7 +96,7 @@ class ProjectumAdderHelper(DbHelperBase):
             due_date = now + relativedelta(years=1)
         else:
             due_date = date_parser.parse(rc.due_date).date()
-        key = f"{rc.lead[:2]}_{''.join(rc.name.casefold().split()).strip()}"
+        key = f"{str(now.year)[2:]}{rc.lead[:2]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
