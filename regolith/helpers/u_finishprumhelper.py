@@ -70,16 +70,27 @@ class FinishprumUpdaterHelper(DbHelperBase):
             print("Please rerun the helper specifying the complete ID.")
             return
         found_projectum.update({'status':'finished'})
-        if rc.pub_sum:
+
+        if found_projectum['professional_summary']:
+            if rc.pro_sum:
+                raise RuntimeError(
+                    "ERROR: please input the professional summary either in field --pro_sum or manually type in the yaml file.")
+        elif rc.pro_sum:
+            found_projectum['public_summary'] = rc.pro_sum
+        else:
+            raise RuntimeError(
+                "ERROR: please input the professional summary either in field --pro_sum or manually type in the yaml file.")
+
+        if found_projectum['public_summary']:
+            if rc.pub_sum:
+                raise RuntimeError(
+                    "ERROR: please input the public summary either in field --pub_sum or manually type in the yaml file.")
+        elif rc.pub_sum:
             found_projectum['public_summary'] = rc.pub_sum
-        elif found_projectum.get('public_summary') is not None:
+        else:
             raise RuntimeError(
-                "ERROR: please rerun with a professional summary in field --pro_sum and public summary in --pub_sum")
-        if rc.pro_sum:
-            found_projectum['professional_summary'] = rc.pro_sum
-        elif found_projectum['professional_summary'] is not None:
-            raise RuntimeError(
-                "ERROR: please rerun with a professional summary in field --pro_sum and public summary in --pub_sum")
+                "ERROR: please input the public summary either in field --pub_sum or manually type in the yaml file.")
+
         if rc.end_date:
             found_projectum.update({'end_date': date_parser.parse(rc.end_date).date()})
         else:
