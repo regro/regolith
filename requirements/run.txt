@@ -9,4 +9,4 @@ openpyxl
 nameparser
 pandas
 pymongo
-matplotlib
+matplotlib-base

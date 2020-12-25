@@ -22,14 +22,15 @@ install:
   - conda update conda
 
   # Install dependencies
-  - conda create -n test --file requirements/run.txt
+  - conda create -n test --file requirements/run.txt python=3.8
   - source activate test
   - python setup.py install
 
 script:
   - set -e
   - conda install --file requirements/test.txt
-  - coverage run run_tests.py
+  - python -m pytest
+  - #coverage run run_tests.py
   - coverage report -m
   - codecov
   - # Command to build your docs
