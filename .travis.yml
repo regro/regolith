@@ -29,8 +29,8 @@ install:
 script:
   - set -e
   - conda install --file requirements/test.txt
-  - python -m pytest
-  - #coverage run run_tests.py
+  - #python -m pytest
+  - coverage run run_tests.py
   - coverage report -m
   - codecov
   - # Command to build your docs
