@@ -22,7 +22,7 @@ install:
   - conda update conda
 
   # Install dependencies
-  - conda create -n test --file requirements/run.txt --python=3.8
+  - conda create -n test --file requirements/run.txt python=3.8
   - source activate test
   - python setup.py install
 
