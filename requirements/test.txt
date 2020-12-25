@@ -1,5 +1,5 @@
 ruamel.yaml
-pytest
+pytest==5
 bibtexparser
 coverage
 codecov
