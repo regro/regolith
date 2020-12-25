@@ -312,6 +312,9 @@ sbillinge:
       status: started
       assigned_by: scopatz
       running_index: 1
+      tags:
+        - reading
+        - downtime
     - description: prepare the presentation
       due_date: '2020-07-29'
       begin_date: '2020-06-22'
@@ -323,6 +326,8 @@ sbillinge:
         - don't forget to upload to the website
       assigned_by: sbillinge
       running_index: 2
+      tags:
+        - downtime
     - description: test a_todo
       due_date: 2020-07-16
       begin_date: 2020-07-06
