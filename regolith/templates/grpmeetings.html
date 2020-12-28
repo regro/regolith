@@ -2,6 +2,7 @@
 {% block header %}
 {% endblock header %}
 {% block content %}
+{% if fmeetings %}
 <h1>Current Group Meeting ({{fmeetings[0]['datestr']}})</h1>
 <li>Meeting Lead: {{fmeetings[0].get('lead', '')}}</li>
 <li>Scribe: {{fmeetings[0].get('scribe', '')}}</li>
@@ -30,6 +31,7 @@
   {%if 'agenda' in fmeetings[0]%}<ol>{%for a in fmeetings[0]['agenda']%}
     <li>{{a}}</li>
   {%endfor%}</ol>{%endif%}
+  {% endif %}
 <h1>Last time ({{ppmeetings[0]['datestr']}})</h1>
   <li>Meeting Lead: {{ppmeetings[0].get('lead', '')}}</li>
   <li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
