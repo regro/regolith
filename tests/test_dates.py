@@ -167,6 +167,12 @@ def test_find_gaps_overlaps(input, flag, expected):
           'date': None
           }
          ),
+        (({'begin_year': '2020', 'begin_month': '4', 'begin_day': '5'}, None),
+         {'begin_date': datetime.date(2020, 4, 5),
+          'end_date': None,
+          'date': None
+          }
+         ),
         (({'begin_year': 2019, 'end_year': 2020}, None),
          {'begin_date': datetime.date(2019, 1, 1),
           'end_date': datetime.date(2020, 12, 31),
