@@ -217,10 +217,15 @@ def get_dates(thing, date_field_prefix=None):
         dates = {'begin_date': None, 'end_date': None, 'date': None}
         return dates
     for key, value in thing.items():
-        if key in minimal_set or key in ['month', 'day']:
+        if key in minimal_set or key in ['month', 'day', 'begin_day', 'begin_month']:
             if isinstance(value, str):
                 if value.strip().lower() == 'tbd':
                     thing[key] = None
+                else:
+                    try:
+                        thing[key] = int(value)
+                    except ValueError:
+                        pass
     if thing.get("end_year") and not thing.get("begin_year"):
         print('WARNING: end_year specified without begin_year')
     begin_date, end_date, date = None, None, None
@@ -253,13 +258,13 @@ def get_dates(thing, date_field_prefix=None):
                                        month_to_int(thing[datenames[1]]),
                                        last_day(thing[datenames[2]], thing[datenames[1]]))
         else:
-            date = datetime.date(int(thing[datenames[2]]),
+            date = datetime.date(thing[datenames[2]],
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
-            begin_date = datetime.date(int(thing[datenames[2]]),
+            begin_date = datetime.date(thing[datenames[2]],
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
-            end_date = datetime.date(int(thing[datenames[2]]),
+            end_date = datetime.date(thing[datenames[2]],
                                        month_to_int(thing[datenames[1]]),
                                        thing[datenames[0]])
     if thing.get('begin_date'):
