@@ -65,13 +65,14 @@ class CPBuilder(LatexBuilderBase):
             grants = merge_collections(self.gtx["proposals"],
                                        self.gtx["grants"],
                                        "proposal_id")
+            print([g.get("title") for g in grants])
+            print("")
             for g in grants:
-                print(g["_id"])
                 g['year'] = None
                 g['month'] = None
                 g['end_date'] = get_dates(g).get('end_date')
                 g['begin_date'] = get_dates(g).get('begin_date',dt.date(1900,1,2))
-                for person in g["team"]:
+                for person in g.get("team",[]):
                     rperson = fuzzy_retrieval(
                         self.gtx["people"], ["aka", "name"], person["name"]
                     )
@@ -81,14 +82,17 @@ class CPBuilder(LatexBuilderBase):
                     amounts = [i.get('amount') for i in g.get('budget')]
                     g['subaward_amount'] = sum(amounts)
 
+            #grants = [g for g in grants if g.get("status") != "declined"]
             current_grants = [
                 dict(g)
                 for g in grants
                 if is_current(g)
+                #and g.get("status") != "declined"
             ]
             current_grants, _, _ = filter_grants(
                 current_grants, {pi["name"]}, pi=False, multi_pi=True
             )
+            current_grants = [g for g in current_grants if g.get("status") != "declined"]
             for g in current_grants:
                 if g.get('budget'):
                     amounts = [i.get('amount') for i in g.get('budget')]
@@ -108,7 +112,6 @@ class CPBuilder(LatexBuilderBase):
             pending_grants, _, _ = filter_grants(
                 pending_grants, {pi["name"]}, pi=False, multi_pi=True
             )
-            print([g.get('begin_date') for g in pending_grants])
             grants = pending_grants + current_grants
             for grant in grants:
                 grant.update(
@@ -125,13 +128,13 @@ class CPBuilder(LatexBuilderBase):
                 )
             badids = [i["_id"] for i in current_grants if
                       not i.get('cpp_info').get('cppflag', "")]
+
             iter = copy(current_grants)
             for grant in iter:
                 if grant["_id"] in badids:
                     current_grants.remove(grant)
             piname = HumanName(pi["name"])
             outfile = "current-pending-{}-{}".format(grp, piname.last.lower())
-            print([grant["_id"] for grant in current_grants])
 
             self.render(
                 "current_pending.tex",
