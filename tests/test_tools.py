@@ -218,6 +218,47 @@ def test_number_suffix(input, expected):
                                 "author": "king arthur",
                                 "amount": "50 mph",
                             },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"},
+                         {
+                             "_id": "grant2",
+                             "title": "African swallow",
+                             "author": "king arthur",
+                             "linked_to": "proposal2"
+                         },
+                         ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                    {
+                        "_id": "grant2",
+                        "title": "African swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal2",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
                         ],
                         [{"_id": "grant1",
                           "linked_to": "proposal1",

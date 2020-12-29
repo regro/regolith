@@ -1025,14 +1025,22 @@ def merge_collections(a, b, target_id):
 
     This would merge all entries in the proposals collection with entries in the
     grants collection for which "_id" in proposals has the value of
-    "proposal_id" in grants.
+    "proposal_id" in grants, returning also unchanged any other entries that are
+    not linked.
     """
     intersect = [{**j,**i} for j in a for i in b if j.get("_id") == i.get(target_id)]
-    bdis = [k for k in b for l in intersect if l.get("_id") != k.get("_id")]
-    adis = [k for k in a for j in intersect if j.get(target_id) != k.get("_id")]
-    print(intersect)
-    print(bdis)
-    print(adis)
+    for j in intersect:
+        for i in b:
+            if i.get("_id") == j.get("_id"):
+                b.remove(i)
+    for j in intersect:
+        for i in a:
+            if i.get("_id") == j.get(target_id):
+                a.remove(i)
+    bdis, adis = b, a
+
+    #bdis = [k for l in intersect for k in b  if l.get("_id") != k.get("_id")]
+    #adis = [k for j in intersect for k in a if j.get(target_id) != k.get("_id")]
     return adis + intersect + bdis
 
 
