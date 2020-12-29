@@ -1027,21 +1027,13 @@ def merge_collections(a, b, target_id):
     grants collection for which "_id" in proposals has the value of
     "proposal_id" in grants.
     """
-    adict = {}
-    for k in a:
-        adict[k.get("_id")] = k
-    bdict = {}
-    for k in b:
-        bdict[k.get("_id")] = k
-    b_for_a = {}
-    for k in adict:
-        for kk, v in bdict.items():
-            if v.get(target_id, "") == k:
-                b_for_a[k] = kk
-    chained = {}
-    for k, v in b_for_a.items():
-        chained[k] = ChainDB(adict[k], bdict[v])
-    return list(chained.values())
+    intersect = [{**j,**i} for j in a for i in b if j.get("_id") == i.get(target_id)]
+    bdis = [k for k in b for l in intersect if l.get("_id") != k.get("_id")]
+    adis = [k for k in a for j in intersect if j.get(target_id) != k.get("_id")]
+    print(intersect)
+    print(bdis)
+    print(adis)
+    return adis + intersect + bdis
 
 
 def update_schemas(default_schema, user_schema):
