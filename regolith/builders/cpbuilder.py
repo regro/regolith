@@ -67,8 +67,6 @@ class CPBuilder(LatexBuilderBase):
             grants = merge_collections_all(self.gtx["proposals"],
                                        self.gtx["grants"],
                                        "proposal_id")
-            print([g.get("title") for g in grants])
-            print("")
             for g in grants:
                 g['year'] = None
                 g['month'] = None
