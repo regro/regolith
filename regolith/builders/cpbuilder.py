@@ -37,12 +37,6 @@ class CPBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         ))
-        gtx["grants"] = list(sorted(
-            all_docs_from_collection(rc.client, "grants"), key=_id_key
-        ))
-        gtx["proposals"] = list(sorted(
-            all_docs_from_collection(rc.client, "proposals"), key=_id_key
-        ))
         gtx["groups"] = list(sorted(
             all_docs_from_collection(rc.client, "groups"), key=_id_key
         ))
@@ -53,7 +47,15 @@ class CPBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
+        gtx = self.gtx
+        rc = self.rc
         for group in self.gtx["groups"]:
+            gtx["grants"] = list(sorted(
+                all_docs_from_collection(rc.client, "grants"), key=_id_key
+            ))
+            gtx["proposals"] = list(sorted(
+                all_docs_from_collection(rc.client, "proposals"), key=_id_key
+            ))
             grp = group["_id"]
             pi = fuzzy_retrieval(
                 self.gtx["people"], ["aka", "name"], group["pi_name"]
