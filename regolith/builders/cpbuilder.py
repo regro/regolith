@@ -4,7 +4,6 @@ import time
 from copy import copy
 from nameparser import HumanName
 
-
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.dates import is_current, get_dates
 from regolith.fsclient import _id_key
@@ -37,12 +36,6 @@ class CPBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         ))
-        gtx["grants"] = list(sorted(
-            all_docs_from_collection(rc.client, "grants"), key=_id_key
-        ))
-        gtx["proposals"] = list(sorted(
-            all_docs_from_collection(rc.client, "proposals"), key=_id_key
-        ))
         gtx["groups"] = list(sorted(
             all_docs_from_collection(rc.client, "groups"), key=_id_key
         ))
@@ -53,7 +46,15 @@ class CPBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
+        gtx = self.gtx
+        rc = self.rc
         for group in self.gtx["groups"]:
+            gtx["grants"] = list(sorted(
+                all_docs_from_collection(rc.client, "grants"), key=_id_key
+            ))
+            gtx["proposals"] = list(sorted(
+                all_docs_from_collection(rc.client, "proposals"), key=_id_key
+            ))
             grp = group["_id"]
             pi = fuzzy_retrieval(
                 self.gtx["people"], ["aka", "name"], group["pi_name"]
@@ -63,16 +64,13 @@ class CPBuilder(LatexBuilderBase):
             pi['initials'] = "".join(piinitialslist).upper()
 
             grants = merge_collections_all(self.gtx["proposals"],
-                                       self.gtx["grants"],
-                                       "proposal_id")
-            print([g.get("title") for g in grants])
-            print("")
+                                           self.gtx["grants"],
+                                           "proposal_id")
             for g in grants:
-                g['year'] = None
-                g['month'] = None
                 g['end_date'] = get_dates(g).get('end_date')
-                g['begin_date'] = get_dates(g).get('begin_date',dt.date(1900,1,2))
-                for person in g.get("team",[]):
+                g['begin_date'] = get_dates(g).get('begin_date',
+                                                   dt.date(1900, 1, 2))
+                for person in g.get("team", []):
                     rperson = fuzzy_retrieval(
                         self.gtx["people"], ["aka", "name"], person["name"]
                     )
@@ -82,17 +80,16 @@ class CPBuilder(LatexBuilderBase):
                     amounts = [i.get('amount') for i in g.get('budget')]
                     g['subaward_amount'] = sum(amounts)
 
-            #grants = [g for g in grants if g.get("status") != "declined"]
             current_grants = [
                 dict(g)
                 for g in grants
                 if is_current(g)
-                #and g.get("status") != "declined"
             ]
             current_grants, _, _ = filter_grants(
                 current_grants, {pi["name"]}, pi=False, multi_pi=True
             )
-            current_grants = [g for g in current_grants if g.get("status") != "declined"]
+            current_grants = [g for g in current_grants if
+                              g.get("status") != "declined"]
             for g in current_grants:
                 if g.get('budget'):
                     amounts = [i.get('amount') for i in g.get('budget')]

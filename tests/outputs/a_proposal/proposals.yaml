@@ -86,17 +86,17 @@ dmref15:
     person_months_academic: 0
     person_months_summer: 1
     project_scope: lots to do but it doesn't overlap with any other of my grants
+    single_pi: true
   currency: USD
-  day: 2
   duration: 3
   end_day: 1
   end_month: May
   end_year: 2019
   funder: NSF
-  month: february
   notes: Quite an idea
   pi: Simon Billinge
   status: accepted
+  submitted_date: '2015-02-02'
   team:
     - institution: Columbia University
       name: qdu
@@ -111,7 +111,6 @@ dmref15:
   title: 'DMREF: Novel, data validated, nanostructure determination methods for accelerating
     materials discovery'
   title_short: DMREF nanostructure
-  year: 2015
 mypropsal:
   amount: 1000000.0
   authors:
@@ -121,7 +120,6 @@ mypropsal:
   begin_month: May
   begin_year: 2030
   currency: USD
-  day: 18
   duration: 3
   end_day: 31
   end_month: December
@@ -132,7 +130,6 @@ mypropsal:
       - http://pdf.com/scopatz-cv
       - http://pdf.com/flanagan-cv
     narrative: http://some.com/pdf
-  month: Aug
   notes: Quite an idea
   pi: Anthony Scopatz
   pre:
@@ -145,5 +142,7 @@ mypropsal:
     narrative: http://some.com/pdf
     year: 1998
   status: submitted
+  submitted_day: 18
+  submitted_month: Aug
+  submitted_year: 1999
   title: A very fine proposal indeed
-  year: 1999

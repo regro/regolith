@@ -1643,7 +1643,7 @@ EXEMPLARS = {
             "begin_month": "May",
             "begin_year": 2030,
             "currency": "USD",
-            "day": 18,
+            "submitted_day": 18,
             "duration": 3,
             "end_day": 31,
             "end_month": "December",
@@ -1655,7 +1655,7 @@ EXEMPLARS = {
                        "http://pdf.com/flanagan-cv"],
                 "narrative": "http://some.com/pdf",
             },
-            "month": "Aug",
+            "submitted_month": "Aug",
             "notes": "Quite an idea",
             "pi": "Anthony Scopatz",
             "pre": {
@@ -1670,7 +1670,7 @@ EXEMPLARS = {
             },
             "status": "submitted",
             "title": "A very fine proposal indeed",
-            "year": 1999,
+            "submitted_year": 1999,
         },
         {
             "_id": "dmref15",
@@ -1688,16 +1688,16 @@ EXEMPLARS = {
                 "person_months_academic": 0,
                 "person_months_summer": 1,
                 "project_scope": "lots to do but it doesn't overlap with any "
-                                 "other of my grants"
+                                 "other of my grants",
+                "single_pi": True
             },
             "currency": "USD",
-            "day": 2,
+            "submitted_date": "2015-02-02",
             "duration": 3,
             "end_day": 1,
             "end_month": "May",
             "end_year": 2019,
             "funder": "NSF",
-            "month": "february",
             "notes": "Quite an idea",
             "pi": "Simon Billinge",
             "status": "accepted",
@@ -1722,7 +1722,6 @@ EXEMPLARS = {
             "title": "DMREF: Novel, data validated, nanostructure determination "
                      "methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure",
-            "year": 2015,
         },
         {
             "_id": "SymPy-1.1",
@@ -3921,6 +3920,8 @@ SCHEMAS = {
                 "person_months_summer": {"required": False,
                                          "anyof_type": ["float", "integer"]},
                 "project_scope": {"required": False, "type": "string"},
+                "single_pi": {"required": False, "type": "boolean",
+                              "description": "set to true if there are no co-pi's"},
             },
             "type": "dict",
         },
@@ -3928,11 +3929,6 @@ SCHEMAS = {
             "description": "typically '$' or 'USD'",
             "required": True,
             "type": "string",
-        },
-        "day": {
-            "description": "day that the proposal was submitted",
-            "required": False,
-            "type": "integer",
         },
         "due_date": {
             "description": "day that the proposal is due",
@@ -3975,11 +3971,6 @@ SCHEMAS = {
             "required": False,
             "type": "dict",
         },
-        "month": {
-            "description": "month that the proposal was submitted",
-            "required": False,
-            "anyof_type": ["string", "integer"]
-        },
         "notes": {
             "description": "anything you want to note",
             "required": False,
@@ -4001,6 +3992,26 @@ SCHEMAS = {
             "type": "string",
             "eallowed": ["pending", "declined", "accepted", "inprep",
                          "submitted"],
+        },
+        "submitted_date": {
+            "description": "date that the proposal was submitted",
+            "required": False,
+            "anyof_type": ["string", "date"],
+        },
+        "submitted_day": {
+            "description": "day that the proposal was submitted",
+            "required": False,
+            "type": "integer",
+        },
+        "submitted_month": {
+            "description": "month that the proposal was submitted",
+            "required": False,
+            "anyof_type": ["string", "integer"]
+        },
+        "submitted_year": {
+            "description": "Year that the proposal was submitted",
+            "required": False,
+            "type": "integer",
         },
         "team": {
             "description": "information about the team members participating "
@@ -4031,11 +4042,6 @@ SCHEMAS = {
             "description": "short title of proposal",
             "required": False,
             "type": "string",
-        },
-        "year": {
-            "description": "Year that the proposal was submitted",
-            "required": False,
-            "type": "integer",
         },
     },
     "refereeReports": {
