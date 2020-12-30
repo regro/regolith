@@ -13,6 +13,7 @@ import datetime as dt
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
 ALLOWED_STATI = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burner","c":"converged", "l": "cancelled"}
+CURRENT_STATI = ["proposed", "started", "converged"]
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="The id of the projectum.")
@@ -22,6 +23,9 @@ def subparser(subpi):
                         help="Index of the item in the enumerated list to update. "
                              "Please enter in the format of 2,5,7 or 3-7 for multiple indices, or just enter one index.",
                         type = str)
+    subpi.add_argument("-c", "--current",  action="store_true",
+                       help="only list current (unfinished, unpaused) milestones",
+                       )
     subpi.add_argument("-d", "--due_date",
                        help="New due date of the milestone in ISO format(YYYY-MM-DD). "
                             "Required for a new milestone.")
@@ -107,6 +111,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
             print("Please choose from one of the following to update/add:")
             print("1. new milestone")
             for i, j in zip(index_list, all_milestones):
+                if rc.current:
+                    if j.get("status") not in CURRENT_STATI:
+                        continue
                 if j['identifier'] == 'milestones':
                     print(f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
                           f"    status: {j.get('status')}")
