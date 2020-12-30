@@ -3996,7 +3996,7 @@ SCHEMAS = {
             "type": "dict",
         },
         "status": {
-            "description": "e.g. 'pending', 'accepted', 'rejected'",
+            "description": "e.g. 'pending', 'accepted', 'declined'",
             "required": True,
             "type": "string",
             "eallowed": ["pending", "declined", "accepted", "inprep",

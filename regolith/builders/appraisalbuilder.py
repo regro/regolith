@@ -24,7 +24,7 @@ from regolith.tools import (
     awards,
     filter_patents,
     filter_licenses,
-    merge_collections,
+    merge_collections_superior,
     get_id_from_name)
 
 
@@ -120,7 +120,7 @@ class AppraisalBuilder(LatexBuilderBase):
         )
         #        pi['initials'] = "SJLB"
 
-        grants = merge_collections(self.gtx["proposals"], self.gtx["grants"],
+        grants = merge_collections_superior(self.gtx["proposals"], self.gtx["grants"],
                                    "proposal_id")
         for g in grants:
             for person in g["team"]:
