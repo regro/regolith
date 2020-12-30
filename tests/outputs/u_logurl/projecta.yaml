@@ -80,7 +80,7 @@ sb_firstprojectum:
       - lead
       - pi
       - group_members
-    status: converged
+    status: finished
   lead: ascopatz
   log_url: https://docs.google.com/document/d/1pQMFpuI
   milestones:

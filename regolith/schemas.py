@@ -1475,7 +1475,7 @@ EXEMPLARS = {
             "roll_out": [
                 "steps that the audience will take to access and interact with "
                 "the deliverable", "not needed for paper submissions"],
-            "status": "finished"
+            "status": "proposed"
         },
         "description": "My first projectum",
         "end_date": "2020-06-05",
@@ -1487,7 +1487,7 @@ EXEMPLARS = {
             "name": "Kick off meeting",
             "objective": "introduce project to the lead",
             "audience": ["lead", "pi", "group_members"],
-            "status": "converged"
+            "status": "finished"
         },
         "lead": "ascopatz",
         "log_url": "https://docs.google.com/document/d/1YC_wtW5Q",

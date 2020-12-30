@@ -113,6 +113,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             for i, j in zip(index_list, all_milestones):
                 if rc.current:
                     if j.get("status") not in CURRENT_STATI:
+                        del j['identifier']
                         continue
                 if j['identifier'] == 'milestones':
                     print(f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
