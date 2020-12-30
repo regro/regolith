@@ -86,6 +86,7 @@ dmref15:
     person_months_academic: 0
     person_months_summer: 1
     project_scope: lots to do but it doesn't overlap with any other of my grants
+    single_pi: true
   currency: USD
   duration: 3
   end_day: 1
