@@ -95,9 +95,7 @@ dmref15:
   notes: Quite an idea
   pi: Simon Billinge
   status: accepted
-  submitted_day: 2
-  submitted_month: february
-  submitted_year: 2015
+  submitted_date: '2015-02-02'
   team:
     - institution: Columbia University
       name: qdu

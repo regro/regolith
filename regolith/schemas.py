@@ -1691,13 +1691,12 @@ EXEMPLARS = {
                                  "other of my grants"
             },
             "currency": "USD",
-            "submitted_day": 2,
+            "submitted_date": "2015-02-02",
             "duration": 3,
             "end_day": 1,
             "end_month": "May",
             "end_year": 2019,
             "funder": "NSF",
-            "submitted_month": "february",
             "notes": "Quite an idea",
             "pi": "Simon Billinge",
             "status": "accepted",
@@ -1722,7 +1721,6 @@ EXEMPLARS = {
             "title": "DMREF: Novel, data validated, nanostructure determination "
                      "methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure",
-            "submitted_year": 2015,
         },
         {
             "_id": "SymPy-1.1",
@@ -3991,6 +3989,11 @@ SCHEMAS = {
             "type": "string",
             "eallowed": ["pending", "declined", "accepted", "inprep",
                          "submitted"],
+        },
+        "submitted_date": {
+            "description": "date that the proposal was submitted",
+            "required": False,
+            "anyof_type": ["string", "date"],
         },
         "submitted_day": {
             "description": "day that the proposal was submitted",

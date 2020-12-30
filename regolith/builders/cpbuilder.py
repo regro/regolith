@@ -67,8 +67,6 @@ class CPBuilder(LatexBuilderBase):
                                            self.gtx["grants"],
                                            "proposal_id")
             for g in grants:
-                g['year'] = None
-                g['month'] = None
                 g['end_date'] = get_dates(g).get('end_date')
                 g['begin_date'] = get_dates(g).get('begin_date',
                                                    dt.date(1900, 1, 2))
@@ -82,12 +80,10 @@ class CPBuilder(LatexBuilderBase):
                     amounts = [i.get('amount') for i in g.get('budget')]
                     g['subaward_amount'] = sum(amounts)
 
-            # grants = [g for g in grants if g.get("status") != "declined"]
             current_grants = [
                 dict(g)
                 for g in grants
                 if is_current(g)
-                # and g.get("status") != "declined"
             ]
             current_grants, _, _ = filter_grants(
                 current_grants, {pi["name"]}, pi=False, multi_pi=True

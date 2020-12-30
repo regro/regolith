@@ -85,9 +85,6 @@ class GrantsListerHelper(SoutHelperBase):
         else:
             desired_date = dt.date.today()
         for grant in collection:
-            # fixme maybe change this logic and change the name of "year" in proposal to "submitted_year" or sthg
-            if grant.get('year'):    # year is used for prop submission but breaks get_dates
-                del grant['year']
             if rc.current and not is_current(grant, now=desired_date):
                 continue
             if not rc.verbose:
