@@ -1688,7 +1688,8 @@ EXEMPLARS = {
                 "person_months_academic": 0,
                 "person_months_summer": 1,
                 "project_scope": "lots to do but it doesn't overlap with any "
-                                 "other of my grants"
+                                 "other of my grants",
+                "single_pi": True
             },
             "currency": "USD",
             "submitted_date": "2015-02-02",
@@ -3919,6 +3920,8 @@ SCHEMAS = {
                 "person_months_summer": {"required": False,
                                          "anyof_type": ["float", "integer"]},
                 "project_scope": {"required": False, "type": "string"},
+                "single_pi": {"required": False, "type": "boolean",
+                              "description": "set to true if there are no co-pi's"},
             },
             "type": "dict",
         },
