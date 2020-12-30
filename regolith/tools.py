@@ -1000,7 +1000,7 @@ def dereference_institution(input_record, institutions):
             input_record["department"] = inst
 
 
-def merge_collections(a, b, target_id):
+def merge_collections_all(a, b, target_id):
     """
     merge two collections into a single merged collection
 
@@ -1014,21 +1014,23 @@ def merge_collections(a, b, target_id):
 
     Returns
     -------
-    the combined collection.  Note that it returns a collection only containing
-    merged items from a and b that are dereferenced in b, i.e., the merged
-    intercept.  If you want the union you can update the returned collection
-    with a.
+    the combined collection.  Note that it returns a collection containing
+    all items from a and b with the items dereferenced in b merged with the
+    dereferenced items in a.
+
+    see also merge_intersection that returns collection that is just referenced
+    in both
 
     Examples
     --------
-    >>>  grants = merge_collections(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
+    >>>  grants = merge_collections_all(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
 
     This would merge all entries in the proposals collection with entries in the
     grants collection for which "_id" in proposals has the value of
     "proposal_id" in grants, returning also unchanged any other entries that are
     not linked.
     """
-    intersect = [{**j,**i} for j in a for i in b if j.get("_id") == i.get(target_id)]
+    intersect = merge_collections_intersect(a, b, target_id)
     for j in intersect:
         for i in b:
             if i.get("_id") == j.get("_id"):
@@ -1038,11 +1040,77 @@ def merge_collections(a, b, target_id):
             if i.get("_id") == j.get(target_id):
                 a.remove(i)
     bdis, adis = b, a
-
-    #bdis = [k for l in intersect for k in b  if l.get("_id") != k.get("_id")]
-    #adis = [k for j in intersect for k in a if j.get(target_id) != k.get("_id")]
     return adis + intersect + bdis
 
+def merge_collections_superior(a, b, target_id):
+    """
+    merge two collections into a single merged collection
+
+    for keys that are in both collections, the value in b will be kept
+
+    Parameters
+    ----------
+    a  the inferior collection (will lose values of shared keys)
+    b  the superior collection (will keep values of shared keys)
+    target_id  str  the name of the key used in b to dereference ids in a
+
+    Returns
+    -------
+    the combined collection.  Note that it returns a collection containing
+    all items from a and b with the items dereferenced in b merged with the
+    dereferenced items in a.
+
+    see also merge_intersection that returns collection that is just referenced
+    in both
+
+    Examples
+    --------
+    >>>  grants = merge_collections_all(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
+
+    This would merge all entries in the proposals collection with entries in the
+    grants collection for which "_id" in proposals has the value of
+    "proposal_id" in grants, returning also unchanged any other entries that are
+    not linked.
+    """
+    intersect = merge_collections_intersect(a, b, target_id)
+    for j in intersect:
+        for i in b:
+            if i.get("_id") == j.get("_id"):
+                b.remove(i)
+    bdis = b
+    return intersect + bdis
+
+def merge_collections_intersect(a, b, target_id):
+    """
+    merge two collections such thta just the intersection is returned
+
+    for shared keys that are in both collections, the value in b will be kept
+
+    Parameters
+    ----------
+    a  the inferior collection (will lose values of shared keys)
+    b  the superior collection (will keep values of shared keys)
+    target_id  str  the name of the key used in b to dereference ids in a
+
+    Returns
+    -------
+    the combined collection.  Note that it returns a collection only containing
+    merged items from a and b that are dereferenced in b, i.e., the merged
+    intercept.
+
+    see also merge_collections_all that returns all items in a, b and the intersect
+    and merge_collections_superior that returns all items in b and the intercept
+
+    Examples
+    --------
+    >>>  grants = merge_collections_intesect(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
+
+    This would merge all entries in the proposals collection with entries in the
+    grants collection for which "_id" in proposals has the value of
+    "proposal_id" in grants, returning just those items that have the dereference
+    """
+    intersect = [{**j, **i} for j in a for i in b if j.get("_id") == i.get(target_id)]
+    return intersect
 
 def update_schemas(default_schema, user_schema):
     """

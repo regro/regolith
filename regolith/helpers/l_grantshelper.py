@@ -15,7 +15,7 @@ from regolith.tools import (
     search_collection,
     key_value_pair_filter,
     collection_str,
-    merge_collections
+    merge_collections_superior
 )
 
 TARGET_COLL = "grants"
@@ -66,7 +66,7 @@ class GrantsListerHelper(SoutHelperBase):
         ]
         for db, coll in zip(self.needed_dbs, colls):
             gtx[db] = coll
-        gtx["grants"] = merge_collections(gtx["proposals"], gtx["grants"],
+        gtx["grants"] = merge_collections_superior(gtx["proposals"], gtx["grants"],
                                    "proposal_id")
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float

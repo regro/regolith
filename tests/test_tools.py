@@ -7,11 +7,13 @@ from regolith.tools import (
     number_suffix,
     latex_safe,
     update_schemas,
-    merge_collections,
     group,
     is_fully_appointed,
     group_member_ids,
     group_member_employment_start_end,
+    merge_collections_all,
+    merge_collections_intersect,
+    merge_collections_superior,
     month_and_year,
     awards_grants_honors,
     get_id_from_name,
@@ -287,11 +289,406 @@ def test_number_suffix(input, expected):
         ),
     ],
 )
-def test_merge_collections(input, expected):
+def test_merge_collections_all(input, expected):
     a = input[0]
     b = input[1]
     target_id = "linked_to"
-    assert merge_collections(a, b, target_id) == expected
+    assert merge_collections_all(a, b, target_id) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                            }
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    }
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}
+                    ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"},
+                         {
+                             "_id": "grant2",
+                             "title": "African swallow",
+                             "author": "king arthur",
+                         },
+                         ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                    {
+                        "_id": "grant2",
+                        "title": "African swallow",
+                        "author": "king arthur",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"},
+                         {
+                             "_id": "grant2",
+                             "title": "African swallow",
+                             "author": "king arthur",
+                             "linked_to": "proposal2"
+                         },
+                         ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                    {
+                        "_id": "grant2",
+                        "title": "African swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal2",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                        ],
+                        [{"_id": "grant1",
+                          "linked_to": "proposal1",
+                          "amount": "100 mph"},
+                         {
+                             "_id": "grant2",
+                             "title": "African swallow",
+                             "author": "king arthur",
+                         },
+                         ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                    {
+                        "_id": "grant2",
+                        "title": "African swallow",
+                        "author": "king arthur",
+                    },
+                ],
+        ),
+    ],
+)
+def test_merge_collections_superior(input, expected):
+    a = input[0]
+    b = input[1]
+    target_id = "linked_to"
+    assert merge_collections_superior(a, b, target_id) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                            }
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    }
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"}
+                    ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"},
+                         ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                            {
+                                "_id": "proposal2",
+                                "title": "African swallow",
+                                "author": "king arthur",
+                            },
+                        ],
+                        [{"_id": "grant1", "linked_to": "proposal1",
+                          "amount": "100 mph"},
+                         {
+                             "_id": "grant2",
+                             "title": "African swallow",
+                             "author": "king arthur",
+                             "linked_to": "proposal2"
+                         },
+                         ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                    {
+                        "_id": "grant2",
+                        "title": "African swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal2",
+                    },
+                ],
+        ),
+        (
+                (
+                        [
+                            {
+                                "_id": "proposal1",
+                                "title": "European swallow",
+                                "author": "king arthur",
+                                "amount": "50 mph",
+                            },
+                        ],
+                        [{"_id": "grant1",
+                          "linked_to": "proposal1",
+                          "amount": "100 mph"},
+                         {
+                             "_id": "grant2",
+                             "title": "African swallow",
+                             "author": "king arthur",
+                         },
+                         ],
+                ),
+                [
+                    {
+                        "_id": "grant1",
+                        "title": "European swallow",
+                        "author": "king arthur",
+                        "linked_to": "proposal1",
+                        "amount": "100 mph",
+                    },
+                ],
+        ),
+    ],
+)
+def test_merge_intersection(input, expected):
+    a = input[0]
+    b = input[1]
+    target_id = "linked_to"
+    assert merge_collections_intersect(a, b, target_id) == expected
 
 
 @pytest.mark.parametrize(

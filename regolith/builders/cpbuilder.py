@@ -13,7 +13,7 @@ from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
     fuzzy_retrieval,
-    merge_collections,
+    merge_collections_all,
 )
 
 
@@ -32,20 +32,20 @@ class CPBuilder(LatexBuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx["people"] = sorted(
+        gtx["people"] = list(sorted(
             all_docs_from_collection(rc.client, "people"),
             key=position_key,
             reverse=True,
-        )
-        gtx["grants"] = sorted(
+        ))
+        gtx["grants"] = list(sorted(
             all_docs_from_collection(rc.client, "grants"), key=_id_key
-        )
-        gtx["proposals"] = sorted(
+        ))
+        gtx["proposals"] = list(sorted(
             all_docs_from_collection(rc.client, "proposals"), key=_id_key
-        )
-        gtx["groups"] = sorted(
+        ))
+        gtx["groups"] = list(sorted(
             all_docs_from_collection(rc.client, "groups"), key=_id_key
-        )
+        ))
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -62,7 +62,7 @@ class CPBuilder(LatexBuilderBase):
             piinitialslist = [i[0] for i in pinames]
             pi['initials'] = "".join(piinitialslist).upper()
 
-            grants = merge_collections(self.gtx["proposals"],
+            grants = merge_collections_all(self.gtx["proposals"],
                                        self.gtx["grants"],
                                        "proposal_id")
             print([g.get("title") for g in grants])
@@ -112,8 +112,8 @@ class CPBuilder(LatexBuilderBase):
             pending_grants, _, _ = filter_grants(
                 pending_grants, {pi["name"]}, pi=False, multi_pi=True
             )
-            grants = pending_grants + current_grants
-            for grant in grants:
+            summed_grants = pending_grants + current_grants
+            for grant in summed_grants:
                 grant.update(
                     award_start_date="{}/{}/{}".format(
                         grant.get("begin_date").month,
