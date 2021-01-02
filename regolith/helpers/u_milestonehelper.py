@@ -210,12 +210,12 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     rc.status = "f"
                     doc.update({'end_date': now})
                     if identifier == 'deliverable':
-                        doc['name'] = 'deliverable'
-                    elif identifier == 'kickoff':
-                        doc['name'] = 'kickoff'
+                        name = 'deliverable'
+                    else:
+                        name = doc['name']
                     print(
                         "The milestone {} has been marked as finished in prum {}".format(
-                            doc['name'], key))
+                            name, key))
                 if rc.status:
                     if rc.status in ALLOWED_STATI:
                         doc.update({'status': ALLOWED_STATI.get(rc.status)})
