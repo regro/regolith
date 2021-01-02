@@ -116,7 +116,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
             i['due_date'] = get_due_date(i)
         all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
         index_list = list(range(2, (len(all_milestones) + 2)))
-        if not rc.verbose and not rc.index:
+        if not rc.index:
+            deliverable['name'] = 'deliverable'
             print("Please choose from one of the following to update/add:")
             print("1. new milestone")
             for i, j in zip(index_list, all_milestones):
@@ -124,32 +125,22 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     if j.get("status") not in CURRENT_STATI:
                         del j['identifier']
                         continue
-                if j['identifier'] == 'milestones':
-                    print(
-                        f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
-                        f"    status: {j.get('status')}")
-                else:
-                    print(
-                        f"{i}. {j.get('identifier')}    due date: {j.get('due_date')}"
-                        f"    status: {j.get('status')}")
-                del j['identifier']
-            return
-        if rc.verbose:
-            print("Please choose from one of the following to update/add:")
-            print("1. new milestone")
-            for i, j in zip(index_list, all_milestones):
-                if j['identifier'] == 'milestones':
-                    print(
-                        f"{i}. {j.get('name')}    due date: {j.get('due_date')}:\n"
-                        f"     audience: {j.get('audience')}\n"
-                        f"     objective: {j.get('objective')}\n"
-                        f"     status: {j.get('status')}\n"
-                        f"     type: {j.get('type')}")
-                else:
-                    print(
-                        f"{i}. {j.get('identifier')}    due date: {j.get('due_date')}:\n"
-                        f"     audience: {j.get('audience')}\n"
-                        f"     status: {j.get('status')}")
+                print(
+                    f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
+                    f"    status: {j.get('status')}")
+                if rc.verbose:
+                    if j.get("audience"):
+                        print(f"     audience: {j.get('audience')}")
+                    if j.get("objective"):
+                        print(f"     objective: {j.get('objective')}")
+                    if j.get("type"):
+                        print(f"     type: {j.get('type')}")
+                    if j.get('notes'):
+                        print(f"     notes:")
+                        for note in j.get('notes', []):
+                            print(f"       - {note}")
+                if j.get('identifier') == 'deliverable':
+                    del j['name']
                 del j['identifier']
             return
         if rc.type and rc.type not in (
@@ -218,6 +209,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     now = dt.date.today()
                     rc.status = "f"
                     doc.update({'end_date': now})
+                    if identifier == 'deliverable':
+                        doc['name'] = 'deliverable'
+                    elif identifier == 'kickoff':
+                        doc['name'] = 'kickoff'
                     print(
                         "The milestone {} has been marked as finished in prum {}".format(
                             doc['name'], key))
