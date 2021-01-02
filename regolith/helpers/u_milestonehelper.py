@@ -2,12 +2,14 @@
     It can update the status, type, and due date of a projectum.
     It can add a new milestone to the projecta collection.
 """
+from itertools import chain
+import datetime as dt
+import dateutil.parser as date_parser
+
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
 from regolith.dates import get_due_date
-from itertools import chain
-import datetime as dt
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m": "meeting", "r": "release", "p": "pull request",
@@ -61,6 +63,9 @@ def subparser(subpi):
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
+    subpi.add_argument("--date",
+                       help="The date that will be used for testing."
+                       )
     return subpi
 
 
@@ -90,6 +95,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
         key = rc.projectum_id
+        if rc.date:
+            now = date_parser.parse(rc.date).date()
+        else:
+            now = dt.date.today()
         filterid = {'_id': key}
         target_prum = rc.client.find_one(rc.database, rc.coll, filterid)
         if not target_prum:
@@ -206,7 +215,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     else:
                         doc.update({'type': rc.type})
                 if rc.finish:
-                    now = dt.date.today()
                     rc.status = "f"
                     doc.update({'end_date': now})
                     if identifier == 'deliverable':
