@@ -18,10 +18,6 @@ TARGET_COLL = "proposals"
 
 def subparser(subpi):
     # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
-                       )
     subpi.add_argument("name", help="A short but unique name for the proposal",
                        )
     subpi.add_argument("amount", help="value of award",
@@ -82,6 +78,13 @@ def subparser(subpi):
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="Anything to note", default=[]
                        )
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file."
+                       )
+    subpi.add_argument("--date",
+                       help="The date that will be used for testing."
+                       )
     return subpi
 
 
@@ -115,7 +118,10 @@ class ProposalAdderHelper(DbHelperBase):
     def db_updater(self):
         gtx = self.gtx
         rc = self.rc
-        now = dt.date.today()
+        if rc.date:
+            now = date_parser.parse(rc.date).date()
+        else:
+            now = dt.date.today()
         key = f"{str(now.year)[2:]}_{''.join(rc.name.casefold().split()).strip()}"
 
         coll = self.gtx[rc.coll]
