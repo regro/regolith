@@ -129,12 +129,6 @@ class MilestonesListerHelper(SoutHelperBase):
                           or bool(
                     set(prum.get('group_members', [])).intersection(
                         set(rc.person)))]
-#        if rc.current:
-#            collection = [prum for prum in collection if
-#                          prum.get('status') in ACTIVE_STATI]
-#        if rc.finished:
-#            collection = [prum for prum in collection if
-#                          prum.get('status') in FINISHED_STATI]
         if not rc.all:
             collection = [prum for prum in collection if
                           prum.get('status') not in INACTIVE_STATI
@@ -193,6 +187,10 @@ class MilestonesListerHelper(SoutHelperBase):
                             audience.extend(ms.get(i))
                 out = ", ".join(audience)
                 print(f"    Audience: {out}")
+                if ms.get("notes"):
+                    print(f"    Notes:")
+                    for note in ms.get("notes"):
+                        print(f"      - {note}")
             else:
                 print(
                     f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")

@@ -1494,6 +1494,7 @@ EXEMPLARS = {
         "milestones": [{
             'due_date': '2020-05-20',
             'name': 'Project lead presentation',
+            'notes': ["do background reading", "understand math"],
             'objective': 'lead presents background reading and '
                          'initial project plan',
             'audience': ['lead', 'pi', 'group_members'],
