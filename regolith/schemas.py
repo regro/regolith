@@ -1475,6 +1475,7 @@ EXEMPLARS = {
             "roll_out": [
                 "steps that the audience will take to access and interact with "
                 "the deliverable", "not needed for paper submissions"],
+            "notes": ["deliverable note"],
             "status": "proposed"
         },
         "description": "My first projectum",
@@ -1487,6 +1488,7 @@ EXEMPLARS = {
             "name": "Kick off meeting",
             "objective": "introduce project to the lead",
             "audience": ["lead", "pi", "group_members"],
+            "notes": ["kickoff note"],
             "status": "finished"
         },
         "lead": "ascopatz",

@@ -9,21 +9,23 @@ from regolith.dates import get_due_date
 from itertools import chain
 import datetime as dt
 
-
 TARGET_COLL = "projecta"
-ALLOWED_TYPES = {"m":"meeting", "r":"release", "p":"pull request", "o":"other"}
-ALLOWED_STATI = {"p":"proposed", "s":"started", "f":"finished", "b":"back_burner","c":"converged", "l": "cancelled"}
+ALLOWED_TYPES = {"m": "meeting", "r": "release", "p": "pull request",
+                 "o": "other"}
+ALLOWED_STATI = {"p": "proposed", "s": "started", "f": "finished",
+                 "b": "back_burner", "c": "converged", "l": "cancelled"}
 CURRENT_STATI = ["proposed", "started", "converged"]
+
 
 def subparser(subpi):
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
-                        help="Increases the verbosity of the output.")
+                       help="Increases the verbosity of the output.")
     subpi.add_argument("-i", "--index",
-                        help="Index of the item in the enumerated list to update. "
-                             "Please enter in the format of 2,5,7 or 3-7 for multiple indices, or just enter one index.",
-                        type = str)
-    subpi.add_argument("-c", "--current",  action="store_true",
+                       help="Index of the item in the enumerated list to update. "
+                            "Please enter in the format of 2,5,7 or 3-7 for multiple indices, or just enter one index.",
+                       type=str)
+    subpi.add_argument("-c", "--current", action="store_true",
                        help="only list current (unfinished, unpaused) milestones",
                        )
     subpi.add_argument("-d", "--due_date",
@@ -44,9 +46,13 @@ def subparser(subpi):
                             f"{ALLOWED_TYPES} "
                             "Defaults to meeting for a new milestone.")
     subpi.add_argument("-a", "--audience",
-                       nargs = '+',
+                       nargs='+',
                        help="Audience of the milestone. "
                             "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
+                       )
+    subpi.add_argument("--notes",
+                       nargs='+',
+                       help="Any notes you want to add to the milestone.",
                        )
     subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
@@ -56,6 +62,7 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
     return subpi
+
 
 class MilestoneUpdaterHelper(DbHelperBase):
     """Helper for updating milestones to the projecta collection.
@@ -86,9 +93,11 @@ class MilestoneUpdaterHelper(DbHelperBase):
         filterid = {'_id': key}
         target_prum = rc.client.find_one(rc.database, rc.coll, filterid)
         if not target_prum:
-            pra = fragment_retrieval(self.gtx["projecta"], ["_id"], rc.projectum_id)
+            pra = fragment_retrieval(self.gtx["projecta"], ["_id"],
+                                     rc.projectum_id)
             if len(pra) == 0:
-                raise RuntimeError("Please input a valid projectum id or a valid fragment of a projectum id")
+                raise RuntimeError(
+                    "Please input a valid projectum id or a valid fragment of a projectum id")
             print("Projecta not found. Projecta with similar names: ")
             for i in range(len(pra)):
                 print(f"{pra[i].get('_id')}")
@@ -105,8 +114,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
         all_milestones.extend(milestones)
         for i in all_milestones:
             i['due_date'] = get_due_date(i)
-        all_milestones.sort(key = lambda x: x['due_date'], reverse=False)
-        index_list = list(range(2, (len(all_milestones)+2)))
+        all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
+        index_list = list(range(2, (len(all_milestones) + 2)))
         if not rc.verbose and not rc.index:
             print("Please choose from one of the following to update/add:")
             print("1. new milestone")
@@ -116,11 +125,13 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         del j['identifier']
                         continue
                 if j['identifier'] == 'milestones':
-                    print(f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
-                          f"    status: {j.get('status')}")
+                    print(
+                        f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
+                        f"    status: {j.get('status')}")
                 else:
-                    print(f"{i}. {j.get('identifier')}    due date: {j.get('due_date')}"
-                          f"    status: {j.get('status')}")
+                    print(
+                        f"{i}. {j.get('identifier')}    due date: {j.get('due_date')}"
+                        f"    status: {j.get('status')}")
                 del j['identifier']
             return
         if rc.verbose:
@@ -128,24 +139,31 @@ class MilestoneUpdaterHelper(DbHelperBase):
             print("1. new milestone")
             for i, j in zip(index_list, all_milestones):
                 if j['identifier'] == 'milestones':
-                    print(f"{i}. {j.get('name')}    due date: {j.get('due_date')}:\n"
-                          f"     audience: {j.get('audience')}\n"
-                          f"     objective: {j.get('objective')}\n"
-                          f"     status: {j.get('status')}\n"
-                          f"     type: {j.get('type')}")
+                    print(
+                        f"{i}. {j.get('name')}    due date: {j.get('due_date')}:\n"
+                        f"     audience: {j.get('audience')}\n"
+                        f"     objective: {j.get('objective')}\n"
+                        f"     status: {j.get('status')}\n"
+                        f"     type: {j.get('type')}")
                 else:
-                    print(f"{i}. {j.get('identifier')}    due date: {j.get('due_date')}:\n"
-                          f"     audience: {j.get('audience')}\n"
-                          f"     status: {j.get('status')}")
+                    print(
+                        f"{i}. {j.get('identifier')}    due date: {j.get('due_date')}:\n"
+                        f"     audience: {j.get('audience')}\n"
+                        f"     status: {j.get('status')}")
                 del j['identifier']
             return
-        if rc.type and rc.type not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_TYPES.items()))):
-                raise KeyError(f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
-        if rc.status and rc.status not in (list(chain.from_iterable((k, v) for k, v in ALLOWED_STATI.items()))):
-                raise KeyError(f"please rerun specifying --status with a value from {ALLOWED_STATI}")
+        if rc.type and rc.type not in (
+        list(chain.from_iterable((k, v) for k, v in ALLOWED_TYPES.items()))):
+            raise KeyError(
+                f"please rerun specifying --type with a value from {ALLOWED_TYPES}")
+        if rc.status and rc.status not in (
+        list(chain.from_iterable((k, v) for k, v in ALLOWED_STATI.items()))):
+            raise KeyError(
+                f"please rerun specifying --status with a value from {ALLOWED_STATI}")
         rc.index = rc.index.replace(" ", "")
         if "-" in rc.index:
-            idx_parsed = [i for i in range(int(rc.index.split('-')[0]), int(rc.index.split('-')[1])+1)]
+            idx_parsed = [i for i in range(int(rc.index.split('-')[0]),
+                                           int(rc.index.split('-')[1]) + 1)]
         elif "," in rc.index:
             idx_parsed = [int(i) for i in rc.index.split(',')]
         else:
@@ -155,7 +173,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
             if idx == 1:
                 mil = {}
                 if not rc.due_date or not rc.name or not rc.objective:
-                    raise RuntimeError("name, objective, and due date are required for a new milestone")
+                    raise RuntimeError(
+                        "name, objective, and due date are required for a new milestone")
                 mil.update({'due_date': rc.due_date})
                 mil['due_date'] = get_due_date(mil)
                 mil.update({'objective': rc.objective, 'name': rc.name})
@@ -177,15 +196,19 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         mil.update({'status': rc.status})
                 else:
                     mil.update({'type': 'meeting'})
+                if rc.notes:
+                    mil["notes"] = notes
                 milestones.append(mil)
-                pdoc = {'milestones':milestones}
+                pdoc = {'milestones': milestones}
             if idx > 1:
-                doc = all_milestones[idx-2]
+                doc = all_milestones[idx - 2]
                 identifier = doc['identifier']
-                if not doc.get('type') and not rc.type and identifier=='milestones':
-                        raise RuntimeError("ERROR: This milestone does not have a type set and this is required. "
-                                           "Please rerun your command adding '--type' "
-                                           f"and typing a type from this list: {ALLOWED_TYPES}")
+                if not doc.get(
+                        'type') and not rc.type and identifier == 'milestones':
+                    raise RuntimeError(
+                        "ERROR: This milestone does not have a type set and this is required. "
+                        "Please rerun your command adding '--type' "
+                        f"and typing a type from this list: {ALLOWED_TYPES}")
                 if rc.type:
                     if rc.type in ALLOWED_TYPES:
                         doc.update({'type': ALLOWED_TYPES.get(rc.type)})
@@ -195,7 +218,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     now = dt.date.today()
                     rc.status = "f"
                     doc.update({'end_date': now})
-                    print("The milestone {} has been marked as finished in prum {}".format(doc['name'],key))
+                    print(
+                        "The milestone {} has been marked as finished in prum {}".format(
+                            doc['name'], key))
                 if rc.status:
                     if rc.status in ALLOWED_STATI:
                         doc.update({'status': ALLOWED_STATI.get(rc.status)})
@@ -206,6 +231,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 if rc.due_date:
                     doc.update({'due_date': rc.due_date})
                 doc['due_date'] = get_due_date(doc)
+                if rc.notes:
+                    notes = doc.get("notes", [])
+                    notes.extend(rc.notes)
+                    doc["notes"] = notes
                 if identifier == 'milestones':
                     if rc.name:
                         doc.update({'name': rc.name})
@@ -216,9 +245,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         if j['identifier'] == 'milestones' and i != idx:
                             new_mil.append(j)
                     new_mil.append(doc)
-                    pdoc.update({'milestones':new_mil})
+                    pdoc.update({'milestones': new_mil})
                 else:
-                    pdoc.update({identifier:doc})
+                    pdoc.update({identifier: doc})
             rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         for i in all_milestones:
             del i['identifier']
