@@ -7,9 +7,29 @@ from cerberus import Validator
 from .sorters import POSITION_LEVELS
 
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
-PRESENTATIONS_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
-                      "plenary", "poster", "seminar", "tutorial"]
+
+ACTIVITIES_TYPE = ["teaching", "research"]
+AGENCIES = ["nsf", "doe"]
 APPOINTMENTS_TYPE = ["gra", "ss", "pd", "ug"]
+COMMITTEES_TYPE = ["phdoral", "phddefense", "phdproposal", "promotion"]
+COMMITTEES_LEVEL = ["department", "school", "university", "external"]
+EXPENSES_TYPE = ["unsubmitted", "submitted", "reimbursed"]
+FACILITIES_TYPE = ["teaching", "research", "shared", "other", "teaching_wish",
+                                     "research_wish"]
+POSITION_STATUS = ["pi", "adjunct", "high-school", "undergrad","ms", "phd",
+                   "postdoc","visitor-supported","visitor-unsupported"]
+PRESENTATION_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
+                      "plenary", "poster", "seminar", "tutorial"]
+PRESENTATION_STATUS = ["in-prep", "submitted", "accepted", "declined",
+                         "cancelled"]
+PROJECT_TYPE = ["ossoftware", "funded"]
+PROPOSAL_STATI = ["pending", "declined", "accepted", "inprep", "submitted"]
+PUBLICITY_TYPE = ["online", "article"]
+REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
+                "submitted", "cancelled"]
+REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
+SERVICE_TYPE = ["profession", "university", "school", "department"]
+
 
 EXEMPLARS = {
     "abstracts": {
@@ -2275,7 +2295,7 @@ SCHEMAS = {
         },
         "status": {
             "description": "The status of the expense",
-            "eallowed": ["reimbursed", "submitted", "unsubmitted", ],
+            "eallowed": EXPENSES_TYPE,
             "type": "string"
         },
         "reimbursements": {
@@ -2865,7 +2885,7 @@ SCHEMAS = {
                         "required": True,
                         "description": "the type of the acitivity",
                         "type": "string",
-                        "eallowed": ["teaching", "research"]
+                        "eallowed": ACTIVITIES_TYPE
                     },
                     "month": {
                         "required": False,
@@ -2929,12 +2949,12 @@ SCHEMAS = {
                              "description": "name of department or school etc."},
                     "type": {"required": False, "type": "string",
                              "description": "type of committee, department, school, university, external",
-                             "eallowed": ["phdoral", "phddefense", "phdproposal", "promotion"]},
+                             "eallowed": COMMITTEES_TYPE},
                     "level": {
                         "required": True,
                         "type": "string",
                         "description": "department or school or university, or external",
-                        "eallowed": ["department", "school", "university", "external"]
+                        "eallowed": COMMITTEES_LEVEL
                     },
                     "group": {
                         "required": False,
@@ -3045,16 +3065,7 @@ SCHEMAS = {
                         "required": False,
                         "type": "string",
                     },
-                    "status": {"required": False, "type": "string", "eallowed": [
-                        "pi",
-                        "adjunct",
-                        "high-school",
-                        "undergrad",
-                        "ms",
-                        "phd",
-                        "postdoc",
-                        "visitor-supported",
-                        "visitor-unsupported"],
+                    "status": {"required": False, "type": "string", "eallowed": POSITION_STATUS,
                                },
                 },
             },
@@ -3083,8 +3094,7 @@ SCHEMAS = {
                                        "for wished-for facilities, so there are "
                                        "teaching-wish and research-wish fields.",
                         "type": "string",
-                        "eallowed": ["teaching", "research", "shared", "other", "teaching_wish",
-                                     "research_wish"]
+                        "eallowed": FACILITIES_TYPE
                     },
                     "begin_month": {
                         "required": False,
@@ -3279,7 +3289,7 @@ SCHEMAS = {
                 "type": "dict",
                 "schema": {
                     "type": {"required": True, "type": "string",
-                             "eallowed": ["online", "article"]},
+                             "eallowed": PUBLICITY_TYPE},
                     "topic": {"required": False, "type": "string",
                               "description": "The short sentence of what the "
                                              "publicity was about",
@@ -3373,8 +3383,7 @@ SCHEMAS = {
                               "anyof_type": ["string", "list"]},
                     "type": {"required": True, "type": "string",
                              "description": "profession, department, school, university",
-                             "eallowed": ["profession", "university",
-                                          "school", "department"]},
+                             "eallowed": SERVICE_TYPE},
                 },
             },
             "type": "list",
@@ -3586,8 +3595,7 @@ SCHEMAS = {
                            "the trip cancelled?",
             "required": True,
             "type": "string",
-            "eallowed": ["in-prep", "submitted", "accepted", "declined",
-                         "cancelled"],
+            "eallowed": PRESENTATION_STATUS,
         },
         "title": {
             "description": "title of the presentation",
@@ -3596,7 +3604,7 @@ SCHEMAS = {
         },
         "type": {
             "description": "type of presentation",
-            "eallowed": PRESENTATIONS_TYPE,
+            "eallowed": PRESENTATION_TYPE,
             "required": True,
             "type": "string",
         },
@@ -3699,7 +3707,7 @@ SCHEMAS = {
             "description": "The type of project",
             "required": False,
             "anyof_type": ["string"],
-            "eallowed": ["ossoftware", "funded"]
+            "eallowed": PROJECT_TYPE
         },
         "website": {
             "description": "URL of the website.",
@@ -3724,7 +3732,7 @@ SCHEMAS = {
         "agency": {
             "description": "currently nsf or doe",
             "type": "string",
-            "eallowed": ["nsf", "doe"],
+            "eallowed": AGENCIES,
         },
         "competency_of_team": {
             "description": "Is the team competent",
@@ -3837,15 +3845,7 @@ SCHEMAS = {
         "status": {
             "description": "the status of the review",
             "type": "string",
-            "eallowed": [
-                "invited",
-                "accepted",
-                "declined",
-                "downloaded",
-                "inprogress",
-                "submitted",
-                "cancelled"
-            ],
+            "eallowed": REVIEW_STATI,
         },
         "summary": {
             "description": "Summary statement",
@@ -3993,8 +3993,7 @@ SCHEMAS = {
             "description": "e.g. 'pending', 'accepted', 'declined'",
             "required": True,
             "type": "string",
-            "eallowed": ["pending", "declined", "accepted", "inprep",
-                         "submitted"],
+            "eallowed": PROPOSAL_STATI,
         },
         "submitted_date": {
             "description": "date that the proposal was submitted",
@@ -4119,8 +4118,7 @@ SCHEMAS = {
             "description": "Your publication recommendation",
             "required": True,
             "type": "string",
-            "eallowed": ["reject", "asis", "smalledits", "diffjournal",
-                         "majoredits"],
+            "eallowed": REVIEW_RECOMMENDATION,
         },
         "requester": {
             "description": "Name of the program officer who requested the review",
@@ -4136,15 +4134,7 @@ SCHEMAS = {
             "description": "Where you are with the review",
             "required": True,
             "type": "string",
-            "eallowed": [
-                "invited",
-                "accepted",
-                "declined",
-                "downloaded",
-                "inprogress",
-                "submitted",
-                "cancelled"
-            ],
+            "eallowed": REVIEW_STATI,
         },
         "submitted_date": {
             "description": "submitted date in ISO YYYY-MM-DD format",
