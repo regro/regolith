@@ -187,12 +187,23 @@ class MongoClient:
         elif ON_PYMONGO_V2:
             return self.client.alive()
         elif ON_PYMONGO_V3:
-            cmd = ["mongostat", "--host", "localhost", "-n", "1"]
-            try:
-                subprocess.check_call(cmd)
-                alive = True
-            except subprocess.CalledProcessError:
-                alive = False
+            alive = False
+            if self.rc.local is False:
+                from pymongo.errors import ConnectionFailure
+                try:
+                    # The ismaster command is cheap and does not require auth.
+                    self.client.admin.command('ismaster')
+                    alive = True
+                except ConnectionFailure:
+                    print("Server not available")
+                    alive = False
+            else:
+                cmd = ["mongostat", "--host", "localhost", "-n", "1"]
+                try:
+                    subprocess.check_call(cmd)
+                    alive = True
+                except subprocess.CalledProcessError:
+                    alive = False
             return alive
         else:
             return False
