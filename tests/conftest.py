@@ -101,7 +101,7 @@ def make_mongodb():
                         "url": 'localhost',
                         "path": repo,
                         "public": True,
-                        "local": False,
+                        "local": True,
                     }
                 ],
                 "stores": [
