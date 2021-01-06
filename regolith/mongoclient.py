@@ -236,10 +236,13 @@ class MongoClient:
         """
         dbs: dict = self.dbs
         client: pymongo.MongoClient = self.client
-        mongodb = client[db['name']]
-        for colname in mongodb.list_collection_names():
-            col = mongodb[colname]
-            dbs[db['name']][colname] = load_mongo_col(col)
+        if db['name'] in client.list_database_names():
+            mongodb = client[db['name']]
+            for colname in mongodb.list_collection_names():
+                col = mongodb[colname]
+                dbs[db['name']][colname] = load_mongo_col(col)
+        else:
+            print('Database name provided in regolithrc.json not found in mongodb')
         return
 
     def import_database(self, db: dict):
@@ -305,6 +308,7 @@ class MongoClient:
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
         coll = self.client[dbname][collname]
+        doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
             i = coll.insert(doc)
             return InsertOneProxy(i, True)
@@ -314,6 +318,8 @@ class MongoClient:
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
         coll = self.client[dbname][collname]
+        for doc in docs:
+            doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
             return coll.insert(docs)
         else:
@@ -322,14 +328,23 @@ class MongoClient:
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection"""
         coll = self.client[dbname][collname]
+        doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
             return coll.remove(doc, multi=False)
         else:
             return coll.delete_one(doc)
 
+    def find_one(self, dbname, collname, filter):
+        """Finds the first document matching filter."""
+        coll = self.dbs[dbname][collname]
+        filter.replace('.', '')
+        doc = coll.find_one(filter)
+        return doc
+
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
         coll = self.client[dbname][collname]
+        filter.replace('.', '')
         if ON_PYMONGO_V2:
             doc = coll.find_one(filter)
             if doc is None:
