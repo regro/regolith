@@ -130,7 +130,7 @@ class PresListBuilder(LatexBuilderBase):
                     pres["authors"] = [
                         author
                         if not get_person_contact(author, self.gtx["people"],
-                                          self.gtx["contacts"])["name"]
+                                          self.gtx["contacts"])
                         else
                         get_person_contact(author, self.gtx["people"],
                                    self.gtx["contacts"])["name"]
