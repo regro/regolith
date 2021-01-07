@@ -44,6 +44,7 @@
   abstract: We pulled apart graphite with tape
   authors:
     - scopatz
+    - afriend
   begin_day: 22
   begin_month: 5
   begin_year: 2018
