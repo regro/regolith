@@ -21,7 +21,7 @@ POSITION_STATUS = ["pi", "adjunct", "high-school", "undergrad","ms", "phd",
 PRESENTATION_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
                       "plenary", "poster", "seminar", "tutorial"]
 PRESENTATION_STATUS = ["in-prep", "submitted", "accepted", "declined",
-                         "cancelled"]
+                         "cancelled", "postponed"]
 PROJECT_TYPE = ["ossoftware", "funded"]
 PROPOSAL_STATI = ["pending", "declined", "accepted", "inprep", "submitted"]
 PUBLICITY_TYPE = ["online", "article"]
@@ -1415,7 +1415,7 @@ EXEMPLARS = {
         {
             "_id": "18sb_this_and_that",
             "abstract": "We pulled apart graphite with tape",
-            "authors": ["scopatz"],
+            "authors": ["scopatz", "afriend"],
             "begin_year": 2018,
             "begin_month": 5,
             "begin_day": 22,

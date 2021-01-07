@@ -27,18 +27,19 @@ from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
     fuzzy_retrieval,
+    get_person_contact,
     number_suffix,
     group_member_ids, latex_safe
 )
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.dates import month_to_int, get_dates
 
-
 class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""
 
     btype = "preslist"
-    needed_dbs = ['groups', 'institutions', 'people', 'grants', 'presentations']
+    needed_dbs = ['groups', 'institutions', 'people', 'grants',
+                  'presentations', 'contacts']
 
 
     def construct_global_ctx(self):
@@ -48,6 +49,11 @@ class PresListBuilder(LatexBuilderBase):
         rc = self.rc
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
+            key=position_key,
+            reverse=True,
+        )
+        gtx["contacts"] = sorted(
+            all_docs_from_collection(rc.client, "contacts"),
             key=position_key,
             reverse=True,
         )
@@ -123,19 +129,11 @@ class PresListBuilder(LatexBuilderBase):
                         pauthors = [pauthors]
                     pres["authors"] = [
                         author
-                        if fuzzy_retrieval(
-                            self.gtx["people"],
-                            ["aka", "name", "_id"],
-                            author,
-                            case_sensitive=False,
-                        )
-                        is None
-                        else fuzzy_retrieval(
-                            self.gtx["people"],
-                            ["aka", "name", "_id"],
-                            author,
-                            case_sensitive=False,
-                        )["name"]
+                        if not get_person_contact(author, self.gtx["people"],
+                                          self.gtx["contacts"])
+                        else
+                        get_person_contact(author, self.gtx["people"],
+                                   self.gtx["contacts"])["name"]
                         for author in pauthors
                     ]
                     authorlist = ", ".join(pres["authors"])

@@ -1080,6 +1080,48 @@ def merge_collections_superior(a, b, target_id):
     bdis = b
     return intersect + bdis
 
+def get_person_contact(name, people_coll, contacts_coll):
+    '''
+    Return a person document if found in either people or contacts collections
+
+    If the person is found in the people collection this person is returned.  If
+    not found in people but found in contacts, the person found in contacts is
+    returned.  If the person is not found in either collection, None is returned
+
+    Parameters
+    ----------
+    name: str
+      The name or id of the person to look for
+    people_coll: collection (list of dicts)
+      The people collection
+    contacts_coll: collection (list of dicts)
+      The contacts collection
+
+    Returns
+    -------
+    person: dict
+      The found person document
+
+    '''
+    people_person = fuzzy_retrieval(
+        people_coll,
+        ["aka", "name", "_id"],
+        name,
+        case_sensitive=False,
+    )
+    contacts_person = fuzzy_retrieval(
+        contacts_coll,
+        ["aka", "name", "_id"],
+        name,
+        case_sensitive=False,
+    )
+    if people_person:
+        return people_person
+    elif contacts_person:
+        return contacts_person
+    else:
+        return None
+
 def merge_collections_intersect(a, b, target_id):
     """
     merge two collections such thta just the intersection is returned
