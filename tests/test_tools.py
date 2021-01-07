@@ -17,6 +17,7 @@ from regolith.tools import (
     month_and_year,
     awards_grants_honors,
     get_id_from_name,
+    get_person_contact,
     date_to_rfc822,
     key_value_pair_filter,
     collection_str,
@@ -25,6 +26,105 @@ from regolith.tools import (
     grant_burn,
     validate_meeting
     )
+
+PEOPLE_COLL = [
+    {"_id": "m1",
+        "name": "member1",
+        "education": [{
+            "group": "bg",
+            "institution": "columbiau",
+            "degree": "PhD",
+            "department": "apam",
+            "begin_year": 2016
+        }],
+        "employment": [{
+            "begin_year": 2020,
+            "begin_month": 1,
+            "organization": "columbiau",
+            "position": "Undergraduate Researcher",
+            "advisor": "sbillinge",
+            "status": "undergrad"
+        }]
+    },
+    {
+        "_id": "nm1",
+        "name": "non-member1",
+        "education": [{
+            "institution": "columbiau",
+            "degree": "PhD",
+            "department": "apam",
+            "begin_year": 2016
+        }],
+        "employment": [{
+            "begin_year": 2020,
+            "begin_month": 1,
+            "organization": "columbiau",
+            "position": "Undergraduate Researcher",
+            "advisor": "sbillinge",
+            "status": "undergrad"
+        }]
+    },
+    {
+        "_id": "m2",
+        "name": "member2",
+        "education": [{
+            "institution": "columbiau",
+            "degree": "PhD",
+            "department": "apam",
+            "begin_year": 2016
+        }],
+        "employment": [{
+            "begin_year": 2020,
+            "begin_month": 1,
+            "group": "bg",
+            "organization": "columbiau",
+            "position": "Undergraduate Researcher",
+            "advisor": "sbillinge",
+            "status": "undergrad"
+        }]
+    },
+]
+
+CONTACTS_COLL = [
+    {"_id": "c1",
+        "name": "contact1",
+        "institution": "columbiau"
+    }]
+
+
+@pytest.mark.parametrize(
+    "input, expected", [
+        (["m1", PEOPLE_COLL, CONTACTS_COLL],
+         {"_id": "m1",
+          "name": "member1",
+          "education": [{
+              "group": "bg",
+              "institution": "columbiau",
+              "degree": "PhD",
+              "department": "apam",
+              "begin_year": 2016
+          }],
+          "employment": [{
+              "begin_year": 2020,
+              "begin_month": 1,
+              "organization": "columbiau",
+              "position": "Undergraduate Researcher",
+              "advisor": "sbillinge",
+              "status": "undergrad"
+          }]
+          }),
+        (["c1", PEOPLE_COLL, CONTACTS_COLL],
+         {"_id": "c1",
+          "name": "contact1",
+          "institution": "columbiau"
+          }),
+
+        (["bad1", PEOPLE_COLL, CONTACTS_COLL], None),
+    ])
+def test_get_person_contact(input, expected):
+    print(input)
+    actual = get_person_contact(input[0],input[1],input[2])
+    assert actual == expected
 
 
 def test_author_publications():
@@ -1025,7 +1125,6 @@ ppl_coll = [
         }]
     },
 ]
-
 @pytest.mark.parametrize(
     "input,expected",
     [
