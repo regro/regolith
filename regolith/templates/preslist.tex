@@ -24,8 +24,11 @@ sentencecase(pres['title']))-}} },
 {\it {{ latex_safe(pres['type']).title()-}} },
 {\it {{ latex_safe(pres['department']['name'])-}} },
 {\it {{ latex_safe(inst['name'])-}} },
-{\it {{ latex_safe(inst['city'])-}} }\
+{\it {{ latex_safe(inst['city'])-}}}%
 {\it {{ latex_safe(inst['state'])-}}}
+{%- if inst.get('country','USA') not in ['USA', 'usa'] -%}
+{\it , {{ latex_safe(inst['country'])-}} }
+{%-endif -%}
 {%-else %}
 {\it {{ latex_safe(pres['meeting_name'])-}} },
 {\it {{ latex_safe(pres['location'])-}} }
