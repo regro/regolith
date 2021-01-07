@@ -81,6 +81,9 @@ class PresListBuilder(LatexBuilderBase):
             grp = group["_id"]
             grpmember_ids = group_member_ids(self.gtx['people'], grp)
             for member in grpmember_ids:
+                if self.rc.people:
+                    if member not in self.rc.people:
+                        continue
                 presentations = deepcopy(self.gtx["presentations"])
                 types = ["all"]
                 #                types = ['invited']
@@ -212,6 +215,16 @@ class PresListBuilder(LatexBuilderBase):
                     self.render(
                         "preslist.tex",
                         outfile + ".tex",
+                        pi=pi,
+                        presentations=presclean,
+                        sentencecase=sentencecase,
+                        monthstyle=month_fullnames,
+                    )
+                    self.env.trim_blocks = True
+                    self.env.lstrip_blocks = True
+                    self.render(
+                        "preslist.txt",
+                        outfile + ".txt",
                         pi=pi,
                         presentations=presclean,
                         sentencecase=sentencecase,
