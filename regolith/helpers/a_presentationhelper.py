@@ -54,6 +54,10 @@ def subparser(subpi):
     subpi.add_argument("-y", "--type", help=f"types, from {ALLOWED_TYPES}. Default",
                        default="invited"
                        )
+    subpi.add_argument("-w", "--webinar", help=f"true if the presentation was a "
+                                               f"webinar. Default False",
+                       action="store_true"
+                       )
     subpi.add_argument("-u", "--authors", nargs="+",
                        help="specify the authors of this presentation, "
                             "defaults to person submitting the presentation",
@@ -130,6 +134,8 @@ class PresentationAdderHelper(DbHelperBase):
                      'begin_date': begin_date,
                      'end_date': end_date,
                      })
+        if rc.webinar:
+            pdoc.update({"webinar": True})
         if rc.type in ['seminar', 'colloquium']:
             pdoc.update({"institution": rc.place,
                         "department": rc.name})
