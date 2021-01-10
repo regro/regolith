@@ -2,20 +2,16 @@
 Prints author, meeting name(if applicable), location (if applicable), date (if applicable),
 and abstract of the presentation.
 """
+# add author change id to name?
+# no location leads to no output -fix and make roboust
+#get tests to pass
 
-import dateutil
-import dateutil.parser as date_parser
-from regolith.dates import (
-    is_current,
-    get_dates
-)
+
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
-    fuzzy_retrieval,
-    search_collection,
+    get_pi_id
 )
 
 TARGET_COLL = "presentations"
@@ -28,24 +24,29 @@ def subparser(subpi):
     subpi.add_argument(
         "-v",
         "--verbose",
+        metavar='',
         action="store_true",
         help="Increases the verbosity of the output.")
     subpi.add_argument(
         "-a",
         "--author",
+        metavar='',
         help='authors group ID(single argument only) to use to find presentation abstract.')
     subpi.add_argument(
         "-y",
         "--year",
-        help='start or end year of the presentation (single argument only) to use to find presentation abstract.')
+        metavar='',
+        help='Start or end year of the presentation (single argument only) to use to find presentation.')
     subpi.add_argument(
         "-l",
         "--location",
-        help='Location of presentation, either a country, city, state, or university(single argument only).')
+        metavar='',
+        help='Location of presentation, either a country, city, state, or university.')
     subpi.add_argument(
         "-t",
         "--title",
-        help='a word or more from the title of the abstract or talk to use to find presentation in particular.')
+        help='Fragment of the title of the abstract or talk to use to filter presentations.')
+    args = subpi.parse_args()
     return subpi
 
 
@@ -55,7 +56,7 @@ class AbstractListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}', 'institutions']
+    needed_dbs = [f'{TARGET_COLL}', 'authors']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -67,7 +68,7 @@ class AbstractListerHelper(SoutHelperBase):
         rc.coll = f"{TARGET_COLL}"
         try:
             if not rc.database:
-                rc.database = rc.databases[0]["name"]
+                rc.database = rc.databases[0]["author"]
         except BaseException:
             pass
         colls = [
@@ -85,53 +86,42 @@ class AbstractListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        list_search = []
         collection = self.gtx["presentation"]
-        if rc.name:
-            list_search.extend(["authors", rc.name])
-        if rc.inst:
-            list_search.extend(["location", rc.inst])
-        if rc.notes:
-            list_search.extend(["title", rc.notes])
-        if rc.filter:
-            list_search.extend(rc.filter)
-        filtered_presentations_id = (search_collection(collection, list_search)).strip('    \n')
-        filtered_presentations_id = list(filtered_presentations_id.split('    \n'))
-        if rc.date:
-            date_list = []
-            temp_dat = date_parser.parse(rc.date).date()
-            temp_dict = {"begin_date": (temp_dat - dateutil.relativedelta.relativedelta(
-                                        months=int(rc.range))).isoformat(),
-                         "end_date": (temp_dat + dateutil.relativedelta.relativedelta(
-                                     months=int(rc.range))).isoformat()}
-            for presentation in collection:
-                curr_d = get_dates(presentation)['date']
-                if is_current(temp_dict, now=curr_d):
-                    date_list.append(presentation.get('_id'))
-                filtered_presentations_id = [value for value in filtered_presentations_id if value in date_list]
-        filtered_presentations = []
-        string_presentations = ''
-        for presentation in collection:
-            if presentation.get('_id') in filtered_presentations_id:
-                filtered_presentations.append(presentation)
-                institution = presentation.get('institution')
-                institution_name = fuzzy_retrieval(self.gtx['institutions'],
-                                                   ['name', '_id', 'aka'], institution)
-                if institution_name:
-                    presentation['institution'] = institution_name.get('name')
-                if rc.verbose:
-                    contact_str = f"{presentation.get('name')}\n"
-                    for k in ['_id', 'email', 'institution', 'department', 'notes', 'aka']:
-                        if presentation.get(k):
-                            if isinstance(presentation.get(k), list):
-                                lst_expanded = '\n        -'.join(map(str, presentation.get(k)))
-                                contact_str += f"    {k}:\n        -{lst_expanded}\n"
-                            else:
-                                contact_str += f"    {k}: {presentation.get(k)}\n"
-                    string_presentations += contact_str
-                else:
-                    string_presentations += f"{presentation.get('name')}  |  {presentation.get('_id')}  |" \
-                                       f"  institution: {presentation.get('institution')}  |" \
-                                       f"  email: {presentation.get('email', 'missing')}\n"
-        print(string_presentations.strip('\n'))
+        if args.year is None:
+            args.year = ''
+        if args.location is None:
+            args.location = ''
+        if args.title is None:
+            args.title = ''
+
+        for key in collection.items():
+            if args.author in key[1]['authors']:
+                if "location" in key[1] and args.location.lower() in key[1]["location"].lower():
+                    if args.title.lower() in key[1]["title"].lower():
+                        if "end_year" in key[1] and "begin_year" in key[1]:
+                            if args.year in str(key[1]["end_year"]) or args.year in str(key[1]["begin_year"]):
+                                print("---------------------------------------")
+                                a = "Authors: "
+                                for i in range(0, len(key[1]["authors"])):
+                                    a = a + "- " + key[1]["authors"][i] + " "
+                                print(a)
+                                if "meeting_name" in key[1]:
+                                    print(key[1]["meeting_name"])
+                                if "institution" in key[1]:
+                                    print("Institution: " + key[1]["institution"], end=' ')
+                                if "department" in key[1]:
+                                    print(", Department: " + key[1]["department"])
+                                print("Location: " + key[1]["location"])
+                                if "begin_day" and "begin_month" in key[1]:
+                                    print("Start: " + str(key[1]["begin_day"]) + "-" + str(key[1]["begin_month"])
+                                          + "-" + str(key[1]["begin_year"]))
+                                if ("end_day" and "end_month" in key[1]):
+                                    print("End: " + str(key[1]["end_day"]) + "-" + str(key[1]["end_month"])
+                                          + "-" + str(key[1]["end_year"]))
+                                if ("type" and "status" and "title" in key[1]):
+                                    print("Type: " + key[1]["type"] + ", Status: " + key[1]["status"])
+                                    print("Project: " + key[1]["project"][0])
+                                    print("\nTitle: " + key[1]["title"])
+                                print("Abstract: " + key[1]["abstract"])
         return
+
