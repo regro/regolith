@@ -44,6 +44,8 @@ def make_db():
                         "public": True,
                         "path": "db",
                         "local": True,
+                        #TODO uncomment this out after proving JSON w/o key worrk
+                        #"backend": "filesystem"
                     }
                 ],
                 "stores": [
@@ -54,7 +56,6 @@ def make_db():
                         "public": True,
                     }
                 ],
-                "backend": "filesystem"
             },
             f,
         )
@@ -102,6 +103,7 @@ def make_mongodb():
                         "path": repo,
                         "public": True,
                         "local": True,
+                        "backend": "mongodb"
                     }
                 ],
                 "stores": [
@@ -113,7 +115,6 @@ def make_mongodb():
                     }
                 ],
                 "mongodbpath": mongodbpath,
-                "backend": "mongodb"
             },
             f,
         )
