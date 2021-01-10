@@ -144,6 +144,41 @@ helper_map = [
      "    aka:\n"
      "        -A. B. Friend\n        -AB Friend\n        -Tony Friend\n"
      ),
+    (["helper", "l_abstract", "run", "-a", "scopatz”, "-y", "2018", "-l", ”upton", "-t", "tape"],
+     "---------------------------------------\n"
+     "Authors: - scopatz - afriend\n"
+     "Meeting to check flexibility on dates\n"
+     "columbiau, apam\n"
+     "Location: Upton NY\n"
+     "Start: 5-22-2018\n"
+     "Type: award, Status: accepted\n"
+     "Project: 18sob_clustermining\n"
+     "Title: We pulled apart graphite with tape\n"
+     "Abstract: Graphitic Dephenestration"
+     ),
+    (["helper", "l_abstract", "run", "-a", "scopatz”,”-l”,”upton"],
+     "---------------------------------------\n"
+     "Authors: - scopatz -afriend\n"
+     "Meeting to check flexibility on dates\n"
+     "columbiau, apam\n"
+     "Location: Upton NY\n"
+     "Start: 5-22-2018\n"
+     "Type: award, Status: accepted\n"
+     "Project: 18sob_clustermining\n"
+     "Title: We pulled apart graphite with tape\n"
+     "Abstract: Graphitic Dephenestration"
+    "---------------------------------------\n"
+     "Authors: - scopatz\n"
+     "2018 NSLS-II and CFN Users Meeting\n"
+     "columbiau, apam\n"
+     "Location: Upton NY\n"
+     "Start: 5-22-2018\n"
+     "End: 5-22-2018\n"
+     "Type: poster, Status: accepted\n"
+     "Project: 18sob_clustermining\n"
+     "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n"
+     "Abstract: We pulled apart graphite with tap"
+     ),
     (["helper", "u_milestone", "sb_firstprojectum", "--index", "5",
       "--status", "converged", "--due_date", "2020-06-01", "--notes", "do this",
       "do that"],
