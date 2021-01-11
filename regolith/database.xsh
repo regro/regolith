@@ -132,7 +132,7 @@ def dump_local_database(db, client, rc):
 def dump_database(db, client, rc):
     """Dumps a database"""
     # do not dump mongo db
-    if rc.backend in ('mongo', 'mongodb'):
+    if db['backend'] in ('mongo', 'mongodb'):
         return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
