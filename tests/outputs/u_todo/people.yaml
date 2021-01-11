@@ -114,6 +114,7 @@ sbillinge:
     state: plasma
     zip: '007'
   initials: SJLB
+  linkedin_url: https://scholar.google.com/citations?hl=en&user=PAJ
   membership:
     - begin_year: 2006
       organization: American Nuclear Society
