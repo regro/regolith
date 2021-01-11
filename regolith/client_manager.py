@@ -17,16 +17,23 @@ class ClientManager:
     """
     Client wrapper that allows for multiple backend clients to be used in parallel with one chained DB
     """
+
     def __init__(self, databases, rc):
-        self.clients = ()
+        client_tuple = tuple()
+        if hasattr(rc, "backend"):
+            for database in databases:
+                database["backend"] = rc.backend
         for database in databases:
-            if not hasattr(database, "backend"):
-                #for backwards compatabity, since most people using an FS backend won't have the backend keyword in rc
+            if "backend" not in database:
+                # For backwards compatabity, since most people using an FS backend won't have the backend keyword in rc
                 database["backend"] = 'filesystem'
             backend_object_type = CLIENTS[database["backend"]]
-            #Checks to see if the clients tuple contains a client with the database's backend
-            if True not in [isinstance(client, backend_object_type) for client in self.clients]:
-                self.clients = self.clients + (CLIENTS[database["backend"]](rc),)
+            # Checks to see if the clients tuple contains a client with the database's backend
+            if len(client_tuple) == 0:
+                client_tuple = client_tuple + (CLIENTS[database["backend"]](rc),)
+            elif True not in [isinstance(client, backend_object_type) for client in client_tuple]:
+                client_tuple = client_tuple + (CLIENTS[database["backend"]](rc),)
+        self.clients = client_tuple
         self.rc = rc
         self.closed = True
         self.chained_db = None
@@ -35,14 +42,14 @@ class ClientManager:
         self._collexts = {}
         self._yamlinsts = {}
 
-    def __getattribute__(self, item):
-        if str(item) is "dbs":
+    def __getattr__(self, attr):
+        if attr == "dbs":
             concatenated_dbs_dict = defaultdict(lambda: defaultdict(dict))
             for client in self.clients:
                 concatenated_dbs_dict.update(client.dbs)
             return concatenated_dbs_dict
         else:
-            object.__getattribute__(self, item)
+            raise AttributeError
 
     def __getitem__(self, key):
         for client in self.clients:

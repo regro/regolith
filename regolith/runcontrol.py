@@ -233,7 +233,6 @@ def ishashable(x):
 
 DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
-    backend="filesystem",
     builddir="_build",
     mongodbpath=property(lambda self: os.path.join(self.builddir, "_dbpath")),
     local=False,
