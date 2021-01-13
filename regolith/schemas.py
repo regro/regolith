@@ -30,6 +30,7 @@ REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
 SERVICE_TYPE = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
+PROJECTA_STATUS = ["proposed", "started", "converged", "finished"]
 
 
 EXEMPLARS = {
@@ -3632,6 +3633,172 @@ SCHEMAS = {
             "required": False,
             "type": "boolean",
         },
+    },
+    "projecta": {
+        "_description": {
+            "description": "This collection describes a single deliverable "
+                            "of a larger project."
+        },
+        "_id": {
+            "description": "Unique projecta identifier",
+            "required": True,
+            "type": "string"
+        },
+        "begin_date": {
+            "description": "projecta start date, yyyy-mm-dd",
+            "required": False,
+            "type": "string"
+        },
+        "collaborators": {
+            "description": "list of collaborator's id's",
+            "required": False,
+            "type": "list"
+        },
+        "deliverable":{
+            "description": "outline of the deliverable for this projecta",
+            "type": "dict",
+            "schema": {
+                "audience": {"description": "who is this deliverable for",
+                             "required": False,
+                             "type": "list"},
+                #is this the proper form of the due date, the exemplar is ambiguous
+                "due_date": {"description": "due date of deliverable, yyyy-mm-dd",
+                             "required": False,
+                             "anyof_type": ["date", "string"]},
+                "success_def": {"description": "definition of a successful deliverable",
+                                "required": False,
+                                "type": "string"},
+                "scope": {"description": "",
+                          "required": False,
+                          "type": "list"},
+                "platform": {"description": "description of how and where the audience will access "
+                                "the deliverable.  e.g. Journal if it is a paper",
+                             "required": False,
+                             "type": "string"},
+                "rollout": {"description": "steps that the audience will take to access "
+                                           "and interact with the deliverable, "
+                                           "not needed for paper submissions",
+                            "required": False,
+                            "type": "list"},
+                "notes": {"description": "deliverable note",
+                          "required": False,
+                          "type": "list"},
+                "status": {"description": "current state of deliverable",
+                           "required": False,
+                           "type": "string",
+                           "eallowed": PROJECTA_STATUS},
+            }
+        },
+        "description": {
+            "description": "explanation of projecta",
+            "required": False,
+            "type": "string"
+        },
+        "end_date": {
+            "description": "projecta end date, yyyy-mm-dd. "
+                           "Not necessarily the same as deliverable due date",
+            "required": False,
+            "anyof_type": ["date", "string"]
+        },
+        "grants":{
+            "description": "grant id funding the project",
+            "required": False,
+            "type": "string"
+        },
+        "group_members": {
+            "description": "group member id's working on this project",
+            "required": False,
+            "type": "list"
+        },
+        "kickoff":{
+            "description": "details the projecta kickoff meeting",
+            "required": False,
+            "type": "dict",
+            "schema": {
+                "date": {"description": "kickoff meeting date, yyyy-mm-dd.",
+                         "required": False,
+                         "anyof_type": ["date", "string"]},
+                "due_date": {"description": "kickoff meeting by date, yyyy-mm-dd.",
+                             "required": False,
+                             "anyof_type": ["date", "string"]},
+                "name": {"description": "name of meeting",
+                         "required": False,
+                         "type": "string"},
+                "objective": {"description": "goal of the meeting",
+                              "required": False,
+                              "type": "string"},
+                "audience": {"description": "rolls of audience members "
+                                            "e.g. 'pi', 'lead'",
+                             "required": False,
+                             "type": "list"},
+                "notes": {"description": "any notes about the kickoof",
+                          "required": False,
+                          "type": "list"},
+                "status": {"description": "proposed, started, finished, converged",
+                           "required": False,
+                           "type": "string",
+                           "eallowed": PROJECTA_STATUS}
+
+            }
+        },
+        "lead": {
+            "description": "id of projecta lead",
+            "required": False,
+            "type": "string"
+        },
+        "log_url": {
+            "description": "link to log of meetings",
+            "required": False,
+            "type": "string"
+        },
+        "milestones": {
+            "description": "smaller deliverables done by a certain date "
+                           "a series of milestones ends with the deliverable "
+                           "the projecta",
+            "required": False,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "due_date": {"description": "due date of milestone, yyyy-mm-dd",
+                                 "required": False,
+                                 "anyof_type": ["date", "string"]},
+                    "name": {"description": "what is the deliverable of milestone",
+                             "required": False,
+                             "type": "string"},
+                    "notes": {"description": "small, non-deliverable to-do's",
+                              "required": False,
+                              "type": "list"},
+                    "objective": {"description": "explains goal of the milestone",
+                                  "required": False,
+                                  "type": "string"},
+                    "audience": {"description": "rolls of audience members "
+                                                "e.g. 'pi', 'lead'",
+                                 "required": False,
+                                 "type": "list"},
+                    "status": {"description": "proposed, started, finished, converged",
+                               "required": False,
+                               "type": "string",
+                               "eallowed": PROJECTA_STATUS},
+                    "type": {"description": "what kind of deliverable is it "
+                                            "e.g. 'meeting",
+                             "required": False,
+                             "type": "string"}
+
+                }
+            }
+        },
+        "name": {"description": "name of the projecta",
+                 "required": False,
+                 "type": "string"},
+        "pi_id": {"description": "id of the PI",
+                  "required": False,
+                  "type": "string"},
+        "status": {"description": "proposed, started, finished, converged",
+                   "required": False,
+                   "type": "string",
+                   "eallowed": PROJECTA_STATUS}
+
     },
     "projects": {
         "_description": {
