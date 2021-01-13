@@ -144,22 +144,76 @@ helper_map = [
      "    aka:\n"
      "        -A. B. Friend\n        -AB Friend\n        -Tony Friend\n"
      ),
-    (["helper", "l_abstract", "run", "---author", "scopatz”,”--location”,”upton"],
+    (["helper", "l_abstract", "run", "--title", "graphitic"],
      "---------------------------------------\n"
-     "Title:  We pulled apart graphite with tape\n"
-     "\nAnthony B. Scopatz\n"
-     "\nAbstract: Graphitic Dephenestration"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     ),
+    (["helper", "l_abstract", "run", "--location", "upton"],
+     "---------------------------------------\n"
+     "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+     "Anthony Scopatz\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+    ),
+    (["helper", "l_abstract", "run", "--year", "2018"],
+     "---------------------------------------\n"
+     "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
+     "Anthony Scopatz\n\n"
+     "Abstract: We made the case for local structure\n"
+     "---------------------------------------\n"
+     "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+     "Anthony Scopatz\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     ),
+    (["helper", "l_abstract", "run", "--author", "scopatz"],
+     "---------------------------------------\n"
+     "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
+     "Anthony Scopatz\n\n"
+     "Abstract: We made the case for local structure\n"
+     "---------------------------------------\n"
+     "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+     "Anthony Scopatz\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     ),
+    (["helper", "l_abstract", "run", "--location", "upton", "--year", "2018"],
+     "---------------------------------------\n"
+     "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+     "Anthony Scopatz\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     ),
+    (["helper", "l_abstract", "run", "--author", "scopatz", "--location", "upton"],
      "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n"
-     "\nAnthony B. Scopatz,  Anthony F. Friend\n"
-     "\nAbstract: We pulled apart graphite with tap"
-     ),
-    (["helper", "l_abstract", "run", "--author", "scopatz", "--year", "2018", "--location", "upton", "--title", "tape"],
+     "\nAnthony Scopatz\n"
+     "\nAbstract: We pulled apart graphite with tape\n"
      "---------------------------------------\n"
-     "Title:  We pulled apart graphite with tape\n"
-     "\nAnthony B. Scopatz\n"
-     "\nAbstract: Graphitic Dephenestration"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
      ),
+    (["helper", "l_abstract", "run", "--author", "scopatz", "--year", "2018", "--location", "upton", "--title", "graphitic"],
+     "---------------------------------------\n"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+    ),
     (["helper", "u_milestone", "sb_firstprojectum", "--index", "5",
       "--status", "converged", "--due_date", "2020-06-01", "--notes", "do this",
       "do that"],

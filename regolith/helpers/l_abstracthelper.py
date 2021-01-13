@@ -75,14 +75,31 @@ class AbstractListerHelper(SoutHelperBase):
         presentations = self.gtx["presentations"]
 
         for presentation in presentations:
-            if rc.title.casefold() not in presentation.get('title').casefold():
+            if rc.title is not None:
+                if rc.title.casefold() not in presentation.get('title').casefold():
+                    continue
+            if rc.location is not None and 'location' in presentation:
+                if rc.location.casefold() not in presentation.get('location').casefold():
+                    continue
+            if rc.location is not None and 'location' not in presentation:
                 continue
+            if rc.year is not None and 'begin_year' in presentation:
+                if int(rc.year) != presentation.get('begin_year'):
+                    continue
+            elif rc.year is not None and 'end_year' in presentation:
+                if int(rc.year) != presentation.get("end_year"):
+                    continue
+            if rc.author is not None:
+                for authors in presentation.get('authors'):
+                    if rc.author not in authors:
+                        continue
             print("---------------------------------------")
             print(f"Title: {presentation.get('title')}\n")
-            author_list=[author
-                         if not get_person_contact(author, self.gtx["people"], self.gtx["contacts"])
-                         else get_person_contact(author, self.gtx["people"], self.gtx["contacts"]).get('name')
-                         for author in presentation.get('authors')]
+            author_list = [author
+                           if not get_person_contact(author, self.gtx["people"], self.gtx["contacts"])
+                           else get_person_contact(author, self.gtx["people"], self.gtx["contacts"]).get('name')
+                           for author in presentation.get('authors')]
             print(", ".join(author_list))
             print(f"\nAbstract: {presentation.get('abstract')}")
         return
+    
