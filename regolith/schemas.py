@@ -1135,6 +1135,7 @@ EXEMPLARS = {
                 "zip": "007",
             },
             "initials": "SJLB",
+            "linkedin_url": "https://scholar.google.com/citations?hl=en&user=PAJ",
             "membership": [
                 {
                     "begin_year": 2006,
@@ -3215,6 +3216,11 @@ SCHEMAS = {
         },
         "initials": {
             "description": "The canonical initials for this group member",
+            "required": False,
+            "type": "string",
+        },
+        "linkedin_url": {
+            "description": "The URL of this person's LinkedIn account",
             "required": False,
             "type": "string",
         },

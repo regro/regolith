@@ -102,4 +102,3 @@ class AbstractListerHelper(SoutHelperBase):
             print(", ".join(author_list))
             print(f"\nAbstract: {presentation.get('abstract')}")
         return
-    
