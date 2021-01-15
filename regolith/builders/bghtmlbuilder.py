@@ -15,24 +15,24 @@ from regolith.tools import (
 )
 
 
-class HtmlBuilder(BuilderBase):
+class BGHtmlBuilder(BuilderBase):
     """Build HTML files for website"""
 
-    btype = "html"
+    btype = "bghtml"
 
     def __init__(self, rc):
         super().__init__(rc)
         # TODO: get this from the RC
         self.cmds = [
             "root_index",
-            "people",
-            "projects",
-            "blog",
-            "jobs",
-            "abstracts",
-            "nojekyll",
-            "cname",
-            "finish",
+            # "people",
+            # "projects",
+            # "blog",
+            # "jobs",
+            # "abstracts",
+            # "nojekyll",
+            # "cname",
+            # "finish",
         ]
 
     def construct_global_ctx(self):
@@ -49,6 +49,9 @@ class HtmlBuilder(BuilderBase):
         gtx["abstracts"] = list(
             all_docs_from_collection(rc.client, "abstracts")
         )
+        gtx["projecta"] = list(
+            all_docs_from_collection(rc.client, "projecta")
+        )
         gtx["group"] = document_by_value(
             all_docs_from_collection(rc.client, "groups"), "name", rc.groupname
         )
@@ -57,29 +60,40 @@ class HtmlBuilder(BuilderBase):
             all_docs_from_collection(rc.client, "institutions"), key=_id_key
         )
 
-    def finish(self):
-        """Move files over to their destination and remove them from the
-        source"""
-        # static
-        stsrc = os.path.join(
-            getattr(self.rc, "static_source", "templates"), "static"
-        )
-        stdst = os.path.join(self.bldir, "static")
-        if os.path.isdir(stdst):
-            shutil.rmtree(stdst)
-        if os.path.isdir(stsrc):
-            shutil.copytree(stsrc, stdst)
-
     def root_index(self):
         """Render root index"""
-        self.render("root_index.html", "index.html", title="Home")
-        make_bibtex_file(list(all_docs_from_collection(self.rc.client,
-                                                       "citations")),
-                         pid='group',
-                         person_dir=self.bldir,
-                         )
+        headerinfo = {"title": "BillingeGroup"}
+        text = "The PDF in the cloud platform provides services for chemists, materials scientists, geologists and physicists interested in the structure of matter."
+        image = "1i5OZD45-9K2yH28FkL3dK8JeZaUbTi9D"
+        pruminfo = {"text": text, "image": "https://drive.google.com/uc?export=view&id={}".format(image)}
+        # filterid = {'_id': key}
+        # found_projectum = rc.client.find_one(rc.database, rc.coll, filterid)
+        # pruminfo = {"text": found_projectum['public_story'].get('text'),
+        #             "image":"https://drive.google.com/uc?export=view&id="+found_projectum['public_story'].get('image')}
+        self.render("bghtmltemplate.html", "bgindex.html", headerinfo=headerinfo, pruminfo=pruminfo)
+
+        # make_bibtex_file(list(all_docs_from_collection(self.rc.client,
+        #                                                "citations")),
+        #                  pid='group',
+        #                  person_dir=self.bldir,
+        #                  )
 
 
+    # def finish(self):
+    #     """Move files over to their destination and remove them from the
+    #     source"""
+    #     # static
+    #     stsrc = os.path.join(
+    #         getattr(self.rc, "static_source", "templates"), "static"
+    #     )
+    #     stdst = os.path.join(self.bldir, "static")
+    #     if os.path.isdir(stdst):
+    #         shutil.rmtree(stdst)
+    #     if os.path.isdir(stsrc):
+    #         shutil.copytree(stsrc, stdst)
+
+
+'''
     def people(self):
         """Render people, former members, and each person"""
         rc = self.rc
@@ -207,3 +221,4 @@ class HtmlBuilder(BuilderBase):
             os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
         ) as f:
             f.write(rc.cname)
+'''
