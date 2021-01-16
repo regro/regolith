@@ -170,6 +170,8 @@ class ProjectumAdderHelper(DbHelperBase):
             "objective": "introduce project to the lead",
             "status": "proposed"
         }})
+        if rc.checklist:
+            pdoc["deliverable"].update({'scope': ['checklist']})
 
         secondm = {'due_date': now + relativedelta(days=21),
                    'name': 'Project lead presentation',
@@ -195,7 +197,8 @@ class ProjectumAdderHelper(DbHelperBase):
         presubmission_checklist = [
             ("Create slide figures", "Create Inkscape graphics (Inkscape is preferrable over ppt) for the slides and place in a ``figures`` directory in the slides directory. These may then be used either in beamer or ppt. Iterate with Simon to convergence. (to get started with Inkscape download and install it, then run the program and navigate to Help-->Tutorials.  The first two ('Basic' and 'Shapes') should probably be enough for someone to get basic functionality.)."),
             ("Create slides", "Create a 'slides' folder in the paper repo or a Google slides deck for a series of talk slides. Iterate the slide skeleton with Simon to convergence. (For a beamer template: https://gitlab.thebillingegroup.com/talks/beamerTalkTemplate)."),
-            ("Create highlight", "Create a 'highlight' folder in the paper repo. Create a Kudos summary. Place it in the 'highlight' folder. Iterate with Simon to convergence. (The kudos template and example can be found in https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y/edit?usp=sharing)."),
+            ("Create a highlight slide", "Create a 'highlight' folder in the paper repo. Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it in the 'highlight' folder. Iterate with Simon to convergence (highlight templates and examples can be found in http://gitlab.thebillingegroup.com/highlights/highlightTemplate)"),
+            ("Create public-summary", "Create a public summary in a text file. Place it in the 'highlight' folder. Iterate with Simon to convergence. (The kudos template and example can be found at https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y/edit?usp=sharing)."),
         ]
 
         submission_checklist = [
@@ -270,7 +273,7 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Apply corrections from coauthors", "Collect all the corrections from the other authors and add any additional ones to the proof and return it."),
             ("Email coauthors", "Send an email to your coauthors that this was successfully resubmitted."),
             ("Revisit talk slides", "Revisit the set of talk slides that summarize the result in a few slides if they need to be updated. Iterate with Simon to convergence."),
-            ("Create the highlight slide", "Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it in the 'highlight' folder. Iterate with Simon to convergence (highlight templates and examples can be found in http://gitlab.thebillingegroup.com/highlights/highlightTemplate)"),
+            ("Revisit the highlight slide", "Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it in the 'highlight' folder. Iterate with Simon to convergence (highlight templates and examples can be found in http://gitlab.thebillingegroup.com/highlights/highlightTemplate)"),
             ("Create web news", "Create a web news story for thebillingegroup.com site. Place it in the 'highlight' folder. Iterate with Simon to convergence"),
             ("Revisit kudos", "Revisit the Kudos summary if it needs to be updated. Iterate with Simon to convergence."),
             ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
