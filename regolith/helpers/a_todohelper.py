@@ -29,7 +29,7 @@ def subparser(subpi):
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
                        )
-    subpi.add_argument("-p", "--importance",
+    subpi.add_argument("--importance",
                        help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1.",
                        default=1
                        )
@@ -42,8 +42,8 @@ def subparser(subpi):
     subpi.add_argument("--begin_date",
                        help="Begin date of the task in format YYYY-MM-DD. Default is today."
                        )
-    subpi.add_argument("-c", "--certain_date",
-                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
+    subpi.add_argument("--date",
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.")
 
     return subpi
 
