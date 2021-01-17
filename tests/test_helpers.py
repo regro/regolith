@@ -240,7 +240,8 @@ helper_map = [
      "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
      "---------------------------------------------------------------------------------\n"
      ),
-    (["helper", "l_todo", "--tags", "downtime", "--date", "2020-07-13", "--assigned_by", "sbillinge"],
+    (["helper", "l_todo", "--tags", "downtime", "--date", "2020-07-13", "--assigned_by",
+      "sbillinge", "--assigned_to", "sbillinge"],
      "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "---------------------------------------------------------------------------------\n"
