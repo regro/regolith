@@ -19,8 +19,9 @@ ALLOWED_IMPORTANCE = [0, 1, 2]
 
 
 def subparser(subpi):
-    subpi.add_argument("description", help="the description of the to_do task. If the description has more than one "
-                                           "word, please enclose it in quotation marks.",
+    subpi.add_argument("description",
+                       help="the description of the to_do task. If the description has more than one "
+                            "word, please enclose it in quotation marks.",
                        default=None)
     subpi.add_argument("due_date",
                        help="Due date of the task. Either enter a date in format YYYY-MM-DD or an "
@@ -33,9 +34,11 @@ def subparser(subpi):
                        help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1.",
                        default=1
                        )
-    subpi.add_argument("-t", "--tags", nargs="+", help="Tags associated with this task.  The todo list can be filtered by these tags")
-    subpi.add_argument("-n", "--notes", nargs="+", help="Additional notes for this task. Each note should be enclosed "
-                                                        "in quotation marks.")
+    subpi.add_argument("-t", "--tags", nargs="+",
+                       help="Tags associated with this task.  The todo list can be filtered by these tags")
+    subpi.add_argument("-n", "--notes", nargs="+",
+                       help="Additional notes for this task. Each note should be enclosed "
+                            "in quotation marks.")
     subpi.add_argument("-a", "--assigned_to",
                        help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by",
@@ -87,12 +90,15 @@ class TodoAdderHelper(DbHelperBase):
         filterid = {'_id': rc.assigned_to}
         person = rc.client.find_one(rc.database, rc.coll, filterid)
         if not person:
-            raise TypeError(f"The id {rc.assigned_to} can't be found in the people collection")
+            raise TypeError(
+                f"The id {rc.assigned_to} can't be found in the people collection")
         if not rc.assigned_by:
             rc.assigned_by = rc.default_user_id
-        find_person = rc.client.find_one(rc.database, rc.coll, {'_id': rc.assigned_by})
+        find_person = rc.client.find_one(rc.database, rc.coll,
+                                         {'_id': rc.assigned_by})
         if not find_person:
-            raise TypeError(f"The id {rc.assigned_by} can't be found in the people collection")
+            raise TypeError(
+                f"The id {rc.assigned_by} can't be found in the people collection")
         now = dt.date.today()
         if not rc.begin_date:
             begin_date = now
@@ -111,8 +117,9 @@ class TodoAdderHelper(DbHelperBase):
             raise ValueError("begin_date can not be after due_date")
         importance = int(rc.importance)
         if importance not in ALLOWED_IMPORTANCE:
-            raise ValueError(f"importance should be chosen from {ALLOWED_IMPORTANCE}")
-        todolist = person.get("todos",[])
+            raise ValueError(
+                f"importance should be chosen from {ALLOWED_IMPORTANCE}")
+        todolist = person.get("todos", [])
         todolist.append({
             'description': rc.description,
             'due_date': due_date,
@@ -127,8 +134,10 @@ class TodoAdderHelper(DbHelperBase):
             todolist[-1]['tags'] = rc.tags
         indices = [todo.get("running_index", 0) for todo in todolist]
         todolist[-1]['running_index'] = max(indices) + 1
-        rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist},
+        rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to},
+                             {"todos": todolist},
                              upsert=True)
-        print(f"The task \"{rc.description}\" for {rc.assigned_to} has been added in {TARGET_COLL} collection.")
+        print(
+            f"The task \"{rc.description}\" for {rc.assigned_to} has been added in {TARGET_COLL} collection.")
 
         return
