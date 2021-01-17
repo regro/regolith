@@ -383,7 +383,7 @@ helper_map = [
     (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge",
       "--description", "update the description", "--due_date", "2020-07-06",
       "--estimated_duration", "35", "--importance", "2", "--status", "finished",
-      "--notes", "some new notes", "notes2", "--begin_date", "2020-06-06",
+      "--notes", "some new notes", "notes2", "--tags", "newtag1", "newtag2", "--begin_date", "2020-06-06",
       "--end_date", "2020-07-07", "--date", "2020-07-13"],
      "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
      ),
@@ -399,7 +399,7 @@ helper_map = [
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
      "finished:\n"
-     "(3) update the description (-7|2|35.0|none|sbillinge)\n"
+     "(3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
      "     - test notes 1\n"
      "     - test notes 2\n"
      "     - some new notes\n"
