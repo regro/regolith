@@ -32,7 +32,7 @@ def subparser(subpi):
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
-    subpi.add_argument("-c", "--date",
+    subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.")
     return subpi
 
@@ -82,10 +82,10 @@ class TodoFinisherHelper(DbHelperBase):
             return
         now = dt.date.today()
         if not rc.index:
-            if not rc.certain_date:
+            if not rc.date:
                 today = now
             else:
-                today = date_parser.parse(rc.certain_date).date()
+                today = date_parser.parse(rc.date).date()
             if rc.filter:
                 todolist = key_value_pair_filter(todolist, rc.filter)
             for todo in todolist:

@@ -359,7 +359,8 @@ helper_map = [
     (
     ["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to", "sbillinge",
      "--assigned_by", "sbillinge", "--begin_date", "2020-07-06", "--importance",
-     "2", "--notes", "test notes 1", "test notes 2", "--date", "2020-07-10"],
+     "2", "--notes", "test notes 1", "test notes 2", "--tags", "tag1", "tag2",
+     "--date", "2020-07-10"],
     "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge",
