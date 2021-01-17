@@ -89,12 +89,10 @@ class TodoFinisherHelper(DbHelperBase):
             if rc.filter:
                 todolist = key_value_pair_filter(todolist, rc.filter)
             for todo in todolist:
-                if not todo.get('importance'):
-                    todo['importance'] = 1
                 if type(todo["due_date"]) == str:
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
-                todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
+                todo["order"] = todo.get('importance', 1) + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
             todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
             print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
