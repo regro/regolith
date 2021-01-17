@@ -103,6 +103,8 @@ class TodoListerHelper(SoutHelperBase):
         for projectum in self.gtx["projecta"]:
             if projectum.get('lead') != rc.assigned_to:
                 continue
+            if "checklist" in projectum.get('deliverable').get('scope'):
+                continue
             projectum["deliverable"].update({"name": "deliverable"})
             gather_miles = [projectum["kickoff"], projectum["deliverable"]]
             gather_miles.extend(projectum["milestones"])
