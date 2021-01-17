@@ -24,7 +24,7 @@ def subparser(subpi):
                        default=None)
     subpi.add_argument("due_date",
                        help="Due date of the task. Either enter a date in format YYYY-MM-DD or an "
-                            "integer. Integer 5 means 5 days from today or from a certain date assigned by --certain_date."
+                            "integer. Integer 5 means 5 days from today (or from a date assigned in --date."
                        )
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
@@ -33,9 +33,10 @@ def subparser(subpi):
                        help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1.",
                        default=1
                        )
+    subpi.add_argument("-t", "--tags", nargs="+", help="Tags associated with this task.  The todo list can be filtered by these tags")
     subpi.add_argument("-n", "--notes", nargs="+", help="Additional notes for this task. Each note should be enclosed "
                                                         "in quotation marks.")
-    subpi.add_argument("-t", "--assigned_to",
+    subpi.add_argument("-a", "--assigned_to",
                        help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by",
                        help="ID of the member that assigns the task. Default id is saved in user.json. ")
@@ -97,10 +98,10 @@ class TodoAdderHelper(DbHelperBase):
             begin_date = now
         else:
             begin_date = date_parser.parse(rc.begin_date).date()
-        if not rc.certain_date:
+        if not rc.date:
             today = now
         else:
-            today = date_parser.parse(rc.certain_date).date()
+            today = date_parser.parse(rc.date).date()
         try:
             relative_day = int(rc.due_date)
             due_date = today + relativedelta(days=relative_day)
@@ -122,6 +123,8 @@ class TodoAdderHelper(DbHelperBase):
             'assigned_by': rc.assigned_by})
         if rc.notes:
             todolist[-1]['notes'] = rc.notes
+        if rc.tags:
+            todolist[-1]['tags'] = rc.tags
         indices = [todo.get("running_index", 0) for todo in todolist]
         todolist[-1]['running_index'] = max(indices) + 1
         rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist},
