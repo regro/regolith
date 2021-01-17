@@ -19,35 +19,31 @@ ALLOWED_IMPORTANCE = [0, 1, 2]
 
 
 def subparser(subpi):
-    subpi.add_argument("description",
-                       help="the description of the to_do task. If the description has more than one "
-                            "word, please enclose it in quotation marks.",
+    subpi.add_argument("description", help="the description of the to_do task. If the description has more than one "
+                                           "word, please enclose it in quotation marks.",
                        default=None)
     subpi.add_argument("due_date",
                        help="Due date of the task. Either enter a date in format YYYY-MM-DD or an "
-                            "integer. Integer 5 means 5 days from today (or from a date assigned in --date."
+                            "integer. Integer 5 means 5 days from today or from a certain date assigned by --certain_date."
                        )
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
                        )
-    subpi.add_argument("--importance",
+    subpi.add_argument("-p", "--importance",
                        help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1.",
                        default=1
                        )
-    subpi.add_argument("-t", "--tags", nargs="+",
-                       help="Tags associated with this task.  The todo list can be filtered by these tags")
-    subpi.add_argument("-n", "--notes", nargs="+",
-                       help="Additional notes for this task. Each note should be enclosed "
-                            "in quotation marks.")
-    subpi.add_argument("-a", "--assigned_to",
+    subpi.add_argument("-n", "--notes", nargs="+", help="Additional notes for this task. Each note should be enclosed "
+                                                        "in quotation marks.")
+    subpi.add_argument("-t", "--assigned_to",
                        help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by",
                        help="ID of the member that assigns the task. Default id is saved in user.json. ")
     subpi.add_argument("--begin_date",
                        help="Begin date of the task in format YYYY-MM-DD. Default is today."
                        )
-    subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.")
+    subpi.add_argument("-c", "--certain_date",
+                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
 
     return subpi
 
@@ -90,24 +86,21 @@ class TodoAdderHelper(DbHelperBase):
         filterid = {'_id': rc.assigned_to}
         person = rc.client.find_one(rc.database, rc.coll, filterid)
         if not person:
-            raise TypeError(
-                f"The id {rc.assigned_to} can't be found in the people collection")
+            raise TypeError(f"The id {rc.assigned_to} can't be found in the people collection")
         if not rc.assigned_by:
             rc.assigned_by = rc.default_user_id
-        find_person = rc.client.find_one(rc.database, rc.coll,
-                                         {'_id': rc.assigned_by})
+        find_person = rc.client.find_one(rc.database, rc.coll, {'_id': rc.assigned_by})
         if not find_person:
-            raise TypeError(
-                f"The id {rc.assigned_by} can't be found in the people collection")
+            raise TypeError(f"The id {rc.assigned_by} can't be found in the people collection")
         now = dt.date.today()
         if not rc.begin_date:
             begin_date = now
         else:
             begin_date = date_parser.parse(rc.begin_date).date()
-        if not rc.date:
+        if not rc.certain_date:
             today = now
         else:
-            today = date_parser.parse(rc.date).date()
+            today = date_parser.parse(rc.certain_date).date()
         try:
             relative_day = int(rc.due_date)
             due_date = today + relativedelta(days=relative_day)
@@ -117,9 +110,8 @@ class TodoAdderHelper(DbHelperBase):
             raise ValueError("begin_date can not be after due_date")
         importance = int(rc.importance)
         if importance not in ALLOWED_IMPORTANCE:
-            raise ValueError(
-                f"importance should be chosen from {ALLOWED_IMPORTANCE}")
-        todolist = person.get("todos", [])
+            raise ValueError(f"importance should be chosen from {ALLOWED_IMPORTANCE}")
+        todolist = person.get("todos",[])
         todolist.append({
             'description': rc.description,
             'due_date': due_date,
@@ -130,14 +122,10 @@ class TodoAdderHelper(DbHelperBase):
             'assigned_by': rc.assigned_by})
         if rc.notes:
             todolist[-1]['notes'] = rc.notes
-        if rc.tags:
-            todolist[-1]['tags'] = rc.tags
         indices = [todo.get("running_index", 0) for todo in todolist]
         todolist[-1]['running_index'] = max(indices) + 1
-        rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to},
-                             {"todos": todolist},
+        rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to}, {"todos": todolist},
                              upsert=True)
-        print(
-            f"The task \"{rc.description}\" for {rc.assigned_to} has been added in {TARGET_COLL} collection.")
+        print(f"The task \"{rc.description}\" for {rc.assigned_to} has been added in {TARGET_COLL} collection.")
 
         return
