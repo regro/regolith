@@ -1757,7 +1757,7 @@ def print_task(task_list, stati, index = True):
             for task in task_list:
                 if task.get('status') == status:
                     print(
-                        f"({task.get('running_index')}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags'))}|{task.get('assigned_by')})")
+                        f"({task.get('running_index')}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
                     if task.get('notes'):
                         for note in task.get('notes'):
                             print(f"     - {note}")
@@ -1765,7 +1765,7 @@ def print_task(task_list, stati, index = True):
             for task in task_list:
                 if task.get('status') == status:
                     print(
-                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags'))}|{task.get('assigned_by')})")
+                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
                     if task.get('notes'):
                         for note in task.get('notes'):
                             print(f"     - {note}")
