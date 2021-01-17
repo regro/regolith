@@ -1376,8 +1376,7 @@ EXEMPLARS = {
                  "importance": 2,
                  "status": "started",
                  "assigned_by": "scopatz",
-                 "running_index": 1,
-                 "tags": ["reading", "downtime"]
+                 "running_index": 1
                  },
                 {"description": "prepare the presentation",
                  "due_date": "2020-07-29",
@@ -1387,8 +1386,7 @@ EXEMPLARS = {
                  "status": "started",
                  "notes": ["about 10 minutes", "don't forget to upload to the website"],
                  "assigned_by": "sbillinge",
-                 "running_index": 2,
-                 "tags": ["downtime"]
+                 "running_index": 2
                  }
             ],
         },
@@ -3466,20 +3464,16 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "assigned_by": {
-                        "description": "ID of the member that assigns the task",
-                        "required": False,
-                        "type": "string"},
-                    "begin_date": {"description": "the begin date",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "end_date": {"description": "the end date",
-                                 "required": False,
-                                 "anyof_type": ["string", "date"]},
                     "description": {"description": "the description of the to-do task",
                                     "required": True,
                                     "type": "string"},
                     "due_date": {"description": "the due date",
+                                 "required": False,
+                                 "anyof_type": ["string", "date"]},
+                    "begin_date": {"description": "the begin date",
+                                   "required": False,
+                                   "anyof_type": ["string", "date"]},
+                    "end_date": {"description": "the end date",
                                  "required": False,
                                  "anyof_type": ["string", "date"]},
                     "duration": {
@@ -3502,11 +3496,11 @@ SCHEMAS = {
                         "description": "Index of a certain task used to update that task in the enumerated todo list.",
                         "required": False,
                         "type": "integer"},
-                    "tags": {
-                        "description": "user-defined tags that can be used to "
-                                       "filter tasks",
+                    "assigned_by": {
+                        "description": "ID of the member that assigns the task",
                         "required": False,
-                        "type": "list"},
+                        "type": "string"},
+
                 }
             }
         },

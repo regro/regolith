@@ -32,8 +32,8 @@ def subparser(subpi):
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
-    subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.")
+    subpi.add_argument("-c", "--certain_date",
+                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
     return subpi
 
 
@@ -82,17 +82,19 @@ class TodoFinisherHelper(DbHelperBase):
             return
         now = dt.date.today()
         if not rc.index:
-            if not rc.date:
+            if not rc.certain_date:
                 today = now
             else:
-                today = date_parser.parse(rc.date).date()
+                today = date_parser.parse(rc.certain_date).date()
             if rc.filter:
                 todolist = key_value_pair_filter(todolist, rc.filter)
             for todo in todolist:
+                if not todo.get('importance'):
+                    todo['importance'] = 1
                 if type(todo["due_date"]) == str:
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
-                todo["order"] = todo.get('importance', 1) + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
+                todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
             todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
             print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
