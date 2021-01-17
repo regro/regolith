@@ -140,8 +140,6 @@ class TodoListerHelper(SoutHelperBase):
             for todo in gather_todos[::-1]:
                 if todo.get('assigned_by') != rc.assigned_by:
                     gather_todos.remove(todo)
-                elif rc.assigned_to == rc.assigned_by:
-                    gather_todos.remove(todo)
         len_of_started_tasks=0
         milestones = 0
         for todo in gather_todos:
