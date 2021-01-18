@@ -29,15 +29,17 @@ ACTIVE_STATI = ["started", "converged", "proposed"]
 def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs='+', help=f'Filter tasks with specific status from {ALLOWED_STATI}. '
                                                         f'Default is started.', default=["started"])
-    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("--short", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
-    subpi.add_argument("-t", "--assigned_to",
+    subpi.add_argument("-t", "--tags", nargs='+',
+                       help="Filter tasks by tags. Items are returned if they contain any of the tags listed")
+    subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
-    subpi.add_argument("-c", "--certain_date",
-                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
+    subpi.add_argument("--date",
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.")
+    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
 
     return subpi
 
@@ -92,14 +94,16 @@ class TodoListerHelper(SoutHelperBase):
             print(
                 "The id you entered can't be found in people.yml.")
             return
-        if not rc.certain_date:
+        if not rc.date:
             today = dt.date.today()
         else:
-            today = date_parser.parse(rc.certain_date).date()
+            today = date_parser.parse(rc.date).date()
         if rc.stati == ["started"]:
             rc.stati = ACTIVE_STATI
         for projectum in self.gtx["projecta"]:
             if projectum.get('lead') != rc.assigned_to:
+                continue
+            if "checklist" in projectum.get('deliverable').get('scope'):
                 continue
             projectum["deliverable"].update({"name": "deliverable"})
             gather_miles = [projectum["kickoff"], projectum["deliverable"]]
@@ -122,13 +126,19 @@ class TodoListerHelper(SoutHelperBase):
             for todo in gather_todos[::-1]:
                 if todo.get('duration') is None or float(todo.get('duration')) > float(rc.short):
                     gather_todos.remove(todo)
+        if rc.tags:
+            for todo in gather_todos[::-1]:
+                takeme = False
+                for tag in rc.tags:
+                    if tag in todo.get('tags'):
+                        takeme = True
+                if not takeme:
+                    gather_todos.remove(todo)
         if rc.assigned_by:
             if rc.assigned_by == "default_id":
                 rc.assigned_by = rc.default_user_id
             for todo in gather_todos[::-1]:
                 if todo.get('assigned_by') != rc.assigned_by:
-                    gather_todos.remove(todo)
-                elif rc.assigned_to == rc.assigned_by:
                     gather_todos.remove(todo)
         len_of_started_tasks=0
         milestones = 0
@@ -139,8 +149,6 @@ class TodoListerHelper(SoutHelperBase):
                 len_of_started_tasks += 1
         len_of_tasks = len(gather_todos) - milestones
         for todo in gather_todos:
-            if not todo.get('importance'):
-                todo['importance'] = 1
             if type(todo["due_date"]) == str:
                 todo["due_date"] = date_parser.parse(todo["due_date"]).date()
             if type(todo.get("end_date")) == str:
@@ -148,14 +156,14 @@ class TodoListerHelper(SoutHelperBase):
             todo["days_to_due"] = (todo.get('due_date') - today).days
             todo["sort_finished"] = (todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1, 1)).days
             try:
-                todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
+                todo["order"] = todo.get('importance',1) + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
             except OverflowError:
                 todo["order"] = float('inf')
         gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks], key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
         gather_todos[len_of_started_tasks: len_of_tasks] = sorted(gather_todos[len_of_started_tasks: len_of_tasks], key=lambda k: (-k["sort_finished"]))
         gather_todos[len_of_tasks:] = sorted(gather_todos[len_of_tasks:], key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
         print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
-        print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
+        print("(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
         print("-" * 81)
         if len_of_tasks != 0:
             print("tasks from people collection:")

@@ -51,20 +51,21 @@ def subparser(subpi):
     subpi.add_argument("--status",
                        help=f"Change the status of the task from {ALLOWED_STATI}."
                        )
-    subpi.add_argument("-n", "--notes", nargs="+", help="Change the notes for this task. Each note should be enclosed "
+    subpi.add_argument("-n", "--notes", nargs="+", help="The new notes for this task. Each note should be enclosed "
                                                         "in quotation marks.")
+    subpi.add_argument("-t", "--tags", nargs="+", help="The new tags to add for this task.")
     subpi.add_argument("--begin_date",
                        help="Change the begin date of the task in format YYYY-MM-DD."
                        )
     subpi.add_argument("--end_date",
                        help="Change the end date of the task in format YYYY-MM-DD."
                        )
-    subpi.add_argument("-t", "--assigned_to",
+    subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
-    subpi.add_argument("-c", "--certain_date",
-                       help="Enter a certain date so that the helper can calculate how many days are left from that date to the deadline. Default is today.")
+    subpi.add_argument("-c", "--date",
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.")
 
     return subpi
 
@@ -127,24 +128,22 @@ class TodoUpdaterHelper(DbHelperBase):
         if len(todolist) == 0:
             print(f"{rc.assigned_to} doesn't have todos in people collection.")
             return
-        if not rc.certain_date:
+        if not rc.date:
             today = dt.date.today()
         else:
-            today = date_parser.parse(rc.certain_date).date()
+            today = date_parser.parse(rc.date).date()
         if not rc.index:
             started_todo = 0
             for todo in todolist:
                 if todo["status"] == 'started':
                     started_todo += 1
-                if not todo.get('importance'):
-                    todo['importance'] = 1
                 if type(todo["due_date"]) == str:
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 if type(todo.get("end_date")) == str:
                     todo["end_date"] = date_parser.parse(todo["end_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
                 todo["sort_finished"] = (todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1, 1)).days
-                todo["order"] = todo['importance'] + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
+                todo["order"] = todo.get('importance', 1) + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
             todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
             todolist[started_todo:] = sorted(todolist[started_todo:], key=lambda k: (-k["sort_finished"]))
             index_match = {}
@@ -224,6 +223,12 @@ class TodoUpdaterHelper(DbHelperBase):
                     except KeyError:
                         todo["notes"] = []
                         todo["notes"].extend(rc.notes)
+                if rc.tags:
+                    try:
+                        todo["tags"].extend(rc.tags)
+                    except KeyError:
+                        todo["tags"] = []
+                        todo["tags"].extend(rc.tags)
                 if rc.begin_date:
                     todo["begin_date"] = date_parser.parse(rc.begin_date).date()
                 if rc.end_date:
