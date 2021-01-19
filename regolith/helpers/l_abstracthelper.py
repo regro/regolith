@@ -13,7 +13,8 @@ HELPER_TARGET = "l_abstract"
 def subparser(subpi):
     subpi.add_argument(
         "run",
-        help='run the lister. To see allowed optional arguments, type "regolith helper l_abstracts".')
+        help='run the lister. To see allowed optional arguments, type '
+             '"regolith helper l_abstracts".')
     subpi.add_argument(
         "-v",
         "--verbose",
@@ -22,19 +23,26 @@ def subparser(subpi):
     subpi.add_argument(
         "-a",
         "--author",
-        help='authors group ID(single argument only) to use to find presentation abstract.')
+        help='authors group ID(single argument only) to use to find '
+             'presentation abstract.')
     subpi.add_argument(
         "-y",
         "--year",
-        help='Start or end year of the presentation (single argument only) to use to find presentation.')
+        help='Start or end year of the presentation (single argument only) to '
+             'use to find presentation.')
     subpi.add_argument(
         "-l",
-        "--location",
-        help='Location of presentation, either a country, city, state, or university.')
+        "--loc_inst",
+        help='Location of presentation, either a fragement of an institution, '
+             'country, city, state, or university. If an instiution is entered,'
+             'the search will be for seminars or colloquiums, otherwise the '
+             'search will be for meetings')
+
     subpi.add_argument(
         "-t",
         "--title",
-        help='Fragment of the title of the abstract or talk to use to filter presentations.')
+        help='Fragment of the title of the abstract or talk to use to '
+             'filter presentations.')
     return subpi
 
 class AbstractListerHelper(SoutHelperBase):
@@ -74,25 +82,37 @@ class AbstractListerHelper(SoutHelperBase):
         rc = self.rc
         presentations = self.gtx["presentations"]
 
+        if (not rc.author) and (not rc.year) and (not rc.loc_inst) and (not rc.title):
+            return
+
         for presentation in presentations:
             if rc.title is not None:
                 if rc.title.casefold() not in presentation.get('title').casefold():
                     continue
-            if rc.location is not None and 'location' in presentation:
-                if rc.location.casefold() not in presentation.get('location').casefold():
-                    continue
-            if rc.location is not None and 'location' not in presentation:
-                continue
+            if presentation['type'] == 'seminar' or presentation['type'] == 'colloquium':
+                if rc.loc_inst is not None:
+                    if rc.loc_inst.casefold() not in presentation.get('institution').casefold():
+                        continue
+            else:
+                if rc.loc_inst is not None and 'location' in presentation:
+                    if rc.loc_inst.casefold() not in presentation.get('location').casefold():
+                        continue
             if rc.year is not None and 'begin_year' in presentation:
                 if int(rc.year) != presentation.get('begin_year'):
                     continue
             elif rc.year is not None and 'end_year' in presentation:
                 if int(rc.year) != presentation.get("end_year"):
                     continue
+            if rc.year is not None and 'begin_date' in presentation:
+                if str(rc.year) not in str(presentation.get('begin_date')):
+                    continue
+            elif rc.year is not None and 'end_date' in presentation:
+                if str(rc.year) not in str(presentation.get("end_date")):
+                    continue
             if rc.author is not None:
-                for authors in presentation.get('authors'):
-                    if rc.author not in authors:
-                        continue
+                if rc.author not in presentation.get('authors'):
+                    continue
+
             print("---------------------------------------")
             print(f"Title: {presentation.get('title')}\n")
             author_list = [author
