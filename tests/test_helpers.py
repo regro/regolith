@@ -329,44 +329,38 @@ helper_map = [
 ]
 
 helper_map = [
-    (["helper", "l_todo", "--deadlines",
+    (["helper", "l_todo", "--short", "65",
       "--date", "2020-07-13", "--assigned_by", "scopatz", "--assigned_to",
       "sbillinge"],
-     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "---------------------------------------------------------------------------------\n"
-     "upcoming deadlines:\n"
-     "------------------------------\n"
-     "(1) 2020-07-19: read paper (6|2|60.0|reading,downtime|scopatz)\n"
-     "---------------------------------------------------------------------------------\n"
-     ),
-    (["helper", "l_todo", "--assigned_to", "sbillinge", "--short_tasks", "65",
-      "--date", "2020-07-13", "--assigned_by", "scopatz"],
-     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "---------------------------------------------------------------------------------\n"
-     "tasks from people collection:\n"
-     "------------------------------\n"
+     "--------------------------------------------------------------------------------\n"
      "started:\n"
      "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
-     "---------------------------------------------------------------------------------\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-19(6 days): read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
      ),
     (["helper", "l_todo", "--tags", "downtime", "--date", "2020-07-13",
       "--assigned_by",
       "sbillinge", "--assigned_to", "sbillinge"],
-     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "---------------------------------------------------------------------------------\n"
+     "--------------------------------------------------------------------------------\n"
      "started:\n"
      "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "------------------------------"
-     "Tasks (decreasing priority going up)"
-     "------------------------------"
      "------------------------------\n"
-     "Deadlines:"
-     "------------------------------"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in people.yml.\n"
@@ -388,32 +382,38 @@ helper_map = [
      ),
     (["helper", "f_todo", "--assigned_to", "sbillinge", "--date",
       "2020-07-13"],
-     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
-     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
-     "---------------------------------------------------------------------------------\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
      "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "---------------------------------------------------------------------------------\n"
+     "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-19(6 days): read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
      ),
     (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge",
       "--description", "update the description", "--due_date", "2020-07-06",
       "--estimated_duration", "35", "--importance", "2", "--status", "finished",
       "--notes", "some new notes", "notes2", "--tags", "newtag1", "newtag2",
-      "--begin_date", "2020-06-06", "--deadline", "f",
+      "--begin_date", "2020-06-06", "--deadline", "t",
       "--end_date", "2020-07-07", "--date", "2020-07-13"],
      "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
      ),
     (["helper", "u_todo", "--assigned_to", "sbillinge", "--stati", "started",
       "finished", "--filter", "description", "the", "--date",
       "2020-07-13"],
-     "If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r\n"
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
      "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
-     "---------------------------------------------------------------------------------\n"
+     "--------------------------------------------------------------------------------\n"
      "started:\n"
      "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
      "     - about 10 minutes\n"
@@ -424,7 +424,17 @@ helper_map = [
      "     - test notes 2\n"
      "     - some new notes\n"
      "     - notes2\n"
-     "---------------------------------------------------------------------------------\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-06(-7 days): update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
+     "     - test notes 1\n"
+     "     - test notes 2\n"
+     "     - some new notes\n"
+     "     - notes2\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
      ),
 ]
 

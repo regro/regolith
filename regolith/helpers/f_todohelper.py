@@ -92,14 +92,13 @@ class TodoFinisherHelper(DbHelperBase):
                 if type(todo["due_date"]) == str:
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
-                todo["order"] = todo.get('importance', 1) + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
-            todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
-            print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
+                todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))
+            todolist = sorted(todolist, key=lambda k: (k['status'], k['importance'], k['order'], -k.get('duration', 10000)))
+            print("If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
-            print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
-            print("-" * 81)
+            print("(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
+            print("-" * 80)
             print_task(todolist, stati=['started'])
-            print("-" * 81)
         else:
             match_todo = [i for i in todolist if i.get("running_index") == rc.index]
             if len(match_todo) == 0:

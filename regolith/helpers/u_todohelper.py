@@ -9,6 +9,7 @@ import sys
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
+from regolith.schemas import (TODO_STATI)
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
@@ -19,18 +20,18 @@ from regolith.tools import (
 
 TARGET_COLL = "people"
 ALLOWED_IMPORTANCE = [0, 1, 2, -1, -2]
-ALLOWED_STATI = ["started", "finished", "cancelled"]
+TODO_STATI = ["started", "finished", "cancelled"]
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
                        help="Enter the index of a certain task in the enumerated list to update that task.",
                        type=int)
-    subpi.add_argument("-s", "--stati", nargs='+', help=f'Update tasks with specific status from {ALLOWED_STATI}. '
+    subpi.add_argument("-s", "--stati", nargs='+', help=f'Update tasks with specific status from {TODO_STATI}. '
                                                         f'Default is started.', default=["started"])
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
-    subpi.add_argument("-r", "--reorder", action="store_true",
-                       help="Reorder and update the indices."
+    subpi.add_argument("-r", "--renumber", action="store_true",
+                       help="Renumber the indices."
                        )
     subpi.add_argument("-d", "--description",
                        help=" Change the description of the to_do task. If the description has more than one "
@@ -44,12 +45,15 @@ def subparser(subpi):
                        help="Change the estimated duration the task will take in minutes. ",
                        type=float
                        )
+    subpi.add_argument("--deadline",
+                       help="give value 't' if due_date is a hard deadline, else 'f' if not",
+                       )
     subpi.add_argument("-p", "--importance",
                        help=f"Change the importance of the task from {ALLOWED_IMPORTANCE}.",
                        type=int
                        )
     subpi.add_argument("--status",
-                       help=f"Change the status of the task from {ALLOWED_STATI}."
+                       help=f"Change the status of the task choosing from {TODO_STATI}."
                        )
     subpi.add_argument("-n", "--notes", nargs="+", help="The new notes for this task. Each note should be enclosed "
                                                         "in quotation marks.")
@@ -64,7 +68,7 @@ def subparser(subpi):
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
-    subpi.add_argument("-c", "--date",
+    subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.")
 
     return subpi
@@ -106,7 +110,7 @@ class TodoUpdaterHelper(DbHelperBase):
                     "in the command line")
                 return
         filterid = {'_id': rc.assigned_to}
-        if rc.reorder:
+        if rc.renumber:
             index = 1
             for i in range(0, len(rc.databases)):
                 db_name = rc.databases[i]["name"]
@@ -137,17 +141,18 @@ class TodoUpdaterHelper(DbHelperBase):
             for todo in todolist:
                 if todo["status"] == 'started':
                     started_todo += 1
-                if type(todo["due_date"]) == str:
+                if isinstance(todo.get("due_date"), str):
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
-                if type(todo.get("end_date")) == str:
+                if isinstance(todo.get("end_date"), str):
                     todo["end_date"] = date_parser.parse(todo["end_date"]).date()
                 todo["days_to_due"] = (todo.get('due_date') - today).days
                 todo["sort_finished"] = (todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1, 1)).days
-                todo["order"] = todo.get('importance', 1) + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
-            todolist = sorted(todolist, key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
+                todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"] - 0.5)))
+            todolist = sorted(todolist, key=lambda k: (k['status'], k['importance'],
+                                                       k['order'], -k.get('duration', 10000)))
             todolist[started_todo:] = sorted(todolist[started_todo:], key=lambda k: (-k["sort_finished"]))
             index_match = {}
-            if rc.reorder:
+            if rc.renumber:
                 new_index_started = 1
                 new_index_finished = -1
                 for todo in todolist[:started_todo]:
@@ -178,18 +183,15 @@ class TodoUpdaterHelper(DbHelperBase):
                     if todo.get('assigned_by') != rc.assigned_by:
                         print(todo.get('assigned_by'))
                         todolist.remove(todo)
-                    elif rc.assigned_to == rc.assigned_by:
-                        todolist.remove(todo)
             if rc.filter:
                 todolist = key_value_pair_filter(todolist, rc.filter)
             if rc.stati == ["started"]:
                 rc.stati = ACTIVE_STATI
-            print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
+            print("If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
             print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
-            print("-" * 81)
+            print("-" * 80)
             print_task(todolist, stati=rc.stati)
-            print("-" * 81)
         else:
             match_todo = [i for i in todolist if i.get("running_index") == rc.index]
             if len(match_todo) == 0:
@@ -205,6 +207,15 @@ class TodoUpdaterHelper(DbHelperBase):
                     except ValueError:
                         due_date = date_parser.parse(rc.due_date).date()
                     todo["due_date"] = due_date
+                if rc.deadline:
+                    if rc.deadline.lower() != "t":
+                        if rc.deadline.lower() != "f":
+                            raise RuntimeError(
+                                "ERROR: allowed values for deadline are t or f")
+                    elif rc.deadline.lower() == "f":
+                        todo["deadline"] = False
+                    else:
+                        todo["deadline"] = True
                 if rc.estimated_duration:
                     todo["duration"] = rc.estimated_duration
                 if rc.importance or rc.importance == 0:
@@ -213,10 +224,10 @@ class TodoUpdaterHelper(DbHelperBase):
                     else:
                         raise ValueError(f"Importance should be chosen from{ALLOWED_IMPORTANCE}.")
                 if rc.status:
-                    if rc.status in ALLOWED_STATI:
+                    if rc.status in TODO_STATI:
                         todo["status"] = rc.status
                     else:
-                        raise ValueError(f"Status should be chosen from {ALLOWED_STATI}.")
+                        raise ValueError(f"Status should be chosen from {TODO_STATI}.")
                 if rc.notes:
                     try:
                         todo["notes"].extend(rc.notes)

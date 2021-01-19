@@ -15,7 +15,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "people"
-ALLOWED_IMPORTANCE = [0, 1, 2]
+ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 
 
 def subparser(subpi):
@@ -31,11 +31,13 @@ def subparser(subpi):
                        help="The estimated duration the task will take in minutes.",
                        )
     subpi.add_argument("-d", "--deadline", action="store_true",
-                       help=f"The due date is a hard deadline. Default is False"
+                       help=f"The due date is treated as a hard deadline when -d is set. Default is False"
                        )
     subpi.add_argument("-m", "--importance",
-                       help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 0",
-                       default=0
+                       help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1. "
+                            f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the eigenhower matrix of "
+                            f"importance vs. urgency",
+                       default=1
                        )
     subpi.add_argument("-t", "--tags", nargs="+",
                        help="Tags associated with this task.  The todo list can be filtered by these tags")
@@ -123,18 +125,19 @@ class TodoAdderHelper(DbHelperBase):
             raise ValueError(
                 f"importance should be chosen from {ALLOWED_IMPORTANCE}")
         todolist = person.get("todos", [])
+        if not rc.deadline:
+            rc.deadline = False
         todolist.append({
             'description': rc.description,
             'due_date': due_date,
             'begin_date': begin_date,
+            'deadline': rc.deadline,
             'duration': float(rc.duration),
             'importance': importance,
             'status': "started",
             'assigned_by': rc.assigned_by})
         if rc.notes:
             todolist[-1]['notes'] = rc.notes
-        if rc.deadline:
-            todolist[-1]['deadline'] = rc.deadline
         if rc.tags:
             todolist[-1]['tags'] = rc.tags
         indices = [todo.get("running_index", 0) for todo in todolist]

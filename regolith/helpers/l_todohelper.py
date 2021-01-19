@@ -24,7 +24,7 @@ from regolith.tools import (
 TARGET_COLL = "people"
 TARGET_COLL2 = "projecta"
 HELPER_TARGET = "l_todo"
-Importance = [3, 2, 1, 0, -1, -2]  # eisenhower matrix (important| urgent) tt=3, tf=2, ft=1, ff=0
+Importance = [3, 2, 1, 0, -1, -2]  # eisenhower matrix (important|urgent) tt=3, tf=2, ft=1, ff=0
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
 
@@ -162,13 +162,11 @@ class TodoListerHelper(SoutHelperBase):
         gather_todos[len_of_tasks:] = sorted(
             gather_todos[len_of_tasks:],
             key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)))
-        print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
+        print("If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r")
         print("(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
-        print("-" * 81)
+        print("-" * 80)
         if milestones != 0:
             print_task(gather_todos[len_of_tasks:], stati=rc.stati, index=False)
-            #print("-" * 42)
-            #print("tasks from projecta and other collections:")
         if len_of_tasks != 0:
             print_task(gather_todos[:len_of_tasks], stati=rc.stati)
         return
@@ -196,8 +194,7 @@ def _format_todos(todo, today):
                 todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1,
                                                                     1)).days
     try:
-        todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"] - 0.5))
-                             )
+        todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"] - 0.5)))
     except OverflowError:
         todo["order"] = float('inf')
     return
