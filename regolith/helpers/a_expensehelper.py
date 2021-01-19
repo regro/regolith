@@ -185,7 +185,7 @@ class ExpenseAdderHelper(DbHelperBase):
                 {
                     'date': begin_date,
                     'purpose': rc.purpose,
-                    'unsegregated_expense': rc.amount,
+                    'unsegregated_expense': float(rc.amount),
                     'segregated_expense': 0
                 }]
             })
