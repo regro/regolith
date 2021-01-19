@@ -229,106 +229,6 @@ helper_map = [
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
      ),
-# fixme replace todo tests here
-    (["helper", "f_prum", "sb_firstprojectum", "--end_date", "2020-07-01"],
-     "sb_firstprojectum status has been updated to finished\n"
-     ),
-    (["helper", "f_prum", "sb_"],
-     "Projectum not found. Projecta with similar names: \n"
-     "sb_firstprojectum     status:finished\n"
-     "Please rerun the helper specifying the complete ID.\n"
-     ),
-    (["helper", "lister", "people"],
-     "Results of your search:\nabeing    \nsbillinge    \nscopatz\n"),
-    (["helper", "lister", "people", "--kv_filter", "name", "simon"],
-     "Results of your search:\n"
-     "sbillinge\n"),
-    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--return_fields", "name", "position"],
-     "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n"),
-    (["helper", "lister", "people", "--keys"],
-     "Available keys:\n"
-     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
-     "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
-     "'github_id', 'google_scholar_url', 'grp_mtg_active', 'hindex', "
-     "'home_address', 'initials', 'linkedin_url', "
-     "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
-     "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
-     "'title', 'todos']\n"),
-    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
-     "Results of your search:\nsbillinge\n"
-     "Available keys:\n"
-     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
-     "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
-     "'github_id', 'google_scholar_url', 'grp_mtg_active', 'hindex', "
-     "'home_address', 'initials', 'linkedin_url', "
-     "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
-     "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
-     "'title', 'todos']\n"
-     ),
-    (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
-     "There are no results that match your search.\n"
-     ),
-    (["helper", "u_institution", "columbiau",
-      "--aka", "ucolumbia", "Columbia University in the City of New York",
-      "--dept_id", "mathematics", "--dept_name", "Department of Mathematics",
-      "--dept_aka", "dept. of mathematics", "math department",
-      "--school_id", "cc", "--school_name", "Columbia College", "--school_aka", "CC",
-      "--date", "2020-01-01"],
-     "columbiau has been updated/added in institutions\n"
-     ),
-    (["helper", "u_institution", "col"],
-     "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
-     "1. col as a new institution.\n"
-     "2. columbiau      Columbia University.\n"),
-    (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31",],
-     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
-     "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
-     "appointments on outdated grants:\n"
-     "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-05-02 until 2019-09-01\n"
-     "    person: scopatz, appointment: s20, grant: sym,\n"
-     "            from 2020-01-01 until 2020-05-15\n"
-     "appointments on depleted grants:\n"
-     "    person: scopatz, appointment: ss20, grant: abc42,\n"
-     "            from 2020-07-15 until 2020-08-31\n"
-     "underspent grants:\n"
-     "    dmref15: end: 2019-05-01\n"
-     "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
-     "      required ss+gra burn: -3.5\n"
-     "    sym: end: 2030-12-31\n"
-     "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
-     "      required ss+gra burn: 0.06\n"
-     "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
-     "overspent grants:\n"
-     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
-     "plotting mode is on\n"
-     ),
-    (["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2020-08-31",],
-     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
-     "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
-     "appointments on outdated grants:\n"
-     "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-05-02 until 2019-09-01\n"
-     "    person: scopatz, appointment: s20, grant: sym,\n"
-     "            from 2020-01-01 until 2020-05-15\n"
-     "appointments on depleted grants:\n"
-     "    person: scopatz, appointment: ss20, grant: abc42,\n"
-     "            from 2020-07-15 until 2020-08-31\n"
-     "underspent grants:\n"
-     "    dmref15: end: 2019-05-01\n"
-     "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
-     "      required ss+gra burn: -3.5\n"
-     "    sym: end: 2030-12-31\n"
-     "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
-     "      required ss+gra burn: 0.06\n"
-     "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
-     "overspent grants:\n"
-     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
-     ),
-    (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
-]
-
-helper_map = [
     (["helper", "l_todo", "--short", "65",
       "--date", "2020-07-13", "--assigned_by", "scopatz", "--assigned_to",
       "sbillinge"],
@@ -436,7 +336,104 @@ helper_map = [
      "Deadlines:\n"
      "------------------------------\n"
      ),
+    (["helper", "f_prum", "sb_firstprojectum", "--end_date", "2020-07-01"],
+     "sb_firstprojectum status has been updated to finished\n"
+     ),
+    (["helper", "f_prum", "sb_"],
+     "Projectum not found. Projecta with similar names: \n"
+     "sb_firstprojectum     status:finished\n"
+     "Please rerun the helper specifying the complete ID.\n"
+     ),
+    (["helper", "lister", "people"],
+     "Results of your search:\nabeing    \nsbillinge    \nscopatz\n"),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon"],
+     "Results of your search:\n"
+     "sbillinge\n"),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--return_fields", "name", "position"],
+     "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n"),
+    (["helper", "lister", "people", "--keys"],
+     "Available keys:\n"
+     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
+     "'github_id', 'google_scholar_url', 'grp_mtg_active', 'hindex', "
+     "'home_address', 'initials', 'linkedin_url', "
+     "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
+     "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
+     "'title', 'todos']\n"),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
+     "Results of your search:\nsbillinge\n"
+     "Available keys:\n"
+     "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
+     "'committees', 'education', 'email', 'employment', 'facilities', 'funding', "
+     "'github_id', 'google_scholar_url', 'grp_mtg_active', 'hindex', "
+     "'home_address', 'initials', 'linkedin_url', "
+     "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
+     "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
+     "'title', 'todos']\n"
+     ),
+    (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
+     "There are no results that match your search.\n"
+     ),
+    (["helper", "u_institution", "columbiau",
+      "--aka", "ucolumbia", "Columbia University in the City of New York",
+      "--dept_id", "mathematics", "--dept_name", "Department of Mathematics",
+      "--dept_aka", "dept. of mathematics", "math department",
+      "--school_id", "cc", "--school_name", "Columbia College", "--school_aka", "CC",
+      "--date", "2020-01-01"],
+     "columbiau has been updated/added in institutions\n"
+     ),
+    (["helper", "u_institution", "col"],
+     "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
+     "1. col as a new institution.\n"
+     "2. columbiau      Columbia University.\n"),
+    (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31",],
+     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+     "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
+     "appointments on outdated grants:\n"
+     "    person: scopatz, appointment: f19, grant: dmref15,\n"
+     "            from 2019-05-02 until 2019-09-01\n"
+     "    person: scopatz, appointment: s20, grant: sym,\n"
+     "            from 2020-01-01 until 2020-05-15\n"
+     "appointments on depleted grants:\n"
+     "    person: scopatz, appointment: ss20, grant: abc42,\n"
+     "            from 2020-07-15 until 2020-08-31\n"
+     "underspent grants:\n"
+     "    dmref15: end: 2019-05-01\n"
+     "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: -3.5\n"
+     "    sym: end: 2030-12-31\n"
+     "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: 0.06\n"
+     "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
+     "overspent grants:\n"
+     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
+     "plotting mode is on\n"
+     ),
+    (["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2020-08-31",],
+     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+     "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
+     "appointments on outdated grants:\n"
+     "    person: scopatz, appointment: f19, grant: dmref15,\n"
+     "            from 2019-05-02 until 2019-09-01\n"
+     "    person: scopatz, appointment: s20, grant: sym,\n"
+     "            from 2020-01-01 until 2020-05-15\n"
+     "appointments on depleted grants:\n"
+     "    person: scopatz, appointment: ss20, grant: abc42,\n"
+     "            from 2020-07-15 until 2020-08-31\n"
+     "underspent grants:\n"
+     "    dmref15: end: 2019-05-01\n"
+     "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: -3.5\n"
+     "    sym: end: 2030-12-31\n"
+     "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: 0.06\n"
+     "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
+     "overspent grants:\n"
+     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
+     ),
+    (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
 ]
+
 
 @pytest.mark.parametrize("hm", helper_map)
 def test_helper_python(hm, make_db, capsys):
