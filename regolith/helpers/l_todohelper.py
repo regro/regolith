@@ -24,13 +24,15 @@ from regolith.tools import (
 TARGET_COLL = "people"
 TARGET_COLL2 = "projecta"
 HELPER_TARGET = "l_todo"
-Importance = [3, 2, 1, 0, -1, -2]  # eisenhower matrix (important|urgent) tt=3, tf=2, ft=1, ff=0
+Importance = [3, 2, 1, 0, -1,
+              -2]  # eisenhower matrix (important|urgent) tt=3, tf=2, ft=1, ff=0
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
 
 def subparser(subpi):
-    subpi.add_argument("-s", "--stati", nargs='+', help=f'Filter tasks with specific status from {TODO_STATI}. '
-                                                        f'Default is started.', default=["started"])
+    subpi.add_argument("-s", "--stati", nargs='+',
+                       help=f'Filter tasks with specific status from {TODO_STATI}. '
+                            f'Default is started.', default=["started"])
     subpi.add_argument("--short", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
     subpi.add_argument("-t", "--tags", nargs='+',
@@ -41,7 +43,8 @@ def subparser(subpi):
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.")
-    subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
+    subpi.add_argument("-f", "--filter", nargs="+",
+                       help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
 
     return subpi
 
@@ -90,7 +93,9 @@ class TodoListerHelper(SoutHelperBase):
                     "in the command line")
                 return
         try:
-            person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
+            person = document_by_value(
+                all_docs_from_collection(rc.client, "people"), "_id",
+                rc.assigned_to)
             gather_todos = person.get("todos", [])
         except:
             print(
@@ -120,19 +125,21 @@ class TodoListerHelper(SoutHelperBase):
                             'due_date': due_date,
                             'assigned_by': projectum.get('pi_id')
                         })
-                        ms.update({'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
+                        ms.update({
+                                      'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
                         gather_todos.append(ms)
         if rc.filter:
             gather_todos = key_value_pair_filter(gather_todos, rc.filter)
         if rc.short:
             for todo in gather_todos[::-1]:
-                if todo.get('duration') is None or float(todo.get('duration')) > float(rc.short):
+                if todo.get('duration') is None or float(
+                        todo.get('duration')) > float(rc.short):
                     gather_todos.remove(todo)
         if rc.tags:
             for todo in gather_todos[::-1]:
                 takeme = False
                 for tag in rc.tags:
-                    if tag in todo.get('tags'):
+                    if tag in todo.get('tags', []):
                         takeme = True
                 if not takeme:
                     gather_todos.remove(todo)
@@ -142,7 +149,7 @@ class TodoListerHelper(SoutHelperBase):
             for todo in gather_todos[::-1]:
                 if todo.get('assigned_by') != rc.assigned_by:
                     gather_todos.remove(todo)
-        len_of_started_tasks=0
+        len_of_started_tasks = 0
         milestones = 0
         for todo in gather_todos:
             if 'milestone: ' in todo['description']:
@@ -154,7 +161,8 @@ class TodoListerHelper(SoutHelperBase):
             _format_todos(todo, today)
         gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks],
                                              key=lambda k:
-                                             (k['status'], k['importance'], k['order'],
+                                             (k['status'], k['importance'],
+                                              k['order'],
                                               -k.get('duration', 10000)))
         gather_todos[len_of_started_tasks: len_of_tasks] = sorted(
             gather_todos[len_of_started_tasks: len_of_tasks],
@@ -162,14 +170,17 @@ class TodoListerHelper(SoutHelperBase):
         gather_todos[len_of_tasks:] = sorted(
             gather_todos[len_of_tasks:],
             key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)))
-        print("If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r")
-        print("(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
+        print(
+            "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r")
+        print(
+            "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
         print("-" * 80)
         if milestones != 0:
             print_task(gather_todos[len_of_tasks:], stati=rc.stati, index=False)
         if len_of_tasks != 0:
             print_task(gather_todos[:len_of_tasks], stati=rc.stati)
         return
+
 
 def _format_todos(todo, today):
     '''
@@ -191,8 +202,8 @@ def _format_todos(todo, today):
         todo["end_date"] = date_parser.parse(todo["end_date"]).date()
     todo["days_to_due"] = (todo.get('due_date') - today).days
     todo["sort_finished"] = (
-                todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1,
-                                                                    1)).days
+            todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1,
+                                                                1)).days
     try:
         todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"] - 0.5)))
     except OverflowError:
