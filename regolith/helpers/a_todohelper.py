@@ -15,7 +15,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "people"
-ALLOWED_IMPORTANCE = [0, 1, 2]
+ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 
 
 def subparser(subpi):
@@ -30,8 +30,13 @@ def subparser(subpi):
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
                        )
-    subpi.add_argument("--importance",
-                       help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1.",
+    subpi.add_argument("-d", "--deadline", action="store_true",
+                       help=f"The due date is treated as a hard deadline when -d is set. Default is False"
+                       )
+    subpi.add_argument("-m", "--importance",
+                       help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1. "
+                            f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the eigenhower matrix of "
+                            f"importance vs. urgency",
                        default=1
                        )
     subpi.add_argument("-t", "--tags", nargs="+",
@@ -120,10 +125,13 @@ class TodoAdderHelper(DbHelperBase):
             raise ValueError(
                 f"importance should be chosen from {ALLOWED_IMPORTANCE}")
         todolist = person.get("todos", [])
+        if not rc.deadline:
+            rc.deadline = False
         todolist.append({
             'description': rc.description,
             'due_date': due_date,
             'begin_date': begin_date,
+            'deadline': rc.deadline,
             'duration': float(rc.duration),
             'importance': importance,
             'status': "started",
