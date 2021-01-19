@@ -331,6 +331,7 @@ sbillinge:
     - description: test a_todo
       due_date: 2020-07-16
       begin_date: 2020-07-06
+      deadline: true
       duration: 50.0
       importance: 2
       status: started

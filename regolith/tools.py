@@ -1745,30 +1745,46 @@ def print_task(task_list, stati, index = True):
     ----------
     task_list: list
         A list of tasks that will be printed.
-    stati:
+    stati: list
         Filter status of the task
-
 
     """
     for status in stati:
         if f"'status': '{status}'" in str(task_list):
             print(f"{status}:")
-        if index:
-            for task in task_list:
-                if task.get('status') == status:
-                    print(
-                        f"({task.get('running_index')}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
-                    if task.get('notes'):
-                        for note in task.get('notes'):
-                            print(f"     - {note}")
-        else:
-            for task in task_list:
-                if task.get('status') == status:
-                    print(
-                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
-                    if task.get('notes'):
-                        for note in task.get('notes'):
-                            print(f"     - {note}")
+        for task in task_list:
+            if index:
+                task["preamble"] = f"({task.get('running_index',0)}) "
+            else:
+                task["preamble"] = ""
+            if task.get('status') == status:
+                print(
+                    f"{task.get('preamble')}{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
+                if task.get('notes'):
+                    for note in task.get('notes'):
+                        print(f"     - {note}")
+    print("-" * 30)
+    print("Tasks (decreasing priority going up)")
+    print("-" * 30)
+    deadline_list = [task for task in task_list
+                     if task.get('deadline') and task.get("status") in stati]
+    deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
+    for task in deadline_list:
+        print(
+            f"{task.get('due_date')}({task.get('days_to_due')} days): {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
+        if task.get('notes'):
+            for note in task.get('notes'):
+                print(f"     - {note}")
+    print(f"{'-'*30}\nDeadlines:\n{'-'*30}")
+
+#        else:
+#            for task in task_list:
+#                if task.get('status') == status:
+#                    print(
+#                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
+#                    if task.get('notes'):
+#                        for note in task.get('notes'):
+#                            print(f"     - {note}")
 
 
 

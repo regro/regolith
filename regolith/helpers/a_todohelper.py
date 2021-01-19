@@ -30,9 +30,12 @@ def subparser(subpi):
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
                        )
-    subpi.add_argument("--importance",
-                       help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1.",
-                       default=1
+    subpi.add_argument("-d", "--deadline", action="store_true",
+                       help=f"The due date is a hard deadline. Default is False"
+                       )
+    subpi.add_argument("-m", "--importance",
+                       help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 0",
+                       default=0
                        )
     subpi.add_argument("-t", "--tags", nargs="+",
                        help="Tags associated with this task.  The todo list can be filtered by these tags")
@@ -130,6 +133,8 @@ class TodoAdderHelper(DbHelperBase):
             'assigned_by': rc.assigned_by})
         if rc.notes:
             todolist[-1]['notes'] = rc.notes
+        if rc.deadline:
+            todolist[-1]['deadline'] = rc.deadline
         if rc.tags:
             todolist[-1]['tags'] = rc.tags
         indices = [todo.get("running_index", 0) for todo in todolist]

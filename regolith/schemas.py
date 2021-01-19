@@ -29,6 +29,7 @@ REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
                 "submitted", "cancelled"]
 REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
 SERVICE_TYPE = ["profession", "university", "school", "department"]
+TODO_STATI = ["started", "finished", "cancelled", "paused"]
 
 
 EXEMPLARS = {
@@ -1372,6 +1373,7 @@ EXEMPLARS = {
                 {"description": "read paper",
                  "due_date": "2020-07-19",
                  "begin_date": "2020-06-15",
+                 "deadline": True,
                  "duration": 60.0,
                  "importance": 2,
                  "status": "started",
@@ -3487,12 +3489,14 @@ SCHEMAS = {
                         "required": False,
                         "type": "float"},
                     "importance": {
-                        "description": "the importance, from 0 to 2",
+                        "description": "the importance, from 0 to 3",
                         "required": False,
                         "type": "integer"},
                     "status": {"description": "the status: started/finished/cancelled",
                                "required": True,
-                               "type": "string"},
+                               "type": "string",
+                               "eallowed": TODO_STATI
+                               },
                     "notes": {"description": "additional notes for this task",
                               "required": False,
                               "type": "list",

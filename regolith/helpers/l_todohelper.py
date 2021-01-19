@@ -10,6 +10,9 @@ from dateutil.relativedelta import *
 from regolith.dates import get_due_date, get_dates
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
+from regolith.schemas import (
+    TODO_STATI
+)
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
@@ -21,13 +24,12 @@ from regolith.tools import (
 TARGET_COLL = "people"
 TARGET_COLL2 = "projecta"
 HELPER_TARGET = "l_todo"
-Importance = [0, 1, 2, -1, -2]
-ALLOWED_STATI = ["started", "finished", "cancelled"]
+Importance = [3, 2, 1, 0, -1, -2]  # eisenhower matrix (important| urgent) tt=3, tf=2, ft=1, ff=0
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
 
 def subparser(subpi):
-    subpi.add_argument("-s", "--stati", nargs='+', help=f'Filter tasks with specific status from {ALLOWED_STATI}. '
+    subpi.add_argument("-s", "--stati", nargs='+', help=f'Filter tasks with specific status from {TODO_STATI}. '
                                                         f'Default is started.', default=["started"])
     subpi.add_argument("--short", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
@@ -149,30 +151,53 @@ class TodoListerHelper(SoutHelperBase):
                 len_of_started_tasks += 1
         len_of_tasks = len(gather_todos) - milestones
         for todo in gather_todos:
-            if type(todo["due_date"]) == str:
-                todo["due_date"] = date_parser.parse(todo["due_date"]).date()
-            if type(todo.get("end_date")) == str:
-                todo["end_date"] = date_parser.parse(todo["end_date"]).date()
-            todo["days_to_due"] = (todo.get('due_date') - today).days
-            todo["sort_finished"] = (todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1, 1)).days
-            try:
-                todo["order"] = todo.get('importance',1) + 1 / (1 + math.exp(abs(todo["days_to_due"]-0.5)))-(todo["days_to_due"] < -7)*10
-            except OverflowError:
-                todo["order"] = float('inf')
-        gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks], key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
-        gather_todos[len_of_started_tasks: len_of_tasks] = sorted(gather_todos[len_of_started_tasks: len_of_tasks], key=lambda k: (-k["sort_finished"]))
-        gather_todos[len_of_tasks:] = sorted(gather_todos[len_of_tasks:], key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)), reverse=True)
+            _format_todos(todo, today)
+        gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks],
+                                             key=lambda k:
+                                             (k['status'], k['importance'], k['order'],
+                                              -k.get('duration', 10000)))
+        gather_todos[len_of_started_tasks: len_of_tasks] = sorted(
+            gather_todos[len_of_started_tasks: len_of_tasks],
+            key=lambda k: (-k["sort_finished"]))
+        gather_todos[len_of_tasks:] = sorted(
+            gather_todos[len_of_tasks:],
+            key=lambda k: (k['status'], k['order'], -k.get('duration', 10000)))
         print("If the indices are far from being in numerical order, please reorder them by running regolith helper u_todo -r")
         print("(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
         print("-" * 81)
-        if len_of_tasks != 0:
-            print("tasks from people collection:")
-            print("-" * 30)
-            print_task(gather_todos[:len_of_tasks], stati=rc.stati)
         if milestones != 0:
-            print("-" * 42)
-            print("tasks from projecta and other collections:")
-            print("-" * 42)
             print_task(gather_todos[len_of_tasks:], stati=rc.stati, index=False)
-        print("-" * 81)
+            #print("-" * 42)
+            #print("tasks from projecta and other collections:")
+        if len_of_tasks != 0:
+            print_task(gather_todos[:len_of_tasks], stati=rc.stati)
         return
+
+def _format_todos(todo, today):
+    '''
+    datify dates, set orders etc and update to-do items in place
+
+    Parameters
+    ----------
+    todo: dict
+      the to-do item to be munged
+
+    Returns
+    -------
+    nothing
+
+    '''
+    if type(todo["due_date"]) == str:
+        todo["due_date"] = date_parser.parse(todo["due_date"]).date()
+    if type(todo.get("end_date")) == str:
+        todo["end_date"] = date_parser.parse(todo["end_date"]).date()
+    todo["days_to_due"] = (todo.get('due_date') - today).days
+    todo["sort_finished"] = (
+                todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1,
+                                                                    1)).days
+    try:
+        todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"] - 0.5))
+                             )
+    except OverflowError:
+        todo["order"] = float('inf')
+    return
