@@ -212,8 +212,8 @@ class TodoUpdaterHelper(DbHelperBase):
                         if rc.deadline.lower() != "f":
                             raise RuntimeError(
                                 "ERROR: allowed values for deadline are t or f")
-                    elif rc.deadline.lower() == "f":
-                        todo["deadline"] = False
+                        else:
+                            todo["deadline"] = False
                     else:
                         todo["deadline"] = True
                 if rc.estimated_duration:
