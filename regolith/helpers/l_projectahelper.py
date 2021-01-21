@@ -23,7 +23,7 @@ TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"
 
 ACTIVE_STATI = ["proposed", "started"]
-INACTIVE_STATI = ["back_burner", "cancelled"]
+INACTIVE_STATI = ["back_burner", "cancelled", "paused"]
 FINISHED_STATI = ["finished"]
 
 
