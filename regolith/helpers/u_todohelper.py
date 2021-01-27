@@ -19,7 +19,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "people"
-ALLOWED_IMPORTANCE = [0, 1, 2, -1, -2]
+ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 TODO_STATI = ["started", "finished", "cancelled"]
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
