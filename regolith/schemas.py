@@ -31,6 +31,13 @@ REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majored
 SERVICE_TYPE = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
 PROJECTA_STATUS = ["proposed", "started", "converged", "finished"]
+# kickoff, deliverable, milestones, and the projectum all have a status field, want different options for each?
+PROJECTUM_STATUS = ["proposed", "started", "converged", "finished", "cancelled", "paused"]
+# this is every milestone type I found in the projecta db
+MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "pull request", "release", "email", "handin",
+                  "code", "task", "manuscript", "approved_file", "presentation", "file", "report",
+                  "submission", "finalized_list", "merged_pr", "decision", "finalized_doc", "demo",
+                  "software", "skel"]
 
 
 EXEMPLARS = {
@@ -1485,7 +1492,7 @@ EXEMPLARS = {
             "webinar": True,
         },
     ],
-    "projecta": {
+    "projectum": {
         "_id": "sb_firstprojectum",
         "begin_date": "2020-04-28",
         "collaborators": ["aeinstein", "pdirac"],
@@ -1527,7 +1534,11 @@ EXEMPLARS = {
                          'initial project plan',
             'audience': ['lead', 'pi', 'group_members'],
             'status': 'proposed',
-            'type': 'meeting'
+            'type': 'meeting',
+            'progress': [
+              '- text: The samples have been synthesized and placed in the sample cupboard. They turned out well and are blue as expected.',
+              '- figure: <token that dereferences a figure or image in group local storage db>',
+              '- slides_url: <url to slides describing the development, e.g., Google slides url>']
         },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
@@ -3634,45 +3645,49 @@ SCHEMAS = {
             "type": "boolean",
         },
     },
-    "projecta": {
+    "projectum": {
         "_description": {
             "description": "This collection describes a single deliverable "
-                            "of a larger project."
+                           "of a larger project."
         },
         "_id": {
-            "description": "Unique projecta identifier",
+            "description": "Unique projectum identifier",
             "required": True,
             "type": "string"
         },
         "begin_date": {
-            "description": "projecta start date, yyyy-mm-dd",
+            "description": "projectum start date, yyyy-mm-dd",
             "required": False,
             "type": "string"
         },
         "collaborators": {
-            "description": "list of collaborator's id's",
+            "description": "list of collaborators ids. These are non-group members. "
+                           "These will be dereferenced from the contacts collection.",
             "required": False,
             "type": "list"
         },
         "deliverable":{
-            "description": "outline of the deliverable for this projecta",
+            "description": "outline of the deliverable for this projectum",
             "type": "dict",
             "schema": {
-                "audience": {"description": "who is this deliverable for",
+                "audience": {"description": "the target audience for this deliverable",
                              "required": False,
                              "type": "list"},
-                #is this the proper form of the due date, the exemplar is ambiguous
                 "due_date": {"description": "due date of deliverable, yyyy-mm-dd",
                              "required": False,
                              "anyof_type": ["date", "string"]},
                 "success_def": {"description": "definition of a successful deliverable",
                                 "required": False,
                                 "type": "string"},
-                "scope": {"description": "",
+                "scope": {"description": "a list of items that define the scope of the deliverable."
+                                         "If this is a software release it might be a list of Use Cases that will be satisfied."
+                                         "If it is a paper it defines what will, and what won't, be described in the paper.",
                           "required": False,
                           "type": "list"},
-                "platform": {"description": "description of how and where the audience will access "
-                                "the deliverable.  e.g. Journal if it is a paper",
+                "platform": {"description": "description of how and where the audience will access the deliverable."
+                                            "e.g. Journal if it is a paper. For software releases, this may be the "
+                                            "computer operating systems that will be supported, or if it will be a "
+                                            "web service, etc.",
                              "required": False,
                              "type": "string"},
                 "rollout": {"description": "steps that the audience will take to access "
@@ -3680,23 +3695,22 @@ SCHEMAS = {
                                            "not needed for paper submissions",
                             "required": False,
                             "type": "list"},
-                "notes": {"description": "deliverable note",
+                "notes": {"description": "any notes about the deliverable that we want to keep track of",
                           "required": False,
                           "type": "list"},
                 "status": {"description": "current state of deliverable",
                            "required": False,
                            "type": "string",
-                           "eallowed": PROJECTA_STATUS},
+                           "eallowed": PROJECTUM_STATUS},
             }
         },
         "description": {
-            "description": "explanation of projecta",
+            "description": "explanation of projectum",
             "required": False,
             "type": "string"
         },
         "end_date": {
-            "description": "projecta end date, yyyy-mm-dd. "
-                           "Not necessarily the same as deliverable due date",
+            "description": "projectum end date, yyyy-mm-dd.",
             "required": False,
             "anyof_type": ["date", "string"]
         },
@@ -3706,12 +3720,13 @@ SCHEMAS = {
             "type": "string"
         },
         "group_members": {
-            "description": "group member id's working on this project",
+            "description": "list of group member id's working on this project,"
+                           "These will be dereferenced from the people collection.",
             "required": False,
             "type": "list"
         },
         "kickoff":{
-            "description": "details the projecta kickoff meeting",
+            "description": "details the projectum kickoff meeting",
             "required": False,
             "type": "dict",
             "schema": {
@@ -3727,34 +3742,36 @@ SCHEMAS = {
                 "objective": {"description": "goal of the meeting",
                               "required": False,
                               "type": "string"},
-                "audience": {"description": "rolls of audience members "
-                                            "e.g. 'pi', 'lead'",
+                "audience": {"description": "list of people attending the meeting."
+                                            "Normally this list is group_members, collaborators, and pi, "
+                                            "or some subset of these. if people are invited who are not already"
+                                            "in these groups their names or id's can be added explicitly to the list",
                              "required": False,
                              "type": "list"},
-                "notes": {"description": "any notes about the kickoof",
+                "notes": {"description": "any notes about the kickoff",
                           "required": False,
                           "type": "list"},
                 "status": {"description": "proposed, started, finished, converged",
                            "required": False,
                            "type": "string",
-                           "eallowed": PROJECTA_STATUS}
-
+                           "eallowed": PROJECTUM_STATUS}
             }
         },
         "lead": {
-            "description": "id of projecta lead",
+            "description": "the id of the lead student or person for the projectum. "
+                           "Person details will be dereferenced from the people collection.",
             "required": False,
             "type": "string"
         },
         "log_url": {
-            "description": "link to log of meetings",
+            "description": "link to an online document (e.g., Google doc) "
+                           "that is a log of notes and meeting minutes for the projectum",
             "required": False,
             "type": "string"
         },
         "milestones": {
             "description": "smaller deliverables done by a certain date "
-                           "a series of milestones ends with the deliverable "
-                           "the projecta",
+                           "a series of milestones ends with the projectum deliverable",
             "required": False,
             "type": "list",
             "schema": {
@@ -3766,38 +3783,49 @@ SCHEMAS = {
                     "name": {"description": "what is the deliverable of milestone",
                              "required": False,
                              "type": "string"},
-                    "notes": {"description": "small, non-deliverable to-do's",
+                    "notes": {"description": "any notes about the milestone and/or "
+                                             "small, non-deliverable to-dos to reach the milestone",
+                              "required": False,
+                              "type": "list"},
+                    "progress": {"description": "text description of progress and observations, "
+                                                "token that dereferences a figure or image in group local storage db, "
+                                                "and/or url to slides describing the development, "
+                                                "e.g., Google slides url",
                               "required": False,
                               "type": "list"},
                     "objective": {"description": "explains goal of the milestone",
                                   "required": False,
                                   "type": "string"},
-                    "audience": {"description": "rolls of audience members "
-                                                "e.g. 'pi', 'lead'",
+                    "audience": {"description": "list of people attending the meeting."
+                                                "Normally this list is group_members, collaborators, and pi, "
+                                                "or some subset of these. if people are invited who are not already"
+                                                "in these groups their names or id's can be added explicitly to the list",
                                  "required": False,
                                  "type": "list"},
-                    "status": {"description": "proposed, started, finished, converged",
+                    "status": {"description": "status of the milestone from {PROJECTUM_STATUS} "
+                                              "proposed, started, finished, converged, cancelled, paused",
                                "required": False,
-                               "type": "string",
-                               "eallowed": PROJECTA_STATUS},
-                    "type": {"description": "what kind of deliverable is it "
+                               "type": "fstring",
+                               "eallowed": PROJECTUM_STATUS},
+                    "type": {"description": "what kind of deliverable the milestone is "
                                             "e.g. 'meeting",
                              "required": False,
-                             "type": "string"}
+                             "type": "string",
+                             "eallowed": MILESTONE_TYPE}
 
                 }
             }
         },
-        "name": {"description": "name of the projecta",
+        "name": {"description": "name of the projectum",
                  "required": False,
                  "type": "string"},
         "pi_id": {"description": "id of the PI",
                   "required": False,
                   "type": "string"},
-        "status": {"description": "proposed, started, finished, converged",
+        "status": {"description": "proposed, started, finished, converged, cancelled, paused",
                    "required": False,
                    "type": "string",
-                   "eallowed": PROJECTA_STATUS}
+                   "eallowed": PROJECTUM_STATUS}
 
     },
     "projects": {
