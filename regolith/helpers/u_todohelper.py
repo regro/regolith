@@ -48,7 +48,7 @@ def subparser(subpi):
     subpi.add_argument("--deadline",
                        help="give value 't' if due_date is a hard deadline, else 'f' if not",
                        )
-    subpi.add_argument("-p", "--importance",
+    subpi.add_argument("-m", "--importance",
                        help=f"Change the importance of the task from {ALLOWED_IMPORTANCE}.",
                        type=int
                        )
