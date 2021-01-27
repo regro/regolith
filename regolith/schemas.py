@@ -30,14 +30,10 @@ REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
 SERVICE_TYPE = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
-PROJECTA_STATUS = ["proposed", "started", "converged", "finished"]
 # kickoff, deliverable, milestones, and the projectum all have a status field, want different options for each?
 PROJECTUM_STATUS = ["proposed", "started", "converged", "finished", "cancelled", "paused"]
-# this is every milestone type I found in the projecta db
-MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "pull request", "release", "email", "handin",
-                  "code", "task", "manuscript", "approved_file", "presentation", "file", "report",
-                  "submission", "finalized_list", "merged_pr", "decision", "finalized_doc", "demo",
-                  "software", "skel"]
+MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "release", "email", "handin",
+                  "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 
 
 EXEMPLARS = {
@@ -1492,7 +1488,7 @@ EXEMPLARS = {
             "webinar": True,
         },
     ],
-    "projectum": {
+    "projecta": {
         "_id": "sb_firstprojectum",
         "begin_date": "2020-04-28",
         "collaborators": ["aeinstein", "pdirac"],
@@ -1535,10 +1531,11 @@ EXEMPLARS = {
             'audience': ['lead', 'pi', 'group_members'],
             'status': 'proposed',
             'type': 'meeting',
-            'progress': [
-              '- text: The samples have been synthesized and placed in the sample cupboard. They turned out well and are blue as expected.',
-              '- figure: <token that dereferences a figure or image in group local storage db>',
-              '- slides_url: <url to slides describing the development, e.g., Google slides url>']
+            'progress':
+              - 'text: The samples have been synthesized and placed in the sample cupboard.'
+                       'They turned out well and are blue as expected.'
+              - 'figure: <token that dereferences a figure or image in group local storage db>'
+              - 'slides_url: <url to slides describing the development, e.g., Google slides url>'
         },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
@@ -3645,7 +3642,7 @@ SCHEMAS = {
             "type": "boolean",
         },
     },
-    "projectum": {
+    "projecta": {
         "_description": {
             "description": "This collection describes a single deliverable "
                            "of a larger project."
@@ -3698,7 +3695,8 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the deliverable that we want to keep track of",
                           "required": False,
                           "type": "list"},
-                "status": {"description": "current state of deliverable",
+                "status": {"description": f"current state of deliverable "
+                                          "Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
@@ -3751,7 +3749,8 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the kickoff",
                           "required": False,
                           "type": "list"},
-                "status": {"description": "proposed, started, finished, converged",
+                "status": {"description": f"status of the kickoff. "
+                                          "Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS}
@@ -3787,12 +3786,26 @@ SCHEMAS = {
                                              "small, non-deliverable to-dos to reach the milestone",
                               "required": False,
                               "type": "list"},
-                    "progress": {"description": "text description of progress and observations, "
-                                                "token that dereferences a figure or image in group local storage db, "
-                                                "and/or url to slides describing the development, "
-                                                "e.g., Google slides url",
-                              "required": False,
-                              "type": "list"},
+                    "progress": {"description": "update on the milestone",
+                                 "required": False,
+                                 "type": "list",
+                                 "schema": {
+                                     "type": "dict",
+                                     "schema": {
+                                         "text": {"description": "text description of progress and observations",
+                                                  "required": False,
+                                                  "type": "string"},
+                                         "figure": {"description": "token that dereferences a figure or image "
+                                                                   "in group local storage db",
+                                                    "required": False,
+                                                    "type": "string"},
+                                         "slides_url": {"description": "url to slides describing the development, "
+                                                                       "e.g., Google slides url",
+                                                        "required": False,
+                                                        "type": "string"}
+                                        }
+                                    }
+                                 },
                     "objective": {"description": "explains goal of the milestone",
                                   "required": False,
                                   "type": "string"},
@@ -3802,13 +3815,13 @@ SCHEMAS = {
                                                 "in these groups their names or id's can be added explicitly to the list",
                                  "required": False,
                                  "type": "list"},
-                    "status": {"description": "status of the milestone from {PROJECTUM_STATUS} "
-                                              "proposed, started, finished, converged, cancelled, paused",
+                    "status": {"description": f"status of the milestone. "
+                                              "Allowed values are {', '.join(PROJECTUM_STATUS)}",
                                "required": False,
-                               "type": "fstring",
+                               "type": "string",
                                "eallowed": PROJECTUM_STATUS},
-                    "type": {"description": "what kind of deliverable the milestone is "
-                                            "e.g. 'meeting",
+                    "type": {"description": f"type of milestone deliverable. "
+                                            "Allowed values are {', '.join(MILESTONE_TYPE)}",
                              "required": False,
                              "type": "string",
                              "eallowed": MILESTONE_TYPE}
@@ -3822,7 +3835,8 @@ SCHEMAS = {
         "pi_id": {"description": "id of the PI",
                   "required": False,
                   "type": "string"},
-        "status": {"description": "proposed, started, finished, converged, cancelled, paused",
+        "status": {"description": f"status of the projectum. "
+                                  "Allowed values are {', '.join(PROJECTUM_STATUS)}",
                    "required": False,
                    "type": "string",
                    "eallowed": PROJECTUM_STATUS}
