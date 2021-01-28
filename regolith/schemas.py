@@ -1531,11 +1531,11 @@ EXEMPLARS = {
             'audience': ['lead', 'pi', 'group_members'],
             'status': 'proposed',
             'type': 'meeting',
-            'progress':
-              - 'text: The samples have been synthesized and placed in the sample cupboard.'
-                       'They turned out well and are blue as expected.'
-              - 'figure: <token that dereferences a figure or image in group local storage db>'
-              - 'slides_url: <url to slides describing the development, e.g., Google slides url>'
+            'progress':[{
+              - 'text': 'The samples have been synthesized and placed in the sample cupboard. '
+                        'They turned out well and are blue as expected.',
+              - 'figure': '<token that dereferences a figure or image in group local storage db>',
+              - 'slides_url': '<url to slides describing the development, e.g., Google slides url>'}]
         },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
@@ -3695,8 +3695,8 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the deliverable that we want to keep track of",
                           "required": False,
                           "type": "list"},
-                "status": {"description": f"current state of deliverable "
-                                          "Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                "status": {"description": "current state of deliverable "
+                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
@@ -3749,8 +3749,8 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the kickoff",
                           "required": False,
                           "type": "list"},
-                "status": {"description": f"status of the kickoff. "
-                                          "Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                "status": {"description": "status of the kickoff. "
+                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS}
@@ -3815,13 +3815,13 @@ SCHEMAS = {
                                                 "in these groups their names or id's can be added explicitly to the list",
                                  "required": False,
                                  "type": "list"},
-                    "status": {"description": f"status of the milestone. "
-                                              "Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                    "status": {"description": "status of the milestone. "
+                                              f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                                "required": False,
                                "type": "string",
                                "eallowed": PROJECTUM_STATUS},
-                    "type": {"description": f"type of milestone deliverable. "
-                                            "Allowed values are {', '.join(MILESTONE_TYPE)}",
+                    "type": {"description": "type of milestone deliverable. "
+                                            f"Allowed values are {', '.join(MILESTONE_TYPE)}",
                              "required": False,
                              "type": "string",
                              "eallowed": MILESTONE_TYPE}
@@ -3835,8 +3835,8 @@ SCHEMAS = {
         "pi_id": {"description": "id of the PI",
                   "required": False,
                   "type": "string"},
-        "status": {"description": f"status of the projectum. "
-                                  "Allowed values are {', '.join(PROJECTUM_STATUS)}",
+        "status": {"description": "status of the projectum. "
+                                  f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                    "required": False,
                    "type": "string",
                    "eallowed": PROJECTUM_STATUS}
