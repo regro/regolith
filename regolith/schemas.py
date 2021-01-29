@@ -30,7 +30,7 @@ REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
 SERVICE_TYPE = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
-# kickoff, deliverable, milestones, and the projectum all have a status field, want different options for each?
+# for status of kickoff, deliverable, milestones, and the projectum
 PROJECTUM_STATUS = ["proposed", "started", "converged", "finished", "cancelled", "paused"]
 MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "release", "email", "handin",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
@@ -1532,18 +1532,21 @@ EXEMPLARS = {
             'status': 'proposed',
             'type': 'meeting',
             'progress':[{
-              - 'text': 'The samples have been synthesized and placed in the sample cupboard. '
-                        'They turned out well and are blue as expected.',
-              - 'figure': '<token that dereferences a figure or image in group local storage db>',
-              - 'slides_url': '<url to slides describing the development, e.g., Google slides url>'}]
-        },
+                'text': 'The samples have been synthesized and places in the sample cupboard. '
+                        'They turned out well and are blue as expected',
+                'figure': 'token that dereferences a figure or image in group local storage db',
+                'slides_url': 'url to slides describing the development, e.g. Google slides url'
+                }
+            ],
+            },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
              'objective': 'develop a detailed plan with dates',
              'audience': ['lead', 'pi', 'group_members'],
              'status': 'proposed',
              'type': 'pr',
-             }],
+             }
+        ],
         "name": "First Projectum",
         "pi_id": "scopatz",
         "status": "started"
@@ -3695,7 +3698,7 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the deliverable that we want to keep track of",
                           "required": False,
                           "type": "list"},
-                "status": {"description": "current state of deliverable "
+                "status": {"description": f"current state of deliverable "
                                           f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
@@ -3749,7 +3752,7 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the kickoff",
                           "required": False,
                           "type": "list"},
-                "status": {"description": "status of the kickoff. "
+                "status": {"description": f"status of the kickoff. "
                                           f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
@@ -3815,12 +3818,12 @@ SCHEMAS = {
                                                 "in these groups their names or id's can be added explicitly to the list",
                                  "required": False,
                                  "type": "list"},
-                    "status": {"description": "status of the milestone. "
+                    "status": {"description": f"status of the milestone. "
                                               f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                                "required": False,
                                "type": "string",
                                "eallowed": PROJECTUM_STATUS},
-                    "type": {"description": "type of milestone deliverable. "
+                    "type": {"description": f"type of milestone deliverable. "
                                             f"Allowed values are {', '.join(MILESTONE_TYPE)}",
                              "required": False,
                              "type": "string",
@@ -3835,7 +3838,7 @@ SCHEMAS = {
         "pi_id": {"description": "id of the PI",
                   "required": False,
                   "type": "string"},
-        "status": {"description": "status of the projectum. "
+        "status": {"description": f"status of the projectum. "
                                   f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                    "required": False,
                    "type": "string",
