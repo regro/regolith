@@ -3690,7 +3690,7 @@ SCHEMAS = {
                                             "web service, etc.",
                              "required": False,
                              "type": "string"},
-                "rollout": {"description": "steps that the audience will take to access "
+                "roll_out": {"description": "steps that the audience will take to access "
                                            "and interact with the deliverable, "
                                            "not needed for paper submissions",
                             "required": False,
