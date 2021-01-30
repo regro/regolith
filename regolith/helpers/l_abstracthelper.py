@@ -1,4 +1,3 @@
-
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -6,9 +5,12 @@ from regolith.tools import (
     get_pi_id,
     get_person_contact
 )
+import itertools
+
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
+
 
 def subparser(subpi):
     subpi.add_argument(
@@ -37,7 +39,6 @@ def subparser(subpi):
              'country, city, state, or university. If an instiution is entered,'
              'the search will be for seminars or colloquiums, otherwise the '
              'search will be for meetings')
-
     subpi.add_argument(
         "-t",
         "--title",
@@ -81,38 +82,37 @@ class AbstractListerHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         presentations = self.gtx["presentations"]
+        SEMINAR_TYPES = ['seminar', 'colloquium']
+        filtered_title, filtered_authors, filtered_years, filtered_inst, filtered_loc = ([] for i in range(5))
 
         if (not rc.author) and (not rc.year) and (not rc.loc_inst) and (not rc.title):
             return
 
-        for presentation in presentations:
-            if rc.title is not None:
-                if rc.title.casefold() not in presentation.get('title').casefold():
-                    continue
-            if presentation['type'] == 'seminar' or presentation['type'] == 'colloquium':
-                if rc.loc_inst is not None:
-                    if rc.loc_inst.casefold() not in presentation.get('institution').casefold():
-                        continue
-            else:
-                if rc.loc_inst is not None and 'location' in presentation:
-                    if rc.loc_inst.casefold() not in presentation.get('location').casefold():
-                        continue
-            if rc.year is not None and 'begin_year' in presentation:
-                if int(rc.year) != presentation.get('begin_year'):
-                    continue
-            elif rc.year is not None and 'end_year' in presentation:
-                if int(rc.year) != presentation.get("end_year"):
-                    continue
-            if rc.year is not None and 'begin_date' in presentation:
-                if str(rc.year) not in str(presentation.get('begin_date')):
-                    continue
-            elif rc.year is not None and 'end_date' in presentation:
-                if str(rc.year) not in str(presentation.get("end_date")):
-                    continue
-            if rc.author is not None:
-                if rc.author not in presentation.get('authors'):
-                    continue
+        if rc.title:
+            filtered_title = [presentation for presentation in presentations
+                                      if rc.title.casefold() in presentation.get('title').casefold()]
+        if rc.author:
+            filtered_authors = [presentation for presentation in presentations
+                                      if rc.author in presentation.get('authors')]
+        if rc.year:
+            filtered_years = [presentation for presentation in presentations
+                                      if int(rc.year) == presentation.get('begin_year', 'begin_date')
+                                      or int(rc.year) == presentation.get('end_year', 'end_date')]
+        if rc.loc_inst:
+            filtered_inst = [presentation for presentation in presentations
+                             if presentation.get('type') in SEMINAR_TYPES and
+                             rc.loc_inst.casefold() in presentation.get('institution').casefold()]
+            filtered_loc = [presentation for presentation in presentations
+                            if rc.loc_inst.casefold() in presentation.get('location','institution').casefold()
+                            and rc.loc_inst.casefold() not in presentation.get('institution').casefold()]
 
+        list_of_sets = [filtered_inst, filtered_years, filtered_title,filtered_authors,filtered_loc]
+        non_empty_lists = [x for x in list_of_sets if x]
+        filtered_list = [element for sublist in non_empty_lists for element in sublist
+                         if all(element in sublist for sublist in non_empty_lists)]
+        flat_filtered_list = list({v['_id']:v for v in filtered_list}.values())
+
+        for presentation in flat_filtered_list:
             print("---------------------------------------")
             print(f"Title: {presentation.get('title')}\n")
             author_list = [author
