@@ -5,8 +5,6 @@ from regolith.tools import (
     get_pi_id,
     get_person_contact
 )
-import itertools
-
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
@@ -16,35 +14,31 @@ def subparser(subpi):
     subpi.add_argument(
         "run",
         help='run the lister. To see allowed optional arguments, type '
-             '"regolith helper l_abstracts".')
-    subpi.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Increases the verbosity of the output.")
+             '"regolith helper l_abstract"')
     subpi.add_argument(
         "-a",
         "--author",
         help='authors group ID(single argument only) to use to find '
-             'presentation abstract.')
+             'presentation abstract')
     subpi.add_argument(
         "-y",
         "--year",
-        help='Start or end year of the presentation (single argument only) to '
-             'use to find presentation.')
+        help='start or end year of the presentation (single argument only) to '
+             'use to find presentation')
     subpi.add_argument(
         "-l",
         "--loc_inst",
-        help='Location of presentation, either a fragement of an institution, '
-             'country, city, state, or university. If an instiution is entered,'
+        help='location of presentation, either a fragment of an institution, '
+             'country, city, state, or university. If an institution is entered,'
              'the search will be for seminars or colloquiums, otherwise the '
-             'search will be for meetings')
+             'search will be for all other meetings')
     subpi.add_argument(
         "-t",
         "--title",
-        help='Fragment of the title of the abstract or talk to use to '
-             'filter presentations.')
+        help='fragment of the title of the abstract or talk to use to '
+             'filter presentations')
     return subpi
+
 
 class AbstractListerHelper(SoutHelperBase):
     """Helper for finding and listing abstracts from the presentations.yml file
@@ -86,33 +80,38 @@ class AbstractListerHelper(SoutHelperBase):
         filtered_title, filtered_authors, filtered_years, filtered_inst, filtered_loc = ([] for i in range(5))
 
         if (not rc.author) and (not rc.year) and (not rc.loc_inst) and (not rc.title):
-            return
+            return None
 
         if rc.title:
             filtered_title = [presentation for presentation in presentations
-                                      if rc.title.casefold() in presentation.get('title').casefold()]
+                              if rc.title.casefold() in presentation.get('title').casefold()]
         if rc.author:
             filtered_authors = [presentation for presentation in presentations
-                                      if rc.author in presentation.get('authors')]
+                                if rc.author in presentation.get('authors')]
         if rc.year:
             filtered_years = [presentation for presentation in presentations
-                                      if int(rc.year) == presentation.get('begin_year', 'begin_date')
-                                      or int(rc.year) == presentation.get('end_year', 'end_date')]
+                              if int(rc.year) == presentation.get('begin_year', 'begin_date')
+                              or int(rc.year) == presentation.get('end_year', 'end_date')]
         if rc.loc_inst:
             filtered_inst = [presentation for presentation in presentations
                              if presentation.get('type') in SEMINAR_TYPES and
                              rc.loc_inst.casefold() in presentation.get('institution').casefold()]
             filtered_loc = [presentation for presentation in presentations
-                            if rc.loc_inst.casefold() in presentation.get('location','institution').casefold()
+                            if rc.loc_inst.casefold() in presentation.get('location', 'institution').casefold()
                             and rc.loc_inst.casefold() not in presentation.get('institution').casefold()]
 
-        list_of_sets = [filtered_inst, filtered_years, filtered_title,filtered_authors,filtered_loc]
-        non_empty_lists = [x for x in list_of_sets if x]
-        filtered_list = [element for sublist in non_empty_lists for element in sublist
-                         if all(element in sublist for sublist in non_empty_lists)]
-        flat_filtered_list = list({v['_id']:v for v in filtered_list}.values())
+        filtered_presentations_by_args = [filtered_inst, filtered_years, filtered_title,
+                                          filtered_authors, filtered_loc]
+        nonempty_filtered_presentations_by_args = [filtered_presentations
+                                                   for filtered_presentations in filtered_presentations_by_args
+                                                   if filtered_presentations]
+        filtered_presentations = [talk for presentations in nonempty_filtered_presentations_by_args
+                                  for talk in presentations
+                                  if all(talk in presentations
+                                         for presentations in nonempty_filtered_presentations_by_args)]
+        flat_filtered_presentations = list({talk['_id']: talk for talk in filtered_presentations}.values())
 
-        for presentation in flat_filtered_list:
+        for presentation in flat_filtered_presentations:
             print("---------------------------------------")
             print(f"Title: {presentation.get('title')}\n")
             author_list = [author
