@@ -30,6 +30,10 @@ REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
 SERVICE_TYPE = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
+# for status of kickoff, deliverable, milestones, and the projectum
+PROJECTUM_STATUS = ["proposed", "started", "converged", "finished", "cancelled", "paused"]
+MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "release", "email", "handin",
+                  "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 
 
 EXEMPLARS = {
@@ -1526,15 +1530,23 @@ EXEMPLARS = {
                          'initial project plan',
             'audience': ['lead', 'pi', 'group_members'],
             'status': 'proposed',
-            'type': 'meeting'
-        },
+            'type': 'meeting',
+            'progress':[{
+                'text': 'The samples have been synthesized and places in the sample cupboard. '
+                        'They turned out well and are blue as expected',
+                'figure': 'token that dereferences a figure or image in group local storage db',
+                'slides_url': 'url to slides describing the development, e.g. Google slides url'
+                }
+            ],
+            },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
              'objective': 'develop a detailed plan with dates',
              'audience': ['lead', 'pi', 'group_members'],
              'status': 'proposed',
              'type': 'pr',
-             }],
+             }
+        ],
         "name": "First Projectum",
         "pi_id": "scopatz",
         "status": "started"
@@ -3632,6 +3644,206 @@ SCHEMAS = {
             "required": False,
             "type": "boolean",
         },
+    },
+    "projecta": {
+        "_description": {
+            "description": "This collection describes a single deliverable "
+                           "of a larger project."
+        },
+        "_id": {
+            "description": "Unique projectum identifier",
+            "required": True,
+            "type": "string"
+        },
+        "begin_date": {
+            "description": "projectum start date, yyyy-mm-dd",
+            "required": False,
+            "anyof_type": ["string", "date"]
+        },
+        "collaborators": {
+            "description": "list of collaborators ids. These are non-group members. "
+                           "These will be dereferenced from the contacts collection.",
+            "required": False,
+            "type": "list"
+        },
+        "deliverable":{
+            "description": "outline of the deliverable for this projectum",
+            "type": "dict",
+            "schema": {
+                "audience": {"description": "the target audience for this deliverable",
+                             "required": False,
+                             "type": "list"},
+                "due_date": {"description": "due date of deliverable, yyyy-mm-dd",
+                             "required": False,
+                             "anyof_type": ["date", "string"]},
+                "success_def": {"description": "definition of a successful deliverable",
+                                "required": False,
+                                "type": "string"},
+                "scope": {"description": "a list of items that define the scope of the deliverable."
+                                         "If this is a software release it might be a list of Use Cases that will be satisfied."
+                                         "If it is a paper it defines what will, and what won't, be described in the paper.",
+                          "required": False,
+                          "type": "list"},
+                "platform": {"description": "description of how and where the audience will access the deliverable."
+                                            "e.g. Journal if it is a paper. For software releases, this may be the "
+                                            "computer operating systems that will be supported, or if it will be a "
+                                            "web service, etc.",
+                             "required": False,
+                             "type": "string"},
+                "roll_out": {"description": "steps that the audience will take to access "
+                                           "and interact with the deliverable, "
+                                           "not needed for paper submissions",
+                            "required": False,
+                            "type": "list"},
+                "notes": {"description": "any notes about the deliverable that we want to keep track of",
+                          "required": False,
+                          "type": "list"},
+                "status": {"description": f"current state of deliverable "
+                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                           "required": False,
+                           "type": "string",
+                           "eallowed": PROJECTUM_STATUS},
+            }
+        },
+        "description": {
+            "description": "explanation of projectum",
+            "required": False,
+            "type": "string"
+        },
+        "end_date": {
+            "description": "projectum end date, yyyy-mm-dd.",
+            "required": False,
+            "anyof_type": ["date", "string"]
+        },
+        "grants":{
+            "description": "grant id funding the project",
+            "required": False,
+            "anyof_type": ["string", "list"]
+        },
+        "group_members": {
+            "description": "list of group member id's working on this project,"
+                           "These will be dereferenced from the people collection.",
+            "required": False,
+            "type": "list"
+        },
+        "kickoff":{
+            "description": "details the projectum kickoff meeting",
+            "required": False,
+            "type": "dict",
+            "schema": {
+                "date": {"description": "kickoff meeting date, yyyy-mm-dd.",
+                         "required": False,
+                         "anyof_type": ["date", "string"]},
+                "due_date": {"description": "kickoff meeting by date, yyyy-mm-dd.",
+                             "required": False,
+                             "anyof_type": ["date", "string"]},
+                "name": {"description": "name of meeting",
+                         "required": False,
+                         "type": "string"},
+                "objective": {"description": "goal of the meeting",
+                              "required": False,
+                              "type": "string"},
+                "audience": {"description": "list of people attending the meeting."
+                                            "Normally this list is group_members, collaborators, and pi, "
+                                            "or some subset of these. if people are invited who are not already"
+                                            "in these groups their names or id's can be added explicitly to the list",
+                             "required": False,
+                             "type": "list"},
+                "notes": {"description": "any notes about the kickoff",
+                          "required": False,
+                          "type": "list"},
+                "status": {"description": f"status of the kickoff. "
+                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                           "required": False,
+                           "type": "string",
+                           "eallowed": PROJECTUM_STATUS}
+            }
+        },
+        "lead": {
+            "description": "the id of the lead student or person for the projectum. "
+                           "Person details will be dereferenced from the people collection.",
+            "required": False,
+            "type": "string"
+        },
+        "log_url": {
+            "description": "link to an online document (e.g., Google doc) "
+                           "that is a log of notes and meeting minutes for the projectum",
+            "required": False,
+            "type": "string"
+        },
+        "milestones": {
+            "description": "smaller deliverables done by a certain date "
+                           "a series of milestones ends with the projectum deliverable",
+            "required": False,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "due_date": {"description": "due date of milestone, yyyy-mm-dd",
+                                 "required": False,
+                                 "anyof_type": ["date", "string"]},
+                    "name": {"description": "what is the deliverable of milestone",
+                             "required": False,
+                             "type": "string"},
+                    "notes": {"description": "any notes about the milestone and/or "
+                                             "small, non-deliverable to-dos to reach the milestone",
+                              "required": False,
+                              "type": "list"},
+                    "progress": {"description": "update on the milestone",
+                                 "required": False,
+                                 "type": "list",
+                                 "schema": {
+                                     "type": "dict",
+                                     "schema": {
+                                         "text": {"description": "text description of progress and observations",
+                                                  "required": False,
+                                                  "type": "string"},
+                                         "figure": {"description": "token that dereferences a figure or image "
+                                                                   "in group local storage db",
+                                                    "required": False,
+                                                    "type": "string"},
+                                         "slides_url": {"description": "url to slides describing the development, "
+                                                                       "e.g., Google slides url",
+                                                        "required": False,
+                                                        "type": "string"}
+                                        }
+                                    }
+                                 },
+                    "objective": {"description": "explains goal of the milestone",
+                                  "required": False,
+                                  "type": "string"},
+                    "audience": {"description": "list of people attending the meeting."
+                                                "Normally this list is group_members, collaborators, and pi, "
+                                                "or some subset of these. if people are invited who are not already"
+                                                "in these groups their names or id's can be added explicitly to the list",
+                                 "required": False,
+                                 "type": "list"},
+                    "status": {"description": f"status of the milestone. "
+                                              f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                               "required": False,
+                               "type": "string",
+                               "eallowed": PROJECTUM_STATUS},
+                    "type": {"description": f"type of milestone deliverable. "
+                                            f"Allowed values are {', '.join(MILESTONE_TYPE)}",
+                             "required": False,
+                             "type": "string",
+                             "eallowed": MILESTONE_TYPE}
+
+                }
+            }
+        },
+        "name": {"description": "name of the projectum",
+                 "required": False,
+                 "type": "string"},
+        "pi_id": {"description": "id of the PI",
+                  "required": False,
+                  "type": "string"},
+        "status": {"description": f"status of the projectum. "
+                                  f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                   "required": False,
+                   "type": "string",
+                   "eallowed": PROJECTUM_STATUS}
+
     },
     "projects": {
         "_description": {

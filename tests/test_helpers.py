@@ -434,7 +434,6 @@ helper_map = [
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
 ]
 
-
 @pytest.mark.parametrize("hm", helper_map)
 def test_helper_python(hm, make_db, capsys):
     repo = Path(make_db)
