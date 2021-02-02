@@ -3658,7 +3658,7 @@ SCHEMAS = {
         "begin_date": {
             "description": "projectum start date, yyyy-mm-dd",
             "required": False,
-            "type": "string"
+            "anyof_type": ["string", "date"]
         },
         "collaborators": {
             "description": "list of collaborators ids. These are non-group members. "
@@ -3718,7 +3718,7 @@ SCHEMAS = {
         "grants":{
             "description": "grant id funding the project",
             "required": False,
-            "type": "string"
+            "anyof_type": ["string", "list"]
         },
         "group_members": {
             "description": "list of group member id's working on this project,"
