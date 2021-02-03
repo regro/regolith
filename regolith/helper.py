@@ -12,6 +12,7 @@ from regolith.helpers import l_progressreporthelper as l_progress
 from regolith.helpers import l_projectahelper as l_projecta
 from regolith.helpers import l_grantshelper as l_grants
 from regolith.helpers import l_membershelper as l_members
+from regolith.helpers import l_abstracthelper as l_abstract
 from regolith.helpers import l_contactshelper as l_contacts
 from regolith.helpers import u_logurlhelper as u_logurl
 from regolith.helpers import u_milestonehelper as u_milestone
@@ -37,6 +38,7 @@ HELPERS = {
     "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser),
     "f_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
     "f_todo": (f_todo.TodoFinisherHelper, f_todo.subparser),
+    "l_abstract": (l_abstract.AbstractListerHelper, l_abstract.subparser),
     "l_contacts": (l_contacts.ContactsListerHelper, l_contacts.subparser),
     "l_grants": (l_grants.GrantsListerHelper, l_grants.subparser),
     "l_members": (l_members.MembersListerHelper, l_members.subparser),
