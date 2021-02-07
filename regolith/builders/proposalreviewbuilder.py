@@ -78,5 +78,5 @@ class PropRevBuilder(LatexBuilderBase):
                 creativity_originality=rev["nsf_create_original_transformative"],
                 benefit_to_society=rev["nsf_pot_to_benefit_society"],
                 plan_good=rev["nsf_plan_good"],
-                advance_knowledge=rev["nsf_pot_to_Advance_knowledge"]
+                advance_knowledge=rev["nsf_pot_to_advance_knowledge"]
             )
