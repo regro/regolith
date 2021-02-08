@@ -242,7 +242,7 @@ class MongoClient:
                 col = mongodb[colname]
                 dbs[db['name']][colname] = load_mongo_col(col)
         else:
-            print('Database name provided in regolithrc.json not found in mongodb')
+            print('WARNING: Database name provided in regolithrc.json not found in mongodb')
         return
 
     def import_database(self, db: dict):
