@@ -350,7 +350,7 @@ helper_map = [
          "tag1",
          "tag2",
          "--date", "2020-07-10"],
-        "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
+        "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge",
       "--end_date", "2020-07-20", "--date", "2020-07-13"],
@@ -435,7 +435,7 @@ helper_map = [
      "'home_address', 'initials', 'linkedin_url', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
-     "'title', 'todos']\n"),
+     "'title']\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
      "Results of your search:\nsbillinge\n"
      "Available keys:\n"
@@ -445,7 +445,7 @@ helper_map = [
      "'home_address', 'initials', 'linkedin_url', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
-     "'title', 'todos']\n"
+     "'title']\n"
      ),
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
      "There are no results that match your search.\n"
