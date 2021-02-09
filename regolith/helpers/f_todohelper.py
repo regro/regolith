@@ -1,4 +1,4 @@
-"""Helper for marking a task as finished in todos of people collection.
+"""Helper for marking a task as finished in todos collection.
 """
 
 import datetime as dt
@@ -17,7 +17,7 @@ from regolith.tools import (
     key_value_pair_filter
 )
 
-TARGET_COLL = "people"
+TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [0, 1, 2]
 
 
@@ -38,7 +38,7 @@ def subparser(subpi):
 
 
 class TodoFinisherHelper(DbHelperBase):
-    """Helper for marking a task as finished in todos of people collection.
+    """Helper for marking a task as finished in todos collection.
     """
     # btype must be the same as helper target in helper.py
     btype = "f_todo"
@@ -72,13 +72,13 @@ class TodoFinisherHelper(DbHelperBase):
                     "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
                     "in the command line")
                 return
-        person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
+        person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
         filterid = {'_id': rc.assigned_to}
         if not person:
-            raise TypeError(f"Id {rc.assigned_to} can't be found in people collection")
+            raise TypeError(f"Id {rc.assigned_to} can't be found in todos collection")
         todolist = person.get("todos", [])
         if len(todolist) == 0:
-            print(f"{rc.assigned_to} doesn't have todos in people collection.")
+            print(f"{rc.assigned_to} doesn't have todos in todos collection.")
             return
         now = dt.date.today()
         if not rc.index:

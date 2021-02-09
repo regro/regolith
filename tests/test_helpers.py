@@ -316,7 +316,7 @@ helper_map = [
      "------------------------------\n"
      "Tasks (decreasing priority going up)\n"
      "------------------------------\n"
-     "2020-07-19(6 days): read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
      "------------------------------\n"
      "Deadlines:\n"
      "------------------------------\n"
@@ -339,7 +339,7 @@ helper_map = [
      "------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
-     "The id you entered can't be found in people.yml.\n"
+     "The id you entered can't be found in todos.yml.\n"
      ),
     (
         ["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to",
@@ -350,7 +350,7 @@ helper_map = [
          "tag1",
          "tag2",
          "--date", "2020-07-10"],
-        "The task \"test a_todo\" for sbillinge has been added in people collection.\n"
+        "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge",
       "--end_date", "2020-07-20", "--date", "2020-07-13"],
@@ -370,7 +370,7 @@ helper_map = [
      "------------------------------\n"
      "Tasks (decreasing priority going up)\n"
      "------------------------------\n"
-     "2020-07-19(6 days): read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
      "------------------------------\n"
      "Deadlines:\n"
      "------------------------------\n"
@@ -403,7 +403,7 @@ helper_map = [
      "------------------------------\n"
      "Tasks (decreasing priority going up)\n"
      "------------------------------\n"
-     "2020-07-06(-7 days): update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
+     "2020-07-06(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
      "     - test notes 1\n"
      "     - test notes 2\n"
      "     - some new notes\n"
@@ -435,7 +435,7 @@ helper_map = [
      "'home_address', 'initials', 'linkedin_url', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
-     "'title', 'todos']\n"),
+     "'title']\n"),
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
      "Results of your search:\nsbillinge\n"
      "Available keys:\n"
@@ -445,7 +445,7 @@ helper_map = [
      "'home_address', 'initials', 'linkedin_url', "
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
-     "'title', 'todos']\n"
+     "'title']\n"
      ),
     (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
      "There are no results that match your search.\n"

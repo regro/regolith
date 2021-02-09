@@ -1,4 +1,4 @@
-"""Helper for adding a to_do task to people.yml
+"""Helper for adding a to_do task to todos.yml
 
 """
 import datetime as dt
@@ -14,7 +14,7 @@ from regolith.tools import (
     document_by_value,
 )
 
-TARGET_COLL = "people"
+TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 
 
@@ -58,7 +58,7 @@ def subparser(subpi):
 
 
 class TodoAdderHelper(DbHelperBase):
-    """Helper for adding a to_do task to people.yml
+    """Helper for adding a todo task to todos.yml
     """
     # btype must be the same as helper target in helper.py
     btype = "a_todo"
@@ -96,14 +96,14 @@ class TodoAdderHelper(DbHelperBase):
         person = rc.client.find_one(rc.database, rc.coll, filterid)
         if not person:
             raise TypeError(
-                f"The id {rc.assigned_to} can't be found in the people collection")
+                f"The id {rc.assigned_to} can't be found in the todos collection")
         if not rc.assigned_by:
             rc.assigned_by = rc.default_user_id
         find_person = rc.client.find_one(rc.database, rc.coll,
                                          {'_id': rc.assigned_by})
         if not find_person:
             raise TypeError(
-                f"The id {rc.assigned_by} can't be found in the people collection")
+                f"The id {rc.assigned_by} can't be found in the todos collection")
         now = dt.date.today()
         if not rc.begin_date:
             begin_date = now
