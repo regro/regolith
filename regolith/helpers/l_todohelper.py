@@ -21,7 +21,7 @@ from regolith.tools import (
     key_value_pair_filter
 )
 
-TARGET_COLL = "people"
+TARGET_COLL = "todos"
 TARGET_COLL2 = "projecta"
 HELPER_TARGET = "l_todo"
 Importance = [3, 2, 1, 0, -1,
@@ -94,12 +94,12 @@ class TodoListerHelper(SoutHelperBase):
                 return
         try:
             person = document_by_value(
-                all_docs_from_collection(rc.client, "people"), "_id",
+                all_docs_from_collection(rc.client, "todos"), "_id",
                 rc.assigned_to)
             gather_todos = person.get("todos", [])
         except:
             print(
-                "The id you entered can't be found in people.yml.")
+                "The id you entered can't be found in todos.yml.")
             return
         if not rc.date:
             today = dt.date.today()

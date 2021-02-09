@@ -339,7 +339,7 @@ helper_map = [
      "------------------------------\n"
      ),
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
-     "The id you entered can't be found in people.yml.\n"
+     "The id you entered can't be found in todos.yml.\n"
      ),
     (
         ["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to",

@@ -1373,30 +1373,6 @@ EXEMPLARS = {
                 },
             ],
             "title": "Dr.",
-            "todos": [
-                {"description": "read paper",
-                 "due_date": "2020-07-19",
-                 "begin_date": "2020-06-15",
-                 "deadline": True,
-                 "duration": 60.0,
-                 "importance": 2,
-                 "status": "started",
-                 "assigned_by": "scopatz",
-                 "running_index": 1,
-                 "tags": ["reading", "downtime"]
-                 },
-                {"description": "prepare the presentation",
-                 "due_date": "2020-07-29",
-                 "begin_date": "2020-06-22",
-                 "duration": 30.0,
-                 "importance": 0,
-                 "status": "started",
-                 "notes": ["about 10 minutes", "don't forget to upload to the website"],
-                 "assigned_by": "sbillinge",
-                 "running_index": 2,
-                 "tags": ["downtime"]
-                 }
-            ],
         },
         {"_id": "abeing",
          "active": False,
@@ -1861,7 +1837,34 @@ EXEMPLARS = {
         "email": "haperson@uni.edu",
         "university_id": "HAP42",
     },
-
+    "todos":{
+        "_id": "sbillinge",
+        "todos": [
+            {"description": "read paper",
+             "due_date": "2020-07-19",
+             "begin_date": "2020-06-15",
+             "deadline": True,
+             "duration": 60.0,
+             "importance": 2,
+             "status": "started",
+             "assigned_by": "scopatz",
+             "running_index": 1,
+             "tags": ["reading", "downtime"]
+             },
+            {"description": "prepare the presentation",
+             "due_date": "2020-07-29",
+             "begin_date": "2020-06-22",
+             "duration": 30.0,
+             "importance": 0,
+             "status": "started",
+             "notes": ["about 10 minutes",
+                       "don't forget to upload to the website"],
+             "assigned_by": "sbillinge",
+             "running_index": 2,
+             "tags": ["downtime"]
+             }
+        ],
+        }
 }
 
 SCHEMAS = {

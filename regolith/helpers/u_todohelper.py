@@ -1,4 +1,4 @@
-"""Helper for updating a task in todos of people collection.
+"""Helper for updating a task in todos of todos collection.
 """
 
 import datetime as dt
@@ -18,7 +18,7 @@ from regolith.tools import (
     key_value_pair_filter
 )
 
-TARGET_COLL = "people"
+TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 TODO_STATI = ["started", "finished", "cancelled"]
 ACTIVE_STATI = ["started", "converged", "proposed"]
@@ -75,7 +75,7 @@ def subparser(subpi):
 
 
 class TodoUpdaterHelper(DbHelperBase):
-    """Helper for updating a task in todos of people collection.
+    """Helper for updating a task in todos of todos collection.
     """
     # btype must be the same as helper target in helper.py
     btype = "u_todo"
@@ -125,12 +125,12 @@ class TodoUpdaterHelper(DbHelperBase):
                     for todo in todolist_idx:
                         todo["running_index"] = index
                         index += 1
-        person = document_by_value(all_docs_from_collection(rc.client, "people"), "_id", rc.assigned_to)
+        person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
         if not person:
-            raise TypeError(f"Id {rc.assigned_to} can't be found in people collection")
+            raise TypeError(f"Id {rc.assigned_to} can't be found in todos collection")
         todolist = person.get("todos", [])
         if len(todolist) == 0:
-            print(f"{rc.assigned_to} doesn't have todos in people collection.")
+            print(f"{rc.assigned_to} doesn't have todos in todos collection.")
             return
         if not rc.date:
             today = dt.date.today()
