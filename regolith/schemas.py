@@ -4370,7 +4370,65 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
-
+        "todos": {
+            "description": "a list of the todo tasks",
+            "required": False,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "assigned_by": {
+                        "description": "ID of the member that assigns the task",
+                        "required": False,
+                        "type": "string"},
+                    "begin_date": {"description": "the begin date",
+                                   "required": False,
+                                   "anyof_type": ["string", "date"]},
+                    "end_date": {"description": "the end date",
+                                 "required": False,
+                                 "anyof_type": ["string", "date"]},
+                    "deadline": {
+                        "description": "true if the due date is a hard deadline",
+                        "required": False,
+                        "type": "boolean"},
+                    "description": {
+                        "description": "the description of the to-do task",
+                        "required": True,
+                        "type": "string"},
+                    "due_date": {"description": "the due date",
+                                 "required": False,
+                                 "anyof_type": ["string", "date"]},
+                    "duration": {
+                        "description": "the size of the task/ the estimated duration it will take to finish the task. Unit: miniutes.",
+                        "required": False,
+                        "type": "float"},
+                    "importance": {
+                        "description": "the importance, from 0 to 3",
+                        "required": False,
+                        "type": "integer"},
+                    "status": {
+                        "description": "the status: started/finished/cancelled",
+                        "required": True,
+                        "type": "string",
+                        "eallowed": TODO_STATI
+                        },
+                    "notes": {"description": "additional notes for this task",
+                              "required": False,
+                              "type": "list",
+                              "schema": {"type": "string"}
+                              },
+                    "running_index": {
+                        "description": "Index of a certain task used to update that task in the enumerated todo list.",
+                        "required": False,
+                        "type": "integer"},
+                    "tags": {
+                        "description": "user-defined tags that can be used to "
+                                       "filter tasks",
+                        "required": False,
+                        "type": "list"},
+                }
+            }
+        },
     },
 }
 
