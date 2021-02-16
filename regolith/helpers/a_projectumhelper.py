@@ -170,9 +170,6 @@ class ProjectumAdderHelper(DbHelperBase):
             "objective": "introduce project to the lead",
             "status": "proposed"
         }})
-        if rc.checklist:
-            pdoc["deliverable"].update({'scope': ['checklist']})
-
         secondm = {'due_date': now + relativedelta(days=21),
                    'name': 'Project lead presentation',
                    'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
@@ -320,6 +317,7 @@ class ProjectumAdderHelper(DbHelperBase):
             "audience": ["simon"],
             "success_def": "audience is happy",
             "scope": [
+                "checklist",
                 "All publication data and metadata are correct and complete"],
             "platform": "regolith publication collection in rg-db-public",
             "roll_out": [
