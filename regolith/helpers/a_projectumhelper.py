@@ -170,9 +170,6 @@ class ProjectumAdderHelper(DbHelperBase):
             "objective": "introduce project to the lead",
             "status": "proposed"
         }})
-        if rc.checklist:
-            pdoc["deliverable"].update({'scope': ['checklist']})
-
         secondm = {'due_date': now + relativedelta(days=21),
                    'name': 'Project lead presentation',
                    'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
@@ -289,9 +286,9 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Check the facility in the db entry", "facility{} is every beamline that was used for data collection. Again, use the standard abbreviations at the top of the file. Use two levels of granularity for each, so X17A would be: 'nsls, x17a', if X17A and X7B were used it would be 'nsls, x17a, x7b' and so on."),
             ("Check the nb in the db entry", "nb{} is some other tags, also listed at the top of the file. 'art' for a regular article and 'hilite' if it is one of our top top papers are the most common."),
             ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace lyang with your name) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually."),
-            ("Add to Zotero", "Add the published reference to the billinge-group-bib folder in our group Zotero account"),
-            ("Finish the highlight slide", "Make a highlight of your work and put it in gitlab/highlights (if not done already during the accepted paper checklist). Look in there for standards to work from. This is an important activity. Now you have done your great work, this is how you can advertise it to others. Top papers we send these highlights to the funding agencies.  Iterate the highlight with Simon till it is converged."),
-            ("Make figures and talk slides", "Make figures and talk slides that will be used in talks and place these on gitlab on talks/figures.  Iterate this with Simon till it is converged."),
+            ("Add/update to Zotero", "Add or update the published reference to the billinge-group-bib folder in our group Zotero account"),
+            ("Finalize the highlight slide", "Make a highlight of your work and put it in gitlab/highlights (if not done already during the accepted paper checklist). Look in there for standards to work from. This is an important activity. Now you have done your great work, this is how you can advertise it to others. Top papers we send these highlights to the funding agencies.  Iterate the highlight with Simon till it is converged."),
+            ("Finalize figures and talk slides", "Make figures and talk slides that will be used in talks and place these on gitlab on talks/figures.  Iterate this with Simon till it is converged."),
             ("Update arXiv if necessary", "If the paper was listed on a preprint server like arXiv, submit a note to arXiv that the paper has appeared and give the full reference. If the journal copyright allows you can post the published version here, but normally that is not alllowed! Still, it is important that people who find the paper on arXiv get directed to the correct reference."),
             ("Ask Simon if anything unfinished", "Ask Simon about any items unfinished."),
             ("Email Simon", "Email Simon if finish the above."),
@@ -320,6 +317,7 @@ class ProjectumAdderHelper(DbHelperBase):
             "audience": ["simon"],
             "success_def": "audience is happy",
             "scope": [
+                "checklist",
                 "All publication data and metadata are correct and complete"],
             "platform": "regolith publication collection in rg-db-public",
             "roll_out": [
