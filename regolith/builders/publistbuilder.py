@@ -27,6 +27,8 @@ class PubListBuilder(LatexBuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
+        if not rc.people:
+            rc.people = ['all']
 
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
@@ -73,6 +75,9 @@ class PubListBuilder(LatexBuilderBase):
             qualifiers = qualifiers + " from grants {}".format(text_grants)
 
         for p in self.gtx["people"]:
+            if self.rc.people[0] != 'all':
+                if p.get("_id") != self.rc.people[0]:
+                    continue
             outfile = p["_id"] + filestub
             p['qualifiers'] = qualifiers
             names = frozenset(p.get("aka", []) + [p["name"]])
