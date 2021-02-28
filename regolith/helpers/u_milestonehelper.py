@@ -197,7 +197,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 else:
                     mil.update({'type': 'meeting'})
                 if rc.notes:
-                    mil["notes"] = notes
+                    mil.update({'notes': rc.notes})
                 milestones.append(mil)
                 pdoc = {'milestones': milestones}
             if idx > 1:
