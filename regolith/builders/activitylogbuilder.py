@@ -81,13 +81,12 @@ class ActivitylogBuilder(LatexBuilderBase):
         begin_month = int(rc.from_date.split("-")[1])
         pre_begin_year = begin_year - 1
         #fixme this won't work if end_month is january
-        if rc.to_date:
-            end_year = rc.to_date.split("-")[0]
-            end_month = rc.to_date.split("-")[0]
-        else:
-            end_year = begin_year + 1
-            end_month = begin_month - 1
-        post_end_year = end_year + 1
+#        if rc.to_date:
+#            end_year = rc.to_date.split("-")[0]
+#            end_month = rc.to_date.split("-")[0]
+#        else:
+#            end_year = begin_year + 1
+#           end_month = begin_month - 1
         begin_period = date_parser.parse(rc.from_date).date()
         pre_begin_period = begin_period - relativedelta(years=1)
         if rc.to_date:
