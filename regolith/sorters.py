@@ -78,7 +78,10 @@ POSITION_LEVELS = {
 
 def position_key(x):
     """Sorts a people based on thier position in the research group."""
-    pos = x.get("position", "").lower()
+    pos = x.get("position", "").casefold()
     first_letter_last = x.get("name", "zappa").rsplit(None, 1)[-1][0].upper()
-    backward_position = 26 - string.ascii_uppercase.index(first_letter_last)
+    try:
+        backward_position = 26 - string.ascii_uppercase.index(first_letter_last)
+    except ValueError:
+        raise ValueError(f"{x.get('_id')} has improperly composed name")
     return POSITION_LEVELS.get(pos, -1), backward_position
