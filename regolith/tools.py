@@ -600,18 +600,20 @@ def filter_presentations(people, presentations, institutions, target, types=["al
     # if specified, only list presentations in specified date ranges
     if since:
         for pres in thirdclean:
-            presdate = date((pres["begin_year"]),
-                            month_to_int(pres["begin_month"]),
-                            int(pres["begin_day"]))
+            if get_dates(pres).get('date'):
+                presdate = get_dates(pres).get('date')
+            else:
+                presdate = get_dates(pres).get('begin_date')
             if presdate > since:
                 fourthclean.append(pres)
     else:
         fourthclean = thirdclean
     if before:
         for pres in fourthclean:
-            presdate = date((pres["begin_year"]),
-                            month_to_int(pres["begin_month"]),
-                            int(pres["begin_day"]))
+            if get_dates(pres).get('date'):
+                presdate = get_dates(pres).get('date')
+            else:
+                presdate = get_dates(pres).get('begin_date')
             if presdate < before:
                 presclean.append(pres)
     else:
@@ -641,16 +643,19 @@ def filter_presentations(people, presentations, institutions, target, types=["al
         ]
         authorlist = ", ".join(pres["authors"])
         pres["authors"] = authorlist
-        pres["begin_month"] = month_to_int(pres["begin_month"])
-        pres["date"] = date(
-            pres["begin_year"],
-            pres["begin_month"],
-            pres["begin_day"],
-        )
-        for day in ["begin_day", "end_day"]:
-            pres["{}_suffix".format(day)] = number_suffix(
-                pres.get(day, None)
-            )
+        if get_dates(pres).get('date'):
+            presdate = get_dates(pres).get('date')
+        else:
+            presdate = get_dates(pres).get('begin_date')
+        pres["begin_month"] = presdate.month
+        pres["date"] = presdate
+        for day in ["begin_", "end_", ""]:
+            try:
+                pres["{}_day_suffix".format(day)] = number_suffix(
+                    get_dates(pres).get(f'{day}date').day
+                )
+            except AttributeError:
+                print(f"presentation {pres.get('_id')} has no {day}date")
         if "institution" in pres:
             try:
                 pres["institution"] = fuzzy_retrieval(

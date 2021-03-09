@@ -15,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import has_started
+from regolith.dates import has_started, is_after
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     fuzzy_retrieval
@@ -88,7 +88,8 @@ def filter_since_date(pubs, since_date):
     for pub in pubs:
         if isinstance(pub.get("year"), str):
             pub["year"] = int(pub.get("year"))
-        if has_started(pub, since_date):
+        pub["day"] = int(pub.get('day', 28))
+        if is_after(pub, since_date):
             if not pub.get("month"):
                 print("WARNING: {} is missing month".format(
                     pub["_id"]))
@@ -398,6 +399,12 @@ class RecentCollaboratorsBuilder(BuilderBase):
         if 'since_date' in filters:
             since_date = filters.get('since_date')
             pubs = filter_since_date(pubs, since_date)
+        try:
+            if rc.verbose:
+                for pub in pubs:
+                    print(f"{pub.get('title')}, ({pub.get('year')})")
+        except AttributeError:
+            pass
         my_collabs = get_coauthors_from_pubs(pubs, person)
         people, institutions = query_people_and_institutions(rc, my_collabs)
         ppl_names = set(zip(people, institutions))
@@ -458,6 +465,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
 
     def render_template2(self, person_info, ppl_3tups, **kwargs):
         """Render the doe template."""
+
         template2 = self.template2
         ppl_3tups = list(set(ppl_3tups))
         ppl_3tups.sort(key=lambda x: x[0])
@@ -479,6 +487,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
         if isinstance(rc.people, str):
             rc.people = [rc.people]
         since_date = get_since_date(rc)
+        print(f"filtering coauthors for papers since {since_date}")
         target = rc.people[0]
         query_results = self.query_ppl(target, since_date=since_date)
         self.render_template1(**query_results)
