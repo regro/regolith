@@ -136,7 +136,7 @@ def get_recent_org(person_info):
             employment,
             key=lambda d: d.get("end_year", float('inf')),
             reverse=True)
-        organization = employment[0].get('organization', '')
+        organization = employment[0].get('organization', employment[0].get('institution'))
     else:
         organization = ""
     return organization
