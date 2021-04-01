@@ -31,6 +31,10 @@ def subparser(subpi):
     subpi.add_argument("-p", "--purpose",
                         help="The purpose or intended use for the reading"
                         )
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file."
+                       )
     return subpi
 
 class GrpPubReadListAdderHelper(DbHelperBase):
@@ -65,28 +69,36 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
-            sys.exit("This entry appears to already exist in the collection")
+            pdoc = dict(pdocl[0])
+            pdoc["papers"] = dict(pdoc["papers"])
         else:
             pdoc = {}
-        pdoc.update({
-            'title': rc.title,
-                })
-        if rc.purpose:
-            pdoc.update({'purpose': rc.purpose})
-        else:
-            pdoc.update({'purpose': ''})
-        pdoc.update({"_id": key})
-        pdoc.update({'papers': {}})
+            pdoc.update({
+                "_id": key,
+                'date': dt.date.today(),
+                'papers': []
+                    })
+        updatables = {'purpose': rc.purpose, 'title': rc.title}
+        for up_key, up_val in updatables.items():
+            if pdoc.get(up_key, '') == '':
+                if up_val:
+                    pdoc.update({up_key: up_val})
+                else:
+                    pdoc['purpose'] = ''
+            else:
+                print(f"INFO: {up_key} statement not updated, entry already has "
+                      f"{up_key} statement: {pdoc.get(up_key)}")
+
 
         for cite in self.gtx["citations"]:
+            #print(f"{cite.get('_id')}: {cite.get('tags', '')}")  # save for filtering for untagged entries
             for tag in rc.tags:
-                if tag in cite.get("tags"):
-                    pdoc["papers"].update({"doi": cite.get("doi"),
-                                           "text": cite.get("synopsis")})
+                if tag in cite.get("tags", ""):
+                    pdoc["papers"].append({"doi": cite.get("doi"),
+                                           "text": cite.get("synopsis", "")})
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
-        print("{} has been added in reading_lists".format(
-            key))
+        print(f"{key} has been added/updated in reading_lists")
 
         return
 
