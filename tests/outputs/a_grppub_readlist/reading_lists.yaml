@@ -14,8 +14,9 @@ getting_started_with_pdf:
     the papers in the order they are listed here.
   year: 2019
 test_the_lister:
+  date: 2021-04-01
   papers:
-    doi: 10.1021/nn501591g
-    text: The description of symbolic computing in Python
+    - doi: 10.1021/nn501591g
+      text: The description of symbolic computing in Python
   purpose: Test the lister
   title: A list to test the lister

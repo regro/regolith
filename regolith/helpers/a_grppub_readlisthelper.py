@@ -1,19 +1,11 @@
 """Builder for Current and Pending Reports."""
 import datetime as dt
-import sys
-import time
-from argparse import RawTextHelpFormatter
-
-import nameparser
+import dateutil.parser as date_parser
 
 from regolith.helpers.basehelper import SoutHelperBase, DbHelperBase
-from regolith.dates import month_to_int, month_to_str_int
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_grants,
-    fuzzy_retrieval,
 )
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
@@ -34,6 +26,9 @@ def subparser(subpi):
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file."
+                       )
+    subpi.add_argument("--date",
+                       help="The date that will be used for testing."
                        )
     return subpi
 
@@ -64,6 +59,10 @@ class GrpPubReadListAdderHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
+        if rc.date:
+            update_date = date_parser.parse(rc.date).date()
+        else:
+            update_date = dt.date.today()
         key = "{}".format("_".join(rc.list_name.split()).strip())
 
         coll = self.gtx[rc.coll]
@@ -75,7 +74,7 @@ class GrpPubReadListAdderHelper(DbHelperBase):
             pdoc = {}
             pdoc.update({
                 "_id": key,
-                'date': dt.date.today(),
+                'date': update_date,
                 'papers': []
                     })
         updatables = {'purpose': rc.purpose, 'title': rc.title}
