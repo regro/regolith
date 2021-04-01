@@ -20,7 +20,6 @@ builder_map = [
     "figure",
     "recent-collabs",
     "beamplan"
-    "reading-lists"
 ]
 db_srcs = ["mongo", "fs"]
 

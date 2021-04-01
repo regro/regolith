@@ -11,7 +11,7 @@ from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
     fuzzy_retrieval,
-    number_suffix,
+    number_suffix, get_crossref_reference,
 )
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.dates import month_to_int
