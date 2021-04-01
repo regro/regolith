@@ -20,8 +20,8 @@ from regolith.tools import (
 
 TARGET_COLL = "grants"
 HELPER_TARGET = "l_grants"
-BLACKLIST = ["frap", "they_pay", "collgf", "physmatch", "ta", "chemmatch",
-             "summer@seas", "startup"]
+BLACKLIST = ["they_pay", "collgf", "physmatch", "ta", "chemmatch",
+             "summer@seas"]
 
 def subparser(subpi):
     subpi.add_argument("-d", "--date",
