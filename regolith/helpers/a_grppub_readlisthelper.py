@@ -18,7 +18,12 @@ def subparser(subpi):
                         default=None)
     subpi.add_argument("title", help="A title for the list that will be "
                                      "rendered with the list")
-    subpi.add_argument("tags", help="The tags to use to build the list",
+    subpi.add_argument("tags", help="list of tags, separated by spaces, to use "
+                                    "to find papers in citations collection that "
+                                    "will be added to the list.  OR logic is used "
+                                    "so this that will return all papers that "
+                                    "contain this OR that in the tags string in "
+                                    "citations",
                        nargs="+")
     subpi.add_argument("-p", "--purpose",
                         help="The purpose or intended use for the reading"
@@ -93,8 +98,10 @@ class GrpPubReadListAdderHelper(DbHelperBase):
             #print(f"{cite.get('_id')}: {cite.get('tags', '')}")  # save for filtering for untagged entries
             for tag in rc.tags:
                 if tag in cite.get("tags", ""):
-                    pdoc["papers"].append({"doi": cite.get("doi"),
-                                           "text": cite.get("synopsis", "")})
+                    dupe_doi = [paper for paper in pdoc.get("papers", []) if cite.get("doi") == paper.get("doi")]
+                    if len(dupe_doi) == 0:
+                        pdoc["papers"].append({"doi": cite.get("doi"),
+                                               "text": cite.get("synopsis", "")})
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print(f"{key} has been added/updated in reading_lists")
