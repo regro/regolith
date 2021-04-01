@@ -1,19 +1,11 @@
 """Builder for Current and Pending Reports."""
 import datetime as dt
-import sys
-import time
-from argparse import RawTextHelpFormatter
-
-import nameparser
+import dateutil.parser as date_parser
 
 from regolith.helpers.basehelper import SoutHelperBase, DbHelperBase
-from regolith.dates import month_to_int, month_to_str_int
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_grants,
-    fuzzy_retrieval,
 )
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
@@ -31,6 +23,13 @@ def subparser(subpi):
     subpi.add_argument("-p", "--purpose",
                         help="The purpose or intended use for the reading"
                         )
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file."
+                       )
+    subpi.add_argument("--date",
+                       help="The date that will be used for testing."
+                       )
     return subpi
 
 class GrpPubReadListAdderHelper(DbHelperBase):
@@ -60,33 +59,45 @@ class GrpPubReadListAdderHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
+        if rc.date:
+            update_date = date_parser.parse(rc.date).date()
+        else:
+            update_date = dt.date.today()
         key = "{}".format("_".join(rc.list_name.split()).strip())
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
-            sys.exit("This entry appears to already exist in the collection")
+            pdoc = dict(pdocl[0])
+            pdoc["papers"] = dict(pdoc["papers"])
         else:
             pdoc = {}
-        pdoc.update({
-            'title': rc.title,
-                })
-        if rc.purpose:
-            pdoc.update({'purpose': rc.purpose})
-        else:
-            pdoc.update({'purpose': ''})
-        pdoc.update({"_id": key})
-        pdoc.update({'papers': {}})
+            pdoc.update({
+                "_id": key,
+                'date': update_date,
+                'papers': []
+                    })
+        updatables = {'purpose': rc.purpose, 'title': rc.title}
+        for up_key, up_val in updatables.items():
+            if pdoc.get(up_key, '') == '':
+                if up_val:
+                    pdoc.update({up_key: up_val})
+                else:
+                    pdoc['purpose'] = ''
+            else:
+                print(f"INFO: {up_key} statement not updated, entry already has "
+                      f"{up_key} statement: {pdoc.get(up_key)}")
+
 
         for cite in self.gtx["citations"]:
+            #print(f"{cite.get('_id')}: {cite.get('tags', '')}")  # save for filtering for untagged entries
             for tag in rc.tags:
-                if tag in cite.get("tags"):
-                    pdoc["papers"].update({"doi": cite.get("doi"),
-                                           "text": cite.get("synopsis")})
+                if tag in cite.get("tags", ""):
+                    pdoc["papers"].append({"doi": cite.get("doi"),
+                                           "text": cite.get("synopsis", "")})
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
-        print("{} has been added in reading_lists".format(
-            key))
+        print(f"{key} has been added/updated in reading_lists")
 
         return
 
