@@ -16,6 +16,7 @@ from regolith.builders.coabuilder import RecentCollaboratorsBuilder
 from regolith.builders.beamplanbuilder import BeamPlanBuilder
 from regolith.builders.activitylogbuilder import ActivitylogBuilder
 from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
+from regolith.builders.readinglistsbuilder import ReadingListsBuilder
 
 
 BUILDERS = {
@@ -31,6 +32,7 @@ BUILDERS = {
     "postdocad": PostdocadBuilder,
     "preslist": PresListBuilder,
     "publist": PubListBuilder,
+    "reading-lists": ReadingListsBuilder,
     "reimb": ReimbursementBuilder,
     "recent-collabs": RecentCollaboratorsBuilder,
     "resume": ResumeBuilder,
