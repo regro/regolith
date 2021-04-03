@@ -11,7 +11,7 @@ from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
     fuzzy_retrieval,
-    number_suffix, get_crossref_reference,
+    number_suffix, get_formatted_crossref_reference,
 )
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.dates import month_to_int
@@ -58,8 +58,8 @@ class ReadingListsBuilder(LatexBuilderBase):
 #                    print(
 #                        "  doi needed for paper: {}".format(paper.get('text')))
                 if doi and doi != 'tbd':
-                    ref = get_crossref_reference(doi)
-                    paper.update({'reference': ref, 'n': n, 'label': 'DOI'})
+                    ref, ref_date = get_formatted_crossref_reference(doi)
+                    paper.update({'reference': ref, 'ref_date': ref_date, 'n': n, 'label': 'DOI'})
                     n += 1
                 elif url:
                     paper['doi'] = url
@@ -68,6 +68,9 @@ class ReadingListsBuilder(LatexBuilderBase):
                 else:
                     paper.update({'n': n})
                     n += 1
+            papers = rlist['papers']
+            papers.sort(key=lambda pper: pper.get('ref_date',datetime.date.today()),reverse=True)
+            rlist['papers'] = papers
 
             self.render(
                 "rlistbibfile.txt",
