@@ -1816,7 +1816,7 @@ EXEMPLARS = {
                     "text": "Very basic, but brief, intro to african swallows"},
                    ],
         "title": "A step-by-step pathway towards african swallow understanding.",
-        "year": 2019}],
+        }],
     "refereeReports": {
         "_id": "1902nature",
         "claimed_found_what": ["gravity waves"],

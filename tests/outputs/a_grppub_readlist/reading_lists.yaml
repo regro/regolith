@@ -1,3 +1,9 @@
+african_swallows:
+  date: '2019-12-01'
+  papers:
+    - doi: 10.1107/97809553602060000935
+      text: Very basic, but brief, intro to african swallows
+  title: A step-by-step pathway towards african swallow understanding.
 getting_started_with_pdf:
   day: 15
   month: 12
