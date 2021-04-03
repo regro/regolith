@@ -1797,7 +1797,24 @@ def print_task(task_list, stati, index = True):
     return
 
 
-def get_crossref_reference(doi):
+def get_formatted_crossref_reference(doi):
+    '''
+    given a doi, return the full reference and the date of the reference from Crossref REST-API
+
+    parameters
+    ----------
+    doi str
+      the doi of the digital object to pull from Crossref
+
+    return
+    ------
+    ref str
+      the nicely formatted reference including title
+    ref_date datetime.date
+      the date of the reference
+
+    '''
+
     cr = Crossref()
     article = cr.works(ids=doi)
     authorlist = [
@@ -1813,28 +1830,29 @@ def get_crossref_reference(doi):
         if len(authorlist) > 1:
             authorlist[-1] = "and {}".format(authorlist[-1])
         sauthorlist = ", ".join(authorlist)
+        ref_date_list = article.get('message').get('issued').get('date-parts')
         ref = "{}, {}, {}, v.{}, pp.{}, ({}).".format(
             article.get('message').get('title')[0],
             sauthorlist,
             journal,
             article.get('message').get('volume'),
             article.get('message').get('page'),
-            article.get('message').get('issued').get(
-                'date-parts')[
-                0][
-                0],
+            ref_date_list[0][0],
         )
     else:
         if len(authorlist) > 1:
             authorlist[-1] = "and {}".format(authorlist[-1])
         sauthorlist = ", ".join(authorlist)
+        ref_date_list = article.get('message').get('issued').get('date-parts')
         ref = "{}, {}, {}, pp.{}, ({}).".format(
             article.get('message').get('title')[0],
             sauthorlist,
             journal,
             article.get('message').get('page'),
-            article.get('message').get('issued').get('date-parts')[
-                0][
-                0],
+            ref_date_list[0][0],
         )
-    return ref
+    ref_date_list = ref_date_list[0]
+    ref_date_list += [6]*(3 - len(ref_date_list))
+    ref_date = date(*ref_date_list)
+
+    return ref, ref_date

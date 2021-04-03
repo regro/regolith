@@ -73,8 +73,7 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
-            pdoc = dict(pdocl[0])
-            pdoc["papers"] = dict(pdoc["papers"])
+            pdoc = pdocl[0]
         else:
             pdoc = {}
             pdoc.update({
@@ -82,6 +81,7 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                 'date': update_date,
                 'papers': []
                     })
+
         updatables = {'purpose': rc.purpose, 'title': rc.title}
         for up_key, up_val in updatables.items():
             if pdoc.get(up_key, '') == '':
@@ -100,8 +100,11 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                 if tag in cite.get("tags", ""):
                     dupe_doi = [paper for paper in pdoc.get("papers", []) if cite.get("doi") == paper.get("doi")]
                     if len(dupe_doi) == 0:
-                        pdoc["papers"].append({"doi": cite.get("doi"),
+                        pprs = pdoc["papers"]
+                        pprs.append({"doi": cite.get("doi"),
                                                "text": cite.get("synopsis", "")})
+                        pdoc["papers"] = pprs
+
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
         print(f"{key} has been added/updated in reading_lists")
