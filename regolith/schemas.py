@@ -1794,10 +1794,10 @@ EXEMPLARS = {
             "title": "The answer to life, the universe, and everything",
         }
     ],
-    "reading_lists": {
+    "reading_lists": [{
         "_id": "getting_started_with_pdf",
-        "day": "15",
-        "month": "12",
+        "day": 15,
+        "month": 12,
         "papers": [{"doi": "10.1107/97809553602060000935",
                     "text": "Very basic, but brief, intro to powder diffraction in general"},
                    {"doi": "10.1039/9781847558237-00464",
@@ -1808,8 +1808,15 @@ EXEMPLARS = {
                    ],
         "purpose": "Beginning reading about PDF",
         "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
-        "year": 2019,
-    },
+        "year": 2019},
+                {
+        "_id": "african_swallows",
+        "date": "2019-12-01",
+        "papers": [{"doi": "10.1107/97809553602060000935",
+                    "text": "Very basic, but brief, intro to african swallows"},
+                   ],
+        "title": "A step-by-step pathway towards african swallow understanding.",
+        }],
     "refereeReports": {
         "_id": "1902nature",
         "claimed_found_what": ["gravity waves"],
@@ -4223,6 +4230,73 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
+    },
+    "reading_lists": {
+        "_description": {
+            "description": "Reading lists consist of doi's or urls of items and "
+                           "a brief synopsis of why they are interesting"
+        },
+        "_id": {
+            "description": "Unique identifier for the reading list.",
+            "required": True,
+            "type": "string"
+        },
+        "date": {"description": "date the list was edited",
+                     "required": False,
+                     "anyof_type": ["date", "string"]},
+        "day": {
+            "description": "The day the list was edited",
+            "required": False,
+            "type": "integer"
+        },
+        "month": {
+            "description": "The month the list was edited",
+            "required": False,
+            "anyof_type": [
+                "integer",
+                "string"
+            ]
+        },
+        "year": {
+            "description": "The day the list was edited",
+            "required": False,
+            "type": "integer"
+        },
+        "papers": {
+            "description": "The list of items that are in the list",
+            "required": True,
+            "type": "list",
+            "schema": {
+                "type": "dict",
+                "schema": {
+                    "doi": {
+                        "description": "the doi of the paper.  If it doesn't have one put 'na'",
+                        "required": False,
+                        "type": "string"
+                    },
+                    "text": {
+                        "description": "the description of why the item is important or interesting",
+                        "required": True,
+                        "type": "string"
+                    },
+                    "url": {
+                        "description": "the url of the item if it has one",
+                        "required": False,
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "purpose": {
+            "description": "The purpose or target audience for the list",
+            "required": False,
+            "type": "string"
+        },
+        "title": {
+            "description": "The title of the list",
+            "required": True,
+            "type": "string"
+        }
     },
     "refereeReports": {
         "_description": {
