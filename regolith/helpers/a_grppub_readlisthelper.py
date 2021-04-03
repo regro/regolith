@@ -14,19 +14,22 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 
 
 def subparser(subpi):
-    subpi.add_argument("list_name", help="A short but unique name for the list",
+    subpi.add_argument("list_name", help="A short but unique name for the list. "
+                                         "If the list exists it will be updated.",
                         default=None)
-    subpi.add_argument("title", help="A title for the list that will be "
-                                     "rendered with the list")
     subpi.add_argument("tags", help="list of tags, separated by spaces, to use "
                                     "to find papers in citations collection that "
                                     "will be added to the list.  OR logic is used "
                                     "so this that will return all papers that "
-                                    "contain this OR that in the tags string in "
+                                    "contain this OR that tag in the tags string in "
                                     "citations",
                        nargs="+")
+    subpi.add_argument("-t", "--title", help="A title for the list that will be "
+                                     "rendered when the list is built. Required if "
+                                             "this is new list.")
     subpi.add_argument("-p", "--purpose",
-                        help="The purpose or intended use for the reading"
+                        help="The purpose or intended use for the reading. This will "
+                             "not be rendered when the list is built"
                         )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -74,6 +77,7 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
             pdoc = pdocl[0]
+            pdoc["papers"] = []   # rebuild the list from scratch
         else:
             pdoc = {}
             pdoc.update({
@@ -82,17 +86,14 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                 'papers': []
                     })
 
-        updatables = {'purpose': rc.purpose, 'title': rc.title}
-        for up_key, up_val in updatables.items():
-            if pdoc.get(up_key, '') == '':
-                if up_val:
-                    pdoc.update({up_key: up_val})
-                else:
-                    pdoc['purpose'] = ''
-            else:
-                print(f"INFO: {up_key} statement not updated, entry already has "
-                      f"{up_key} statement: {pdoc.get(up_key)}")
-
+        if rc.purpose:
+            pdoc.update({'purpose': rc.purpose})
+        if rc.title:
+            pdoc.update({'title': rc.title})
+        try:
+            pdoc['title']
+        except KeyError:
+            raise KeyError("ERROR: a title is required for a new list.  Please rerun specifying -t")
 
         for cite in self.gtx["citations"]:
             #print(f"{cite.get('_id')}: {cite.get('tags', '')}")  # save for filtering for untagged entries
