@@ -1794,7 +1794,7 @@ EXEMPLARS = {
             "title": "The answer to life, the universe, and everything",
         }
     ],
-    "reading_lists": {
+    "reading_lists": [{
         "_id": "getting_started_with_pdf",
         "day": 15,
         "month": 12,
@@ -1808,8 +1808,15 @@ EXEMPLARS = {
                    ],
         "purpose": "Beginning reading about PDF",
         "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
-        "year": 2019,
-    },
+        "year": 2019},
+                {
+        "_id": "african_swallows",
+        "date": "2019-12-01",
+        "papers": [{"doi": "10.1107/97809553602060000935",
+                    "text": "Very basic, but brief, intro to african swallows"},
+                   ],
+        "title": "A step-by-step pathway towards african swallow understanding.",
+        "year": 2019}],
     "refereeReports": {
         "_id": "1902nature",
         "claimed_found_what": ["gravity waves"],
