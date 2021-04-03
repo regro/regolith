@@ -4225,6 +4225,10 @@ SCHEMAS = {
         },
     },
     "reading_lists": {
+        "_description": {
+            "description": "Reading lists consist of doi's or urls of items and "
+                           "a brief synopsis of why they are interesting"
+        },
         "_id": {
             "description": "Unique identifier for the reading list.",
             "required": True,
