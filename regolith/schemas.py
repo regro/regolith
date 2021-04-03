@@ -4282,7 +4282,7 @@ SCHEMAS = {
         },
         "purpose": {
             "description": "The purpose or target audience for the list",
-            "required": True,
+            "required": False,
             "type": "string"
         },
         "title": {
