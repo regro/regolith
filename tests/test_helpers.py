@@ -462,8 +462,8 @@ helper_map = [
      "Please rerun the helper specifying '-n list-index' to update item number 'list-index':\n"
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
-    (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31",],
-     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+    (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31"],
+      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
      "    person: scopatz, appointment: f19, grant: dmref15,\n"
@@ -473,6 +473,8 @@ helper_map = [
      "appointments on depleted grants:\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
      "            from 2020-07-15 until 2020-08-31\n"
+     "    person: scopatz, appointment: ss21, grant: future_grant,\n"
+     "            from 2020-09-06 until 2021-08-31\n"
      "underspent grants:\n"
      "    dmref15: end: 2019-05-01\n"
      "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
@@ -482,10 +484,39 @@ helper_map = [
      "      required ss+gra burn: 0.06\n"
      "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
      "overspent grants:\n"
+     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "plotting mode is on\n"
      ),
-    (["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2020-08-31",],
+    (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31", "-v"],
+     "skipping ta since it is in the blacklist\n"
+     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+     "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
+     "skipping sym2.0 since it it does not support any appointments\n"
+     "appointments on outdated grants:\n"
+     "    person: scopatz, appointment: f19, grant: dmref15,\n"
+     "            from 2019-05-02 until 2019-09-01\n"
+     "    person: scopatz, appointment: s20, grant: sym,\n"
+     "            from 2020-01-01 until 2020-05-15\n"
+     "appointments on depleted grants:\n"
+     "    person: scopatz, appointment: ss20, grant: abc42,\n"
+     "            from 2020-07-15 until 2020-08-31\n"
+     "    person: scopatz, appointment: ss21, grant: future_grant,\n"
+     "            from 2020-09-06 until 2021-08-31\n"
+     "underspent grants:\n"
+     "    dmref15: end: 2019-05-01\n"
+     "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: -3.5\n"
+     "    sym: end: 2030-12-31\n"
+     "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: 0.06\n"
+     "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
+     "overspent grants:\n"
+     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
+     "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
+     "plotting mode is on\n"
+     ),
+    (["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2020-08-31"],
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
@@ -496,6 +527,8 @@ helper_map = [
      "appointments on depleted grants:\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
      "            from 2020-07-15 until 2020-08-31\n"
+     "    person: scopatz, appointment: ss21, grant: future_grant,\n"
+     "            from 2020-09-06 until 2021-08-31\n"
      "underspent grants:\n"
      "    dmref15: end: 2019-05-01\n"
      "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
@@ -505,6 +538,7 @@ helper_map = [
      "      required ss+gra burn: 0.06\n"
      "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
      "overspent grants:\n"
+     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      ),
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
