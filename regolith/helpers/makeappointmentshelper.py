@@ -43,15 +43,19 @@ MONTHLY_COST_QUANTUM = 3262
 def subparser(subpi):
 
     subpi.add_argument("run",
-                       help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
+                       help='run the helper. to see optional arguments, enter '
+                            '"regolith helper makeappointments"')
     subpi.add_argument("-d", "--projection-from-date",
-                       help='the date from which projections into the future will be calculated')
+                       help='the date from which projections into the future '
+                            'will be calculated')
     subpi.add_argument("--no-plot", action="store_true",
                        help='suppress plotting feature')
     subpi.add_argument("--no-gui", action="store_true",
-                       help='suppress interactive matplotlib GUI (used for running tests)')
+                       help='suppress interactive matplotlib GUI (used for '
+                            'running tests)')
     subpi.add_argument("-v", "--verbose", action="store_true",
-                       help='increase chatter')
+                       help="Plot all non-blacklisted grants.  If not set, grants "
+                            "that ended more than 2 years ago won't be plotted")
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated. Defaults to first database in regolithrc.json")
@@ -132,6 +136,9 @@ class MakeAppointmentsHelper(SoutHelperBase):
         all_grants = {}
         grants_end, grants_begin = None, None
         for grant in self.gtx['grants']:
+            if grant.get('alias','') == 'future_grant':
+                grant["end_date"] = projection_from_date + timedelta(days=2190)
+                grant["budget"][0]["end_date"] = projection_from_date + timedelta(days=2190)
             if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
                 if rc.verbose:
                  print(f"skipping {grant.get('alias')} since it is in the blacklist")
@@ -161,13 +168,13 @@ class MakeAppointmentsHelper(SoutHelperBase):
             emps = [person_date for person_date in person_dates
                     if not person_date.get("permanent")]
             emps.sort(key=lambda x: x.get('end_date', 0))
-            if emps:
-                date_last_emp = emps[-1].get('end_date', 0)
-                months_to_cover = round((date_last_emp - projection_from_date).days / 30.5, 2)
-            if months_to_cover > 0 and emps[-1].get("status") in ["phd", "postdoc"]:
-                print(
-                    f"{person['_id']} needs to be covered for {months_to_cover} months")
-                cum_months_to_cover += months_to_cover
+            # if emps:
+            #     date_last_emp = emps[-1].get('end_date', 0)
+            #     months_to_cover = round((date_last_emp - projection_from_date).days / 30.5, 2)
+            # if months_to_cover > 0 and emps[-1].get("status") in ["phd", "postdoc"]:
+            #     print(
+            #         f"{person['_id']} needs to be covered for {months_to_cover} months")
+            #     cum_months_to_cover += months_to_cover
 
 
             appts = collect_appts([person],filter_key='type',filter_value = 'gra')
@@ -278,7 +285,13 @@ class MakeAppointmentsHelper(SoutHelperBase):
                         cum_pd[x] += day_burn['postdoc_days']
                         cum_ss[x] += day_burn['ss_days']
                         counter += 1
-                plots.append(plotter(grant_dates, student=this_student,
+                if not rc.verbose:
+                    if max(grant_dates) >= projection_from_date - timedelta(days=730):
+                        plots.append(plotter(grant_dates, student=this_student,
+                                         pd=this_pd, ss=this_ss,
+                                         title=grant)[0])
+                else:
+                    plots.append(plotter(grant_dates, student=this_student,
                                      pd=this_pd, ss=this_ss,
                                      title=grant)[0])
 
