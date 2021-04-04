@@ -68,9 +68,6 @@ class ReadingListsBuilder(LatexBuilderBase):
                 else:
                     paper.update({'n': n})
                     n += 1
-            papers = rlist['papers']
-            papers.sort(key=lambda pper: pper.get('ref_date',datetime.date.today()),reverse=True)
-            rlist['papers'] = papers
 
             self.render(
                 "rlistbibfile.txt",
