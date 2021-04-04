@@ -104,14 +104,13 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                         pprs = pdoc["papers"]
                         pprs.append({"doi": cite.get("doi"),
                                      "text": cite.get("synopsis", ""),
-                                     "year": cite.get("year")})
-                        pprs.sort(key=lambda pper: pper.get('year',
-                                                             dt.date.today().year),
-                                   reverse=True)
+                                     "year": int(cite.get("year"))})
                         pdoc["papers"] = pprs
-
-
-
+        pprs = pdoc["papers"]
+        pprs.sort(key=lambda pper: pper.get('year'),
+                  reverse=True)
+#        print([ppr.get("year") for ppr in pprs])
+        pdoc["papers"] = pprs
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
