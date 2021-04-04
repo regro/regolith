@@ -103,8 +103,14 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                     if len(dupe_doi) == 0:
                         pprs = pdoc["papers"]
                         pprs.append({"doi": cite.get("doi"),
-                                               "text": cite.get("synopsis", "")})
+                                     "text": cite.get("synopsis", ""),
+                                     "year": int(cite.get("year"))})
                         pdoc["papers"] = pprs
+        pprs = pdoc["papers"]
+        pprs.sort(key=lambda pper: pper.get('year'),
+                  reverse=True)
+        [ppr.pop("year") for ppr in pprs]
+        pdoc["papers"] = pprs
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
