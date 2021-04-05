@@ -38,20 +38,46 @@ ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
 TRACKED_TYPES = ["gra", "pd", "ss", "ug"]
 MONTHLY_COST_QUANTUM = 3262
 
+_future_grant = {
+    # "_id": "_future_grant",
+    #             "account": "n/a",
+    #             "activity": 0,
+    #             "admin": "tbd",
+                "alias": "future_grant",
+                "amount": 0,
+                "awardnr": "tbd",
+                "budget": [{
+                     "begin_date": "2020-05-01",
+                     "end_date": "2099-12-31",
+                     "amount": 0,
+                     "student_months": 0,
+                     "postdoc_months": 0,
+                     "ss_months": 0
+                }]
+}
+
 
 
 def subparser(subpi):
 
     subpi.add_argument("run",
-                       help='run the helper. to see optional arguments, enter "regolith helper makeappointments"')
+                       help='run the helper. to see optional arguments, enter '
+                            '"regolith helper makeappointments".'
+                            'The grant "future_grant" is available internally '
+                            'to assign people to for making projections.  It '
+                            'will be plotted to show when you need new funding '
+                            'by and how much.')
     subpi.add_argument("-d", "--projection-from-date",
-                       help='the date from which projections into the future will be calculated')
+                       help='the date from which projections into the future '
+                            'will be calculated')
     subpi.add_argument("--no-plot", action="store_true",
                        help='suppress plotting feature')
     subpi.add_argument("--no-gui", action="store_true",
-                       help='suppress interactive matplotlib GUI (used for running tests)')
+                       help='suppress interactive matplotlib GUI (used for '
+                            'running tests)')
     subpi.add_argument("-v", "--verbose", action="store_true",
-                       help='increase chatter')
+                       help="Plot all non-blacklisted grants.  If not set, grants "
+                            "that ended more than 2 years ago won't be plotted")
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated. Defaults to first database in regolithrc.json")
@@ -129,12 +155,21 @@ class MakeAppointmentsHelper(SoutHelperBase):
             projection_from_date = date.today()
 
         # collecting amounts and time interval for all grants
-        all_grants = {}
+        _future_grant["begin_date"] = projection_from_date
+        _future_grant["end_date"] = projection_from_date + timedelta(days=2190)
+        _future_grant["budget"][0]["begin_date"] = projection_from_date
+        _future_grant["budget"][0]["end_date"] = projection_from_date + timedelta(days=2190)
+        all_grants = {_future_grant.get('alias'): {
+                        "begin_date": _future_grant.get("begin_date"),
+                        'end_date': _future_grant.get("end_date"),
+                        'budget': _future_grant.get('budget'),
+                        'burn': grant_burn(_future_grant, all_appts)
+        }}
         grants_end, grants_begin = None, None
         for grant in self.gtx['grants']:
             if grant.get('_id') in BLACKLIST or grant.get('alias') in BLACKLIST:
                 if rc.verbose:
-                 print(f"skipping {grant.get('alias')} since it is in the blacklist")
+                 print(f"skipping {grant.get('alias',grant.get('_id'))} since it is in the blacklist")
                 continue
             prop = rc.client.find_one(rc.database, "proposals", {"_id": grant.get("proposal_id")})
             if prop.get('year'):
@@ -161,14 +196,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
             emps = [person_date for person_date in person_dates
                     if not person_date.get("permanent")]
             emps.sort(key=lambda x: x.get('end_date', 0))
-            if emps:
-                date_last_emp = emps[-1].get('end_date', 0)
-                months_to_cover = round((date_last_emp - projection_from_date).days / 30.5, 2)
-            if months_to_cover > 0 and emps[-1].get("status") in ["phd", "postdoc"]:
-                print(
-                    f"{person['_id']} needs to be covered for {months_to_cover} months")
-                cum_months_to_cover += months_to_cover
-
 
             appts = collect_appts([person],filter_key='type',filter_value = 'gra')
             appts.extend(collect_appts([person],filter_key='type',filter_value = 'ss'))
@@ -278,15 +305,23 @@ class MakeAppointmentsHelper(SoutHelperBase):
                         cum_pd[x] += day_burn['postdoc_days']
                         cum_ss[x] += day_burn['ss_days']
                         counter += 1
-                plots.append(plotter(grant_dates, student=this_student,
+                if not rc.verbose:
+                    if max(grant_dates) >= projection_from_date - timedelta(days=730):
+                        plots.append(plotter(grant_dates, student=this_student,
+                                         pd=this_pd, ss=this_ss,
+                                         title=grant)[0])
+                else:
+                    plots.append(plotter(grant_dates, student=this_student,
                                      pd=this_pd, ss=this_ss,
                                      title=grant)[0])
 
         if outdated:
+            outdated.sort(key=lambda mess:mess[-10:])
             print("appointments on outdated grants:")
             for appt in outdated:
                print(appt)
         if depleted:
+            depleted.sort(key=lambda mess:mess[-10:])
             print("appointments on depleted grants:")
             for appt in depleted:
                 print(appt)

@@ -760,6 +760,15 @@ EXEMPLARS = {
                 "loading": 0.8,
                 "status": "proposed",
                 "notes": []
+            },
+            "ss21": {
+                "begin_date": "2020-09-01",
+                "end_date": "2021-08-31",
+                "grant": "future_grant",
+                "type": "ss",
+                "loading": 1.0,
+                "status": "proposed",
+                "notes": []
             }
 
         },
