@@ -81,18 +81,34 @@ class PubListBuilder(LatexBuilderBase):
             outfile = p["_id"] + filestub
             p['qualifiers'] = qualifiers
             names = frozenset(p.get("aka", []) + [p["name"]])
+            pubs_nobold = self.filter_publications(names, reverse=True, bold=False)
+            pubs_ackno = self.filter_publications(names, reverse=True, bold=False, ackno=True)
             pubs = self.filter_publications(names, reverse=True)
 
             if fd:
                 dpubs = self.filter_pubs_by_date(pubs, sy, sm, sd, by, bm, bd)
                 pubs = dpubs
+                dpubs = self.filter_pubs_by_date(pubs_nobold, sy, sm, sd, by, bm, bd)
+                pubs_nobold = dpubs
+                dpubs = self.filter_pubs_by_date(pubs_ackno, sy, sm, sd, by, bm, bd)
+                pubs_ackno = dpubs
 
             if gr:
                 gpubs = self.filter_pubs_by_grant(pubs, grants)
                 pubs = gpubs
+                gpubs = self.filter_pubs_by_grant(pubs_nobold, grants)
+                pubs_nobold = gpubs
+                gpubs = self.filter_pubs_by_grant(pubs_ackno, grants)
+                pubs_ackno = gpubs
 
             bibfile = self.make_bibtex_file(
                 pubs, pid=p["_id"], person_dir=self.bldir
+            )
+            bibfile_nobold = self.make_bibtex_file(
+                pubs_nobold, pid=f"{p['_id']}_nobold", person_dir=self.bldir
+            )
+            bibfile_ackno = self.make_bibtex_file(
+                pubs_ackno, pid=f"{p['_id']}_ackno", person_dir=self.bldir
             )
             if not p.get('email'):
                 p['email'] = ""
@@ -108,21 +124,47 @@ class PubListBuilder(LatexBuilderBase):
                 bibfile=bibfile,
                 employment=emp,
             )
+            self.render(
+                "publist_nobold.tex",
+                outfile + "_nobold.tex",
+                p=p,
+                title=p.get("name", ""),
+                pubs=pubs_nobold,
+                names=names,
+                bibfile=bibfile_nobold,
+                employment=emp,
+            )
+            self.render(
+                "publist_ackno.tex",
+                outfile + "_ackno.tex",
+                p=p,
+                title=p.get("name", ""),
+                pubs=pubs_ackno,
+                names=names,
+                bibfile=bibfile_ackno,
+                employment=emp,
+            )
             self.pdf(p["_id"])
 
-    def filter_publications(self, authors, reverse=False):
+    def filter_publications(self, authors, reverse=False, bold=True, ackno=False):
         rc = self.rc
         pubs = []
         for pub in all_docs_from_collection(rc.client, "citations"):
             if len(set(pub["author"]) & authors) == 0:
                 continue
-            bold_self = []
-            for a in pub["author"]:
-                if a in authors:
-                    bold_self.append("\\textbf{" + a + "}")
-                else:
-                    bold_self.append(a)
-            pub["author"] = bold_self
+            if bold:
+                bold_self = []
+                for a in pub["author"]:
+                    if a in authors:
+                        bold_self.append("\\textbf{" + a + "}")
+                    else:
+                        bold_self.append(a)
+                pub["author"] = bold_self
+            if ackno:
+                if pub.get('ackno'):
+                    pub["note"] = latex_safe(f"\\newline\\newline\\noindent "
+                                             f"Acknowledgement:\\newline\\noindent "
+                                             f"{pub.get('ackno')}\\newline\\newline\\noindent ")
             pubs.append(pub)
         pubs.sort(key=doc_date_key, reverse=reverse)
         return pubs
