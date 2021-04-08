@@ -39,10 +39,10 @@ TRACKED_TYPES = ["gra", "pd", "ss", "ug"]
 MONTHLY_COST_QUANTUM = 3262
 
 _future_grant = {
-    # "_id": "_future_grant",
-    #             "account": "n/a",
-    #             "activity": 0,
-    #             "admin": "tbd",
+                "_id": "_future_grant",
+                "account": "n/a",
+                "activity": 0,
+                "admin": "tbd",
                 "alias": "future_grant",
                 "amount": 0,
                 "awardnr": "tbd",

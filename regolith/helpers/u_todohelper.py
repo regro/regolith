@@ -110,21 +110,6 @@ class TodoUpdaterHelper(DbHelperBase):
                     "in the command line")
                 return
         filterid = {'_id': rc.assigned_to}
-        if rc.renumber:
-            index = 1
-            for i in range(0, len(rc.databases)):
-                db_name = rc.databases[i]["name"]
-                person_idx = rc.client.find_one(db_name, rc.coll, filterid)
-                if isinstance(person_idx,dict):
-                    todolist_idx = person_idx.get("todos", [])
-                else:
-                    continue
-                if len(todolist_idx) == 0:
-                    continue
-                else:
-                    for todo in todolist_idx:
-                        todo["running_index"] = index
-                        index += 1
         person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
         if not person:
             raise TypeError(f"Id {rc.assigned_to} can't be found in todos collection")
@@ -137,10 +122,10 @@ class TodoUpdaterHelper(DbHelperBase):
         else:
             today = date_parser.parse(rc.date).date()
         if not rc.index:
-            started_todo = 0
+            finished_todo = 0
             for todo in todolist:
-                if todo["status"] == 'started':
-                    started_todo += 1
+                if todo["status"] == 'finished':
+                    finished_todo += 1
                 if isinstance(todo.get("due_date"), str):
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 if isinstance(todo.get("end_date"), str):
@@ -150,15 +135,15 @@ class TodoUpdaterHelper(DbHelperBase):
                 todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"] - 0.5)))
             todolist = sorted(todolist, key=lambda k: (k['status'], k['importance'],
                                                        k['order'], -k.get('duration', 10000)))
-            todolist[started_todo:] = sorted(todolist[started_todo:], key=lambda k: (-k["sort_finished"]))
+            todolist[:finished_todo] = sorted(todolist[:finished_todo], key=lambda k: (-k["sort_finished"]))
             index_match = {}
             if rc.renumber:
                 new_index_started = 1
                 new_index_finished = -1
-                for todo in todolist[:started_todo]:
+                for todo in reversed(todolist[finished_todo:]):
                     index_match[todo["running_index"]] = new_index_started
                     new_index_started += 1
-                for todo in todolist[started_todo:]:
+                for todo in reversed(todolist[:finished_todo]):
                     index_match[todo["running_index"]] = new_index_finished
                     new_index_finished += -1
                 for i in range(0, len(rc.databases)):
