@@ -6,7 +6,7 @@ from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
-from regolith.dates import month_to_int, is_current
+from regolith.dates import month_to_int, is_current, get_dates
 from regolith.sorters import position_key, doc_date_key
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
@@ -161,16 +161,17 @@ class ActivitylogBuilder(LatexBuilderBase):
         )
         grants = pending_grants + current_grants
         for grant in grants:
+            grant_dates = get_dates(grant)
             grant.update(
                 award_start_date="{2}/{1}/{0}".format(
-                    grant["begin_day"],
-                    month_to_int(grant["begin_month"]),
-                    grant["begin_year"],
+                    grant_dates.get("begin_day"),
+                    grant_dates.get("begin_month"),
+                    grant_dates.get("begin_year"),
                 ),
                 award_end_date="{2}/{1}/{0}".format(
-                    grant["end_day"],
-                    month_to_int(grant["end_month"]),
-                    grant["end_year"],
+                    grant_dates.get("end_day"),
+                    grant_dates.get("end_month"),
+                    grant_dates.get("end_year"),
                 ),
             )
         badids = [i["_id"] for i in current_grants if
