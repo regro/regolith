@@ -110,26 +110,10 @@ class TodoUpdaterHelper(DbHelperBase):
                     "in the command line")
                 return
         filterid = {'_id': rc.assigned_to}
-        # if rc.renumber:
-        #     index = 1
-        #     for i in range(0, len(rc.databases)):
-        #         db_name = rc.databases[i]["name"]
-        #         person_idx = rc.client.find_one(db_name, rc.coll, filterid)
-        #         if isinstance(person_idx,dict):
-        #             todolist_idx = person_idx.get("todos", [])
-        #         else:
-        #             continue
-        #         if len(todolist_idx) == 0:
-        #             continue
-        #         else:
-        #             for todo in todolist_idx:
-        #                 todo["running_index"] = index
-        #                 index += 1
         person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
         if not person:
             raise TypeError(f"Id {rc.assigned_to} can't be found in todos collection")
         todolist = person.get("todos", [])
-        print(len(todolist))
         if len(todolist) == 0:
             print(f"{rc.assigned_to} doesn't have todos in todos collection.")
             return
