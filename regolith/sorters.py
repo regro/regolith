@@ -6,6 +6,9 @@ from regolith.dates import date_to_float
 doc_date_key = lambda x: date_to_float(
     x.get("year", 1970), x.get("month", "jan")
 )
+doc_date_key_high = lambda x: date_to_float(
+    x.get("year", 1970), x.get("month", "dec")
+)
 ene_date_key = lambda x: date_to_float(
     x.get("end_year", 4242), x.get("end_month", "dec")
 )

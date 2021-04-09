@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 from habanero import Crossref
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
-from regolith.sorters import doc_date_key, id_key, ene_date_key
+from regolith.sorters import doc_date_key, id_key, ene_date_key, doc_date_key_high
 from regolith.chained_db import ChainDB
 from regolith.schemas import APPOINTMENTS_TYPE
 
@@ -191,7 +191,7 @@ def filter_publications(citations, authors, reverse=False, bold=True,
             pubs_by_grant.append(pub)
 
     pubs = [x for x in pubs_by_date if x in pubs_by_grant]
-    pubs.sort(key=doc_date_key, reverse=reverse)
+    pubs.sort(key=doc_date_key_high, reverse=reverse)
     return pubs
 
 
