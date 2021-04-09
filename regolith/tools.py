@@ -147,6 +147,8 @@ def filter_publications(citations, authors, reverse=False, bold=True,
         The date before which papers must have been published
     """
     pubs_by_date, pubs_by_grant = [], []
+    if not isinstance(citations, list):
+        citations = list(citations)
     cites = deepcopy(citations)
     for pub in cites:
         if (
