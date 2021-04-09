@@ -91,7 +91,6 @@ CONTACTS_COLL = [
         "institution": "columbiau"
     }]
 
-
 @pytest.mark.parametrize(
     "input, expected", [
         (["m1", PEOPLE_COLL, CONTACTS_COLL],
@@ -124,6 +123,30 @@ CONTACTS_COLL = [
 def test_get_person_contact(input, expected):
     print(input)
     actual = get_person_contact(input[0],input[1],input[2])
+    assert actual == expected
+
+CITATIONS = [{"_id": "paper",
+              "author": ["m1","cleese"],
+              "ackno": "thanks",
+              "grants": ["fwp","dmref"],
+              "month": "apr",
+              "year": "2021"}]
+
+@pytest.mark.parametrize(
+    "args, kwargs, expected", [
+        ([CITATIONS, set(["m1"])],
+         {},
+         [{'_id': 'paper',
+           'ackno': 'thanks',
+           'author': ['\\textbf{m1}', 'cleese'],
+           'grants': ['fwp', 'dmref'],
+           'month': 'apr',
+           'year': '2021'}]
+         )
+  ]
+)
+def test_filter_publications(args, kwargs, expected):
+    actual = filter_publications(*args, **kwargs)
     assert actual == expected
 
 

@@ -127,7 +127,8 @@ def get_team_from_grant(grantcol):
 
 
 def filter_publications(citations, authors, reverse=False, bold=True,
-                        since=None, before=None, ):
+                        since=None, before=None, ackno=False,
+                        grants=None):
     """Filter publications by the author(s)/editor(s)
 
     Parameters
@@ -145,18 +146,15 @@ def filter_publications(citations, authors, reverse=False, bold=True,
     before : date, optional
         The date before which papers must have been published
     """
-    pubs = []
-    for pub in citations:
+    pubs_by_date, pubs_by_grant = [], []
+    cites = deepcopy(citations)
+    for pub in cites:
         if (
                 len((set(pub.get("author", [])) | set(
                     pub.get("editor", []))) & authors)
                 == 0
         ):
             continue
-        if not pub.get("month") or pub.get("month") == "tbd":
-            #            print("WARNING: {} missing month will be ignored".format(pub.get("title")))
-            continue
-        pub = deepcopy(pub)
         if bold:
             bold_self = []
             for a in pub["author"]:
@@ -165,8 +163,11 @@ def filter_publications(citations, authors, reverse=False, bold=True,
                 else:
                     bold_self.append(a)
             pub["author"] = bold_self
-        else:
-            pub = deepcopy(pub)
+        if ackno:
+            if pub.get('ackno'):
+                pub["note"] = latex_safe(f"\\newline\\newline\\noindent "
+                                         f"Acknowledgement:\\newline\\noindent "
+                                         f"{pub.get('ackno')}\\newline\\newline\\noindent ")
         if since:
             bibdate = date(int(pub.get("year")),
                            month_to_int(pub.get("month", 12)),
@@ -174,12 +175,22 @@ def filter_publications(citations, authors, reverse=False, bold=True,
             if bibdate > since:
                 if before:
                     if bibdate < before:
-                        pubs.append(pub)
+                        pubs_by_date.append(pub)
                 else:
-                    pubs.append(pub)
+                    pubs_by_date.append(pub)
         else:
-            pubs.append(pub)
+            pubs_by_date.append(pub)
 
+        if grants:
+            if isinstance(grants, str):
+                grants = [grants]
+            for grant in grants:
+                if grant in pub.get("grant",""):
+                    pubs_by_grant.append(pub)
+        else:
+            pubs_by_grant.append(pub)
+
+    pubs = [x for x in pubs_by_date if x in pubs_by_grant]
     pubs.sort(key=doc_date_key, reverse=reverse)
     return pubs
 
