@@ -91,7 +91,6 @@ CONTACTS_COLL = [
         "institution": "columbiau"
     }]
 
-
 @pytest.mark.parametrize(
     "input, expected", [
         (["m1", PEOPLE_COLL, CONTACTS_COLL],
@@ -124,6 +123,160 @@ CONTACTS_COLL = [
 def test_get_person_contact(input, expected):
     print(input)
     actual = get_person_contact(input[0],input[1],input[2])
+    assert actual == expected
+
+CITATIONS = [{"_id": "paper",
+              "author": ["m1","cleese"],
+              "ackno": "thanks",
+              "grant": "fwp, dmref",
+              "month": "apr",
+              "year": "2021"},
+            {"_id": "paper2",
+              "author": ["m1","palin"],
+              "ackno": "thanks",
+              "grant": "fwp2",
+              "year": "2020"},
+             {"_id": "paper3",
+              "author": ["m1", "jones"],
+              "ackno": "thanks",
+              "grant": "fwp2",
+              "month": "jun",
+              "year": "2020"}
+             ]
+
+@pytest.mark.parametrize(
+    "args, kwargs, expected", [
+        ([CITATIONS, set(["m1"])],
+         {},
+         [{"_id": "paper3",
+              "author": ["\\textbf{m1}", "jones"],
+              "ackno": "thanks",
+              "grant": "fwp2",
+              "month": "jun",
+              "year": "2020"},
+          {"_id": "paper2",
+           "author": ["\\textbf{m1}", "palin"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "year": "2020"},
+          {'_id': 'paper',
+           'ackno': 'thanks',
+           'author': ['\\textbf{m1}', 'cleese'],
+           'grant': 'fwp, dmref',
+           'month': 'apr',
+           'year': '2021'}
+          ]
+         ),
+        ([CITATIONS, set(["m1"])],
+         {"bold": False, "ackno": True},
+         [{"_id": "paper3",
+           "author": ["m1", "jones"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "month": "jun",
+           "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+           "year": "2020"},
+          {"_id": "paper2",
+           "author": ["m1", "palin"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+           "year": "2020"},
+          {'_id': 'paper',
+           'ackno': 'thanks',
+           'author': ['m1', 'cleese'],
+           'grant': 'fwp, dmref',
+           'month': 'apr',
+           "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+           'year': '2021'}
+          ]
+         ),
+        ([CITATIONS, set(["m1"])],
+             {"bold":False},
+             [{"_id": "paper3",
+               "author": ["m1", "jones"],
+               "ackno": "thanks",
+               "grant": "fwp2",
+               "month": "jun",
+               "year": "2020"},
+              {"_id": "paper2",
+               "author": ["m1", "palin"],
+               "ackno": "thanks",
+               "grant": "fwp2",
+               "year": "2020"},
+              {'_id': 'paper',
+               'ackno': 'thanks',
+               'author': ['m1', 'cleese'],
+               'grant': 'fwp, dmref',
+               'month': 'apr',
+               'year': '2021'}
+              ]
+             ),
+        ([CITATIONS, set(["m1"])],
+         {"bold": False, "grants": "fwp2"},
+         [{"_id": "paper3",
+           "author": ["m1", "jones"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "month": "jun",
+           "year": "2020"},
+          {"_id": "paper2",
+           "author": ["m1", "palin"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "year": "2020"}
+          ]
+         ),
+        ([CITATIONS, set(["m1"])],
+         {"bold": False, "grants": ["fwp2", "dmref"]},
+         [{"_id": "paper3",
+           "author": ["m1", "jones"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "month": "jun",
+           "year": "2020"},
+          {"_id": "paper2",
+           "author": ["m1", "palin"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "year": "2020"},
+          {'_id': 'paper',
+           'ackno': 'thanks',
+           'author': ['m1', 'cleese'],
+           'grant': 'fwp, dmref',
+           'month': 'apr',
+           'year': '2021'}
+          ]
+         ),
+        ([CITATIONS, set(["m1"])],
+         {"bold": False, "since": dt.date(2021,1,1)},
+         [{'_id': 'paper',
+           'ackno': 'thanks',
+           'author': ['m1', 'cleese'],
+           'grant': 'fwp, dmref',
+           'month': 'apr',
+           'year': '2021'}
+          ]
+         ),
+        ([CITATIONS, set(["m1"])],
+         {"bold": False, "since": dt.date(2020, 5, 1), "before": dt.date(2021,1,1)},
+         [{"_id": "paper3",
+           "author": ["m1", "jones"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "month": "jun",
+           "year": "2020"},
+          {"_id": "paper2",
+           "author": ["m1", "palin"],
+           "ackno": "thanks",
+           "grant": "fwp2",
+           "year": "2020"},
+          ]
+         ),
+    ]
+)
+def test_filter_publications(args, kwargs, expected):
+    actual = filter_publications(*args, **kwargs)
     assert actual == expected
 
 

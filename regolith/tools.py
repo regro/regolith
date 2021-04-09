@@ -13,7 +13,8 @@ from dateutil.relativedelta import relativedelta
 from habanero import Crossref
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
-from regolith.sorters import doc_date_key, id_key, ene_date_key
+from regolith.sorters import doc_date_key, id_key, ene_date_key, \
+    doc_date_key_high
 from regolith.chained_db import ChainDB
 from regolith.schemas import APPOINTMENTS_TYPE
 
@@ -127,7 +128,8 @@ def get_team_from_grant(grantcol):
 
 
 def filter_publications(citations, authors, reverse=False, bold=True,
-                        since=None, before=None, ):
+                        since=None, before=None, ackno=False,
+                        grants=None):
     """Filter publications by the author(s)/editor(s)
 
     Parameters
@@ -144,19 +146,23 @@ def filter_publications(citations, authors, reverse=False, bold=True,
         The date after which papers must have been published
     before : date, optional
         The date before which papers must have been published
+    ackno : bool
+        Move the acknowledgement statement to note so that it is displayed in the
+        publication list
+    grants : string or list of strings, optional
+        The grant or grants to filter over
     """
-    pubs = []
-    for pub in citations:
+    pubs_by_date, pubs_by_grant = [], []
+    if not isinstance(citations, list):
+        citations = list(citations)
+    cites = deepcopy(citations)
+    for pub in cites:
         if (
                 len((set(pub.get("author", [])) | set(
                     pub.get("editor", []))) & authors)
                 == 0
         ):
             continue
-        if not pub.get("month") or pub.get("month") == "tbd":
-            #            print("WARNING: {} missing month will be ignored".format(pub.get("title")))
-            continue
-        pub = deepcopy(pub)
         if bold:
             bold_self = []
             for a in pub["author"]:
@@ -165,8 +171,11 @@ def filter_publications(citations, authors, reverse=False, bold=True,
                 else:
                     bold_self.append(a)
             pub["author"] = bold_self
-        else:
-            pub = deepcopy(pub)
+        if ackno:
+            if pub.get('ackno'):
+                pub["note"] = latex_safe(f"\\newline\\newline\\noindent "
+                                         f"Acknowledgement:\\newline\\noindent "
+                                         f"{pub.get('ackno')}\\newline\\newline\\noindent ")
         if since:
             bibdate = date(int(pub.get("year")),
                            month_to_int(pub.get("month", 12)),
@@ -174,13 +183,23 @@ def filter_publications(citations, authors, reverse=False, bold=True,
             if bibdate > since:
                 if before:
                     if bibdate < before:
-                        pubs.append(pub)
+                        pubs_by_date.append(pub)
                 else:
-                    pubs.append(pub)
+                    pubs_by_date.append(pub)
         else:
-            pubs.append(pub)
+            pubs_by_date.append(pub)
 
-    pubs.sort(key=doc_date_key, reverse=reverse)
+        if grants:
+            if isinstance(grants, str):
+                grants = [grants]
+            for grant in grants:
+                if grant in pub.get("grant", ""):
+                    pubs_by_grant.append(pub)
+        else:
+            pubs_by_grant.append(pub)
+
+    pubs = [x for x in pubs_by_date if x in pubs_by_grant]
+    pubs.sort(key=doc_date_key_high, reverse=reverse)
     return pubs
 
 
@@ -314,13 +333,18 @@ def filter_service(ppl, begin_period, type, verbose=False):
             if i.get("type") == type:
                 if i.get('year'):
                     end_year = i.get('year')
-                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]), end_year))
+                    if verbose: print(
+                        "end_year from {} = {}".format(i.get("name"[:10]),
+                                                       end_year))
                 elif i.get('end_year'):
                     end_year = i.get('end_year')
-                    if verbose: print("end_year from {} = {}".format(i.get("name"[:10]), end_year))
+                    if verbose: print(
+                        "end_year from {} = {}".format(i.get("name"[:10]),
+                                                       end_year))
                 else:
                     end_year = date.today().year
-                    if verbose: print("no end_year, using today = {}".format(end_year))
+                    if verbose: print(
+                        "no end_year, using today = {}".format(end_year))
                 end_date = date(int(end_year),
                                 month_to_int(i.get("end_month", 12)),
                                 i.get("end_day", 28))
@@ -461,7 +485,8 @@ def filter_licenses(patentscoll, people, target, since=None, before=None):
                         else:
                             i['month'] = SHORT_MONTH_NAMES[
                                 month_to_int(i['month'])]
-                        total = sum([event.get("amount") for event in i["events"]])
+                        total = sum(
+                            [event.get("amount") for event in i["events"]])
                         i["total_amount"] = total
                         events = [event for event in i["events"] if
                                   date(event["year"], event["month"],
@@ -469,7 +494,8 @@ def filter_licenses(patentscoll, people, target, since=None, before=None):
                         events = sorted(events,
                                         key=lambda event: date(event["year"],
                                                                event["month"],
-                                                               event.get("day", 28)))
+                                                               event.get("day",
+                                                                         28)))
                         i["events"] = events
                         licenses.append(i)
                 else:
@@ -517,7 +543,8 @@ def filter_activities(people, begin_period, type, verbose=False):
     return activities
 
 
-def filter_presentations(people, presentations, institutions, target, types=["all"],
+def filter_presentations(people, presentations, institutions, target,
+                         types=["all"],
                          since=None, before=None, statuses=["accepted"]):
     '''
     filters presentations for different types and date ranges
@@ -1048,6 +1075,7 @@ def merge_collections_all(a, b, target_id):
     bdis, adis = b, a
     return adis + intersect + bdis
 
+
 def merge_collections_superior(a, b, target_id):
     """
     merge two collections into a single merged collection
@@ -1085,6 +1113,7 @@ def merge_collections_superior(a, b, target_id):
                 b.remove(i)
     bdis = b
     return intersect + bdis
+
 
 def get_person_contact(name, people_coll, contacts_coll):
     '''
@@ -1128,6 +1157,7 @@ def get_person_contact(name, people_coll, contacts_coll):
     else:
         return None
 
+
 def merge_collections_intersect(a, b, target_id):
     """
     merge two collections such thta just the intersection is returned
@@ -1157,8 +1187,10 @@ def merge_collections_intersect(a, b, target_id):
     grants collection for which "_id" in proposals has the value of
     "proposal_id" in grants, returning just those items that have the dereference
     """
-    intersect = [{**j, **i} for j in a for i in b if j.get("_id") == i.get(target_id)]
+    intersect = [{**j, **i} for j in a for i in b if
+                 j.get("_id") == i.get(target_id)]
     return intersect
+
 
 def update_schemas(default_schema, user_schema):
     """
@@ -1209,7 +1241,8 @@ def get_person(person_id, rc):
     )
     if person_found:
         return person_found
-    print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
+    print("WARNING: {} missing from people and contacts. Check aka.".format(
+        person_id))
     return None
 
 
@@ -1309,6 +1342,7 @@ def group_member_ids(ppl_coll, grpname):
                     grpmembers.add(person["_id"])
     return grpmembers
 
+
 def group_member_employment_start_end(person, grpname):
     """
     Get start and end dates of group member employment
@@ -1332,8 +1366,9 @@ def group_member_employment_start_end(person, grpname):
             if position.get("group", None) == grpname:
                 dates = get_dates(position)
                 if not dates.get('end_date') and not position.get("permanent"):
-                    raise RuntimeError("WARNING: {} has no end date in employment for {} starting {}".
-                          format(person["_id"], grpname, dates.get("begin_date")))
+                    raise RuntimeError(
+                        "WARNING: {} has no end date in employment for {} starting {}".
+                        format(person["_id"], grpname, dates.get("begin_date")))
                 grpmember.append({"_id": person["_id"],
                                   "begin_date": dates.get("begin_date"),
                                   "end_date": dates.get("end_date"),
@@ -1341,6 +1376,7 @@ def group_member_employment_start_end(person, grpname):
                                   "status": position.get("status")
                                   })
     return grpmember
+
 
 def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
     """Retrieves a list of all documents from the collection where the fragment
@@ -1461,16 +1497,20 @@ def is_fully_appointed(person, begin_date, end_date):
                 good_period = False
         else:
             if not good_period:
-                print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
-                                                                     str(start_gap), str(day - relativedelta(days=1))))
+                print("WARNING: appointment gap for {} from {} to {}".format(
+                    person.get('_id'),
+                    str(start_gap), str(day - relativedelta(days=1))))
             good_period = True
         if x == timespan.days and not good_period:
             if day != start_gap:
-                print("WARNING: appointment gap for {} from {} to {}".format(person.get('_id'),
-                                                                             str(start_gap), str(day)))
+                print("WARNING: appointment gap for {} from {} to {}".format(
+                    person.get('_id'),
+                    str(start_gap), str(day)))
             else:
-                print("WARNING: appointment gap for {} on {}".format(person.get('_id'), str(day)))
+                print("WARNING: appointment gap for {} on {}".format(
+                    person.get('_id'), str(day)))
     return status
+
 
 def key_value_pair_filter(collection, arguments):
     """Retrieves a list of all documents from the collection where the fragment
@@ -1501,7 +1541,8 @@ def key_value_pair_filter(collection, arguments):
         raise RuntimeError("Error: Number of keys and values do not match")
     elements = collection
     for i in range(0, len(arguments) - 1, 2):
-        elements = fragment_retrieval(elements, [arguments[i]], arguments[i + 1])
+        elements = fragment_retrieval(elements, [arguments[i]],
+                                      arguments[i + 1])
     return elements
 
 
@@ -1567,7 +1608,8 @@ def search_collection(collection, arguments, keys=None):
     return collection_str(collection, keys)
 
 
-def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None, end_date=None):
+def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
+                  end_date=None):
     """
     Retrieves a list of all the appointments on the given grant(s) in the given interval of time for each person in the
     given people collection.
@@ -1601,13 +1643,21 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     """
 
     if bool(begin_date) ^ bool(end_date):
-        raise RuntimeError("please enter both begin date and end date or neither")
-    filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
-    filter_value = [filter_value] if not isinstance(filter_value, list) else filter_value
-    if (bool(filter_key)^bool(filter_value)) or (filter_key and filter_value and len(filter_key) != len(filter_value)):
-        raise RuntimeError("number of filter keys and filter values do not match")
-    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
-    end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
+        raise RuntimeError(
+            "please enter both begin date and end date or neither")
+    filter_key = [filter_key] if not isinstance(filter_key,
+                                                list) else filter_key
+    filter_value = [filter_value] if not isinstance(filter_value,
+                                                    list) else filter_value
+    if (bool(filter_key) ^ bool(filter_value)) or (
+            filter_key and filter_value and len(filter_key) != len(
+            filter_value)):
+        raise RuntimeError(
+            "number of filter keys and filter values do not match")
+    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date,
+                                                                    str) else begin_date
+    end_date = date_parser.parse(end_date).date() if isinstance(end_date,
+                                                                str) else end_date
     timespan = 0
     if begin_date:
         timespan = end_date - begin_date
@@ -1621,9 +1671,11 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
         for a in p_appts:
             if p_appts[a].get('type') not in APPOINTMENTS_TYPE:
                 raise ValueError(
-                    "invalid  type {} for appointment {} of {}".format(p_appts[a].get('type'), a, p.get('_id')))
+                    "invalid  type {} for appointment {} of {}".format(
+                        p_appts[a].get('type'), a, p.get('_id')))
             if filter_key:
-                if all(p_appts[a].get(filter_key[x]) == filter_value[x] for x in range(len(filter_key))):
+                if all(p_appts[a].get(filter_key[x]) == filter_value[x] for x in
+                       range(len(filter_key))):
                     if begin_date:
                         for y in range(timespan.days + 1):
                             day = begin_date + relativedelta(days=y)
@@ -1685,29 +1737,38 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
     if not grant.get('budget'):
         raise ValueError("{} has no specified budget".format(grant.get('_id')))
     if bool(begin_date) ^ bool(end_date):
-        raise RuntimeError("please enter both begin date and end date or neither")
-    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
-    end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
+        raise RuntimeError(
+            "please enter both begin date and end date or neither")
+    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date,
+                                                                    str) else begin_date
+    end_date = date_parser.parse(end_date).date() if isinstance(end_date,
+                                                                str) else end_date
     if isinstance(appts, dict):
         appts = collect_appts([{"appointments": appts}])
     grad_val, pd_val, ss_val = 0.0, 0.0, 0.0
     grant_amounts = {}
     budget_dates = get_dates(grant.get('budget')[0])
-    budget_begin, budget_end = budget_dates['begin_date'], budget_dates['end_date']
+    budget_begin, budget_end = budget_dates['begin_date'], budget_dates[
+        'end_date']
     for period in grant.get('budget'):
         period_dates = get_dates(period)
-        period_begin, period_end = period_dates['begin_date'], period_dates['end_date']
+        period_begin, period_end = period_dates['begin_date'], period_dates[
+            'end_date']
         budget_begin = period_begin if period_begin < budget_begin else budget_begin
         budget_end = period_end if period_end > budget_end else budget_end
-        grad_val += (period.get('student_months', 0) - period.get('student_writeoff', 0)) * 30.5
-        pd_val += (period.get('postdoc_months', 0) - period.get('postdoc_writeoff', 0)) * 30.5
-        ss_val += (period.get('ss_months', 0) - period.get('ss_writeoff', 0)) * 30.5
+        grad_val += (period.get('student_months', 0) - period.get(
+            'student_writeoff', 0)) * 30.5
+        pd_val += (period.get('postdoc_months', 0) - period.get(
+            'postdoc_writeoff', 0)) * 30.5
+        ss_val += (period.get('ss_months', 0) - period.get('ss_writeoff',
+                                                           0)) * 30.5
         span = period_end - period_begin
         for x in range(span.days + 1):
             day = period_begin + relativedelta(days=x)
             for a in appts:
-                if (a.get('grant') == grant.get('_id') or a.get('grant') == grant.get('alias')) and is_current(a,
-                                                                                                               now=day):
+                if (a.get('grant') == grant.get('_id') or a.get(
+                        'grant') == grant.get('alias')) and is_current(a,
+                                                                       now=day):
                     if a.get('type') == 'gra':
                         grad_val -= a.get('loading') * 1
                     elif a.get('type') == 'pd':
@@ -1715,7 +1776,9 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
                     elif a.get('type') == 'ss':
                         ss_val -= a.get('loading') * 1
             if (not begin_date) or (begin_date <= day <= end_date):
-                gvals = {"student_days": round(grad_val, 2), "postdoc_days": round(pd_val, 2), "ss_days": round(ss_val, 2)}
+                gvals = {"student_days": round(grad_val, 2),
+                         "postdoc_days": round(pd_val, 2),
+                         "ss_days": round(ss_val, 2)}
                 grant_amounts.update({day: gvals})
     return grant_amounts
 
@@ -1736,14 +1799,19 @@ def validate_meeting(meeting, date):
     meeting_date = date_parser.parse(meeting.get('_id')[3:]).date()
     if meeting.get('journal_club') and meeting_date < date:
         if meeting.get('journal_club').get('doi').lower() == 'tbd':
-            raise ValueError(f'{meeting.get("_id")} does not have a journal club doi')
-    if meeting_date < date and meeting.get('presentation').get('link').lower() == 'tbd':
-        raise ValueError(f'{meeting.get("_id")} does not have a presentation link')
-    if meeting_date < date and meeting.get('presentation').get('title').lower() == 'tbd':
-        raise ValueError(f'{meeting.get("_id")} does not have a presentation title')
+            raise ValueError(
+                f'{meeting.get("_id")} does not have a journal club doi')
+    if meeting_date < date and meeting.get('presentation').get(
+            'link').lower() == 'tbd':
+        raise ValueError(
+            f'{meeting.get("_id")} does not have a presentation link')
+    if meeting_date < date and meeting.get('presentation').get(
+            'title').lower() == 'tbd':
+        raise ValueError(
+            f'{meeting.get("_id")} does not have a presentation title')
 
 
-def print_task(task_list, stati, index = True):
+def print_task(task_list, stati, index=True):
     """
     Print tasks in a nice format.
 
@@ -1760,12 +1828,12 @@ def print_task(task_list, stati, index = True):
             print(f"{status}:")
         for task in task_list:
             if index:
-                task["preamble"] = f"({task.get('running_index',0)}) "
+                task["preamble"] = f"({task.get('running_index', 0)}) "
             else:
                 task["preamble"] = ""
             if task.get('status') == status:
                 print(
-                    f"{task.get('preamble')}{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
+                    f"{task.get('preamble')}{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')})")
                 if task.get('notes'):
                     for note in task.get('notes'):
                         print(f"     - {note}")
@@ -1777,22 +1845,20 @@ def print_task(task_list, stati, index = True):
     deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
     for task in deadline_list:
         print(
-            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index',0)}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
+            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')})")
         if task.get('notes'):
             for note in task.get('notes'):
                 print(f"     - {note}")
-    print(f"{'-'*30}\nDeadlines:\n{'-'*30}")
+    print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
 
-#        else:
-#            for task in task_list:
-#                if task.get('status') == status:
-#                    print(
-#                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
-#                    if task.get('notes'):
-#                        for note in task.get('notes'):
-#                            print(f"     - {note}")
-
-
+    #        else:
+    #            for task in task_list:
+    #                if task.get('status') == status:
+    #                    print(
+    #                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
+    #                    if task.get('notes'):
+    #                        for note in task.get('notes'):
+    #                            print(f"     - {note}")
 
     return
 
@@ -1852,7 +1918,7 @@ def get_formatted_crossref_reference(doi):
             ref_date_list[0][0],
         )
     ref_date_list = ref_date_list[0]
-    ref_date_list += [6]*(3 - len(ref_date_list))
+    ref_date_list += [6] * (3 - len(ref_date_list))
     ref_date = date(*ref_date_list)
 
     return ref, ref_date

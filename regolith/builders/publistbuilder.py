@@ -10,10 +10,11 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection
+from regolith.tools import all_docs_from_collection, filter_publications
 from regolith.sorters import doc_date_key, ene_date_key, position_key
 from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
 from datetime import date
+from dateutil import parser as date_parser
 from regolith.dates import is_between
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
@@ -35,28 +36,28 @@ class PubListBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         )
+        gtx["citations"] = sorted(
+            all_docs_from_collection(rc.client, "citations"),
+            key=position_key,
+            reverse=True,
+        )
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def latex(self):
         fd = gr = False
         filestub, qualifiers = "", ""
         if self.rc.from_date:
-            fd = True
-            from_date = self.rc.from_date
-            sy = int(from_date.split("-")[0])
-            sm = int(from_date.split("-")[1])
-            sd = int(from_date.split("-")[2])
+            from_date = date_parser.parse(self.rc.from_date).date()
             filestub = filestub + "_from{}".format(from_date)
             qualifiers = qualifiers + "in the period from {}".format(from_date)
             if self.rc.to_date:
-                to_date = self.rc.to_date
+                to_date = date_parser.parse(self.rc.to_date).date()
                 filestub = filestub + "_to{}".format(to_date)
                 qualifiers = qualifiers + " to {}".format(to_date)
             else:
-                to_date = dt.datetime.date(dt.datetime.today()).isoformat()
-            by = int(to_date.split("-")[0])
-            bm = int(to_date.split("-")[1])
-            bd = int(to_date.split("-")[2])
+                to_date = None
+        else:
+            from_date, to_date = None, None
         if self.rc.grants:
             gr = True
             grants = self.rc.grants
@@ -65,7 +66,7 @@ class PubListBuilder(LatexBuilderBase):
             if len(grants) > 2:
                 text_grants = ", and ".join([",".join(grants[:-1]), grants[-1]])
             elif len(grants) == 2:
-                text_grants = "and ".join([",".join(grants[0]), grants[1]])
+                text_grants = "and ".join([grants[0], grants[1]])
             elif len(grants) == 1:
                 text_grants = grants[0]
             cat_grants, all_grants = "", ""
@@ -81,18 +82,28 @@ class PubListBuilder(LatexBuilderBase):
             outfile = p["_id"] + filestub
             p['qualifiers'] = qualifiers
             names = frozenset(p.get("aka", []) + [p["name"]])
-            pubs = self.filter_publications(names, reverse=True)
+            citations = list(self.gtx["citations"])
+            grants = self.rc.grants
 
-            if fd:
-                dpubs = self.filter_pubs_by_date(pubs, sy, sm, sd, by, bm, bd)
-                pubs = dpubs
-
-            if gr:
-                gpubs = self.filter_pubs_by_grant(pubs, grants)
-                pubs = gpubs
+            pubs_nobold = filter_publications(citations, names, reverse=True, bold=False,
+                                              ackno=False, since=from_date,
+                                              before=to_date, grants=grants)
+            pubs_ackno = filter_publications(citations, names, reverse=True,
+                                             bold=False, ackno=True,
+                                             since=from_date,
+                                             before=to_date, grants=grants)
+            pubs = filter_publications(citations, names, reverse=True, ackno=False,
+                                       bold=True, since=from_date,
+                                       before=to_date, grants=grants)
 
             bibfile = self.make_bibtex_file(
                 pubs, pid=p["_id"], person_dir=self.bldir
+            )
+            bibfile_nobold = self.make_bibtex_file(
+                pubs_nobold, pid=f"{p['_id']}_nobold", person_dir=self.bldir
+            )
+            bibfile_ackno = self.make_bibtex_file(
+                pubs_ackno, pid=f"{p['_id']}_ackno", person_dir=self.bldir
             )
             if not p.get('email'):
                 p['email'] = ""
@@ -108,37 +119,27 @@ class PubListBuilder(LatexBuilderBase):
                 bibfile=bibfile,
                 employment=emp,
             )
+            self.render(
+                "publist_nobold.tex",
+                outfile + "_nobold.tex",
+                p=p,
+                title=p.get("name", ""),
+                pubs=pubs_nobold,
+                names=names,
+                bibfile=bibfile_nobold,
+                employment=emp,
+            )
+            self.render(
+                "publist_ackno.tex",
+                outfile + "_ackno.tex",
+                p=p,
+                title=p.get("name", ""),
+                pubs=pubs_ackno,
+                names=names,
+                bibfile=bibfile_ackno,
+                employment=emp,
+            )
             self.pdf(p["_id"])
-
-    def filter_publications(self, authors, reverse=False):
-        rc = self.rc
-        pubs = []
-        for pub in all_docs_from_collection(rc.client, "citations"):
-            if len(set(pub["author"]) & authors) == 0:
-                continue
-            bold_self = []
-            for a in pub["author"]:
-                if a in authors:
-                    bold_self.append("\\textbf{" + a + "}")
-                else:
-                    bold_self.append(a)
-            pub["author"] = bold_self
-            pubs.append(pub)
-        pubs.sort(key=doc_date_key, reverse=reverse)
-        return pubs
-
-    def filter_pubs_by_date(self, pubs, sy, sm, sd, by, bm, bd):
-        filtered_pubs = []
-        start = date(sy, sm, sd)
-        end = date(by, bm, bd)
-        for pub in pubs:
-            month = pub.get("month", 1)
-            day = pub.get("day", 1)
-            year = int(pub.get("year"))
-            thing = {"year": year, "month": month, "day": day}
-            if is_between(thing, start=start, end=end):
-                filtered_pubs.append(pub)
-        return filtered_pubs
 
     def filter_pubs_by_grant(self, pubs, grants):
         if isinstance(grants, str):
