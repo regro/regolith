@@ -15,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import has_started, is_after
+from regolith.dates import is_after
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     fuzzy_retrieval
@@ -89,13 +89,12 @@ def filter_since_date(pubs, since_date):
         if isinstance(pub.get("year"), str):
             pub["year"] = int(pub.get("year"))
         pub["day"] = int(pub.get('day', 28))
+        pub["month"] = pub.get("month", "dec")
+        if pub.get("month").casefold().strip() == 'tbd' or pub.get("month").strip() == '':
+            print("WARNING: {} is missing month".format(
+                pub["_id"]))
+            pub["month"] = "dec"
         if is_after(pub, since_date):
-            if not pub.get("month"):
-                print("WARNING: {} is missing month".format(
-                    pub["_id"]))
-            if pub.get("month") == "tbd".casefold():
-                print("WARNING: month in {} is tbd".format(
-                    pub["_id"]))
             yield pub
 
 
@@ -157,7 +156,7 @@ def query_people_and_institutions(rc, names):
             if not person_found:
                 print(
                     "WARNING: {} not found in contacts or people. Check aka".format(
-                        person_name))
+                        person_name).encode('utf-8'))
             else:
                 people.append(person_found['name'])
                 inst = fuzzy_retrieval(all_docs_from_collection(
@@ -344,7 +343,7 @@ def find_coeditors(person, rc):
     coeditor_inst_journals = set()
     for coeditor_id, journal in coeditor_id_journals(emps):
         coeditor = get_person(coeditor_id, rc)
-        coeditor_name = HumanName(coeditor['name'])
+        coeditor_name = HumanName(coeditor.get('name'),"")
         inst_name = get_inst_name(coeditor, rc)
         coeditor_inst_journals.add((coeditor_name.last, coeditor_name.first, inst_name, journal))
     return coeditor_inst_journals
@@ -394,7 +393,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
                                  ['aka', 'name', '_id'], target,
                                  case_sensitive=False)
         if not person:
-            raise RuntimeError("Person {} not found in people.".format(target))
+            raise RuntimeError("Person {} not found in people.".format(target).encode('utf-8'))
         pubs = get_person_pubs(gtx["citations"], person)
         if 'since_date' in filters:
             since_date = filters.get('since_date')
