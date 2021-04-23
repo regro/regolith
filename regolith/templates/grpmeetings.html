@@ -7,8 +7,8 @@
 <li>Meeting Lead: {{fmeetings[0].get('lead', '')}}</li>
 <li>Scribe: {{fmeetings[0].get('scribe', '')}}</li>
   {% if fmeetings[0].get('journal_club') %}
-  <li>Journal club presentation: {{fmeetings[0].get('journal_club').get('presenter','')}},
-    {{fmeetings[0].get('journal_club').get('title','')}}</li>
+  <li>Journal club presentation: {{fmeetings[0].get('journal_club').get('presenter','')}}:<br>
+    {{fmeetings[0].get('journal_club').get('doi','')}}</li>
   {% endif %}
   {% if fmeetings[0].get('presentation') %}
   <li>Presentation: {{fmeetings[0].get('presentation').get('presenter','')}},
@@ -36,8 +36,8 @@
   <li>Meeting Lead: {{ppmeetings[0].get('lead', '')}}</li>
   <li>Scribe: {{ppmeetings[0].get('scribe', '')}}</li>
   {% if ppmeetings[0].get('journal_club') %}
-  <li>Journal club presenter: {{ppmeetings[0].get('journal_club').get('presenter','')}},
-    {{ppmeetings[0].get('journal_club').get('title','')}}</li>
+  <li>Journal club presenter: {{ppmeetings[0].get('journal_club').get('presenter','')}}:<br>
+    {{ppmeetings[0].get('journal_club').get('doi','')}}</li>
   {% endif %}
   {% if ppmeetings[0].get('presentation') %}
   <li>Presentation: {{ppmeetings[0].get('presentation').get('presenter','')}},
@@ -69,7 +69,7 @@
   <h2><a>{{mtg['datestr']}}</a></h2>
   <li>Meeting Lead: {{mtg.get('lead', '')}}</li>
   {% if mtg.get('journal_club') %}
-  <li>Journal Club: {{mtg.get('journal_club').get('presenter','')}},
+  <li>Journal Club: {{mtg.get('journal_club').get('presenter','')}}:<br>
     {{mtg.get('journal_club').get('doi','')}}</li>
   {% endif %}
   {% if mtg.get('presentation') %}
