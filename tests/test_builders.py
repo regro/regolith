@@ -1,6 +1,7 @@
 import os
 import sys
 
+import habanero
 import openpyxl
 import pytest
 from xonsh.lib import subprocess
@@ -10,16 +11,17 @@ from regolith.main import main
 
 builder_map = [
     "annual-activity",
-    "cv",
-    "html",
-    "resume",
-    "publist",
+    "beamplan",
     "current-pending",
-    "preslist",
-    "reimb",
+    "cv",
     "figure",
+    "html",
+    "internalhtml",
+    "preslist",
+    "publist",
     "recent-collabs",
-    "beamplan"
+    # "reimb",
+    "resume"
 ]
 db_srcs = ["mongo", "fs"]
 
@@ -66,7 +68,7 @@ def prep_figure():
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 @pytest.mark.parametrize("bm", builder_map)
 @pytest.mark.parametrize("db_src", db_srcs)
-def test_builder(bm, db_src, make_db, make_mongodb):
+def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
     # FIXME: Somehow the mongo backend failed to build figure
     if db_src == "mongo" and bm == "figure":
         return
@@ -82,6 +84,11 @@ def test_builder(bm, db_src, make_db, make_mongodb):
     os.chdir(repo)
     if bm == "figure":
         prep_figure()
+    if bm == "internalhtml":
+        # for some reason the mocking of the crossref call doesn't work when the
+        # test is run using subprocess, so skip in this case.
+        # the functionality is fully tested in test_builder_python
+        pytest.skip("mocking of Crossref not working with subprocess")
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)
     if bm == "reimb" or bm == "recent-collabs":
@@ -137,7 +144,8 @@ def test_builder(bm, db_src, make_db, make_mongodb):
 
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("bm", builder_map)
-def test_builder_python(bm, db_src, make_db, make_mongodb):
+def test_builder_python(bm, db_src, make_db, make_mongodb,
+                        monkeypatch):
     if db_src == "fs":
         repo = make_db
     elif db_src == "mongo":
@@ -148,6 +156,16 @@ def test_builder_python(bm, db_src, make_db, make_mongodb):
     os.chdir(repo)
     if bm == "figure":
         prep_figure()
+    if bm == "internalhtml":
+        def mockreturn(*args, **kwargs):
+            mock_article = {'message': {'author': [{"given":"SJL","family":"B"}],
+                                        "short-container-title": ["J Club Paper"],
+                                        "volume": 10,
+                                        "title": ["title"],
+                                        "issued": {"date-parts":[[1971]]}}
+                            }
+            return mock_article
+        monkeypatch.setattr(habanero.Crossref, "works", mockreturn)
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)
     if bm == "reimb" or bm == "recent-collabs":
@@ -197,4 +215,4 @@ def test_builder_python(bm, db_src, make_db, make_mongodb):
                         if not is_same(expected, actual, ['../..', 'tmp']):
                             assert actual == expected
                     else:
-                        assert expected == actual
+                        assert actual == expected

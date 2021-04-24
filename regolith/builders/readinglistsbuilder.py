@@ -1,8 +1,5 @@
 """Builder for Reading Lists."""
 
-from copy import deepcopy, copy
-import datetime, sys
-import requests
 from habanero import Crossref
 
 from regolith.builders.basebuilder import LatexBuilderBase
@@ -10,11 +7,8 @@ from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    fuzzy_retrieval,
-    number_suffix, get_formatted_crossref_reference,
+    get_formatted_crossref_reference,
 )
-from regolith.stylers import sentencecase, month_fullnames
-from regolith.dates import month_to_int
 
 class ReadingListsBuilder(LatexBuilderBase):
     """Build reading lists from database entries"""

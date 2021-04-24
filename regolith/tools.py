@@ -13,10 +13,10 @@ from dateutil.relativedelta import relativedelta
 from habanero import Crossref
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
-from regolith.sorters import doc_date_key, id_key, ene_date_key, \
+from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
-from regolith.chained_db import ChainDB
 from regolith.schemas import APPOINTMENTS_TYPE
+from requests import HTTPError
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -1878,11 +1878,16 @@ def get_formatted_crossref_reference(doi):
       the nicely formatted reference including title
     ref_date datetime.date
       the date of the reference
+    returns None None in the article cannot be found given the doi
 
     '''
 
     cr = Crossref()
-    article = cr.works(ids=doi)
+    try:
+        article = cr.works(ids=doi)
+    except HTTPError:
+        return None, None
+
     authorlist = [
         "{} {}".format(a['given'].strip(), a['family'].strip())
         for a in article.get('message').get('author')]
@@ -1897,7 +1902,7 @@ def get_formatted_crossref_reference(doi):
             authorlist[-1] = "and {}".format(authorlist[-1])
         sauthorlist = ", ".join(authorlist)
         ref_date_list = article.get('message').get('issued').get('date-parts')
-        ref = "{}, {}, {}, v.{}, pp.{}, ({}).".format(
+        ref = "{}, {}, {}, v. {}, pp. {}, ({}).".format(
             article.get('message').get('title')[0],
             sauthorlist,
             journal,
