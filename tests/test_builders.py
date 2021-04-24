@@ -68,7 +68,7 @@ def prep_figure():
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 @pytest.mark.parametrize("bm", builder_map)
 @pytest.mark.parametrize("db_src", db_srcs)
-def test_builder(bm, db_src, make_db, make_mongodb):
+def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
     # FIXME: Somehow the mongo backend failed to build figure
     if db_src == "mongo" and bm == "figure":
         return
@@ -82,6 +82,16 @@ def test_builder(bm, db_src, make_db, make_mongodb):
     else:
         raise ValueError("Unknown database source: {}".format(db_src))
     os.chdir(repo)
+    if bm == "internalhtml":
+        def mockreturn(*args, **kwargs):
+            mock_article = {'message': {'author': [{"given":"SJL","family":"B"}],
+                                        "short-container-title": ["J Club Paper"],
+                                        "volume": 10,
+                                        "title": ["title"],
+                                        "issued": {"date-parts":[[1971]]}}
+                            }
+            return mock_article
+        monkeypatch.setattr(habanero.Crossref, "works", mockreturn)
     if bm == "figure":
         prep_figure()
     if bm == "html":
