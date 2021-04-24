@@ -126,8 +126,7 @@ class InternalHtmlBuilder(BuilderBase):
                     print(
                     "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
                 mtg["presentation"]["presenter"] = prsn["name"]
-                mtg["presentation"]["link"] = PROJ_URL_BASE + \
-                                              mtg["presentation"].get("link","tbd")
+                mtg["presentation"]["link"] = mtg["presentation"].get("link","tbd")
             mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
                                   mtg.get("day"))
             mtg['datestr'] = mtg['date'].strftime('%m/%d/%Y')
