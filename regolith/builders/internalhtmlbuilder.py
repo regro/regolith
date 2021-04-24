@@ -2,12 +2,10 @@
 import os
 import shutil
 import datetime as dt
-from habanero import Crossref
-
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.fsclient import _id_key
-from regolith.sorters import doc_date_key, position_key, ene_date_key
+from regolith.sorters import position_key, ene_date_key
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
@@ -44,7 +42,6 @@ class InternalHtmlBuilder(BuilderBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        self.cr = Crossref()
         gtx["jobs"] = list(all_docs_from_collection(rc.client, "jobs"))
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
@@ -82,7 +79,6 @@ class InternalHtmlBuilder(BuilderBase):
         """Render projects"""
         rc = self.rc
         mtgsi = all_docs_from_collection(rc.client, "meetings")
-        peeps = all_docs_from_collection(rc.client, "people")
         pp_mtgs, f_mtgs = [], []
 
 
@@ -147,6 +143,7 @@ class InternalHtmlBuilder(BuilderBase):
             "grpmeetings.html", "grpmeetings.html", title="Group Meetings",
             ppmeetings=pp_mtgs, fmeetings=f_mtgs
         )
+
 
     def nojekyll(self):
         """Touches a nojekyll file in the build dir"""
