@@ -88,7 +88,7 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
         # for some reason the mocking of the crossref call doesn't work when the
         # test is run using subprocess, so skip in this case.
         # the functionality is fully tested in test_builder_python
-        return
+        pytest.skip("mocking of Crossref not working with subprocess")
     if bm == "html":
         os.makedirs("templates/static", exist_ok=True)
     if bm == "reimb" or bm == "recent-collabs":
