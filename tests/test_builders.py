@@ -82,6 +82,8 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
     else:
         raise ValueError("Unknown database source: {}".format(db_src))
     os.chdir(repo)
+    if bm == "figure":
+        prep_figure()
     if bm == "internalhtml":
         def mockreturn(*args, **kwargs):
             mock_article = {'message': {'author': [{"given":"SJL","family":"B"}],
@@ -92,9 +94,7 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
                             }
             return mock_article
         monkeypatch.setattr(habanero.Crossref, "works", mockreturn)
-    if bm == "figure":
-        prep_figure()
-    if bm == "html":
+    if bm == "html" or bm == "internalhtml":
         os.makedirs("templates/static", exist_ok=True)
     if bm == "reimb" or bm == "recent-collabs":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
