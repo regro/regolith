@@ -1,5 +1,8 @@
+import habanero
 import pytest
 import datetime as dt
+from requests import HTTPError
+
 from regolith.tools import (
     filter_publications,
     fuzzy_retrieval,
@@ -24,8 +27,8 @@ from regolith.tools import (
     search_collection,
     collect_appts,
     grant_burn,
-    validate_meeting
-    )
+    validate_meeting, get_formatted_crossref_reference
+)
 
 PEOPLE_COLL = [
     {"_id": "m1",
@@ -308,6 +311,23 @@ def test_fuzzy_retrieval():
             )
             == person
     )
+
+def test_get_formatted_crossref_reference(monkeypatch):
+    def mockreturn(*args, **kwargs):
+        mock_article = {'message': {'author': [{"given": "SJL", "family": "Billinge"}],
+                                    "short-container-title": ["J. Great Results"],
+                                    "volume": 10,
+                                    "title": ["Whamo"],
+                                    "page": "231-233",
+                                    "issued": {"date-parts": [[1971,8,20]]}}
+                        }
+        return mock_article
+
+    monkeypatch.setattr(habanero.Crossref, "works", mockreturn)
+    expected = ("Whamo, SJL Billinge, J. Great Results, v. 10, pp. 231-233, (1971).",
+                dt.date(1971, 8, 20))
+    actual = get_formatted_crossref_reference("test")
+    assert actual == expected
 
 
 @pytest.mark.parametrize(
