@@ -139,7 +139,7 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
                         if not is_same(expected, actual, ['../..', 'tmp']):
                             assert actual == expected
                     else:
-                        assert expected == actual
+                        assert actual == expected
 
 
 @pytest.mark.parametrize("db_src", db_srcs)

@@ -101,7 +101,7 @@ EXEMPLARS = {
         "title": "My Vision",
         "year": 2015,
     },
-    "citations": {
+    "citations": [{
         "_id": "meurer2016sympy",
         "author": [
             "Meurer, Aaron",
@@ -141,6 +141,25 @@ EXEMPLARS = {
         "volume": "4",
         "year": "2017",
     },
+        {
+            "_id": "meurer2016nomonth",
+            "author": [
+                "Meurer, Aaron",
+                "Anthony Scopatz",
+            ],
+            "doi": "10.1021/nn501591g",
+            "entrytype": "article",
+            "journal": "PeerJ Computer Science",
+            "month": "tbd",
+            "pages": "e103",
+            "publisher": "PeerJ Inc. San Francisco, USA",
+            "synopsis": "A pub with month as tbd",
+            "tags": "nomonth",
+            "title": "SymPy: Symbolic computing in Python",
+            "volume": "4",
+            "year": "2017",
+        }
+    ],
     "contacts": {
         "_id": "afriend",
         "aka": [
