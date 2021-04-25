@@ -95,7 +95,7 @@ class HtmlBuilder(BuilderBase):
                 all_docs_from_collection(rc.client, "citations"),
                 names,
                 reverse=True,
-                bold=True,
+                bold=False,
             )
 
             bibfile = make_bibtex_file(
