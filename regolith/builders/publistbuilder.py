@@ -140,6 +140,16 @@ class PubListBuilder(LatexBuilderBase):
                 employment=emp,
             )
             self.pdf(p["_id"])
+            self.render(
+                "publist_pandoc_friendly.tex",
+                outfile + "_pandoc.tex",
+                p=p,
+                title=p.get("name", ""),
+                pubs=pubs_nobold,
+                names=names,
+                bibfile=bibfile_nobold,
+                employment=emp,
+            )
 
     def filter_pubs_by_grant(self, pubs, grants):
         if isinstance(grants, str):

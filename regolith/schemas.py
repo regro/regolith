@@ -143,6 +143,7 @@ EXEMPLARS = {
     },
         {
             "_id": "meurer2016nomonth",
+            "ackno": "we acknowledge useful convos with our friends",
             "author": [
                 "Meurer, Aaron",
                 "Anthony Scopatz",
