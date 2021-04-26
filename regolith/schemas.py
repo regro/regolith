@@ -1645,10 +1645,8 @@ EXEMPLARS = {
             ],
             "does_what": "Find a cure for Poverty",
             "due_date": "2020-04-10",
-            "freewrite": [
+            "freewrite": 
                 "I can put extra things here, such as special instructions from the",
-                "program officer",
-            ],
             "goals": [
                 "The goals of the proposal are to put together a team to find a cure"
                 "for Poverty, and then to find it"
