@@ -20,7 +20,7 @@ builder_map = [
     "preslist",
     "publist",
     "recent-collabs",
-    #"reimb",
+    "reimb",
     "resume",
     "review-prop",
     "review-man"
