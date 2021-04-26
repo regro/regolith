@@ -38,9 +38,11 @@ POSITION_LEVELS = {
     "editor": -1,
     "unknown": -1,
     "undergraduate research assistant": 1,
+    "undergraduate researcher": 1,
     "intern": 1,
-    "masters research assistant": 2,
-    "visiting student": 1,
+    "masters research assistant": 2.5,
+    "masters researcher": 2.5,
+    "visiting student": 2,
     "graduate research assistant": 3,
     "teaching assistant": 3,
     "research assistant": 2,
@@ -50,7 +52,7 @@ POSITION_LEVELS = {
     "assistant lecturer": 4,
     "lecturer": 5,
     "research scientist": 4.5,
-    "associate scientist": 5,
+    "associate scientist": 6,
     "adjunct scientist": 5,
     "senior assistant lecturer": 5,
     "research associate": 5,
@@ -60,8 +62,8 @@ POSITION_LEVELS = {
     "consultant": 5,
     "programer": 5,
     "programmer": 5,
-    "visiting scientist": 6,
-    "research assistant professor": 4,
+    "visiting scientist": 5,
+    "research assistant professor": 5,
     "assistant professor": 8,
     "assistant physicist": 8,
     "associate professor": 9,
@@ -80,7 +82,7 @@ POSITION_LEVELS = {
 
 
 def position_key(x):
-    """Sorts a people based on thier position in the research group."""
+    """Sorts a people based on their position in the research group."""
     pos = x.get("position", "").casefold()
     first_letter_last = x.get("name", "zappa").rsplit(None, 1)[-1][0].upper()
     try:

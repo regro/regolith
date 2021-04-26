@@ -9,6 +9,7 @@ import sys
 from regolith.dates import get_due_date, is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
+from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id, search_collection,
@@ -41,7 +42,7 @@ class MembersListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}','institutions']
+    needed_dbs = [f'{TARGET_COLL}', 'institutions', 'groups']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -80,11 +81,13 @@ class MembersListerHelper(SoutHelperBase):
             collection = self.gtx["people"]
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
+        group = fuzzy_retrieval(gtx['groups'], ["_id", "aka", "name"],
+                                rc.groupname)
+        group_id = group.get("_id")
 
         if rc.filter:
             if not rc.verbose:
                 results = (collection_str(collection, rc.keys))
-                # "scopatz"
                 print(results, end="")
                 return
             else:
@@ -105,18 +108,32 @@ class MembersListerHelper(SoutHelperBase):
                     people.append(person)
                 else:
                     people.append(person)
-                    
+
         for i in people:
+            not_current_positions = [emp for emp in i.get('employment') if
+                                     not is_current(emp)]
+            not_current_positions.sort(key=lambda x: get_dates(x)["end_date"])
+            current_positions = [emp for emp in i.get('employment') if
+                                 is_current(emp)]
+            current_positions.sort(
+                key=lambda x: get_dates(x)["begin_date"])
+            positions = not_current_positions + current_positions
+            position_keys = [position_key(position) for position in positions if position.get("group","") == group_id]
+            i["position_key"] = max(position_keys)[0]
+        people.sort(key=lambda k: k['position_key'], reverse=True)
+        position_names = {1:"Undergrads", 2.5: "Masters Students", 2: "Visiting Students",
+                          3: "Graduate Students", 4: "Post Docs", 5: "Visitors",
+                          8: "Assistant Scientists", 9: "Associate Scientists",
+                          10: "Scientists", 11: "PI"}
+        accounting = 12
+        for i in people:
+            if i.get('position_key') < accounting:
+                accounting = i.get('position_key')
+                print(f"    -- {position_names.get(accounting,position_names.get(5))} --")
             if rc.verbose:
                 print("{}, {}".format(i.get('name'), i.get('position')))
                 print("    email: {} | group_id: {}".format(i.get('email'), i.get('_id')))
                 print("    github_id: {} | orcid: {}".format(i.get('github_id'), i.get('orcid_id')))
-                not_current_positions = [emp for emp in i.get('employment') if not is_current(emp)]
-                not_current_positions.sort(key=lambda x: get_dates(x)["end_date"])
-                current_positions = [emp for emp in i.get('employment') if is_current(emp)]
-                current_positions.sort(
-                    key=lambda x: get_dates(x)["begin_date"])
-                positions = not_current_positions + current_positions
                 for position in positions:
                     if is_current(position):
                         inst = fuzzy_retrieval(gtx["institutions"], ["aka", "name", "_id"],
