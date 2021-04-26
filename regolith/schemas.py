@@ -9,7 +9,7 @@ from .sorters import POSITION_LEVELS
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 
 ACTIVITIES_TYPE = ["teaching", "research"]
-AGENCIES = ["nsf", "doe"]
+AGENCIES = ["nsf", "doe", "other"]
 APPOINTMENTS_TYPE = ["gra", "ss", "pd", "ug"]
 COMMITTEES_TYPE = ["phdoral", "phddefense", "phdproposal", "promotion"]
 COMMITTEES_LEVEL = ["department", "school", "university", "external"]
@@ -1645,10 +1645,8 @@ EXEMPLARS = {
             ],
             "does_what": "Find a cure for Poverty",
             "due_date": "2020-04-10",
-            "freewrite": [
+            "freewrite": 
                 "I can put extra things here, such as special instructions from the",
-                "program officer",
-            ],
             "goals": [
                 "The goals of the proposal are to put together a team to find a cure"
                 "for Poverty, and then to find it"
@@ -3944,7 +3942,7 @@ SCHEMAS = {
             "type": "list",
         },
         "agency": {
-            "description": "currently nsf or doe",
+            "description": "currently nsf, doe or other",
             "type": "string",
             "eallowed": AGENCIES,
         },
@@ -3988,7 +3986,7 @@ SCHEMAS = {
                            "right before the summary.  This section often used "
                            "for extra review criteria for the particular proposal",
             "required": False,
-            "type": "list",
+            "anyof_type": ["string", "list"]
         },
         "goals": {
             "description": "What are the main goals of the proposed research",

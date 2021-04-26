@@ -16,7 +16,7 @@ from regolith.tools import (
 
 class PropRevBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
-    btype = "propreview"
+    btype = "review-prop"
     needed_dbs = ['institutions', 'proposalReviews']
 
     def construct_global_ctx(self):
@@ -46,13 +46,18 @@ class PropRevBuilder(LatexBuilderBase):
                 multiauth = True
             firstauthor = HumanName(rev["names"][0])
             firstauthorlastname = firstauthor.last
+
             if isinstance(rev["institutions"], str):
                 rev["institutions"] = [rev["institutions"]]
             instns = [fuzzy_retrieval(
                     self.gtx["institutions"], ["aka", "name", "_id"], i
                 ) for i in rev["institutions"]]
             institution_names = [i["name"] if i else
-                                rev["institutions"] for i in instns]
+                                j for i,j in zip(instns,
+                                                  rev.get("institutions"))]
+            if isinstance(rev["freewrite"], str):
+                rev["freewrite"] = [rev["freewrite"]]
+
 
             self.render(
                 "propreport.txt",
