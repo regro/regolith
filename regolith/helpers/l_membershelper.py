@@ -42,7 +42,7 @@ class MembersListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}','institutions']
+    needed_dbs = [f'{TARGET_COLL}', 'institutions', 'groups']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -81,11 +81,13 @@ class MembersListerHelper(SoutHelperBase):
             collection = self.gtx["people"]
         bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
+        group = fuzzy_retrieval(gtx['groups'], ["_id", "aka", "name"],
+                                rc.groupname)
+        group_id = group.get("_id")
 
         if rc.filter:
             if not rc.verbose:
                 results = (collection_str(collection, rc.keys))
-                # "scopatz"
                 print(results, end="")
                 return
             else:
@@ -116,9 +118,8 @@ class MembersListerHelper(SoutHelperBase):
             current_positions.sort(
                 key=lambda x: get_dates(x)["begin_date"])
             positions = not_current_positions + current_positions
-            position_keys = [position_key(position) for position in positions if position.get("group","") == 'bg']
+            position_keys = [position_key(position) for position in positions if position.get("group","") == group_id]
             i["position_key"] = max(position_keys)[0]
-            print(i["name"],i["position_key"])
         people.sort(key=lambda k: k['position_key'], reverse=True)
         position_names = {1:"Undergrads", 2.5: "Masters Students", 2: "Visiting Students",
                           3: "Graduate Students", 4: "Post Docs", 5: "Visitors",

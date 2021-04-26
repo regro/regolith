@@ -1396,7 +1396,7 @@ EXEMPLARS = {
               "position": "intern"},
              {"group": "agroup", "begin_date": "2020-01-01", "end_date": "2030-12-31", "organization": "usouthcarolina",
               "position": "intern"},
-             {"group": "bg", "begin_date": "2010-06-01", "end_date": "2012-08-31", "organization": "columbiau",
+             {"group": "ergs", "begin_date": "2010-06-01", "end_date": "2012-08-31", "organization": "columbiau",
               "position": "intern"},
              {"group": "bg", "begin_date": "2017-06-01", "end_date": "2019-08-31", "organization": "columbiau",
               "position": "intern"},

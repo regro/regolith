@@ -96,27 +96,46 @@ helper_map = [
     (["helper", "l_grants", "--current", "--date", "2020-05-25"],
      "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n"
      ),
-    (["helper", "l_members", "-c", "-v"],
+    (["helper", "l_members", "--current", "-v"],
+     "    -- Assistant Scientists --\n"
      "Simon J. L. Billinge, professor\n"
      "    email: sb2896@columbia.edu | group_id: sbillinge\n"
      "    github_id: None | orcid: 0000-0002-9432-4248\n"
      "    current organization: The University of South Carolina\n"
      "    current position: Assistant Professor\n"
      ),
-    (["helper", "l_members", "-p", "-v"],
+    (["helper", "l_members", "-v"],
+     "    -- Assistant Scientists --\n"
+     "Simon J. L. Billinge, professor\n"
+     "    email: sb2896@columbia.edu | group_id: sbillinge\n"
+     "    github_id: None | orcid: 0000-0002-9432-4248\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: Assistant Professor\n"
+     "Anthony Scopatz, professor\n"
+     "    email: scopatz@cec.sc.edu | group_id: scopatz\n"
+     "    github_id: ascopatz | orcid: 0000-0002-9432-4248\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: Assistant Professor\n"
+     "    -- Undergrads --\n"
      "Abstract Being, intern\n"
-      "    email: None | group_id: abeing\n"
-      "    github_id: None | orcid: None\n"
-      "    billinge group position: intern\n"
-      "    billinge group position: intern\n"
-      "    billinge group position: intern\n"
-      "    current organization: The University of South Carolina\n"
-      "    current position: Intern\n"
-      "Anthony Scopatz, professor\n"
-      "    email: scopatz@cec.sc.edu | group_id: scopatz\n"
-      "    github_id: ascopatz | orcid: 0000-0002-9432-4248\n"
-      "    current organization: The University of South Carolina\n"
-      "    current position: Assistant Professor\n"
+     "    email: None | group_id: abeing\n"
+     "    github_id: None | orcid: None\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: Assistant Professor\n"
+     ),
+    (["helper", "l_members", "--prior", "-v"],
+     "    -- Assistant Scientists --\n"
+     "Anthony Scopatz, professor\n"
+     "    email: scopatz@cec.sc.edu | group_id: scopatz\n"
+     "    github_id: ascopatz | orcid: 0000-0002-9432-4248\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: Assistant Professor\n"
+     "    -- Undergrads --\n"
+     "Abstract Being, intern\n"
+     "    email: None | group_id: abeing\n"
+     "    github_id: None | orcid: None\n"
+     "    current organization: The University of South Carolina\n"
+     "    current position: Assistant Professor\n"
      ),
     (["helper", "l_members", "--filter", "name", "sco"],
      "scopatz    \n"
