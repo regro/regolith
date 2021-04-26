@@ -3988,7 +3988,7 @@ SCHEMAS = {
                            "right before the summary.  This section often used "
                            "for extra review criteria for the particular proposal",
             "required": False,
-            "type": "list",
+            "anyof_type": ["string", "list"]
         },
         "goals": {
             "description": "What are the main goals of the proposed research",
