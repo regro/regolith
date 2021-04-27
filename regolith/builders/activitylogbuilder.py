@@ -2,9 +2,10 @@
 import datetime as dt
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
-from copy import copy, deepcopy
+from copy import deepcopy, copy
 
 from regolith.builders.basebuilder import LatexBuilderBase
+from regolith.builders.cpbuilder import is_pending
 from regolith.fsclient import _id_key
 from regolith.dates import month_to_int, is_current, get_dates
 from regolith.sorters import position_key, doc_date_key
@@ -24,8 +25,7 @@ from regolith.tools import (
     awards,
     filter_patents,
     filter_licenses,
-    merge_collections_superior,
-    get_id_from_name)
+    get_id_from_name, merge_collections_all)
 
 
 class ActivitylogBuilder(LatexBuilderBase):
@@ -33,7 +33,8 @@ class ActivitylogBuilder(LatexBuilderBase):
 
     btype = "annual-activity"
     needed_dbs = ['groups', 'people', 'grants', 'proposals', 'institutions',
-                  'projects', 'presentations', 'patents', 'citations']
+                  'projects', 'presentations', 'patents', 'citations', 
+                  'proposalReviews']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -48,6 +49,9 @@ class ActivitylogBuilder(LatexBuilderBase):
         gtx["institutions"] = sorted(
             all_docs_from_collection(rc.client, "institutions"), key=_id_key
         )
+        gtx["groups"] = sorted(
+            all_docs_from_collection(rc.client, "groups"), key=_id_key
+        )
         gtx["grants"] = sorted(
             all_docs_from_collection(rc.client, "grants"), key=_id_key
         )
@@ -60,6 +64,9 @@ class ActivitylogBuilder(LatexBuilderBase):
         gtx["presentations"] = sorted(
             all_docs_from_collection(rc.client, "presentations"), key=_id_key
         )
+        gtx["proprevs"] = sorted(
+            all_docs_from_collection(rc.client, "proposalReviews"), key=_id_key
+        )
         gtx["patents"] = sorted(
             all_docs_from_collection(rc.client, "patents"), key=_id_key
         )
@@ -71,6 +78,8 @@ class ActivitylogBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         rc = self.rc
+        group = fuzzy_retrieval(self.gtx['groups'], ["_id", "aka", "name"],
+                                rc.groupname)
         if not rc.people:
             raise RuntimeError("ERROR: please rerun specifying --people name")
         if not rc.from_date:
@@ -96,7 +105,7 @@ class ActivitylogBuilder(LatexBuilderBase):
         me["post_end_period"] = dt.date.strftime(post_end_period, "%m/%d/%Y")
         projs = filter_projects(
             self.gtx["projects"], set([build_target]),
-            group="bg"
+            group=group["_id"]
         )
         #########
         # highlights
@@ -116,14 +125,31 @@ class ActivitylogBuilder(LatexBuilderBase):
         # current and pending
         #########
         pi = fuzzy_retrieval(
-            self.gtx["people"], ["aka", "name", "_id"], build_target
+            self.gtx["people"], ["aka", "name"], group["pi_name"]
         )
-        #        pi['initials'] = "SJLB"
+        pinames = pi["name"].split()
+        piinitialslist = [i[0] for i in pinames]
+        pi['initials'] = "".join(piinitialslist).upper()
 
-        grants = merge_collections_superior(self.gtx["proposals"], self.gtx["grants"],
-                                   "proposal_id")
+        grants = merge_collections_all(self.gtx["proposals"],
+                                       self.gtx["grants"],
+                                       "proposal_id")
         for g in grants:
-            for person in g["team"]:
+            g['end_date'] = get_dates(g).get('end_date')
+            g['begin_date'] = get_dates(g).get('begin_date',
+                                               dt.date(1900, 1, 2))
+            g['award_start_date'] = "{}/{}/{}".format(
+                g.get("begin_date").month,
+                g.get("begin_date").day,
+                g.get("begin_date").year,
+            )
+            g['award_end_date'] = "{}/{}/{}".format(
+                g.get("end_date").month,
+                g.get("end_date").day,
+                g.get("end_date").year
+            )
+
+            for person in g.get("team", []):
                 rperson = fuzzy_retrieval(
                     self.gtx["people"], ["aka", "name"], person["name"]
                 )
@@ -133,21 +159,24 @@ class ActivitylogBuilder(LatexBuilderBase):
                 amounts = [i.get('amount') for i in g.get('budget')]
                 g['subaward_amount'] = sum(amounts)
 
-
         current_grants = [
             dict(g)
             for g in grants
             if is_current(g)
         ]
-
         current_grants, _, _ = filter_grants(
             current_grants, {pi["name"]}, pi=False, multi_pi=True
         )
+        current_grants = [g for g in current_grants if
+                          g.get("status") != "declined"]
+        for g in current_grants:
+            if g.get('budget'):
+                amounts = [i.get('amount') for i in g.get('budget')]
+                g['subaward_amount'] = sum(amounts)
 
         pending_grants = [
-            g
-            for g in self.gtx["proposals"]
-            if g["status"] == "pending"
+            g for g in self.gtx["proposals"]
+            if is_pending(g["status"])
         ]
         for g in pending_grants:
             for person in g["team"]:
@@ -159,23 +188,9 @@ class ActivitylogBuilder(LatexBuilderBase):
         pending_grants, _, _ = filter_grants(
             pending_grants, {pi["name"]}, pi=False, multi_pi=True
         )
-        grants = pending_grants + current_grants
-        for grant in grants:
-            grant_dates = get_dates(grant)
-            grant.update(
-                award_start_date="{2}/{1}/{0}".format(
-                    grant_dates.get("begin_day"),
-                    grant_dates.get("begin_month"),
-                    grant_dates.get("begin_year"),
-                ),
-                award_end_date="{2}/{1}/{0}".format(
-                    grant_dates.get("end_day"),
-                    grant_dates.get("end_month"),
-                    grant_dates.get("end_year"),
-                ),
-            )
         badids = [i["_id"] for i in current_grants if
-                  not i['cpp_info'].get('cppflag', "")]
+                  not i.get('cpp_info').get('cppflag', "")]
+
         iter = copy(current_grants)
         for grant in iter:
             if grant["_id"] in badids:
@@ -308,6 +323,9 @@ class ActivitylogBuilder(LatexBuilderBase):
             bold=False,
             since=begin_period
         )
+        #remove unpublished papers
+        unpubs = [pub for pub in pubs if len(pub.get("doi") == 0)]
+        pubs = [pub for pub in pubs if len(pub.get("doi")) > 0]
         bibfile = make_bibtex_file(
             pubs, pid=me["_id"], person_dir=self.bldir
         )
@@ -345,7 +363,7 @@ class ActivitylogBuilder(LatexBuilderBase):
         #########################
         self.render(
             "columbia_annual_report.tex",
-            "billinge-ann-report.tex",
+            f"{pi['_id']}-ann-report.tex",
             pi=pi,
             p=me,
             projects=projs,

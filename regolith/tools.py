@@ -306,17 +306,15 @@ def filter_employment_for_advisees(people, begin_period, status, active=False):
     for p in people:
         for i in p.get("employment", []):
             if i.get("status") == status:
-                if i.get("end_year"):
-                    end_date = date(i.get("end_year"),
-                                    month_to_int(i.get("end_month", 12)),
-                                    i.get("end_day", 28))
-                else:
+                emp_dates = get_dates(i)
+                end_date = emp_dates.get("end_date")
+                if not end_date:
                     end_date = date.today()
-                    i["end_year"] = end_date.year
+                i["end_year"] = end_date.year
                 if end_date >= begin_period:
                     p['role'] = i.get("position")
                     p['status'] = status
-                    p['end_year'] = i.get("end_year", "n/a")
+                    p['end_year'] = end_date.year
                     p['position'] = i.get("position")
                     advisees.append(p)
                     advisees.sort(key=lambda x: x['end_year'], reverse=True)
