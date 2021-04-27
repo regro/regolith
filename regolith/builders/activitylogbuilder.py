@@ -276,16 +276,16 @@ class ActivitylogBuilder(LatexBuilderBase):
         uni_service.extend(school_service)
         if num_recletts > 0:
             uni_service.append({"name": f"Wrote recommendation letters for {num_recletts} "
-                                 f"people this year"})
+                                 f"people this period"})
         mego = deepcopy(me)
         prof_service = filter_service(mego,
                                       begin_period, "profession")
         if num_proprevs > 0:
             prof_service.append({"name": f"Reviewed {num_proprevs} funding proposals for "
-                                f"national agencies this year"})
+                                f"national agencies this period"})
         if num_manrevs > 0:
             prof_service.append({"name": f"Reviewed {num_manrevs} manuscripts for "
-                                f"peer reviewed journals this year"})
+                                f"peer reviewed journals this period"})
         mego = deepcopy(me)
         phd_defenses = filter_committees(mego,
                                   begin_period, "phddefense")
