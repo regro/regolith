@@ -1871,6 +1871,7 @@ EXEMPLARS = {
         "first_author_last_name": "Wingit",
         "freewrite": "this comment didn't fit anywhere above",
         "journal": "Nature",
+        "month": "jun",
         "recommendation": "reject",
         "requester": "Max Planck",
         "reviewer": "sbillinge",
@@ -4484,11 +4485,6 @@ SCHEMAS = {
             "description": "name of the journal",
             "required": True,
             "type": "string",
-        },
-        "month": {
-            "description": "the month the entry was created",
-            "required": False,
-            "anyof_type": ["string", "integer"]
         },
         "recommendation": {
             "description": "Your publication recommendation",
