@@ -4383,6 +4383,11 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
+        "institutions": {
+            "description": "the institutions of the pi and co-pis",
+            "required": False,
+            "anyof_type": ["string", "list"]
+        },
         "journal": {
             "description": "name of the journal",
             "required": True,
