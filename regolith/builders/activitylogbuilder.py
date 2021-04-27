@@ -135,9 +135,12 @@ class ActivitylogBuilder(LatexBuilderBase):
         # Manuscript review count
         ########
         manrevs = self.gtx['manrevs']
-        num_manrevs = len([manrev["_id"] for manrev in 
-                           manrevs if 
-                           get_dates(manrev, date_field_prefix="submitted"
+        num_manrevs = len([manrev["_id"]
+                           for manrev in manrevs
+                           if get_dates(manrev, date_field_prefix="submitted"
+                                     ).get("submitted_date", dt.date(1971,1,1)
+                                           ) is not None
+                           and get_dates(manrev, date_field_prefix="submitted"
                                      ).get("submitted_date", dt.date(1971,1,1)
                                            ) >= begin_period])
         #########
