@@ -10,9 +10,24 @@ window.close()
 
 class DataBase:
     ext = '.yml'
+    people_db = "people.yml"
+    MUST_EXIST = [people_db]
 
     def __init__(self, path):
-        self.db = yaml.safe_load(path)
+        self.path = path
+
+    def load(self):
+        """ load database from file """
+        self.db = yaml.safe_load(self.path)
+        return self.db
+
+    def save(self):  # TODO - make sure it follows Simon's format PEP-?
+        """ save database to file """
+        yaml.safe_dump(self.db, self.path)
+
+    def get_people(self):
+        """ get people from people database"""
+        return yaml.safe_load(self.people_db)
 
 
 class EntryElements(object):
@@ -52,7 +67,7 @@ class UIConfig:
     gui_theme_2 = 'LightBrown1'
     gui_theme_3 = 'DarkBlue13'
     gui_theme_4 = 'LightBlue'
-    sg.change_look_and_feel(gui_theme_3)
+    # sg.change_look_and_feel(gui_theme_4)
 
     sg.set_options(font=font_11)
     sg.set_options(element_padding=(5, 5))
@@ -114,8 +129,8 @@ class Layouts(UIConfig):
         """
         self.layout = layout
 
-    def title_lo(self):
-        self.layout.append([sg.T(self.entry, text_color='blue', font=self.font_11b)])
+    def title_lo(self, title):
+        self.layout.append([sg.T(title, text_color='blue', font=self.font_11b)])
         self.layout.append([sg.T("")])
 
 
@@ -126,6 +141,7 @@ class GUI(UIConfig):
         self.db_fpath = str()
         self.db = dict()
         self.ext = DataBase.ext
+        self.must_exist = DataBase.MUST_EXIST
         self.select_db_ui()
 
     def select_db_ui(self):
@@ -143,46 +159,64 @@ class GUI(UIConfig):
         layout.append([sg.T("What Database you would like to explore?")])
         layout.append([sg.DropDown([], key="_existing_dbs_", enable_events=True)])
 
-        layout.append([sg.T("", key="_OUTPUT_", text_color="red")])
+        layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(30, 1))])
         layout.append([sg.Button("submit")])
 
-        window = sg.Window("select a database", layout,
-                           resizable=False)
+        # build window
+        window = sg.Window("select a database", layout, resizable=False)
 
+        # run
         while True:
             event, values = window.read()
+
             if event == "_explore_":
                 db_files = list()
                 self.dbs_path = values['db_path']
+
                 if self.dbs_path:
+
                     if os.path.isdir(self.dbs_path):
                         os.chdir(self.dbs_path)
                         files = os.listdir(self.dbs_path)
+                        count_must_exist = len(self.must_exist)
                         for f in files:
-                            if not f.endswith(self.ext):
+                            if f in self.must_exist:
+                                count_must_exist -= 1
+                            if f.endswith(self.ext):
                                 db_files.append(f)
-                        if db_files:
-                            window['_existing_dbs_'].update(values=db_files, size=(max(map(len, db_files)), 1))
-                        else:
+                            if count_must_exist == 0:
+                                window['_existing_dbs_'].update(values=db_files, size=(max(map(len, db_files)), 10))
+
+                        # bad path
+                        if not db_files or count_must_exist > 0:
                             window['_existing_dbs_'].update(values=[], size=(1, 1))
-                            window['_OUTPUT_'](value=f"Warning: chosen path has no *{self.ext} files")
+                            if not db_files:
+                                window['_OUTPUT_'](value=f"Warning: chosen path has no *{self.ext} files")
+                            if count_must_exist > 0:
+                                window['_OUTPUT_'](value=f"Warning: not all 'must exist' files are present\n"
+                                                         f"must exist files: {self.must_exist}")
+
                     else:
                         window['_OUTPUT_'](value="Not existing dir")
+
                 else:
                     window['_OUTPUT_'](value="Path is not specified")
 
             if event == "submit":
                 if values["_existing_dbs_"]:
-                    selected_db = values["_existing_dbs_"]
-                    selected_db_name = selected_db.replace(self.ext, '')
-                    self.db_fpath = os.path.join(self.dbs_path, selected_db)
+                    self.selected_db = values["_existing_dbs_"]
+                    self.db_fpath = os.path.join(self.dbs_path, self.selected_db)
                     try:
-                        self.db = DataBase(self.db_fpath).db
+                        self.db = DataBase(self.db_fpath).load()
                     except:
                         window['_OUTPUT_'](value="Warning: Corrupted file")
 
                     window.hide()
-                    self.edit_ui(selected_db_name)
+
+                    self.master_data_title = self.selected_db.replace(self.ext, '')
+                    schema = SCHEMAS[self.master_data_title]
+                    self.edit_ui(self.master_data_title, schema)
+
                     window.un_hide()
 
                 else:
@@ -192,13 +226,34 @@ class GUI(UIConfig):
                 window.close()
                 break
 
-    def edit_ui(self, selected_db_name):
+    def edit_ui(self, data_title: str, schema, nested: bool = False):
+
+        DB = DataBase(self.db_fpath)
+
         layout = list()
 
-        title = f"Edit Datbase {selected_db_name}"
-        Layouts(layout).title_lo()
+        if nested:
+            self.dynamic_db_name += "." + data_title
+            Layouts(layout).title_lo(f"nested data: {self.dynamic_db_name}")
 
-        schema = SCHEMAS[selected_db_name]
+        elif not nested:
+
+            self.dynamic_db_name = data_title
+
+            Layouts(layout).title_lo(f"Database: {data_title}")
+
+            # build uneque layout
+            if data_title == "projecta":
+                # load filtration databases
+                people = DB.get_people()
+
+                # build
+                layout.append([sg.T("Select User")])
+                layout.append([sg.DropDown(people, key="_user_", enable_events=True)])
+
+                layout.append([sg.T("Select Prum")])
+                layout.append([sg.DropDown([], key="_prum_", enable_events=True)])
+
         for entry, elements in schema:
             tooltip = str()
             ee = EntryElements()
@@ -235,19 +290,57 @@ class GUI(UIConfig):
                 elif 'date_lo' in ee.anyof_type:
                     el.date_lo(tooltip=tooltip)
 
+        layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(30, 1))])
+        layout.append([sg.Button("Save")])
+
+        # build window
         window = sg.Window('', layout,
                            resizable=True)
 
+        # run
         while True:
             event, values = window.read(timeout=20)
             if event is None:
                 window.close()
                 break
 
+            if self.master_data_title == "projecta":
+                sub_db = dict()
+                if values['_user_']:
+                    if event == '_user_':
+                        sub_db = self.db[values['_user_']]
+                        window['_prum_'].update(values=sub_db)
+                else:
+                    window['_prum_'].update(values=[])
+
+                if values['_prum_']:
+                    if event == '_prum_':
+                        for entry, val in sub_db.items():
+                            if isinstance(val, str):
+                                window[entry].update(value=val)
+                            if isinstance(val, list):
+                                if isinstance(val[0], str):
+                                    window[entry].update(value=str(val))
+
+                    window['save'].update(disabled=False)
+                else:
+                    window['save'].update(disabled=True)
+
             if event.startswith("@enter_schema_"):
-                nested_entry = event.replace("@enter_schema_")
+                nested_entry = self.selected_db.replace(self.ext, '')
                 nested_schema = schema[nested_entry]["schema"]
-                self.edit_ui(nested_schema)
+                self.edit_ui(nested_entry, nested_schema, nested=True)
+
+            if event == "save":
+                # for entry, val in values.items():
+                #     if isinstance(val, str):
+                #         window[entry].update(value=val)
+                #     if isinstance(val, list):
+                #         if isinstance(val[0], str):
+                #             window[entry].update(value=str(val))
+
+                DB.save()
+                sg.popup_quick(f"Saved!")
 
 
 def _setter(entry_elements: EntryElements, elements: dict):
