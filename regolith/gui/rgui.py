@@ -30,9 +30,10 @@ class DataBase:
             self.db = yaml.safe_load(f)
         return self.db
 
-    def save(self):  # TODO - make sure it follows Simon's format PEP-?
+    def save(self, db):  # TODO - make sure it follows Simon's format PEP-?
         """ save database to file """
-        yaml.safe_dump(self.db, self.path)
+        with open(self.path, 'w') as f:
+            yaml.safe_dump(db, f)
 
     @staticmethod
     def get_default_path():
@@ -134,7 +135,9 @@ class EntryLayouts(UIConfig):
         self.layout[-1].extend([sg.Multiline('', size=self.multyline_size, tooltip=tooltip, key=self.entry)])
 
     def nested_schema_lo(self, tooltip):
-        self.layout[-1].extend([sg.T('', key=self.entry), sg.Button("+", tooltip=tooltip, key=f"@enter_schema_{self.entry}")])
+        self.layout[-1].extend([sg.In('expend -> ', key=self.entry, size=(0, 0), disabled=True),
+                                # TODO add to ignore list. currently a dummy space holder for entry name
+                                sg.Button("+", tooltip=tooltip, key=f"@enter_schema_{self.entry}")])
 
 
 class Layouts(UIConfig):
@@ -186,7 +189,7 @@ class GUI(UIConfig):
         layout.append([sg.Button("submit")])
 
         # build window
-        window = sg.Window("select a database", layout, resizable=False, element_justification='center')
+        window = sg.Window("select a database", layout, resizable=False, element_justification='center', finalize=True)
 
         # run
         while True:
@@ -249,7 +252,7 @@ class GUI(UIConfig):
                 window.close()
                 break
 
-    def edit_ui(self, data_title: str, schema, nested: bool = False):
+    def edit_ui(self, data_title: str, schema, nested: bool = False, nested_data: dict = None):
         DESCRIPTION_KEY = '_description'
         ID_KEY = '_id'
 
@@ -281,7 +284,6 @@ class GUI(UIConfig):
                 layout.append([sg.DropDown([], key="_prum_", enable_events=True, size=self.selector_long_size)])
 
         layout.append([sg.Button('load', key='_load_', font=self.font_9b)])
-
         for entry, elements in schema.items():
             tooltip = str()
             ee = EntryElements()
@@ -315,17 +317,17 @@ class GUI(UIConfig):
                 el.types_lo(ee.anyof_type)
                 tooltip += f'\ntypes: {ee.anyof_type}'
                 if 'list' in ee.anyof_type:
-                    el.input_lo(tooltip=tooltip)
+                    el.multyline_lo(tooltip=tooltip)
                 elif 'date' in ee.anyof_type:
                     el.date_lo(tooltip=tooltip)
                 else:
                     el.input_lo(tooltip=tooltip)
 
         layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(30, 1))])
-        layout.append([sg.Button('save', key="_save_")])
+        # layout.append([sg.Button('save', key="_save_")])
 
         # build window
-        window = sg.Window('', layout, resizable=True)
+        window = sg.Window('', layout, resizable=True, finalize=True)
 
         # run
         while True:
@@ -334,47 +336,58 @@ class GUI(UIConfig):
                 window.close()
                 break
 
-            if self.master_data_title == "projecta":
-                sub_db = dict()
-                if values['_user_']:
-                    initials = values['_user_'][:2]
-                    if event == '_user_':
-                        user_prums = list()
-                        for _id in self.db:
-                            if _id[2:4] == initials:
-                                user_prums.append(_id)
-                        window['_prum_'].update(values=user_prums)
-                else:
-                    window['_prum_'].update(values=[])
+            ###  specific targeting for a database
+            if not nested:
+                if self.master_data_title == "projecta":
+                    sub_db = dict()
+                    if values['_user_']:
+                        initials = values['_user_'][:2]
+                        if event == '_user_':
+                            user_prums = list()
+                            for _id in self.db:
+                                if _id[2:4] == initials:
+                                    user_prums.append(_id)
+                            window['_prum_'].update(values=user_prums)
+                    else:
+                        window['_prum_'].update(values=[])
 
-                if event == '_load_':
-                    if values['_prum_']:
-                        _id = values['_prum_']
-                        _data = self.db[_id]
-                        perfect = True
-                        for entry, val in _data.items():
-                            try:
-                                window[entry].update(value='')
-                                if isinstance(val, str):
-                                    window[entry].update(value=val)
-                                if isinstance(val, list):
-                                    if val:
-                                        if isinstance(val[0], str):
-                                            window[entry].update(value=str(val))
-                            except:
-                                perfect = False
-                                print(f'\033[91m WARNING: "{entry}" is not part of the schema \033[0m')
-                        if not perfect:
-                            sg.popup_error('Error - see log', non_blocking=True)
-
-                    window['_save_'].update(disabled=False)
+            if event == '_load_':
+                if nested:
+                    self._data = nested_data
                 else:
-                    window['_save_'].update(disabled=True)
+                    self._id = values['_prum_']
+                    self._data = self.db[self._id]
+                perfect = True
+                for entry, val in self._data.items():
+                    print(f'\033[93m------------------ \033[0m')
+                    print(entry, ":", val)
+
+                    if entry in values:
+                        window[entry].update(value='')
+                        if isinstance(val, list):
+                            if val:
+                                if isinstance(val[0], str):
+                                    window[entry].update(value=str(val))
+
+                        elif isinstance(val, dict):
+                            pass
+
+                        else:
+                            window[entry].update(value=val)
+
+                    else:
+                        perfect = False
+                        print(f'\033[91m WARNING: "{entry}" is not part of the schema \033[0m')
+                if not perfect:
+                    sg.popup_error('Error - see log', non_blocking=True)
+
 
             if event.startswith("@enter_schema_"):
-                nested_entry = self.selected_db.replace(self.ext, '')
+                nested_entry = event.replace("@enter_schema_", '')
                 nested_schema = schema[nested_entry]["schema"]
-                self.edit_ui(nested_entry, nested_schema, nested=True)
+                window.hide()
+                self.edit_ui(nested_entry, nested_schema, nested=True, nested_data=self._data[nested_entry])
+                window.un_hide()
 
             if event.startswith('@get_date_'):
                 date = sg.popup_get_date()
@@ -389,8 +402,22 @@ class GUI(UIConfig):
                 #     if isinstance(val, list):
                 #         if isinstance(val[0], str):
                 #             window[entry].update(value=str(val))
+                print ("==> SAVE ")
+                for key, val in values.items():
+                    if key in self._data:
+                        try:
+                            val = eval(val)
+                            if isinstance(val, list):
+                                pass
+                            else:
+                                val = str(val)
+                        except:
+                            val = str(val)
+                            print(f"ERROR:  {key}")
 
-                DB.save()
+                        self._data[key] = val
+                self.db.update({self._id: self._data})
+                DB.save(self.db)
                 sg.popup_quick(f"Saved!")
 
 
