@@ -15,13 +15,13 @@ COMMITTEES_TYPE = ["phdoral", "phddefense", "phdproposal", "promotion"]
 COMMITTEES_LEVEL = ["department", "school", "university", "external"]
 EXPENSES_TYPE = ["unsubmitted", "submitted", "reimbursed"]
 FACILITIES_TYPE = ["teaching", "research", "shared", "other", "teaching_wish",
-                                     "research_wish"]
-POSITION_STATUS = ["pi", "adjunct", "high-school", "undergrad","ms", "phd",
-                   "postdoc","visitor-supported","visitor-unsupported"]
+                   "research_wish"]
+POSITION_STATUS = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
+                   "postdoc", "visitor-supported", "visitor-unsupported"]
 PRESENTATION_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
-                      "plenary", "poster", "seminar", "tutorial"]
+                     "plenary", "poster", "seminar", "tutorial"]
 PRESENTATION_STATUS = ["in-prep", "submitted", "accepted", "declined",
-                         "cancelled", "postponed"]
+                       "cancelled", "postponed"]
 PROJECT_TYPE = ["ossoftware", "funded"]
 PROPOSAL_STATI = ["pending", "declined", "accepted", "inprep", "submitted"]
 PUBLICITY_TYPE = ["online", "article"]
@@ -34,7 +34,6 @@ TODO_STATI = ["started", "finished", "cancelled", "paused"]
 PROJECTUM_STATUS = ["proposed", "started", "converged", "finished", "cancelled", "paused"]
 MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "release", "email", "handin",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
-
 
 EXEMPLARS = {
     "abstracts": {
@@ -1536,14 +1535,14 @@ EXEMPLARS = {
             'audience': ['lead', 'pi', 'group_members'],
             'status': 'proposed',
             'type': 'meeting',
-            'progress':[{
+            'progress': [{
                 'text': 'The samples have been synthesized and places in the sample cupboard. '
                         'They turned out well and are blue as expected',
                 'figure': 'token that dereferences a figure or image in group local storage db',
                 'slides_url': 'url to slides describing the development, e.g. Google slides url'
-                }
+            }
             ],
-            },
+        },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
              'objective': 'develop a detailed plan with dates',
@@ -1645,7 +1644,7 @@ EXEMPLARS = {
             ],
             "does_what": "Find a cure for Poverty",
             "due_date": "2020-04-10",
-            "freewrite": 
+            "freewrite":
                 "I can put extra things here, such as special instructions from the",
             "goals": [
                 "The goals of the proposal are to put together a team to find a cure"
@@ -1836,13 +1835,13 @@ EXEMPLARS = {
         "purpose": "Beginning reading about PDF",
         "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
         "year": 2019},
-                {
-        "_id": "african_swallows",
-        "date": "2019-12-01",
-        "papers": [{"doi": "10.1107/97809553602060000935",
-                    "text": "Very basic, but brief, intro to african swallows"},
-                   ],
-        "title": "A step-by-step pathway towards african swallow understanding.",
+        {
+            "_id": "african_swallows",
+            "date": "2019-12-01",
+            "papers": [{"doi": "10.1107/97809553602060000935",
+                        "text": "Very basic, but brief, intro to african swallows"},
+                       ],
+            "title": "A step-by-step pathway towards african swallow understanding.",
         }],
     "refereeReports": {
         "_id": "1902nature",
@@ -1871,7 +1870,7 @@ EXEMPLARS = {
         "email": "haperson@uni.edu",
         "university_id": "HAP42",
     },
-    "todos":{
+    "todos": {
         "_id": "sbillinge",
         "todos": [
             {"description": "read paper",
@@ -1898,7 +1897,7 @@ EXEMPLARS = {
              "tags": ["downtime"]
              }
         ],
-        }
+    }
 }
 
 SCHEMAS = {
@@ -3210,8 +3209,8 @@ SCHEMAS = {
                                "description": "URL of your Google Scholar "
                                               "rofile"},
         "grp_mtg_active": {"required": False, "type": "boolean",
-                      "description": "Whether to schedule tasks at group meeting "
-                                     "or not"},
+                           "description": "Whether to schedule tasks at group meeting "
+                                          "or not"},
         "hindex": {
             "description": "details of hindex pulled on a certain date",
             "required": False,
@@ -3647,7 +3646,7 @@ SCHEMAS = {
             "required": False,
             "type": "list"
         },
-        "deliverable":{
+        "deliverable": {
             "description": "outline of the deliverable for this projectum",
             "type": "dict",
             "schema": {
@@ -3672,10 +3671,10 @@ SCHEMAS = {
                              "required": False,
                              "type": "string"},
                 "roll_out": {"description": "steps that the audience will take to access "
-                                           "and interact with the deliverable, "
-                                           "not needed for paper submissions",
-                            "required": False,
-                            "type": "list"},
+                                            "and interact with the deliverable, "
+                                            "not needed for paper submissions",
+                             "required": False,
+                             "type": "list"},
                 "notes": {"description": "any notes about the deliverable that we want to keep track of",
                           "required": False,
                           "type": "list"},
@@ -3696,7 +3695,7 @@ SCHEMAS = {
             "required": False,
             "anyof_type": ["date", "string"]
         },
-        "grants":{
+        "grants": {
             "description": "grant id funding the project",
             "required": False,
             "anyof_type": ["string", "list"]
@@ -3707,7 +3706,7 @@ SCHEMAS = {
             "required": False,
             "type": "list"
         },
-        "kickoff":{
+        "kickoff": {
             "description": "details the projectum kickoff meeting",
             "required": False,
             "type": "dict",
@@ -3787,8 +3786,8 @@ SCHEMAS = {
                                                                        "e.g., Google slides url",
                                                         "required": False,
                                                         "type": "string"}
-                                        }
-                                    }
+                                     }
+                                 }
                                  },
                     "objective": {"description": "explains goal of the milestone",
                                   "required": False,
@@ -4269,8 +4268,8 @@ SCHEMAS = {
             "type": "string"
         },
         "date": {"description": "date the list was edited",
-                     "required": False,
-                     "anyof_type": ["date", "string"]},
+                 "required": False,
+                 "anyof_type": ["date", "string"]},
         "day": {
             "description": "The day the list was edited",
             "required": False,
@@ -4466,13 +4465,13 @@ SCHEMAS = {
             "type": "string",
         },
     },
-    "todos":{
+    "todos": {
         "_description": {
             "description": "This is a collection of todo items"
         },
         "_id": {
             "description": "the person to whom these todos are applied."
-            "this should be the id of a person from people",
+                           "this should be the id of a person from people",
             "required": True,
             "type": "string",
         },
@@ -4517,7 +4516,7 @@ SCHEMAS = {
                         "required": True,
                         "type": "string",
                         "eallowed": TODO_STATI
-                        },
+                    },
                     "notes": {"description": "additional notes for this task",
                               "required": False,
                               "type": "list",
@@ -4541,7 +4540,7 @@ SCHEMAS = {
 for s in SCHEMAS:
     SCHEMAS[s]["files"] = {
         "description": "Files associated with the document",
-        # TODO: fix this since this is currently comming out a CommentedMap
+        # TODO: fix this since this is currently comming out a CommentedMap (+1: Yevgeny)
         # "type": "list",
         # "schema": {"type": "string"},
         "required": False,
