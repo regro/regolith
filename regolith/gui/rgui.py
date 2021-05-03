@@ -2,12 +2,9 @@ import os
 import yaml
 import PySimpleGUI as sg
 from regolith.schemas import SCHEMAS
+from regolith.gui.config_ui import UIConfig
 
-window = sg.Window('')
-sg.DEFAULT_WINDOW_LOCATION = map(lambda x: x / 3, window.get_screen_size())
-window.close()
-
-DEFAULTS_PATH = "/home/yr2369/github/regolith/dev/regolith/regolith/gui/defaults.yml"
+DEFAULTS_PATH = os.path.join(os.path.dirname(__file__), 'defaults.yml')
 
 
 def load(path, type='yaml'):
@@ -44,7 +41,33 @@ class DataBase:
         return list(load(self.people_db).keys())
 
 
-class EntryElements(object):
+class Messaging:
+    @staticmethod
+    def win_msg(window, msg, key="_OUTPUT_"):
+        window[key].update(value=msg)
+
+    @staticmethod
+    def r_msg(msg):
+        print(f"\033[91m{msg}\033[0m")
+
+    @staticmethod
+    def g_msg(msg):
+        print(f"\033[92m{msg}\033[0m")
+
+    @staticmethod
+    def y_msg(msg):
+        print(f"\033[93m{msg}\033[0m")
+
+    @staticmethod
+    def b_msg(msg):
+        print(f"\033[94m{msg}\033[0m")
+
+    @staticmethod
+    def popup_warning(msg="Error - see log"):
+        sg.popup_error(msg, non_blocking=True, keep_on_top=True, auto_close_duration=10)
+
+
+class EntryElements(Messaging):
     """
     an entry object components - used to define what layout to use and its content
 
@@ -59,41 +82,59 @@ class EntryElements(object):
         self.anyof_type = None  # list
         self.schema = None  # dict
 
+        self.errors = list()
 
-class UIConfig:
-    # fonts
-    font_style = 'courier 10 pitch'
-    font_8 = (font_style, 8)
-    font_8b = (font_style, 8, 'bold')
-    font_9 = (font_style, 9)
-    font_9b = (font_style, 9, 'bold')
-    font_11 = (font_style, 11)
-    font_11b = (font_style, 11, 'bold')
+    def not_found(self, entry: str, _type: str):
+        """ activate when _type is not found """
+        self.perfect = False
+        self.r_msg(f'WARNING: "{entry}" entry has no attribute "{_type}"')
+        self.errors.append((entry, _type))
 
-    # standard_sizes
-    selector_short_size = (20, 8)
-    selector_long_size = (40, 8)
-    required_entry_size = (17, 1)
-    entry_size = (20, 1)
-    types_size = (20, 1)
-    input_size = (60, 1)
-    multyline_size = (60, 3)
+    def _setter(self, entry, elements: dict):
+        """
+        set entry elements and assert their existence
 
-    ### globals
-    # look and feel
-    gui_theme_1 = 'LightBrown3'
-    gui_theme_2 = 'LightBrown1'
-    gui_theme_3 = 'DarkBlue13'
-    gui_theme_4 = 'LightBlue'
+        Parameters
+        ----------
+        entry: str
+            the name of the entry
+        elements: dict
+            the schema elements
 
-    sg.change_look_and_feel(gui_theme_4)
-    sg.set_options(input_elements_background_color='#ffffff')
-    sg.set_options(font=font_11)
-    sg.set_options(element_padding=(5, 5))
-    sg.set_options(border_width=2)
+        Returns
+        -------
 
-    sg.set_options(use_ttk_buttons=True)
-    sg.set_options(ttk_theme="clam")  # 'clam', 'alt', 'default', 'classic'
+        """
+        self.perfect = True
+
+        self.y_msg('----------------')
+        print('--', entry)
+        for element, val in elements.items():
+            self.__setattr__(element, val)
+            print(element, ":", val)
+
+        # description
+        try:
+            assert self.description is not None
+        except AssertionError:
+            self.not_found(entry, 'description')
+
+        # type
+        try:
+            assert self.anyof_type is not None or self.type is not None
+        except AssertionError:
+            self.not_found(entry, 'description')
+
+        # required
+        if self.type != 'dict':
+            try:
+                assert self.required is not None
+            except AssertionError:
+                self.not_found(entry, 'description')
+
+        # not perfect
+        if not self.perfect:
+            self.popup_warning()
 
 
 class EntryLayouts(UIConfig):
@@ -140,7 +181,7 @@ class EntryLayouts(UIConfig):
                                 sg.Button("+", tooltip=tooltip, key=f"@enter_schema_{self.entry}")])
 
 
-class Layouts(UIConfig):
+class GlobalLayouts(UIConfig):
 
     def __init__(self, layout: list):
         """
@@ -149,7 +190,7 @@ class Layouts(UIConfig):
         Parameters
         ----------
         layout: list
-            that layout list
+            ui layout
         """
         self.layout = layout
 
@@ -157,7 +198,44 @@ class Layouts(UIConfig):
         self.layout.append([sg.T(title, text_color='blue', font=self.font_11b, tooltip=tooltip)])
 
 
-class GUI(UIConfig):
+class BaseLayouts(UIConfig):
+
+    def __init__(self, layout: list):
+        """
+        layout builder for specific bases
+
+        Parameters
+        ----------
+        layout: list
+            ui layout
+        """
+        self.layout = layout
+
+    def projecta(self, people: list):
+        """
+        projecta ui builder
+
+        filters using people
+
+        Parameters
+        ----------
+        people: list
+            list of people frp, people database
+
+        Returns
+        -------
+        updated layout
+        """
+
+        # build
+        self.layout.append([sg.T("Select User")])
+        self.layout.append([sg.DropDown(people, key="_user_", enable_events=True, size=self.selector_short_size)])
+
+        self.layout.append([sg.T("Select target prum")])
+        self.layout.append([sg.DropDown([], key="_prum_", enable_events=True, size=self.selector_long_size)])
+
+
+class GUI(UIConfig, Messaging):
 
     def __init__(self):
         self.dbs_path = str()
@@ -173,7 +251,7 @@ class GUI(UIConfig):
         layout = list()
 
         title = "Select a Database"
-        Layouts(layout).title_lo(title)
+        GlobalLayouts(layout).title_lo(title)
 
         layout.append([sg.T("Where the Databases are located?")])
         layout.append([sg.T("Path", tooltip="path to "),
@@ -192,10 +270,11 @@ class GUI(UIConfig):
         window = sg.Window("select a database", layout, resizable=False, element_justification='center', finalize=True)
 
         # run
+        first = True
         while True:
-            event, values = window.read()
+            event, values = window.read(timeout=50)
 
-            if event == "_explore_":
+            if event == "_explore_" or first:
                 db_files = list()
                 self.dbs_path = values['db_path']
 
@@ -217,16 +296,16 @@ class GUI(UIConfig):
                         if not db_files or count_must_exist > 0:
                             window['_existing_dbs_'].update(values=[], size=(1, 1))
                             if not db_files:
-                                window['_OUTPUT_'](value=f"Warning: chosen path has no *{self.ext} files")
+                                self.win_msg(window, f"Warning: chosen path has no *{self.ext} files")
                             if count_must_exist > 0:
-                                window['_OUTPUT_'](value=f"Warning: not all 'must exist' files are present\n"
-                                                         f"must exist files: {self.must_exist}")
+                                self.win_msg(window, f"Warning: not all 'must exist' files are present\n"
+                                                     f"must exist files: {self.must_exist}")
 
                     else:
-                        window['_OUTPUT_'](value="Not existing dir")
+                        self.win_msg(window, "Not existing dir")
 
                 else:
-                    window['_OUTPUT_'](value="Path is not specified")
+                    self.win_msg(window, "Path is not specified")
 
             if event == "submit":
                 if values["_existing_dbs_"]:
@@ -235,22 +314,28 @@ class GUI(UIConfig):
                     try:
                         self.db = DataBase(self.db_fpath).load()
                     except:
-                        window['_OUTPUT_'](value="Warning: Corrupted file")
-
-                    window.hide()
+                        self.win_msg(window, "Warning: Corrupted file")
 
                     self.master_data_title = self.selected_db.replace(self.ext, '')
-                    schema = SCHEMAS[self.master_data_title]
-                    self.edit_ui(self.master_data_title, schema)
+                    try:
+                        schema = SCHEMAS[self.master_data_title]
+                    except KeyError:
+                        self.win_msg(window, f"SORRY! '{self.master_data_title}' schema does not exist.")
+                        continue
 
+                    window.hide()
+                    self.edit_ui(self.master_data_title, schema)
                     window.un_hide()
 
                 else:
-                    window['_OUTPUT_'](value="Please select a database")
+                    self.win_msg(window, "Please select a database")
 
             if event is None:
                 window.close()
                 break
+
+            # terminate first
+            first = False
 
     def edit_ui(self, data_title: str, schema, nested: bool = False, nested_data: dict = None):
         DESCRIPTION_KEY = '_description'
@@ -262,69 +347,69 @@ class GUI(UIConfig):
 
         if nested:
             self.dynamic_db_name += "." + data_title
-            Layouts(layout).title_lo(f"nested data: {self.dynamic_db_name}")
+            GlobalLayouts(layout).title_lo(f"nested data: {self.dynamic_db_name}")
 
         elif not nested:
 
             self.dynamic_db_name = data_title
             _description = schema.pop(DESCRIPTION_KEY)
             _id = schema.pop(ID_KEY)
-            Layouts(layout).title_lo(f"Database: {data_title}", tooltip=_description)
+            GlobalLayouts(layout).title_lo(f"Database: {data_title}", tooltip=_description)
 
-            # build uneque layout
+            # build unique base-related layout
+            bl = BaseLayouts(layout)
             if data_title == "projecta":
                 # load filtration databases
                 people = DB.get_people()
-
-                # build
-                layout.append([sg.T("Select User")])
-                layout.append([sg.DropDown(people, key="_user_", enable_events=True, size=self.selector_short_size)])
-
-                layout.append([sg.T("Select target prum")])
-                layout.append([sg.DropDown([], key="_prum_", enable_events=True, size=self.selector_long_size)])
+                bl.projecta(people)
 
         layout.append([sg.Button('load', key='_load_', font=self.font_9b)])
+        layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
+
         for entry, elements in schema.items():
             tooltip = str()
+
+            # set entry elements from schema
             ee = EntryElements()
+            ee._setter(entry, elements)
 
-            ee = _setter(entry, ee, elements)
+            # set standard layout builder for entry from schema
             el = EntryLayouts(layout, entry)
-
-            # add red * if required=True and entry title
-            if ee.required is True:
-                el.required_entry_lo()
-            else:
-                el.entry_lo()
 
             # set tooltip as description
             if ee.description:
                 tooltip = f'description: {ee.description}'
 
-            if ee.type:
-                el.types_lo(ee.type)
-                tooltip += f'\ntype: {ee.type}'
-                if ee.schema:
-                    el.nested_schema_lo(tooltip=tooltip)
-                elif ee.type == 'string':
-                    el.input_lo(tooltip=tooltip)
-                elif ee.type == 'date_lo':
-                    el.date_lo(tooltip=tooltip)
-                elif ee.type == 'list':
-                    el.multyline_lo(tooltip=tooltip)
-
-            elif ee.anyof_type:
-                el.types_lo(ee.anyof_type)
-                tooltip += f'\ntypes: {ee.anyof_type}'
-                if 'list' in ee.anyof_type:
-                    el.multyline_lo(tooltip=tooltip)
-                elif 'date' in ee.anyof_type:
-                    el.date_lo(tooltip=tooltip)
+            # build layout based on type
+            if ee.type or ee.anyof_type:
+                if ee.required is True:
+                    el.required_entry_lo()
                 else:
-                    el.input_lo(tooltip=tooltip)
+                    el.entry_lo()
 
-        layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(30, 1))])
-        # layout.append([sg.Button('save', key="_save_")])
+                if ee.type:
+                    el.types_lo(ee.type)
+                    tooltip += f'\ntype: {ee.type}'
+                    if ee.schema:
+                        el.nested_schema_lo(tooltip=tooltip)
+                    elif ee.type == 'string':
+                        el.input_lo(tooltip=tooltip)
+                    elif ee.type == 'date_lo':
+                        el.date_lo(tooltip=tooltip)
+                    elif ee.type == 'list':
+                        el.multyline_lo(tooltip=tooltip)
+
+                elif ee.anyof_type:
+                    el.types_lo(ee.anyof_type)
+                    tooltip += f'\ntypes: {ee.anyof_type}'
+                    if 'list' in ee.anyof_type:
+                        el.multyline_lo(tooltip=tooltip)
+                    elif 'date' in ee.anyof_type:
+                        el.date_lo(tooltip=tooltip)
+                    else:
+                        el.input_lo(tooltip=tooltip)
+
+        # layout.append([sg.Button('save', key="_save_")])  # TODO
 
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
@@ -337,8 +422,8 @@ class GUI(UIConfig):
                 break
 
             ###  specific targeting for a database
-            if not nested:
-                if self.master_data_title == "projecta":
+            if self.master_data_title == "projecta":
+                if not nested:
                     sub_db = dict()
                     if values['_user_']:
                         initials = values['_user_'][:2]
@@ -351,36 +436,35 @@ class GUI(UIConfig):
                     else:
                         window['_prum_'].update(values=[])
 
-            if event == '_load_':
-                if nested:
-                    self._data = nested_data
-                else:
-                    self._id = values['_prum_']
-                    self._data = self.db[self._id]
-                perfect = True
-                for entry, val in self._data.items():
-                    print(f'\033[93m------------------ \033[0m')
-                    print(entry, ":", val)
+                if event == '_load_':
+                    if nested:
+                        self._data = nested_data
+                    else:
+                        self._id = values['_prum_']
+                        self._data = self.db[self._id]
+                    perfect = True
+                    for entry, val in self._data.items():
+                        self.y_msg('------------------')
+                        print(entry, ":", val)
 
-                    if entry in values:
-                        window[entry].update(value='')
-                        if isinstance(val, list):
-                            if val:
-                                if isinstance(val[0], str):
-                                    window[entry].update(value=str(val))
+                        if entry in values:
+                            window[entry].update(value='')
+                            if isinstance(val, list):
+                                if val:
+                                    if isinstance(val[0], str):
+                                        window[entry].update(value=str(val))
 
-                        elif isinstance(val, dict):
-                            pass
+                            elif isinstance(val, dict):
+                                pass
+
+                            else:
+                                window[entry].update(value=val)
 
                         else:
-                            window[entry].update(value=val)
-
-                    else:
-                        perfect = False
-                        print(f'\033[91m WARNING: "{entry}" is not part of the schema \033[0m')
-                if not perfect:
-                    sg.popup_error('Error - see log', non_blocking=True)
-
+                            perfect = False
+                            self.r_msg(f'WARNING: "{entry}" is not part of the schema')
+                    if not perfect:
+                        self.popup_warning()
 
             if event.startswith("@enter_schema_"):
                 nested_entry = event.replace("@enter_schema_", '')
@@ -395,14 +479,14 @@ class GUI(UIConfig):
                 entry = event.replace('@get_date_', '')
                 window[entry].update(value=date)
 
-            if event == "_save_":
+            if event == "_save_":  # TODO
                 # for entry, val in values.items():
                 #     if isinstance(val, str):
                 #         window[entry].update(value=val)
                 #     if isinstance(val, list):
                 #         if isinstance(val[0], str):
                 #             window[entry].update(value=str(val))
-                print ("==> SAVE ")
+                print("==> SAVE ")
                 for key, val in values.items():
                     if key in self._data:
                         try:
@@ -420,57 +504,6 @@ class GUI(UIConfig):
                 DB.save(self.db)
                 sg.popup_quick(f"Saved!")
 
-
-def _setter(entry, entry_elements: EntryElements, elements: dict):
-    """
-    set entry elements and assert their existence
-
-    Parameters
-    ----------
-    entry_elements: EntryElements
-        initiated EntryElements class object
-    elements: dict
-        the schema elements
-
-    Returns
-    -------
-
-    """
-    print("\033[93m ---------------- \033[0m")
-    print('--', entry)
-    for element, val in elements.items():
-        entry_elements.__setattr__(element, val)
-        print(element, ":", val)
-
-    perfect = True
-
-    # description
-    try:
-        assert entry_elements.description is not None
-    except:
-        perfect = False
-        print(f'\033[91m WARNING: "{entry}" entry has no "description"\033[0m')
-
-    # type
-    try:
-        assert entry_elements.anyof_type is not None or entry_elements.type is not None
-    except:
-        perfect = False
-
-        print(f'\033[91m WARNING: "{entry}" entry has no "type"\033[0m')
-
-    # required
-    if entry_elements.type != 'dict':
-        try:
-            assert entry_elements.required is not None
-        except:
-            print(f'\033[91m WARNING: "{entry}" entry has no "required"\033[0m')
-
-    # not perfect
-    if not perfect:
-        sg.popup_error("Error - see log", non_blocking=True, auto_close_duration=8)
-
-    return entry_elements
 
 
 if __name__ == '__main__':
