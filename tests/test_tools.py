@@ -27,7 +27,10 @@ from regolith.tools import (
     search_collection,
     collect_appts,
     grant_burn,
-    validate_meeting, get_formatted_crossref_reference
+    validate_meeting,
+    get_formatted_crossref_reference,
+    compound_dict,
+    compound_list
 )
 
 PEOPLE_COLL = [
@@ -1308,6 +1311,71 @@ def test_group_member_ids(input, expected):
     actual = group_member_ids(input, "bg")
     assert actual == expected
 
+
+d1 = {
+    'name': 'John',
+    'experience': [
+        {'company': 'Google', 'role': 'product manager'},
+        {'comapny': 'Amazon', 'role': 'QA'}
+    ],
+    'school': {
+        'name': 'Columbia',
+        'location': 'NYC',
+        'year': 'senior'
+    }
+}
+d2 = {
+    'name': 'Sarah',
+    'experience': [
+        {'company': 'Verizon', 'role': 'sales'},
+        {'comapny': 'AT&T', 'role': 'software engineer'}
+    ],
+    'school': {
+        'name': 'Columbia',
+        'location': 'NYC',
+        'year': 'junior'
+    },
+    'hobbies': ['swimming', 'hiking'],
+    'info': {
+        'stats': {
+            'code': 'a76',
+            'location': 'California'
+        },
+        'software': 'CAD'
+    }
+}
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (d1, ['John', 'Google', 'product manager', 'Amazon', 'QA', 'Columbia', 'NYC', 'senior']),
+        (d2, ['Sarah', 'Verizon', 'sales', 'AT&T', 'software engineer', 'Columbia', 'NYC', 'junior', 'swimming', 'hiking', 'a76', 'California', 'CAD']),
+    ]
+)
+def test_compound_dict(input, expected):
+    assert(compound_dict(input, []) == expected)
+
+l1 = [
+    'hello',
+    {'name': 'Fred', 'status': 'active'},
+    {'name': 'Derf', 'status': 'inactive'},
+    'bye'
+]
+l2 = [
+    ['a', 'b', 'c'],
+    {'name': 'Anthony', 'Status': 'active'},
+    [{'product': 'phone'}, {'product': 'laptop'}],
+    "end"
+]
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (l1, ['hello', 'Fred', 'active', 'Derf', 'inactive', 'bye']),
+        (l2, ['a', 'b', 'c', 'Anthony', 'active', 'phone', 'laptop', 'end']),
+    ]
+)
+def test_compound_list(input, expected):
+    assert(compound_list(input, []) == expected)
+
 p1 = {
     "_id": "scopatz",
     "aka": [
@@ -1328,7 +1396,26 @@ p2 = {
     ],
     "name": "Anthony Bill Chris",
 }
-
+p3 = {
+    "_id": "Leonan",
+    "name": "Leonan Garea",
+    "company": {
+        "name": "Amazon",
+        "role": "Product Manager"
+    },
+    "projects": [
+        {'title': 'GUI Application', 'description': 'Make a GUI for the group'},
+    ]
+}
+p4 = {
+    "_id": "cba",
+    "name": "Jackie",
+    "company": {},
+    "projects": [
+        {'title': 'PDF Maker', 'description': 'New PDF function'},
+        {'title': 'Write Paper', 'description': 'Draft the new paper'}
+    ]
+}
 @pytest.mark.parametrize(
     "input, expected",
     [
@@ -1339,7 +1426,9 @@ p2 = {
         (([p1, p2], ["aka", "name", "_id"],
                            "scopatz, a", False),[p1]),
         (([p1, p2], ["aka", "name", "_id"],
-                           "ill", False),[p2]),          
+                           "ill", False),[p2]),
+        (([p3], ["company"], "Amazon", False), [p3]),
+        (([p3, p4], ["projects"], "PDF", False), [p4]),
     ],
 )
 def test_fragment_retrieval(input, expected):
