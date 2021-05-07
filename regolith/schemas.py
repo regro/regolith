@@ -22,7 +22,7 @@ PRESENTATION_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keyn
                      "plenary", "poster", "seminar", "tutorial"]
 PRESENTATION_STATUS = ["in-prep", "submitted", "accepted", "declined",
                        "cancelled", "postponed"]
-PROJECT_TYPE = ["ossoftware", "funded"]
+PROJECT_TYPE = ["ossoftware", "funded", "outreach"]
 PROPOSAL_STATI = ["pending", "declined", "accepted", "inprep", "submitted"]
 PUBLICITY_TYPE = ["online", "article"]
 REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
