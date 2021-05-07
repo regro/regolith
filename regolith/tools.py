@@ -1466,9 +1466,6 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
     for doc in coll:
         returns = []
         for k in fields:
-            # ret = doc.get(k, [])
-            # if not isinstance(ret, list):
-            #     ret = [ret]
             ret = doc.get(k, None)
             if ret is not None:
                 if isinstance(ret, list):
