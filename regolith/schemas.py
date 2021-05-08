@@ -2262,6 +2262,24 @@ SCHEMAS = {
             "description": "begin date in YYYY-MM-DD",
             "anyof_type": ["string", "date"],
         },
+        "begin_year": {"description": "The year when the travel/business started",
+                       "required": False,
+                       "type": "integer"},
+        "begin_month": {"description": "The month when the travel/business started",
+                        "required": False,
+                        "anyof_type": ["string", "integer"]},
+        "begin_day": {"description": "The day when the travel/business started",
+                      "required": False,
+                      "type": "integer"},
+        "end_year": {"description": "The year when the travel/business end",
+                     "required": False,
+                     "type": "integer"},
+        "end_month": {"description": "The month when the travel/business end",
+                      "required": False,
+                      "anyof_type": ["string", "integer"]},
+        "end_day": {"description": "The day when the travel/business end",
+                    "required": False,
+                    "type": "integer"},
         "end_date": {
             "description": "end date in YYYY-MM-DD",
             "anyof_type": ["string", "date"],
@@ -2333,6 +2351,11 @@ SCHEMAS = {
                         "description": "The currency the payment was made in",
                         "type": "float",
                     },
+                    "prepaid_expense": {
+                       "description": "The amount of prepaid expense in USD",
+                       "required": False,
+                       "type": "float"
+                      },
                 },
             },
         },
@@ -2342,13 +2365,15 @@ SCHEMAS = {
             "required": True,
         },
         "notes": {
-            "description": "Notes about the expense",
-            "type": "list",
+            "description": "Description of the expenses. It will not be included in the reimbursement form",
+            "required": False,
+            "anyof_type": ["list", "string"],
 
         },
         "status": {
             "description": "The status of the expense",
             "eallowed": EXPENSES_TYPE,
+            "required": False,
             "type": "string"
         },
         "reimbursements": {
@@ -2818,21 +2843,21 @@ SCHEMAS = {
         },
         "actions": {
             "description": "action items expected from the group members for that particular meeting week",
-            "required": False,
+            "required": True,
             "type": "list",
         },
         "agenda": {
             "description": "schedule of the current meeting",
-            "required": False,
+            "required": True,
             "type": "list",
         },
         "buddies": {
             "description": "list of pairs of group members that are selected for the buddy round robin",
-            "required": False,
+            "required": True,
             "type": "list",
         },
         "day": {
-            "description": "day of the group meeting",
+            "description": "day of the group meeting, or the day the entry was edited",
             "required": False,
             "type": "integer",
         },
@@ -2840,20 +2865,32 @@ SCHEMAS = {
             "description": "indicating the doi of the journal and the presenting group member as the presenter",
             "required": False,
             "type": "dict",
+            "schema": {
+                 "doi": {
+                  "description": "The doi of the journal club presentation target paper.  tbd if it is not known yet",
+                  "type": "string",
+                  "required": False
+                 },
+                 "presenter": {
+                  "description": "The name or _id of the group member presenting",
+                  "type": "string",
+                  "required": False
+                 }
+                }
         },
         "lead": {
             "description": "person who will be leading the meeting of the current week",
-            "required": False,
+            "required": True,
             "type": "string",
         },
         "minutes": {
             "description": "meeting notes in a chronological order according to comments made by the group members",
-            "required": False,
+            "required": True,
             "type": "list",
         },
         "month": {
             "description": "month in which the meeting is taking place",
-            "required": False,
+            "required": True,
             "anyof_type": ["string", "integer"]
         },
         "place": {
@@ -2865,32 +2902,49 @@ SCHEMAS = {
             "description": "indicating the title of the presentation along with the link and the presenter ",
             "required": False,
             "type": "dict",
+            "schema": {
+                 "title": {
+                  "description": "The title of the presentation.  tbd if it is not known yet",
+                  "type": "string",
+                  "required": True
+                 },
+                 "link": {
+                  "description": "The name of the presentation repo in gitlab. e.g., 2003sb_grpmtg.  It is assumed that it will be in the talks group on gitlab.  tbd if it is not known yet",
+                  "type": "string",
+                  "required": True
+                 },
+                 "presenter": {
+                  "description": "The name or _id of the group member presenting",
+                  "type": "string",
+                  "required": True
+                 }
+                }
         },
         "scribe": {
             "description": "person who will be taking notes and updating minutes accordingly",
-            "required": False,
+            "required": True,
             "type": "string",
         },
         "time": {
-            "description": "person who will be taking notes and updating minutes accordingly"
+            "description": "the time of the meeting"
                            "If an integer is minutes past midnight, so 13:30 is 810 for"
                            "example.",
             "required": False,
-            "anyof_type": ["string", "integer"]
+            "anyof_type": ["string", "integer", "datetime"]
         },
         "updated": {
-            "description": "person who will be taking notes and updating minutes accordingly",
+            "description": "The datetime.date object of the most recent update",
             "required": False,
             "anyof_type": ["string", "datetime", "date"],
         },
         "uuid": {
-            "description": "person who will be taking notes and updating minutes accordingly",
+            "description": "A uuid for the entry",
             "required": False,
             "type": "string",
         },
         "year": {
-            "description": "person who will be taking notes and updating minutes accordingly",
-            "required": False,
+            "description": "year the meeting took place",
+            "required": True,
             "type": "integer",
         },
     },
@@ -3683,6 +3737,9 @@ SCHEMAS = {
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
+                "type": {"description": "type of deliverable",
+                         "required": False,
+                         "type": "string"}
             }
         },
         "description": {
@@ -3736,7 +3793,11 @@ SCHEMAS = {
                                           f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
-                           "eallowed": PROJECTUM_STATUS}
+                           "eallowed": PROJECTUM_STATUS},
+                "identifier": {"description": "label of kickoff",
+                               "required": False,
+                               "type": "string"
+                      }
             }
         },
         "lead": {
@@ -3807,7 +3868,31 @@ SCHEMAS = {
                                             f"Allowed values are {', '.join(MILESTONE_TYPE)}",
                              "required": False,
                              "type": "string",
-                             "eallowed": MILESTONE_TYPE}
+                             "eallowed": MILESTONE_TYPE},
+                    "end_date": {"description": "end date of milestone, yyyy-mm-dd",
+                                 "required": False,
+                                 "anyof_type": ["date", "string"]},
+                    "identifier": {"description": "label of milestone",
+                                   "required": False,
+                                   "type": "string"},
+                    "release_definition": {"description": "describes a release",
+                                           "required": False,
+                                           "type": "dict",
+                                           "schema": {
+                                                "success_def": {"description": "outlines what success will be",
+                                                                "required": False,
+                                                                "type": "string"},
+                                                "scope": {"description": "what scope of the release is",
+                                                          "required": False,
+                                                          "type": "list"},
+                                                "platform": {"description": "where it will be release",
+                                                             "required": False,
+                                                             "type": "string"},
+                                                "roll_out": {"description": "how the release will be rolled out",
+                                                             "required": False,
+                                                             "type": "list"}
+                                           }
+                          },
 
                 }
             }
@@ -3822,7 +3907,22 @@ SCHEMAS = {
                                   f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                    "required": False,
                    "type": "string",
-                   "eallowed": PROJECTUM_STATUS}
+                   "eallowed": PROJECTUM_STATUS},
+        "ana_repo_url": {"description": "link to remote repository",
+                         "required": False,
+                         "type": "string"},
+        "man_repo_url": {"description": "link to remote repository",
+                         "required": False,
+                         "type": "string"},
+        "man_url": {"description": "",
+                    "required": False,
+                    "type": "string"},
+        "related_projecta": {"description": "list of id's of related projecta",
+                             "required": False,
+                             "type": "list"},
+        "notes": {"description": "notes about the projecta",
+                  "required": False,
+                  "type": "list"},
 
     },
     "projects": {
