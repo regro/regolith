@@ -2861,6 +2861,21 @@ SCHEMAS = {
             "required": False,
             "type": "integer",
         },
+        "month": {
+            "description": "month in which the meeting is taking place",
+            "required": True,
+            "anyof_type": ["string", "integer"]
+        },
+        "year": {
+            "description": "year the meeting took place",
+            "required": True,
+            "type": "integer",
+        },
+        "date": {
+            "description": "date of meeting in format YYYY-MM-DD",
+            "required": False,
+            "anyof_type": ["string", "datetime", "date"],
+        },
         "journal_club": {
             "description": "indicating the doi of the journal and the presenting group member as the presenter",
             "required": False,
@@ -2888,11 +2903,6 @@ SCHEMAS = {
             "required": True,
             "type": "list",
         },
-        "month": {
-            "description": "month in which the meeting is taking place",
-            "required": True,
-            "anyof_type": ["string", "integer"]
-        },
         "place": {
             "description": "location where the meeting is taking place on campus",
             "required": False,
@@ -2909,7 +2919,7 @@ SCHEMAS = {
                   "required": True
                  },
                  "link": {
-                  "description": "The name of the presentation repo in gitlab. e.g., 2003sb_grpmtg.  It is assumed that it will be in the talks group on gitlab.  tbd if it is not known yet",
+                  "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
                   "type": "string",
                   "required": True
                  },
@@ -2942,11 +2952,7 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
-        "year": {
-            "description": "year the meeting took place",
-            "required": True,
-            "type": "integer",
-        },
+
     },
     "people": {
         "_description": {
@@ -3732,8 +3738,8 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the deliverable that we want to keep track of",
                           "required": False,
                           "type": "list"},
-                "status": {"description": f"current state of deliverable "
-                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                "status": {"description": "current state of deliverable "
+                                          "Allowed values are 'proposed', 'started', 'converged', 'finished', 'cancelled', 'paused'",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
@@ -3789,8 +3795,8 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the kickoff",
                           "required": False,
                           "type": "list"},
-                "status": {"description": f"status of the kickoff. "
-                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                "status": {"description": "status of the kickoff. "
+                                          "Allowed values are 'proposed', 'started', 'converged', 'finished', 'cancelled', 'paused'",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
@@ -3859,8 +3865,8 @@ SCHEMAS = {
                                                 "in these groups their names or id's can be added explicitly to the list",
                                  "required": False,
                                  "type": "list"},
-                    "status": {"description": f"status of the milestone. "
-                                              f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                    "status": {"description": "status of the milestone. "
+                                              "Allowed values are 'proposed', 'started', 'converged', 'finished', 'cancelled', 'paused'",
                                "required": False,
                                "type": "string",
                                "eallowed": PROJECTUM_STATUS},
@@ -3875,25 +3881,6 @@ SCHEMAS = {
                     "identifier": {"description": "label of milestone",
                                    "required": False,
                                    "type": "string"},
-                    "release_definition": {"description": "describes a release",
-                                           "required": False,
-                                           "type": "dict",
-                                           "schema": {
-                                                "success_def": {"description": "outlines what success will be",
-                                                                "required": False,
-                                                                "type": "string"},
-                                                "scope": {"description": "what scope of the release is",
-                                                          "required": False,
-                                                          "type": "list"},
-                                                "platform": {"description": "where it will be release",
-                                                             "required": False,
-                                                             "type": "string"},
-                                                "roll_out": {"description": "how the release will be rolled out",
-                                                             "required": False,
-                                                             "type": "list"}
-                                           }
-                          },
-
                 }
             }
         },
@@ -3903,20 +3890,17 @@ SCHEMAS = {
         "pi_id": {"description": "id of the PI",
                   "required": False,
                   "type": "string"},
-        "status": {"description": f"status of the projectum. "
-                                  f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+        "status": {"description": "status of the projectum. "
+                                  "Allowed values are 'proposed', 'started', 'converged', 'finished', 'cancelled', 'paused'",
                    "required": False,
                    "type": "string",
                    "eallowed": PROJECTUM_STATUS},
-        "ana_repo_url": {"description": "link to remote repository",
+        "other_urls": {"description": "link to remote repository. e.g. analysis or data repositories",
                          "required": False,
-                         "type": "string"},
-        "man_repo_url": {"description": "link to remote repository",
-                         "required": False,
-                         "type": "string"},
-        "man_url": {"description": "",
-                    "required": False,
-                    "type": "string"},
+                         "type": "list"},
+        "product_url": {"description": "url for manuscript or code repository",
+                        "required": False,
+                        "type": "string"},
         "related_projecta": {"description": "list of id's of related projecta",
                              "required": False,
                              "type": "list"},
