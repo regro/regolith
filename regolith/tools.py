@@ -1378,6 +1378,61 @@ def group_member_employment_start_end(person, grpname):
     return grpmember
 
 
+def compound_dict(doc, li):
+    """
+    Recursive function that collects all the strings from a document that is a dictionary
+
+    Parameters
+    ----------
+    doc dict
+      The specific document we are traversing
+    li
+      The recursive list that holds all the strings
+
+    Returns
+    -------
+    list of strings
+       The strings that make up the nested attributes of this object
+
+    """
+    for key in doc:
+        res = doc.get(key)
+        if isinstance(res, str):
+            li.append(res)
+        elif isinstance(res, list):
+            li.extend(compound_list(res, []))
+        elif isinstance(res, dict):
+            li.extend(compound_dict(res, []))
+    return li
+
+
+def compound_list(doc, li):
+    """
+    Recursive function that collects all the strings from a document that is a list
+
+    Parameters
+    ----------
+    doc list
+      The specific document we are traversing
+    li
+      The recursive list that holds all the strings
+
+    Returns
+    -------
+    list of strings
+       The strings that make up the nested attributes of this list
+
+    """
+    for item in doc:
+        if isinstance(item, dict):
+            li.extend(compound_dict(item, []))
+        elif isinstance(item, str):
+            li.append(item)
+        elif isinstance(item, list):
+            li.extend(compound_list(item, []))
+    return li
+
+
 def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
     """Retrieves a list of all documents from the collection where the fragment
     appears in any one of the given fields
@@ -1411,9 +1466,17 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
     for doc in coll:
         returns = []
         for k in fields:
-            ret = doc.get(k, [])
-            if not isinstance(ret, list):
-                ret = [ret]
+            ret = doc.get(k, None)
+            if ret is not None:
+                if isinstance(ret, list):
+                    ret = compound_list(ret, [])
+                elif isinstance(ret, dict):
+                    ret = compound_dict(ret, [])
+                else:
+                    ret = [ret]
+
+            else:
+                ret = []
             returns.extend(ret)
         if not case_sensitive:
             returns = [reti.lower() for reti in returns if

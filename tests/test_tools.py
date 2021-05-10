@@ -27,7 +27,10 @@ from regolith.tools import (
     search_collection,
     collect_appts,
     grant_burn,
-    validate_meeting, get_formatted_crossref_reference
+    validate_meeting,
+    get_formatted_crossref_reference,
+    compound_dict,
+    compound_list
 )
 
 PEOPLE_COLL = [
@@ -1308,6 +1311,100 @@ def test_group_member_ids(input, expected):
     actual = group_member_ids(input, "bg")
     assert actual == expected
 
+
+d1 = {
+    'name': 'John',
+    'experience': [
+        {'company': 'Google', 'role': 'product manager'},
+        {'company': 'Amazon', 'role': 'QA'}
+    ],
+    'school': {
+        'name': 'Columbia',
+        'location': 'NYC',
+        'year': 'senior'
+    }
+}
+d2 = {
+    'name': 'Sarah',
+    'experience': [
+        {'company': 'Verizon', 'role': 'sales'},
+        {'company': 'AT&T', 'role': 'software engineer'}
+    ],
+    'school': {
+        'name': 'Columbia',
+        'location': 'NYC',
+        'year': 'junior'
+    },
+    'hobbies': ['swimming', 'hiking'],
+    'info': {
+        'stats': {
+            'code': 'a76',
+            'location': 'California'
+        },
+        'software': 'CAD'
+    }
+}
+d3 = {
+    '_id': 'abc',
+    'name': 'Example Lab',
+    'Members': [
+        {
+            'Name': 'Lisa',
+            'Experience': [
+                {
+                    'company': 'Google',
+                    'location': {'state': 'CA', 'zip code': '94043'}
+                },
+                {
+                    'company': 'Amazon',
+                    'location': {'state': 'VA', 'zip code': '20189'}
+                }
+            ]
+        },
+        {
+            'Name': 'Stephen',
+            'Experience': [
+                {
+                    'company': 'Goldman Sachs',
+                    'location': {'state': 'NY', 'zip code': '10282'}
+                }
+            ]
+        }
+    ]
+}
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (d1, ['John', 'Google', 'product manager', 'Amazon', 'QA', 'Columbia', 'NYC', 'senior']),
+        (d2, ['Sarah', 'Verizon', 'sales', 'AT&T', 'software engineer', 'Columbia', 'NYC', 'junior', 'swimming', 'hiking', 'a76', 'California', 'CAD']),
+        (d3, ['abc', 'Example Lab', 'Lisa', 'Google', 'CA', '94043', 'Amazon', 'VA', '20189', 'Stephen', 'Goldman Sachs', 'NY', '10282'])
+    ]
+)
+def test_compound_dict(input, expected):
+    assert(compound_dict(input, []) == expected)
+
+l1 = [
+    'hello',
+    {'name': 'Fred', 'status': 'active'},
+    {'name': 'Derf', 'status': 'inactive'},
+    'bye'
+]
+l2 = [
+    ['a', 'b', 'c'],
+    {'name': 'Anthony', 'Status': 'active'},
+    [{'product': 'phone'}, {'product': 'laptop'}],
+    "end"
+]
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (l1, ['hello', 'Fred', 'active', 'Derf', 'inactive', 'bye']),
+        (l2, ['a', 'b', 'c', 'Anthony', 'active', 'phone', 'laptop', 'end']),
+    ]
+)
+def test_compound_list(input, expected):
+    assert(compound_list(input, []) == expected)
+
 p1 = {
     "_id": "scopatz",
     "aka": [
@@ -1328,7 +1425,54 @@ p2 = {
     ],
     "name": "Anthony Bill Chris",
 }
-
+p3 = {
+    "_id": "Leonan",
+    "name": "Leonan Garea",
+    "company": {
+        "name": "Amazon",
+        "role": "Product Manager"
+    },
+    "projects": [
+        {'title': 'GUI Application', 'description': 'Make a GUI for the group'},
+    ]
+}
+p4 = {
+    "_id": "cba",
+    "name": "Jackie",
+    "company": {},
+    "projects": [
+        {'title': 'PDF Maker', 'description': 'New PDF function'},
+        {'title': 'Write Paper', 'description': 'Draft the new paper'}
+    ]
+}
+p5 = {
+    '_id': 'ghi',
+    'name': 'Carl',
+    'experience': [
+        {
+            'name': 'Google',
+            'roles': [
+                {
+                    'position': 'software engineer',
+                    'location': {'state': 'CA', 'zip code': '92551'}
+                },
+                {
+                    'position': 'manager',
+                    'location': {'state': 'VA', 'zip code': '20189'}
+                }
+            ]
+        },
+        {
+            'name': 'Goldman Sachs',
+            'Experience': [
+                {
+                    'position': 'junior associate',
+                    'location': {'state': 'NY', 'zip code': '10282'}
+                }
+            ]
+        }
+    ]
+}
 @pytest.mark.parametrize(
     "input, expected",
     [
@@ -1339,7 +1483,11 @@ p2 = {
         (([p1, p2], ["aka", "name", "_id"],
                            "scopatz, a", False),[p1]),
         (([p1, p2], ["aka", "name", "_id"],
-                           "ill", False),[p2]),          
+                           "ill", False),[p2]),
+        (([p3], ["company"], "Amazon", False), [p3]),
+        (([p3, p4], ["projects"], "PDF", False), [p4]),
+        (([p5], ['experience'], '20189', False), [p5]),
+        (([p5], ['experience'], 'hello', False), [])
     ],
 )
 def test_fragment_retrieval(input, expected):
