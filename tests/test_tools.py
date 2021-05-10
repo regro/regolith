@@ -1316,7 +1316,7 @@ d1 = {
     'name': 'John',
     'experience': [
         {'company': 'Google', 'role': 'product manager'},
-        {'comapny': 'Amazon', 'role': 'QA'}
+        {'company': 'Amazon', 'role': 'QA'}
     ],
     'school': {
         'name': 'Columbia',
@@ -1328,7 +1328,7 @@ d2 = {
     'name': 'Sarah',
     'experience': [
         {'company': 'Verizon', 'role': 'sales'},
-        {'comapny': 'AT&T', 'role': 'software engineer'}
+        {'company': 'AT&T', 'role': 'software engineer'}
     ],
     'school': {
         'name': 'Columbia',
@@ -1344,11 +1344,40 @@ d2 = {
         'software': 'CAD'
     }
 }
+d3 = {
+    '_id': 'abc',
+    'name': 'Example Lab',
+    'Members': [
+        {
+            'Name': 'Lisa',
+            'Experience': [
+                {
+                    'company': 'Google',
+                    'location': {'state': 'CA', 'zip code': '94043'}
+                },
+                {
+                    'company': 'Amazon',
+                    'location': {'state': 'VA', 'zip code': '20189'}
+                }
+            ]
+        },
+        {
+            'Name': 'Stephen',
+            'Experience': [
+                {
+                    'company': 'Goldman Sachs',
+                    'location': {'state': 'NY', 'zip code': '10282'}
+                }
+            ]
+        }
+    ]
+}
 @pytest.mark.parametrize(
     "input,expected",
     [
         (d1, ['John', 'Google', 'product manager', 'Amazon', 'QA', 'Columbia', 'NYC', 'senior']),
         (d2, ['Sarah', 'Verizon', 'sales', 'AT&T', 'software engineer', 'Columbia', 'NYC', 'junior', 'swimming', 'hiking', 'a76', 'California', 'CAD']),
+        (d3, ['abc', 'Example Lab', 'Lisa', 'Google', 'CA', '94043', 'Amazon', 'VA', '20189', 'Stephen', 'Goldman Sachs', 'NY', '10282'])
     ]
 )
 def test_compound_dict(input, expected):
@@ -1416,6 +1445,34 @@ p4 = {
         {'title': 'Write Paper', 'description': 'Draft the new paper'}
     ]
 }
+p5 = {
+    '_id': 'ghi',
+    'name': 'Carl',
+    'experience': [
+        {
+            'name': 'Google',
+            'roles': [
+                {
+                    'position': 'software engineer',
+                    'location': {'state': 'CA', 'zip code': '92551'}
+                },
+                {
+                    'position': 'manager',
+                    'location': {'state': 'VA', 'zip code': '20189'}
+                }
+            ]
+        },
+        {
+            'name': 'Goldman Sachs',
+            'Experience': [
+                {
+                    'position': 'junior associate',
+                    'location': {'state': 'NY', 'zip code': '10282'}
+                }
+            ]
+        }
+    ]
+}
 @pytest.mark.parametrize(
     "input, expected",
     [
@@ -1429,6 +1486,8 @@ p4 = {
                            "ill", False),[p2]),
         (([p3], ["company"], "Amazon", False), [p3]),
         (([p3, p4], ["projects"], "PDF", False), [p4]),
+        (([p5], ['experience'], '20189', False), [p5]),
+        (([p5], ['experience'], 'hello', False), [])
     ],
 )
 def test_fragment_retrieval(input, expected):
