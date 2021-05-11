@@ -1559,8 +1559,8 @@ EXEMPLARS = {
         "name": "First Projectum",
         "pi_id": "scopatz",
         "status": "started",
-        "other_urls": "https://docs.google.com/document/d/analysis",
-        "product_urls": "https://docs.google.com/document/d/manuscript"
+        "other_urls": ["https://docs.google.com/document/d/analysis"],
+        "product_url": "https://docs.google.com/document/d/manuscript",
     },
     "projects": {
         "_id": "Cyclus",
