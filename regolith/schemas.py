@@ -206,6 +206,8 @@ EXEMPLARS = {
     },
     "expenses": {
         "_id": "test",
+        "begin_date": "2018-01-01",
+        "end_date": "2018-01-10",
         "expense_type": "business",
         "grant_percentages": ["50", "50"],
         "grants": ["dmref15", "SymPy-1.1"],
@@ -217,12 +219,15 @@ EXEMPLARS = {
                 "purpose": "test",
                 "unsegregated_expense": 10 * i,
                 "segregated_expense": 0,
+                "prepaid_expense": 10.3
             }
             for i in range(1, 11)
         ],
         "payee": "scopatz",
         "project": "Cyclus",
         "overall_purpose": "testing the databallectionsse",
+        "notes": "this expense was used to get the work done",
+        "status": "submitted",
     },
     "grades": {
         "_id": "Human A. Person-rx-power-hw02-EMCH-758-2017-S",
@@ -1553,7 +1558,9 @@ EXEMPLARS = {
         ],
         "name": "First Projectum",
         "pi_id": "scopatz",
-        "status": "started"
+        "status": "started",
+        "other_urls": "https://docs.google.com/document/d/analysis",
+        "product_urls": "https://docs.google.com/document/d/manuscript"
     },
     "projects": {
         "_id": "Cyclus",
