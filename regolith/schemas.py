@@ -3745,8 +3745,8 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the deliverable that we want to keep track of",
                           "required": False,
                           "type": "list"},
-                "status": {"description": "current state of deliverable "
-                                          "Allowed values are 'proposed', 'started', 'converged', 'finished', 'cancelled', 'paused'",
+                "status": {"description": f"status of the deliverable. "
+                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
@@ -3802,15 +3802,11 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the kickoff",
                           "required": False,
                           "type": "list"},
-                "status": {"description": "status of the kickoff. "
-                                          "Allowed values are 'proposed', 'started', 'converged', 'finished', 'cancelled', 'paused'",
+                "status": {"description": f"status of the kickoff. "
+                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
-                "identifier": {"description": "label of kickoff",
-                               "required": False,
-                               "type": "string"
-                      }
             }
         },
         "lead": {
@@ -3872,8 +3868,8 @@ SCHEMAS = {
                                                 "in these groups their names or id's can be added explicitly to the list",
                                  "required": False,
                                  "type": "list"},
-                    "status": {"description": "status of the milestone. "
-                                              "Allowed values are 'proposed', 'started', 'converged', 'finished', 'cancelled', 'paused'",
+                    "status": {"description": f"status of the milestone. "
+                                              f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                                "required": False,
                                "type": "string",
                                "eallowed": PROJECTUM_STATUS},
@@ -3897,8 +3893,8 @@ SCHEMAS = {
         "pi_id": {"description": "id of the PI",
                   "required": False,
                   "type": "string"},
-        "status": {"description": "status of the projectum. "
-                                  "Allowed values are 'proposed', 'started', 'converged', 'finished', 'cancelled', 'paused'",
+        "status": {"description": f"status of the projectum. "
+                                  f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                    "required": False,
                    "type": "string",
                    "eallowed": PROJECTUM_STATUS},
@@ -3908,10 +3904,7 @@ SCHEMAS = {
         "product_url": {"description": "url for manuscript or code repository",
                         "required": False,
                         "type": "string"},
-        "related_projecta": {"description": "list of id's of related projecta",
-                             "required": False,
-                             "type": "list"},
-        "notes": {"description": "notes about the projecta",
+        "notes": {"description": "notes about the projectum",
                   "required": False,
                   "type": "list"},
 
