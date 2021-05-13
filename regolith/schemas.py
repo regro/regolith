@@ -206,6 +206,8 @@ EXEMPLARS = {
     },
     "expenses": {
         "_id": "test",
+        "begin_date": "2018-01-01",
+        "end_date": "2018-01-10",
         "expense_type": "business",
         "grant_percentages": ["50", "50"],
         "grants": ["dmref15", "SymPy-1.1"],
@@ -217,12 +219,15 @@ EXEMPLARS = {
                 "purpose": "test",
                 "unsegregated_expense": 10 * i,
                 "segregated_expense": 0,
+                "prepaid_expense": 10.3
             }
             for i in range(1, 11)
         ],
         "payee": "scopatz",
         "project": "Cyclus",
         "overall_purpose": "testing the databallectionsse",
+        "notes": "this expense was used to get the work done",
+        "status": "submitted",
     },
     "grades": {
         "_id": "Human A. Person-rx-power-hw02-EMCH-758-2017-S",
@@ -1553,7 +1558,9 @@ EXEMPLARS = {
         ],
         "name": "First Projectum",
         "pi_id": "scopatz",
-        "status": "started"
+        "status": "started",
+        "other_urls": ["https://docs.google.com/document/d/analysis"],
+        "product_url": "https://docs.google.com/document/d/manuscript",
     },
     "projects": {
         "_id": "Cyclus",
@@ -2262,6 +2269,24 @@ SCHEMAS = {
             "description": "begin date in YYYY-MM-DD",
             "anyof_type": ["string", "date"],
         },
+        "begin_year": {"description": "The year when the travel/business started",
+                       "required": False,
+                       "type": "integer"},
+        "begin_month": {"description": "The month when the travel/business started",
+                        "required": False,
+                        "anyof_type": ["string", "integer"]},
+        "begin_day": {"description": "The day when the travel/business started",
+                      "required": False,
+                      "type": "integer"},
+        "end_year": {"description": "The year when the travel/business end",
+                     "required": False,
+                     "type": "integer"},
+        "end_month": {"description": "The month when the travel/business end",
+                      "required": False,
+                      "anyof_type": ["string", "integer"]},
+        "end_day": {"description": "The day when the travel/business end",
+                    "required": False,
+                    "type": "integer"},
         "end_date": {
             "description": "end date in YYYY-MM-DD",
             "anyof_type": ["string", "date"],
@@ -2333,6 +2358,11 @@ SCHEMAS = {
                         "description": "The currency the payment was made in",
                         "type": "float",
                     },
+                    "prepaid_expense": {
+                       "description": "The amount of prepaid expense in USD",
+                       "required": False,
+                       "type": "float"
+                      },
                 },
             },
         },
@@ -2342,13 +2372,15 @@ SCHEMAS = {
             "required": True,
         },
         "notes": {
-            "description": "Notes about the expense",
-            "type": "list",
+            "description": "Description of the expenses. It will not be included in the reimbursement form",
+            "required": False,
+            "anyof_type": ["list", "string"],
 
         },
         "status": {
             "description": "The status of the expense",
             "eallowed": EXPENSES_TYPE,
+            "required": False,
             "type": "string"
         },
         "reimbursements": {
@@ -2818,43 +2850,65 @@ SCHEMAS = {
         },
         "actions": {
             "description": "action items expected from the group members for that particular meeting week",
-            "required": False,
+            "required": True,
             "type": "list",
         },
         "agenda": {
             "description": "schedule of the current meeting",
-            "required": False,
+            "required": True,
             "type": "list",
         },
         "buddies": {
             "description": "list of pairs of group members that are selected for the buddy round robin",
-            "required": False,
+            "required": True,
             "type": "list",
         },
         "day": {
-            "description": "day of the group meeting",
+            "description": "day of the group meeting, or the day the entry was edited",
             "required": False,
             "type": "integer",
+        },
+        "month": {
+            "description": "month in which the meeting is taking place",
+            "required": True,
+            "anyof_type": ["string", "integer"]
+        },
+        "year": {
+            "description": "year the meeting took place",
+            "required": True,
+            "type": "integer",
+        },
+        "date": {
+            "description": "date of meeting in format YYYY-MM-DD",
+            "required": False,
+            "anyof_type": ["string", "datetime", "date"],
         },
         "journal_club": {
             "description": "indicating the doi of the journal and the presenting group member as the presenter",
             "required": False,
             "type": "dict",
+            "schema": {
+                 "doi": {
+                  "description": "The doi of the journal club presentation target paper.  tbd if it is not known yet",
+                  "type": "string",
+                  "required": False
+                 },
+                 "presenter": {
+                  "description": "The name or _id of the group member presenting",
+                  "type": "string",
+                  "required": False
+                 }
+                }
         },
         "lead": {
             "description": "person who will be leading the meeting of the current week",
-            "required": False,
+            "required": True,
             "type": "string",
         },
         "minutes": {
             "description": "meeting notes in a chronological order according to comments made by the group members",
-            "required": False,
+            "required": True,
             "type": "list",
-        },
-        "month": {
-            "description": "month in which the meeting is taking place",
-            "required": False,
-            "anyof_type": ["string", "integer"]
         },
         "place": {
             "description": "location where the meeting is taking place on campus",
@@ -2865,34 +2919,47 @@ SCHEMAS = {
             "description": "indicating the title of the presentation along with the link and the presenter ",
             "required": False,
             "type": "dict",
+            "schema": {
+                 "title": {
+                  "description": "The title of the presentation.  tbd if it is not known yet",
+                  "type": "string",
+                  "required": True
+                 },
+                 "link": {
+                  "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
+                  "type": "string",
+                  "required": True
+                 },
+                 "presenter": {
+                  "description": "The name or _id of the group member presenting",
+                  "type": "string",
+                  "required": True
+                 }
+                }
         },
         "scribe": {
             "description": "person who will be taking notes and updating minutes accordingly",
-            "required": False,
+            "required": True,
             "type": "string",
         },
         "time": {
-            "description": "person who will be taking notes and updating minutes accordingly"
+            "description": "the time of the meeting"
                            "If an integer is minutes past midnight, so 13:30 is 810 for"
                            "example.",
             "required": False,
-            "anyof_type": ["string", "integer"]
+            "anyof_type": ["string", "integer", "datetime"]
         },
         "updated": {
-            "description": "person who will be taking notes and updating minutes accordingly",
+            "description": "The datetime.date object of the most recent update",
             "required": False,
             "anyof_type": ["string", "datetime", "date"],
         },
         "uuid": {
-            "description": "person who will be taking notes and updating minutes accordingly",
+            "description": "A uuid for the entry",
             "required": False,
             "type": "string",
         },
-        "year": {
-            "description": "person who will be taking notes and updating minutes accordingly",
-            "required": False,
-            "type": "integer",
-        },
+
     },
     "people": {
         "_description": {
@@ -3678,11 +3745,14 @@ SCHEMAS = {
                 "notes": {"description": "any notes about the deliverable that we want to keep track of",
                           "required": False,
                           "type": "list"},
-                "status": {"description": f"current state of deliverable "
+                "status": {"description": f"status of the deliverable. "
                                           f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
+                "type": {"description": "type of deliverable",
+                         "required": False,
+                         "type": "string"}
             }
         },
         "description": {
@@ -3736,7 +3806,7 @@ SCHEMAS = {
                                           f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                            "required": False,
                            "type": "string",
-                           "eallowed": PROJECTUM_STATUS}
+                           "eallowed": PROJECTUM_STATUS},
             }
         },
         "lead": {
@@ -3807,8 +3877,13 @@ SCHEMAS = {
                                             f"Allowed values are {', '.join(MILESTONE_TYPE)}",
                              "required": False,
                              "type": "string",
-                             "eallowed": MILESTONE_TYPE}
-
+                             "eallowed": MILESTONE_TYPE},
+                    "end_date": {"description": "end date of milestone, yyyy-mm-dd",
+                                 "required": False,
+                                 "anyof_type": ["date", "string"]},
+                    "identifier": {"description": "label of milestone",
+                                   "required": False,
+                                   "type": "string"},
                 }
             }
         },
@@ -3822,7 +3897,16 @@ SCHEMAS = {
                                   f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
                    "required": False,
                    "type": "string",
-                   "eallowed": PROJECTUM_STATUS}
+                   "eallowed": PROJECTUM_STATUS},
+        "other_urls": {"description": "link to remote repository. e.g. analysis or data repositories",
+                         "required": False,
+                         "type": "list"},
+        "product_url": {"description": "url for manuscript or code repository",
+                        "required": False,
+                        "type": "string"},
+        "notes": {"description": "notes about the projectum",
+                  "required": False,
+                  "type": "list"},
 
     },
     "projects": {

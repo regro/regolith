@@ -103,5 +103,8 @@
       status: finished
       type: pr
   name: First Projectum
+  other_urls:
+    - https://docs.google.com/document/d/analysis
   pi_id: scopatz
+  product_url: https://docs.google.com/document/d/manuscript
   status: finished

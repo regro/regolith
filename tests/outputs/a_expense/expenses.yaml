@@ -51,6 +51,8 @@
       where: bank
   status: unsubmitted
 test:
+  begin_date: '2018-01-01'
+  end_date: '2018-01-10'
   expense_type: business
   grant_percentages:
     - '50'
@@ -65,60 +67,72 @@ test:
       purpose: test
       unsegregated_expense: 10
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 2
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 20
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 3
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 30
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 4
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 40
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 5
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 50
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 6
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 60
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 7
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 70
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 8
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 80
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 9
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 90
       segregated_expense: 0
+      prepaid_expense: 10.3
     - day: 10
       month: Jan
       year: 2018
       purpose: test
       unsegregated_expense: 100
       segregated_expense: 0
+      prepaid_expense: 10.3
+  notes: this expense was used to get the work done
   overall_purpose: testing the databallectionsse
   payee: scopatz
   project: Cyclus
+  status: submitted
