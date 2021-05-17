@@ -223,13 +223,13 @@ class MongoClient:
         if False in password_not_req:
             try:
                 password = rc.mongo_db_password
-                host = host.replace("PASSWORD", password)
+                host = host.replace("<password>", password)
             except AttributeError:
-                print("Add a password to user.json in user/config/regolith/user.json with the key mongo_db_password")
+                print("Add a password to user.json in user/.config/regolith/user.json with the key mongo_db_password")
         try:
-            host = host.replace("USER", rc.mongo_id)
+            host = host.replace("<username>", rc.mongo_id)
         except AttributeError:
-            print("Add a mongo_id to user.json in user/config/regolith/user.json with the key mongo_id")
+            print("Add a mongo_id to user.json in user/.config/regolith/user.json with the key mongo_id")
         self.client = pymongo.MongoClient(host)
         if not self.is_alive():
             # we need to wait for the server to startup
@@ -250,13 +250,24 @@ class MongoClient:
         """
         dbs: dict = self.dbs
         client: pymongo.MongoClient = self.client
-        if db['name'] in client.list_database_names():
+        # if db['name'] in client.list_database_names():
+        #     mongodb = client[db['name']]
+        #     for colname in mongodb.list_collection_names():
+        #         col = mongodb[colname]
+        #         dbs[db['name']][colname] = load_mongo_col(col)
+        # else:
+        #     print('WARNING: Database name provided in regolithrc.json not found in mongodb')
+        from pymongo.errors import OperationFailure
+        try:
             mongodb = client[db['name']]
-            for colname in mongodb.list_collection_names():
-                col = mongodb[colname]
-                dbs[db['name']][colname] = load_mongo_col(col)
-        else:
+        except OperationFailure as fail:
             print('WARNING: Database name provided in regolithrc.json not found in mongodb')
+        # try:
+        for colname in mongodb.list_collection_names():
+            col = mongodb[colname]
+            dbs[db['name']][colname] = load_mongo_col(col)
+        # except OperationFailure as fail:
+        #     print(fail)
         return
 
     def import_database(self, db: dict):
