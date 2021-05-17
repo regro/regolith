@@ -31,6 +31,7 @@ and its activities.
      'path': 'path/to/database',  # inside of the resource location
      'public': True | False,  # whether the database is fully public or may contain
                               # sensitive information.
+     'local': True | False  # Whether or not git, hg, or mongo are locally hosted/updated or full remote
      },
      ...
      ]
