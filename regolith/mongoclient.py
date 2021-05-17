@@ -162,7 +162,7 @@ class MongoClient:
         self.chained_db = dict()
         self.closed = True
         # actually startup mongo
-        self.open()
+        #self.open()
 
     def _preclean(self):
         mongodbpath = self.rc.mongodbpath
@@ -211,11 +211,25 @@ class MongoClient:
     def open(self):
         """Opens the database client"""
         rc = self.rc
+        mongo_dbs_filter = filter(lambda db: db['backend'] == "mongo" or db["backend"] == "mongodb", rc.databases)
+        mongo_dbs_list = list(mongo_dbs_filter)
         if hasattr(rc, 'host'):
             host = getattr(rc, 'host')
         else:
             dbs = getattr(rc, 'databases')
-            host = dbs[0]['url']
+            for db in mongo_dbs_list:
+                host = db['url']
+        password_not_req = [required["public"] for required in mongo_dbs_list]
+        if False in password_not_req:
+            try:
+                password = rc.mongo_db_password
+                host = host.replace("PASSWORD", password)
+            except AttributeError:
+                print("Add a password to user.json in user/config/regolith/user.json with the key mongo_db_password")
+        try:
+            host = host.replace("USER", rc.mongo_id)
+        except AttributeError:
+            print("Add a mongo_id to user.json in user/config/regolith/user.json with the key mongo_id")
         self.client = pymongo.MongoClient(host)
         if not self.is_alive():
             # we need to wait for the server to startup
