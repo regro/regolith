@@ -223,11 +223,11 @@ class MongoClient:
         if False in password_not_req:
             try:
                 password = rc.mongo_db_password
-                host = host.replace("<password>", password)
+                host = host.replace("pwd_from_config", password)
             except AttributeError:
                 print("Add a password to user.json in user/.config/regolith/user.json with the key mongo_db_password")
         try:
-            host = host.replace("<username>", rc.mongo_id)
+            host = host.replace("uname_from_config", rc.mongo_id)
         except AttributeError:
             print("Add a mongo_id to user.json in user/.config/regolith/user.json with the key mongo_id")
         self.client = pymongo.MongoClient(host)
