@@ -39,7 +39,7 @@ class ClientManager:
         self.rc = rc
         self.closed = True
         self.chained_db = None
-        self.open()
+        # self.open()
         self._collfiletypes = {}
         self._collexts = {}
         self._yamlinsts = {}

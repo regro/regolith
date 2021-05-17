@@ -230,7 +230,7 @@ class MongoClient:
             host = host.replace("uname_from_config", rc.mongo_id)
         except AttributeError:
             print("Add a mongo_id to user.json in user/.config/regolith/user.json with the key mongo_id")
-        self.client = pymongo.MongoClient(host)
+        self.client = pymongo.MongoClient(host, authSource="admin")
         if not self.is_alive():
             # we need to wait for the server to startup
             self._preclean()
@@ -250,24 +250,20 @@ class MongoClient:
         """
         dbs: dict = self.dbs
         client: pymongo.MongoClient = self.client
-        # if db['name'] in client.list_database_names():
-        #     mongodb = client[db['name']]
-        #     for colname in mongodb.list_collection_names():
-        #         col = mongodb[colname]
-        #         dbs[db['name']][colname] = load_mongo_col(col)
-        # else:
-        #     print('WARNING: Database name provided in regolithrc.json not found in mongodb')
         from pymongo.errors import OperationFailure
         try:
             mongodb = client[db['name']]
-        except OperationFailure as fail:
+        except OperationFailure:
             print('WARNING: Database name provided in regolithrc.json not found in mongodb')
-        # try:
-        for colname in mongodb.list_collection_names():
-            col = mongodb[colname]
-            dbs[db['name']][colname] = load_mongo_col(col)
-        # except OperationFailure as fail:
-        #     print(fail)
+        try:
+            for colname in mongodb.list_collection_names():
+                col = mongodb[colname]
+                dbs[db['name']][colname] = load_mongo_col(col)
+        except OperationFailure as fail:
+            print("Mongo's Error Message:" + fail + "\n")
+            print("The user does not have permission to access this database\n\n")
+            print("If erroneous, the role/mongo-account utilized likely is only read/write. List collection \n"
+                  "permission as well as finding is needed")
         return
 
     def import_database(self, db: dict):
