@@ -213,13 +213,19 @@ class MongoClient:
         rc = self.rc
         mongo_dbs_filter = filter(lambda db: db['backend'] == "mongo" or db["backend"] == "mongodb", rc.databases)
         mongo_dbs_list = list(mongo_dbs_filter)
+        host = None
         if hasattr(rc, 'host'):
             host = getattr(rc, 'host')
         else:
-            dbs = getattr(rc, 'databases')
             for db in mongo_dbs_list:
+                if host is not None:
+                    if host != db['url']:
+                        print("WARNING: Multiple mongo URLs not supported. Use single cluster per rc.")
+                        return
                 host = db['url']
-        password_not_req = [required["public"] for required in mongo_dbs_list]
+        # Currently configured such that password deemed unnecessary for strictly local mongo instance
+        # CI will likely break if this changes
+        password_not_req = [required["local"] for required in mongo_dbs_list]
         if False in password_not_req:
             try:
                 password = rc.mongo_db_password
@@ -260,8 +266,8 @@ class MongoClient:
                 col = mongodb[colname]
                 dbs[db['name']][colname] = load_mongo_col(col)
         except OperationFailure as fail:
-            print("Mongo's Error Message:" + fail + "\n")
-            print("The user does not have permission to access this database\n\n")
+            print("Mongo's Error Message:" + str(fail) + "\n")
+            print("The user does not have permission to access " + db['name'] + "\n\n")
             print("If erroneous, the role/mongo-account utilized likely is only read/write. List collection \n"
                   "permission as well as finding is needed")
         return
