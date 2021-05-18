@@ -36,3 +36,4 @@ def test_fs_to_mongo_python(make_db):
         print(e)
     else:
         assert True == True
+
