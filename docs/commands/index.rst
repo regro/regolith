@@ -30,8 +30,16 @@ Shell commands for regolith
 	    email               automates emailing
 	    classlist           updates classlist information from file
 	    json-to-yaml        Converts files from JSON to YAML
-	    yaml-to-json        Converts files from YAML to JSON
-	    validate            Validates db
+        yaml-to-json        Converts files from YAML to JSON
+        fs-to-mongo         Import database from filesystem to mongodb. By
+                            default, the database will be import to the local
+                            mongodb. The database can also be imported to the
+                            destination specified by the 'database':'dst_url' key.
+                            For this to work, ensure that the username, password,
+                            and database are included in the dst_url, and that
+                            local is set to true.
+        validate            Validates db
+
 
 
 

@@ -265,8 +265,9 @@ def create_parser():
     ftm = subp.add_parser(
         "fs-to-mongo",
         help="Import database from filesystem to mongodb. By default, the database will be import to the local "
-             "mongodb. If the 'dst_url' key is specified in the database in 'databases' part in "
-             "'regolithrc.json'. The database will be import to the destination specified by 'dst_url'."
+             "mongodb. The database can also be imported to the destination specified by the 'database':'dst_url' key."
+             " For this to work, ensure that the username, password, and database are included in the dst_url, and that"
+             " local is set to true."
     )
 
     ftm.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
