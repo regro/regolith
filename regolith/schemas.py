@@ -4486,6 +4486,14 @@ SCHEMAS = {
             "required": True,
             "type": "string",
         },
+        "month": {
+            "description": "The month the review was requested",
+            "required": False,
+            "anyof_type": [
+                "integer",
+                "string"
+            ]
+        },
         "recommendation": {
             "description": "Your publication recommendation",
             "required": True,
@@ -4509,7 +4517,7 @@ SCHEMAS = {
             "eallowed": REVIEW_STATI,
         },
         "submitted_date": {
-            "description": "submitted date in ISO YYYY-MM-DD format",
+            "description": "submitted date in ISO YYYY-MM-DD format. tbd if not done yet",
             "required": True,
             "anyof_type": ["string", "date"],
         },
