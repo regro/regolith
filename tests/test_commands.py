@@ -13,5 +13,5 @@ def test_fs_to_mongo(make_db):
     #    dbpath.mkdir()
     #    cp0 = subprocess.run(['mongod', '--fork', '--syslog', '--dbpath', dbpath])
     #    assert cp0.returncode == 0
-    cp1 = subprocess.run(['regolith', 'fs-to-mongo'], cwd=repo)
+    cp1 = subprocess.run(['regolith', 'fs-to-mongo'], cwd=repo, shell=True)
     assert cp1.returncode == 0
