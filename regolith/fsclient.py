@@ -54,8 +54,6 @@ def date_encoder(obj):
 
 def dump_json(filename, docs, date_handler=None):
     """Dumps a dict of documents into a file."""
-    if not date_handler:
-        date_handler = date_encoder
     docs = sorted(docs.values(), key=_id_key)
     lines = [json.dumps(doc, sort_keys=True, default=date_handler) for doc in docs]
     s = "\n".join(lines)
