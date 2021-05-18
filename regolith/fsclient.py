@@ -48,13 +48,8 @@ def load_json(filename):
 
 
 def date_encoder(obj):
-    if isinstance(obj, datetime.datetime):
-        return obj.strftime('%Y-%m-%d')
-    elif isinstance(obj, datetime.date):
-        return obj.strftime('%Y-%m-%d')
-    else:
-        raise TypeError(f'Object of type {obj.__class__.__name__} '
-                                  f'is not JSON serializable')
+    if isinstance(obj, (datetime.date, datetime.datetime)):
+        return obj.isoformat()
 
 
 def dump_json(filename, docs, date_handler=None):
