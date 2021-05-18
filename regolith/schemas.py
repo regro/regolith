@@ -1497,7 +1497,7 @@ EXEMPLARS = {
             "webinar": True,
         },
     ],
-    "projecta": {
+    "projecta": [{
         "_id": "sb_firstprojectum",
         "begin_date": "2020-04-28",
         "collaborators": ["aeinstein", "pdirac"],
@@ -1546,7 +1546,7 @@ EXEMPLARS = {
                 'figure': 'token that dereferences a figure or image in group local storage db',
                 'slides_url': 'url to slides describing the development, e.g. Google slides url'
             }
-            ],
+            ]
         },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
@@ -1562,6 +1562,15 @@ EXEMPLARS = {
         "other_urls": ["https://docs.google.com/document/d/analysis"],
         "product_url": "https://docs.google.com/document/d/manuscript",
     },
+        {
+            "_id": "ab_inactive",
+            "lead": "abeing",
+            "status": "started",
+            "deliverable": {"due_date": "2021-05-03"},
+            "kickoff": {"due_date": "2021-05-03", "name": "Kickoff"},
+            "milestones": [{"due_date": "2021-05-03", "name": "Milestone"}]
+        }
+        ],
     "projects": {
         "_id": "Cyclus",
         "name": "Cyclus",
@@ -3812,7 +3821,7 @@ SCHEMAS = {
         "lead": {
             "description": "the id of the lead student or person for the projectum. "
                            "Person details will be dereferenced from the people collection.",
-            "required": False,
+            "required": True,
             "type": "string"
         },
         "log_url": {
@@ -3895,7 +3904,7 @@ SCHEMAS = {
                   "type": "string"},
         "status": {"description": f"status of the projectum. "
                                   f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
-                   "required": False,
+                   "required": True,
                    "type": "string",
                    "eallowed": PROJECTUM_STATUS},
         "other_urls": {"description": "link to remote repository. e.g. analysis or data repositories",

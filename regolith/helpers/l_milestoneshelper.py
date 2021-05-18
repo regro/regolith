@@ -179,7 +179,7 @@ class MilestonesListerHelper(SoutHelperBase):
                 print(f"    log url: {ms.get('log_url')}")
                 print(f"    Purpose: {ms.get('objective')}")
                 audience = []
-                for i in ms.get('audience'):
+                for i in ms.get('audience', []):
                     if isinstance(ms.get(i, i), str):
                         audience.append(ms.get(i, i))
                     else:
