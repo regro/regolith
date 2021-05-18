@@ -138,12 +138,6 @@ class MilestonesListerHelper(SoutHelperBase):
         if not rc.stati:
             rc.stati = ['started']
         for projectum in collection:
-            if not projectum.get("deliverable"):
-                projectum["deliverable"] = {"audience": []}
-            if not projectum.get("kickoff"):
-                projectum["kickoff"] = {"audience": []}
-            if not projectum.get("milestones"):
-                projectum["milestones"] = [{"audience": []}]
             projectum["deliverable"].update({"name": "deliverable",
                                              "objective": "deliver"})
             projectum["kickoff"].update({"type": "meeting"})
