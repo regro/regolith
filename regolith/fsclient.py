@@ -4,7 +4,7 @@ import os
 import sys
 from collections import defaultdict
 from copy import deepcopy
-from datetime import datetime
+import datetime
 from glob import iglob
 
 import ruamel.yaml
@@ -47,15 +47,20 @@ def load_json(filename):
     return docs
 
 
-def dateEncoder(obj):
-    if isinstance(obj, datetime.date):
+def date_encoder(obj):
+    if isinstance(obj, datetime.datetime):
         return obj.strftime('%Y-%m-%d')
+    elif isinstance(obj, datetime.date):
+        return obj.strftime('%Y-%m-%d')
+    else:
+        raise TypeError(f'Object of type {obj.__class__.__name__} '
+                                  f'is not JSON serializable')
 
 
 def dump_json(filename, docs, date_handler=None):
     """Dumps a dict of documents into a file."""
     if not date_handler:
-        date_handler = dateEncoder
+        date_handler = date_encoder
     docs = sorted(docs.values(), key=_id_key)
     lines = [json.dumps(doc, sort_keys=True, default=date_handler) for doc in docs]
     s = "\n".join(lines)
