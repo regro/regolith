@@ -1,7 +1,7 @@
 import pytest
 import datetime
 
-from testfixtures import TempDirectory
+import tempfile
 from pathlib import Path
 
 from regolith.fsclient import date_encoder, dump_json
@@ -19,10 +19,9 @@ def test_dump_json():
            "second": {"_id": "second"}
            }
     json_doc = ('{"_id": "first", "date": "2021-05-01", "name": "me", "test_list": [5, 4]}\n{"_id": "second"}')
-    with TempDirectory() as d:
-        temp_dir = Path(d.path)
-        filename = temp_dir / "test.json"
-        dump_json(filename, doc, date_handler=date_encoder)
-        with open(filename, 'r', encoding="utf-8") as f:
-            actual = f.read()
-        assert actual == json_doc
+    temp_dir = Path(tempfile.gettempdir())
+    filename = temp_dir / "test.json"
+    dump_json(filename, doc, date_handler=date_encoder)
+    with open(filename, 'r', encoding="utf-8") as f:
+        actual = f.read()
+    assert actual == json_doc
