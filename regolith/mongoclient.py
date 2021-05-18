@@ -162,7 +162,7 @@ class MongoClient:
         self.chained_db = dict()
         self.closed = True
         # actually startup mongo
-        #self.open()
+        # self.open()
 
     def _preclean(self):
         mongodbpath = self.rc.mongodbpath
@@ -210,39 +210,44 @@ class MongoClient:
 
     def open(self):
         """Opens the database client"""
-        rc = self.rc
-        mongo_dbs_filter = filter(lambda db: db['backend'] == "mongo" or db["backend"] == "mongodb", rc.databases)
-        mongo_dbs_list = list(mongo_dbs_filter)
-        host = None
-        if hasattr(rc, 'host'):
-            host = getattr(rc, 'host')
-        else:
-            for db in mongo_dbs_list:
-                if host is not None:
-                    if host != db['url']:
-                        print("WARNING: Multiple mongo URLs not supported. Use single cluster per rc.")
-                        return
-                host = db['url']
-        # Currently configured such that password deemed unnecessary for strictly local mongo instance
-        # CI will likely break if this changes
-        password_not_req = [required["local"] for required in mongo_dbs_list]
-        if False in password_not_req:
-            try:
-                password = rc.mongo_db_password
-                host = host.replace("pwd_from_config", password)
-            except AttributeError:
-                print("Add a password to user.json in user/.config/regolith/user.json with the key mongo_db_password")
-        try:
-            host = host.replace("uname_from_config", rc.mongo_id)
-        except AttributeError:
-            print("Add a mongo_id to user.json in user/.config/regolith/user.json with the key mongo_id")
-        self.client = pymongo.MongoClient(host, authSource="admin")
-        if not self.is_alive():
-            # we need to wait for the server to startup
-            self._preclean()
-            self._startserver()
-            time.sleep(0.1)
-        self.closed = False
+        if self.closed:
+            rc = self.rc
+            mongo_dbs_filter = filter(lambda db: db['backend'] == "mongo" or db["backend"] == "mongodb", rc.databases)
+            mongo_dbs_list = list(mongo_dbs_filter)
+            host = None
+            if hasattr(rc, 'host'):
+                host = rc.host
+            else:
+                for db in mongo_dbs_list:
+                    if host is not None:
+                        if host != db['url']:
+                            print("WARNING: Multiple mongo URLs not supported. Use single cluster per rc.")
+                            return
+                    host = db['url']
+            # Currently configured such that password deemed unnecessary for strictly local mongo instance
+            # CI will likely break if this changes
+            password_not_req = [required["local"] for required in mongo_dbs_list]
+            if False in password_not_req:
+                try:
+                    password = rc.mongo_db_password
+                    if host is not None:
+                        host = host.replace("pwd_from_config", password)
+                        host = host.replace("uname_from_config", rc.mongo_id)
+                    elif "dst_url" in rc.databases[0]:
+                        rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace("pwd_from_config", password)
+                        rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace("uname_from_config", rc.mongo_id)
+                except AttributeError:
+                    print("Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
+                          "mongo_id and mongo_db_password respectively")
+                except Exception as e:
+                    print(e)
+            self.client = pymongo.MongoClient(host, authSource="admin")
+            if not self.is_alive():
+                # we need to wait for the server to startup
+                self._preclean()
+                self._startserver()
+                time.sleep(0.1)
+            self.closed = False
 
     def load_database(self, db: dict):
         """Load the database information from mongo database.
