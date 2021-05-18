@@ -1,3 +1,14 @@
+ab_inactive:
+  deliverable:
+    due_date: '2021-05-03'
+  kickoff:
+    due_date: '2021-05-03'
+    name: Kickoff
+  lead: abeing
+  milestones:
+    - due_date: '2021-05-03'
+      name: Milestone
+  status: started
 ly_newprojectum:
   begin_date: 2020-04-29
   collaborators:

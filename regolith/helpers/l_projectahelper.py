@@ -38,6 +38,9 @@ def subparser(subpi):
                        help="Filter milestones for this project lead")
     subpi.add_argument("-p", "--person",
                        help="Filter milestones for this person whether lead or not")
+    subpi.add_argument("-o", "--orphan", action="store_true",
+                       help="Find all orphans: prums that are assigned to 'tbd' or have a "
+                            "non active person as lead")
     subpi.add_argument("-e", "--ended", action="store_true",
                        help="Lists projecta that have ended. Use the -d and -r flags to specify up to "
                             "what date and how many days before then. The default is 7 days before today.")
@@ -67,7 +70,7 @@ class ProjectaListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_dbs = [f'{TARGET_COLL}', "people"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -118,14 +121,27 @@ class ProjectaListerHelper(SoutHelperBase):
         grouped_projecta = {}
         if rc.grant:
             collection = [prum for prum in collection if
-                          rc.grant in prum.get('grants')]
+                          rc.grant in prum.get('grants', [])]
+        if rc.orphan:
+            if rc.person or rc.lead:
+                raise RuntimeError(
+                    f"you cannot specify lead or person with orphan")
+            dead_parents = [person.get("_id") for person in self.gtx["people"]
+                             if not person.get("active")]
+            collection = [prum for prum in collection
+                          if prum.get('lead') in dead_parents
+                          and prum.get('status') in ACTIVE_STATI
+                          or prum.get('lead').lower() == 'tbd']
         if rc.lead:
-            if rc.person:
+            if rc.person or rc.orphan:
                 raise RuntimeError(
                     f"please specify either lead or person, not both")
             collection = [prum for prum in collection if
                           prum.get('lead') == rc.lead]
         if rc.person:
+            if rc.orphan:
+                raise RuntimeError(
+                    f"please specify either lead or person, not both")
             if isinstance(rc.person, str):
                 rc.person = [rc.person]
             collection = [prum for prum in collection
