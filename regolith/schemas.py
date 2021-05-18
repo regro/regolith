@@ -4517,8 +4517,8 @@ SCHEMAS = {
             "eallowed": REVIEW_STATI,
         },
         "submitted_date": {
-            "description": "submitted date in ISO YYYY-MM-DD format. tbd if not done yet",
-            "required": True,
+            "description": "submitted date in ISO YYYY-MM-DD format.",
+            "required": False,
             "anyof_type": ["string", "date"],
         },
         "title": {

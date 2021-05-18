@@ -137,7 +137,8 @@ class ActivitylogBuilder(LatexBuilderBase):
         manrevs = self.gtx['manrevs']
         num_manrevs = len([manrev["_id"]
                            for manrev in manrevs
-                           if get_dates(manrev, date_field_prefix="submitted"
+                           if manrev.get("status") == "submitted"
+                           and get_dates(manrev, date_field_prefix="submitted"
                                      ).get("submitted_date", dt.date(1971,1,1)
                                            ) is not None
                            and get_dates(manrev, date_field_prefix="submitted"
