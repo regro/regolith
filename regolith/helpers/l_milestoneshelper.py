@@ -24,8 +24,9 @@ HELPER_TARGET = "l_milestones"
 ALLOWED_STATI = ["all", "proposed", "converged", "started", "finished", "back_burner",
                  "paused", "cancelled"]
 ACTIVE_STATI = ["proposed", "converged", "started"]
-INACTIVE_STATI = ["back_burner",
-                 "paused", "cancelled"]
+PAUSED_STATI = ["back_burner", "paused"]
+CANCELLED_STATI = ["cancelled"]
+INACTIVE_STATI = PAUSED_STATI + CANCELLED_STATI
 FINISHED_STATI = ["finished"]
 ROLES = ['pi', 'lead', 'group_members', 'collaborators']
 
