@@ -24,8 +24,9 @@ HELPER_TARGET = "l_milestones"
 ALLOWED_STATI = ["all", "proposed", "converged", "started", "finished", "back_burner",
                  "paused", "cancelled"]
 ACTIVE_STATI = ["proposed", "converged", "started"]
-INACTIVE_STATI = ["back_burner",
-                 "paused", "cancelled"]
+PAUSED_STATI = ["back_burner", "paused"]
+CANCELLED_STATI = ["cancelled"]
+INACTIVE_STATI = PAUSED_STATI + CANCELLED_STATI
 FINISHED_STATI = ["finished"]
 ROLES = ['pi', 'lead', 'group_members', 'collaborators']
 
@@ -179,7 +180,7 @@ class MilestonesListerHelper(SoutHelperBase):
                 print(f"    log url: {ms.get('log_url')}")
                 print(f"    Purpose: {ms.get('objective')}")
                 audience = []
-                for i in ms.get('audience'):
+                for i in ms.get('audience', []):
                     if isinstance(ms.get(i, i), str):
                         audience.append(ms.get(i, i))
                     else:

@@ -15,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import is_after
+from regolith.dates import is_after, month_to_int
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     fuzzy_retrieval
@@ -107,21 +107,37 @@ def get_since_date(rc):
     return since_date
 
 
-def get_coauthors_from_pubs(pubs, not_person):
+def get_coauthors_from_pubs(rc, pubs, not_person):
     """Get co-authors' names from the publication. Not include the person itself."""
+    not_person_akas = [not_person['_id'], not_person['name']] + not_person['aka']
     my_collabs = list()
     for pub in pubs:
+        pub_date = dt.date(int(pub.get("year")), month_to_int(pub.get("month")),1)
         my_collabs.extend(
             [
-                collabs for collabs in
+                (collabs, pub_date) for collabs in
                 (names for names in pub.get('author', []))
             ]
         )
-    my_collabs = set(my_collabs)
-    for name in ([not_person['_id'], not_person['name']] + not_person['aka']):
-        if name in my_collabs:
-            my_collabs.remove(name)
-    return my_collabs
+    my_collabs.sort(key=lambda x: x[1], reverse=True)
+    collab_buffer, my_collab_set = [], []
+    for collab in my_collabs:
+        person = fuzzy_retrieval(all_docs_from_collection(
+            rc.client, "people"),
+            ["name", "aka", "_id"],
+            collab[0], case_sensitive=False)
+        if not person:
+            person = fuzzy_retrieval(all_docs_from_collection(
+                rc.client, "contacts"),
+                ["name", "aka", "_id"],
+                collab[0], case_sensitive=False)
+            if not person:
+                person = {'_id': collab[0]}
+        person_id = person['_id']
+        if person_id not in collab_buffer and collab[0] not in not_person_akas:
+            my_collab_set.append(collab)
+            collab_buffer.append(person_id)
+    return my_collab_set
 
 
 def get_recent_org(person_info):
@@ -143,16 +159,16 @@ def get_recent_org(person_info):
 
 def query_people_and_institutions(rc, names):
     """Get the people and institutions names."""
-    people, institutions = [], []
+    people, institutions, latest_active = [], [], []
     for person_name in names:
         person_found = fuzzy_retrieval(all_docs_from_collection(
             rc.client, "people"),
             ["name", "aka", "_id"],
-            person_name, case_sensitive=False)
+            person_name[0], case_sensitive=False)
         if not person_found:
             person_found = fuzzy_retrieval(all_docs_from_collection(
                 rc.client, "contacts"),
-                ["name", "aka", "_id"], person_name, case_sensitive=False)
+                ["name", "aka", "_id"], person_name[0], case_sensitive=False)
             if not person_found:
                 print(
                     "WARNING: {} not found in contacts or people. Check aka".format(
@@ -182,7 +198,8 @@ def query_people_and_institutions(rc, names):
                 print(
                     "WARNING: {} missing from institutions".format(
                         pinst))
-    return people, institutions
+        latest_active.append(person_name[1])
+    return people, institutions, latest_active
 
 
 def get_inst_name(person, rc):
@@ -241,7 +258,7 @@ def format_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
         # remove all people who are in the institution of the person
         if inst_name != excluded_inst_name:
             name = HumanName(ppl_tup[0])
-            yield name.last, " ".join([name.first, name.middle]), ppl_tup[1]
+            yield name.last, " ".join([name.first, name.middle]), ppl_tup[1], " ", ppl_tup[2]
     return ppl
 
 
@@ -404,10 +421,12 @@ class RecentCollaboratorsBuilder(BuilderBase):
                     print(f"{pub.get('title')}, ({pub.get('year')})")
         except AttributeError:
             pass
-        my_collabs = get_coauthors_from_pubs(pubs, person)
-        people, institutions = query_people_and_institutions(rc, my_collabs)
-        ppl_names = set(zip(people, institutions))
+        my_collabs_dated = get_coauthors_from_pubs(rc, pubs, person)
+        people, institutions, latest_active = query_people_and_institutions(rc, my_collabs_dated)
+        ppl_names = set(zip(people, institutions, latest_active))
         collab_3tups = set(format_last_first_instutition_names(rc, ppl_names))
+        sort_collabs = sorted(list(collab_3tups),key=lambda x: (x[4],x[0]))
+        collab_3tups = set(sort_collabs)
         advisors_3tups = set(get_advisors_name_inst(person, rc))
         advisees_3tups = set(get_advisees_name_inst(gtx["people"], person, rc))
         ppl_3tups = sorted(list(collab_3tups | advisors_3tups | advisees_3tups))
