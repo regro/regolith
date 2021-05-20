@@ -162,7 +162,7 @@ class MongoClient:
         self.chained_db = dict()
         self.closed = True
         # actually startup mongo
-        self.open()
+        # self.open()
 
     def _preclean(self):
         mongodbpath = self.rc.mongodbpath
@@ -210,19 +210,44 @@ class MongoClient:
 
     def open(self):
         """Opens the database client"""
-        rc = self.rc
-        if hasattr(rc, 'host'):
-            host = getattr(rc, 'host')
-        else:
-            dbs = getattr(rc, 'databases')
-            host = dbs[0]['url']
-        self.client = pymongo.MongoClient(host)
-        if not self.is_alive():
-            # we need to wait for the server to startup
-            self._preclean()
-            self._startserver()
-            time.sleep(0.1)
-        self.closed = False
+        if self.closed:
+            rc = self.rc
+            mongo_dbs_filter = filter(lambda db: db['backend'] == "mongo" or db["backend"] == "mongodb", rc.databases)
+            mongo_dbs_list = list(mongo_dbs_filter)
+            host = None
+            if hasattr(rc, 'host'):
+                host = rc.host
+            else:
+                for db in mongo_dbs_list:
+                    if host is not None:
+                        if host != db['url']:
+                            print("WARNING: Multiple mongo URLs not supported. Use single cluster per rc.")
+                            return
+                    host = db['url']
+            # Currently configured such that password deemed unnecessary for strictly local mongo instance
+            # CI will likely break if this changes
+            password_not_req = [required["local"] for required in mongo_dbs_list]
+            if False in password_not_req:
+                try:
+                    password = rc.mongo_db_password
+                    if host is not None:
+                        host = host.replace("pwd_from_config", password)
+                        host = host.replace("uname_from_config", rc.mongo_id)
+                    elif "dst_url" in rc.databases[0]:
+                        rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace("pwd_from_config", password)
+                        rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace("uname_from_config", rc.mongo_id)
+                except AttributeError:
+                    print("Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
+                          "mongo_id and mongo_db_password respectively")
+                except Exception as e:
+                    print(e)
+            self.client = pymongo.MongoClient(host, authSource="admin")
+            if not self.is_alive():
+                # we need to wait for the server to startup
+                self._preclean()
+                self._startserver()
+                time.sleep(0.1)
+            self.closed = False
 
     def load_database(self, db: dict):
         """Load the database information from mongo database.
@@ -236,10 +261,20 @@ class MongoClient:
         """
         dbs: dict = self.dbs
         client: pymongo.MongoClient = self.client
-        mongodb = client[db['name']]
-        for colname in mongodb.list_collection_names():
-            col = mongodb[colname]
-            dbs[db['name']][colname] = load_mongo_col(col)
+        from pymongo.errors import OperationFailure
+        try:
+            mongodb = client[db['name']]
+        except OperationFailure:
+            print('WARNING: Database name provided in regolithrc.json not found in mongodb')
+        try:
+            for colname in mongodb.list_collection_names():
+                col = mongodb[colname]
+                dbs[db['name']][colname] = load_mongo_col(col)
+        except OperationFailure as fail:
+            print("Mongo's Error Message:" + str(fail) + "\n")
+            print("The user does not have permission to access " + db['name'] + "\n\n")
+            print("If erroneous, the role/mongo-account utilized likely is only read/write. List collection \n"
+                  "permission as well as finding is needed")
         return
 
     def import_database(self, db: dict):
@@ -305,6 +340,7 @@ class MongoClient:
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
         coll = self.client[dbname][collname]
+        doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
             i = coll.insert(doc)
             return InsertOneProxy(i, True)
@@ -314,6 +350,8 @@ class MongoClient:
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
         coll = self.client[dbname][collname]
+        for doc in docs:
+            doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
             return coll.insert(docs)
         else:
@@ -322,14 +360,23 @@ class MongoClient:
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection"""
         coll = self.client[dbname][collname]
+        doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
             return coll.remove(doc, multi=False)
         else:
             return coll.delete_one(doc)
 
+    def find_one(self, dbname, collname, filter):
+        """Finds the first document matching filter."""
+        coll = self.dbs[dbname][collname]
+        filter.replace('.', '')
+        doc = coll.find_one(filter)
+        return doc
+
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
         coll = self.client[dbname][collname]
+        filter.replace('.', '')
         if ON_PYMONGO_V2:
             doc = coll.find_one(filter)
             if doc is None:
