@@ -25,11 +25,6 @@ class ClientManager:
                 database["backend"] = rc.backend
         for database in databases:
             if "backend" not in database:
-#TODO re-insert this message or remove the many redundant client.open calls in a way that doesn't break commands
-
-                # print("INFO: Backend client set to default of filesystem.\n "
-                #       "      Specify backend in regolithrc.json (databases: [{key=\'backend\'}]) if you want different "
-                #       "behavior")
                 database["backend"] = 'filesystem'
             backend_object_type = CLIENTS[database["backend"]]
             # Checks to see if the clients tuple contains a client with the database's backend
