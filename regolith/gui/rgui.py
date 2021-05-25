@@ -4,7 +4,6 @@ import PySimpleGUI as sg
 from regolith.schemas import SCHEMAS
 from regolith.gui.config_ui import UIConfig
 
-DEFAULTS_PATH = os.path.join(os.path.dirname(__file__), 'defaults.yml')
 
 
 def load(path, type='yaml'):
@@ -34,7 +33,8 @@ class DataBase:
 
     @staticmethod
     def get_default_path():
-        return load(DEFAULTS_PATH)['default_path']
+        defaults = os.path.join(os.path.dirname(__file__), 'defaults', 'dbs_path.yml')
+        return load(defaults)['dbs_path']
 
     def get_people(self):
         """ get people from people database"""
@@ -132,7 +132,7 @@ class EntryElements(Messaging):
             except AssertionError:
                 self.not_found(entry, 'description')
 
-        # not perfect
+        # test if perfect
         if not self.perfect:
             self.popup_warning()
 
