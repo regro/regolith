@@ -49,6 +49,8 @@ class PropRevBuilder(LatexBuilderBase):
 
             if isinstance(rev["institutions"], str):
                 rev["institutions"] = [rev["institutions"]]
+            if len(rev["institutions"]) == 0:
+                rev["institutions"] = [""]
             instns = [fuzzy_retrieval(
                     self.gtx["institutions"], ["aka", "name", "_id"], i
                 ) for i in rev["institutions"]]
