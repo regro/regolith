@@ -306,60 +306,44 @@ def filter_employment_for_advisees(people, begin_period, status, active=False):
     for p in people:
         for i in p.get("employment", []):
             if i.get("status") == status:
-                if i.get("end_year"):
-                    end_date = date(i.get("end_year"),
-                                    month_to_int(i.get("end_month", 12)),
-                                    i.get("end_day", 28))
-                else:
+                emp_dates = get_dates(i)
+                end_date = emp_dates.get("end_date")
+                if not end_date:
                     end_date = date.today()
-                    i["end_year"] = end_date.year
+                i["end_year"] = end_date.year
                 if end_date >= begin_period:
                     p['role'] = i.get("position")
                     p['status'] = status
-                    p['end_year'] = i.get("end_year", "n/a")
+                    p['end_year'] = end_date.year
                     p['position'] = i.get("position")
                     advisees.append(p)
                     advisees.sort(key=lambda x: x['end_year'], reverse=True)
     return advisees
 
 
-def filter_service(ppl, begin_period, type, verbose=False):
-    service = []
-    people = copy(ppl)
-    for p in people:
-        myservice = []
-        svc = copy(p.get("service", []))
-        for i in svc:
-            if i.get("type") == type:
-                if i.get('year'):
-                    end_year = i.get('year')
-                    if verbose: print(
-                        "end_year from {} = {}".format(i.get("name"[:10]),
-                                                       end_year))
-                elif i.get('end_year'):
-                    end_year = i.get('end_year')
-                    if verbose: print(
-                        "end_year from {} = {}".format(i.get("name"[:10]),
-                                                       end_year))
-                else:
-                    end_year = date.today().year
-                    if verbose: print(
-                        "no end_year, using today = {}".format(end_year))
-                end_date = date(int(end_year),
-                                month_to_int(i.get("end_month", 12)),
-                                i.get("end_day", 28))
-                if end_date >= begin_period:
-                    if not i.get('month'):
-                        month = i.get("begin_month", 0)
-                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
-                    else:
-                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
-                    myservice.append(i)
-        p['service'] = myservice
-        if len(p['service']) > 0:
-            service.append(p)
-    return service
+def filter_service(p, begin_period, type):
+    myservice = []
+    for i in p.get("service", []):
+        if i.get("type") == type:
+            i_dates = get_dates(i)
+            end_date = i_dates.get("end_date", i_dates.get("date"))
+            if not end_date:
+                end_date = date.today()
+            if end_date >= begin_period:
+                myservice.append(i)
+    return myservice
 
+def filter_committees(person, begin_period, type):
+    mycommittees = []
+    for committee in person.get("committees", []):
+        if committee.get("type") == type:
+            committee_dates = get_dates(committee)
+            end_date = committee_dates.get("end_date", committee_dates.get("date"))
+            if not end_date:
+                end_date = date.today()
+            if end_date >= begin_period:
+                mycommittees.append(committee)
+    return mycommittees
 
 def filter_facilities(people, begin_period, type, verbose=False):
     facilities = []

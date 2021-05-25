@@ -1871,6 +1871,7 @@ EXEMPLARS = {
         "first_author_last_name": "Wingit",
         "freewrite": "this comment didn't fit anywhere above",
         "journal": "Nature",
+        "month": "jun",
         "recommendation": "reject",
         "requester": "Max Planck",
         "reviewer": "sbillinge",
@@ -4486,9 +4487,12 @@ SCHEMAS = {
             "type": "string",
         },
         "month": {
-            "description": "the month the entry was created",
+            "description": "The month the review was requested",
             "required": False,
-            "anyof_type": ["string", "integer"]
+            "anyof_type": [
+                "integer",
+                "string"
+            ]
         },
         "recommendation": {
             "description": "Your publication recommendation",
@@ -4513,8 +4517,8 @@ SCHEMAS = {
             "eallowed": REVIEW_STATI,
         },
         "submitted_date": {
-            "description": "submitted date in ISO YYYY-MM-DD format",
-            "required": True,
+            "description": "submitted date in ISO YYYY-MM-DD format.",
+            "required": False,
             "anyof_type": ["string", "date"],
         },
         "title": {

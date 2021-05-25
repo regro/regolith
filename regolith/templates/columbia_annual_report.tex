@@ -608,6 +608,37 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     \end{itemize}
 {% endif %}
 \subsection*{ Other (examination committees, GSAS, CUMC advising etc.) }
+{% if len(phd_defenses) == 0 %}
+     No PhD defense committees this period\\
+{% else %}
+     PhD defense committees:\\
+    \begin{itemize}[label=$-$]
+    {% for ugr in phd_defenses %}
+        \item   PhD defense for {{latex_safe(ugr['name'])-}}
+            {% if ugr.get("unit")%} ({{- ugr.get("unit") -}}){%endif%}\\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+{% if len(phd_proposals) == 0 %}
+{% else %}
+     PhD proposal committees:\\
+    \begin{itemize}[label=$-$]
+    {% for ugr in phd_proposals %}
+        \item   PhD proposal for {{latex_safe(ugr['name'])-}}
+            {% if ugr.get("unit")%} ({{- ugr.get("unit") -}}){%endif%}\\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+{% if len(phd_orals) == 0 %}
+{% else %}
+     PhD oral committees:\\
+    \begin{itemize}[label=$-$]
+    {% for ugr in phd_orals %}
+        \item   PhD oral for {{latex_safe(ugr['name'])-}}
+            {% if ugr.get("unit")%} ({{- ugr.get("unit") -}}){%endif%}\\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
 
 
 \subsection*{ Postdoctoral researchers and research scientists supported on grants}
@@ -656,11 +687,9 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     {{ None }}
 {% else %}
     \begin{itemize}[label=$-$]
-    {% for ugr in dept_service %}
-        {% for s in ugr['service'] %}
+        {% for s in dept_service %}
             \item   {{ s['name']-}}  \\
         {% endfor%}
-    {%endfor%}
     \end{itemize}
 {% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -670,8 +699,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     {{ None }}
 {% else %}
     \begin{itemize}[label=$-$]
-    {% for ugr in uni_service %}
-        {% for s in ugr['service'] %}
+        {% for s in uni_service %}
             \item   {{ s['name']-}}
                 {% if s['month'] and s['year'] %}
                 \textemdash {{s['month']}}/{{s['year']}}
@@ -680,7 +708,6 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
                 \\ {{s['other']}}
                 {%-endif-%}
                         {% endfor%}
-    {%endfor%}
     \end{itemize}
 {% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -690,8 +717,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     {{ None }}
 {% else %}
     \begin{itemize}[label=$-$]
-    {% for ugr in prof_service %}
-        {% for s in ugr['service'] %}
+        {% for s in prof_service %}
             \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
@@ -699,7 +725,6 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
                 \\ {{s['other']}}
                 {%-endif-%}
                         {% endfor%}
-    {%endfor%}
     \end{itemize}
 {% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -709,8 +734,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     {{ None }}
 {% else %}
     \begin{itemize}[label=$-$]
-    {% for ugr in outreach %}
-        {% for s in ugr['service'] %}
+        {% for s in outreach %}
             \item   {{ s['name']-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
@@ -718,7 +742,6 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
                 \\ {{s['other']}}
                 {%-endif-%}
                         {% endfor%}
-    {%endfor%}
     \end{itemize}
 {% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
