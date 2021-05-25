@@ -1,16 +1,34 @@
 import os
-import yaml
 import PySimpleGUI as sg
 from regolith.schemas import SCHEMAS
 from regolith.gui.config_ui import UIConfig
+from regolith.fsclient import load_yaml, load_json, dump_yaml, dump_json
+import yaml
 
+LOADER_TYPE = 'yaml'  # "json"
 
+def load(filepath, _type=LOADER_TYPE):
+    """ load catalog """
+    if _type == 'yaml':
+        return load_yaml(filepath)
+    elif _type == 'json':
+        return load_json(filepath)
+    else:
+        return IOError('Invalid loader type. Can be only "yaml" of "json"')
 
-def load(path, type='yaml'):
-    if type == 'yaml':
-        with open(path, 'r') as f:
-            return yaml.safe_load(f)
+def dump(filepath, docs, _type=LOADER_TYPE):
+    """ dump catalog """
+    if _type == 'yaml':
+        return dump_yaml(filepath, docs)
+    elif _type == 'json':
+        return dump_json(filepath, docs)
+    else:
+        return IOError('Invalid loader type. Can be only "yaml" of "json"')
 
+def local_loader(path):
+    """ loads yaml config files, such as defaults """
+    with open(path, 'r') as fp:
+        return yaml.safe_load(fp)
 
 class DataBase:
     ext = '.yml'
@@ -20,21 +38,10 @@ class DataBase:
     def __init__(self, path):
         self.path = path
 
-    def load(self):
-        """ load database from file """
-        with open(self.path, 'r') as f:
-            self.db = yaml.safe_load(f)
-        return self.db
-
-    def save(self, db):  # TODO - make sure it follows Simon's format PEP-?
-        """ save database to file """
-        with open(self.path, 'w') as f:
-            yaml.safe_dump(db, f)
-
     @staticmethod
     def get_default_path():
         defaults = os.path.join(os.path.dirname(__file__), 'defaults', 'dbs_path.yml')
-        return load(defaults)['dbs_path']
+        return local_loader(defaults)['dbs_path']
 
     def get_people(self):
         """ get people from people database"""
@@ -312,7 +319,7 @@ class GUI(UIConfig, Messaging):
                     self.selected_db = values["_existing_dbs_"]
                     self.db_fpath = os.path.join(self.dbs_path, self.selected_db)
                     try:
-                        self.db = DataBase(self.db_fpath).load()
+                        self.db = load(self.db_fpath)
                     except:
                         self.win_msg(window, "Warning: Corrupted file")
 
@@ -409,7 +416,7 @@ class GUI(UIConfig, Messaging):
                     else:
                         el.input_lo(tooltip=tooltip)
 
-        # layout.append([sg.Button('save', key="_save_")])  # TODO
+        layout.append([sg.Button('save', key="_save_")])  # TODO
 
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
@@ -501,7 +508,7 @@ class GUI(UIConfig, Messaging):
 
                         self._data[key] = val
                 self.db.update({self._id: self._data})
-                DB.save(self.db)
+                dump(self.db_fpath, self.db)
                 sg.popup_quick(f"Saved!")
 
 
