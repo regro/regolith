@@ -75,3 +75,4 @@ docs/collections/students.rst
 .idea/
 
 .DS_Store
+/regolith/gui/icons/.~lock.*

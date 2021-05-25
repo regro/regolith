@@ -27,13 +27,23 @@ class UIConfig:
     gui_theme_3 = 'DarkBlue13'
     gui_theme_4 = 'LightBlue'
 
+    # selected colors
+    PALE_BLUE_BUTTON_COLOR = '#A5CADD'
+    YELLOW_BUTTON_COLOR = '#d8d584'
+    WHITE_COLOR = '#ffffff'
+    BLACK_COLOR = '#000000'
+
     # icons
     LOGO_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'regolith-logo.png')
+    ENTER_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'enter.png')
+    DATE_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'date.png')
 
     # global setup
     sg.change_look_and_feel(gui_theme_4)
     sg.set_options(icon=LOGO_ICON)
-    sg.set_options(input_elements_background_color='#ffffff')
+    sg.set_options(input_elements_background_color=WHITE_COLOR)
+    sg.set_options(button_color=(BLACK_COLOR, YELLOW_BUTTON_COLOR))
+    sg.set_options(text_color=BLACK_COLOR)
     sg.set_options(font=font_11)
     sg.set_options(element_padding=(5, 5))
     sg.set_options(border_width=2)

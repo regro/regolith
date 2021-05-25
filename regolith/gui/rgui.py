@@ -7,6 +7,7 @@ import yaml
 
 LOADER_TYPE = 'yaml'  # "json"
 
+
 def load(filepath, _type=LOADER_TYPE):
     """ load catalog """
     if _type == 'yaml':
@@ -15,6 +16,7 @@ def load(filepath, _type=LOADER_TYPE):
         return load_json(filepath)
     else:
         return IOError('Invalid loader type. Can be only "yaml" of "json"')
+
 
 def dump(filepath, docs, _type=LOADER_TYPE):
     """ dump catalog """
@@ -25,10 +27,12 @@ def dump(filepath, docs, _type=LOADER_TYPE):
     else:
         return IOError('Invalid loader type. Can be only "yaml" of "json"')
 
+
 def local_loader(path):
     """ loads yaml config files, such as defaults """
     with open(path, 'r') as fp:
         return yaml.safe_load(fp)
+
 
 class DataBase:
     ext = '.yml'
@@ -71,7 +75,7 @@ class Messaging:
 
     @staticmethod
     def popup_warning(msg="Error - see log"):
-        sg.popup_error(msg, non_blocking=True, keep_on_top=True, auto_close_duration=10)
+        sg.popup_error(msg, non_blocking=True, keep_on_top=True, auto_close=True, auto_close_duration=3)
 
 
 class EntryElements(Messaging):
@@ -130,14 +134,14 @@ class EntryElements(Messaging):
         try:
             assert self.anyof_type is not None or self.type is not None
         except AssertionError:
-            self.not_found(entry, 'description')
+            self.not_found(entry, 'type')
 
         # required
         if self.type != 'dict':
             try:
                 assert self.required is not None
             except AssertionError:
-                self.not_found(entry, 'description')
+                self.not_found(entry, 'required')
 
         # test if perfect
         if not self.perfect:
@@ -159,6 +163,7 @@ class EntryLayouts(UIConfig):
         """
         self.layout = layout
         self.entry = entry
+        self.gl = GlobalLayouts(self.layout)
 
     def required_entry_lo(self):
         self.layout.append([sg.Text('*', text_color='red')])
@@ -175,17 +180,19 @@ class EntryLayouts(UIConfig):
     def input_lo(self, tooltip):
         self.layout[-1].extend([sg.Input('', size=self.input_size, tooltip=tooltip, key=self.entry)])
 
-    def date_lo(self, tooltip):
-        self.layout[-1].extend([sg.Input('', size=self.input_size, tooltip=tooltip, key=self.entry),
-                                sg.Button('+', key=f'@get_date_{self.entry}')])
-
     def multyline_lo(self, tooltip):
         self.layout[-1].extend([sg.Multiline('', size=self.multyline_size, tooltip=tooltip, key=self.entry)])
 
+    def date_lo(self, tooltip):
+        self.layout[-1].extend([sg.Input('', size=self.input_size, tooltip=tooltip, key=self.entry)])
+        self.layout[-1].extend([self.gl.icon_button(icon=self.DATE_ICON,
+                                                    key=f"@get_date_{self.entry}",
+                                                    tooltip=tooltip)])
     def nested_schema_lo(self, tooltip):
-        self.layout[-1].extend([sg.In('expend -> ', key=self.entry, size=(0, 0), disabled=True),
-                                # TODO add to ignore list. currently a dummy space holder for entry name
-                                sg.Button("+", tooltip=tooltip, key=f"@enter_schema_{self.entry}")])
+        self.layout[-1].extend([sg.T('explore', text_color=self.PALE_BLUE_BUTTON_COLOR, key=self.entry)])  # key keeper
+        self.layout[-1].extend([self.gl.icon_button(icon=self.ENTER_ICON,
+                                                    key=f"@enter_schema_{self.entry}",
+                                                    tooltip=tooltip)])
 
 
 class GlobalLayouts(UIConfig):
@@ -202,7 +209,26 @@ class GlobalLayouts(UIConfig):
         self.layout = layout
 
     def title_lo(self, title, tooltip=''):
-        self.layout.append([sg.T(title, text_color='blue', font=self.font_11b, tooltip=tooltip)])
+        self.layout.append([sg.T(title, font=self.font_11b, tooltip=tooltip)])
+
+    def icon_button(self, icon: str, key: str, tooltip: str = ''):
+        """  quick create of icon button
+
+        the defaults work with an icon file that is 1*1 cm
+        Parameters
+        ----------
+        icon: str
+            path to png icon file.
+        key: str
+            a prefix to control the key
+        tooltip: str
+        Returns
+        -------
+        sg.Button preconfigured object
+        """
+        return sg.Button("", image_filename=icon,
+                         image_subsample=3, button_color=self.PALE_BLUE_BUTTON_COLOR,
+                         tooltip=tooltip, key=key)
 
 
 class BaseLayouts(UIConfig):
@@ -236,10 +262,12 @@ class BaseLayouts(UIConfig):
 
         # build
         self.layout.append([sg.T("Select User")])
-        self.layout.append([sg.DropDown(people, key="_user_", enable_events=True, size=self.selector_short_size)])
+        self.layout.append([sg.DropDown(people, key="_user_", enable_events=True, readonly=True,
+                                        size=self.selector_short_size)])
 
         self.layout.append([sg.T("Select target prum")])
-        self.layout.append([sg.DropDown([], key="_prum_", enable_events=True, size=self.selector_long_size)])
+        self.layout.append([sg.DropDown([], key="_prum_", enable_events=True, readonly=True,
+                                        size=self.selector_long_size)])
 
 
 class GUI(UIConfig, Messaging):
@@ -268,7 +296,7 @@ class GUI(UIConfig, Messaging):
         layout.append([sg.Button("explore databases", key="_explore_")])
         layout.append([sg.T("")])
         layout.append([sg.T("What Database you would like to explore?")])
-        layout.append([sg.DropDown([], key="_existing_dbs_", enable_events=True)])
+        layout.append([sg.DropDown([], key="_existing_dbs_", enable_events=True, readonly=True)])
 
         layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
         layout.append([sg.Button("submit")])
@@ -510,7 +538,6 @@ class GUI(UIConfig, Messaging):
                 self.db.update({self._id: self._data})
                 dump(self.db_fpath, self.db)
                 sg.popup_quick(f"Saved!")
-
 
 
 if __name__ == '__main__':
