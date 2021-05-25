@@ -1,7 +1,6 @@
 import habanero
 import pytest
 import datetime as dt
-from requests import HTTPError
 
 from regolith.tools import (
     filter_publications,

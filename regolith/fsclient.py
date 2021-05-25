@@ -120,9 +120,10 @@ class FileSystemClient:
         return not self.closed
 
     def open(self):
-        self.dbs = defaultdict(lambda: defaultdict(dict))
-        self.chained_db = {}
-        self.closed = False
+        if self.closed:
+            self.dbs = defaultdict(lambda: defaultdict(dict))
+            self.chained_db = {}
+            self.closed = False
 
     def load_json(self, db, dbpath):
         """Loads the JSON part of a database."""

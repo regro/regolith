@@ -15,7 +15,7 @@ https://www.mongodb.com/try/download/community
 .. code-block:: JSON
 {"groupname": "Example Group Name",
  "databases": [
-    "name": "<databasename>"
+    "name": "<databasename>",
     "dst_url": "mongodb+srv://<username>:<password>@<clustername>.uc5ro.mongodb.net/<databasename>?w=majority",
     "url": "..",
     "public": false,

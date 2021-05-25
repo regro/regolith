@@ -6,7 +6,6 @@
 import datetime as dt
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
-import sys
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key

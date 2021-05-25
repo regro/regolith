@@ -5,16 +5,12 @@
 """
 import datetime as dt
 import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
-import sys
 
-from regolith.dates import get_due_date, get_dates, is_current, has_finished
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    search_collection,
     key_value_pair_filter,
     collection_str
 )

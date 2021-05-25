@@ -3,10 +3,6 @@
    Projecta are small bite-sized project quanta that typically will result in
    one manuscript.
 """
-import datetime as dt
-import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
-import sys
 
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
@@ -14,7 +10,6 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    search_collection,
     key_value_pair_filter,
     collection_str
 )

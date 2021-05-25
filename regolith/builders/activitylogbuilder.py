@@ -118,7 +118,6 @@ class ActivitylogBuilder(LatexBuilderBase):
         pi = fuzzy_retrieval(
             self.gtx["people"], ["aka", "name", "_id"], build_target
         )
-        #        pi['initials'] = "SJLB"
 
         grants = merge_collections_superior(self.gtx["proposals"], self.gtx["grants"],
                                    "proposal_id")

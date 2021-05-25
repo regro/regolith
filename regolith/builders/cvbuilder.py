@@ -9,7 +9,6 @@ from regolith.tools import (
     filter_grants,
     awards_grants_honors,
     make_bibtex_file,
-    fuzzy_retrieval,
     dereference_institution,
 )
 

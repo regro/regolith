@@ -18,8 +18,7 @@ the presentations.yml.
 
 The presentations are output in a ./_build directory."""
 
-from copy import deepcopy, copy
-import datetime, sys
+from copy import deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
@@ -29,10 +28,10 @@ from regolith.tools import (
     fuzzy_retrieval,
     get_person_contact,
     number_suffix,
-    group_member_ids, latex_safe
+    group_member_ids
 )
 from regolith.stylers import sentencecase, month_fullnames
-from regolith.dates import month_to_int, get_dates
+from regolith.dates import get_dates
 
 class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""
@@ -86,8 +85,6 @@ class PresListBuilder(LatexBuilderBase):
                         continue
                 presentations = deepcopy(self.gtx["presentations"])
                 types = ["all"]
-                #                types = ['invited']
-                #statuses = ["all"]
                 statuses = ['accepted']
 
                 firstclean = list()
@@ -143,7 +140,6 @@ class PresListBuilder(LatexBuilderBase):
                     pres["authors"] = authorlist
                     presdates = get_dates(pres)
                     pres["date"] = presdates.get("begin_date")
-#                    all_date_objects = ['day', 'month', 'year']
                     beg_end = ['begin', 'end']
                     for be in beg_end:
                         if presdates.get(f"{be}_date"):
@@ -177,11 +173,6 @@ class PresListBuilder(LatexBuilderBase):
                         except:
                              print("no institute {} in institutions collection".format(inst))
                              pres["institution"] = {"_id": inst, "department": {"name": ""}}
-#                            sys.exit(
-#                                "ERROR: institution {} not found in "
-#                                "institutions.yml.  Please add and "
-#                                "rerun".format(pres["institution"])
-#                            )
                         if "department" in pres:
                             try:
                                 pres["department"] = pres["institution"][

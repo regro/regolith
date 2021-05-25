@@ -2,7 +2,7 @@
 """
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, fragment_retrieval, collection_str
+from regolith.tools import all_docs_from_collection, fragment_retrieval
 import datetime as dt
 from dateutil import parser as date_parser
 

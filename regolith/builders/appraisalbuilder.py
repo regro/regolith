@@ -1,7 +1,5 @@
 """Builder for CVs."""
 import datetime as dt
-import os
-import sys
 from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
@@ -118,7 +116,6 @@ class AppraisalBuilder(LatexBuilderBase):
         pi = fuzzy_retrieval(
             self.gtx["people"], ["aka", "name", "_id"], build_target
         )
-        #        pi['initials'] = "SJLB"
 
         grants = merge_collections_superior(self.gtx["proposals"], self.gtx["grants"],
                                    "proposal_id")
@@ -143,14 +140,12 @@ class AppraisalBuilder(LatexBuilderBase):
         current_grants, _, _ = filter_grants(
             current_grants, {pi["name"]}, pi=False, multi_pi=True
         )
-        #        print("current: {}".format(current_grants))
 
         pending_grants = [
             g
             for g in self.gtx["proposals"]
             if g["status"] == "pending"
         ]
-        #        print("pending: {}".format(pending_grants))
         for g in pending_grants:
             for person in g["team"]:
                 rperson = fuzzy_retrieval(

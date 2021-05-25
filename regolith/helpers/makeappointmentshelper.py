@@ -6,13 +6,11 @@
    - Suggests appointments to make for these members
    - Suggests new appointments
 """
-from copy import copy
 
 import numpy
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as date_parser
 from datetime import timedelta, date
-import sys
 
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
@@ -24,10 +22,8 @@ from regolith.tools import (
     grant_burn, group_member_employment_start_end,
 )
 from regolith.dates import (
-    is_current,
     get_dates,
 )
-import matplotlib
 import matplotlib.pyplot as plt
 
 TARGET_COLL = "people"
@@ -57,7 +53,6 @@ _future_grant = {
 }
 
 
-
 def subparser(subpi):
 
     subpi.add_argument("run",
@@ -83,6 +78,7 @@ def subparser(subpi):
                        help="The database that will be updated. Defaults to first database in regolithrc.json")
 
     return subpi
+
 
 def plotter(datearray, student=None, pd=None, ss=None, title=None):
     fig,ax = plt.subplots()
@@ -138,7 +134,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
         gtx["float"] = float
         gtx["str"] = str
         gtx["zip"] = zip
-
 
     def sout(self):
         rc = self.rc
