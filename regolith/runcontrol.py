@@ -273,6 +273,7 @@ def filter_databases(rc):
         rc.db = dbs[0]["name"]
     rc.databases = dbs
 
+
 def connect_db(rc, colls=None):
     '''
     Load up the db's

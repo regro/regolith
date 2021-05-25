@@ -1,9 +1,7 @@
 """Date based tools"""
-import calendar
 import datetime
 from dateutil import parser as date_parser
 
-import datetime as dt
 import calendar
 
 MONTHS = {

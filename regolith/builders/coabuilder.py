@@ -66,7 +66,6 @@ def get_advisees_name_inst(coll, advisor, rc):
         for edu in edus:
             if 'advisor' in edu and edu['advisor'] in advisor_names:
 
-#                if edu['status'] == 'postdoc'
                 person_name = HumanName(person.get("name"))
                 inst_name = edu.get("institution")
                 inst = fuzzy_retrieval(

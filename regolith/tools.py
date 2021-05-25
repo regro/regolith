@@ -33,8 +33,6 @@ if sys.version_info[0] >= 3:
     unicode_type = str
 else:
     pass
-    # string_types = (str, unicode)
-    # unicode_type = unicode
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 
@@ -519,18 +517,6 @@ def filter_activities(people, begin_period, type, verbose=False):
         svc = copy(p.get("activities", []))
         for i in svc:
             if i.get("type") == type:
-                # if i.get('year'):
-                #     end_year = i.get('year')
-                #     if verbose: print("end_year from 'year' = {}".format(end_year))
-                # elif i.get('end_year'):
-                #     end_year = i.get('end_year')
-                #     if verbose: print("end_year from 'end_year' = {}".format(end_year))
-                # else:
-                #     end_year = date.today().year
-                #     if verbose: print("no end_year, using today = {}".format(end_year))                                i.get("end_month", 12),
-                #                 i.get("end_day", last_day(end_year,  i.get("end_month")))
-                # if verbose: print("end_date = {} and begin_period = {}".format(end_date,begin_period))
-                # if verbose: print("condition end_date >= begin_period will be used")
                 idates = get_dates(i)
                 if idates["end_date"] >= begin_period:
                     usedate = idates.get('begin_date', idates.get('date'))
@@ -1913,16 +1899,6 @@ def print_task(task_list, stati, index=True):
             for note in task.get('notes'):
                 print(f"     - {note}")
     print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
-
-    #        else:
-    #            for task in task_list:
-    #                if task.get('status') == status:
-    #                    print(
-    #                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
-    #                    if task.get('notes'):
-    #                        for note in task.get('notes'):
-    #                            print(f"     - {note}")
-
     return
 
 

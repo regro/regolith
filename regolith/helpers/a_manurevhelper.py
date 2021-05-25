@@ -1,5 +1,4 @@
 """Builder for manuscript reviews."""
-import datetime as dt
 import sys
 from dateutil import parser as dateparser
 

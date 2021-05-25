@@ -1,19 +1,14 @@
 """Builder for Current and Pending Reports."""
 import datetime as dt
 import sys
-import time
-from argparse import RawTextHelpFormatter
 
 import nameparser
 
-from regolith.helpers.basehelper import SoutHelperBase, DbHelperBase
-from regolith.dates import month_to_int, month_to_str_int
+from regolith.helpers.basehelper import DbHelperBase
+from regolith.dates import month_to_str_int
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_grants,
-    fuzzy_retrieval,
 )
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
