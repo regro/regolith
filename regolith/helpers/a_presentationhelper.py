@@ -1,9 +1,6 @@
 """Helper for adding a presentation to the presentation collection.
 """
-import datetime as dt
 import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
-import sys
 
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase

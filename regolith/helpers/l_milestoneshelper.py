@@ -4,7 +4,6 @@
    one manuscript.
 """
 
-
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key

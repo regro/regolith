@@ -4,10 +4,8 @@
 import datetime as dt
 import dateutil.parser as date_parser
 import math
-import sys
-from dateutil.relativedelta import *
 
-from regolith.dates import get_due_date, get_dates
+from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.schemas import (

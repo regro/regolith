@@ -47,10 +47,6 @@ class ReadingListsBuilder(LatexBuilderBase):
             for paper in rlist['papers']:
                 doi = paper.get('doi')
                 url = paper.get('url')
-#                if doi == 'tbd':
-#                    pass
-#                    print(
-#                        "  doi needed for paper: {}".format(paper.get('text')))
                 if doi and doi != 'tbd':
                     ref, ref_date = get_formatted_crossref_reference(doi)
                     paper.update({'reference': ref, 'ref_date': ref_date, 'n': n, 'label': 'DOI'})
@@ -68,11 +64,3 @@ class ReadingListsBuilder(LatexBuilderBase):
                 outfile_bib + ".txt",
                 rlist=rlist,
             )
-
-
-"""            self.render(
-                "rlist_word.docx",
-                outfile_bib + ".docx",
-                rlist=rlist,
-            )
-"""

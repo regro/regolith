@@ -2,7 +2,7 @@
 import datetime as dt
 import dateutil.parser as date_parser
 
-from regolith.helpers.basehelper import SoutHelperBase, DbHelperBase
+from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
@@ -104,7 +104,6 @@ class GrpPubReadListAdderHelper(DbHelperBase):
             raise KeyError("ERROR: a title is required for a new list.  Please rerun specifying -t")
 
         for cite in self.gtx["citations"]:
-            #print(f"{cite.get('_id')}: {cite.get('tags', '')}")  # save for filtering for untagged entries
             for tag in rc.tags:
                 if tag in cite.get("tags", ""):
                     dupe_doi = [paper for paper in pdoc.get("papers", []) if cite.get("doi") == paper.get("doi")]

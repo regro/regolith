@@ -1,6 +1,5 @@
 """Builder for Current and Pending Reports."""
 import datetime as dt
-import time
 from copy import copy
 from nameparser import HumanName
 

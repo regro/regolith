@@ -3,8 +3,6 @@
 
 import datetime as dt
 import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
-import sys
 import math
 
 from regolith.helpers.basehelper import DbHelperBase

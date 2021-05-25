@@ -18,8 +18,7 @@ the presentations.yml.
 
 The presentations are output in a ./_build directory."""
 
-from copy import deepcopy, copy
-import datetime, sys
+from copy import deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
@@ -32,7 +31,7 @@ from regolith.tools import (
     group_member_ids, latex_safe, filter_presentations
 )
 from regolith.stylers import sentencecase, month_fullnames
-from regolith.dates import month_to_int, get_dates
+from regolith.dates import get_dates
 
 class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""

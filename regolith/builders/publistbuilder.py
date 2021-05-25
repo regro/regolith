@@ -1,6 +1,5 @@
 """Builder for publication lists."""
 import os
-import datetime as dt
 
 try:
     from bibtexparser.bwriter import BibTexWriter
