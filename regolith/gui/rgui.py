@@ -6,6 +6,8 @@ from regolith.fsclient import load_yaml, load_json, dump_yaml, dump_json
 import yaml
 
 LOADER_TYPE = 'yaml'  # "json"
+DESCRIPTION_KEY = '_description'
+ID_KEY = '_id'
 
 
 def load(filepath, _type=LOADER_TYPE):
@@ -188,6 +190,7 @@ class EntryLayouts(UIConfig):
         self.layout[-1].extend([self.gl.icon_button(icon=self.DATE_ICON,
                                                     key=f"@get_date_{self.entry}",
                                                     tooltip=tooltip)])
+
     def nested_schema_lo(self, tooltip):
         self.layout[-1].extend([sg.T('explore', text_color=self.PALE_BLUE_BUTTON_COLOR, key=self.entry)])  # key keeper
         self.layout[-1].extend([self.gl.icon_button(icon=self.ENTER_ICON,
@@ -230,6 +233,11 @@ class GlobalLayouts(UIConfig):
                          image_subsample=3, button_color=self.PALE_BLUE_BUTTON_COLOR,
                          tooltip=tooltip, key=key)
 
+    def _id_lo(self):
+        self.layout.append([sg.T("Select _id:")])
+        self.layout.append([sg.DropDown([], key="_id", enable_events=True, readonly=True,
+                                        size=self.selector_long_size)])
+
 
 class BaseLayouts(UIConfig):
 
@@ -260,14 +268,10 @@ class BaseLayouts(UIConfig):
         updated layout
         """
 
-        # build
-        self.layout.append([sg.T("Select User")])
-        self.layout.append([sg.DropDown(people, key="_user_", enable_events=True, readonly=True,
+        # filter
+        self.layout.append([sg.T("Filter by: User")])
+        self.layout.append([sg.DropDown([''] + people, key="_user_", enable_events=True, readonly=True,
                                         size=self.selector_short_size)])
-
-        self.layout.append([sg.T("Select target prum")])
-        self.layout.append([sg.DropDown([], key="_prum_", enable_events=True, readonly=True,
-                                        size=self.selector_long_size)])
 
 
 class GUI(UIConfig, Messaging):
@@ -372,13 +376,45 @@ class GUI(UIConfig, Messaging):
             # terminate first
             first = False
 
-    def edit_ui(self, data_title: str, schema, nested: bool = False, nested_data: dict = None):
-        DESCRIPTION_KEY = '_description'
-        ID_KEY = '_id'
+    def _show_data(self, window, values, data):
+        perfect = True
 
-        DB = DataBase(self.db_fpath)
+        # clean
+        for entry, val in values.items():
+            if entry in data:
+                window[entry].update(value='')  # FIXME
+
+        # fill
+        for entry, val in data.items():
+            self.y_msg('------------------')
+            print(entry, ":", val)
+
+            if entry == ID_KEY:
+                continue
+
+            else:
+                if isinstance(val, dict) or (isinstance(val, list) and val and isinstance(val[0], dict)):
+                    continue
+                elif entry in values:
+                    window[entry].update(value=val)
+                else:
+                    perfect = False
+                    self.r_msg(f'WARNING: "{entry}" is not part of the schema')
+
+        if not perfect:
+            self.popup_warning()
+
+    def _update_selected_ids(self, window, selectec_ids):
+        window['_id'].update(value='', values=[''] + list(selectec_ids))
+
+    def edit_ui(self, data_title: str, schema, nested: bool = False, nested_data: dict = None):
 
         layout = list()
+
+        gl = GlobalLayouts(layout)
+        bl = BaseLayouts(layout)
+
+        DB = DataBase(self.db_fpath)
 
         if nested:
             self.dynamic_db_name += "." + data_title
@@ -391,14 +427,17 @@ class GUI(UIConfig, Messaging):
             _id = schema.pop(ID_KEY)
             GlobalLayouts(layout).title_lo(f"Database: {data_title}", tooltip=_description)
 
-            # build unique base-related layout
-            bl = BaseLayouts(layout)
+            # build unique base-related filter layouts
             if data_title == "projecta":
                 # load filtration databases
                 people = DB.get_people()
                 bl.projecta(people)
 
-        layout.append([sg.Button('load', key='_load_', font=self.font_9b)])
+                layout[-1].extend([gl.icon_button(icon=self.FILTER_ICON, key='_filter_', tooltip='filter')])
+
+        # build _id layout
+        gl._id_lo()
+
         layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
 
         for entry, elements in schema.items():
@@ -444,62 +483,55 @@ class GUI(UIConfig, Messaging):
                     else:
                         el.input_lo(tooltip=tooltip)
 
-        layout.append([sg.Button('save', key="_save_")])  # TODO
+        layout.append([sg.Button('save', key="_save_")])
 
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
 
         # run
+        _first = True
         while True:
             event, values = window.read(timeout=20)
             if event is None:
                 window.close()
                 break
 
-            ###  specific targeting for a database
-            if self.master_data_title == "projecta":
-                if not nested:
-                    sub_db = dict()
+            # choose _id
+            if _first:
+                all_ids = list(self.db)
+                selectec_ids = all_ids
+                self._update_selected_ids(window, selectec_ids)
+
+            if event == '_filter_':
+                # specific filters
+                if self.master_data_title == "projecta":
+                    # filter _id's by user
                     if values['_user_']:
                         initials = values['_user_'][:2]
-                        if event == '_user_':
-                            user_prums = list()
-                            for _id in self.db:
-                                if _id[2:4] == initials:
-                                    user_prums.append(_id)
-                            window['_prum_'].update(values=user_prums)
+                        filtered_ids = list()
+                        for _id in self.db:
+                            if _id[2:4] == initials:
+                                filtered_ids.append(_id)
+                        selectec_ids = filtered_ids
                     else:
-                        window['_prum_'].update(values=[])
+                        selectec_ids = all_ids
 
-                if event == '_load_':
-                    if nested:
-                        self._data = nested_data
+                # set selected _id's
+                self._update_selected_ids(window, selectec_ids)
+
+            if not nested:
+                if event == "_id":
+                    self._id = values['_id']
+                    if not self._id:
+                        self.win_msg(window, f'choose a non-empty "{ID_KEY}"')
+                        continue
                     else:
-                        self._id = values['_prum_']
                         self._data = self.db[self._id]
-                    perfect = True
-                    for entry, val in self._data.items():
-                        self.y_msg('------------------')
-                        print(entry, ":", val)
+                        self._show_data(window, values, self._data)
 
-                        if entry in values:
-                            window[entry].update(value='')
-                            if isinstance(val, list):
-                                if val:
-                                    if isinstance(val[0], str):
-                                        window[entry].update(value=str(val))
-
-                            elif isinstance(val, dict):
-                                pass
-
-                            else:
-                                window[entry].update(value=val)
-
-                        else:
-                            perfect = False
-                            self.r_msg(f'WARNING: "{entry}" is not part of the schema')
-                    if not perfect:
-                        self.popup_warning()
+            if nested:
+                self._data = nested_data
+                self._show_data(window, values, self._data)
 
             if event.startswith("@enter_schema_"):
                 nested_entry = event.replace("@enter_schema_", '')
@@ -515,13 +547,7 @@ class GUI(UIConfig, Messaging):
                 window[entry].update(value=date)
 
             if event == "_save_":  # TODO
-                # for entry, val in values.items():
-                #     if isinstance(val, str):
-                #         window[entry].update(value=val)
-                #     if isinstance(val, list):
-                #         if isinstance(val[0], str):
-                #             window[entry].update(value=str(val))
-                print("==> SAVE ")
+                print("==> SAVING ")
                 for key, val in values.items():
                     if key in self._data:
                         try:
@@ -538,6 +564,8 @@ class GUI(UIConfig, Messaging):
                 self.db.update({self._id: self._data})
                 dump(self.db_fpath, self.db)
                 sg.popup_quick(f"Saved!")
+
+            _first = False
 
 
 if __name__ == '__main__':

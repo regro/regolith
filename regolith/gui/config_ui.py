@@ -37,6 +37,7 @@ class UIConfig:
     LOGO_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'regolith-logo.png')
     ENTER_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'enter.png')
     DATE_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'date.png')
+    FILTER_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'filter.png')
 
     # global setup
     sg.change_look_and_feel(gui_theme_4)

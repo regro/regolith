@@ -4542,7 +4542,7 @@ for s in SCHEMAS:
     SCHEMAS[s]["files"] = {
         "description": "Files associated with the document",
         # TODO: fix this since this is currently comming out a CommentedMap
-        # "type": "list",
+        "type": "list",  #TODO - YEVGENY: @simon, can we have type to have a value?
         # "schema": {"type": "string"},
         "required": False,
     }
