@@ -5,11 +5,16 @@ from regolith.gui.config_ui import UIConfig
 from regolith.fsclient import load_yaml, load_json, dump_yaml, dump_json
 import yaml
 
+# _static globals
 LOADER_TYPE = 'yaml'  # "json"
 DESCRIPTION_KEY = '_description'
 ID_KEY = '_id'
 IGNORE_KEYS = [DESCRIPTION_KEY, ID_KEY]
+
+# dynamic globals
 POPOUT_ERROR = False
+VERBOSE = 0
+
 
 def load(filepath, _type=LOADER_TYPE):
     """ load catalog """
@@ -127,10 +132,11 @@ class EntryElements(Messaging):
         self.perfect = True
 
         self.y_msg('----------------')
-        print('--', entry)
+        self.b_msg('-- ' + entry)
         for element, val in elements.items():
             self.__setattr__(element, val)
-            print(element, ":", val)
+            if VERBOSE == 1:
+                print(element, ":", val)
 
         # description
         try:
@@ -429,7 +435,6 @@ class GUI(UIConfig, Messaging):
             # terminate first
             first = False
 
-
     def edit_ui(self, data_title: str, schema, nested: bool = False, nested_data: dict = None):
 
         layout = list()
@@ -499,22 +504,26 @@ class GUI(UIConfig, Messaging):
                 if event == "_id":
                     self._id = values['_id']
                     if not self._id:
-                        self.win_msg(window, f'choose a non-empty "{ID_KEY}"')
+                        self.win_msg(window, f'"{ID_KEY}" is not selected')
                         continue
                     else:
                         self._data = self.db[self._id]
                         self._show_data(window, values, schema, self._data)
 
             if nested:
-                self._data = nested_data
-                self._show_data(window, values, schema, self._data)
+                if _first:
+                    self._data = nested_data
+                    self._show_data(window, values, schema, self._data)
 
             if event.startswith("@enter_schema_"):
-                nested_entry = event.replace("@enter_schema_", '')
-                nested_schema = schema[nested_entry]["schema"]
-                window.hide()
-                self.edit_ui(nested_entry, nested_schema, nested=True, nested_data=self._data[nested_entry])
-                window.un_hide()
+                if values["_id"]:
+                    nested_entry = event.replace("@enter_schema_", '')
+                    nested_schema = schema[nested_entry]["schema"]
+                    window.hide()
+                    self.edit_ui(nested_entry, nested_schema, nested=True, nested_data=self._data[nested_entry])
+                    window.un_hide()
+                else:
+                    self.win_msg(window, f'"{ID_KEY}" is not selected')
 
             if event.startswith('@get_date_'):
                 date = sg.popup_get_date()
@@ -570,8 +579,9 @@ class GUI(UIConfig, Messaging):
 
         # fill
         for entry, val in data.items():
-            self.y_msg('------------------')
-            print(entry, ":", val)
+            if VERBOSE == 1:
+                self.y_msg('------------------')
+                print(entry, ":", val)
 
             if entry not in IGNORE_KEYS:
                 if isinstance(val, dict) or (isinstance(val, list) and val and isinstance(val[0], dict)):
@@ -587,6 +597,7 @@ class GUI(UIConfig, Messaging):
 
     def _update_selected_ids(self, window, selectec_ids):
         window['_id'].update(value='', values=[''] + list(selectec_ids))
+
 
 if __name__ == '__main__':
     GUI()()
