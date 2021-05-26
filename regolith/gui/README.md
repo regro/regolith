@@ -22,7 +22,7 @@
     1. Edit
     1. Save (#TODO - roundtrip + ask to add and commit current database with a msg + ask if to push to origin (set up an ssh))
     1. Create a PR 
-- window when pressing [+]
+- window when pressing [`->`] (=explore)
     1. shows nested dictionary or a list of dictionaries. For the latter it requires selection by the first key.
      
     

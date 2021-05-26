@@ -8,7 +8,8 @@ import yaml
 LOADER_TYPE = 'yaml'  # "json"
 DESCRIPTION_KEY = '_description'
 ID_KEY = '_id'
-
+IGNORE_KEYS = [DESCRIPTION_KEY, ID_KEY]
+POPOUT_ERROR = False
 
 def load(filepath, _type=LOADER_TYPE):
     """ load catalog """
@@ -75,9 +76,14 @@ class Messaging:
     def b_msg(msg):
         print(f"\033[94m{msg}\033[0m")
 
-    @staticmethod
-    def popup_warning(msg="Error - see log"):
-        sg.popup_error(msg, non_blocking=True, keep_on_top=True, auto_close=True, auto_close_duration=3)
+    def popup_warning(self, msg="Warnings - see log"):
+        if POPOUT_ERROR:
+            sg.popup_error(msg, non_blocking=True, keep_on_top=True, auto_close=True, auto_close_duration=3)
+        else:
+            self.r_msg('')
+            self.r_msg('-----------------')
+            self.r_msg(msg)
+            self.r_msg('-----------------')
 
 
 class EntryElements(Messaging):
@@ -233,10 +239,58 @@ class GlobalLayouts(UIConfig):
                          image_subsample=3, button_color=self.PALE_BLUE_BUTTON_COLOR,
                          tooltip=tooltip, key=key)
 
+    def output_msg_lo(self):
+        self.layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
+
     def _id_lo(self):
         self.layout.append([sg.T("Select _id:")])
         self.layout.append([sg.DropDown([], key="_id", enable_events=True, readonly=True,
                                         size=self.selector_long_size)])
+
+    def schema_lo(self, schema):
+        for entry, elements in schema.items():
+            if entry not in IGNORE_KEYS:
+                tooltip = str()
+
+                # set entry elements from schema
+                ee = EntryElements()
+                ee._setter(entry, elements)
+
+                # set standard layout builder for entry from schema
+                el = EntryLayouts(self.layout, entry)
+
+                # set tooltip as description
+                if ee.description:
+                    tooltip = f'description: {ee.description}'
+
+                # build layout based on type
+                if ee.type or ee.anyof_type:
+                    if ee.required is True:
+                        el.required_entry_lo()
+                    else:
+                        el.entry_lo()
+
+                    if ee.type:
+                        el.types_lo(ee.type)
+                        tooltip += f'\ntype: {ee.type}'
+                        if ee.schema:
+                            el.nested_schema_lo(tooltip=tooltip)
+                        elif ee.type == 'string':
+                            el.input_lo(tooltip=tooltip)
+                        elif ee.type == 'date_lo':
+                            el.date_lo(tooltip=tooltip)
+                        elif ee.type == 'list':
+                            el.multyline_lo(tooltip=tooltip)
+
+                    elif ee.anyof_type:
+                        el.types_lo(ee.anyof_type)
+                        tooltip += f'\ntypes: {ee.anyof_type}'
+                        if 'list' in ee.anyof_type:
+                            el.multyline_lo(tooltip=tooltip)
+                        elif 'date' in ee.anyof_type:
+                            el.date_lo(tooltip=tooltip)
+                        else:
+                            el.input_lo(tooltip=tooltip)
 
 
 class BaseLayouts(UIConfig):
@@ -288,9 +342,9 @@ class GUI(UIConfig, Messaging):
 
     def select_db_ui(self):
         layout = list()
-
+        gl = GlobalLayouts(layout)
         title = "Select a Database"
-        GlobalLayouts(layout).title_lo(title)
+        gl.title_lo(title)
 
         layout.append([sg.T("Where the Databases are located?")])
         layout.append([sg.T("Path", tooltip="path to "),
@@ -301,8 +355,7 @@ class GUI(UIConfig, Messaging):
         layout.append([sg.T("")])
         layout.append([sg.T("What Database you would like to explore?")])
         layout.append([sg.DropDown([], key="_existing_dbs_", enable_events=True, readonly=True)])
-
-        layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
+        gl.output_msg_lo()
         layout.append([sg.Button("submit")])
 
         # build window
@@ -376,36 +429,6 @@ class GUI(UIConfig, Messaging):
             # terminate first
             first = False
 
-    def _show_data(self, window, values, data):
-        perfect = True
-
-        # clean
-        for entry, val in values.items():
-            if entry in data:
-                window[entry].update(value='')  # FIXME
-
-        # fill
-        for entry, val in data.items():
-            self.y_msg('------------------')
-            print(entry, ":", val)
-
-            if entry == ID_KEY:
-                continue
-
-            else:
-                if isinstance(val, dict) or (isinstance(val, list) and val and isinstance(val[0], dict)):
-                    continue
-                elif entry in values:
-                    window[entry].update(value=val)
-                else:
-                    perfect = False
-                    self.r_msg(f'WARNING: "{entry}" is not part of the schema')
-
-        if not perfect:
-            self.popup_warning()
-
-    def _update_selected_ids(self, window, selectec_ids):
-        window['_id'].update(value='', values=[''] + list(selectec_ids))
 
     def edit_ui(self, data_title: str, schema, nested: bool = False, nested_data: dict = None):
 
@@ -421,11 +444,8 @@ class GUI(UIConfig, Messaging):
             GlobalLayouts(layout).title_lo(f"nested data: {self.dynamic_db_name}")
 
         elif not nested:
-
             self.dynamic_db_name = data_title
-            _description = schema.pop(DESCRIPTION_KEY)
-            _id = schema.pop(ID_KEY)
-            GlobalLayouts(layout).title_lo(f"Database: {data_title}", tooltip=_description)
+            GlobalLayouts(layout).title_lo(f"Database: {data_title}", tooltip=schema[DESCRIPTION_KEY])
 
             # build unique base-related filter layouts
             if data_title == "projecta":
@@ -437,52 +457,8 @@ class GUI(UIConfig, Messaging):
 
         # build _id layout
         gl._id_lo()
-
-        layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
-
-        for entry, elements in schema.items():
-            tooltip = str()
-
-            # set entry elements from schema
-            ee = EntryElements()
-            ee._setter(entry, elements)
-
-            # set standard layout builder for entry from schema
-            el = EntryLayouts(layout, entry)
-
-            # set tooltip as description
-            if ee.description:
-                tooltip = f'description: {ee.description}'
-
-            # build layout based on type
-            if ee.type or ee.anyof_type:
-                if ee.required is True:
-                    el.required_entry_lo()
-                else:
-                    el.entry_lo()
-
-                if ee.type:
-                    el.types_lo(ee.type)
-                    tooltip += f'\ntype: {ee.type}'
-                    if ee.schema:
-                        el.nested_schema_lo(tooltip=tooltip)
-                    elif ee.type == 'string':
-                        el.input_lo(tooltip=tooltip)
-                    elif ee.type == 'date_lo':
-                        el.date_lo(tooltip=tooltip)
-                    elif ee.type == 'list':
-                        el.multyline_lo(tooltip=tooltip)
-
-                elif ee.anyof_type:
-                    el.types_lo(ee.anyof_type)
-                    tooltip += f'\ntypes: {ee.anyof_type}'
-                    if 'list' in ee.anyof_type:
-                        el.multyline_lo(tooltip=tooltip)
-                    elif 'date' in ee.anyof_type:
-                        el.date_lo(tooltip=tooltip)
-                    else:
-                        el.input_lo(tooltip=tooltip)
-
+        gl.output_msg_lo()
+        gl.schema_lo(schema)
         layout.append([sg.Button('save', key="_save_")])
 
         # build window
@@ -527,11 +503,11 @@ class GUI(UIConfig, Messaging):
                         continue
                     else:
                         self._data = self.db[self._id]
-                        self._show_data(window, values, self._data)
+                        self._show_data(window, values, schema, self._data)
 
             if nested:
                 self._data = nested_data
-                self._show_data(window, values, self._data)
+                self._show_data(window, values, schema, self._data)
 
             if event.startswith("@enter_schema_"):
                 nested_entry = event.replace("@enter_schema_", '')
@@ -567,6 +543,50 @@ class GUI(UIConfig, Messaging):
 
             _first = False
 
+    def _show_data(self, window, values, schema, data):
+        """
+        fill data of _id entry
+
+        Parameters
+        ----------
+        window: sg.window
+        values: dict
+            values of window.read()
+        schema: dict
+            the layout dict
+        data: dict
+            data from _id entry
+        Returns
+        -------
+
+        """
+        perfect = True
+
+        # clean
+        for entry, val in values.items():
+            if entry not in IGNORE_KEYS:
+                if entry in schema:
+                    window[entry].update(value='')
+
+        # fill
+        for entry, val in data.items():
+            self.y_msg('------------------')
+            print(entry, ":", val)
+
+            if entry not in IGNORE_KEYS:
+                if isinstance(val, dict) or (isinstance(val, list) and val and isinstance(val[0], dict)):
+                    continue
+                elif entry in values:
+                    window[entry].update(value=val)
+                else:
+                    perfect = False
+                    self.r_msg(f'WARNING: "{entry}" is not part of the schema')
+
+        if not perfect:
+            self.popup_warning()
+
+    def _update_selected_ids(self, window, selectec_ids):
+        window['_id'].update(value='', values=[''] + list(selectec_ids))
 
 if __name__ == '__main__':
     GUI()()
