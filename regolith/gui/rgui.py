@@ -131,8 +131,9 @@ class EntryElements(Messaging):
         """
         self.perfect = True
 
-        self.y_msg('----------------')
-        self.b_msg('-- ' + entry)
+        if VERBOSE == 1:
+            self.y_msg('----------------')
+            self.b_msg('-- ' + entry)
         for element, val in elements.items():
             self.__setattr__(element, val)
             if VERBOSE == 1:
@@ -253,7 +254,15 @@ class GlobalLayouts(UIConfig):
         self.layout.append([sg.DropDown([], key="_id", enable_events=True, readonly=True,
                                         size=self.selector_long_size)])
 
+    def nested_id_lo(self, nested_dict_list):
+        nested_entries = list(
+            f'{i}' for i, d in enumerate(nested_dict_list))  # TODO - requires fixing SCHEMA to specify nested filter
+        self.layout.append([sg.T("Select nested entry:")])
+        self.layout.append([sg.DropDown([''] + nested_entries, key="_nested_entry_", enable_events=True, readonly=True,
+                                        size=self.selector_long_size)])
+
     def schema_lo(self, schema):
+        """ auto builder of layout from schemas.SCHEMA item"""
         for entry, elements in schema.items():
             if entry not in IGNORE_KEYS:
                 tooltip = str()
@@ -435,22 +444,49 @@ class GUI(UIConfig, Messaging):
             # terminate first
             first = False
 
-    def edit_ui(self, data_title: str, schema, nested: bool = False, nested_data: dict = None):
+    def edit_ui(self, data_title: str, schema: dict, nested: bool = False,
+                nested_type: str = 'dict', nested_data: dict = None):
+        """
+        main auto-built ui for presenting and updating entries in a selected catalog
 
+        Parameters
+        ----------
+        data_title: str
+            the title of the catalog or nested_entry
+        schema: dict
+            the schema for building the ui. Follows schemas.SCHEMA.
+        nested: bool
+            if True, treats it as a nested entry and not the main entry
+        nested_type: str
+            can get 'list' or 'dict'. By selection, builds accordingly
+        nested_data: dict
+            if nested, required a dictionary
+
+        Returns
+        -------
+
+        """
+        assert nested_type in ['list', 'dict']
+
+        # init
         layout = list()
-
         gl = GlobalLayouts(layout)
         bl = BaseLayouts(layout)
-
         DB = DataBase(self.db_fpath)
+        self.dynamic_nested_entry = ''
 
         if nested:
-            self.dynamic_db_name += "." + data_title
-            GlobalLayouts(layout).title_lo(f"nested data: {self.dynamic_db_name}")
+            gl.title_lo(f"Database: {self.db_name}")
+            gl.title_lo(f"_id: {self._id}")
+            self.dynamic_nested_entry += "." + data_title
+            gl.title_lo(f"nested entry: {self.dynamic_nested_entry}")
+            if nested_type == 'list':
+                gl.nested_id_lo(nested_data)
 
-        elif not nested:
-            self.dynamic_db_name = data_title
-            GlobalLayouts(layout).title_lo(f"Database: {data_title}", tooltip=schema[DESCRIPTION_KEY])
+        else:
+            self.db_name = data_title
+
+            gl.title_lo(f"Database: {data_title}", tooltip=schema[DESCRIPTION_KEY])
 
             # build unique base-related filter layouts
             if data_title == "projecta":
@@ -461,7 +497,8 @@ class GUI(UIConfig, Messaging):
                 layout[-1].extend([gl.icon_button(icon=self.FILTER_ICON, key='_filter_', tooltip='filter')])
 
         # build _id layout
-        gl._id_lo()
+        if not nested:
+            gl._id_lo()
         gl.output_msg_lo()
         gl.schema_lo(schema)
         layout.append([sg.Button('save', key="_save_")])
@@ -478,7 +515,7 @@ class GUI(UIConfig, Messaging):
                 break
 
             # choose _id
-            if _first:
+            if not nested and _first:
                 all_ids = list(self.db)
                 selectec_ids = all_ids
                 self._update_selected_ids(window, selectec_ids)
@@ -500,7 +537,18 @@ class GUI(UIConfig, Messaging):
                 # set selected _id's
                 self._update_selected_ids(window, selectec_ids)
 
-            if not nested:
+            if nested:
+                if nested_type == 'list':
+                    if event == '_nested_entry_' and values['_nested_entry_']:
+                        selected_index = int(values['_nested_entry_'].split('-', 1)[0].strip()) - 1
+                        self._show_data(window, values, schema, nested_data[selected_index])
+
+                elif nested_type == 'dict':
+                    if _first:
+                        self._data = nested_data
+                        self._show_data(window, values, schema, self._data)
+
+            else:
                 if event == "_id":
                     self._id = values['_id']
                     if not self._id:
@@ -510,18 +558,35 @@ class GUI(UIConfig, Messaging):
                         self._data = self.db[self._id]
                         self._show_data(window, values, schema, self._data)
 
-            if nested:
-                if _first:
-                    self._data = nested_data
-                    self._show_data(window, values, schema, self._data)
-
+            # if not nested:
             if event.startswith("@enter_schema_"):
-                if values["_id"]:
+                _pass = False
+                if not nested:
+                    if values["_id"]:
+                        _pass = True
+                if nested:
+                    if values["_nested_entry_"]:
+                        _pass = True
+                if _pass:
                     nested_entry = event.replace("@enter_schema_", '')
                     nested_schema = schema[nested_entry]["schema"]
+                    #  TODO - fix in SCHEMA so after list of dict, it will be clear that there is a need to enter deeper
+                    if 'schema' in nested_schema and 'type' in nested_schema:
+                        nested_schema = nested_schema['schema']
+                    nested_type = schema[nested_entry]["type"]
+                    nested_data = self._data[nested_entry]
                     window.hide()
-                    self.edit_ui(nested_entry, nested_schema, nested=True, nested_data=self._data[nested_entry])
+                    self.edit_ui(nested_entry, nested_schema, nested=True,
+                                 nested_data=nested_data, nested_type=nested_type)
                     window.un_hide()
+
+                    # reset when exit
+                    self.dynamic_nested_entry = ''
+                    if nested:
+                        self._data = nested_data
+                    else:
+                        self._data = self.db[self._id]
+
                 else:
                     self.win_msg(window, f'"{ID_KEY}" is not selected')
 
