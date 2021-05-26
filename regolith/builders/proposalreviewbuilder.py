@@ -47,8 +47,8 @@ class PropRevBuilder(LatexBuilderBase):
             firstauthor = HumanName(rev["names"][0])
             firstauthorlastname = firstauthor.last
 
-            if isinstance(rev["institutions"], str):
-                rev["institutions"] = [rev["institutions"]]
+            if isinstance(rev.get("institutions", ""), str):
+                rev["institutions"] = [rev.get("institutions", "")]
             if len(rev["institutions"]) == 0:
                 rev["institutions"] = [""]
             instns = [fuzzy_retrieval(
