@@ -260,6 +260,12 @@ class GlobalLayouts(UIConfig):
     def update_button(self):
         self.layout.append([sg.Button('update', key="_update_")])
 
+    def finish_button(self, extend=False):
+        if extend:
+            self.layout[-1].extend([sg.Button('finish', key="_finish_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
+        else:
+            self.layout.append([sg.Button('finish', key="_finish_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
+
     def output_msg_lo(self):
         self.layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
 
@@ -269,8 +275,7 @@ class GlobalLayouts(UIConfig):
                                         size=self.selector_long_size)])
 
     def nested_id_lo(self, nested_dict_list):
-        nested_entries = list(
-            f'{i}' for i, d in enumerate(nested_dict_list))  # TODO - requires fixing SCHEMA to specify nested filter
+        nested_entries = list(str(i) for i in range(len(nested_dict_list)))
         self.layout.append([sg.T("Select nested entry:")])
         self.layout.append([sg.DropDown([''] + nested_entries, key="_nested_entry_", enable_events=True, readonly=True,
                                         size=self.selector_long_size)])
@@ -372,6 +377,7 @@ class GUI(UIConfig, Messaging):
         self.ext = DataBase.ext
         self.must_exist = DataBase.MUST_EXIST
         self.db = dict()
+        self.entry_keys = list()
 
     def __call__(self):
         self.select_db_ui()
@@ -470,7 +476,7 @@ class GUI(UIConfig, Messaging):
             first = False
 
     def edit_ui(self, data_title: str, schema: dict, nested: bool = False,
-                nested_type: str = 'dict', nested_data: dict = None):
+                nested_type: str = 'dict'):
         """
         main auto-built ui for presenting and updating entries in a selected catalog
 
@@ -484,8 +490,6 @@ class GUI(UIConfig, Messaging):
             if True, treats it as a nested entry and not the main entry
         nested_type: str
             can get 'list' or 'dict'. By selection, builds accordingly
-        nested_data: dict
-            if nested, required a dictionary
 
         Returns
         -------
@@ -507,7 +511,8 @@ class GUI(UIConfig, Messaging):
             self.dynamic_nested_entry += ">>" + data_title
             gl.title_lo(f"{self.dynamic_nested_entry}")
             if nested_type == 'list':
-                gl.nested_id_lo(nested_data)
+                _data = self._get_nested_data()
+                gl.nested_id_lo(_data)
 
         # head
         else:
@@ -528,6 +533,8 @@ class GUI(UIConfig, Messaging):
         gl.output_msg_lo()
         gl.schema_lo(schema)
         gl.update_button()
+        if nested:
+            gl.finish_button(extend=True)
 
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
@@ -546,8 +553,8 @@ class GUI(UIConfig, Messaging):
                 selectec_ids = all_ids
                 self._update_selected_ids(window, selectec_ids)
 
+            # specific filters
             if event == '_filter_':
-                # specific filters
                 if self.master_data_title == "projecta":
                     # filter _id's by user
                     if values['_user_']:
@@ -566,13 +573,14 @@ class GUI(UIConfig, Messaging):
             if nested:
                 if nested_type == 'list':
                     if event == '_nested_entry_' and values['_nested_entry_']:
-                        selected_index = int(values['_nested_entry_'].split('-', 1)[0].strip()) - 1
-                        self._show_data(window, values, schema, nested_data[selected_index])
+                        selected_index = int(values['_nested_entry_'].strip())
+                        _data = self._get_nested_data()[selected_index]
+                        self._show_data(window, values, schema, _data)
 
                 elif nested_type == 'dict':
                     if _first:
-                        self._data = nested_data
-                        self._show_data(window, values, schema, self._data)
+                        _data = self._get_nested_data()
+                        self._show_data(window, values, schema, _data)
 
             else:
                 if event == "_id":
@@ -581,8 +589,9 @@ class GUI(UIConfig, Messaging):
                         self.win_msg(window, f'"{ID_KEY}" is not selected')
                         continue
                     else:
-                        self._data = self.db[self._id]
-                        self._show_data(window, values, schema, self._data)
+                        self.entry_keys.append(self._id)
+                        _data = self._get_nested_data()
+                        self._show_data(window, values, schema, _data)
 
             # if not nested:
             if event.startswith("@enter_schema_"):
@@ -595,26 +604,31 @@ class GUI(UIConfig, Messaging):
                         _pass = True
                 if _pass:
                     nested_entry = event.replace("@enter_schema_", '')
+                    nested_type = schema[nested_entry]["type"]
                     nested_schema = schema[nested_entry]["schema"]
+
                     #  TODO - fix in SCHEMA so after list of dict, it will be clear that there is a need to enter deeper
                     if 'schema' in nested_schema and 'type' in nested_schema:
                         nested_schema = nested_schema['schema']
-                    nested_type = schema[nested_entry]["type"]
-                    nested_data = self._data[nested_entry]
+
+                    # extract relevant data
+                    self.entry_keys.append(nested_entry)
+                    _data = self._get_nested_data()
+
                     window.hide()
-                    self.edit_ui(nested_entry, nested_schema, nested=True,
-                                 nested_data=nested_data, nested_type=nested_type)
+                    self.edit_ui(nested_entry, nested_schema, nested=True, nested_type=nested_type)
                     window.un_hide()
 
-                    # reset when exit
+                    # exit nest
+                    self.entry_keys.remove(nested_entry)
                     self.dynamic_nested_entry = ''
-                    if nested:
-                        self._data = nested_data
-                    else:
-                        self._data = self.db[self._id]
 
                 else:
                     self.win_msg(window, f'"{ID_KEY}" is not selected')
+
+            if event in ["_update_", "_finish_"]:
+                _data = self._get_nested_data()
+
 
             if event.startswith("@edit_list_"):
                 entry = event.replace('@edit_list_', '')
@@ -637,7 +651,9 @@ class GUI(UIConfig, Messaging):
                 entry = event.replace('@get_date_', '')
                 window[entry].update(value=date)
 
-            if event == ":Save":  # TODO
+
+
+            if event == ":Save":
                 print("==> SAVING ")
                 for key, val in values.items():
                     if key in self._data:
@@ -658,9 +674,15 @@ class GUI(UIConfig, Messaging):
 
             _first = False
 
+    def _get_nested_data(self):
+        _data = self.db
+        for ek in self.entry_keys:
+            _data = _data[ek]
+        return _data
+
     def _edit_list_win(self, entry: str, data: list):
         data_string = yaml.safe_dump(data, indent=2, sort_keys=False)
-        rows = len(data) + 2
+        rows = len(data) + 3
         layout = list()
 
         # build layout
