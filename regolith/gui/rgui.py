@@ -4,7 +4,6 @@
 # todo - include Zacks suggestion  --> ask the user to set a root and use the rc.json file as a path memory. remember defaults
 
 
-
 import os
 import PySimpleGUI as sg
 from regolith.schemas import SCHEMAS
@@ -204,12 +203,13 @@ class EntryLayouts(UIConfig):
 
     def multyline_lo(self, tooltip):
         self.layout[-1].extend([sg.Multiline('', size=self.multyline_size, tooltip=tooltip, key=self.entry)])
+        self.layout[-1].extend([self.gl.icon_button(icon=self.EDIT_ICON,
+                                                    key=f"@edit_list_{self.entry}")])
 
     def date_lo(self, tooltip):
         self.layout[-1].extend([sg.Input('', size=self.input_size, tooltip=tooltip, key=self.entry)])
         self.layout[-1].extend([self.gl.icon_button(icon=self.DATE_ICON,
-                                                    key=f"@get_date_{self.entry}",
-                                                    tooltip=tooltip)])
+                                                    key=f"@get_date_{self.entry}")])
 
     def nested_schema_lo(self, tooltip):
         self.layout[-1].extend([sg.T('explore', text_color=self.PALE_BLUE_BUTTON_COLOR, key=self.entry)])  # key keeper
@@ -257,6 +257,9 @@ class GlobalLayouts(UIConfig):
                          image_subsample=3, button_color=self.PALE_BLUE_BUTTON_COLOR,
                          tooltip=tooltip, key=key)
 
+    def update_button(self):
+        self.layout.append([sg.Button('update', key="_update_")])
+
     def output_msg_lo(self):
         self.layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
 
@@ -275,7 +278,7 @@ class GlobalLayouts(UIConfig):
     def menu_lo(self):
         menu = [
             [' - File - ', [":Save", ":Load", "---", ":Exit"]],
-            [' - Info - ', [":About", ":Docs"]],   # TODO - functionalize
+            [' - Info - ', [":About", ":Docs"]],  # TODO - functionalize
         ]
         self.layout.append([sg.Menu(menu)])
 
@@ -372,6 +375,10 @@ class GUI(UIConfig, Messaging):
 
     def __call__(self):
         self.select_db_ui()
+
+    def quick_error(self, msg):
+        sg.popup_error(msg,
+                       non_blocking=True, auto_close=True, auto_close_duration=3)
 
     def select_db_ui(self):
         layout = list()
@@ -517,11 +524,10 @@ class GUI(UIConfig, Messaging):
 
             gl._id_lo()
 
-
         # global
         gl.output_msg_lo()
         gl.schema_lo(schema)
-        layout.append([sg.Button('update', key="_update_")])
+        gl.update_button()
 
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
@@ -530,7 +536,7 @@ class GUI(UIConfig, Messaging):
         _first = True
         while True:
             event, values = window.read(timeout=20)
-            if event is None:
+            if event is None or event == ":Exit":
                 window.close()
                 break
 
@@ -595,7 +601,6 @@ class GUI(UIConfig, Messaging):
                         nested_schema = nested_schema['schema']
                     nested_type = schema[nested_entry]["type"]
                     nested_data = self._data[nested_entry]
-                    self.db
                     window.hide()
                     self.edit_ui(nested_entry, nested_schema, nested=True,
                                  nested_data=nested_data, nested_type=nested_type)
@@ -611,9 +616,24 @@ class GUI(UIConfig, Messaging):
                 else:
                     self.win_msg(window, f'"{ID_KEY}" is not selected')
 
+            if event.startswith("@edit_list_"):
+                entry = event.replace('@edit_list_', '')
+                try:
+                    data = eval(values[entry])
+                    assert isinstance(data, list)
+                except:
+                    self.quick_error("must represent a valid list-like string format")
+                    continue
+
+                data = self._edit_list_win(entry, data)
+                window[entry].update(value=data)
+
             if event.startswith('@get_date_'):
                 date = sg.popup_get_date()
-                date = f'{date[2]}-{date[0]}-{date[1]}'
+                if data:
+                    date = f'{date[2]}-{date[0]}-{date[1]}'
+                else:
+                    continue
                 entry = event.replace('@get_date_', '')
                 window[entry].update(value=date)
 
@@ -637,6 +657,39 @@ class GUI(UIConfig, Messaging):
                 sg.popup_quick(f"Saved!")
 
             _first = False
+
+    def _edit_list_win(self, entry: str, data: list):
+        data_string = yaml.safe_dump(data, indent=2, sort_keys=False)
+        rows = len(data) + 2
+        layout = list()
+
+        # build layout
+        _gl = GlobalLayouts(layout)
+        _gl.title_lo(entry)
+        layout.append([sg.Multiline(data_string, size=(self.edit_list_len, rows), key='_data_')])
+        _gl.update_button()
+
+        # build window
+        window = sg.Window('', layout, resizable=True, finalize=True)
+
+        # run
+        while True:
+            event, values = window.read(timeout=20)
+            if event is None:
+                window.close()
+                return data
+
+            if event == "_update_":
+                striped_data = values["_data_"]
+                try:  # to update data
+                    data = yaml.safe_load(striped_data)
+                    assert isinstance(data, list)
+                    window.close()
+                    return data
+
+                except:
+                    self.quick_error("must represent a valid yaml list format")
+
 
     def _show_data(self, window, values, schema, data):
         """

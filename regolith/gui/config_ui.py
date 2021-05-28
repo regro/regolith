@@ -1,6 +1,9 @@
 import PySimpleGUI as sg
 import os
 
+def _icon(fname):
+    return os.path.join(os.path.dirname(__file__), 'icons', fname)
+
 class UIConfig:
     # fonts
     font_style = 'courier 10 pitch'
@@ -19,6 +22,8 @@ class UIConfig:
     types_size = (20, 1)
     input_size = (60, 1)
     multyline_size = (60, 3)
+    edit_list_len = 75
+
 
     ### globals
     # look and feel
@@ -34,10 +39,12 @@ class UIConfig:
     BLACK_COLOR = '#000000'
 
     # icons
-    LOGO_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'regolith-logo.png')
-    ENTER_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'enter.png')
-    DATE_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'date.png')
-    FILTER_ICON = os.path.join(os.path.dirname(__file__), 'icons', 'filter.png')
+
+    LOGO_ICON = _icon('regolith-logo.png')
+    ENTER_ICON = _icon('enter.png')
+    DATE_ICON = _icon('date.png')
+    FILTER_ICON = _icon('filter.png')
+    EDIT_ICON = _icon('edit.png')
 
     # global setup
     sg.change_look_and_feel(gui_theme_4)
