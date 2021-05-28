@@ -1,3 +1,10 @@
+# todo - stabilize dump
+# todo - open lists in a stable format
+# todo - open the ability to run helpers and present the results (dropdowns with updating lists)
+# todo - include Zacks suggestion  --> ask the user to set a root and use the rc.json file as a path memory. remember defaults
+
+
+
 import os
 import PySimpleGUI as sg
 from regolith.schemas import SCHEMAS
@@ -224,8 +231,12 @@ class GlobalLayouts(UIConfig):
         """
         self.layout = layout
 
-    def title_lo(self, title, tooltip=''):
-        self.layout.append([sg.T(title, font=self.font_11b, tooltip=tooltip)])
+    def title_lo(self, title, tooltip='', extend=False):
+        if extend:
+            self.layout[-1].extend([sg.T(";")])
+            self.layout[-1].extend([sg.T(title, font=self.font_11b, tooltip=tooltip)])
+        else:
+            self.layout.append([sg.T(title, font=self.font_11b, tooltip=tooltip)])
 
     def icon_button(self, icon: str, key: str, tooltip: str = ''):
         """  quick create of icon button
@@ -260,6 +271,13 @@ class GlobalLayouts(UIConfig):
         self.layout.append([sg.T("Select nested entry:")])
         self.layout.append([sg.DropDown([''] + nested_entries, key="_nested_entry_", enable_events=True, readonly=True,
                                         size=self.selector_long_size)])
+
+    def menu_lo(self):
+        menu = [
+            [' - File - ', [":Save", ":Load", "---", ":Exit"]],
+            [' - Info - ', [":About", ":Docs"]],   # TODO - functionalize
+        ]
+        self.layout.append([sg.Menu(menu)])
 
     def schema_lo(self, schema):
         """ auto builder of layout from schemas.SCHEMA item"""
@@ -475,19 +493,20 @@ class GUI(UIConfig, Messaging):
         DB = DataBase(self.db_fpath)
         self.dynamic_nested_entry = ''
 
+        # nested
         if nested:
             gl.title_lo(f"Database: {self.db_name}")
-            gl.title_lo(f"_id: {self._id}")
-            self.dynamic_nested_entry += "." + data_title
-            gl.title_lo(f"nested entry: {self.dynamic_nested_entry}")
+            gl.title_lo(f"{self._id}", extend=True)
+            self.dynamic_nested_entry += ">>" + data_title
+            gl.title_lo(f"{self.dynamic_nested_entry}")
             if nested_type == 'list':
                 gl.nested_id_lo(nested_data)
 
+        # head
         else:
+            gl.menu_lo()
             self.db_name = data_title
-
             gl.title_lo(f"Database: {data_title}", tooltip=schema[DESCRIPTION_KEY])
-
             # build unique base-related filter layouts
             if data_title == "projecta":
                 # load filtration databases
@@ -496,12 +515,13 @@ class GUI(UIConfig, Messaging):
 
                 layout[-1].extend([gl.icon_button(icon=self.FILTER_ICON, key='_filter_', tooltip='filter')])
 
-        # build _id layout
-        if not nested:
             gl._id_lo()
+
+
+        # global
         gl.output_msg_lo()
         gl.schema_lo(schema)
-        layout.append([sg.Button('save', key="_save_")])
+        layout.append([sg.Button('update', key="_update_")])
 
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
@@ -575,6 +595,7 @@ class GUI(UIConfig, Messaging):
                         nested_schema = nested_schema['schema']
                     nested_type = schema[nested_entry]["type"]
                     nested_data = self._data[nested_entry]
+                    self.db
                     window.hide()
                     self.edit_ui(nested_entry, nested_schema, nested=True,
                                  nested_data=nested_data, nested_type=nested_type)
@@ -596,7 +617,7 @@ class GUI(UIConfig, Messaging):
                 entry = event.replace('@get_date_', '')
                 window[entry].update(value=date)
 
-            if event == "_save_":  # TODO
+            if event == ":Save":  # TODO
                 print("==> SAVING ")
                 for key, val in values.items():
                     if key in self._data:
