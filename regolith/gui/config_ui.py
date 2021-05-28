@@ -53,7 +53,7 @@ class UIConfig:
     sg.set_options(button_color=(BLACK_COLOR, YELLOW_BUTTON_COLOR))
     sg.set_options(text_color=BLACK_COLOR)
     sg.set_options(font=font_11)
-    sg.set_options(element_padding=(5, 5))
+    sg.set_options(element_padding=(5, 2))
     sg.set_options(border_width=2)
     sg.set_options(use_ttk_buttons=True)
     sg.set_options(ttk_theme="clam")  # 'clam', 'alt', 'default', 'classic'

@@ -1,7 +1,6 @@
-# todo - stabilize dump
-# todo - open lists in a stable format
 # todo - open the ability to run helpers and present the results (dropdowns with updating lists)
 # todo - include Zacks suggestion  --> ask the user to set a root and use the rc.json file as a path memory. remember defaults
+# todo - test when nesting level > 1
 
 
 import os
@@ -266,6 +265,12 @@ class GlobalLayouts(UIConfig):
         else:
             self.layout.append([sg.Button('finish', key="_finish_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
 
+    def save_button(self, extend=False):
+        if extend:
+            self.layout[-1].extend([sg.Button('Save', key="_save_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
+        else:
+            self.layout.append([sg.Button('Save', key="_save_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
+
     def output_msg_lo(self):
         self.layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
 
@@ -277,7 +282,7 @@ class GlobalLayouts(UIConfig):
     def nested_id_lo(self, nested_dict_list):
         nested_entries = list(str(i) for i in range(len(nested_dict_list)))
         self.layout.append([sg.T("Select nested entry:")])
-        self.layout.append([sg.DropDown([''] + nested_entries, key="_nested_entry_", enable_events=True, readonly=True,
+        self.layout.append([sg.DropDown(nested_entries, key="_nested_entry_", enable_events=True, readonly=True,
                                         size=self.selector_long_size)])
 
     def menu_lo(self):
@@ -516,7 +521,7 @@ class GUI(UIConfig, Messaging):
 
         # head
         else:
-            gl.menu_lo()
+            # gl.menu_lo()
             self.db_name = data_title
             gl.title_lo(f"Database: {data_title}", tooltip=schema[DESCRIPTION_KEY])
             # build unique base-related filter layouts
@@ -535,6 +540,8 @@ class GUI(UIConfig, Messaging):
         gl.update_button()
         if nested:
             gl.finish_button(extend=True)
+        else:
+            gl.save_button(extend=True)
 
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
@@ -573,7 +580,7 @@ class GUI(UIConfig, Messaging):
             if nested:
                 if nested_type == 'list':
                     if event == '_nested_entry_' and values['_nested_entry_']:
-                        selected_index = int(values['_nested_entry_'].strip())
+                        selected_index = self._get_nested_index(values)
                         _data = self._get_nested_data()[selected_index]
                         self._show_data(window, values, schema, _data)
 
@@ -589,7 +596,7 @@ class GUI(UIConfig, Messaging):
                         self.win_msg(window, f'"{ID_KEY}" is not selected')
                         continue
                     else:
-                        self.entry_keys.append(self._id)
+                        self.entry_keys = [self._id]
                         _data = self._get_nested_data()
                         self._show_data(window, values, schema, _data)
 
@@ -615,9 +622,9 @@ class GUI(UIConfig, Messaging):
                     self.entry_keys.append(nested_entry)
                     _data = self._get_nested_data()
 
-                    window.hide()
+                    # window.hide()
                     self.edit_ui(nested_entry, nested_schema, nested=True, nested_type=nested_type)
-                    window.un_hide()
+                    # window.un_hide()
 
                     # exit nest
                     self.entry_keys.remove(nested_entry)
@@ -625,10 +632,6 @@ class GUI(UIConfig, Messaging):
 
                 else:
                     self.win_msg(window, f'"{ID_KEY}" is not selected')
-
-            if event in ["_update_", "_finish_"]:
-                _data = self._get_nested_data()
-
 
             if event.startswith("@edit_list_"):
                 entry = event.replace('@edit_list_', '')
@@ -644,35 +647,53 @@ class GUI(UIConfig, Messaging):
 
             if event.startswith('@get_date_'):
                 date = sg.popup_get_date()
-                if data:
+                if date:
                     date = f'{date[2]}-{date[0]}-{date[1]}'
                 else:
                     continue
                 entry = event.replace('@get_date_', '')
                 window[entry].update(value=date)
 
-
-
-            if event == ":Save":
-                print("==> SAVING ")
+            if event in ["_update_", "_finish_", "_save_", ":Save"]:
+                _data = self._get_nested_data()
                 for key, val in values.items():
-                    if key in self._data:
-                        try:
-                            val = eval(val)
-                            if isinstance(val, list):
-                                pass
-                            else:
-                                val = str(val)
-                        except:
-                            val = str(val)
-                            print(f"ERROR:  {key}")
+                    if val:
+                        if val.strip() and key in schema:
+                            _pass = True
+                            try:
+                                try:
+                                    val = eval(val)
+                                    if isinstance(val, list):
+                                        pass
+                                    else:
+                                        val = str(val)
+                                except:
+                                    val = str(val)
+                            except:
+                                self.r_msg(f"ErrorEvalList:  {key}")
+                                self.quick_error(f"Error saving - see ")
+                                _pass = False
+                            if _pass:
+                                if isinstance(_data, list):
+                                    index = self._get_nested_index(values)
+                                    _data[index].update({key: val})
+                                else:
+                                    _data.update({key: val})
 
-                        self._data[key] = val
-                self.db.update({self._id: self._data})
-                dump(self.db_fpath, self.db)
-                sg.popup_quick(f"Saved!")
+                if event == "_finish_":
+                    window.Close()
+                    break
+
+                if event in ["_save_", ":Save"]:
+                    dump(self.db_fpath, self.db)
+                    # TODO - the next line is required because of the fsclient.dump function pops-out the _id key
+                    self.db = load(self.db_fpath)
+                    sg.popup_quick(f"Saved!")
 
             _first = False
+
+    def _get_nested_index(self, values):
+        return int(values['_nested_entry_'].strip())
 
     def _get_nested_data(self):
         _data = self.db
@@ -711,7 +732,6 @@ class GUI(UIConfig, Messaging):
 
                 except:
                     self.quick_error("must represent a valid yaml list format")
-
 
     def _show_data(self, window, values, schema, data):
         """
