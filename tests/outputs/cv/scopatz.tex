@@ -20,6 +20,7 @@
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
+\usepackage{longtable}
 
 %-----------------------------------------------------------
 % Hyperlink setup
@@ -57,6 +58,8 @@
 \setlength{\topmargin}{-0.3in}
 \setlength{\topskip}{0in}
 \setlength{\voffset}{0.1in}
+\setlength\LTleft{0.25in}
+\setlength\LTright{0.25in}
 
 
 %-----------------------------------------------------------
@@ -90,6 +93,22 @@
     \end{tabular*}
     \end{center}
     \vspace{-24pt}
+}
+
+\newcommand{\ressubheadingitemslongtitle}[5]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{p{6.5in}}{\textbf{#1}\cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{p{6.5in}}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{-32pt}
+    \begin{itemize}\renewcommand{\labelitemi}{}
+        \item\begin{itemize}
+        #5
+        \end{itemize}
+    \end{itemize}
 }
 
 \newcommand{\ressubheadingitems}[5]{
@@ -237,16 +256,7 @@ The University of South Carolina & scopatz@cec.sc.edu \\
 {\Large\underline{Lifetime Total Grant Amount as PI:} \textbf{ \$988,785.00 }}
 
 
-\ressubheadingitems{DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery}
-    { \$982,785.00}
-    {NSF DMREF DMREF-1534910}
-    {present -
-      present}
-    {
-      
-    }
-
-\ressubheadingitems{SymPy 1.1 Release Support}
+\ressubheadingitemslongtitle{SymPy 1.1 Release Support}
     { \$3,000.00}
     {NumFOCUS Small Development Grants }
     {May 2030 -
@@ -260,7 +270,7 @@ The University of South Carolina & scopatz@cec.sc.edu \\
       
     }
 
-\ressubheadingitems{SymPy 1.1 Release Support}
+\ressubheadingitemslongtitle{SymPy 1.1 Release Support}
     { \$3,000.00}
     {NumFOCUS Small Development Grants }
     {Jun 2019 -
@@ -274,6 +284,15 @@ The University of South Carolina & scopatz@cec.sc.edu \\
       
     }
 
+\ressubheadingitemslongtitle{DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery}
+    { \$982,785.00}
+    {NSF DMREF DMREF-1534910}
+    {May 2018 -
+      May 2019}
+    {
+
+    }
+
 
 
 
@@ -281,19 +300,30 @@ The University of South Carolina & scopatz@cec.sc.edu \\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Awards \& Honours}
+\resheading{Awards \& Honors}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{-2pt}
-\begin{center}\begin{tabular*}{6.6in}{p{6in} c r}
-International Steering Committee\dotfill & \hspace{.1in} &2020\\
-National Steering Committee\dotfill & \hspace{.1in} &2018-2021\\
+\begin{center}
+\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
 Omega Laser User's Group Travel Award (\$1,100)\dotfill & \hspace{.1in} &2013\\
 NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
 
     \vphantom{E}
-\end{tabular*}
+\end{longtable}
 \end{center}\vspace*{-16pt}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Service}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{-2pt}
+\begin{center}
+\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
+International Steering Committee\dotfill & \hspace{.1in} &2020\\
+National Steering Committee\dotfill & \hspace{.1in} &2018-2021\\
+
+    \vphantom{E}
+\end{longtable}
+\end{center}\vspace*{-16pt}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -311,7 +341,7 @@ NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
 
 %\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Software Projects}
+\resheading{Major Projects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -368,7 +398,8 @@ NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
 
 
 
-%\clearpage
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Memberships}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -380,7 +411,6 @@ NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
 \ressubheadingshort{Python Software Foundation}
     {\em{2013-present} }
     {Fellow}
-
 
 
 

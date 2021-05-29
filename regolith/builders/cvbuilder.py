@@ -10,7 +10,7 @@ from regolith.tools import (
     awards_grants_honors,
     make_bibtex_file,
     fuzzy_retrieval,
-    dereference_institution,
+    dereference_institution, merge_collections_superior,
 )
 
 
@@ -18,7 +18,8 @@ class CVBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
     btype = "cv"
-    needed_dbs = ['institutions', 'people', 'grants', 'citations', 'projects']
+    needed_dbs = ['institutions', 'people', 'grants', 'citations', 'projects',
+                  'proposals']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -63,12 +64,20 @@ class CVBuilder(LatexBuilderBase):
             projs = filter_projects(
                 all_docs_from_collection(rc.client, "projects"), names
             )
-            grants = list(all_docs_from_collection(rc.client, "grants"))
+            just_grants = list(all_docs_from_collection(rc.client, "grants"))
+            just_proposals = list(all_docs_from_collection(rc.client, "proposals"))
+            grants = merge_collections_superior(just_proposals,
+                                                just_grants,
+                                                "proposal_id")
+            for grant in grants:
+                for member in grant.get("team"):
+                    dereference_institution(member, self.gtx["institutions"])
             pi_grants, pi_amount, _ = filter_grants(grants, names, pi=True)
             coi_grants, coi_amount, coi_sub_amount = filter_grants(
                 grants, names, pi=False
             )
-            aghs = awards_grants_honors(p)
+            aghs = awards_grants_honors(p, "honors")
+            service = awards_grants_honors(p, "service", funding=False)
             # TODO: pull this out so we can use it everywhere
             for ee in [emp, edu]:
                 for e in ee:
@@ -79,6 +88,7 @@ class CVBuilder(LatexBuilderBase):
                 p=p,
                 title=p.get("name", ""),
                 aghs=aghs,
+                service=service,
                 pubs=pubs,
                 names=names,
                 bibfile=bibfile,

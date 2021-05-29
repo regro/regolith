@@ -272,6 +272,11 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     total_amount = 0.0
     subaward_amount = 0.0
     for grant in input_grants:
+        grant_dates = get_dates(grant)
+        datenames = ["begin_", "end_"]
+        for datename in datenames:
+            grant[f"{datename}year"] = grant_dates[f"{datename}date"].year
+            grant[f"{datename}month"] = grant_dates[f"{datename}date"].month
         team_names = set(gets(grant["team"], "name"))
         if len(team_names & names) == 0:
             continue
@@ -717,7 +722,7 @@ def filter_presentations(people, presentations, institutions, target,
     return presclean
 
 
-def awards_grants_honors(p):
+def awards_grants_honors(p, target_name, funding=True, service_types=None):
     """Make sorted awards grants and honors list.
 
     Parameters
@@ -725,41 +730,50 @@ def awards_grants_honors(p):
     p : dict
         The person entry
     """
+    if not service_types:
+        service_types = ["profession"]
     aghs = []
-    if p.get("funding"):
-        for x in p.get("funding", ()):
-            d = {
-                "description": "{0} ({1}{2:,})".format(
-                    latex_safe(x["name"]),
-                    x.get("currency", "$").replace("$", "\$"),
-                    x["value"],
-                ),
-                "year": x["year"],
-                "_key": date_to_float(x["year"], x.get("month", 0)),
-            }
+    if funding:
+        if p.get("funding"):
+            for x in p.get("funding", ()):
+                d = {
+                    "description": "{0} ({1}{2:,})".format(
+                        latex_safe(x["name"]),
+                        x.get("currency", "$").replace("$", "\$"),
+                        x["value"],
+                    ),
+                    "year": x["year"],
+                    "_key": date_to_float(x["year"], x.get("month", 0)),
+                }
+                aghs.append(d)
+    target = p.get(target_name, [])
+    for x in target:
+        if target_name != "service" or target_name == "service" and x.get("type") in service_types:
+            d = {"description": latex_safe(x["name"])}
+            if "year" in x:
+                x["date"] = date(x["year"], 1, 1)
+                del x["year"]
+            x_dates = get_dates(x)
+            if x_dates.get("date"):
+                d.update(
+                    {"year": x_dates["date"].year,
+                     "_key": date_to_float(x_dates["date"].year, x_dates["date"].month)}
+                )
+            elif x_dates.get("begin_date") and x_dates.get("end_date"):
+                d.update(
+                    {
+                        "year": "{}-{}".format(x_dates["begin_date"].year, x_dates["end_date"].year),
+                        "_key": date_to_float(x_dates["begin_date"].year, x_dates["begin_date"].month),
+                    }
+                )
+            elif x_dates.get("begin_date"):
+                d.update(
+                    {
+                        "year": "{}".format(x_dates["begin_date"].year),
+                        "_key": date_to_float(x_dates["begin_date"].year, x_dates["begin_date"].month),
+                    }
+                )
             aghs.append(d)
-    for x in p.get("service", []) + p.get("honors", []):
-        d = {"description": latex_safe(x["name"])}
-        if "year" in x:
-            d.update(
-                {"year": x["year"],
-                 "_key": date_to_float(x["year"], x.get("month", 0))}
-            )
-        elif "begin_year" in x and "end_year" in x:
-            d.update(
-                {
-                    "year": "{}-{}".format(x["begin_year"], x["end_year"]),
-                    "_key": date_to_float(x["begin_year"], x.get("month", 0)),
-                }
-            )
-        elif "begin_year" in x:
-            d.update(
-                {
-                    "year": "{}".format(x["begin_year"]),
-                    "_key": date_to_float(x["begin_year"], x.get("month", 0)),
-                }
-            )
-        aghs.append(d)
     aghs.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)
     return aghs
 
@@ -868,9 +882,13 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         ent = dict(pub)
         ent["ID"] = ent.pop("_id")
         ent["ENTRYTYPE"] = ent.pop("entrytype")
-        for n in ["author", "editor"]:
-            if n in ent:
-                ent[n] = " and ".join(ent[n])
+        if isinstance(ent.get("editor"), list):
+            for n in ["author", "editor"]:
+                if n in ent:
+                    ent[n] = " and ".join(ent[n])
+        else:
+            if "author" in ent:
+                ent["author"] = " and ".join(ent["author"])
         for key in ent.keys():
             if key in skip_keys:
                 continue
@@ -1005,9 +1023,9 @@ def dereference_institution(input_record, institutions):
             state_country = db_inst.get("country")
         input_record["location"] = "{}, {}".format(db_inst["city"],
                                                    state_country)
-        if not db_inst.get("departments"):
-            print("WARNING: no departments in {}. {} sought".format(
-                db_inst.get("_id"), inst))
+        # if not db_inst.get("departments"):
+        #     print("WARNING: no departments in {}. {} sought".format(
+        #         db_inst.get("_id"), inst))
         if "department" in input_record and db_inst.get("departments"):
             input_record["department"] = fuzzy_retrieval(
                 [db_inst["departments"]], ["name", "aka"],
@@ -1091,6 +1109,7 @@ def merge_collections_superior(a, b, target_id):
     not linked.
     """
     intersect = merge_collections_intersect(a, b, target_id)
+    b=list(b)
     for j in intersect:
         for i in b:
             if i.get("_id") == j.get("_id"):
