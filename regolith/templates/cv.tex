@@ -110,6 +110,7 @@
         \end{itemize}
     \end{itemize}
 }
+
 \newcommand{\ressubheadingitems}[5]{
     \begin{center}
     \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
@@ -246,7 +247,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 \resheading{Awards \& Honors}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{-2pt}
-\begin{center}%\begin{tabular*}{6.6in}{p{6in} c r}
+\begin{center}
 \begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
 {% for agh in aghs %}
     {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
@@ -259,7 +260,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 \resheading{Service}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{-2pt}
-\begin{center}%\begin{tabular*}{6.6in}{p{6in} c r}
+\begin{center}
 \begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
 {% for serve in service %}
     {{-serve['description']-}} \dotfill & \hspace{.1in} & {{-serve['year']-}} \\
@@ -336,7 +337,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 {% endfor %}
 
 
-%\clearpage
+
 {%if 'membership' in p and len(p['membership']) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Memberships}

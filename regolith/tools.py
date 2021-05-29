@@ -272,6 +272,11 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     total_amount = 0.0
     subaward_amount = 0.0
     for grant in input_grants:
+        grant_dates = get_dates(grant)
+        datenames = ["begin_", "end_"]
+        for datename in datenames:
+            grant[f"{datename}year"] = grant_dates[f"{datename}date"].year
+            grant[f"{datename}month"] = grant_dates[f"{datename}date"].month
         team_names = set(gets(grant["team"], "name"))
         if len(team_names & names) == 0:
             continue
@@ -1034,9 +1039,9 @@ def dereference_institution(input_record, institutions):
             state_country = db_inst.get("country")
         input_record["location"] = "{}, {}".format(db_inst["city"],
                                                    state_country)
-        if not db_inst.get("departments"):
-            print("WARNING: no departments in {}. {} sought".format(
-                db_inst.get("_id"), inst))
+        # if not db_inst.get("departments"):
+        #     print("WARNING: no departments in {}. {} sought".format(
+        #         db_inst.get("_id"), inst))
         if "department" in input_record and db_inst.get("departments"):
             input_record["department"] = fuzzy_retrieval(
                 [db_inst["departments"]], ["name", "aka"],

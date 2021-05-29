@@ -65,7 +65,7 @@ class ResumeBuilder(LatexBuilderBase):
             coi_grants, coi_amount, coi_sub_amount = filter_grants(
                 grants, names, pi=False
             )
-            aghs = awards_grants_honors(p)
+            aghs = awards_grants_honors(p, "honors")
             self.render(
                 "resume.tex",
                 p["_id"] + ".tex",
