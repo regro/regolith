@@ -92,7 +92,7 @@ class PropRevAdderHelper(DbHelperBase):
                 'goals': [],
                 'importance': [],
                 'institutions': [],
-                'month': 'tbd',
+                'month': month,
                 'names': name.full_name,
                 'nsf_broader_impacts': [],
                 'nsf_create_original_transformative': [],
@@ -101,7 +101,7 @@ class PropRevAdderHelper(DbHelperBase):
                 'nsf_pot_to_benefit_society': [],
                 'status': 'accepted',
                 'summary': '',
-                'year': 2020
+                'year': year
                 })
 
         if rc.title:
