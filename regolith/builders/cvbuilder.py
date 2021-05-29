@@ -73,6 +73,13 @@ class CVBuilder(LatexBuilderBase):
             coi_grants, coi_amount, coi_sub_amount = filter_grants(
                 grants, names, pi=False
             )
+            for grant in coi_grants:
+                inst = fuzzy_retrieval(self.gtx["institutions"],
+                                       ["aka", "name", "_id"], grant["pi"].get("institution", ""))
+                if inst:
+                    grant["pi"]["institution"] = inst.get("name")
+                else:
+                    print(f"WARNING: can't find {grant['pi']['institution']} in institutions collection")
             aghs = awards_grants_honors(p, "honors")
             service = awards_grants_honors(p, "service", funding=False)
             # TODO: pull this out so we can use it everywhere

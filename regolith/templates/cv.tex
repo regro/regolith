@@ -98,8 +98,7 @@
 \newcommand{\ressubheadingitemslongtitle}[5]{
     \begin{center}
     \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
-        \multicolumn{2}{p{6.5in}}{\textbf{#1}}\\
-        \multicolumn{2}{c}{\cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{p{6.5in}}{\textbf{#1}\cftdotfill{\cftdotsep} #2} \\
         \multicolumn{2}{p{6.5in}}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
         \vphantom{E}
     \end{tabular*}
@@ -225,7 +224,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     {
       \resitem{Role: {{grant['me']['position']-}} }
       \resitem{Total award: \${{-"{:,.2f}".format(grant['amount'])-}} }
-      \resitem{PI: {{grant['pi']['name']}} at {{grant['pi']['institution']}} }
+      \resitem{PI: {{grant['pi']['name']}} at {{latex_safe(grant['pi']['institution'])}} }
       {% if 'narrative' in grant or 'benefit_of_collaboration' in grant %}
         \resitem{
           {%- if 'narrative' in grant %}
