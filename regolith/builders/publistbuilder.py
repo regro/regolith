@@ -11,11 +11,9 @@ except ImportError:
     HAVE_BIBTEX_PARSER = False
 
 from regolith.tools import all_docs_from_collection, filter_publications
-from regolith.sorters import doc_date_key, ene_date_key, position_key
-from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
-from datetime import date
+from regolith.sorters import ene_date_key, position_key
+from regolith.builders.basebuilder import LatexBuilderBase
 from dateutil import parser as date_parser
-from regolith.dates import is_between
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
@@ -170,7 +168,13 @@ class PubListBuilder(LatexBuilderBase):
             ent = dict(pub)
             ent["ID"] = ent.pop("_id")
             ent["ENTRYTYPE"] = ent.pop("entrytype")
-            ent["author"] = " and ".join(ent["author"])
+            if isinstance(ent.get("editor"), list):
+                for n in ["author", "editor"]:
+                    if n in ent:
+                        ent[n] = " and ".join(ent[n])
+            else:
+                if "author" in ent:
+                    ent["author"] = " and ".join(ent["author"])
             for key in ent.keys():
                 if key in skip_keys:
                     continue

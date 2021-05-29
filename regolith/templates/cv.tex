@@ -20,6 +20,7 @@
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
 \usepackage[utf8]{inputenc}
+\usepackage{longtable}
 
 %-----------------------------------------------------------
 % Hyperlink setup
@@ -57,6 +58,8 @@
 \setlength{\topmargin}{-0.3in}
 \setlength{\topskip}{0in}
 \setlength{\voffset}{0.1in}
+\setlength\LTleft{0.25in}
+\setlength\LTright{0.25in}
 
 
 %-----------------------------------------------------------
@@ -92,6 +95,22 @@
     \vspace{-24pt}
 }
 
+\newcommand{\ressubheadingitemslongtitle}[5]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{p{6.5in}}{\textbf{#1}}\\
+        \multicolumn{2}{c}{\cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{p{6.5in}}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{-32pt}
+    \begin{itemize}\renewcommand{\labelitemi}{}
+        \item\begin{itemize}
+        #5
+        \end{itemize}
+    \end{itemize}
+}
 \newcommand{\ressubheadingitems}[5]{
     \begin{center}
     \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
@@ -166,13 +185,13 @@
 {\Large\underline{Lifetime Total Grant Amount as PI:} \textbf{ \${{"{:,.2f}".format(pi_amount)}} }}
 
 {% for grant in pi_grants %}
-\ressubheadingitems{ {{-grant['title']-}} }
+\ressubheadingitemslongtitle{ {{-grant['title']-}} }
     { \${{-"{:,.2f}".format(grant['amount'])-}} }
     { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
     { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
       {{month_and_year(grant.get('end_month'), grant.get('end_year'))-}} }
     {
-      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
+      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant %}
         \resitem{
           {%- if 'narrative' in grant %}
             \href{ {{-grant['narrative']-}} }{Narrative}.
@@ -198,7 +217,7 @@
 subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 
 {% for grant in coi_grants %}
-\ressubheadingitems{ {{-grant['title']-}} }
+\ressubheadingitemslongtitle{ {{-grant['title']-}} }
     { \${{-"{:,.2f}".format(grant['subaward_amount'])-}} }
     { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
     { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
@@ -207,7 +226,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
       \resitem{Role: {{grant['me']['position']-}} }
       \resitem{Total award: \${{-"{:,.2f}".format(grant['amount'])-}} }
       \resitem{PI: {{grant['pi']['name']}} at {{grant['pi']['institution']}} }
-      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
+      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant %}
         \resitem{
           {%- if 'narrative' in grant %}
             \href{ {{-grant['narrative']-}} }{Narrative}.
@@ -225,17 +244,30 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 {% endif %}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Awards \& Honours}
+\resheading{Awards \& Honors}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{-2pt}
-\begin{center}\begin{tabular*}{6.6in}{p{6in} c r}
+\begin{center}%\begin{tabular*}{6.6in}{p{6in} c r}
+\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
 {% for agh in aghs %}
     {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
 {% endfor %}
     \vphantom{E}
-\end{tabular*}
+\end{longtable}
 \end{center}\vspace*{-16pt}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Service}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{-2pt}
+\begin{center}%\begin{tabular*}{6.6in}{p{6in} c r}
+\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
+{% for serve in service %}
+    {{-serve['description']-}} \dotfill & \hspace{.1in} & {{-serve['year']-}} \\
+{% endfor %}
+    \vphantom{E}
+\end{longtable}
+\end{center}\vspace*{-16pt}
 
 {%if len(pubs) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -251,7 +283,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 
 %\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Software Projects}
+\resheading{Major Projects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for proj in projects %}
 {% set me = proj['team'][0] %}
@@ -306,6 +338,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 
 
 %\clearpage
+{%if 'membership' in p and len(p['membership']) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Memberships}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -314,8 +347,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     {\em{ {{-month_and_year(m.get('begin_month'), m.get('begin_year'))-}} -
           {{-month_and_year(m.get('end_month'), m.get('end_year'))-}} } }
     { {{-latex_safe(m['position'])-}} }
-{% endfor %}
-
+{% endfor %}{% endif %}
 
 {%if 'skills' in p and len(p['skills']) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
