@@ -10,7 +10,7 @@ from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
-    fuzzy_retrieval,
+    fuzzy_retrieval, dereference_institution,
 )
 
 
@@ -38,7 +38,7 @@ class PropRevBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         for rev in self.gtx["proposalReviews"]:
-            outname = "{}_{}".format(_id_key(rev),rev["reviewer"])
+            outname = "{}_{}".format(_id_key(rev), rev["reviewer"])
             multiauth = False
             if isinstance(rev["names"], str):
                 rev["names"] = [rev["names"]]
@@ -51,12 +51,13 @@ class PropRevBuilder(LatexBuilderBase):
                 rev["institutions"] = [rev.get("institutions", "")]
             if len(rev["institutions"]) == 0:
                 rev["institutions"] = [""]
-            instns = [fuzzy_retrieval(
-                    self.gtx["institutions"], ["aka", "name", "_id"], i
-                ) for i in rev["institutions"]]
-            institution_names = [i["name"] if i else
-                                j for i,j in zip(instns,
-                                                  rev.get("institutions"))]
+            institution_docs = []
+            for inst in rev["institutions"]:
+                instdoc = {"institution": inst}
+                dereference_institution(instdoc, self.gtx["institutions"])
+                if not instdoc:
+                    instdoc = {"institution": inst}
+                institution_docs.append(instdoc)
             if isinstance(rev["freewrite"], str):
                 rev["freewrite"] = [rev["freewrite"]]
 
@@ -68,7 +69,7 @@ class PropRevBuilder(LatexBuilderBase):
                 agency=rev["agency"],
                 appropriateness=rev["doe_appropriateness_of_approach"],
                 title=rev["title"],
-                institution=institution_names[0],
+                institution=institution_docs[0].get("institution"),
                 multiauthor=multiauth,
                 firstAuthorLastName=firstauthorlastname,
                 competency=rev["competency_of_team"],

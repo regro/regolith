@@ -10,6 +10,7 @@ from regolith.broker import load_db
 from regolith.main import main
 
 builder_map = [
+    "review-prop",
     "annual-activity",
     "beamplan",
     "current-pending",
@@ -20,10 +21,9 @@ builder_map = [
     "preslist",
     "publist",
     "recent-collabs",
-    "reimb",
     "resume",
-    "review-prop",
-    "review-man"
+    "review-man",
+    "reimb"
 ]
 db_srcs = ["mongo", "fs"]
 
