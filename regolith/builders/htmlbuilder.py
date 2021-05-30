@@ -3,6 +3,7 @@ import os
 import shutil
 
 from regolith.builders.basebuilder import BuilderBase
+from regolith.dates import get_dates
 from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
@@ -110,6 +111,18 @@ class HtmlBuilder(BuilderBase):
             projs = filter_projects(
                 all_docs_from_collection(rc.client, "projects"), names
             )
+            for serve in p.get("service", []):
+                serve_dates = get_dates(serve)
+                date = serve_dates.get("date")
+                if not date:
+                    date = serve_dates.get("end_date")
+                if not date:
+                    date = serve_dates.get("begin_date")
+                serve["year"] = date.year
+                serve["month"] = date.month
+            sns = p.get("service", [])
+            sns.sort(key=ene_date_key, reverse=True)
+            p["service"] = sns
             self.render(
                 "person.html",
                 os.path.join("people", p["_id"] + ".html"),

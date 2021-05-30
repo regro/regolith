@@ -997,7 +997,7 @@ def number_suffix(number):
     return suffix
 
 
-def dereference_institution(input_record, institutions):
+def dereference_institution(input_record, institutions, verbose=False):
     """Tool for replacing placeholders for institutions with the actual
     institution data. Note that the replacement is done inplace
 
@@ -1009,10 +1009,11 @@ def dereference_institution(input_record, institutions):
         The institutions
     """
     inst = input_record.get("institution") or input_record.get("organization")
-    if not inst:
-        error = input_record.get("position") or input_record.get("degree")
-        print("WARNING: no institution or organization but found {}".format(
-            error))
+    if verbose:
+        if not inst:
+            error = input_record.get("position") or input_record.get("degree")
+            print("WARNING: no institution or organization but found {}".format(
+                error))
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if db_inst:
         input_record["institution"] = db_inst["name"]
@@ -1023,9 +1024,10 @@ def dereference_institution(input_record, institutions):
             state_country = db_inst.get("country")
         input_record["location"] = "{}, {}".format(db_inst["city"],
                                                    state_country)
-        # if not db_inst.get("departments"):
-        #     print("WARNING: no departments in {}. {} sought".format(
-        #         db_inst.get("_id"), inst))
+        if verbose:
+            if not db_inst.get("departments"):
+                print("WARNING: no departments in {}. {} sought".format(
+                    db_inst.get("_id"), inst))
         if "department" in input_record and db_inst.get("departments"):
             input_record["department"] = fuzzy_retrieval(
                 [db_inst["departments"]], ["name", "aka"],
