@@ -266,6 +266,7 @@ EXEMPLARS = {
                     "institution": "University of South Carolina",
                     "name": "Aaron Meurer",
                     "position": "researcher",
+                    "admin_people": ["A. D. Ministrator"]
                 },
             ],
             "status": "pending",
@@ -1596,7 +1597,6 @@ EXEMPLARS = {
                 "end_year": 2015,
                 "name": "Anthony Scopatz",
                 "position": "Project Lead",
-                "admin_people": ["A. D. Ministrator"]
             }
         ],
         "type": "funded",
