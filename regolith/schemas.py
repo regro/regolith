@@ -13,9 +13,11 @@ AGENCIES = ["nsf", "doe", "other"]
 APPOINTMENTS_TYPE = ["gra", "ss", "pd", "ug"]
 COMMITTEES_TYPE = ["phdoral", "phddefense", "phdproposal", "promotion"]
 COMMITTEES_LEVEL = ["department", "school", "university", "external"]
-EXPENSES_TYPE = ["unsubmitted", "submitted", "reimbursed"]
+EXPENSES_STATUS = ["unsubmitted", "submitted", "reimbursed"]
+EXPENSES_TYPE = ["travel", "business"]
 FACILITIES_TYPE = ["teaching", "research", "shared", "other", "teaching_wish",
                    "research_wish"]
+GRANT_STATUS = ["pending", "declined", "accepted", "in-prep"]
 POSITION_STATUS = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
                    "postdoc", "visitor-supported", "visitor-unsupported"]
 PRESENTATION_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
@@ -347,6 +349,7 @@ EXEMPLARS = {
             "alias": "dmref15",
             "account": "GG012345",
             "amount": 982785.0,
+            "awardnr": "DMR-0785462",
             "funder": "NSF",
             "grant_id": "DMREF-1534910",
             "institution": "Columbia University",
@@ -1220,14 +1223,13 @@ EXEMPLARS = {
                 {
                     "type": "department",
                     "name": "Applied Physics program committee",
-                    "year": 2018,
-                    "month": 1
+                    "begin_date": "2018-01-01",
+                    "end_date": "2019-01-01"
                 },
                 {
                     "type": "school",
                     "name": "Ad hoc tenure committee",
-                    "year": 2017,
-                    "month": 6,
+                    "date": "2017-06-01",
                     "notes": "Albert Einstein"
                 },
                 {
@@ -1594,6 +1596,7 @@ EXEMPLARS = {
                 "end_year": 2015,
                 "name": "Anthony Scopatz",
                 "position": "Project Lead",
+                "admin_people": ["A. D. Ministrator"]
             }
         ],
         "type": "funded",
@@ -2389,7 +2392,7 @@ SCHEMAS = {
         },
         "status": {
             "description": "The status of the expense",
-            "eallowed": EXPENSES_TYPE,
+            "eallowed": EXPENSES_STATUS,
             "required": False,
             "type": "string"
         },
@@ -2440,7 +2443,7 @@ SCHEMAS = {
         },
         "expense_type": {
             "description": "The type of expense",
-            "allowed": ["travel", "business"],
+            "eallowed": EXPENSES_TYPE,
             "required": True,
         },
     },
@@ -2504,6 +2507,11 @@ SCHEMAS = {
             "description": "value of award",
             "required": True,
             "type": ("integer", "float"),
+        },
+        "awardnr": {
+            "description": "the number of the award from the agency",
+            "type": "string",
+            "required": False,
         },
         "begin_date": {
             "description": "start date of the grant (if string, in format YYYY-MM-DD)",
@@ -2591,12 +2599,12 @@ SCHEMAS = {
         },
         "program": {
             "description": "the program the work was funded under",
-            "required": True,
+            "required": False,
             "type": "string",
         },
         # TODO: maybe this should be moved to proposals?
         "status": {
-            "allowed": ["pending", "declined", "accepted", "in-prep"],
+            "eallowed": GRANT_STATUS,
             "description": "status of the grant",
             "required": False,
             "type": "string",
@@ -2615,6 +2623,7 @@ SCHEMAS = {
             "required": True,
             "schema": {
                 "schema": {
+                    "admin_people": {"required": False, "type": "list"},
                     "cv": {"required": False, "type": "string"},
                     "institution": {"required": True, "type": "string"},
                     "name": {"required": True, "type": "string"},
@@ -3485,6 +3494,15 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
+                    "date": {"description": "the date of the service",
+                                   "required": False,
+                                   "anyof_type": ["string", "date"]},
+                    "begin_date": {"description": "the begin date",
+                                   "required": False,
+                                   "anyof_type": ["string", "date"]},
+                    "end_date": {"description": "the end date",
+                                 "required": False,
+                                 "anyof_type": ["string", "date"]},
                     "description": {"required": False, "type": "string"},
                     "duration": {"required": False, "type": "string"},
                     "month": {"description": "Use month and year if the service"
