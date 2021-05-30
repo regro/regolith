@@ -1667,7 +1667,7 @@ EXEMPLARS = {
                 "for Poverty, and then to find it"
             ],
             "importance": ["save lives", "lift people from poverty"],
-            "institutions": "upenn",
+            "institutions": [],
             "month": "May",
             "names": ["A Genius"],
             "nsf_broader_impacts": ["Poor people will be made unpoor"],
