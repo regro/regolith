@@ -120,6 +120,9 @@ class HtmlBuilder(BuilderBase):
                     date = serve_dates.get("begin_date")
                 serve["year"] = date.year
                 serve["month"] = date.month
+            ene = p.get("service", [])
+            ene.sort(key=ene_date_key, reverse=True)
+            p["service"] = ene
             self.render(
                 "person.html",
                 os.path.join("people", p["_id"] + ".html"),

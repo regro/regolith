@@ -1224,8 +1224,8 @@ EXEMPLARS = {
                 {
                     "type": "department",
                     "name": "Applied Physics program committee",
-                    "begin_date": "2017-01-01",
-                    "end_date": "2017-05-01"
+                    "begin_date": "2018-01-01",
+                    "end_date": "2018-01-01"
                 },
                 {
                     "type": "school",
