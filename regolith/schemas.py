@@ -1239,7 +1239,7 @@ EXEMPLARS = {
                     "year": 2017,
                     "month": 12,
                     "role": "co-organizer",
-                    "other": "great way to meet people",
+                    "other": ["great way to meet people"],
                 },
             ],
             "skills": [
