@@ -17,6 +17,7 @@ class UIConfig:
     # standard_sizes
     selector_short_size = (20, 8)
     selector_long_size = (40, 8)
+    selector_index_size = (3, 8)
     required_entry_size = (17, 1)
     entry_size = (20, 1)
     types_size = (20, 1)
@@ -33,10 +34,13 @@ class UIConfig:
     gui_theme_4 = 'LightBlue'
 
     # selected colors
-    PALE_BLUE_BUTTON_COLOR = '#A5CADD'
+    PALE_BLUE_BUTTON_COLOR = '#a5cadd'
     YELLOW_BUTTON_COLOR = '#d8d584'
     WHITE_COLOR = '#ffffff'
     BLACK_COLOR = '#000000'
+    RED_COLOR = '#f48c84'
+    GREEN_COLOR = '#abecab'
+    GREY_COLOR = "#d9d9d9"
 
     # icons
 

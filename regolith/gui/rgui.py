@@ -230,12 +230,11 @@ class GlobalLayouts(UIConfig):
         """
         self.layout = layout
 
-    def title_lo(self, title, tooltip='', extend=False):
-        if extend:
-            self.layout[-1].extend([sg.T(";")])
-            self.layout[-1].extend([sg.T(title, font=self.font_11b, tooltip=tooltip)])
-        else:
-            self.layout.append([sg.T(title, font=self.font_11b, tooltip=tooltip)])
+    def padx(self):
+        self.layout[-1].extend([sg.T('')])
+
+    def pady(self):
+        self.layout.append([sg.T('')])
 
     def icon_button(self, icon: str, key: str, tooltip: str = ''):
         """  quick create of icon button
@@ -256,44 +255,77 @@ class GlobalLayouts(UIConfig):
                          image_subsample=3, button_color=self.PALE_BLUE_BUTTON_COLOR,
                          tooltip=tooltip, key=key)
 
-    def update_button(self):
-        self.layout.append([sg.Button('update', key="_update_")])
+    def update_button(self, extend=False):
+        if extend:
+            self.layout[-1].extend([sg.Button('Update', key="_update_",
+                                              disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
+        else:
+            self.layout.append([sg.Button('Update', key="_update_",
+                                          disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
 
     def finish_button(self, extend=False):
         if extend:
-            self.layout[-1].extend([sg.Button('finish', key="_finish_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
+            self.layout[-1].extend([sg.Button('Finish', key="_finish_", button_color=self.PALE_BLUE_BUTTON_COLOR,
+                                              disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
         else:
-            self.layout.append([sg.Button('finish', key="_finish_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
+            self.layout.append([sg.Button('Finish', key="_finish_", button_color=self.PALE_BLUE_BUTTON_COLOR,
+                                          disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
 
     def save_button(self, extend=False):
         if extend:
-            self.layout[-1].extend([sg.Button('Save', key="_save_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
+            self.layout[-1].extend([sg.Button('Save', key="_save_", button_color=self.PALE_BLUE_BUTTON_COLOR,
+                                              disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
         else:
-            self.layout.append([sg.Button('Save', key="_save_", button_color=self.PALE_BLUE_BUTTON_COLOR)])
+            self.layout.append([sg.Button('Save', key="_save_", button_color=self.PALE_BLUE_BUTTON_COLOR,
+                                          disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
+
+    def add_button(self, extend=False):
+        if extend:
+            self.layout[-1].extend([sg.Button('Add', key="_add_", button_color=self.GREEN_COLOR,
+                                              disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
+        else:
+            self.layout.append([sg.Button('Add', key="_add_", button_color=self.GREEN_COLOR,
+                                          disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
+
+    def delete_button(self, extend=False):
+        if extend:
+            self.layout[-1].extend([sg.Button('Delete', key="_delete_", button_color=self.RED_COLOR,
+                                              disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
+        else:
+            self.layout.append([sg.Button('Delete', key="_delete_", button_color=self.RED_COLOR,
+                                          disabled_button_color=(self.GREY_COLOR, self.WHITE_COLOR))])
+
+    def title_lo(self, title, tooltip='', extend=False):
+        if extend:
+            self.layout[-1].extend([sg.T(";")])
+            self.layout[-1].extend([sg.T(title, font=self.font_11b, tooltip=tooltip)])
+        else:
+            self.layout.append([sg.T(title, font=self.font_11b, tooltip=tooltip)])
 
     def output_msg_lo(self):
         self.layout.append([sg.T("", key="_OUTPUT_", text_color="red", size=(50, 1))])
 
     def _id_lo(self):
-        self.layout.append([sg.T("Select _id:")])
-        self.layout.append([sg.DropDown([], key="_id", enable_events=True, readonly=True,
-                                        size=self.selector_long_size)])
+        self.layout.append([sg.T("Select _id:", text_color=self.RED_COLOR)])
+        self.layout[-1].extend([sg.DropDown([], key="_id", enable_events=True, readonly=True,
+                                            size=self.selector_long_size)])
 
     def nested_id_lo(self, nested_dict_list):
         nested_entries = list(str(i) for i in range(len(nested_dict_list)))
-        self.layout.append([sg.T("Select nested entry:")])
-        self.layout.append([sg.DropDown(nested_entries, key="_nested_entry_", enable_events=True, readonly=True,
-                                        size=self.selector_long_size)])
+        self.layout.append([sg.T("Select nested entry:", text_color=self.RED_COLOR)])
+        self.layout[-1].extend([sg.DropDown(nested_entries, key="_nested_index_", enable_events=True, readonly=True,
+                                        size=self.selector_index_size)])
 
     def menu_lo(self):
         menu = [
-            [' - File - ', [":Save", ":Load", "---", ":Exit"]],
-            [' - Info - ', [":About", ":Docs"]],  # TODO - functionalize
+            [' - File - ', [":Save", "---", ":Exit"]],
+            # [' - Info - ', [":About", ":Docs"]],  # TODO - functionalize
         ]
         self.layout.append([sg.Menu(menu)])
 
     def schema_lo(self, schema):
         """ auto builder of layout from schemas.SCHEMA item"""
+        box = list()
         for entry, elements in schema.items():
             if entry not in IGNORE_KEYS:
                 tooltip = str()
@@ -303,7 +335,7 @@ class GlobalLayouts(UIConfig):
                 ee._setter(entry, elements)
 
                 # set standard layout builder for entry from schema
-                el = EntryLayouts(self.layout, entry)
+                el = EntryLayouts(box, entry)
 
                 # set tooltip as description
                 if ee.description:
@@ -338,8 +370,10 @@ class GlobalLayouts(UIConfig):
                         else:
                             el.input_lo(tooltip=tooltip)
 
+        self.layout.append([sg.Column(box, size=(1000, 600), scrollable=True, vertical_scroll_only=True)])
 
-class BaseLayouts(UIConfig):
+
+class FilterLayouts(UIConfig):
 
     def __init__(self, layout: list):
         """
@@ -351,6 +385,9 @@ class BaseLayouts(UIConfig):
             ui layout
         """
         self.layout = layout
+
+    def title_lo(self):
+        self.layout.append([sg.T("Filter by:")])
 
     def projecta(self, people: list):
         """
@@ -367,11 +404,9 @@ class BaseLayouts(UIConfig):
         -------
         updated layout
         """
-
-        # filter
-        self.layout.append([sg.T("Filter by: User")])
-        self.layout.append([sg.DropDown([''] + people, key="_user_", enable_events=True, readonly=True,
-                                        size=self.selector_short_size)])
+        self.layout.append([sg.T("User:")])
+        self.layout[-1].extend([sg.DropDown([''] + people, key="_user_",
+                                            enable_events=True, readonly=True, size=self.selector_short_size)])
 
 
 class GUI(UIConfig, Messaging):
@@ -387,11 +422,8 @@ class GUI(UIConfig, Messaging):
     def __call__(self):
         self.select_db_ui()
 
-    def quick_error(self, msg):
-        sg.popup_error(msg,
-                       non_blocking=True, auto_close=True, auto_close_duration=3)
-
     def select_db_ui(self):
+        # sg.show_debugger_window()
         layout = list()
         gl = GlobalLayouts(layout)
         title = "Select a Database"
@@ -433,7 +465,8 @@ class GUI(UIConfig, Messaging):
                             if f.endswith(self.ext):
                                 db_files.append(f)
                             if count_must_exist == 0:
-                                window['_existing_dbs_'].update(values=db_files, size=(max(map(len, db_files)), 10))
+                                window['_existing_dbs_'].update(values=sorted(db_files),
+                                                                size=(max(map(len, db_files)), 10))
 
                         # bad path
                         if not db_files or count_must_exist > 0:
@@ -467,7 +500,7 @@ class GUI(UIConfig, Messaging):
                         continue
 
                     window.hide()
-                    self.edit_ui(self.master_data_title, schema)
+                    self.edit_head_ui(self.master_data_title, schema)
                     window.un_hide()
 
                 else:
@@ -480,8 +513,7 @@ class GUI(UIConfig, Messaging):
             # terminate first
             first = False
 
-    def edit_ui(self, data_title: str, schema: dict, nested: bool = False,
-                nested_type: str = 'dict'):
+    def edit_head_ui(self, data_title: str, schema: dict):
         """
         main auto-built ui for presenting and updating entries in a selected catalog
 
@@ -491,57 +523,37 @@ class GUI(UIConfig, Messaging):
             the title of the catalog or nested_entry
         schema: dict
             the schema for building the ui. Follows schemas.SCHEMA.
-        nested: bool
-            if True, treats it as a nested entry and not the main entry
-        nested_type: str
-            can get 'list' or 'dict'. By selection, builds accordingly
 
         Returns
         -------
 
         """
-        assert nested_type in ['list', 'dict']
-
+        # sg.show_debugger_window()
         # init
         layout = list()
         gl = GlobalLayouts(layout)
-        bl = BaseLayouts(layout)
-        DB = DataBase(self.db_fpath)
+        fl = FilterLayouts(layout)
         self.dynamic_nested_entry = ''
+        self.db_name = data_title
 
-        # nested
-        if nested:
-            gl.title_lo(f"Database: {self.db_name}")
-            gl.title_lo(f"{self._id}", extend=True)
-            self.dynamic_nested_entry += ">>" + data_title
-            gl.title_lo(f"{self.dynamic_nested_entry}")
-            if nested_type == 'list':
-                _data = self._get_nested_data()
-                gl.nested_id_lo(_data)
-
-        # head
-        else:
-            # gl.menu_lo()
-            self.db_name = data_title
-            gl.title_lo(f"Database: {data_title}", tooltip=schema[DESCRIPTION_KEY])
-            # build unique base-related filter layouts
-            if data_title == "projecta":
-                # load filtration databases
-                people = DB.get_people()
-                bl.projecta(people)
-
-                layout[-1].extend([gl.icon_button(icon=self.FILTER_ICON, key='_filter_', tooltip='filter')])
-
-            gl._id_lo()
-
-        # global
+        # build layout
+        gl.menu_lo()
+        gl.title_lo(f"Database: {data_title}", tooltip=schema[DESCRIPTION_KEY])
+        # -- filters (base-specific)
+        if data_title == "projecta":
+            # -- load filtration databases
+            people = DataBase(self.db_fpath).get_people()
+            fl.title_lo()
+            fl.projecta(people)
+            layout[-1].extend([gl.icon_button(icon=self.FILTER_ICON, key='_filter_', tooltip='filter')])
+        gl.pady()
+        gl._id_lo()
         gl.output_msg_lo()
         gl.schema_lo(schema)
+        gl.pady()
         gl.update_button()
-        if nested:
-            gl.finish_button(extend=True)
-        else:
-            gl.save_button(extend=True)
+        gl.padx()
+        gl.save_button(extend=True)
 
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
@@ -554,8 +566,16 @@ class GUI(UIConfig, Messaging):
                 window.close()
                 break
 
+            # control
+            if values['_id']:
+                window["_update_"].update(disabled=False)
+                window["_save_"].update(disabled=False)
+            else:
+                window["_update_"].update(disabled=True)
+                window["_save_"].update(disabled=True)
+
             # choose _id
-            if not nested and _first:
+            if _first:
                 all_ids = list(self.db)
                 selectec_ids = all_ids
                 self._update_selected_ids(window, selectec_ids)
@@ -573,48 +593,26 @@ class GUI(UIConfig, Messaging):
                         selectec_ids = filtered_ids
                     else:
                         selectec_ids = all_ids
-
                 # set selected _id's
                 self._update_selected_ids(window, selectec_ids)
 
-            if nested:
-                if nested_type == 'list':
-                    if event == '_nested_entry_' and values['_nested_entry_']:
-                        selected_index = self._get_nested_index(values)
-                        _data = self._get_nested_data()[selected_index]
-                        self._show_data(window, values, schema, _data)
+            # set _id and show data
+            if event == "_id":
+                self._id = values['_id']
+                if not self._id:
+                    continue
+                self.entry_keys = [self._id]
+                _data = self._get_nested_data()
+                self._show_data(window, values, schema, _data)
 
-                elif nested_type == 'dict':
-                    if _first:
-                        _data = self._get_nested_data()
-                        self._show_data(window, values, schema, _data)
-
-            else:
-                if event == "_id":
-                    self._id = values['_id']
-                    if not self._id:
-                        self.win_msg(window, f'"{ID_KEY}" is not selected')
-                        continue
-                    else:
-                        self.entry_keys = [self._id]
-                        _data = self._get_nested_data()
-                        self._show_data(window, values, schema, _data)
-
-            # if not nested:
+            # explore nested:
             if event.startswith("@enter_schema_"):
-                _pass = False
-                if not nested:
-                    if values["_id"]:
-                        _pass = True
-                if nested:
-                    if values["_nested_entry_"]:
-                        _pass = True
-                if _pass:
+                if values["_id"]:
                     nested_entry = event.replace("@enter_schema_", '')
                     nested_type = schema[nested_entry]["type"]
                     nested_schema = schema[nested_entry]["schema"]
 
-                    #  TODO - fix in SCHEMA so after list of dict, it will be clear that there is a need to enter deeper
+                    #  TODO - fix in SCHEMA so after list of dict it is be clear that there is a need to dig deeper
                     if 'schema' in nested_schema and 'type' in nested_schema:
                         nested_schema = nested_schema['schema']
 
@@ -623,7 +621,9 @@ class GUI(UIConfig, Messaging):
                     _data = self._get_nested_data()
 
                     # window.hide()
-                    self.edit_ui(nested_entry, nested_schema, nested=True, nested_type=nested_type)
+                    window.alpha_channel = 0.5
+                    self.edit_nested_ui(nested_entry, nested_schema, nested_type)
+                    window.alpha_channel = 1.0
                     # window.un_hide()
 
                     # exit nest
@@ -633,75 +633,157 @@ class GUI(UIConfig, Messaging):
                 else:
                     self.win_msg(window, f'"{ID_KEY}" is not selected')
 
+            # edit list
             if event.startswith("@edit_list_"):
-                entry = event.replace('@edit_list_', '')
-                try:
-                    data = eval(values[entry])
-                    assert isinstance(data, list)
-                except:
-                    self.quick_error("must represent a valid list-like string format")
-                    continue
+                self._edit_list(window, values, event)
 
-                data = self._edit_list_win(entry, data)
-                window[entry].update(value=data)
-
+            # select date
             if event.startswith('@get_date_'):
-                date = sg.popup_get_date()
-                if date:
-                    date = f'{date[2]}-{date[0]}-{date[1]}'
-                else:
-                    continue
-                entry = event.replace('@get_date_', '')
-                window[entry].update(value=date)
+                self._select_date(window, event)
 
+            # update , save
             if event in ["_update_", "_finish_", "_save_", ":Save"]:
                 _data = self._get_nested_data()
-                for key, val in values.items():
-                    if val:
-                        if val.strip() and key in schema:
-                            _pass = True
-                            try:
-                                try:
-                                    val = eval(val)
-                                    if isinstance(val, list):
-                                        pass
-                                    else:
-                                        val = str(val)
-                                except:
-                                    val = str(val)
-                            except:
-                                self.r_msg(f"ErrorEvalList:  {key}")
-                                self.quick_error(f"Error saving - see ")
-                                _pass = False
-                            if _pass:
-                                if isinstance(_data, list):
-                                    index = self._get_nested_index(values)
-                                    _data[index].update({key: val})
-                                else:
-                                    _data.update({key: val})
+                self._update_data(values, schema, _data)
 
                 if event == "_finish_":
                     window.Close()
                     break
 
                 if event in ["_save_", ":Save"]:
-                    dump(self.db_fpath, self.db)
-                    # TODO - the next line is required because of the fsclient.dump function pops-out the _id key
-                    self.db = load(self.db_fpath)
-                    sg.popup_quick(f"Saved!")
+                    self._dump_to_local()
 
             _first = False
 
-    def _get_nested_index(self, values):
-        return int(values['_nested_entry_'].strip())
+    def edit_nested_ui(self, nested_entry: str, nested_schema: dict, nested_type: str = 'dict'):
+        """
+        main auto-built ui for presenting and updating entries in a selected catalog
 
-    def _get_nested_data(self):
-        _data = self.db
-        for ek in self.entry_keys:
-            _data = _data[ek]
-        return _data
+        Parameters
+        ----------
+        nested_entry: str
+            the title of the nested_entry
+        nested_schema: dict
+            the schema for building the ui. uses the nested dictionary of the head schema.SCHEMA
+        nested_type: str
+            can get 'list' or 'dict'. By selection, builds accordingly
 
-    def _edit_list_win(self, entry: str, data: list):
+        Returns
+        -------
+
+        """
+        # sg.show_debugger_window()
+        assert nested_type in ['list', 'dict']
+
+        # init
+        layout = list()
+        gl = GlobalLayouts(layout)
+
+        # build layout
+        gl.title_lo(f"Database: {self.db_name}")
+        gl.title_lo(f"{self._id}", extend=True)
+        self.dynamic_nested_entry += ">>" + nested_entry
+        gl.title_lo(f"{self.dynamic_nested_entry}")
+        if nested_type == 'list':
+            _data = self._get_nested_data()
+            gl.nested_id_lo(_data)
+        gl.output_msg_lo()
+        gl.schema_lo(nested_schema)
+        gl.pady()
+        gl.update_button()
+        gl.finish_button(extend=True)
+        if nested_type == 'list':
+            gl.padx()
+            gl.add_button(extend=True)
+            gl.delete_button(extend=True)
+
+        # build window
+        window = sg.Window('', layout, resizable=True, finalize=True)
+
+        # run
+        _first = True
+        while True:
+            event, values = window.read(timeout=20)
+            if event is None or event == ":Exit":
+                window.close()
+                break
+
+            # control
+            if nested_type == 'list':
+                if values['_nested_index_']:
+                    window["_update_"].update(disabled=False)
+                    window["_finish_"].update(disabled=False)
+                    window["_add_"].update(disabled=False)
+                    window["_delete_"].update(disabled=False)
+                else:
+                    window["_update_"].update(disabled=True)
+                    window["_finish_"].update(disabled=True)
+                    window["_add_"].update(disabled=True)
+                    window["_delete_"].update(disabled=True)
+
+            # show data
+            # --list
+            if nested_type == 'list':
+                if event == '_nested_index_' and values['_nested_index_']:
+                    selected_index = self._get_nested_index(values)
+                    _data = self._get_nested_data()[selected_index]
+                    self._show_data(window, values, nested_schema, _data)
+            # --dict
+            elif nested_type == 'dict' and _first:
+                _data = self._get_nested_data()
+                self._show_data(window, values, nested_schema, _data)
+
+            # if not nested:
+            if event.startswith("@enter_schema_"):
+                if values["_nested_index_"]:
+                    _nested_entry = event.replace("@enter_schema_", '')
+                    _nested_type = nested_schema[_nested_entry]["type"]
+                    _nested_schema = nested_schema[_nested_entry]["schema"]
+
+                    #  TODO - fix in SCHEMA so after list of dict it is be clear that there is a need to dig deeper
+                    if 'schema' in _nested_schema and 'type' in _nested_schema:
+                        _nested_schema = _nested_schema['schema']
+
+                    # --extract relevant data
+                    self.entry_keys.append(_nested_entry)
+                    _data = self._get_nested_data()
+
+                    # --enter nesting
+                    # window.hide()
+                    window.alpha_channel = 0.5
+                    self.edit_nested_ui(_nested_entry, _nested_schema, _nested_type)
+                    window.alpha_channel = 1.0
+                    # window.un_hide()
+
+                    # --exit nesting
+                    self.entry_keys.remove(_nested_entry)
+                    self.dynamic_nested_entry = self.dynamic_nested_entry.rsplit('.', 1)[0]
+
+                else:
+                    self.win_msg(window, f'"{ID_KEY}" is not selected')
+
+            # edit list
+            if event.startswith("@edit_list_"):
+                self._edit_list(window, values, event)
+
+            # select date
+            if event.startswith('@get_date_'):
+                self._select_date(window, event)
+
+            # update , save
+            if event in ["_update_", "_finish_", "_save_", ":Save"]:
+                # -- always update first
+                _data = self._get_nested_data()
+                self._update_data(values, nested_schema, _data)
+                if event == "_finish_":
+                    window.Close()
+                    break
+                if event in ["_save_", ":Save"]:
+                    self._dump_to_local()
+
+            _first = False
+
+    def edit_list_ui(self, entry: str, data: list):
         data_string = yaml.safe_dump(data, indent=2, sort_keys=False)
         rows = len(data) + 3
         layout = list()
@@ -711,7 +793,6 @@ class GUI(UIConfig, Messaging):
         _gl.title_lo(entry)
         layout.append([sg.Multiline(data_string, size=(self.edit_list_len, rows), key='_data_')])
         _gl.update_button()
-
         # build window
         window = sg.Window('', layout, resizable=True, finalize=True)
 
@@ -731,7 +812,71 @@ class GUI(UIConfig, Messaging):
                     return data
 
                 except:
-                    self.quick_error("must represent a valid yaml list format")
+                    self._quick_error("must represent a valid yaml list format")
+
+    def _quick_error(self, msg):
+        sg.popup_error(msg,
+                       non_blocking=True, auto_close=True, auto_close_duration=3)
+
+    def _get_nested_index(self, values):
+        return int(values['_nested_index_'].strip())
+
+    def _get_nested_data(self):
+        _data = self.db
+        for ek in self.entry_keys:
+            _data = _data[ek]
+        return _data
+
+    def _dump_to_local(self):
+        dump(self.db_fpath, self.db)
+        # TODO - the next line is required because of the fsclient.dump function pops-out the _id key
+        self.db = load(self.db_fpath)
+        sg.popup_quick(f"Saved!")
+
+    def _update_data(self, values, schema, _data):
+        for key, val in values.items():
+            if val:
+                if val.strip() and key in schema:
+                    _pass = True
+                    try:
+                        try:
+                            val = eval(val)
+                            if isinstance(val, list):
+                                pass
+                            else:
+                                val = str(val)
+                        except:
+                            val = str(val)
+                    except:
+                        self.r_msg(f"ErrorEvalList:  {key}")
+                        self._quick_error(f"Error saving - see ")
+                        _pass = False
+                    if _pass:
+                        if isinstance(_data, list):
+                            index = self._get_nested_index(values)
+                            _data[index].update({key: val})
+                        else:
+                            _data.update({key: val})
+
+    def _select_date(self, window, event):
+        date = sg.popup_get_date()
+        if date:
+            date = f'{date[2]}-{date[0]}-{date[1]}'
+        else:
+            return
+        entry = event.replace('@get_date_', '')
+        window[entry].update(value=date)
+
+    def _edit_list(self, window, values, event):
+        entry = event.replace('@edit_list_', '')
+        try:
+            data = eval(values[entry])
+            assert isinstance(data, list)
+        except:
+            self._quick_error("must represent a valid list-like string format")
+            return
+        data = self.edit_list_ui(entry, data)
+        window[entry].update(value=data)
 
     def _show_data(self, window, values, schema, data):
         """
