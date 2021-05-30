@@ -5,7 +5,7 @@
 
 import os
 import PySimpleGUI as sg
-from regolith.schemas import SCHEMAS
+from regolith.schemas import SCHEMAS, EXEMPLARS
 from regolith.gui.config_ui import UIConfig
 from regolith.fsclient import load_yaml, load_json, dump_yaml, dump_json
 import yaml
@@ -19,7 +19,6 @@ IGNORE_KEYS = [DESCRIPTION_KEY, ID_KEY]
 # dynamic globals
 POPOUT_ERROR = False
 VERBOSE = 0
-
 
 def load(filepath, _type=LOADER_TYPE):
     """ load catalog """
@@ -200,6 +199,9 @@ class EntryLayouts(UIConfig):
     def input_lo(self, tooltip):
         self.layout[-1].extend([sg.Input('', size=self.input_size, tooltip=tooltip, key=self.entry)])
 
+    def checkbox_lo(self, tooltip):
+        self.layout[-1].extend([sg.Checkbox('', tooltip=tooltip, key=self.entry)])
+
     def multyline_lo(self, tooltip):
         self.layout[-1].extend([sg.Multiline('', size=self.multyline_size, tooltip=tooltip, key=self.entry)])
         self.layout[-1].extend([self.gl.icon_button(icon=self.EDIT_ICON,
@@ -310,11 +312,10 @@ class GlobalLayouts(UIConfig):
         self.layout[-1].extend([sg.DropDown([], key="_id", enable_events=True, readonly=True,
                                             size=self.selector_long_size)])
 
-    def nested_id_lo(self, nested_dict_list):
-        nested_entries = list(str(i) for i in range(len(nested_dict_list)))
+    def nested_id_lo(self, nested_entries):
         self.layout.append([sg.T("Select nested entry:", text_color=self.RED_COLOR)])
         self.layout[-1].extend([sg.DropDown(nested_entries, key="_nested_index_", enable_events=True, readonly=True,
-                                        size=self.selector_index_size)])
+                                            size=self.selector_index_size)])
 
     def menu_lo(self):
         menu = [
@@ -355,10 +356,13 @@ class GlobalLayouts(UIConfig):
                             el.nested_schema_lo(tooltip=tooltip)
                         elif ee.type == 'string':
                             el.input_lo(tooltip=tooltip)
-                        elif ee.type == 'date_lo':
+                        elif ee.type == 'date':
                             el.date_lo(tooltip=tooltip)
                         elif ee.type == 'list':
                             el.multyline_lo(tooltip=tooltip)
+                        elif ee.type == 'boolean':
+                            el.checkbox_lo(tooltip=tooltip)
+
 
                     elif ee.anyof_type:
                         el.types_lo(ee.anyof_type)
@@ -370,7 +374,7 @@ class GlobalLayouts(UIConfig):
                         else:
                             el.input_lo(tooltip=tooltip)
 
-        self.layout.append([sg.Column(box, size=(1000, 600), scrollable=True, vertical_scroll_only=True)])
+        self.layout.append([sg.Column(box, size=self.schema_box_size, scrollable=True, vertical_scroll_only=True)])
 
 
 class FilterLayouts(UIConfig):
@@ -492,15 +496,15 @@ class GUI(UIConfig, Messaging):
                     except:
                         self.win_msg(window, "Warning: Corrupted file")
 
-                    self.master_data_title = self.selected_db.replace(self.ext, '')
+                    self.head_data_title = self.selected_db.replace(self.ext, '')
                     try:
-                        schema = SCHEMAS[self.master_data_title]
+                        schema = SCHEMAS[self.head_data_title]
                     except KeyError:
-                        self.win_msg(window, f"SORRY! '{self.master_data_title}' schema does not exist.")
+                        self.win_msg(window, f"SORRY! '{self.head_data_title}' schema does not exist.")
                         continue
 
                     window.hide()
-                    self.edit_head_ui(self.master_data_title, schema)
+                    self.edit_head_ui(self.head_data_title, schema)
                     window.un_hide()
 
                 else:
@@ -520,7 +524,7 @@ class GUI(UIConfig, Messaging):
         Parameters
         ----------
         data_title: str
-            the title of the catalog or nested_entry
+            the title of the catalog
         schema: dict
             the schema for building the ui. Follows schemas.SCHEMA.
 
@@ -582,7 +586,7 @@ class GUI(UIConfig, Messaging):
 
             # specific filters
             if event == '_filter_':
-                if self.master_data_title == "projecta":
+                if self.head_data_title == "projecta":
                     # filter _id's by user
                     if values['_user_']:
                         initials = values['_user_'][:2]
@@ -621,7 +625,7 @@ class GUI(UIConfig, Messaging):
                     _data = self._get_nested_data()
 
                     # window.hide()
-                    window.alpha_channel = 0.5
+                    window.alpha_channel = 0.7
                     self.edit_nested_ui(nested_entry, nested_schema, nested_type)
                     window.alpha_channel = 1.0
                     # window.un_hide()
@@ -686,7 +690,8 @@ class GUI(UIConfig, Messaging):
         gl.title_lo(f"{self.dynamic_nested_entry}")
         if nested_type == 'list':
             _data = self._get_nested_data()
-            gl.nested_id_lo(_data)
+            nested_entries = self._get_nested_list_entries(_data)
+            gl.nested_id_lo(nested_entries)
         gl.output_msg_lo()
         gl.schema_lo(nested_schema)
         gl.pady()
@@ -713,21 +718,43 @@ class GUI(UIConfig, Messaging):
                 if values['_nested_index_']:
                     window["_update_"].update(disabled=False)
                     window["_finish_"].update(disabled=False)
-                    window["_add_"].update(disabled=False)
+                    # window["_add_"].update(disabled=False)
                     window["_delete_"].update(disabled=False)
                 else:
                     window["_update_"].update(disabled=True)
                     window["_finish_"].update(disabled=True)
-                    window["_add_"].update(disabled=True)
+                    # window["_add_"].update(disabled=True)
                     window["_delete_"].update(disabled=True)
 
-            # show data
             # --list
             if nested_type == 'list':
                 if event == '_nested_index_' and values['_nested_index_']:
-                    selected_index = self._get_nested_index(values)
+                    selected_index = self._get_selected_index(values)
                     _data = self._get_nested_data()[selected_index]
                     self._show_data(window, values, nested_schema, _data)
+                if event == '_add_':
+                    _data = self._get_nested_data()
+                    _data.append(self.build_skel_dict())
+                    last_index = len(_data) - 1
+                    self._show_data(window, values, nested_schema, _data[last_index])
+                    new_index_list = self._get_nested_list_entries(_data)
+                    window['_nested_index_'].update(values=new_index_list, value=last_index)
+                if event == '_delete_':
+                    answer = sg.popup_yes_no(f"Are you sure you want to delete entry # {values['_nested_index_']} ?")
+                    if answer == 'Yes':
+                        _data = self._get_nested_data()
+                        if len(_data) > 1:
+                            selected_index = self._get_selected_index(values)
+                            _data.pop(selected_index)
+                            last_index = len(_data) - 1
+                            self._show_data(window, values, nested_schema, _data[last_index])
+                            new_index_list = self._get_nested_list_entries(_data)
+                            window['_nested_index_'].update(values=new_index_list, value=last_index)
+                        elif len(_data) == 1:
+                            self._quick_error('will not delete last item in list')
+                            continue
+
+
             # --dict
             elif nested_type == 'dict' and _first:
                 _data = self._get_nested_data()
@@ -739,7 +766,6 @@ class GUI(UIConfig, Messaging):
                     _nested_entry = event.replace("@enter_schema_", '')
                     _nested_type = nested_schema[_nested_entry]["type"]
                     _nested_schema = nested_schema[_nested_entry]["schema"]
-
                     #  TODO - fix in SCHEMA so after list of dict it is be clear that there is a need to dig deeper
                     if 'schema' in _nested_schema and 'type' in _nested_schema:
                         _nested_schema = _nested_schema['schema']
@@ -750,7 +776,7 @@ class GUI(UIConfig, Messaging):
 
                     # --enter nesting
                     # window.hide()
-                    window.alpha_channel = 0.5
+                    window.alpha_channel = 0.7
                     self.edit_nested_ui(_nested_entry, _nested_schema, _nested_type)
                     window.alpha_channel = 1.0
                     # window.un_hide()
@@ -818,14 +844,18 @@ class GUI(UIConfig, Messaging):
         sg.popup_error(msg,
                        non_blocking=True, auto_close=True, auto_close_duration=3)
 
-    def _get_nested_index(self, values):
+    def _get_selected_index(self, values):
         return int(values['_nested_index_'].strip())
 
-    def _get_nested_data(self):
+    def _get_nested_data(self) -> dict or list:
         _data = self.db
         for ek in self.entry_keys:
             _data = _data[ek]
         return _data
+
+    def _get_nested_list_entries(self, _data):
+        nested_entries = list(str(i) for i in range(len(_data)))
+        return nested_entries
 
     def _dump_to_local(self):
         dump(self.db_fpath, self.db)
@@ -840,9 +870,9 @@ class GUI(UIConfig, Messaging):
                     _pass = True
                     try:
                         try:
-                            val = eval(val)
-                            if isinstance(val, list):
-                                pass
+                            _val = eval(val)
+                            if isinstance(_val, list):
+                                val = _val
                             else:
                                 val = str(val)
                         except:
@@ -853,7 +883,7 @@ class GUI(UIConfig, Messaging):
                         _pass = False
                     if _pass:
                         if isinstance(_data, list):
-                            index = self._get_nested_index(values)
+                            index = self._get_selected_index(values)
                             _data[index].update({key: val})
                         else:
                             _data.update({key: val})
@@ -924,6 +954,23 @@ class GUI(UIConfig, Messaging):
     def _update_selected_ids(self, window, selectec_ids):
         window['_id'].update(value='', values=[''] + list(selectec_ids))
 
+    def build_skel_dict(self):
+        exemplar = EXEMPLARS[self.head_data_title]
+        for ek in self.entry_keys[1:]:
+            exemplar = exemplar[ek]
+        if isinstance(exemplar, list):
+            exemplar = exemplar[0]
+        skel_dict = dict()
+        for k, v in exemplar.items():
+            if isinstance(v, list):
+                skel_dict.update({k: list()})
+                # if isinstance(v[0], dict):
+                #     skel_dict[k].append(self.build_skel_dict(v[0]))
+            # elif isinstance(v, dict):
+            #     skel_dict.update({k: self.build_skel_dict(v)})
+            else:
+                skel_dict.update({k: str()})
+        return skel_dict
 
 if __name__ == '__main__':
     GUI()()

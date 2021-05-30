@@ -15,6 +15,7 @@ class UIConfig:
     font_11b = (font_style, 11, 'bold')
 
     # standard_sizes
+    schema_box_size = (1000, 600)
     selector_short_size = (20, 8)
     selector_long_size = (40, 8)
     selector_index_size = (3, 8)
