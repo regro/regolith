@@ -115,6 +115,8 @@ class HtmlBuilder(BuilderBase):
                 serve_dates = get_dates(serve)
                 date = serve_dates.get("date")
                 if not date:
+                    date = serve_dates.get("end_date")
+                if not date:
                     date = serve_dates.get("begin_date")
                 serve["year"] = date.year
                 serve["month"] = date.month
