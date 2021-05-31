@@ -145,9 +145,10 @@ def get_dates(thing, date_field_prefix=None):
 
     Returns
     -------
-       dict containing datetime.date objects for begin_date end_date and date, and
+       dict containing datetime.date objects for valid begin_date end_date and date, and
        prefix_date if a prefix string was passed.  Missing and empty dates and
-       date items that contain the string 'tbd' return None.
+       date items that contain the string 'tbd' are not returned.  If no valid
+       date items are found, an empty dict is returned
 
     Description
     -----------
@@ -200,7 +201,6 @@ def get_dates(thing, date_field_prefix=None):
     prefix_input. The following dictionary is returned:
     {'begin_date': datetime.date(2019, 1, 1),
      'end_date': datetime.date(2020, 2, 29),
-     'date': None
     }
     '''
 
@@ -214,7 +214,7 @@ def get_dates(thing, date_field_prefix=None):
         else list(set([thing.get(i) for i in minimal_set]))
     if len(minimal_things) == 1 and not minimal_things[0]:
         print("WARNING: cannot find any dates")
-        dates = {'begin_date': None, 'end_date': None, 'date': None}
+        dates = {}
         return dates
     for key, value in thing.items():
         if key in minimal_set or key in ['month', 'day', 'begin_day', 'begin_month']:
@@ -287,7 +287,8 @@ def get_dates(thing, date_field_prefix=None):
         dates = {'begin_date': begin_date, 'end_date': end_date, datenames[3]: date, 'date': date}
     else:
         dates = {'begin_date': begin_date, 'end_date': end_date, 'date': date}
-    return dates
+    dates_no_nones = {k: v for k, v in dates.items() if v is not None}
+    return dates_no_nones
 
 
 def get_due_date(thing):
