@@ -1,5 +1,9 @@
 """Builder for CVs."""
+from copy import deepcopy
+from datetime import datetime, date 
+
 from regolith.builders.basebuilder import LatexBuilderBase
+from regolith.dates import get_dates
 from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
@@ -11,6 +15,7 @@ from regolith.tools import (
     make_bibtex_file,
     fuzzy_retrieval,
     dereference_institution, merge_collections_superior,
+    filter_employment_for_advisees,
 )
 
 
@@ -42,6 +47,8 @@ class CVBuilder(LatexBuilderBase):
         for p in self.gtx["people"]:
             # so we don't modify the dbs when de-referencing
             names = frozenset(p.get("aka", []) + [p["name"]])
+            begin_period = date(1650, 1, 1)
+
             pubs = filter_publications(
                 all_docs_from_collection(rc.client, "citations"),
                 names,
@@ -82,6 +89,34 @@ class CVBuilder(LatexBuilderBase):
             for ee in [emp, edu]:
                 for e in ee:
                     dereference_institution(e, self.gtx["institutions"])
+
+            undergrads = filter_employment_for_advisees(self.gtx["people"],
+                                                        begin_period,
+                                                        "undergrad")
+            masters = filter_employment_for_advisees(self.gtx["people"],
+                                                     begin_period,
+                                                     "ms")
+            currents = filter_employment_for_advisees(self.gtx["people"],
+                                                      begin_period,
+                                                      "phd")
+            graduateds = filter_employment_for_advisees(self.gtx["people"],
+                                                        begin_period,
+                                                        "phd")
+            postdocs = filter_employment_for_advisees(self.gtx["people"],
+                                                      begin_period,
+                                                      "postdoc")
+            visitors = filter_employment_for_advisees(self.gtx["people"],
+                                                      begin_period,
+                                                      "visitor-unsupported")
+            iter = deepcopy(graduateds)
+            for g in iter:
+                if g.get("active"):
+                    graduateds.remove(g)
+            iter = deepcopy(currents)
+            for g in iter:
+                if not g.get("active"):
+                    currents.remove(g)
+
             self.render(
                 "cv.tex",
                 p["_id"] + ".tex",
@@ -89,6 +124,12 @@ class CVBuilder(LatexBuilderBase):
                 title=p.get("name", ""),
                 aghs=aghs,
                 service=service,
+                undergrads=undergrads,
+                masters=masters,
+                currentphds=currents,
+                graduatedphds=graduateds,
+                postdocs=postdocs,
+                visitors=visitors,
                 pubs=pubs,
                 names=names,
                 bibfile=bibfile,

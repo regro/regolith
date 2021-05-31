@@ -19,9 +19,11 @@
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
+\usepackage{times}
+\usepackage{enumitem}
 \usepackage[utf8]{inputenc}
 \usepackage{longtable}
-
+\setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
 %-----------------------------------------------------------
 % Hyperlink setup
 \hypersetup{
@@ -61,6 +63,11 @@
 \setlength\LTleft{0.25in}
 \setlength\LTright{0.25in}
 
+\newlength{\subitemsoffset}
+\setlength{\subitemsoffset}{-24pt}
+\newlength{\itemsoffset}
+\setlength{\itemsoffset}{-24pt}
+
 
 %-----------------------------------------------------------
 %Custom commands
@@ -81,7 +88,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
 }
 
 \newcommand{\ressubheading}[4]{
@@ -92,7 +99,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
 }
 
 \newcommand{\ressubheadingitemslongtitle}[5]{
@@ -103,7 +110,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-32pt}
+    \vspace{\subitemsoffset}
     \begin{itemize}\renewcommand{\labelitemi}{}
         \item\begin{itemize}
         #5
@@ -119,7 +126,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-32pt}
+    \vspace{\subitemsoffset}
     \begin{itemize}\renewcommand{\labelitemi}{}
         \item\begin{itemize}
         #5
@@ -202,8 +209,8 @@ The University of South Carolina & scopatz@cec.sc.edu \\
 \ressubheadingitems{The University of South Carolina}
     {Columbia, SC}
     {Assistant Professor, Mechanical Engineering Department}
-    {2015 -
-      present}
+    {Jan 2015 -
+      Dec 2021}
     { 
         \resitem{Cyclus: An agent-based, discrete time nuclear fuel cycle simulator.}
      
@@ -290,9 +297,8 @@ The University of South Carolina & scopatz@cec.sc.edu \\
     {May 2018 -
       May 2019}
     {
-
+      
     }
-
 
 
 
@@ -311,6 +317,62 @@ NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
     \vphantom{E}
 \end{longtable}
 \end{center}\vspace*{-16pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\ressubheadingitemslongtitle{Cyclus}
+    {Project Lead}
+    {Agent-Based Nuclear Fuel Cycle Simulator}
+    {Jun 2013 -
+      Jul 2015}
+    {
+      
+        \resitem{Discrete facilities with discrete material transactions}
+      
+        \resitem{Low barrier to entry, rapid payback to adoption}
+      
+      \resitem{Website: \url{http://fuelcycle.org/} }
+    }
+\vspace{0.5em}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Graduate and Postgraduate advising}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{ Current Ph.D. students }
+    \begin{itemize}[label=$-$]
+    
+        \item   Simon J. L. Billinge\\
+    
+    \end{itemize}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Masters advising }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{itemize}[label=$-$]
+    
+        \item   Anthony Scopatz\textemdash Assistant Professor, Mechanical Engineering Department  \\
+    
+    \end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Undergraduate research students }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{itemize}[label=$-$]
+    
+        \item   Anthony Scopatz\textemdash Assistant Professor, Mechanical Engineering Department  \\
+    
+    \end{itemize}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Service}
@@ -337,28 +399,6 @@ National Steering Committee\dotfill & \hspace{.1in} &2018-2021\\
 
 \end{enumerate}
 
-
-
-%\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Projects}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\ressubheadingitemslongtitle{Cyclus}
-    {Project Lead}
-    {Agent-Based Nuclear Fuel Cycle Simulator}
-    {Jun 2013 -
-      Jul 2015}
-    {
-      
-        \resitem{Discrete facilities with discrete material transactions}
-      
-        \resitem{Low barrier to entry, rapid payback to adoption}
-      
-      \resitem{Website: \url{http://fuelcycle.org/} }
-    }
-\vspace{0.5em}
 
 
 %\clearpage

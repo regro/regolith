@@ -19,9 +19,11 @@
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
+\usepackage{times}
+\usepackage{enumitem}
 \usepackage[utf8]{inputenc}
 \usepackage{longtable}
-
+\setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
 %-----------------------------------------------------------
 % Hyperlink setup
 \hypersetup{
@@ -61,6 +63,11 @@
 \setlength\LTleft{0.25in}
 \setlength\LTright{0.25in}
 
+\newlength{\subitemsoffset}
+\setlength{\subitemsoffset}{-24pt}
+\newlength{\itemsoffset}
+\setlength{\itemsoffset}{-24pt}
+
 
 %-----------------------------------------------------------
 %Custom commands
@@ -81,7 +88,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
 }
 
 \newcommand{\ressubheading}[4]{
@@ -92,7 +99,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
 }
 
 \newcommand{\ressubheadingitemslongtitle}[5]{
@@ -103,7 +110,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-32pt}
+    \vspace{\subitemsoffset}
     \begin{itemize}\renewcommand{\labelitemi}{}
         \item\begin{itemize}
         #5
@@ -119,7 +126,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-32pt}
+    \vspace{\subitemsoffset}
     \begin{itemize}\renewcommand{\labelitemi}{}
         \item\begin{itemize}
         #5
@@ -257,6 +264,68 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 \end{center}\vspace*{-16pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for proj in projects %}
+{% set me = proj['team'][0] %}
+\ressubheadingitemslongtitle{ {{-proj['name']-}} }
+    { {{-me['position']-}} }
+    { {{-proj['description']-}} }
+    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
+      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
+    {
+      {% for o in proj['other'] %}
+        \resitem{ {{-latex_safe(o)-}} }
+      {% endfor %}
+      {% if proj['website'] and len(proj['website']) > 0 )%}
+      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
+      {% endif %}
+\vspace{0.5em}
+{% endfor %}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Graduate and Postgraduate advising}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% if len(currentphds) > 0 %}
+\subsection*{ Current Ph.D. students }
+    \begin{itemize}[label=$-$]
+    {% for ugr in currentphds %}
+        \item   {{latex_safe(ugr['name'])-}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+{% if len(graduatedphds) > 0 %}
+\subsection*{ Graduated Ph.D. students }
+    \begin{itemize}[label=$-$]
+    {% for ugr in graduatedphds %}
+        \item   {{latex_safe(ugr['name']) }}\textemdash Graduated {{ugr['end_year']}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+
+{% if len(masters) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Masters advising }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{itemize}[label=$-$]
+    {% for ugr in masters %}
+        \item   {{latex_safe(ugr['name'])-}} \textemdash {{latex_safe(ugr['role'])}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+
+{% if len(undergrads) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Undergraduate research students }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{itemize}[label=$-$]
+    {% for ugr in undergrads %}
+        \item   {{latex_safe(ugr['name'])-}} \textemdash {{latex_safe(ugr['role'])}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Service}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{-2pt}
@@ -280,26 +349,6 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 \end{enumerate}
 {% endif %}
 
-
-%\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Projects}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for proj in projects %}
-{% set me = proj['team'][0] %}
-\ressubheadingitemslongtitle{ {{-proj['name']-}} }
-    { {{-me['position']-}} }
-    { {{-proj['description']-}} }
-    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
-      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
-    {
-      {% for o in proj['other'] %}
-        \resitem{ {{-latex_safe(o)-}} }
-      {% endfor %}
-      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
-    }
-\vspace{0.5em}
-{% endfor %}
 
 %\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

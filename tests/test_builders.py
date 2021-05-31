@@ -10,11 +10,11 @@ from regolith.broker import load_db
 from regolith.main import main
 
 builder_map = [
+    "cv",
     "review-prop",
     "annual-activity",
     "beamplan",
     "current-pending",
-    "cv",
     "figure",
     "html",
     "internalhtml",
