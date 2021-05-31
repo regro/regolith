@@ -277,9 +277,10 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
       {% for o in proj['other'] %}
         \resitem{ {{-latex_safe(o)-}} }
       {% endfor %}
-      {% if proj['website'] and len(proj['website']) > 0 )%}
+      {% if proj['website'] and len(proj['website']) > 0 %}
       \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
       {% endif %}
+      }
 \vspace{0.5em}
 {% endfor %}
 
