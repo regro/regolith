@@ -393,7 +393,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 
 
 %\clearpage
-{% if 'teaching' in p and len(p['teaching'] > 0) %}
+{% if 'teaching' in p and len(p['teaching']) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Teaching Experience}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -429,8 +429,7 @@ $^\mathrm{ {{ pres['end_day_suffix']-}} }$
 {% endfor %}
 {% endif %}
 
-
-
+            
 {%if 'membership' in p and len(p['membership']) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Memberships}

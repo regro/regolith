@@ -600,9 +600,9 @@ def filter_presentations(people, presentations, institutions, target,
             for author in pauthors
         ]
         authorids = [
-            author["_id"]
-            for author in authors
-            if author is not None
+            author["_id"] if author is not None
+            else author
+            for author in authors 
         ]
         if target in authorids:
             firstclean.append(pres)
@@ -679,45 +679,14 @@ def filter_presentations(people, presentations, institutions, target,
             except AttributeError:
                 print(f"presentation {pres.get('_id')} has no {day}date")
         if "institution" in pres:
-            try:
-                pres["institution"] = fuzzy_retrieval(
-                    institutions,
-                    ["aka", "name", "_id"],
-                    pres["institution"],
-                    case_sensitive=False,
-                )
-                if pres["institution"] is None:
-                    print(
-                        "WARNING: department {} not found in"
-                        " {} in institutions.yml.  Pres list will"
-                        " build but please check this entry carefully and "
-                        "rerun to remove "
-                        "errors".format(pres["institution"], pres["_id"])
-                    )
-            except:
-                sys.exit(
-                    "ERROR: institution {} not found in "
-                    "institutions.yml.  Please add and "
-                    "rerun".format(pres["institution"])
-                )
-            if "department" in pres:
-                try:
-                    pres["department"] = pres["institution"][
-                        "departments"
-                    ][pres["department"]]
-                except:
-                    print(
-                        "WARNING: department {} not found in"
-                        " {} in institutions.yml.  Pres list will"
-                        " build but please check this entry carefully and"
-                        " please add the dept to the institution!".format(
-                            pres["department"],
-                            pres["institution"],
-                        )
-                    )
-                    pres["department"] = {
-                        "name": pres["department"]
-                    }
+            inst = {"institution": pres.get("institution"),
+                    "department": pres.get("department")}
+            dereference_institution(inst, institutions)
+            pres["institution"] = {'name': inst.get("institution"),
+                                   'city': inst.get("city"),
+                                   'state': inst.get("state"),
+                                   'country': inst.get("country")}
+            pres["department"] = {'name': inst.get("department")}
     if len(presclean) > 0:
         presclean = sorted(
             presclean,
@@ -1027,6 +996,9 @@ def dereference_institution(input_record, institutions, verbose=False):
             state_country = db_inst.get("state")
         else:
             state_country = db_inst.get("country")
+        input_record["city"] = db_inst["city"]
+        input_record["state"] = db_inst.get("state")
+        input_record["country"] = db_inst.get("country")
         input_record["location"] = "{}, {}".format(db_inst["city"],
                                                    state_country)
         if verbose:
@@ -1034,12 +1006,14 @@ def dereference_institution(input_record, institutions, verbose=False):
                 print("WARNING: no departments in {}. {} sought".format(
                     db_inst.get("_id"), inst))
         if "department" in input_record and db_inst.get("departments"):
-            input_record["department"] = fuzzy_retrieval(
-                [db_inst["departments"]], ["name", "aka"],
+            for k, v in db_inst.get("departments").items():
+                v.update({"_id": k})
+            extracted_department = fuzzy_retrieval(
+                db_inst["departments"].values(), ["name", "aka", "_id"],
                 input_record["department"]
             )
-        else:
-            input_record["department"] = inst
+            if extracted_department:
+               input_record["department"] = extracted_department.get("name")
 
 
 def merge_collections_all(a, b, target_id):

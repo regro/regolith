@@ -19,7 +19,11 @@
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
+\usepackage{times}
+\usepackage{enumitem}
 \usepackage[utf8]{inputenc}
+\usepackage{longtable}
+\setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
 
 %-----------------------------------------------------------
 % Hyperlink setup
@@ -58,6 +62,10 @@
 \setlength{\topskip}{0in}
 \setlength{\voffset}{0.1in}
 
+\newlength{\subitemsoffset}
+\setlength{\subitemsoffset}{-24pt}
+\newlength{\itemsoffset}
+\setlength{\itemsoffset}{-24pt}
 
 %-----------------------------------------------------------
 %Custom commands
@@ -78,7 +86,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
 }
 
 \newcommand{\ressubheading}[4]{
@@ -89,7 +97,23 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
+}
+
+\newcommand{\ressubheadingitemslongtitle}[5]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{p{6.5in}}{\textbf{#1}\cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{p{6.5in}}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{\subitemsoffset}
+    \begin{itemize}\renewcommand{\labelitemi}{}
+        \item\begin{itemize}
+        #5
+        \end{itemize}
+    \end{itemize}
 }
 
 \newcommand{\ressubheadingitems}[5]{
@@ -100,7 +124,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-32pt}
+    \vspace{\subitemsoffset}
     \begin{itemize}\renewcommand{\labelitemi}{}
         \item\begin{itemize}
         #5
@@ -232,12 +256,52 @@ The University of South Carolina & scopatz@cec.sc.edu \\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Awards \& Honors}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{-2pt}
+\begin{center}
+\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
+Omega Laser User's Group Travel Award (\$1,100)\dotfill & \hspace{.1in} &2013\\
+NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
+
+    \vphantom{E}
+\end{longtable}
+\end{center}\vspace*{-16pt}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\ressubheadingitemslongtitle{Cyclus}
+    {Project Lead}
+    {Agent-Based Nuclear Fuel Cycle Simulator}
+    {Jun 2013 -
+      Jul 2015}
+    {
+      
+        \resitem{Discrete facilities with discrete material transactions}
+      
+        \resitem{Low barrier to entry, rapid payback to adoption}
+      
+      
+      \resitem{Website: \url{http://fuelcycle.org/} }
+      
+      }
+\vspace{0.5em}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Grants as Lead PI}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {\Large\underline{Lifetime Total Grant Amount as PI:} \textbf{ \$988,785.00 }}
 
 
-\ressubheadingitems{SymPy 1.1 Release Support}
+\ressubheadingitemslongtitle{SymPy 1.1 Release Support}
     { \$3,000.00}
     {NumFOCUS Small Development Grants }
     {May 2030 -
@@ -251,7 +315,7 @@ The University of South Carolina & scopatz@cec.sc.edu \\
       
     }
 
-\ressubheadingitems{SymPy 1.1 Release Support}
+\ressubheadingitemslongtitle{SymPy 1.1 Release Support}
     { \$3,000.00}
     {NumFOCUS Small Development Grants }
     {Jun 2019 -
@@ -265,61 +329,20 @@ The University of South Carolina & scopatz@cec.sc.edu \\
       
     }
 
-\ressubheadingitems{DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery}
+\ressubheadingitemslongtitle{DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery}
     { \$982,785.00}
     {NSF DMREF DMREF-1534910}
     {May 2018 -
       May 2019}
     {
       
-        \resitem{
-            \href{http://www.nsf.gov/pubs/2014/nsf14591/nsf14591.htm}{Call for Proposals}.
-        }
-      
     }
 
-      
 
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Awards \& Honours}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{-2pt}
-\begin{center}\begin{tabular*}{6.6in}{p{6in} c r}
-Omega Laser User's Group Travel Award (\$1,100)\dotfill & \hspace{.1in} &2013\\
-NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
 
-    \vphantom{E}
-\end{tabular*}
-\end{center}\vspace*{-16pt}
-
-
-
-%\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Software Projects}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\ressubheadingitems{Cyclus}
-    {Project Lead}
-    {Agent-Based Nuclear Fuel Cycle Simulator}
-    {Jun 2013 -
-      Jul 2015}
-    {
-      
-        \resitem{Discrete facilities with discrete material transactions}
-      
-        \resitem{Low barrier to entry, rapid payback to adoption}
-      
-      \resitem{Website: \url{http://fuelcycle.org/} }
-    }
-\vspace{0.5em}
-
-
-%\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Memberships}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -331,7 +354,6 @@ NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
 \ressubheadingshort{Python Software Foundation}
     {\em{2013-present} }
     {Fellow}
-
 
 
 
