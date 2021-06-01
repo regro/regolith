@@ -665,10 +665,15 @@ def filter_presentations(people, presentations, institutions, target,
         else:
             presdate = get_dates(pres).get('begin_date')
         pres["begin_month"] = presdate.month
+        pres["begin_year"] = presdate.year
+        pres["begin_day"] = presdate.day
+        end_date = get_dates(pres).get("end_date")
+        if end_date:
+            pres["end_day"] = end_date.day
         pres["date"] = presdate
         for day in ["begin_", "end_", ""]:
             try:
-                pres["{}_day_suffix".format(day)] = number_suffix(
+                pres["{}day_suffix".format(day)] = number_suffix(
                     get_dates(pres).get(f'{day}date').day
                 )
             except AttributeError:

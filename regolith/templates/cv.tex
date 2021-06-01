@@ -359,6 +359,38 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 \end{enumerate}
 {% endif %}
 
+{% if len(presentations) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Presentations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+{% for pres in presentations %}
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
+sentencecase(pres['title']))-}} },
+{%-set inst = pres['institution'] %}
+{%-if pres['type'] in ['colloquium', 'seminar']%}
+{\it {{ latex_safe(pres['type']).title()-}} },
+{\it {{ latex_safe(pres['department']['name'])-}} },
+{\it {{ latex_safe(inst['name'])-}} },
+{\it {{ latex_safe(inst['city'])-}} }\
+{\it {{ latex_safe(inst['state'])-}}},
+{%-else %}
+{\it {{ latex_safe(pres['meeting_name'])-}} },
+{\it {{ latex_safe(pres['location'])-}} },
+{%-endif %}
+{ {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
+{{-pres['begin_day']-}}%
+{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']%}
+$^\mathrm{ {{ pres['begin_day_suffix']}} }$
+{%-else %}
+--{{ pres['end_day']-}}
+$^\mathrm{ {{ pres['end_day_suffix']-}} }$
+{%-endif %}
+( {{-pres['begin_year']-}} ).
+{% endfor %}
+\end{enumerate}
+{% endif %}
+
 
 %\clearpage
 {% if 'teaching' in p and len(p['teaching'] > 0) %}

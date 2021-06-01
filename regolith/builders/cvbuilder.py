@@ -5,6 +5,7 @@ from datetime import datetime, date
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
+from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
@@ -24,7 +25,7 @@ class CVBuilder(LatexBuilderBase):
 
     btype = "cv"
     needed_dbs = ['institutions', 'people', 'grants', 'citations', 'projects',
-                  'proposals']
+                  'proposals', 'presentations']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -35,6 +36,9 @@ class CVBuilder(LatexBuilderBase):
             all_docs_from_collection(rc.client, "people"),
             key=position_key,
             reverse=True,
+        )
+        gtx["presentations"] = sorted(
+            all_docs_from_collection(rc.client, "presentations"), key=_id_key
         )
         gtx["institutions"] = sorted(
             all_docs_from_collection(rc.client, "institutions"), key=_id_key
@@ -142,6 +146,8 @@ class CVBuilder(LatexBuilderBase):
                 education=edu,
                 employment=emp,
                 presentations=presentations,
+                sentencecase=sentencecase,
+                monthstyle=month_fullnames,
                 projects=projs,
                 pi_grants=pi_grants,
                 pi_amount=pi_amount,
