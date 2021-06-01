@@ -44,7 +44,7 @@ class CVBuilder(LatexBuilderBase):
         rc = self.rc
         for p in self.gtx["people"]:
             # so we don't modify the dbs when de-referencing
-            names = frozenset(p.get("aka", []) + [p["name"]])
+            names = frozenset(p.get("aka", []) + [p["name"]] + [p["_id"]])
             begin_period = date(1650, 1, 1)
 
             pubs = filter_publications(
