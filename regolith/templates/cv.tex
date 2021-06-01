@@ -184,6 +184,44 @@
     }
 {% endfor %}
 
+{% if len(aghs) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Awards \& Honors}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{-2pt}
+\begin{center}
+\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
+{% for agh in aghs %}
+    {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
+{% endfor %}
+    \vphantom{E}
+\end{longtable}
+\end{center}\vspace*{-16pt}
+{% endif %}
+
+{% if len(projects) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for proj in projects %}
+{% set me = proj['team'][0] %}
+\ressubheadingitemslongtitle{ {{-proj['name']-}} }
+    { {{-me['position']-}} }
+    { {{-proj['description']-}} }
+    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
+      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
+    {
+      {% for o in proj['other'] %}
+        \resitem{ {{-latex_safe(o)-}} }
+      {% endfor %}
+      {% if proj['website'] and len(proj['website']) > 0 %}
+      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
+      {% endif %}
+      }
+\vspace{0.5em}
+{% endfor %}
+{% endif %}
+
 
 {% if len(pi_grants) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,41 +287,9 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     }
 {% endfor %}
 {% endif %}
+              
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Awards \& Honors}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{-2pt}
-\begin{center}
-\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
-{% for agh in aghs %}
-    {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
-{% endfor %}
-    \vphantom{E}
-\end{longtable}
-\end{center}\vspace*{-16pt}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Projects}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for proj in projects %}
-{% set me = proj['team'][0] %}
-\ressubheadingitemslongtitle{ {{-proj['name']-}} }
-    { {{-me['position']-}} }
-    { {{-proj['description']-}} }
-    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
-      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
-    {
-      {% for o in proj['other'] %}
-        \resitem{ {{-latex_safe(o)-}} }
-      {% endfor %}
-      {% if proj['website'] and len(proj['website']) > 0 %}
-      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
-      {% endif %}
-      }
-\vspace{0.5em}
-{% endfor %}
-
+{% if len(currentphds) > 0 or len(graduatedphds) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Graduate and Postgraduate advising}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -303,10 +309,11 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     {%endfor%}
     \end{itemize}
 {% endif %}
+{% endif %}
 
 {% if len(masters) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{ Masters advising }
+\resheading{ Masters students advised }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \begin{itemize}[label=$-$]
     {% for ugr in masters %}
@@ -326,6 +333,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     \end{itemize}
 {% endif %}
 
+{% if len(service) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Service}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -338,10 +346,11 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     \vphantom{E}
 \end{longtable}
 \end{center}\vspace*{-16pt}
+{% endif %}
 
-{%if len(pubs) > 0%}
+{% if len(pubs) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{All Publications}
+\resheading{Publications}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}
 {% for pub in pubs %}
@@ -352,6 +361,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 
 
 %\clearpage
+{% if 'teaching' in p and len(p['teaching'] > 0) %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Teaching Experience}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -385,6 +395,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
       {% endif %}
     }
 {% endfor %}
+{% endif %}
 
 
 

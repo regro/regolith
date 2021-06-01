@@ -3,7 +3,6 @@ from copy import deepcopy
 from datetime import datetime, date 
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import get_dates
 from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
@@ -13,7 +12,6 @@ from regolith.tools import (
     filter_grants,
     awards_grants_honors,
     make_bibtex_file,
-    fuzzy_retrieval,
     dereference_institution, merge_collections_superior,
     filter_employment_for_advisees,
 )
