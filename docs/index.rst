@@ -235,7 +235,7 @@ OK, your Regolith is working.  If it isn't working, consider joining, browsing
 and posting questions to the `regolith-users <https://groups.google.com/u/1/g/regolith-users>`_ 
 Google group.
 
-What next?
+Quick(ish) Start
 ================
 OK, let's use Regolith to build our cv.  Why not.  again, in a terminal navigate
 to the top level directory of your database (where the :bash:`regolithrc.json` 
@@ -250,7 +250,50 @@ build them into your academic cv according to a pre-determined template.  The
 current template builds the cv using latex.  If your computer has latex installed
 and Regolith can find it, your cv should appear as a pdf document in the directory
 :bash:`my-cv-db/_build` (or more generally :bash:`<path>/<to>/<database_name>/_build`)  All your built documents will appera in the :bash:`_build`
-directory.
+directory.  
+
+If not, let's have Regolith build the latex source file for the cv but without trying 
+render it to PDF, 
+
+.. code-block:: sh
+
+    $ regolith build cv --no-pdf
+
+The latex source is a text file and you can open it in a text editor.  You can
+render it by opening a free account at http://overleaf.com starting a new blank
+project, uploading the :bash:`<filename>.tex` and :bash:`<filename>.bib` files to
+that project and hitting the :bash:`recompile` button.
+
+Whether it builds on your computer or on overleaf, it should look something like
+
+.. image:: ../_static/cv.pdf
+
+If, for some reason, the publication list doesn't render 
+correctly, try running the latex command again.  If you are going to
+do much building with regolith it is definitely recommended to install latex on
+your computer, such as MikTeX for windows (latex comes installed with many linux
+systems.
+
+What Next?
+===========
+
+You have not spent too much time building your database yet, but you
+can already build a number of different things.  Try building your
+resume (:bash:`$ regolith build resume`), your publication list 
+(:bash:`$ regolith build publist`) and your presentation list
+(:bash:`$ regolith build preslist`).  You can even build a web-page
+for your group (:bash:`$ regolith build html`).  It will look pretty
+ugly until we set it up properly with a nice template, but the conten
+will be built from the databases.
+
+To see everything you can build, type :bash:`$ regolith build --help`.
+To build some of those things you will need more collections, for example,
+:bash:`proposals` and :bash:`grants` collections
+
+
+
+
+
 
 Tutorials
 =========
