@@ -12,8 +12,10 @@ from regolith.tools import (
     filter_grants,
     awards_grants_honors,
     make_bibtex_file,
-    dereference_institution, merge_collections_superior,
     filter_employment_for_advisees,
+    dereference_institution, 
+    merge_collections_superior, 
+    filter_presentations,
 )
 
 
@@ -74,6 +76,12 @@ class CVBuilder(LatexBuilderBase):
             grants = merge_collections_superior(just_proposals,
                                                 just_grants,
                                                 "proposal_id")
+            presentations = filter_presentations(self.gtx["people"],
+                               self.gtx["presentations"],
+                               self.gtx["institutions"],
+                               p.get("_id"),
+                               statuses=["accepted"])
+
             for grant in grants:
                 for member in grant.get("team"):
                     dereference_institution(member, self.gtx["institutions"])
@@ -133,6 +141,7 @@ class CVBuilder(LatexBuilderBase):
                 bibfile=bibfile,
                 education=edu,
                 employment=emp,
+                presentations=presentations,
                 projects=projs,
                 pi_grants=pi_grants,
                 pi_amount=pi_amount,
