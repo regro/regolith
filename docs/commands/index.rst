@@ -8,7 +8,7 @@ Shell commands for regolith
 .. code-block:: bash
 
 	usage: regolith [-h]
-	                {rc,add,ingest,store,app,grade,build,deploy,email,classlist,json-to-yaml,yaml-to-json,validate}
+	                {rc,add,ingest,store,app,grade,build,helper,deploy,email,classlist,json-to-yaml,yaml-to-json,validate}
 	                ...
 
 	optional arguments:
@@ -26,6 +26,7 @@ Shell commands for regolith
 	    grade               starts up a flask app for adding grades to the
 	                        database.
 	    build               builds various available targets
+        helper              runs an available helper target
 	    deploy              deploys what was built by regolith
 	    email               automates emailing
 	    classlist           updates classlist information from file
@@ -41,6 +42,7 @@ Shell commands for regolith
     add
     app
     build
+    helper
     classlist
     deploy
     email
