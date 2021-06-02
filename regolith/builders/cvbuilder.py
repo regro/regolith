@@ -1,7 +1,11 @@
 """Builder for CVs."""
+from copy import deepcopy
+from datetime import datetime, date 
+
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
+from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
     all_docs_from_collection,
     filter_publications,
@@ -9,8 +13,10 @@ from regolith.tools import (
     filter_grants,
     awards_grants_honors,
     make_bibtex_file,
-    fuzzy_retrieval,
-    dereference_institution, merge_collections_superior,
+    filter_employment_for_advisees,
+    dereference_institution, 
+    merge_collections_superior, 
+    filter_presentations,
 )
 
 
@@ -19,7 +25,7 @@ class CVBuilder(LatexBuilderBase):
 
     btype = "cv"
     needed_dbs = ['institutions', 'people', 'grants', 'citations', 'projects',
-                  'proposals']
+                  'proposals', 'presentations']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -31,6 +37,9 @@ class CVBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         )
+        gtx["presentations"] = sorted(
+            all_docs_from_collection(rc.client, "presentations"), key=_id_key
+        )
         gtx["institutions"] = sorted(
             all_docs_from_collection(rc.client, "institutions"), key=_id_key
         )
@@ -41,7 +50,9 @@ class CVBuilder(LatexBuilderBase):
         rc = self.rc
         for p in self.gtx["people"]:
             # so we don't modify the dbs when de-referencing
-            names = frozenset(p.get("aka", []) + [p["name"]])
+            names = frozenset(p.get("aka", []) + [p["name"]] + [p["_id"]])
+            begin_period = date(1650, 1, 1)
+
             pubs = filter_publications(
                 all_docs_from_collection(rc.client, "citations"),
                 names,
@@ -69,6 +80,12 @@ class CVBuilder(LatexBuilderBase):
             grants = merge_collections_superior(just_proposals,
                                                 just_grants,
                                                 "proposal_id")
+            presentations = filter_presentations(self.gtx["people"],
+                               self.gtx["presentations"],
+                               self.gtx["institutions"],
+                               p.get("_id"),
+                               statuses=["accepted"])
+
             for grant in grants:
                 for member in grant.get("team"):
                     dereference_institution(member, self.gtx["institutions"])
@@ -82,6 +99,34 @@ class CVBuilder(LatexBuilderBase):
             for ee in [emp, edu]:
                 for e in ee:
                     dereference_institution(e, self.gtx["institutions"])
+
+            undergrads = filter_employment_for_advisees(self.gtx["people"],
+                                                        begin_period,
+                                                        "undergrad")
+            masters = filter_employment_for_advisees(self.gtx["people"],
+                                                     begin_period,
+                                                     "ms")
+            currents = filter_employment_for_advisees(self.gtx["people"],
+                                                      begin_period,
+                                                      "phd")
+            graduateds = filter_employment_for_advisees(self.gtx["people"],
+                                                        begin_period,
+                                                        "phd")
+            postdocs = filter_employment_for_advisees(self.gtx["people"],
+                                                      begin_period,
+                                                      "postdoc")
+            visitors = filter_employment_for_advisees(self.gtx["people"],
+                                                      begin_period,
+                                                      "visitor-unsupported")
+            iter = deepcopy(graduateds)
+            for g in iter:
+                if g.get("active"):
+                    graduateds.remove(g)
+            iter = deepcopy(currents)
+            for g in iter:
+                if not g.get("active"):
+                    currents.remove(g)
+
             self.render(
                 "cv.tex",
                 p["_id"] + ".tex",
@@ -89,11 +134,20 @@ class CVBuilder(LatexBuilderBase):
                 title=p.get("name", ""),
                 aghs=aghs,
                 service=service,
+                undergrads=undergrads,
+                masters=masters,
+                currentphds=currents,
+                graduatedphds=graduateds,
+                postdocs=postdocs,
+                visitors=visitors,
                 pubs=pubs,
                 names=names,
                 bibfile=bibfile,
                 education=edu,
                 employment=emp,
+                presentations=presentations,
+                sentencecase=sentencecase,
+                monthstyle=month_fullnames,
                 projects=projs,
                 pi_grants=pi_grants,
                 pi_amount=pi_amount,

@@ -19,9 +19,11 @@
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
+\usepackage{times}
+\usepackage{enumitem}
 \usepackage[utf8]{inputenc}
 \usepackage{longtable}
-
+\setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
 %-----------------------------------------------------------
 % Hyperlink setup
 \hypersetup{
@@ -61,6 +63,11 @@
 \setlength\LTleft{0.25in}
 \setlength\LTright{0.25in}
 
+\newlength{\subitemsoffset}
+\setlength{\subitemsoffset}{-24pt}
+\newlength{\itemsoffset}
+\setlength{\itemsoffset}{-24pt}
+
 
 %-----------------------------------------------------------
 %Custom commands
@@ -81,7 +88,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
 }
 
 \newcommand{\ressubheading}[4]{
@@ -92,7 +99,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
 }
 
 \newcommand{\ressubheadingitemslongtitle}[5]{
@@ -103,7 +110,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-32pt}
+    \vspace{\subitemsoffset}
     \begin{itemize}\renewcommand{\labelitemi}{}
         \item\begin{itemize}
         #5
@@ -119,7 +126,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-32pt}
+    \vspace{\subitemsoffset}
     \begin{itemize}\renewcommand{\labelitemi}{}
         \item\begin{itemize}
         #5
@@ -202,8 +209,8 @@ The University of South Carolina & scopatz@cec.sc.edu \\
 \ressubheadingitems{The University of South Carolina}
     {Columbia, SC}
     {Assistant Professor, Mechanical Engineering Department}
-    {2015 -
-      present}
+    {Jan 2015 -
+      Dec 2021}
     { 
         \resitem{Cyclus: An agent-based, discrete time nuclear fuel cycle simulator.}
      
@@ -249,6 +256,49 @@ The University of South Carolina & scopatz@cec.sc.edu \\
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Awards \& Honors}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{-2pt}
+\begin{center}
+\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
+Omega Laser User's Group Travel Award (\$1,100)\dotfill & \hspace{.1in}
+&2013\\
+
+NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in}
+&2013\\
+
+    \vphantom{E}
+\end{longtable}
+\end{center}\vspace*{-16pt}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\ressubheadingitemslongtitle{Cyclus}
+    {Project Lead}
+    {Agent-Based Nuclear Fuel Cycle Simulator}
+    {Jun 2013 -
+      Jul 2015}
+    {
+      
+        \resitem{Discrete facilities with discrete material transactions}
+      
+        \resitem{Low barrier to entry, rapid payback to adoption}
+      
+      
+      \resitem{Website: \url{http://fuelcycle.org/} }
+      
+      }
+\vspace{0.5em}
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Grants as Lead PI}
@@ -290,27 +340,52 @@ The University of South Carolina & scopatz@cec.sc.edu \\
     {May 2018 -
       May 2019}
     {
-
+      
     }
 
 
 
 
 
+              
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Awards \& Honors}
+\resheading{ Graduate and Postgraduate advising}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{-2pt}
-\begin{center}
-\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
-Omega Laser User's Group Travel Award (\$1,100)\dotfill & \hspace{.1in} &2013\\
-NIF User's Group Travel Award (\$1,150)\dotfill & \hspace{.1in} &2013\\
 
-    \vphantom{E}
-\end{longtable}
-\end{center}\vspace*{-16pt}
+\subsection*{ Current Ph.D. students }
+    \begin{itemize}[label=$-$]
+    
+        \item   Simon J. L. Billinge\\
+    
+    \end{itemize}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Masters students advised }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{itemize}[label=$-$]
+    
+        \item   Anthony Scopatz\textemdash Assistant Professor, Mechanical Engineering Department  \\
+    
+    \end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Undergraduate research students }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{itemize}[label=$-$]
+    
+        \item   Anthony Scopatz\textemdash Assistant Professor, Mechanical Engineering Department  \\
+    
+    \end{itemize}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Service}
@@ -326,8 +401,9 @@ National Steering Committee\dotfill & \hspace{.1in} &2018-2021\\
 \end{center}\vspace*{-16pt}
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{All Publications}
+\resheading{Publications}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}
 
@@ -339,29 +415,43 @@ National Steering Committee\dotfill & \hspace{.1in} &2018-2021\\
 
 
 
-%\clearpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Projects}
+\resheading{Presentations}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
 
+\item Anthony Scopatz, {\bf Nanostructure challenges and successes from 
+16th century warships to 21st century energy},
+{\it Colloquium},
+{\it Department of Physics},
+{\it Columbia University},
+{\it New York}\
+{\it NY},
+{ May }22%
+$^\mathrm{ nd }$
+(2018).
 
-\ressubheadingitemslongtitle{Cyclus}
-    {Project Lead}
-    {Agent-Based Nuclear Fuel Cycle Simulator}
-    {Jun 2013 -
-      Jul 2015}
-    {
-      
-        \resitem{Discrete facilities with discrete material transactions}
-      
-        \resitem{Low barrier to entry, rapid payback to adoption}
-      
-      \resitem{Website: \url{http://fuelcycle.org/} }
-    }
-\vspace{0.5em}
+\item Anthony Scopatz, {\bf Clustermining: extracting core structures of 
+metallic nanoparticles from the atomic pair distribution function},
+{\it 2018 NSLS-II and CFN Users Meeting},
+{\it Upton NY},
+{ May }22%
+$^\mathrm{ nd }$
+(2018).
+
+\item Anthony Scopatz, afriend, {\bf Graphitic dephenestration},
+{\it Meeting to check flexibility on dates},
+{\it Upton NY},
+{ May }22%
+$^\mathrm{ nd }$
+(2018).
+
+\end{enumerate}
+
 
 
 %\clearpage
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Teaching Experience}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -398,7 +488,7 @@ National Steering Committee\dotfill & \hspace{.1in} &2018-2021\\
 
 
 
-
+            
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Memberships}

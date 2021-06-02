@@ -897,6 +897,7 @@ EXEMPLARS = {
                 "begin_year": 2015,
                 "coworkers": ["afriend"],
                 "group": "ergs",
+                "status": "ms",
                 "location": "Columbia, SC",
                 "organization": "The University of South Carolina",
                 "other": [
@@ -916,6 +917,8 @@ EXEMPLARS = {
                 "end_year": 2015,
                 "end_month": 3,
                 "end_day": 15,
+                "advisor": "scopatz",
+                "status": "undergrad",
                 "location": "Madison, WI",
                 "organization": "CNERG, The University of " "Wisconsin-Madison",
                 "department": "Physics",
@@ -1095,6 +1098,7 @@ EXEMPLARS = {
                               "Program",
                     "end_year": 2011,
                     "group": "ergs",
+                    "advisor": "scopatz",
                     "institution": "The University of Texas at Austin",
                     "department": "apam",
                     "location": "Austin, TX",
@@ -1112,6 +1116,8 @@ EXEMPLARS = {
                     "group": "ergs",
                     "location": "Columbia, SC",
                     "organization": "The University of South Carolina",
+                    "status": "phd",
+                    "advisor": "scopatz",
                     "other": [
                         "Cyclus: An agent-based, discrete time nuclear fuel "
                         "cycle simulator.",
