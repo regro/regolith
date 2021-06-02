@@ -43,9 +43,13 @@ Installation
 ----------------------------
 The quickest way to get started is to set up your first minimal database using a 
 handy cookie cutter.  These instructions use the command line and assume you know
-how to use the terminal/cmd prompt
+how to use the terminal/cmd prompt, and that you know how to install software from
+either Pypi using :bash:`pip` or Anaconda/Miniconda using :bash:`conda`.  The
+instructions use the linux shell commands which should work on Mac and linux
+computers, and on windows if you are running from at Git Bash terminal (recommended)
+but will be slightly different (but still work) on a windows cmd terminal.
 
-First install cookiecutter
+First install the cookiecutter package if you don't already have it
 
 .. code-block:: sh
 
@@ -55,18 +59,23 @@ or
 
 .. code-block:: sh
 
-    $ conda install cookiecutter
+    $ pip install cookiecutter
 
-Next, clone the template repo from GitHub.  
+Next, clone the GitHub repository with the handy beginning database template  
 
 .. code-block:: sh
 
     $ git clone git@github.com/sbillinge/regolithdb-cookiecutter
 
-Make a note of the path to the resulting :bash:`regolithdb-cookiecutter` directory.
+Make a note of the path to the resulting :bash:`regolithdb-cookiecutter` directory,
+(e.g., :bash:`/c/Users/me/scratch/regolithdb-cookiecutter` but yours will be different).
+This is not your database, this is just the template and will be removed shortly.
 
-Next, move the directory where you want to install your very own database.  It 
-recommended to create a directory off your home directory called :bash:`dbs`
+Next, in a new terminal, or in the same terminal, move to the directory where 
+you want to install your own permanent database.  For example, we like to 
+create a directory off our home directory called :bash:`dbs` where we will keep
+all of our databases (believe me, once you start using Regolith you will want
+to make more and more)
 
 .. code-block:: bash
 
@@ -84,32 +93,35 @@ The program will ask a series of questions and you can type responses.  Take you
 time and answer the questions as accurately as possible, because you are already
 entering data into your database!
 
-The questions look like
+Here is an example, and the questions look like
 
 .. code-block:: bash
 
-    $ cookiecutter ../dev/regolithdb-cookiecutter/
+    $ cookiecutter ~/scratch/regolithdb-cookiecutter/
     database_name [my-cv-db]:
     my_first_name [Albert]: Simon
     my_last_name [Einstein]: Billinge
     id_for_me [aeinstein]: sbillinge
     my_group_name [Einstein Group]: Billinge Group
 
-and so on.  If you make a mistake just type CTL^C and try again.  
+and so on.  If you just hit enter the cookie-cutter will use the default values
+and you will build a database for Einstein, but type the values you want in
+answer to each question to make your own. 
 
-Type
+If you make a mistake just type CTL^C 
+and do it again.  You may have to remove the directory if it has already been
+created, for example, :bash:`$ rm -r my-cv-db`.  Watch what you type here and
+be careful not to remove something you care about by mistake!
+
+When you are happy with your database setup, type
 
 .. code-block:: bash
 
     $ ls
 
+which lists all the files in your current directory, 
 and you should see a directory called :bash:`my-cv-db` or whatever you chose to 
-call you database.
-
-It is not too late to change answers to questions.  You can remove the 
-database entirely (:bash:`$ rm my-cv-db`) and do it over. 
-
-OK, let's go and look at our database.  change directory into it and do a directory
+call you database.  OK, let's go and look at our database.  change directory into it and do a directory
 listing, 
 
 .. code-block:: bash
@@ -146,7 +158,7 @@ Regolith packages are available from conda-forge and PyPI:
     $ pip install regolith
 
 The Regolith code is migrating quickly these days.  If you prefer you can 
-install from the GitHub repository in develop mode and get the latest changes.
+install from the GitHub repository mode and get the latest changes.
 In that case, clone the `GitHub repository  <https://github.com/regro/regolith>`_,
 change directory to the top level directory in that cloned repository where the
 :bash:`setup.py` file is.  From inside your virtual environment, type
@@ -155,7 +167,9 @@ change directory to the top level directory in that cloned repository where the
 
     $ pip install regolith -e
 
-which installs regolith in this environment in develop mode.
+which installs regolith in this environment in develop mode.  In this mode, the
+version of Regolith you run will change each time you update from the repo 
+leading to instability so be careful.
 
 To check that your installation is working, let's have Regolith make us a
 todo list from our database.  
@@ -251,17 +265,20 @@ Regolith will take information from the various collections in your database and
 build them into your academic cv according to a pre-determined template.  The 
 current template builds the cv using latex.  If your computer has latex installed
 and Regolith can find it, your cv should appear as a pdf document in the directory
-:bash:`my-cv-db/_build` (or more generally :bash:`<path>/<to>/<database_name>/_build`)  All your built documents will appera in the :bash:`_build`
+:bash:`my-cv-db/_build` (or more generally :bash:`<path>/<to>/<database_name>/_build`).  
+All your built documents will appear in the :bash:`_build`
 directory.  
 
-If not, let's have Regolith build the latex source file for the cv but without trying 
+If you don't have latex installed we can  have Regolith build the latex 
+source file for the cv but without trying to 
 render it to PDF, 
 
 .. code-block:: sh
 
     $ regolith build cv --no-pdf
 
-The latex source is a text file and you can open it in a text editor.  You can
+The latex source is a text file that you will find in the :bash:`_build` directory
+and you can open it in a text editor.  Even without latex installed you can
 render it by opening a free account at http://overleaf.com starting a new blank
 project, uploading the :bash:`<filename>.tex` and :bash:`<filename>.bib` files to
 that project and hitting the :bash:`recompile` button.
@@ -274,22 +291,23 @@ If, for some reason, the publication list doesn't render
 correctly, try running the latex command again.  If you are going to
 do much building with regolith it is definitely recommended to install latex on
 your computer, such as MikTeX for windows (latex comes installed with many linux
-systems.
+systems and is easily installed on IOS).
 
 What Next?
 ===========
 
-You have not spent too much time building your database yet, but you
+You have not spent too much time entering data into your database yet, but you
 can already build a number of different things.  Try building your
 resume (:bash:`$ regolith build resume`), your publication list 
 (:bash:`$ regolith build publist`) and your presentation list
 (:bash:`$ regolith build preslist`).  You can even build a web-page
 for your group (:bash:`$ regolith build html`).  It will look pretty
-ugly until we set it up properly with a nice template, but the conten
-will be built from the databases.
+ugly until we set it up properly with a nice template, but all the content
+will be dynamically built from the latest info in your databases.
 
 To see everything you can build, type :bash:`$ regolith build --help`.
-To build some of those things you will need more collections, for example,
+To build some of those things you will need more collections that are not
+in the cookie cutter template, for example,
 :bash:`proposals` and :bash:`grants` collections, but you get the idea.
 
 So next we might want to work on those collections and start adding more data.
@@ -322,11 +340,12 @@ and a collection consisting of a list of dictionaries would look like this in ya
 
 Long story short, you can update your database by directly editing the file,
 and this is quick and easy when you get comfortable with the YAML syntax,
-but can be frustrating as ou are learning it.  
+but can be frustrating as you are learning it.  
 
 If you want to check what
 fields are allowed or required in a collection look at the Collections part of 
-the docs, which are built from the Regolith schema (or directly look at the 
+the docs, :ref:`regolith_collections`, which are built from the Regolith schema 
+(or directly look at the 
 schema in :bash:`schema.py`).  You can automatically check if your database
 edits are valid by running :bash:`$ regolith validate`.
 
@@ -334,7 +353,8 @@ Getting Help from Helpers
 ==========================
 Regolith builders build documents, but there are a small but growing number of
 tools that either will run popular queries on the database and print the results
-to the terminal ("lister helpers" with :bash:`l_` prefixes -- you already used on,
+to the terminal ("lister helpers" with :bash:`l_` prefixes -- you 
+already used one,
 it was the lister helper that builds your todo list).  
 
 There are also helpers 
@@ -440,42 +460,60 @@ and hit return, e.g.,
                             --filter. If no argument is given the default is just
                             the id.
 
-you then would rerun the command giving all required, and any optional command 
+you then would rerun the command giving all required, and any 
+optional, command 
 line arguments. e.g., 
 
 .. code-block:: sh
 
-    $ regolith helper l_contacts --name frank
+    $ regolith helper l_contacts run --name frank -v
 
 will return all contacts in the contacts collection where :bash:`frank` appears anywhere
-in the name.
+in the name, such as :bash:`Frankie Valli`, :bash:`Baron von Frankenstein`
+and :bash:`Anne Frank` (if they are in your contacts).  The :bash:`-v`
+command stands for :bash:`verbose` which means more information is 
+returned than if you don't type :bash:`-v`.  You can try it now:
+
+.. code-block:: sh
+
+    $ regolith helper l_contacts run -n auth -v
+
+
 
 Backing up and protecting your work
 ===================================
 Now you have started saving your precious life's work in your regolith database
 you better start protecting it and backing it up.  One low overhead approach
-for this is to set up your database directory to be backed up remotely as 
-a Google drive or dropbox synced directory.
+for this is simply to set up your database directory to be backed up remotely as 
+a Google drive or Dropbox synced directory, for example.
 
-Regolith is set up to 
+However, Regolith is set up to 
 work with git and GitHub and this is a powerful option if you are
-comfortable with it.  To use this option, the next thing to do is to turn your database directory
+comfortable with it.  This gets more useful when you want to start
+sharing databases with group members, for example, using GitHub access rights.
+It is also possible to make sure people's edits to the database won't
+break things by setting up continuous integration (CI) that runs some
+validation and builders and makes sure they don't crash before the
+edits are accepted.  This is much more advanced usage which you 
+should save for later.
+
+To get started with the GitHub option, the next thing to do is to turn your database directory
 on your filesystem into a git repository and link it to a repository on
-your personal space on GitHub.  You can make that repo private so the world
+your personal space on GitHub (you will need a GitHub account).  You can make 
+that repo private so the world
 cannot see your todo list, or public so that the world can see the web-page
 you build from it.  We will get back to this later, but Regolith will build
 collections from across databases, so you can have parts of your :bash:`people` 
-collection private and other parts public.  Depending which regolithrc.json
+collection private and other parts public.  Depending which :bash:`regolithrc.json`
 file you use to build with, you can pull from the public, or private, or both
-parts.  
-
+parts.  Again, this is a peep to the future.
 For now, let's assume you just want to back up and keep versions of
-you private database.  You will make a repo on your personal GitHub account (you
-can get one for free) and synchronize your local database with this repo.
+you private database.  You will make a repository on your personal GitHub account 
+and synchronize your local database with this repo.
 `Instructions for doing this are here <https://docs.github.com/en/github/importing-your-projects-to-github/importing-source-code-to-github/adding-an-existing-project-to-github-using-the-command-line>`_
 
 Once you get everything set up you will want to periodically (meaning
-frequently type
+frequently) type
 
 
 .. code-block:: sh
@@ -492,25 +530,27 @@ GitHub backup, you will have to explicitly add it before committing,
     $ git add my_new_file.py
     $ git commit -m "an even more informative commit message"
 
-:bash:`$ git commit` commits (i.e., checks in) to the git database (not your 
-database!) everything that has been added, or staged, for commit.  
+:bash:`$ git commit` commits (i.e., checks in) to the git database (yes,
+git, like you now, is using a database backend) everything that has been added, or staged, for commit.  
 :bash:`$ git commit -a` automatically adds all files that git is tracking 
 (have been previously committed in the past) that have been edited and then
 commits them. 
 
 They are now safely captured in the git database and you can retrieve them 
-later if you accidentally delete your database or mess it up some other way.
+later if you accidentally delete your personal database or mess it up some other way.
 But this version of the git database is still stored on your local computer, so
-if you spill coffee on it, you are in trouble.  :bash:`$ git push` pushes all
+if you spill coffee on your computer, you may lose everything.  :bash:`$ git push` pushes all
 these updates to a remote computer on the internet at the GitHub headquarters.
 Git and GitHub form a wonderful but complicated infrastructure, it is well worth
 getting to know how to use them well.  For now, we have used it to 
 secure your precious database.  Remember to make frequent pushes.
 
-
-
-
-
+OK, you are started with your Regolith database.  Go play.  Regolith
+can do many more complicated things to help with administering your
+research group, or whatever you are working on.  We will continue to
+add tutorials below explaining some of these things, so check back
+from time to time.  And remember join and to ask questions at the `regolith-users <https://groups.google.com/u/1/g/regolith-users>`_ 
+Google group.  They will get answered.
 
 
 
