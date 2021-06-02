@@ -354,8 +354,102 @@ pesky 15th todo item on your todo list, run
 That is a lot of typing to finish a todo, so consider setting up an alias in 
 the config file for your terminal program (my terminals run bash so I put the 
 alias in the :bash:`.bashrc` file in my home directory (:bash:`$ cd ~` to get there).
-With this alias I just type :bash:`rhlt 15` to finish that 15th todo item.    
+With this alias I just type :bash:`rhlt 15` to finish that 15th todo item.  
+
+To explore what helpers are there so you can play with them, type 
+
+.. code-block:: sh
+
+    $ regolith helper
+
+and hit return.  It will return a list of available helpers, e.g.,
+
+.. code-block:: sh
+
+    $ regolith helper
+        usage: regolith helper [-h] helper_target
+        regolith helper: error: the following arguments are required: helper_target
+        usage: regolith helper [-h] helper_target
+        
+        positional arguments:
+          helper_target  helper target to run. Currently valid targets are:
+                         ['a_expense', 'a_grppub_readlist', 'a_manurev',
+                         'a_presentation', 'a_projectum', 'a_proposal', 'a_proprev',
+                         'a_todo', 'f_prum', 'f_todo', 'l_abstract', 'l_contacts',
+                         'l_grants', 'l_members', 'l_milestones', 'l_progress',
+                         'l_projecta', 'l_todo', 'u_contact', 'u_institution',
+                         'u_logurl', 'u_milestone', 'u_todo', 'v_meetings', 'lister',
+                         'makeappointments']
+
+then if you want to know how to use any of the helpers type
+
+.. code-block:: sh
+
+    $ regolith helper <helper target>
+
+and hit return, e.g.,
+
+.. code-block:: sh
+
+    $ regolith helper l_contacts
+    usage: regolith helper [-h] [-v] [-n NAME] [-i INST] [-d DATE] [-r RANGE]
+                           [-o NOTES] [-f FILTER [FILTER ...]]
+                           [-k KEYS [KEYS ...]]
+                           helper_target run
+    regolith helper: error: the following arguments are required: run
+    usage: regolith helper [-h] [-v] [-n NAME] [-i INST] [-d DATE] [-r RANGE]
+                           [-o NOTES] [-f FILTER [FILTER ...]]
+                           [-k KEYS [KEYS ...]]
+                           helper_target run
     
+    positional arguments:
+      helper_target         helper target to run. Currently valid targets are:
+                            ['a_expense', 'a_grppub_readlist', 'a_manurev',
+                            'a_presentation', 'a_projectum', 'a_proposal',
+                            'a_proprev', 'a_todo', 'f_prum', 'f_todo',
+                            'l_abstract', 'l_contacts', 'l_grants', 'l_members',
+                            'l_milestones', 'l_progress', 'l_projecta', 'l_todo',
+                            'u_contact', 'u_institution', 'u_logurl',
+                            'u_milestone', 'u_todo', 'v_meetings', 'lister',
+                            'makeappointments']
+      run                   run the lister. To see allowed optional arguments,
+                            type "regolith helper l_contacts".
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -v, --verbose         Increases the verbosity of the output.
+      -n NAME, --name NAME  name or name fragment (single argument only) to use to
+                            find contacts.
+      -i INST, --inst INST  institution or an institution fragment (single
+                            argument only) to use to find contacts.
+      -d DATE, --date DATE  approximate date in ISO format (YYYY-MM-DD)
+                            corresponding to when the contact was entered in the
+                            database. Comes with a default range of 4 months
+                            centered around the date; change range using --range
+                            argument.
+      -r RANGE, --range RANGE
+                            range (in months) centered around date d specified by
+                            --date, i.e. (d +/- r/2).
+      -o NOTES, --notes NOTES
+                            fragment (single argument only) to be found in the
+                            notes section of a contact.
+      -f FILTER [FILTER ...], --filter FILTER [FILTER ...]
+                            Search this collection by giving key element pairs.
+      -k KEYS [KEYS ...], --keys KEYS [KEYS ...]
+                            Specify what keys to return values from when running
+                            --filter. If no argument is given the default is just
+                            the id.
+
+you then would rerun the command giving all required, and any optional command 
+line arguments. e.g., 
+
+.. code-block:: sh
+
+    $ regolith helper l_contacts --name frank
+
+will return all contacts in the contacts collection where :bash:`frank` appears anywhere
+in the name.
+
 Backing up and protecting your work
 ===================================
 Now you have started saving your precious life's work in your regolith database
