@@ -1,6 +1,6 @@
 """Builder for CVs."""
 from copy import deepcopy
-from datetime import datetime, date 
+from datetime import  date 
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
@@ -14,9 +14,9 @@ from regolith.tools import (
     awards_grants_honors,
     make_bibtex_file,
     filter_employment_for_advisees,
-    dereference_institution, 
-    merge_collections_superior, 
-    filter_presentations,
+    dereference_institution,
+    merge_collections_superior,
+    filter_presentations, remove_duplicate_docs,
 )
 
 
@@ -115,9 +115,12 @@ class CVBuilder(LatexBuilderBase):
             postdocs = filter_employment_for_advisees(self.gtx["people"],
                                                       begin_period,
                                                       "postdoc")
+            postdocs = remove_duplicate_docs(postdocs, "name")
             visitors = filter_employment_for_advisees(self.gtx["people"],
                                                       begin_period,
                                                       "visitor-unsupported")
+            visitors = remove_duplicate_docs(visitors, "name")
+
             iter = deepcopy(graduateds)
             for g in iter:
                 if g.get("active"):

@@ -201,6 +201,18 @@
 
 {% if len(projects) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{ Major research focus area(s) and current projects.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Research Focus Areas}
+\begin{itemize}[label=$-$]
+{% for areas in p["research_focus_areas"]%}
+\item {{ latex_safe(areas["description"]) }}
+{% endfor%}
+\end{itemize}
+{% endif %}
+
+{% if len(projects) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Projects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for proj in projects %}
@@ -310,6 +322,25 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     \end{itemize}
 {% endif %}
 {% endif %}
+    
+{% if len(postdocs) > 0 %}
+\subsection*{ Postdoctoral researchers and research scientists supported on grants}
+    \begin{itemize}[label=$-$]
+    {% for ugr in postdocs %}
+        \item   {{latex_safe(ugr['name'])-}} - ({{ ugr['begin_year']}} - {{ ugr['end_year']}}) \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+
+{% if len(visitors) > 0 %}
+        \subsection*{ Self-funded visitors contributing to research}
+    \begin{itemize}[label=$-$]
+    {% for ugr in visitors %}
+        \item   {{latex_safe(ugr['name'])-}}\textemdash {{ugr['position']}}  \\
+    {%endfor%}
+    \end{itemize}
+{% endif %}
+    
 
 {% if len(masters) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

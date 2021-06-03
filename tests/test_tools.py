@@ -18,6 +18,7 @@ from regolith.tools import (
     merge_collections_intersect,
     merge_collections_superior,
     month_and_year,
+    remove_duplicate_docs,
     awards_grants_honors,
     get_id_from_name,
     get_person_contact,
@@ -30,7 +31,7 @@ from regolith.tools import (
     validate_meeting,
     get_formatted_crossref_reference,
     compound_dict,
-    compound_list
+    compound_list, filter_employment_for_advisees
 )
 
 PEOPLE_COLL = [
@@ -1913,6 +1914,8 @@ def test_validate_meeting(meeting, date, expected):
         (appointed_people[3], 'abstract', [])
     ]
 )
+
+
 def test_group_member_employment_start_end(person, grpname, expected):
     try:
         actual = group_member_employment_start_end(person, grpname)
@@ -1922,4 +1925,84 @@ def test_group_member_employment_start_end(person, grpname, expected):
             actual = group_member_employment_start_end(person, grpname)
         assert str(excinfo.value) == expected
 
+@pytest.mark.parametrize(
+    "inp,expected",
+    [
+        ([{"dupe_key": 1, "nond": 2}],
+         [{"dupe_key": 1, "nond": 2}]),
+        ([{"dupe_key": 1, "nond": 2}, {"dupe_key": 1, "nond": 3}],
+         [{"dupe_key": 1, "nond": 2}]),
+        ([{"no_dupe_key": 1, "nond": 2}],
+         "ERROR: Target key, dupe_key not found in {'no_dupe_key': 1, 'nond': 2}"),
+    ]
+)
+def test_remove_duplicate_docs(inp, expected):
+    try:
+        actual = remove_duplicate_docs(inp, "dupe_key")
+        assert actual == expected
+    except:
+        with pytest.raises(RuntimeError) as excinfo:
+            actual = remove_duplicate_docs(inp, "dupe_key")
+        assert str(excinfo.value) == expected
 
+
+@pytest.mark.parametrize(
+    "inp,expected",
+    [
+        ([
+             [{"_id": "student", "name": "Lancelot", "employment": [
+                 {"status": "ms",
+                  "begin_date": "2020-05-05",
+                  "end_date": "2020-10-10",
+                  "position": "masters researcher"
+                  }]}],
+             "2022-01-01"
+         ],
+         []
+        ),
+        ([
+             [{"_id": "student", "name": "Lancelot", "employment": [
+                 {"status": "ms",
+                  "begin_date": "2020-05-05",
+                  "end_date": "2020-10-10",
+                  "position": "masters researcher"
+                  }]}],
+             "2019-01-01"
+         ],
+         [{"_id": "student", "name": "Lancelot", "employment": [
+             {"status": "ms",
+              "begin_date": "2020-05-05",
+              "end_date": "2020-10-10",
+              "position": "masters researcher"
+              }],
+           "role": "masters researcher",
+           "begin_year": 2020,
+           "end_year": 2020,
+           "status": "ms",
+           "position": "masters researcher"
+           }]
+        ),
+      ([
+            [{"_id": "student", "name": "Lancelot", "employment": [
+                {"status": "ms", 
+                 "begin_date": "2020-05-05",
+                 "position": "masters researcher"
+                 }]}],
+            "2019-01-01"
+            ],
+        [{"_id": "student", "name": "Lancelot", "employment": [
+            {"status": "ms", 
+             "begin_date": "2020-05-05",
+             "position": "masters researcher"
+             }],
+             "role": "masters researcher",
+             "begin_year": 2020,
+             "end_year": "present",
+             "status": "ms",
+             "position": "masters researcher"
+             }] 
+    )
+    ])
+def test_filter_employment_for_advisees(inp, expected):
+    actual = filter_employment_for_advisees(inp[0], inp[1], "ms")
+    assert actual == expected
