@@ -115,16 +115,15 @@ class InternalHtmlBuilder(BuilderBase):
                     mtg["journal_club"]["doi"] = ref
 
             if mtg.get("presentation"):
+                prsn_id = mtg["presentation"].get("presenter", "None")
                 prsn = fuzzy_retrieval(
                     all_docs_from_collection(rc.client, "people"),
                     ["_id", "name", "aka"],
-                    mtg["presentation"].get("presenter"))
-                if mtg["presentation"].get("presenter") == "hold":
-                    prsn = {}
-                    prsn["name"] = "Hold"
+                    prsn_id)
                 if not prsn:
                     print(
                     "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
+                    prsn = {"name": prsn_id }
                 mtg["presentation"]["presenter"] = prsn["name"]
                 mtg["presentation"]["link"] = mtg["presentation"].get("link","tbd")
             mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
