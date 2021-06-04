@@ -102,13 +102,16 @@ class InternalHtmlBuilder(BuilderBase):
                 print("{} scribe {} not found in people".format(mtg["_id"],mtg.get("scribe")))
             mtg["scribe"] = scribe["name"]
             if mtg.get("journal_club"):
+                prsn_id = mtg["journal_club"].get("presenter", "None")
                 prsn = fuzzy_retrieval(
                     all_docs_from_collection(rc.client, "people"),
                     ["_id", "name", "aka"],
-                    mtg["journal_club"].get("presenter"))
+                    prsn_id)
                 if not prsn:
-                    print(
-                    "{} Jclub presenter {} not found in people".format(mtg["_id"],mtg["journal_club"].get("presenter")))
+                    if prsn_id.lower() != "hold":
+                        print(
+                        "WARNING: {} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
+                    prsn = {"name": prsn_id }
                 mtg["journal_club"]["presenter"] = prsn["name"]
                 if mtg["journal_club"].get("doi", "tbd").casefold() != 'tbd':
                     ref, _ = get_formatted_crossref_reference(mtg["journal_club"].get("doi"))
@@ -121,8 +124,9 @@ class InternalHtmlBuilder(BuilderBase):
                     ["_id", "name", "aka"],
                     prsn_id)
                 if not prsn:
-                    print(
-                    "{} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
+                    if prsn_id.lower() != "hold":
+                        print(
+                        "WARNING: {} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
                     prsn = {"name": prsn_id }
                 mtg["presentation"]["presenter"] = prsn["name"]
                 mtg["presentation"]["link"] = mtg["presentation"].get("link","tbd")
