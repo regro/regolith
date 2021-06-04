@@ -707,7 +707,7 @@ EXEMPLARS = {
             "day": 1,
             "journal_club": {
                 "doi": "10.1107/S2053273319005606",
-                "presenter": "sbillinge",
+                "presenter": "not_a_valid_group_id",
             },
             "lead": "sbillinge",
             "minutes": [
@@ -729,7 +729,7 @@ EXEMPLARS = {
             "presentation": {
                 "title": "PDF Distance Extraction",
                 "link": "2007ac_grpmtg",
-                "presenter": "sbillinge",
+                "presenter": "not_a_valid_group_id",
             },
             "scribe": "sbillinge",
             "time": '0',
