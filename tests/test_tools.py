@@ -1978,6 +1978,7 @@ def test_remove_duplicate_docs(inp, expected):
            "role": "masters researcher",
            "begin_year": 2020,
            "end_year": 2020,
+           'end_date': dt.date(2020, 10, 10),
            "status": "ms",
            "position": "masters researcher"
            }]
@@ -1990,19 +1991,21 @@ def test_remove_duplicate_docs(inp, expected):
                  }]}],
             "2019-01-01"
             ],
-        [{"_id": "student", "name": "Lancelot", "employment": [
-            {"status": "ms", 
-             "begin_date": "2020-05-05",
-             "position": "masters researcher"
-             }],
+        [{"_id": "student", "name": "Lancelot", 
+             "employment": [
+                {"status": "ms", 
+                 "begin_date": "2020-05-05",
+                 "position": "masters researcher"
+                 }],
              "role": "masters researcher",
              "begin_year": 2020,
              "end_year": "present",
+             'end_date': dt.date(2021, 6, 3),
              "status": "ms",
              "position": "masters researcher"
              }] 
     )
     ])
 def test_filter_employment_for_advisees(inp, expected):
-    actual = filter_employment_for_advisees(inp[0], inp[1], "ms")
+    actual = filter_employment_for_advisees(inp[0], inp[1], "ms", dt.date(2021,6,3))
     assert actual == expected

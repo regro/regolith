@@ -306,7 +306,7 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     return grants, total_amount, subaward_amount
 
 
-def filter_employment_for_advisees(peoplecoll, begin_period, status):
+def filter_employment_for_advisees(peoplecoll, begin_period, status, now=None):
     """Filter people to get advisees since begin_period
 
     Parameters
@@ -320,6 +320,8 @@ def filter_employment_for_advisees(peoplecoll, begin_period, status):
         the status of the person in the group to filter for,  e.g., ms, phd, postdoc
     """
     people = deepcopy(peoplecoll)
+    if not now:
+        now = date.today()
     advisees = []
     if isinstance(begin_period, str):
         begin_period = date_parser.parse(begin_period).date()
@@ -330,7 +332,7 @@ def filter_employment_for_advisees(peoplecoll, begin_period, status):
                 begin_date = emp_dates.get("begin_date")
                 end_date = emp_dates.get("end_date")
                 if not end_date:
-                    end_date = date.today()
+                    end_date = now
                 if end_date >= begin_period:
                     p['role'] = i.get("position")
                     p['begin_year'] = begin_date.year
@@ -340,8 +342,9 @@ def filter_employment_for_advisees(peoplecoll, begin_period, status):
                         p['end_year'] = end_date.year
                     p['status'] = status
                     p['position'] = i.get("position")
+                    p['end_date'] = end_date
                     advisees.append(p)
-                    advisees.sort(key=lambda x: x['end_year'], reverse=True)
+                    advisees.sort(key=lambda x: x['end_date'], reverse=True)
     return advisees
 
 
