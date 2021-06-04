@@ -2909,19 +2909,21 @@ SCHEMAS = {
             "anyof_type": ["string", "datetime", "date"],
         },
         "journal_club": {
-            "description": "indicating the doi of the journal and the presenting group member as the presenter",
+            "description": "Journal club presentation in group meeting",
             "required": False,
             "type": "dict",
             "schema": {
                  "doi": {
-                  "description": "The doi of the journal club presentation target paper.  tbd if it is not known yet",
+                  "description": "The doi of the journal club presentation paper.  "
+                                 "tbd if it is not known yet",
                   "type": "string",
-                  "required": False
+                  "required": True
                  },
                  "presenter": {
-                  "description": "The name or _id of the group member presenting",
+                  "description": "The _id of the group member presenting, or a "
+                                 "string describing the presenter, e.g., their full name.",
                   "type": "string",
-                  "required": False
+                  "required": True
                  }
                 }
         },
@@ -2956,7 +2958,8 @@ SCHEMAS = {
                   "required": True
                  },
                  "presenter": {
-                  "description": "The name or _id of the group member presenting",
+                  "description": "The _id of the group member presenting "
+                                 "or a string describing the person.",
                   "type": "string",
                   "required": True
                  }
