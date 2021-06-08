@@ -602,7 +602,7 @@ def filter_presentations(people, presentations, institutions, target,
         authorids = [
             author["_id"] if author is not None
             else author
-            for author in authors 
+            for author in authors
         ]
         if target in authorids:
             firstclean.append(pres)
@@ -1968,9 +1968,9 @@ def get_formatted_crossref_reference(doi):
 def remove_duplicate_docs(coll,key):
     '''
     find all docs where the target key has the same value and remove duplicates
-    
+
     The doc found first will be kept and subsequent docs will be removed
-    
+
     parameters
     ----------
     target iterable of dicts
@@ -1992,5 +1992,26 @@ def remove_duplicate_docs(coll,key):
         else:
             newcoll.append(doc)
             values.append(doc.get(key))
-        
+
     return newcoll
+
+
+def validate_col(collection_name, collection_dict, rc):
+    from regolith.schemas import validate
+    from pprint import pprint
+    from cerberus.errors import ValidationError
+    any_errors = False
+    for doc_id, doc in collection_dict.items():
+        v = validate(collection_name, doc, rc.schemas)
+        if v[0] is False:
+            any_errors = True
+            print("ERROR in {}:".format(doc_id))
+            pprint(v[1])
+            for vv in v[1]:
+                pprint(doc.get(vv))
+            print("-" * 15)
+            print("\n")
+    if not any_errors:
+        print("\nNO ERRORS IN DBS\n" + "=" * 15)
+    else:
+        raise ValidationError
