@@ -166,13 +166,13 @@ helper_map = [
      "    aka:\n"
      "        -A. B. Friend\n        -AB Friend\n        -Tony Friend\n"
      ),
-    (["helper", "l_abstract", "run", "--title", "graphitic"],
+    (["helper", "l_abstract", "--title", "graphitic"],
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "run", "--loc_inst", "upton"],
+    (["helper", "l_abstract", "--loc_inst", "upton"],
      "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
@@ -182,7 +182,7 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "run", "--year", "2018"],
+    (["helper", "l_abstract",  "--year", "2018"],
      "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"
@@ -196,7 +196,7 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "run", "--author", "scopatz"],
+    (["helper", "l_abstract", "--author", "scopatz"],
      "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"
@@ -210,7 +210,7 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "run", "--loc_inst", "upton", "--year", "2018"],
+    (["helper", "l_abstract", "--loc_inst", "upton", "--year", "2018"],
      "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
@@ -220,7 +220,7 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "run", "--author", "scopatz", "--loc_inst", "upton"],
+    (["helper", "l_abstract", "--author", "scopatz", "--loc_inst", "upton"],
      "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n"
      "\nAnthony Scopatz\n"
@@ -230,13 +230,13 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "run", "--author", "scopatz", "--year", "2018", "--loc_inst", "upton", "--title", "graphitic"],
+    (["helper", "l_abstract", "--author", "scopatz", "--year", "2018", "--loc_inst", "upton", "--title", "graphitic"],
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "run", "--loc_inst", "columbiau"],
+    (["helper", "l_abstract", "--loc_inst", "columbiau"],
      "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"
