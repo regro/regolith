@@ -588,6 +588,23 @@ def test_helper_python(hm, make_db, capsys):
     if expecteddir.is_dir():
         assert_outputs(builddir, expecteddir)
 
+helper_map_loose = [
+    (["helper", "l_abstract"],
+     "-------------------------------------------\n"
+     "please rerun specifying at least one filter\n"
+     "-------------------------------------------\n"
+     )
+    ]
+@pytest.mark.parametrize("hm", helper_map_loose)
+def test_helper_python_loose(hm, make_db, capsys):
+    repo = Path(make_db)
+    testfile = Path(__file__)
+    os.chdir(repo)
+
+    main(args=hm[0])
+    out, err = capsys.readouterr()
+    assert hm[1] in out
+
 
 def assert_outputs(builddir, expecteddir):
     """
