@@ -127,9 +127,9 @@ def make_mongodb():
             subprocess.check_call(cmd, cwd=repo)
         except subprocess.CalledProcessError:
             print(
-                "If on linux or mac, Mongod command failed to execute. If on windows, mongod has not been installed as \n"
-                "a service. In order to run mongodb tests, make sure to install the mongodb community edition\n"
-                "for your OS with the following link: https://docs.mongodb.com/manual/installation/")
+                "Mongod likely has not been installed as a service. In order to run mongodb tests, make sure\n"
+                "to install the mongodb community edition with the following link: \n"
+                "https://docs.mongodb.com/manual/installation/")
             yield False
             return
         cmd = ["mongostat", "--host", "localhost", "-n", "1"]
@@ -138,9 +138,10 @@ def make_mongodb():
     try:
         subprocess.check_call(cmd, cwd=repo)
     except subprocess.CalledProcessError:
-        print("If on linux or mac, Mongod command failed to execute. If on windows, mongod has not been installed as \n"
-              "a service. In order to run mongodb tests, make sure to install the mongodb community edition\n"
-              "for your OS with the following link: https://docs.mongodb.com/manual/installation/")
+        print("If on linux/mac, Mongod command failed to execute. If on windows, the status of mongo could not be\n"
+              "retrieved. In order to run mongodb tests, make sure to install the mongodb community edition with\n"
+              "the following link:\n"
+              "https://docs.mongodb.com/manual/installation/")
         yield False
         return
     # Write collection docs
@@ -241,9 +242,9 @@ def make_mixed_db():
             subprocess.check_call(cmd, cwd=repo)
         except subprocess.CalledProcessError:
             print(
-                "If on linux or mac, Mongod command failed to execute. If on windows, mongod has not been installed as \n"
-                "a service. In order to run mongodb tests, make sure to install the mongodb community edition\n"
-                "for your OS with the following link: https://docs.mongodb.com/manual/installation/")
+                "Mongod likely has not been installed as a service. In order to run mongodb tests, make sure\n"
+                "to install the mongodb community edition with the following link: \n"
+                "https://docs.mongodb.com/manual/installation/")
             yield False
             return
         cmd = ["mongostat", "--host", "localhost", "-n", "1"]
@@ -252,9 +253,10 @@ def make_mixed_db():
     try:
         subprocess.check_call(cmd, cwd=repo)
     except subprocess.CalledProcessError:
-        print("If on linux or mac, Mongod command failed to execute. If on windows, mongod has not been installed as \n"
-              "a service. In order to run mongodb tests, make sure to install the mongodb community edition\n"
-              "for your OS with the following link: https://docs.mongodb.com/manual/installation/")
+        print("If on linux/mac, Mongod command failed to execute. If on windows, the status of mongo could not be\n"
+              "retrieved. In order to run mongodb tests, make sure to install the mongodb community edition with\n"
+              "the following link:\n"
+              "https://docs.mongodb.com/manual/installation/")
         yield False
         return
     # Write one collection doc in mongo
