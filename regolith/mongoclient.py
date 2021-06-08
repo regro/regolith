@@ -11,6 +11,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from ruamel.yaml import YAML
+from cerberus.errors import ValidationError
+
+from regolith.tools import validate_col
 
 #
 # setup mongo
@@ -337,6 +340,13 @@ class MongoClient:
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
+        try:
+            validate_col(collname, doc, self.rc)
+        except ValidationError:
+            sys.exit("Validation failed. Upload cancelled... exiting program")
+        except Exception as e:
+            print(e)
+            sys.exit("Validation failed unexpectedly. Upload cancelled... exiting program")
         coll = self.client[dbname][collname]
         doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
@@ -347,6 +357,19 @@ class MongoClient:
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
+        screened_docs = []
+        for doc in docs:
+            try:
+                validate_col(collname, doc, self.rc)
+            except ValidationError:
+                screened_docs.append(doc)
+            except Exception as e:
+                print(e)
+                sys.exit("Validation failed unexpectedly... exiting program")
+        if len(screened_docs) != 0:
+            print("The following documents failed validation and were not uploaded\n")
+            for doc in screened_docs:
+                print(doc['_id'])
         coll = self.client[dbname][collname]
         for doc in docs:
             doc['_id'].replace('.', '')
@@ -373,6 +396,9 @@ class MongoClient:
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
+        #TODO validate an update, which is difficult because an update does not change
+        # the dictionary until the command is executed. So I would have to update locally
+        # then validate, then update remotely
         coll = self.client[dbname][collname]
         filter.replace('.', '')
         if ON_PYMONGO_V2:

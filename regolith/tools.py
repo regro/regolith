@@ -1966,3 +1966,24 @@ def get_formatted_crossref_reference(doi):
     ref_date = date(*ref_date_list)
 
     return ref, ref_date
+
+
+def validate_col(collection_name, collection_dict, rc):
+    from regolith.schemas import validate
+    from pprint import pprint
+    from cerberus.errors import ValidationError
+    any_errors = False
+    for doc_id, doc in collection_dict.items():
+        v = validate(collection_name, doc, rc.schemas)
+        if v[0] is False:
+            any_errors = True
+            print("ERROR in {}:".format(doc_id))
+            pprint(v[1])
+            for vv in v[1]:
+                pprint(doc.get(vv))
+            print("-" * 15)
+            print("\n")
+    if not any_errors:
+        print("\nNO ERRORS IN DBS\n" + "=" * 15)
+    else:
+        raise ValidationError
