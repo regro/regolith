@@ -586,10 +586,21 @@ helper_map = [
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
 ]
 
+db_srcs = ["mongo", "fs"]
+
+
+@pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hm", helper_map)
-def test_helper_python(hm, make_db, capsys):
-    repo = Path(make_db)
+def test_helper_python(hm, make_db, db_src, make_mongodb, capsys):
     testfile = Path(__file__)
+
+    if db_src == "fs":
+        repo = Path(make_db)
+    elif db_src == "mongo":
+        if make_mongodb is False:
+            pytest.skip("Mongoclient failed to start")
+        else:
+            repo = Path(make_mongodb)
     os.chdir(repo)
 
     main(args=hm[0])
@@ -599,8 +610,18 @@ def test_helper_python(hm, make_db, capsys):
     expecteddir = testfile.parent / "outputs" / hm[0][1]
 
     if expecteddir.is_dir():
-        test_dir = repo / "db"
-        assert_outputs(test_dir, expecteddir)
+        if db_src == "fs":
+            test_dir = repo / "db"
+            assert_outputs(test_dir, expecteddir)
+        elif db_src == "mongo":
+            from regolith.database import connect
+            from regolith.runcontrol import DEFAULT_RC, load_rcfile
+            os.chdir(repo)
+            rc = DEFAULT_RC
+            rc._update(load_rcfile("regolithrc.json"))
+            with connect(rc) as client:
+                mongo_database = client[rc.db]
+                assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
 
 helper_map_loose = [
     (["helper", "l_abstract"],
@@ -618,6 +639,22 @@ def test_helper_python_loose(hm, make_db, capsys):
     main(args=hm[0])
     out, err = capsys.readouterr()
     assert hm[1] in out
+
+def assert_mongo_vs_yaml_outputs(expecteddir, mongo_database):
+    from regolith.mongoclient import load_mongo_col
+    from regolith.fsclient import load_yaml
+    from regolith.dates import convert_doc_iso_to_date
+    os.chdir(expecteddir)
+    for root, dirs, files in os.walk("."):
+        for file in files:
+            fn2 = expecteddir / root / file
+            expected_collection_dict = load_yaml(fn2)
+            base, ext = os.path.splitext(file)
+            mongo_coll_pointer = mongo_database[base]
+            edited_collection_dict = load_mongo_col(mongo_coll_pointer)
+            for k, v in edited_collection_dict.items():
+                edited_collection_dict[k] = convert_doc_iso_to_date(v)
+            assert edited_collection_dict == expected_collection_dict
 
 
 def assert_outputs(builddir, expecteddir):

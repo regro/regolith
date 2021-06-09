@@ -9,6 +9,7 @@ from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
+import datetime
 
 from ruamel.yaml import YAML
 
@@ -125,6 +126,49 @@ def load_mongo_col(col: Collection) -> dict:
     return {
         doc['_id']: doc for doc in col.find({})
     }
+
+
+def bson_document_cleanup(doc: dict):
+    """
+    This method should be used prior to updating or adding a document to a collection in mongo. Specifically, this
+    replaces all periods in keys and _id value with a blank, and changes datetime.date to an iso string. It does so
+    recursively for nested dictionaries.
+
+    Parameters
+    ----------
+    doc
+
+    Returns
+    -------
+    doc
+
+    """
+    def change_keys_id_and_date(obj, convert):
+        """
+        Recursively goes through the dictionary obj and replaces keys with the convert function.
+        """
+        if isinstance(obj, datetime.date):
+            # Mongo cannot handle datetime.date format, but we have infrastructure to handle iso date strings present
+            # Do not convert to datetime.datetime. Mongo can handle this, but regolith cannot.
+            return obj.isoformat()
+        if isinstance(obj, (str, int, float)):
+            return obj
+        if isinstance(obj, dict):
+            new = obj.__class__()
+            for k, v in obj.items():
+                new[convert(k)] = change_keys_id_and_date(v, convert)
+        elif isinstance(obj, (list, set, tuple)):
+            new = obj.__class__(change_keys_id_and_date(v, convert) for v in obj)
+        else:
+            return obj
+        return new
+
+    def convert(k):
+        return k.replace('.', '')
+
+    doc = change_keys_id_and_date(doc, convert)
+    doc['_id'].replace('.', '')
+    return doc
 
 
 @fallback(ON_PYMONGO_V2, None)
@@ -339,6 +383,7 @@ class MongoClient:
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
+        doc = bson_document_cleanup(doc)
         try:
             valid = validate_doc(collname, doc, self.rc)
             if not valid:
@@ -347,7 +392,6 @@ class MongoClient:
             print(e)
             sys.exit("Validation failed unexpectedly. Upload cancelled... exiting program")
         coll = self.client[dbname][collname]
-        doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
             i = coll.insert(doc)
             return InsertOneProxy(i, True)
@@ -356,6 +400,8 @@ class MongoClient:
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
+        docs = [bson_document_cleanup(doc) for doc in docs]
+
         screened_docs = []
         for doc in docs:
             try:
@@ -370,8 +416,6 @@ class MongoClient:
             for doc in screened_docs:
                 print(doc['_id'])
         coll = self.client[dbname][collname]
-        for doc in docs:
-            doc['_id'].replace('.', '')
         if ON_PYMONGO_V2:
             return coll.insert(docs)
         else:
@@ -380,7 +424,7 @@ class MongoClient:
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection"""
         coll = self.client[dbname][collname]
-        doc['_id'].replace('.', '')
+        doc = bson_document_cleanup(doc)
         if ON_PYMONGO_V2:
             return coll.remove(doc, multi=False)
         else:
