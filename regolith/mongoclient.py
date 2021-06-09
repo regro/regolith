@@ -444,12 +444,18 @@ class MongoClient:
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
-        #TODO validate an update, which is difficult because an update does not change
-        # the dictionary until the command is executed. So I would have to update locally
-        # then validate, then update remotely
-        validation_coll = self.dbs[dbname][collname]
-        coll = self.client[dbname][collname]
         filter['_id'].replace('.', '')
+        doc = self.find_one(dbname, collname, filter)
+        newdoc = dict(filter if doc is None else doc)
+        newdoc.update(update)
+        try:
+            valid = validate_doc(collname, newdoc, self.rc)
+            if not valid:
+                sys.exit("Validation failed. Upload cancelled... exiting program")
+        except Exception as e:
+            print(e)
+            sys.exit("Validation failed unexpectedly. Upload cancelled... exiting program")
+        coll = self.client[dbname][collname]
         update = bson_cleanup(update)
         if ON_PYMONGO_V2:
             doc = coll.find_one(filter)
