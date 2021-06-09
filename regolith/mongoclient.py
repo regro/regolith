@@ -433,7 +433,7 @@ class MongoClient:
     def find_one(self, dbname, collname, filter):
         """Finds the first document matching filter."""
         coll = self.dbs[dbname][collname]
-        filter.replace('.', '')
+        filter['_id'].replace('.', '')
         doc = coll.find_one(filter)
         return doc
 
