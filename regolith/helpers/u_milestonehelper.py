@@ -251,9 +251,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     pdoc.update({'milestones': new_mil})
                 else:
                     pdoc.update({identifier: doc})
+            pdoc[identifier].pop('identifier', None)
             rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         for i in all_milestones:
-            del i['identifier']
+            i.pop('identifier', None)
         print("{} has been updated in projecta".format(key))
 
         return
