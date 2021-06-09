@@ -11,9 +11,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from ruamel.yaml import YAML
-from cerberus.errors import ValidationError
 
-from regolith.tools import validate_col
+from regolith.tools import validate_doc
 
 #
 # setup mongo
@@ -341,9 +340,9 @@ class MongoClient:
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
         try:
-            validate_col(collname, doc, self.rc)
-        except ValidationError:
-            sys.exit("Validation failed. Upload cancelled... exiting program")
+            valid = validate_doc(collname, doc, self.rc)
+            if not valid:
+                sys.exit("Validation failed. Upload cancelled... exiting program")
         except Exception as e:
             print(e)
             sys.exit("Validation failed unexpectedly. Upload cancelled... exiting program")
@@ -360,9 +359,9 @@ class MongoClient:
         screened_docs = []
         for doc in docs:
             try:
-                validate_col(collname, doc, self.rc)
-            except ValidationError:
-                screened_docs.append(doc)
+                valid = validate_doc(collname, doc, self.rc)
+                if not valid:
+                    screened_docs.append(doc)
             except Exception as e:
                 print(e)
                 sys.exit("Validation failed unexpectedly... exiting program")
