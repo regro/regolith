@@ -654,6 +654,8 @@ def assert_mongo_vs_yaml_outputs(expecteddir, mongo_database):
             edited_collection_dict = load_mongo_col(mongo_coll_pointer)
             for k, v in edited_collection_dict.items():
                 edited_collection_dict[k] = convert_doc_iso_to_date(v)
+            for k, v in expected_collection_dict.items():
+                expected_collection_dict[k] = convert_doc_iso_to_date(v)
             assert edited_collection_dict == expected_collection_dict
 
 
