@@ -128,7 +128,13 @@ def load_mongo_col(col: Collection) -> dict:
     }
 
 
-def bson_document_cleanup(doc: dict):
+def doc_cleanup(doc: dict):
+    doc = bson_cleanup(doc)
+    doc['_id'].replace('.', '')
+    return doc
+
+
+def bson_cleanup(doc: dict):
     """
     This method should be used prior to updating or adding a document to a collection in mongo. Specifically, this
     replaces all periods in keys and _id value with a blank, and changes datetime.date to an iso string. It does so
@@ -164,10 +170,9 @@ def bson_document_cleanup(doc: dict):
         return new
 
     def convert(k):
-        return k.replace('.', '')
+        return k.replace('.', '-')
 
     doc = change_keys_id_and_date(doc, convert)
-    doc['_id'].replace('.', '')
     return doc
 
 
@@ -383,7 +388,7 @@ class MongoClient:
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
-        doc = bson_document_cleanup(doc)
+        doc = doc_cleanup(doc)
         try:
             valid = validate_doc(collname, doc, self.rc)
             if not valid:
@@ -400,7 +405,7 @@ class MongoClient:
 
     def insert_many(self, dbname, collname, docs):
         """Inserts many documents into a database/collection."""
-        docs = [bson_document_cleanup(doc) for doc in docs]
+        docs = [doc_cleanup(doc) for doc in docs]
 
         screened_docs = []
         for doc in docs:
@@ -424,7 +429,7 @@ class MongoClient:
     def delete_one(self, dbname, collname, doc):
         """Removes a single document from a collection"""
         coll = self.client[dbname][collname]
-        doc = bson_document_cleanup(doc)
+        doc = doc_cleanup(doc)
         if ON_PYMONGO_V2:
             return coll.remove(doc, multi=False)
         else:
@@ -432,8 +437,8 @@ class MongoClient:
 
     def find_one(self, dbname, collname, filter):
         """Finds the first document matching filter."""
-        coll = self.dbs[dbname][collname]
         filter['_id'].replace('.', '')
+        coll = self.client[dbname][collname]
         doc = coll.find_one(filter)
         return doc
 
@@ -442,8 +447,10 @@ class MongoClient:
         #TODO validate an update, which is difficult because an update does not change
         # the dictionary until the command is executed. So I would have to update locally
         # then validate, then update remotely
+        validation_coll = self.dbs[dbname][collname]
         coll = self.client[dbname][collname]
-        filter.replace('.', '')
+        filter['_id'].replace('.', '')
+        update = bson_cleanup(update)
         if ON_PYMONGO_V2:
             doc = coll.find_one(filter)
             if doc is None:
@@ -456,4 +463,4 @@ class MongoClient:
                 return self.insert_one(dbname, collname, newdoc)
             return coll.update(doc, update, **kwargs)
         else:
-            return coll.find_one_and_update(filter, update, **kwargs)
+            return coll.find_one_and_update(filter, {"$set": update}, **kwargs)
