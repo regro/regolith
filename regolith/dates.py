@@ -129,6 +129,33 @@ def last_day(year, month):
     """
     return calendar.monthrange(year, month_to_int(month))[1]
 
+
+def convert_doc_iso_to_date(doc):
+    def convert_date(obj):
+        """
+        Recursively goes through the dictionary obj and converts date from iso to datetime.date
+        """
+        if isinstance(obj, str):
+            try:
+                date = datetime.datetime.strptime(obj, '%Y-%m-%d').date()
+            except ValueError:
+                return obj
+            else:
+                return date
+        if isinstance(obj, (int, float)):
+            return obj
+        if isinstance(obj, dict):
+            new = obj.__class__()
+            for k, v in obj.items():
+                new[k] = convert_date(v)
+        elif isinstance(obj, (list, set, tuple)):
+            new = obj.__class__(convert_date(v) for v in obj)
+        else:
+            return obj
+        return new
+    return convert_date(doc)
+
+
 def get_dates(thing, date_field_prefix=None):
     '''
     given a dict like thing, return the date items
