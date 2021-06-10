@@ -33,7 +33,11 @@ REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majored
 SERVICE_TYPE = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
 # for status of kickoff, deliverable, milestones, and the projectum
-PROJECTUM_STATUS = ["proposed", "started", "converged", "finished", "cancelled", "paused"]
+PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
+PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
+PROJECTUM_CANCELLED_STATI = ["cancelled"]
+PROJECTUM_FINISHED_STATI = ["finished"]
+PROJECTUM_STATUS = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "release", "email", "handin",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 
