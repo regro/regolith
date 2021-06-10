@@ -15,7 +15,7 @@ from regolith.sorters import doc_date_key, ene_date_key, position_key
 from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
-BEAMLINE = "xpd"
+BEAMLINE = "nsls"
 
 class PubListBuilder(LatexBuilderBase):
     btype = "publist"
