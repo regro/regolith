@@ -74,7 +74,7 @@ def make_db():
         rmtree(repo)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def make_mongodb():
     """A test fixture that creates and destroys a git repo in a temporary
     directory, as well as a mongo database.
@@ -176,7 +176,7 @@ def make_mongodb():
     if not OUTPUT_FAKE_DB:
         rmtree(repo)
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def make_mixed_db():
     """A test fixture that creates and destroys a git repo in a temporary
     directory, as well as a mongo database.
