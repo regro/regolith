@@ -15,7 +15,7 @@ from regolith.sorters import doc_date_key, ene_date_key, position_key
 from regolith.builders.basebuilder import LatexBuilderBase, latex_safe
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
-BEAMLINE = "aps"
+BEAMLINE = "xpd"
 
 class PubListBuilder(LatexBuilderBase):
     btype = "publist"
@@ -57,6 +57,7 @@ class PubListBuilder(LatexBuilderBase):
             # fixme
             if BEAMLINE not in self.rc.grants:
                 gr = True
+                fac = False
                 grants = self.rc.grants
                 if isinstance(grants, str):
                     grants = [grants]
