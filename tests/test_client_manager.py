@@ -8,7 +8,7 @@ from regolith.tools import all_docs_from_collection
 from regolith.schemas import EXEMPLARS
 
 
-def test_builder_python(make_mixed_db):
+def test_collection_retrieval_python(make_mixed_db):
     if make_mixed_db is False:
         pytest.skip("Mongoclient failed to start")
     else:
