@@ -1,3 +1,4 @@
+from regolith.dates import get_dates
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
@@ -11,10 +12,6 @@ HELPER_TARGET = "l_abstract"
 
 
 def subparser(subpi):
-    subpi.add_argument(
-        "run",
-        help='run the lister. To see allowed optional arguments, type '
-             '"regolith helper l_abstract"')
     subpi.add_argument(
         "-a",
         "--author",
@@ -75,12 +72,16 @@ class AbstractListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
+
         presentations = self.gtx["presentations"]
         SEMINAR_TYPES = ['seminar', 'colloquium']
         filtered_title, filtered_authors, filtered_years, filtered_inst, filtered_loc = ([] for i in range(5))
 
         if (not rc.author) and (not rc.year) and (not rc.loc_inst) and (not rc.title):
-            return None
+            print("-------------------------------------------")
+            print("please rerun specifying at least one filter")
+            print("-------------------------------------------")
+            return
 
         if rc.title:
             filtered_title = [presentation for presentation in presentations
@@ -90,8 +91,9 @@ class AbstractListerHelper(SoutHelperBase):
                                 if rc.author in presentation.get('authors')]
         if rc.year:
             filtered_years = [presentation for presentation in presentations
-                              if int(rc.year) == presentation.get('begin_year', 'begin_date')
-                              or int(rc.year) == presentation.get('end_year', 'end_date')]
+                              if get_dates(presentation).get("date",
+                                                             get_dates(presentation).get("end_date",
+                                                             get_dates(presentation).get("begin_date"))).year == int(rc.year)]
         if rc.loc_inst:
             filtered_inst = [presentation for presentation in presentations
                              if presentation.get('type') in SEMINAR_TYPES and
