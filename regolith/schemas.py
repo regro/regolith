@@ -1579,9 +1579,9 @@ EXEMPLARS = {
             "_id": "ab_inactive",
             "lead": "abeing",
             "status": "started",
-            "deliverable": {"due_date": "2021-05-03"},
-            "kickoff": {"due_date": "2021-05-03", "name": "Kickoff"},
-            "milestones": [{"due_date": "2021-05-03", "name": "Milestone"}]
+            "deliverable": {"due_date": "2021-05-03", "status": "paused"},
+            "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged"}]
         }
         ],
     "projects": {
@@ -3788,7 +3788,7 @@ SCHEMAS = {
                           "type": "list"},
                 "status": {"description": f"status of the deliverable. "
                                           f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
-                           "required": False,
+                           "required": True,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
                 "type": {"description": "type of deliverable",
