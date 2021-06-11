@@ -1,13 +1,16 @@
 ab_inactive:
   deliverable:
     due_date: '2021-05-03'
+    status: paused
   kickoff:
     due_date: '2021-05-03'
     name: Kickoff
+    status: backburner
   lead: abeing
   milestones:
     - due_date: '2021-05-03'
       name: Milestone
+      status: converged
   status: started
 ly_newprojectum:
   begin_date: 2020-04-29

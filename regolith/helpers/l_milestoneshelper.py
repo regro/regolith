@@ -3,10 +3,7 @@
    Projecta are small bite-sized project quanta that typically will result in
    one manuscript.
 """
-import datetime as dt
-import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
-import sys
+
 
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
@@ -14,32 +11,40 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    search_collection,
     key_value_pair_filter,
     collection_str
 )
+from regolith.schemas import PROJECTUM_STATUS, PROJECTUM_PAUSED_STATI, \
+    PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI, PROJECTUM_ACTIVE_STATI
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
-ALLOWED_STATI = ["all", "proposed", "converged", "started", "finished", "back_burner",
-                 "paused", "cancelled"]
-ACTIVE_STATI = ["proposed", "converged", "started"]
-PAUSED_STATI = ["back_burner", "paused"]
-CANCELLED_STATI = ["cancelled"]
-INACTIVE_STATI = PAUSED_STATI + CANCELLED_STATI
-FINISHED_STATI = ["finished"]
+ALLOWED_STATI = PROJECTUM_STATUS
+ALLOWED_STATI.append("all")
+PAUSED_STATI = PROJECTUM_PAUSED_STATI
+CANCELLED_STATI = PROJECTUM_CANCELLED_STATI
+FINISHED_STATI = PROJECTUM_FINISHED_STATI
+ACTIVE_STATI = PROJECTUM_ACTIVE_STATI
+INACTIVE_STATI = PAUSED_STATI + CANCELLED_STATI + FINISHED_STATI
 ROLES = ['pi', 'lead', 'group_members', 'collaborators']
 
 
 def subparser(subpi):
     subpi.add_argument('--helper_help',
-                        help='This helper will list all milestones. Rerun specifying '
-                             '--lead PERSON or --person PERSON to get the milestones for projecta '
-                             'where PERSON is lead, or has any role, respectively. '
-                             'Rerun with --all, --current, or --finished to get '
-                             'all, active or finished milestones, respectively. '
-                             'filters work with AND logic so -l PERSON -c will list '
-                             'the active milestones for projecta where PERSON is lead'
+                        help=f'This helper will list all ACTIVE milestones by default. To'
+                             f'be active the projectum itself must be active and the '
+                             f'milestone within the prum also active.  Active states '
+                             f'have status from {ACTIVE_STATI}. '
+                             f''
+                             f'Rerun specifying '
+                             f'--lead PERSON or --person PERSON to get the milestones for projecta '
+                             f'where PERSON is lead, or has any role, respectively. '
+                             f'Rerun with --all, --current, or --finished to get '
+                             f'all, active or finished milestones, respectively. '
+                             f'filters work with AND logic so -l PERSON -c will list '
+                             f'the active milestones for projecta where PERSON is lead.'
+                             f'Note that "checklist" prums are not listed. Please use'
+                             f'u_milestone to see those.'
                         )
     subpi.add_argument("-l", "--lead",
                        help="Filter milestones for this project lead"
@@ -48,15 +53,15 @@ def subparser(subpi):
                        help="Filter milestones for this person whether lead or not")
     subpi.add_argument("-s", "--stati", nargs="+",
                        help=f"Filter milestones for these stati from {ALLOWED_STATI}."
-                            f" Default is active projecta, i.e. 'started'",
+                            f" Default is active projecta, i.e. {ACTIVE_STATI}",
                        default=None
                        )
     subpi.add_argument("--all", action="store_true",
                        help="Lists all milestones in general")
     subpi.add_argument("-c", "--current", action="store_true",
-                       help="Lists all active milestones")
+                       help="Same behavior as default.  Here for consistency")
     subpi.add_argument("--finished", action="store_true",
-                       help="Lists all finished milestones")
+                       help=f"Lists all finished milestones, i.e., status is in {FINISHED_STATI}")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='increase verbosity of output')
     # The --filter and --keys flags should be in every lister
@@ -116,6 +121,13 @@ class MilestonesListerHelper(SoutHelperBase):
             not rc.current) and (not rc.person) and (not rc.all):
             return
 
+        # fixme there must be a better way, but for now use magic to
+        # to remove checklists
+        # print(collection)
+        collection = [prum for prum in collection if
+                      "checklist" not in prum.get('deliverable', {}).get('scope', [])]
+
+
         if rc.lead:
             if rc.person:
                 raise RuntimeError(
@@ -129,31 +141,34 @@ class MilestonesListerHelper(SoutHelperBase):
                           if prum.get('lead') in rc.person
                           or bool(
                     set(prum.get('group_members', [])).intersection(
-                        set(rc.person)))]
+                        set(rc.person)))
+                          or bool(
+                    set(prum.get('collaborators', [])).intersection(
+                        set(rc.person)))
+                          ]
+
         if not rc.all:
             collection = [prum for prum in collection if
                           prum.get('status') not in INACTIVE_STATI
                           ]
 
         all_milestones = []
-        if not rc.stati:
-            rc.stati = ['started']
+        if not rc.stati and not rc.all and not rc.finished:
+            rc.stati = ACTIVE_STATI
+        elif rc.finished:
+            rc.stati = FINISHED_STATI
+        elif rc.all:
+            rc.stati = ALLOWED_STATI
         for projectum in collection:
             projectum["deliverable"].update({"name": "deliverable",
                                              "objective": "deliver"})
             projectum["kickoff"].update({"type": "meeting"})
             milestones = [projectum["kickoff"], projectum["deliverable"]]
             milestones.extend(projectum["milestones"])
-            if rc.current:
-                milestones = [ms for ms in milestones if
-                              ms.get('status') in ACTIVE_STATI]
-            if rc.finished:
-                milestones = [ms for ms in milestones if
-                              ms.get('status') in FINISHED_STATI]
-            if not rc.all:
-                milestones = [ms for ms in milestones if
-                              ms.get('status') not in INACTIVE_STATI
-                              ]
+            milestones = [ms for ms in milestones if
+                              ms.get('status') in rc.stati
+                          ]
+
             for ms in milestones:
                 due_date = get_due_date(ms)
                 ms.update({

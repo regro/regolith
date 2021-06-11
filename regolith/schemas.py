@@ -33,7 +33,11 @@ REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majored
 SERVICE_TYPE = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
 # for status of kickoff, deliverable, milestones, and the projectum
-PROJECTUM_STATUS = ["proposed", "started", "converged", "finished", "cancelled", "paused"]
+PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
+PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
+PROJECTUM_CANCELLED_STATI = ["cancelled"]
+PROJECTUM_FINISHED_STATI = ["finished"]
+PROJECTUM_STATUS = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "release", "email", "handin",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 
@@ -1575,9 +1579,9 @@ EXEMPLARS = {
             "_id": "ab_inactive",
             "lead": "abeing",
             "status": "started",
-            "deliverable": {"due_date": "2021-05-03"},
-            "kickoff": {"due_date": "2021-05-03", "name": "Kickoff"},
-            "milestones": [{"due_date": "2021-05-03", "name": "Milestone"}]
+            "deliverable": {"due_date": "2021-05-03", "status": "paused"},
+            "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged"}]
         }
         ],
     "projects": {
@@ -3784,7 +3788,7 @@ SCHEMAS = {
                           "type": "list"},
                 "status": {"description": f"status of the deliverable. "
                                           f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
-                           "required": False,
+                           "required": True,
                            "type": "string",
                            "eallowed": PROJECTUM_STATUS},
                 "type": {"description": "type of deliverable",
