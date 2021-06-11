@@ -146,10 +146,6 @@ class MilestonesListerHelper(SoutHelperBase):
                     set(prum.get('collaborators', [])).intersection(
                         set(rc.person)))
                           ]
-        if rc.current:
-            collection = [prum for prum in collection if
-                          prum.get('status') in ACTIVE_STATI
-                          ]
 
         if not rc.all:
             collection = [prum for prum in collection if
@@ -173,9 +169,6 @@ class MilestonesListerHelper(SoutHelperBase):
                               ms.get('status') in rc.stati
                           ]
 
-            # if rc.current:
-            #     milestones = [ms for ms in milestones if
-            #                   ms.get('status') in ACTIVE_STATI]
             for ms in milestones:
                 due_date = get_due_date(ms)
                 ms.update({
