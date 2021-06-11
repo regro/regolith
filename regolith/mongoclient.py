@@ -389,13 +389,9 @@ class MongoClient:
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
         doc = doc_cleanup(doc)
-        try:
-            valid = validate_doc(collname, doc, self.rc)
-            if not valid:
-                sys.exit("Validation failed. Upload cancelled... exiting program")
-        except Exception as e:
-            print(e)
-            sys.exit("Validation failed unexpectedly. Upload cancelled... exiting program")
+        valid = validate_doc(collname, doc, self.rc)
+        if not valid:
+            raise ValueError("Validation failed. Upload cancelled.")
         coll = self.client[dbname][collname]
         if ON_PYMONGO_V2:
             i = coll.insert(doc)
@@ -409,17 +405,15 @@ class MongoClient:
 
         screened_docs = []
         for doc in docs:
-            try:
-                valid = validate_doc(collname, doc, self.rc)
-                if not valid:
-                    screened_docs.append(doc)
-            except Exception as e:
-                print(e)
-                sys.exit("Validation failed unexpectedly... exiting program")
+            valid = validate_doc(collname, doc, self.rc)
+            if not valid:
+                screened_docs.append(doc)
         if len(screened_docs) != 0:
             print("The following documents failed validation and were not uploaded\n")
             for doc in screened_docs:
                 print(doc['_id'])
+                if doc in docs:
+                    docs.remove(doc)
         coll = self.client[dbname][collname]
         if ON_PYMONGO_V2:
             return coll.insert(docs)
@@ -448,13 +442,9 @@ class MongoClient:
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)
         newdoc.update(update)
-        try:
-            valid = validate_doc(collname, newdoc, self.rc)
-            if not valid:
-                sys.exit("Validation failed. Upload cancelled... exiting program")
-        except Exception as e:
-            print(e)
-            sys.exit("Validation failed unexpectedly. Upload cancelled... exiting program")
+        valid = validate_doc(collname, newdoc, self.rc)
+        if not valid:
+            raise ValueError("Validation failed. Upload cancelled.")
         coll = self.client[dbname][collname]
         update = bson_cleanup(update)
         if ON_PYMONGO_V2:
