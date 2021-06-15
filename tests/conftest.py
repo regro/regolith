@@ -127,7 +127,7 @@ def make_mongodb():
             subprocess.check_call(cmd, cwd=repo)
         except subprocess.CalledProcessError:
             print(
-                "Mongod likely has not been installed as a service. In order to run mongodb tests, make sure\n"
+                "Mongodb likely has not been installed as a service. In order to run mongodb tests, make sure\n"
                 "to install the mongodb community edition with the following link: \n"
                 "https://docs.mongodb.com/manual/installation/")
             yield False
@@ -138,9 +138,9 @@ def make_mongodb():
     try:
         subprocess.check_call(cmd, cwd=repo)
     except subprocess.CalledProcessError:
-        print("If on linux/mac, Mongod command failed to execute. If on windows, the status of mongo could not be\n"
-              "retrieved. In order to run mongodb tests, make sure to install the mongodb community edition with\n"
-              "the following link:\n"
+        print("If using linux or mac, Mongod command failed to execute. If using windows, the status of mongo could \n"
+              "not be retrieved. In order to run mongodb tests, make sure to install the mongodb community edition with"
+              "\nthe following link:\n"
               "https://docs.mongodb.com/manual/installation/")
         yield False
         return
