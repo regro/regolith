@@ -1970,13 +1970,16 @@ def get_formatted_crossref_reference(doi):
 
 def validate_doc(collection_name, doc, rc):
     from regolith.schemas import validate
-    from pprint import pprint
+    from pprint import pformat
     v = validate(collection_name, doc, rc.schemas)
+    error_message = ""
     if v[0] is False:
-        print("ERROR in {}:".format(doc['_id']))
-        pprint(v[1])
+        error_message += "ERROR in {}:\n".format(doc['_id'])
+        error_message += pformat(v[1])
+        error_message += "\n"
         for vv in v[1]:
-            pprint(doc.get(vv))
-        print("-" * 15)
-        print("\n")
-    return v[0]
+            error_message += pformat(doc.get(vv))
+            error_message += "\n"
+        error_message += ("-" * 15)
+        error_message += "\n"
+    return v[0], error_message

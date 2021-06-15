@@ -389,9 +389,9 @@ class MongoClient:
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""
         doc = doc_cleanup(doc)
-        valid = validate_doc(collname, doc, self.rc)
+        valid, potential_error = validate_doc(collname, doc, self.rc)
         if not valid:
-            raise ValueError("Validation failed. Upload cancelled.")
+            raise ValueError(potential_error)
         coll = self.client[dbname][collname]
         if ON_PYMONGO_V2:
             i = coll.insert(doc)
@@ -404,14 +404,17 @@ class MongoClient:
         docs = [doc_cleanup(doc) for doc in docs]
 
         screened_docs = []
+        full_error = ""
         for doc in docs:
-            valid = validate_doc(collname, doc, self.rc)
+            valid, potential_error = validate_doc(collname, doc, self.rc)
             if not valid:
                 screened_docs.append(doc)
+                full_error += potential_error
+                full_error += "\n"
         if len(screened_docs) != 0:
             print("The following documents failed validation and were not uploaded\n")
             for doc in screened_docs:
-                print(doc['_id'])
+                print(full_error)
                 if doc in docs:
                     docs.remove(doc)
         coll = self.client[dbname][collname]
@@ -442,9 +445,9 @@ class MongoClient:
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)
         newdoc.update(update)
-        valid = validate_doc(collname, newdoc, self.rc)
+        valid, potential_error = validate_doc(collname, newdoc, self.rc)
         if not valid:
-            raise ValueError("Validation failed. Upload cancelled.")
+            raise ValueError(potential_error)
         coll = self.client[dbname][collname]
         update = bson_cleanup(update)
         if ON_PYMONGO_V2:
