@@ -55,7 +55,7 @@ BAD_PROJECTUM = {
 }
 
 
-def test_mongo_insertion_validation(capsys, make_mongodb):
+def test_mongo_insertion_validation(make_mongodb):
     if make_mongodb is False:
         pytest.skip("Mongoclient failed to start")
     else:
@@ -72,6 +72,5 @@ def test_mongo_insertion_validation(capsys, make_mongodb):
             rc.client.insert_one(only_database_in_test, 'projecta', BAD_PROJECTUM)
         except ValueError as e:
             result = e.args[0]
-    out, err = capsys.readouterr()
     expected = 'ERROR in sb_firstprojectum:\n{\'lead\': [\'required field\'], \'status\': [\'required field\']}\nNone\nNone\n---------------\n'
     assert result == expected
