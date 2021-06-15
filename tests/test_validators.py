@@ -55,7 +55,8 @@ BAD_PROJECTUM = {
 }
 
 
-def test_mongo_insertion_validation(make_mongodb):
+def test_mongo_invalid_insertion(make_mongodb):
+    # proof that valid insertion is allowed is provided by helper tests on mongo
     if make_mongodb is False:
         pytest.skip("Mongoclient failed to start")
     else:
