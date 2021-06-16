@@ -1937,7 +1937,7 @@ PEOPLE = [
 
 PRESENTATIONS = [
     {"_id": "abc",
-    "authors": ["bbanner"],
+    "authors": ["pparker"],
     "begin_year": 2018,
     "begin_month": 1,
     "begin_day": 1,
@@ -1979,15 +1979,34 @@ INSTITUTIONS = [{
     "name": "Rutgers University",
     "state": "NJ"}
     ]
-@pytest.mark.parameterize(
-    "args, kwargs, expected",
-    [(PEOPLE, PRESENTATIONS, INSTITUTIONS, "bbanner"),
-     {},
-    [
-    ]
+@pytest.mark.parametrize(
+    "args, kwargs, expected",[
+
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "pparker"],
+    {},
+    [{"_id": "abc",
+    "authors": "peter parker",
+    "begin_day_suffix": "st",
+    "begin_year": 2018,
+    "begin_month": 1,
+    "begin_day": 1,
+    "date": dt.date(2018, 1, 1),
+    "day_suffix": "st",
+    "department": {'name': 'apam'},
+    "institution": {'city': 'New York',
+                   'country': 'USA',
+                   'name': 'Columbia University',
+                   'state': 'NY'},
+    "status": "accepted",
+    "type": "award"}]
+    ),
+
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "pparker"],
+    {}
   ]
 )
 
 
 def test_filter_presentations(args, kwargs, expected):
-    not pass
+    actual = filter_presentations(*args, **kwargs)
+    assert actual == expected
