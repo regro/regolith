@@ -1925,44 +1925,47 @@ def test_group_member_employment_start_end(person, grpname, expected):
 
 
 PEOPLE = [
-    {"_id" : " ",
-    "aka" : " ",
-    "name" : " "},
-    {"_id" : " ",
-    "aka" : " ",
-    "name" : " "},
-    {"_id" : " ",
-    "aka" : " ",
-    "name" : " "}]
+    {"_id" : "tstark",
+    "aka" : "iron man",
+    "name" : "tony stark"},
+    {"_id" : "nromanov",
+    "aka" : "black widow",
+    "name" : "natasha romanov"},
+    {"_id" : "pparker",
+    "aka" : "spider man",
+    "name" : "peter parker"}]
 
 PRESENTATIONS = [
-    {"_id": "",
-    "authors": ["scopatz", "afriend"],
+    {"_id": "abc",
+    "authors": ["bbanner"],
     "begin_year": 2018,
-    "begin_month": 5,
-    "begin_day": 22,
+    "begin_month": 1,
+    "begin_day": 1,
     "department": "apam",
     "institution": "columbiau",
     "status": "accepted",
-    "type": "award",},
-    {"_id": "",
-    "authors": ["scopatz", "afriend"],
-    "begin_year": 2018,
-    "begin_month": 5,
-    "begin_day": 22,
+    "type": "award"},
+    {"_id": "def",
+    "authors": ["tstark"],
+    "begin_year": 2017,
+    "begin_month": 1,
+    "begin_day": 1,
     "department": "apam",
     "institution": "columbiau",
-    "status": "accepted",
-    "type": "award", },
-    {"_id": "",
-    "authors": ["scopatz", "afriend"],
-    "begin_year": 2018,
-    "begin_month": 5,
-    "begin_day": 22,
-    "department": "apam",
-    "institution": "columbiau",
-    "status": "accepted",
-    "type": "award", }]
+    "status": "declined",
+    "type": "keynote"},
+    {"_id": "ghi",
+    "authors": ["pparker", "nromanov"],
+    "begin_year": 2019,
+    "begin_month": 1,
+    "begin_day": 1,
+    "end_year": 2019,
+    "end_month": 1,
+    "end_day": 8,
+    "department": "physics",
+    "institution": "rutgersu",
+    "status": "cancelled",
+    "type": "poster"}]
 
 INSTITUTIONS = [{
     "_id": "columbiau",
@@ -1970,22 +1973,21 @@ INSTITUTIONS = [{
     "country": "USA",
     "name": "Columbia University",
     "state": "NY"},
-    {"_id": "columbiau",
-    "city": "New York",
+    {"_id": "rutgersu",
+    "city": "New Brunswick",
     "country": "USA",
-    "name": "Columbia University",
-    "state": "NY"}
+    "name": "Rutgers University",
+    "state": "NJ"}
     ]
 @pytest.mark.parameterize(
     "args, kwargs, expected",
-    [("args"),
-     {"kwargs"},
+    [(PEOPLE, PRESENTATIONS, INSTITUTIONS, "bbanner"),
+     {},
     [
-     "expected"
     ]
   ]
 )
 
 
 def test_filter_presentations(args, kwargs, expected):
-    pass
+    not pass
