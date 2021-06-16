@@ -5,6 +5,7 @@ from requests import HTTPError
 
 from regolith.tools import (
     filter_publications,
+    filter_presentations,
     fuzzy_retrieval,
     fragment_retrieval,
     number_suffix,
@@ -1923,3 +1924,15 @@ def test_group_member_employment_start_end(person, grpname, expected):
         assert str(excinfo.value) == expected
 
 
+@pytest.mark.parameterize(
+    "args, kwargs, expected",
+    [("args"),
+     {"kwargs"},
+    [
+     "expected"
+    ]
+  ]
+)
+
+def test_filter_presentations(args, kwargs, expected):
+    pass
