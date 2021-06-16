@@ -1924,6 +1924,58 @@ def test_group_member_employment_start_end(person, grpname, expected):
         assert str(excinfo.value) == expected
 
 
+PEOPLE = [
+    {"_id" : " ",
+    "aka" : " ",
+    "name" : " "},
+    {"_id" : " ",
+    "aka" : " ",
+    "name" : " "},
+    {"_id" : " ",
+    "aka" : " ",
+    "name" : " "}]
+
+PRESENTATIONS = [
+    {"_id": "",
+    "authors": ["scopatz", "afriend"],
+    "begin_year": 2018,
+    "begin_month": 5,
+    "begin_day": 22,
+    "department": "apam",
+    "institution": "columbiau",
+    "status": "accepted",
+    "type": "award",},
+    {"_id": "",
+    "authors": ["scopatz", "afriend"],
+    "begin_year": 2018,
+    "begin_month": 5,
+    "begin_day": 22,
+    "department": "apam",
+    "institution": "columbiau",
+    "status": "accepted",
+    "type": "award", },
+    {"_id": "",
+    "authors": ["scopatz", "afriend"],
+    "begin_year": 2018,
+    "begin_month": 5,
+    "begin_day": 22,
+    "department": "apam",
+    "institution": "columbiau",
+    "status": "accepted",
+    "type": "award", }]
+
+INSTITUTIONS = [{
+    "_id": "columbiau",
+    "city": "New York",
+    "country": "USA",
+    "name": "Columbia University",
+    "state": "NY"},
+    {"_id": "columbiau",
+    "city": "New York",
+    "country": "USA",
+    "name": "Columbia University",
+    "state": "NY"}
+    ]
 @pytest.mark.parameterize(
     "args, kwargs, expected",
     [("args"),
@@ -1933,6 +1985,7 @@ def test_group_member_employment_start_end(person, grpname, expected):
     ]
   ]
 )
+
 
 def test_filter_presentations(args, kwargs, expected):
     pass
