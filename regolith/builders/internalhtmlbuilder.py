@@ -4,6 +4,7 @@ import shutil
 import datetime as dt
 
 from regolith.builders.basebuilder import BuilderBase
+from regolith.dates import get_dates
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key, ene_date_key
 from regolith.tools import (
@@ -79,9 +80,8 @@ class InternalHtmlBuilder(BuilderBase):
         """Render projects"""
         rc = self.rc
         mtgsi = all_docs_from_collection(rc.client, "meetings")
-        pp_mtgs, f_mtgs = [], []
 
-
+        pp_mtgs, f_mtgs, jclub_cumulative = [], [], []
         for mtg in mtgsi:
             if not mtg.get('lead'):
                 print("{} missing a meeting lead".format(mtg["_id"]))
@@ -116,6 +116,7 @@ class InternalHtmlBuilder(BuilderBase):
                 if mtg["journal_club"].get("doi", "tbd").casefold() != 'tbd':
                     ref, _ = get_formatted_crossref_reference(mtg["journal_club"].get("doi"))
                     mtg["journal_club"]["doi"] = ref
+                    jclub_cumulative.append((ref, get_dates(mtg).get("date","no date")))
 
             if mtg.get("presentation"):
                 prsn_id = mtg["presentation"].get("presenter", "None")
@@ -139,11 +140,12 @@ class InternalHtmlBuilder(BuilderBase):
             else:
                 pp_mtgs.append(mtg)
 
+        jclub_cumulative = sorted(jclub_cumulative, key=lambda x: x[1], reverse=True)
         pp_mtgs = sorted(pp_mtgs, key=lambda x: x.get('date'), reverse=True)
         f_mtgs = sorted(f_mtgs, key=lambda x: x.get('date'))
         self.render(
             "grpmeetings.html", "grpmeetings.html", title="Group Meetings",
-            ppmeetings=pp_mtgs, fmeetings=f_mtgs
+            ppmeetings=pp_mtgs, fmeetings=f_mtgs, jclublist=jclub_cumulative
         )
 
 
