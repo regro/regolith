@@ -712,6 +712,7 @@ EXEMPLARS = {
             "day": 1,
             "journal_club": {
                 "doi": "10.1107/S2053273319005606",
+                "link": "http://myslides.com/link/to/2007ac_grpmtg",
                 "presenter": "not_a_valid_group_id",
             },
             "lead": "sbillinge",
@@ -2923,6 +2924,11 @@ SCHEMAS = {
                                  "tbd if it is not known yet",
                   "type": "string",
                   "required": True
+                 },
+                 "link": {
+                  "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
+                  "type": "string",
+                  "required": False
                  },
                  "presenter": {
                   "description": "The _id of the group member presenting, or a "
