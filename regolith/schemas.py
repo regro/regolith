@@ -11,6 +11,7 @@ SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 ACTIVITIES_TYPE = ["teaching", "research"]
 AGENCIES = ["nsf", "doe", "other"]
 APPOINTMENTS_TYPE = ["gra", "ss", "pd", "ug"]
+APPOINTMENTS_STATI = ["proposed", "finalized", "appointed"]
 COMMITTEES_TYPE = ["phdoral", "phddefense", "phdproposal", "promotion"]
 COMMITTEES_LEVEL = ["department", "school", "university", "external"]
 EXPENSES_STATUS = ["unsubmitted", "submitted", "reimbursed"]
@@ -18,6 +19,8 @@ EXPENSES_TYPE = ["travel", "business"]
 FACILITIES_TYPE = ["teaching", "research", "shared", "other", "teaching_wish",
                    "research_wish"]
 GRANT_STATUS = ["pending", "declined", "accepted", "in-prep"]
+MILESTONE_TYPE = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin",
+                  "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 POSITION_STATUS = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
                    "postdoc", "visitor-supported", "visitor-unsupported"]
 PRESENTATION_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
@@ -25,6 +28,11 @@ PRESENTATION_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keyn
 PRESENTATION_STATUS = ["in-prep", "submitted", "accepted", "declined",
                        "cancelled", "postponed"]
 PROJECT_TYPE = ["ossoftware", "funded", "outreach"]
+PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
+PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
+PROJECTUM_CANCELLED_STATI = ["cancelled"]
+PROJECTUM_FINISHED_STATI = ["finished"]
+PROJECTUM_STATUS = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 PROPOSAL_STATI = ["pending", "declined", "accepted", "inprep", "submitted"]
 PUBLICITY_TYPE = ["online", "article"]
 REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
@@ -33,13 +41,6 @@ REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majored
 SERVICE_TYPE = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
 # for status of kickoff, deliverable, milestones, and the projectum
-PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
-PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
-PROJECTUM_CANCELLED_STATI = ["cancelled"]
-PROJECTUM_FINISHED_STATI = ["finished"]
-PROJECTUM_STATUS = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
-MILESTONE_TYPE = ["pr", "meeting", "other", "paper", "release", "email", "handin",
-                  "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 
 EXEMPLARS = {
     "abstracts": {
@@ -711,6 +712,7 @@ EXEMPLARS = {
             "day": 1,
             "journal_club": {
                 "doi": "10.1107/S2053273319005606",
+                "link": "http://myslides.com/link/to/2007ac_grpmtg",
                 "presenter": "not_a_valid_group_id",
             },
             "lead": "sbillinge",
@@ -2922,6 +2924,11 @@ SCHEMAS = {
                                  "tbd if it is not known yet",
                   "type": "string",
                   "required": True
+                 },
+                 "link": {
+                  "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
+                  "type": "string",
+                  "required": False
                  },
                  "presenter": {
                   "description": "The _id of the group member presenting, or a "
