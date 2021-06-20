@@ -11,3 +11,4 @@ pandas
 pymongo
 matplotlib-base
 habanero
+gooey
