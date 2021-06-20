@@ -30,6 +30,7 @@ def subparser(subpi):
                        help="Filter projecta for this project lead"
                        )
     subpi.add_argument("-s", "--stati", nargs="+",
+                       choices=ALLOWED_STATI,
                        help=f"Filter projecta for these stati from {ALLOWED_STATI}."
                             f" Default is all projecta",
                        default=None

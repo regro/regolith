@@ -24,7 +24,9 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 def subparser(subpi):
     subpi.add_argument("name", help="pi first name space last name in quotes",
                         default=None)
-    subpi.add_argument("type", help=f"{ALLOWED_TYPES}", default=None)
+    subpi.add_argument("type",
+                       choices=ALLOWED_TYPES,
+                       help=f"{ALLOWED_TYPES}", default=None)
     subpi.add_argument("due_date", help="due date in form YYYY-MM-DD")
     subpi.add_argument("-d", "--database",
                         help="The database that will be updated.  Defaults to "
@@ -36,6 +38,7 @@ def subparser(subpi):
     subpi.add_argument("-r", "--reviewer",
                         help="name of the reviewer.  Defaults to sbillinge")
     subpi.add_argument("-s", "--status",
+                       choices=ALLOWED_STATI,
                         help=f"status, from {ALLOWED_STATI}. default is accepted")
     subpi.add_argument("-t", "--title",
                         help="the title of the proposal")

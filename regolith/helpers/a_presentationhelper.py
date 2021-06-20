@@ -48,10 +48,13 @@ def subparser(subpi):
                        default='tbd'
                        )
     subpi.add_argument("-s", "--status",
+                       choices=ALLOWED_STATI,
                        help=f"status, from {ALLOWED_STATI}, default is accepted",
                        default="accepted"
                        )
-    subpi.add_argument("-y", "--type", help=f"types, from {ALLOWED_TYPES}. Default",
+    subpi.add_argument("-y", "--type",
+                       choices=ALLOWED_TYPES,
+                       help=f"types, from {ALLOWED_TYPES}. Default",
                        default="invited"
                        )
     subpi.add_argument("-w", "--webinar", help=f"true if the presentation was a "

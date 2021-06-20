@@ -31,8 +31,10 @@ ACTIVE_STATI = ["started", "converged", "proposed"]
 
 def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs='+',
+                       #choices=TODO_STATI,
+                       #widget="Listbox",
                        help=f'Filter tasks with specific status from {TODO_STATI}. '
-                            f'Default is started.', default=["started"])
+                            f'Default is started.', default="started")
     subpi.add_argument("--short", nargs='?', const=30,
                        help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
     subpi.add_argument("-t", "--tags", nargs='+',

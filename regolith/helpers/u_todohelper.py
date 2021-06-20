@@ -49,10 +49,12 @@ def subparser(subpi):
                        help="give value 't' if due_date is a hard deadline, else 'f' if not",
                        )
     subpi.add_argument("-m", "--importance",
+                       choices=ALLOWED_IMPORTANCE,
                        help=f"Change the importance of the task from {ALLOWED_IMPORTANCE}.",
                        type=int
                        )
     subpi.add_argument("--status",
+                       choices=TODO_STATI,
                        help=f"Change the status of the task choosing from {TODO_STATI}."
                        )
     subpi.add_argument("-n", "--notes", nargs="+", help="The new notes for this task. Each note should be enclosed "

@@ -43,6 +43,7 @@ def subparser(subpi):
                        help="grant, or list of grants that cover this expense. Defaults to tbd"
                        )
     subpi.add_argument("-s", "--status",
+                       choices = ALLOWED_STATI,
                        help=f"status, from {ALLOWED_STATI}. Default is unsubmitted",
                        default='unsubmitted'
                        )
