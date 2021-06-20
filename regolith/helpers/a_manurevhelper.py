@@ -34,6 +34,7 @@ def subparser(subpi):
                        help="name of the reviewer. Defaults to the one saved in user.json. "
                        )
     subpi.add_argument("-s", "--status",
+                       choices=ALLOWED_STATI,
                        help=f"status, from {ALLOWED_STATI}. default is accepted"
                        )
     subpi.add_argument("-t", "--database",

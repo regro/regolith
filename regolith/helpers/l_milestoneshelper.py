@@ -49,6 +49,9 @@ def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs="+",
                        help=f"Filter milestones for these stati from {PROJECTUM_STATI}."
                             f" Default is active projecta, i.e. {PROJECTUM_ACTIVE_STATI}",
+                       choices=ALLOWED_STATI,
+                       help=f"Filter milestones for these stati from {ALLOWED_STATI}."
+                            f" Default is active projecta, i.e. {ACTIVE_STATI}",
                        default=None
                        )
     subpi.add_argument("--all", action="store_true",

@@ -175,6 +175,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("-s", "--status",
                        help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
+                       choices = ALLOWED_STATI,
+                       help=f"status, from {ALLOWED_STATI}. Default is unsubmitted",
                        default='unsubmitted'
                        )
     subpi.add_argument("-w", "--where",

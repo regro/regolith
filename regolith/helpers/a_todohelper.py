@@ -34,6 +34,7 @@ def subparser(subpi):
                        help=f"The due date is treated as a hard deadline when -d is set. Default is False"
                        )
     subpi.add_argument("-m", "--importance",
+                       choices=ALLOWED_IMPORTANCE,
                        help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1. "
                             f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the eigenhower matrix of "
                             f"importance vs. urgency",

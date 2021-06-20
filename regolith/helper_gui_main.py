@@ -43,8 +43,10 @@ CONNECTED_COMMANDS = {
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
 
-@Gooey
+# @Gooey(advanced=True)
+@Gooey()
 def create_parser():
+    p = GooeyParser()
     p = ArgumentParser()
     subp = p.add_subparsers(title="helper_target", dest="helper_target")
     for k, v in HELPERS.items():
