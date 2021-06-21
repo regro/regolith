@@ -13,6 +13,24 @@ from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from regolith.tools import dbpathname
 
+import signal
+import logging
+
+
+class DelayedKeyboardInterrupt:
+
+    def __enter__(self):
+        self.signal_received = False
+        self.old_handler = signal.signal(signal.SIGINT, self.handler)
+
+    def handler(self, sig, frame):
+        self.signal_received = (sig, frame)
+        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+
+    def __exit__(self, type, value, traceback):
+        signal.signal(signal.SIGINT, self.old_handler)
+        if self.signal_received:
+            self.old_handler(*self.signal_received)
 YAML_BASE_MAP = {CommentedMap: dict,
                  CommentedSeq: list}
 
@@ -77,18 +95,19 @@ def load_yaml(filename, return_inst=False, loader=None):
 
 def dump_yaml(filename, docs, inst=None):
     """Dumps a dict of documents into a file."""
-    inst = YAML() if inst is None else inst
-    inst.representer.ignore_aliases = lambda *data: True
-    inst.indent(mapping=2, sequence=4, offset=2)
-    sorted_dict = ruamel.yaml.comments.CommentedMap()
-    for k in sorted(docs):
-        doc = docs[k]
-        _id = doc.pop("_id")
-        sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
-        for kk in sorted(doc.keys()):
-            sorted_dict[k][kk] = doc[kk]
-    with open(filename, "w", encoding="utf-8") as fh:
-        inst.dump(sorted_dict, stream=fh)
+    with DelayedKeyboardInterrupt():
+        inst = YAML() if inst is None else inst
+        inst.representer.ignore_aliases = lambda *data: True
+        inst.indent(mapping=2, sequence=4, offset=2)
+        sorted_dict = ruamel.yaml.comments.CommentedMap()
+        for k in sorted(docs):
+            doc = docs[k]
+            _id = doc.pop("_id")
+            sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
+            for kk in sorted(doc.keys()):
+                sorted_dict[k][kk] = doc[kk]
+        with open(filename, "w", encoding="utf-8") as fh:
+            inst.dump(sorted_dict, stream=fh)
 
 
 def json_to_yaml(inp, out):
