@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import sys
 import time
+import urllib
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
@@ -229,8 +230,8 @@ class MongoClient:
                 try:
                     password = rc.mongo_db_password
                     if host is not None:
-                        host = host.replace("pwd_from_config", password)
-                        host = host.replace("uname_from_config", rc.mongo_id)
+                        host = host.replace("pwd_from_config", urllib.parse.quote_plus(password))
+                        host = host.replace("uname_from_config", urllib.parse.quote_plus(rc.mongo_id))
                     elif "dst_url" in rc.databases[0]:
                         rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace("pwd_from_config", password)
                         rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace("uname_from_config", rc.mongo_id)
