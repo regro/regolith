@@ -35,6 +35,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("-m", "--importance",
                        choices=ALLOWED_IMPORTANCE,
+                       type=int,
                        help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1. "
                             f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the eigenhower matrix of "
                             f"importance vs. urgency",
@@ -121,10 +122,12 @@ class TodoAdderHelper(DbHelperBase):
             due_date = date_parser.parse(rc.due_date).date()
         if begin_date > due_date:
             raise ValueError("begin_date can not be after due_date")
-        importance = int(rc.importance)
-        if importance not in ALLOWED_IMPORTANCE:
+        if rc.importance not in ALLOWED_IMPORTANCE:
             raise ValueError(
                 f"importance should be chosen from {ALLOWED_IMPORTANCE}")
+        else:
+            importance = int(rc.importance)
+
         todolist = person.get("todos", [])
         if not rc.deadline:
             rc.deadline = False
