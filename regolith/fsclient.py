@@ -13,6 +13,27 @@ from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from regolith.tools import dbpathname
 
+import signal
+import logging
+
+
+class DelayedKeyboardInterrupt:
+
+    def __enter__(self):
+        self.signal_received = False
+        self.old_handler = signal.signal(signal.SIGINT, self.handler)
+
+    def handler(self, sig, frame):
+        self.signal_received = (sig, frame)
+        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+
+    def __exit__(self, type, value, traceback):
+        signal.signal(signal.SIGINT, self.old_handler)
+        if self.signal_received:
+            self.old_handler(*self.signal_received)
+
+
+
 YAML_BASE_MAP = {CommentedMap: dict,
                  CommentedSeq: list}
 
@@ -88,7 +109,8 @@ def dump_yaml(filename, docs, inst=None):
         for kk in sorted(doc.keys()):
             sorted_dict[k][kk] = doc[kk]
     with open(filename, "w", encoding="utf-8") as fh:
-        inst.dump(sorted_dict, stream=fh)
+        with DelayedKeyboardInterrupt():
+            inst.dump(sorted_dict, stream=fh)
 
 
 def json_to_yaml(inp, out):
