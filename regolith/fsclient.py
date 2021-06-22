@@ -17,22 +17,20 @@ import signal
 import logging
 
 
-signal_received = False
-def DelayedKeyboardInterrupt(func):
+class DelayedKeyboardInterrupt:
 
-    def handler(sig, frame):
-        global signal_received
-        signal_received = (sig, frame)
+    def __enter__(self):
+        self.signal_received = False
+        self.old_handler = signal.signal(signal.SIGINT, self.handler)
+
+    def handler(self, sig, frame):
+        self.signal_received = (sig, frame)
         logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
 
-    def wrap(*args, **kwargs):
-        old_handler = signal.signal(signal.SIGINT, handler)
-        func(*args, **kwargs)
-        signal.signal(signal.SIGINT, old_handler)
-        global signal_received
-        if signal_received:
-            old_handler(*signal_received)
-    return wrap
+    def __exit__(self, type, value, traceback):
+        signal.signal(signal.SIGINT, self.old_handler)
+        if self.signal_received:
+            self.old_handler(*self.signal_received)
 
 
 
@@ -98,7 +96,6 @@ def load_yaml(filename, return_inst=False, loader=None):
     return (docs, inst) if return_inst else docs
 
 
-@DelayedKeyboardInterrupt
 def dump_yaml(filename, docs, inst=None):
     """Dumps a dict of documents into a file."""
     inst = YAML() if inst is None else inst
@@ -112,7 +109,8 @@ def dump_yaml(filename, docs, inst=None):
         for kk in sorted(doc.keys()):
             sorted_dict[k][kk] = doc[kk]
     with open(filename, "w", encoding="utf-8") as fh:
-        inst.dump(sorted_dict, stream=fh)
+        with DelayedKeyboardInterrupt():
+            inst.dump(sorted_dict, stream=fh)
 
 
 def json_to_yaml(inp, out):
