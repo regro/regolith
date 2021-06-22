@@ -24,8 +24,8 @@ def DelayedKeyboardInterrupt(func):
         old_handler = signal.signal(signal.SIGINT, handler)
         func(*args, **kwargs)
         signal.signal(signal.SIGINT, old_handler)
-        if self.signal_received:
-            self.old_handler(*self.signal_received)
+        if signal_received:
+            old_handler(*signal_received)
 
     def handler(sig, frame):
         signal_received = (sig, frame)
@@ -100,7 +100,7 @@ def dump_yaml(filename, docs, inst=None):
     inst.representer.ignore_aliases = lambda *data: True
     inst.indent(mapping=2, sequence=4, offset=2)
     sorted_dict = ruamel.yaml.comments.CommentedMap()
-        for k in sorted(docs):
+    for k in sorted(docs):
         doc = docs[k]
         _id = doc.pop("_id")
         sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
