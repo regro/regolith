@@ -271,7 +271,7 @@ class MongoClient:
                 for db in mongo_dbs_list:
                     if host is not None:
                         if host != db['url']:
-                            print("WARNING: Multiple mongo URLs not supported. Use single cluster per rc.")
+                            print("WARNING: Multiple mongo clusters not supported. Use single cluster per rc.")
                             return
                     host = db['url']
             # Currently configured such that password deemed unnecessary for strictly local mongo instance
@@ -289,10 +289,11 @@ class MongoClient:
                         rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace(
                             "uname_from_config", urllib.parse.quote_plus(rc.mongo_id))
                 except AttributeError:
-                    print("Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
-                          "mongo_id and mongo_db_password respectively")
-                except Exception as e:
-                    print(e)
+                    print("ERROR:\n"
+                          "Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
+                          "mongo_id and mongo_db_password respectively.\n\n"
+                          "In regolithrc.json, \'uname_from_config\' and \'pwd_from_config\' can/should replace these\n"
+                          "fields in the mongo URL string.\n")
             self.client = pymongo.MongoClient(host, authSource="admin")
             if not self.is_alive():
                 # we need to wait for the server to startup
