@@ -233,8 +233,10 @@ class MongoClient:
                         host = host.replace("pwd_from_config", urllib.parse.quote_plus(password))
                         host = host.replace("uname_from_config", urllib.parse.quote_plus(rc.mongo_id))
                     elif "dst_url" in rc.databases[0]:
-                        rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace("pwd_from_config", password)
-                        rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace("uname_from_config", rc.mongo_id)
+                        rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace(
+                            "pwd_from_config", urllib.parse.quote_plus(password))
+                        rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace(
+                            "uname_from_config", urllib.parse.quote_plus(rc.mongo_id))
                 except AttributeError:
                     print("Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
                           "mongo_id and mongo_db_password respectively")
