@@ -162,6 +162,7 @@ class MongoClient:
         self.dbs = defaultdict(lambda: defaultdict(dict))
         self.chained_db = dict()
         self.closed = True
+        self.local = True
 
     def _preclean(self):
         mongodbpath = self.rc.mongodbpath
@@ -187,7 +188,7 @@ class MongoClient:
             return self.client.alive()
         elif ON_PYMONGO_V3:
             alive = False
-            if self.rc.local is False:
+            if self.local is False:
                 from pymongo.errors import ConnectionFailure
                 try:
                     # The ismaster command is cheap and does not require auth.
@@ -223,10 +224,11 @@ class MongoClient:
                             print("WARNING: Multiple mongo clusters not supported. Use single cluster per rc.")
                             return
                     host = db['url']
+            if "+srv" in host:
+                self.local = False
             # Currently configured such that password deemed unnecessary for strictly local mongo instance
-            # CI will likely break if this changes
-            password_not_req = [required["local"] for required in mongo_dbs_list]
-            if False in password_not_req:
+            password_req = not self.local
+            if password_req:
                 try:
                     password = rc.mongo_db_password
                     if host is not None:
@@ -241,14 +243,20 @@ class MongoClient:
                     print("ERROR:\n"
                           "Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
                           "mongo_id and mongo_db_password respectively.\n\n"
-                          "In regolithrc.json, \'uname_from_config\' and \'pwd_from_config\' can/should replace these\n"
-                          "fields in the mongo URL string.\n")
+                          "\'uname_from_config\' and \'pwd_from_config\' can/should stand in for these field in the\n"
+                          "mongo URL string in regolithrc.json.\n")
             self.client = pymongo.MongoClient(host, authSource="admin")
             if not self.is_alive():
-                # we need to wait for the server to startup
-                self._preclean()
-                self._startserver()
-                time.sleep(0.1)
+                if self.local:
+                    # we need to wait for the server to startup
+                    self._preclean()
+                    self._startserver()
+                    time.sleep(0.1)
+                else:
+                    raise ConnectionError("Mongo server exists, communication refused. Potential TLS issue.\n"
+                                          "Attempt the following in regolith env bash terminal:\n"
+                                          "export SSL_CERT_FILE=$(python -c \"import certifi; print(certifi.where())\")"
+                                          )
             self.closed = False
 
     def load_database(self, db: dict):
