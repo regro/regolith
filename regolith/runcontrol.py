@@ -235,7 +235,6 @@ DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
     builddir="_build",
     mongodbpath=property(lambda self: os.path.join(self.builddir, "_dbpath")),
-    local=False,
     user_config=os.path.expanduser("~/.config/regolith/user.json"),
     force=False,
 )
