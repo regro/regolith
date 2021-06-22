@@ -20,16 +20,19 @@ import logging
 def DelayedKeyboardInterrupt(func):
 
     signal_received = False
+    def handler(sig, frame):
+        signal_received = (sig, frame)
+        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+        
     def wrap(*args, **kwargs):
         old_handler = signal.signal(signal.SIGINT, handler)
         func(*args, **kwargs)
         signal.signal(signal.SIGINT, old_handler)
         if signal_received:
             old_handler(*signal_received)
+    return wrap
 
-    def handler(sig, frame):
-        signal_received = (sig, frame)
-        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+
 
 YAML_BASE_MAP = {CommentedMap: dict,
                  CommentedSeq: list}
