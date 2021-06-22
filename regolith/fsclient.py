@@ -17,17 +17,19 @@ import signal
 import logging
 
 
+signal_received = False
 def DelayedKeyboardInterrupt(func):
 
-    signal_received = False
     def handler(sig, frame):
+        global signal_received
         signal_received = (sig, frame)
         logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
-        
+
     def wrap(*args, **kwargs):
         old_handler = signal.signal(signal.SIGINT, handler)
         func(*args, **kwargs)
         signal.signal(signal.SIGINT, old_handler)
+        global signal_received
         if signal_received:
             old_handler(*signal_received)
     return wrap
