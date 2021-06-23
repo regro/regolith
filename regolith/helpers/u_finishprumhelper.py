@@ -13,11 +13,13 @@ def subparser(subpi):
                        help="the ID or fragment of the ID of the projectum to be updated, e.g., 20sb")
     subpi.add_argument("--end_date",
                        help="End date of the projectum in ISO format (YYYY-MM-DD). "
-                            "Defaults to today.")
+                            "Defaults to today.",
+                       widget='DateChooser')
     # Do not delete --database arg
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file.")
+                            "first database in the regolithrc.json file.",
+                       widget='FileChooser')
     return subpi
 
 

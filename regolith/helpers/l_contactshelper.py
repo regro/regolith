@@ -41,7 +41,8 @@ def subparser(subpi):
         "-d",
         "--date",
         help='approximate date in ISO format (YYYY-MM-DD) corresponding to when the contact was entered in the database. '
-             'Comes with a default range of 4 months centered around the date; change range using --range argument.')
+             'Comes with a default range of 4 months centered around the date; change range using --range argument.',
+        widget='DateChooser')
     subpi.add_argument(
         "-r",
         "--range",

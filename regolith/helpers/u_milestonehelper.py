@@ -33,7 +33,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("-d", "--due_date",
                        help="New due date of the milestone in ISO format(YYYY-MM-DD). "
-                            "Required for a new milestone.")
+                            "Required for a new milestone.",
+                       widget='DateChooser')
     subpi.add_argument("-n", "--name",
                        help="Name of the milestone. "
                             "Required for a new milestone.")
@@ -65,9 +66,11 @@ def subparser(subpi):
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file.")
+                            "first database in the regolithrc.json file.",
+                       widget='FileChooser')
     subpi.add_argument("--date",
-                       help="The date that will be used for testing."
+                       help="The date that will be used for testing.",
+                       widget='DateChooser'
                        )
     return subpi
 

@@ -39,7 +39,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("-u", "--due_date",
                        help="Change the due date of the task. Either enter a date in format YYYY-MM-DD or an "
-                            "integer. Integer 5 means 5 days from today or from a certain date assigned by --certain_date. "
+                            "integer. Integer 5 means 5 days from today or from a certain date assigned by --certain_date. ",
+                       widget='DateChooser'
                        )
     subpi.add_argument("-e", "--estimated_duration",
                        help="Change the estimated duration the task will take in minutes. ",
@@ -61,17 +62,20 @@ def subparser(subpi):
                                                         "in quotation marks.")
     subpi.add_argument("-t", "--tags", nargs="+", help="The new tags to add for this task.")
     subpi.add_argument("--begin_date",
-                       help="Change the begin date of the task in format YYYY-MM-DD."
+                       help="Change the begin date of the task in format YYYY-MM-DD.",
+                       widget='DateChooser'
                        )
     subpi.add_argument("--end_date",
-                       help="Change the end date of the task in format YYYY-MM-DD."
+                       help="Change the end date of the task in format YYYY-MM-DD.",
+                       widget='DateChooser'
                        )
     subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.")
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.",
+                       widget='DateChooser')
 
     return subpi
 

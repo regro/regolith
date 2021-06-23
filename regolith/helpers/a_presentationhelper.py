@@ -29,10 +29,12 @@ def subparser(subpi):
     subpi.add_argument("begin_date",
                        help="Input begin date for this presentation "
                             "in YYYY-MM-DD format",
+                       widget='DateChooser'
                        )
     subpi.add_argument("end_date",
                        help="Input end date for this presentation"
                             "in YYYY-MM-DD format",
+                       widget='DateChooser'
                        )
     subpi.add_argument("-p", "--person",
                        help="the person submitting the presentation, used for presentation name,"
@@ -79,7 +81,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
+                            "first database in the regolithrc.json file.",
+                       widget='FileChooser'
                        )
     return subpi
 

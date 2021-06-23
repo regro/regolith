@@ -25,13 +25,15 @@ def subparser(subpi):
                        default=None)
     subpi.add_argument("due_date",
                        help="Due date of the task. Either enter a date in format YYYY-MM-DD or an "
-                            "integer. Integer 5 means 5 days from today (or from a date assigned in --date."
+                            "integer. Integer 5 means 5 days from today (or from a date assigned in --date.",
+                       widget='DateChooser'
                        )
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
                        )
     subpi.add_argument("-d", "--deadline", action="store_true",
-                       help=f"The due date is treated as a hard deadline when -d is set. Default is False"
+                       help=f"The due date is treated as a hard deadline when -d is set. Default is False",
+                       widget='DateChooser'
                        )
     subpi.add_argument("-m", "--importance",
                        choices=ALLOWED_IMPORTANCE,
@@ -51,10 +53,12 @@ def subparser(subpi):
     subpi.add_argument("-b", "--assigned_by",
                        help="ID of the member that assigns the task. Default id is saved in user.json. ")
     subpi.add_argument("--begin_date",
-                       help="Begin date of the task in format YYYY-MM-DD. Default is today."
+                       help="Begin date of the task in format YYYY-MM-DD. Default is today.",
+                       widget='DateChooser'
                        )
     subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.")
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.",
+                       widget='DateChooser')
 
     return subpi
 
