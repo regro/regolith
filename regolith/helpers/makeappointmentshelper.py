@@ -69,7 +69,8 @@ def subparser(subpi):
                             'by and how much.')
     subpi.add_argument("-d", "--projection-from-date",
                        help='the date from which projections into the future '
-                            'will be calculated')
+                            'will be calculated',
+                       widget='DateChooser')
     subpi.add_argument("--no-plot", action="store_true",
                        help='suppress plotting feature')
     subpi.add_argument("--no-gui", action="store_true",
@@ -80,8 +81,7 @@ def subparser(subpi):
                             "that ended more than 2 years ago won't be plotted")
     # Do not delete --database arg
     subpi.add_argument("--database",
-                       help="The database that will be updated. Defaults to first database in regolithrc.json",
-                       widget='FileChooser')
+                       help="The database that will be updated. Defaults to first database in regolithrc.json")
 
     return subpi
 

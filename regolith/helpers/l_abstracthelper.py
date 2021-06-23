@@ -21,7 +21,8 @@ def subparser(subpi):
         "-y",
         "--year",
         help='start or end year of the presentation (single argument only) to '
-             'use to find presentation')
+             'use to find presentation',
+        widget='IntegerField')
     subpi.add_argument(
         "-l",
         "--loc_inst",

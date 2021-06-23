@@ -30,10 +30,10 @@ def subparser(subpi):
                        )
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
+                       widget='IntegerField'
                        )
     subpi.add_argument("-d", "--deadline", action="store_true",
                        help=f"The due date is treated as a hard deadline when -d is set. Default is False",
-                       widget='DateChooser'
                        )
     subpi.add_argument("-m", "--importance",
                        choices=ALLOWED_IMPORTANCE,

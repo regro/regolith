@@ -31,8 +31,7 @@ def subparser(subpi):
                        widget='DateChooser')
     subpi.add_argument("-d", "--database",
                         help="The database that will be updated.  Defaults to "
-                             "first database in the regolithrc.json file.",
-                       widget='FileChooser'
+                             "first database in the regolithrc.json file."
                         )
     subpi.add_argument("-q", "--requester",
                         help="Name of the Program officer requesting"

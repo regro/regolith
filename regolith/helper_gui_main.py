@@ -44,7 +44,9 @@ NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
 
 # @Gooey(advanced=True)
-@Gooey()
+@Gooey(body_bg_color='#000000',
+       required_cols=1,
+       optional_cols=1)
 def create_parser():
     p = GooeyParser()
     #p = ArgumentParser()

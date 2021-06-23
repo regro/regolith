@@ -28,7 +28,9 @@ def subparser(subpi):
                        help="Enter the index of a certain task in the enumerated list to update that task.",
                        type=int)
     subpi.add_argument("-s", "--stati", nargs='+', help=f'Update tasks with specific status from {TODO_STATI}. '
-                                                        f'Default is started.', default=["started"])
+                                                        f'Default is started.', default=["started"],
+                       choices=TODO_STATI,
+                       widget='Listbox')
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("-r", "--renumber", action="store_true",
                        help="Renumber the indices."
