@@ -35,7 +35,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
                                           "Please enter either an end date or a duration. "
-                                          "Non-integer values are rounded down."
+                                          "Non-integer values are rounded down.",
+                       widget='IntegerField'
                        )
     subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD",
                        widget='DateChooser'
@@ -52,7 +53,9 @@ def subparser(subpi):
                             "group pi id in regolithrc.json"
                        )
     subpi.add_argument("--cppflag", help="Current and pending form (True or False). Defaults to True)",
-                       default=True
+                       default=True,
+                       widget='Dropdown',
+                       choices=[True,False]
                        )
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
                                                 "submitted. Defaults to False", default='None'
@@ -64,12 +67,14 @@ def subparser(subpi):
     subpi.add_argument("--months_academic", help="Number of working months in the academic year "
                                                  "to be stated on the current and pending form. "
                                                  "Defaults to 0",
-                       default=0
+                       default=0,
+                       widget='IntegerField'
                        )
     subpi.add_argument("--months_summer", help="Number of working months in the summer to be "
                                                "stated on the current and pending form. "
                                                "Defaults to 0",
-                       default=0
+                       default=0,
+                       widget='IntegerField'
                        )
     subpi.add_argument("-s", "--scope", help="Scope of project and statement of any overlaps "
                                              "with other current and pending grants",
@@ -83,8 +88,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file.",
-                       widget='FileChooser'
+                            "first database in the regolithrc.json file."
                        )
     subpi.add_argument("--date",
                        help="The date that will be used for testing.",

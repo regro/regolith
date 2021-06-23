@@ -53,8 +53,7 @@ def subparser(subpi):
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file.",
-                       widget='FileChooser')
+                            "first database in the regolithrc.json file.")
     # Do not delete --date arg
     subpi.add_argument("--date",
                        help="The date when the institution was created in ISO format. "
