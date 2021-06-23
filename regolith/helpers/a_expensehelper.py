@@ -154,6 +154,14 @@ def expense_constructor(key, begin_date, end_date, rc):
 
 
 def subparser(subpi):
+    # Do not delete --database arg
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file.",
+                       widget='FileChooser'
+                       )
+    subpi.add_argument("amount", help="expense amount",
+                       )
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
                        )
@@ -189,11 +197,12 @@ def subparser(subpi):
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
                             "In YYYY-MM-DD format. Defaults to today's date",
-
+                       widget='DateChooser'
                        )
     subpi.add_argument("-e,", "--end_date",
                        help="Input end date for this expense. "
                             "In YYYY-MM-DD format. Defaults to today's date",
+                       widget='DateChooser'
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",
