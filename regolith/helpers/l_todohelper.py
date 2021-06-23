@@ -44,7 +44,8 @@ def subparser(subpi):
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.")
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.",
+                       widget='DateChooser')
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
 

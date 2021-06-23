@@ -36,12 +36,14 @@ def subparser(subpi):
     # Do not delete --date arg
     subpi.add_argument("--date",
                        help="The date when the contact was created in ISO format. "
-                            "Defaults to today's date."
+                            "Defaults to today's date.",
+                       widget='DateChooser'
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file.")
+                            "first database in the regolithrc.json file.",
+                       widget='FileChooser')
     # FIXME
     # subpi.add_argument("-e", "--email",
     #                    help="email address")

@@ -19,13 +19,15 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 def subparser(subpi):
     subpi.add_argument("name", help="Full name, or last name, of the first author",
                        )
-    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD in quotes", default=''
+    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD in quotes", default='',
+                       widget='DateChooser'
                        )
     subpi.add_argument("journal", help="journal to be published on", default=''
                        )
     subpi.add_argument("title", help="the title of the Manuscript", default=''
                        )
-    subpi.add_argument("-d", "--submitted_date", help="submitted date in ISO YYYY-MM-DD format in quotes"
+    subpi.add_argument("-d", "--submitted_date", help="submitted date in ISO YYYY-MM-DD format in quotes",
+                       widget='DateChooser'
                        )
     subpi.add_argument("-q", "--requester",
                        help="name, or id in contacts, of the editor requesting the review"
@@ -39,7 +41,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("-t", "--database",
                        help="The database that will be updated. Defaults to "
-                            "first database in the regolithrc.json file."
+                            "first database in the regolithrc.json file.",
+                       widget='FileChooser'
                        )
     return subpi
 

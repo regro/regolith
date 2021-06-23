@@ -80,7 +80,8 @@ def subparser(subpi):
                             "that ended more than 2 years ago won't be plotted")
     # Do not delete --database arg
     subpi.add_argument("--database",
-                       help="The database that will be updated. Defaults to first database in regolithrc.json")
+                       help="The database that will be updated. Defaults to first database in regolithrc.json",
+                       widget='FileChooser')
 
     return subpi
 

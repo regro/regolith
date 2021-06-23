@@ -27,10 +27,12 @@ def subparser(subpi):
     subpi.add_argument("type",
                        choices=ALLOWED_TYPES,
                        help=f"{ALLOWED_TYPES}", default=None)
-    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD")
+    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD",
+                       widget='DateChooser')
     subpi.add_argument("-d", "--database",
                         help="The database that will be updated.  Defaults to "
-                             "first database in the regolithrc.json file."
+                             "first database in the regolithrc.json file.",
+                       widget='FileChooser'
                         )
     subpi.add_argument("-q", "--requester",
                         help="Name of the Program officer requesting"

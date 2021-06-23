@@ -33,10 +33,12 @@ def subparser(subpi):
                         )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
+                            "first database in the regolithrc.json file.",
+                       widget='FileChooser'
                        )
     subpi.add_argument("--date",
-                       help="The date that will be used for testing."
+                       help="The date that will be used for testing.",
+                       widget='DateChooser'
                        )
     return subpi
 
