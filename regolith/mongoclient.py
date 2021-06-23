@@ -224,8 +224,12 @@ class MongoClient:
                             print("WARNING: Multiple mongo clusters not supported. Use single cluster per rc.")
                             return
                     host = db['url']
-            if "+srv" in host:
-                self.local = False
+            if host is not None:
+                if "+srv" in host:
+                    self.local = False
+            elif "dst_url" in rc.databases[0]:
+                if "+srv" in rc.databases[0]["dst_url"]:
+                    self.local = False
             # Currently configured such that password deemed unnecessary for strictly local mongo instance
             password_req = not self.local
             if password_req:
