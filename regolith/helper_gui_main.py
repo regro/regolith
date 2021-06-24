@@ -44,9 +44,12 @@ NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
 
 # @Gooey(advanced=True)
-@Gooey(body_bg_color='#000000',
+@Gooey(#body_bg_color='#808080',
+       #header_bg_color='#808080',
        required_cols=1,
-       optional_cols=1)
+       optional_cols=1,
+       sidebar_title='Helpers',
+       program_name='Regolith Helpers')
 def create_parser():
     p = GooeyParser()
     #p = ArgumentParser()

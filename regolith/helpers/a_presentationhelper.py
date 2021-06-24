@@ -28,13 +28,11 @@ def subparser(subpi):
                                     "department if seminar",
                        )
     subpi.add_argument("begin_date",
-                       help="Input begin date for this presentation "
-                            "in YYYY-MM-DD format",
+                       help="Input begin date for this presentation ",
                        widget='DateChooser'
                        )
     subpi.add_argument("end_date",
-                       help="Input end date for this presentation"
-                            "in YYYY-MM-DD format",
+                       help="Input end date for this presentation",
                        widget='DateChooser'
                        )
     subpi.add_argument("-p", "--person",
@@ -51,16 +49,15 @@ def subparser(subpi):
                        )
     subpi.add_argument("-s", "--status",
                        choices=ALLOWED_STATI,
-                       help=f"status, from {ALLOWED_STATI}, default is accepted",
+                       help=f"Presentation status",
                        default="accepted"
                        )
     subpi.add_argument("-y", "--type",
                        choices=ALLOWED_TYPES,
-                       help=f"types, from {ALLOWED_TYPES}. Default",
+                       help=f"Presentation type",
                        default="invited"
                        )
-    subpi.add_argument("-w", "--webinar", help=f"true if the presentation was a "
-                                               f"webinar. Default False",
+    subpi.add_argument("-w", "--webinar", help=f"Is the presentation a webinar?",
                        action="store_true"
                        )
     subpi.add_argument("-u", "--authors", nargs="+",

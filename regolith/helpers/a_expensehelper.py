@@ -22,10 +22,11 @@ def subparser(subpi):
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file.",
-                       widget='FileChooser'
+                            "first database in the regolithrc.json file."
                        )
     subpi.add_argument("amount", help="expense amount",
+                       widget='DecimalField',
+                       gooey_options={'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision' : 2}
                        )
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
@@ -34,7 +35,7 @@ def subparser(subpi):
                        default=None)
 
     subpi.add_argument("-b", "--business", action='store_true',
-                       help="expense type is business. If not specified defaults to travel"
+                       help="Is the expense type business? If not specified, defaults to travel"
                        )
     subpi.add_argument("-y", "--payee",
                        help="payee of the expense. defaults to sbillinge",
@@ -45,7 +46,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("-s", "--status",
                        choices = ALLOWED_STATI,
-                       help=f"status, from {ALLOWED_STATI}. Default is unsubmitted",
+                       help=f"status",
                        default='unsubmitted'
                        )
     subpi.add_argument("-w", "--where",
@@ -53,16 +54,17 @@ def subparser(subpi):
                        )
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="List of notes for the expense. Defaults to empty list",
-                       default= []
+                       default= [],
+                       widget='Textarea'
                        )
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date",
+                            "Defaults to today's date",
                        widget='DateChooser'
                        )
     subpi.add_argument("-e,", "--end_date",
                        help="Input end date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date",
+                            "Defaults to today's date",
                        widget='DateChooser'
                        )
     return subpi

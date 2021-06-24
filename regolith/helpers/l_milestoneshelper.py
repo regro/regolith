@@ -53,9 +53,10 @@ def subparser(subpi):
                        help="Filter milestones for this person whether lead or not")
     subpi.add_argument("-s", "--stati", nargs="+",
                        choices=ALLOWED_STATI,
-                       help=f"Filter milestones for these stati from {ALLOWED_STATI}."
+                       help=f"Filter milestones for these stati."
                             f" Default is active projecta, i.e. {ACTIVE_STATI}",
-                       default=None
+                       default=None,
+                       widget='Listbox'
                        )
     subpi.add_argument("--all", action="store_true",
                        help="Lists all milestones in general")

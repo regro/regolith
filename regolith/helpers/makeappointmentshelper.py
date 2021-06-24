@@ -61,8 +61,7 @@ _future_grant = {
 def subparser(subpi):
 
     subpi.add_argument("run",
-                       help='run the helper. to see optional arguments, enter '
-                            '"regolith helper makeappointments".'
+                       help='Run the helper'
                             'The grant "future_grant" is available internally '
                             'to assign people to for making projections.  It '
                             'will be plotted to show when you need new funding '

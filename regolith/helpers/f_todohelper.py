@@ -24,7 +24,8 @@ ALLOWED_IMPORTANCE = [0, 1, 2]
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
                        help="Enter the index of a certain task in the enumerated list to mark as finished.",
-                       type=int)
+                       type=int,
+                       widget='IntegerField')
     subpi.add_argument("--end_date",
                        help="Add the end date of the task. Default is today.",
                        widget='DateChooser')

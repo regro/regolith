@@ -19,14 +19,14 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 def subparser(subpi):
     subpi.add_argument("name", help="Full name, or last name, of the first author",
                        )
-    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD in quotes", default='',
+    subpi.add_argument("due_date", help="Due date", default='',
                        widget='DateChooser'
                        )
     subpi.add_argument("journal", help="journal to be published on", default=''
                        )
     subpi.add_argument("title", help="the title of the Manuscript", default=''
                        )
-    subpi.add_argument("-d", "--submitted_date", help="submitted date in ISO YYYY-MM-DD format in quotes",
+    subpi.add_argument("-d", "--submitted_date", help="Submitted date",
                        widget='DateChooser'
                        )
     subpi.add_argument("-q", "--requester",
@@ -37,7 +37,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("-s", "--status",
                        choices=ALLOWED_STATI,
-                       help=f"status, from {ALLOWED_STATI}. default is accepted"
+                       help=f"Manuscript status",
+                       default='accepted'
                        )
     subpi.add_argument("-t", "--database",
                        help="The database that will be updated. Defaults to "

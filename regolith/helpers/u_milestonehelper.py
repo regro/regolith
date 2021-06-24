@@ -31,7 +31,7 @@ def subparser(subpi):
                        help="only list current (unfinished, unpaused) milestones",
                        )
     subpi.add_argument("-d", "--due_date",
-                       help="New due date of the milestone in ISO format(YYYY-MM-DD). "
+                       help="New due date of the milestone. "
                             "Required for a new milestone.",
                        widget='DateChooser')
     subpi.add_argument("-n", "--name",
@@ -58,6 +58,7 @@ def subparser(subpi):
     subpi.add_argument("--notes",
                        nargs='+',
                        help="Any notes you want to add to the milestone.",
+                       widget='Textarea'
                        )
     subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
