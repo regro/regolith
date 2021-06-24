@@ -25,7 +25,7 @@ BLACKLIST = ["they_pay", "collgf", "physmatch", "ta", "chemmatch",
 
 def subparser(subpi):
     subpi.add_argument("-d", "--date",
-                       help="Filter grants by a date in ISO format (YYYY-MM-DD)",
+                       help="Filter grants by a date",
                        widget='DateChooser'
                        )
     subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')

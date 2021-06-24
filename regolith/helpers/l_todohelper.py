@@ -33,11 +33,12 @@ def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs='+',
                        choices=TODO_STATI,
                        #widget="Listbox",
-                       help=f'Filter tasks with specific status from {TODO_STATI}. '
-                            f'Default is started.', default="started",
+                       help=f'Filter tasks with specific stati',
+                       default="started",
                        widget='Listbox')
     subpi.add_argument("--short", nargs='?', const=30,
-                       help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
+                       help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.',
+                       widget='IntegerField',gooey_options={'min': 0, 'max': 1000})
     subpi.add_argument("-t", "--tags", nargs='+',
                        help="Filter tasks by tags. Items are returned if they contain any of the tags listed")
     subpi.add_argument("-a", "--assigned_to",

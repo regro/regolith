@@ -12,7 +12,7 @@ def subparser(subpi):
     subpi.add_argument("projectum_id",
                        help="the ID or fragment of the ID of the projectum to be updated, e.g., 20sb")
     subpi.add_argument("--end_date",
-                       help="End date of the projectum in ISO format (YYYY-MM-DD). "
+                       help="End date of the projectum. "
                             "Defaults to today.",
                        widget='DateChooser')
     # Do not delete --database arg

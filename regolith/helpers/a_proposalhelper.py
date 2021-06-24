@@ -21,24 +21,24 @@ def subparser(subpi):
     subpi.add_argument("name", help="A short but unique name for the proposal",
                        )
     subpi.add_argument("amount", help="value of award",
+                       widget='DecimalField',
+                       gooey_options={'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision' : 2}
                        )
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
-    subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
-                                            "in format YYYY-MM-DD.",
+    subpi.add_argument("--begin_date", help="The begin date for the proposed grant ",
                        widget='DateChooser'
                        )
-    subpi.add_argument("--end_date", help="The end date for the proposed grant in "
-                                          "format YYYY-MM-DD. Please enter either an "
+    subpi.add_argument("--end_date", help="The end date for the proposed grant."
+                                          " Please enter either an "
                                           "end date or a duration",
                        widget='DateChooser'
                        )
     subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
-                                          "Please enter either an end date or a duration. "
-                                          "Non-integer values are rounded down.",
+                                          "Please enter either an end date or a duration. ",
                        widget='IntegerField'
                        )
-    subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD",
+    subpi.add_argument("--due_date", help="The due date for the proposal",
                        widget='DateChooser'
                        )
     subpi.add_argument("-a", "--authors", nargs="+",
@@ -58,7 +58,7 @@ def subparser(subpi):
                        choices=[True,False]
                        )
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
-                                                "submitted. Defaults to False", default='None'
+                                                "submitted. Defaults to None", default='None'
                        )
     subpi.add_argument("-i", "--institution",
                        help="The institution where the work will primarily "
@@ -84,7 +84,8 @@ def subparser(subpi):
                        default=''
                        )
     subpi.add_argument("-n", "--notes", nargs="+",
-                       help="Anything to note", default=[]
+                       help="Anything to note", default=[],
+                       widget='Textarea'
                        )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "

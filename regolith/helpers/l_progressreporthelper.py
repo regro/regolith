@@ -31,9 +31,10 @@ def subparser(subpi):
                        )
     subpi.add_argument("-s", "--stati", nargs="+",
                        choices=ALLOWED_STATI,
-                       help=f"Filter projecta for these stati from {ALLOWED_STATI}."
+                       help=f"Filter projecta for these stati."
                             f" Default is all projecta",
-                       default=None
+                       default=None,
+                       widget='Listbox'
                        )
     # The --filter and --keys flags should be in every lister
     subpi.add_argument("-f", "--filter", nargs="+",

@@ -26,8 +26,8 @@ def subparser(subpi):
                         default=None)
     subpi.add_argument("type",
                        choices=ALLOWED_TYPES,
-                       help=f"{ALLOWED_TYPES}", default=None)
-    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD",
+                       help=f"Report type", default=None)
+    subpi.add_argument("due_date", help="Due date",
                        widget='DateChooser')
     subpi.add_argument("-d", "--database",
                         help="The database that will be updated.  Defaults to "
@@ -40,7 +40,8 @@ def subparser(subpi):
                         help="name of the reviewer.  Defaults to sbillinge")
     subpi.add_argument("-s", "--status",
                        choices=ALLOWED_STATI,
-                        help=f"status, from {ALLOWED_STATI}. default is accepted")
+                        help=f"Report status",
+                       default='accepted')
     subpi.add_argument("-t", "--title",
                         help="the title of the proposal")
     return subpi
