@@ -48,11 +48,6 @@ class GeneralListerHelper(SoutHelperBase):
         needed_dbs = [rc.coll]
         if "groups" in needed_dbs:
             rc.pi_id = get_pi_id(rc)
-        try:
-            if not rc.database:
-                rc.database = rc.databases[0]["name"]
-        except BaseException:
-            pass
         colls = [
             sorted(
                 all_docs_from_collection(rc.client, collname), key=_id_key
