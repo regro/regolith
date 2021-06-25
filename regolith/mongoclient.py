@@ -1,5 +1,6 @@
 """Client interface for MongoDB.
-Maintained such that only pymongo is necessary when inter"""
+Maintained such that only pymongo is necessary when using helper/builders, and additional command-line tools
+are necessary to install for maintenance tasks, such as fs-to-mongo."""
 import itertools
 import os
 import shutil
