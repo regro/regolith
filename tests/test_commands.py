@@ -30,6 +30,7 @@ def test_fs_to_mongo_python(make_db):
         main(['fs-to-mongo'])
     except Exception as e:
         print(e)
+        assert True == False
     else:
         assert True == True
 
