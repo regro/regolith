@@ -84,6 +84,7 @@ def make_mongodb():
     This will yield the path to the repo.
     """
     cwd = os.getcwd()
+    forked = False
     name = "regolith_mongo_fake"
     repo = os.path.join(tempfile.gettempdir(), name)
     if os.path.exists(repo):
@@ -138,6 +139,7 @@ def make_mongodb():
         cmd = ["mongostat", "--host", "localhost", "-n", "1"]
     else:
         cmd = ['mongod', '--fork', '--syslog', '--dbpath', mongodbpath]
+        forked = True
     try:
         subprocess.check_call(cmd, cwd=repo)
     except subprocess.CalledProcessError:
@@ -176,6 +178,7 @@ def make_mongodb():
     except subprocess.CalledProcessError:
         print(f'Deleting the test database failed, insert \"mongo {REGOLITH_MONGODB_NAME} --eval '
               f'\"db.dropDatabase()\"\" into command line manually')
+    shut_down_fork(forked, repo)
     if not OUTPUT_FAKE_DB:
         rmtree(repo)
 
@@ -189,6 +192,7 @@ def make_mixed_db():
     abstracts test collections in EXEMPLARS respectively.
     """
     cwd = os.getcwd()
+    forked = False
     name = "regolith_mongo_fake"
     repo = os.path.join(tempfile.gettempdir(), name)
     if os.path.exists(repo):
@@ -253,6 +257,7 @@ def make_mixed_db():
         cmd = ["mongostat", "--host", "localhost", "-n", "1"]
     else:
         cmd = ['mongod', '--fork', '--syslog', '--dbpath', mongodbpath]
+        forked = True
     try:
         subprocess.check_call(cmd, cwd=repo)
     except subprocess.CalledProcessError:
@@ -293,6 +298,7 @@ def make_mixed_db():
     except subprocess.CalledProcessError:
         print(f'Deleting the test database failed, insert \"mongo {REGOLITH_MONGODB_NAME} --eval '
               f'\"db.dropDatabase()\"\" into command line manually')
+    shut_down_fork(forked, repo)
     os.chdir(cwd)
     if not OUTPUT_FAKE_DB:
         rmtree(repo)
@@ -365,6 +371,7 @@ def make_fs_to_mongo_migration_db():
     abstracts test collections in EXEMPLARS respectively.
     """
     cwd = os.getcwd()
+    forked = False
     name = "regolith_mongo_fake"
     repo = os.path.join(tempfile.gettempdir(), name)
     if os.path.exists(repo):
@@ -414,6 +421,7 @@ def make_fs_to_mongo_migration_db():
         cmd = ["mongostat", "--host", "localhost", "-n", "1"]
     else:
         cmd = ['mongod', '--fork', '--syslog', '--dbpath', mongodbpath]
+        forked = True
     try:
         subprocess.check_call(cmd, cwd=repo)
     except subprocess.CalledProcessError:
@@ -439,6 +447,17 @@ def make_fs_to_mongo_migration_db():
     except subprocess.CalledProcessError:
         print(f'Deleting the test database failed, insert \"mongo {ALTERNATE_REGOLITH_MONGODB_NAME} --eval '
               f'\"db.dropDatabase()\"\" into command line manually')
+    shut_down_fork(forked, repo)
     os.chdir(cwd)
     if not OUTPUT_FAKE_DB:
         rmtree(repo)
+
+
+def shut_down_fork(forked, repo):
+    if forked:
+        cmd = ["mongo", "admin", "--eval", "db.shutdownServer()"]
+        try:
+            subprocess.check_call(cmd, cwd=repo)
+        except subprocess.CalledProcessError:
+            print(f'Deleting the test database failed, insert \"mongo admin --eval '
+                  f'\"db.shutdownServer()\"\" into command line manually')
