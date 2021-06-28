@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 from pathlib import Path
 import os
+import copy
 
 import pytest
 
@@ -64,7 +65,7 @@ def test_mongo_invalid_insertion(make_mongodb):
     from regolith.database import connect
     from regolith.runcontrol import DEFAULT_RC, load_rcfile
     os.chdir(repo)
-    rc = DEFAULT_RC
+    rc = copy.copy(DEFAULT_RC)
     rc.schemas = SCHEMAS
     rc._update(load_rcfile("regolithrc.json"))
     with connect(rc) as rc.client:

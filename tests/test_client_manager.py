@@ -1,6 +1,6 @@
 import pytest
 import os
-from copy import deepcopy
+from copy import deepcopy, copy
 
 from regolith.database import connect
 from regolith.runcontrol import DEFAULT_RC, load_rcfile
@@ -14,7 +14,7 @@ def test_collection_retrieval_python(make_mixed_db):
     else:
         repo, fs_coll, mongo_coll = make_mixed_db
     os.chdir(repo)
-    rc = DEFAULT_RC
+    rc = copy(DEFAULT_RC)
     rc._update(load_rcfile("regolithrc.json"))
     with connect(rc) as rc.client:
         fs_test_dict = dict(list(all_docs_from_collection(rc.client, "abstracts"))[0])

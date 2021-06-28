@@ -288,7 +288,7 @@ def create_parser():
 
 
 def main(args=None):
-    rc = DEFAULT_RC
+    rc = copy.copy(DEFAULT_RC)
     parser = create_parser()
     args0 = Namespace()
     args1, rest = parser.parse_known_args(args, namespace=args0)
