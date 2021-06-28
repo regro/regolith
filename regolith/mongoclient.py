@@ -363,6 +363,10 @@ class MongoClient:
         """
         host = getattr(self.rc, 'host', None)
         uri = db.get('dst_url', None)
+        # Catch the easy/common regolith rc error of putting the db uri as localhost rather than host
+        if uri == 'localhost':
+            uri = None
+            host = 'localhost'
         dbpath = dbpathname(db, self.rc)
         dbname = db['name']
         import_jsons(dbpath, dbname, host=host, uri=uri)
@@ -398,7 +402,7 @@ class MongoClient:
         return
 
     def keys(self):
-        return self.client.database_names()
+        return self.client.list_database_names()
 
     def __getitem__(self, key):
         return self.client[key]
