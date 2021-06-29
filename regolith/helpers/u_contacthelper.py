@@ -25,7 +25,8 @@ def subparser(subpi):
     subpi.add_argument("-t","--notes", nargs='+',
                         help="Notes.  As many notes as you like, each one in "
                              "quotes and separated by a space, such as where "
-                             "and when met, what discussed.")
+                             "and when met, what discussed.",
+                       widget='Textarea')
     subpi.add_argument("-d", "--department", help="Department at the institution.")
     subpi.add_argument("--id", help="id of the person, e.g., first letter first name "
                                           "plus last name, but unique.")
@@ -35,8 +36,9 @@ def subparser(subpi):
                             "quotes separated by a space")
     # Do not delete --date arg
     subpi.add_argument("--date",
-                       help="The date when the contact was created in ISO format. "
-                            "Defaults to today's date."
+                       help="The date when the contact was created. "
+                            "Defaults to today's date.",
+                       widget='DateChooser'
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",

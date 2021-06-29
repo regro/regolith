@@ -44,10 +44,12 @@ def subparser(subpi):
                             "non active person as lead")
     subpi.add_argument("-e", "--ended", action="store_true",
                        help="Lists projecta that have ended. Use the -d and -r flags to specify up to "
-                            "what date and how many days before then. The default is 7 days before today.")
+                            "what date and how many days before then. The default is 7 days before today.",
+                       widget='IntegerField')
     subpi.add_argument("-d", "--date",
                        help="projecta with end_date within RANGE before this date will be listed. "
-                            "The default is today. Some projecta don't have an end date and won't appear in a search")
+                            "The default is today. Some projecta don't have an end date and won't appear in a search",
+                       widget='DateChooser')
     subpi.add_argument("-r", "--range",
                        help="date range back from DATE to search over in days. "
                             "If no range is specified, search range will be 7 days")

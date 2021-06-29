@@ -35,7 +35,8 @@ def subparser(subpi):
     # Do not delete --date arg
     subpi.add_argument("--date",
                        help="The begin_date for the projectum  Defaults to "
-                            "today's date."
+                            "today's date.",
+                       widget='DateChooser'
                        )
     subpi.add_argument("-d", "--description",
                        help="Slightly longer description of the projectum"
@@ -51,7 +52,8 @@ def subparser(subpi):
                        help="grant or (occasionally) list of grants that support this work"
                        )
     subpi.add_argument("-u", "--due_date",
-                       help="proposed due date for the deliverable"
+                       help="proposed due date for the deliverable",
+                       widget='DateChooser'
                        )
     subpi.add_argument("--checklist", action='store_true',
                        help="Create manuscript checklist if specified"

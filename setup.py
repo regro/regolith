@@ -48,7 +48,7 @@ def main():
                 "*.xsh",
             ]
         },
-        scripts=["scripts/regolith"],
+        scripts=["scripts/regolith", "scripts/helper_gui"],
         zip_safe=False,
     )
     if HAVE_SETUPTOOLS:

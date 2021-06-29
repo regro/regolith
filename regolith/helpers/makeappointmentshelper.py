@@ -61,15 +61,15 @@ _future_grant = {
 def subparser(subpi):
 
     subpi.add_argument("run",
-                       help='run the helper. to see optional arguments, enter '
-                            '"regolith helper makeappointments".'
+                       help='Run the helper'
                             'The grant "future_grant" is available internally '
                             'to assign people to for making projections.  It '
                             'will be plotted to show when you need new funding '
                             'by and how much.')
     subpi.add_argument("-d", "--projection-from-date",
                        help='the date from which projections into the future '
-                            'will be calculated')
+                            'will be calculated',
+                       widget='DateChooser')
     subpi.add_argument("--no-plot", action="store_true",
                        help='suppress plotting feature')
     subpi.add_argument("--no-gui", action="store_true",

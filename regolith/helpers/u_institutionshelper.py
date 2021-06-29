@@ -35,7 +35,7 @@ def subparser(subpi):
                        help="List of all the different names this "
                             "institution is known by.")
     subpi.add_argument("--dept_id",
-                       help="e.g. physics.")
+                       help="dept_id, e.g. physics.")
     subpi.add_argument("--dept_name",
                        help="Department canonical name, e.g., Department of Physics. "
                             "Required if --dept_id supplied and it is a new department")
@@ -56,8 +56,9 @@ def subparser(subpi):
                             "first database in the regolithrc.json file.")
     # Do not delete --date arg
     subpi.add_argument("--date",
-                       help="The date when the institution was created in ISO format. "
-                            "Defaults to today's date."
+                       help="The date when the institution was created. "
+                            "Defaults to today's date.",
+                       widget='DateChooser'
                        )
     return subpi
 

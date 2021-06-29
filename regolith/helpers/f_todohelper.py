@@ -24,16 +24,19 @@ ALLOWED_IMPORTANCE = [0, 1, 2]
 def subparser(subpi):
     subpi.add_argument("-i", "--index",
                        help="Enter the index of a certain task in the enumerated list to mark as finished.",
-                       type=int)
+                       type=int,
+                       widget='IntegerField')
     subpi.add_argument("--end_date",
-                       help="Add the end date of the task. Default is today.")
+                       help="Add the end date of the task. Default is today.",
+                       widget='DateChooser')
     subpi.add_argument("-t", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.")
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.",
+                       widget='DateChooser')
     return subpi
 
 

@@ -176,7 +176,7 @@ class FileSystemClient:
             base, ext = os.path.splitext(collfilename)
             self._collexts[base] = ext
             self._collfiletypes[base] = "yaml"
-            print("loading " + f + "...", file=sys.stderr)
+            #print("loading " + f + "...", file=sys.stderr)
             coll, inst = load_yaml(f, return_inst=True)
             dbs[db["name"]][base] = coll
             self._yamlinsts[dbpath, base] = inst
@@ -210,7 +210,7 @@ class FileSystemClient:
         os.makedirs(dbpath, exist_ok=True)
         to_add = []
         for collname, collection in self.dbs[db["name"]].items():
-            print("dumping " + collname + "...", file=sys.stderr)
+            #print("dumping " + collname + "...", file=sys.stderr)
             filetype = self._collfiletypes.get(collname, "yaml")
             if filetype == "json":
                 filename = self.dump_json(collection, collname, dbpath)

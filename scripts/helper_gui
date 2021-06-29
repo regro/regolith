@@ -1,0 +1,3 @@
+#!/usr/bin/env python
+from regolith.helper_gui_main import main
+main()

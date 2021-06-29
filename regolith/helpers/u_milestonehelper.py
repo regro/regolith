@@ -31,8 +31,9 @@ def subparser(subpi):
                        help="only list current (unfinished, unpaused) milestones",
                        )
     subpi.add_argument("-d", "--due_date",
-                       help="New due date of the milestone in ISO format(YYYY-MM-DD). "
-                            "Required for a new milestone.")
+                       help="New due date of the milestone. "
+                            "Required for a new milestone.",
+                       widget='DateChooser')
     subpi.add_argument("-n", "--name",
                        help="Name of the milestone. "
                             "Required for a new milestone.")
@@ -40,10 +41,12 @@ def subparser(subpi):
                        help="Objective of the milestone. "
                             "Required for a new milestone.")
     subpi.add_argument("-s", "--status",
+                       choices=ALLOWED_STATI,
                        help="Status of the milestone/deliverable: "
                             f"{ALLOWED_STATI}. "
                             "Defaults to proposed for a new milestone.")
     subpi.add_argument("-t", "--type",
+                       choices=ALLOWED_TYPES,
                        help="Type of the milestone: "
                             f"{ALLOWED_TYPES} "
                             "Defaults to meeting for a new milestone.")
@@ -55,6 +58,7 @@ def subparser(subpi):
     subpi.add_argument("--notes",
                        nargs='+',
                        help="Any notes you want to add to the milestone.",
+                       widget='Textarea'
                        )
     subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
@@ -64,7 +68,8 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
     subpi.add_argument("--date",
-                       help="The date that will be used for testing."
+                       help="The date that will be used for testing.",
+                       widget='DateChooser'
                        )
     return subpi
 

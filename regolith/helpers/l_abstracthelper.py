@@ -21,7 +21,10 @@ def subparser(subpi):
         "-y",
         "--year",
         help='start or end year of the presentation (single argument only) to '
-             'use to find presentation')
+             'use to find presentation',
+        default=2021,
+        widget='IntegerField', gooey_options={'min': 2000, 'max': 2100}
+    )
     subpi.add_argument(
         "-l",
         "--loc_inst",
