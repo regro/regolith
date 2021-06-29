@@ -587,7 +587,10 @@ helper_map = [
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
 ]
 
-db_srcs = ["mongo", "fs"]
+db_srcs = [
+    # "mongo",
+    "fs"
+]
 
 
 @pytest.mark.parametrize("db_src", db_srcs)
