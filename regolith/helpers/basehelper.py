@@ -88,7 +88,6 @@ class HelperBase(object):
     def hlp(self):
         """run the helper, note this runs any of the commands
         listed in ``self.cmds``"""
-        os.makedirs(self.bldir, exist_ok=True)
         for cmd in self.cmds:
             getattr(self, cmd)()
 

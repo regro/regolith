@@ -595,17 +595,11 @@ def test_helper_python(hm, make_db, capsys):
     out, err = capsys.readouterr()
     assert out == hm[1]
 
-    builddir = repo / "_build" / hm[0][1]
     expecteddir = testfile.parent / "outputs" / hm[0][1]
-    are_outfiles = any(builddir.iterdir())
-    if are_outfiles and not expecteddir.is_dir():
-        print("WARNING: there are built outputs that are not being tested")
-    if are_outfiles and expecteddir.is_dir():
-        assert_outputs(builddir, expecteddir)
 
-    builddir = repo / "db"
     if expecteddir.is_dir():
-        assert_outputs(builddir, expecteddir)
+        test_dir = repo / "db"
+        assert_outputs(test_dir, expecteddir)
 
 helper_map_loose = [
     (["helper", "l_abstract"],
