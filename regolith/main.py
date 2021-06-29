@@ -34,7 +34,8 @@ CONNECTED_COMMANDS = {
     "classlist": commands.classlist,
     "validate": commands.validate,
     "helper": commands.helper,
-    "fs-to-mongo": commands.fs_to_mongo
+    "fs-to-mongo": commands.fs_to_mongo,
+    "mongo-to-fs": commands.mongo_to_fs
 }
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
@@ -261,13 +262,26 @@ def create_parser():
     )
     ytj.add_argument("files", nargs="+", help="file names to convert")
 
+    # mongo-to-fs subparser
+    mtf = subp.add_parser(
+        "mongo-to-fs",
+        help="Backup database from mongodb to filesystem as json. The database will be imported to the destination "
+             "specified by the 'database':'dst_url' key. For this to work, ensure that the database is included in the "
+             "dst_url, and that local is set to true."
+    )
+
+    mtf.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
+                                    "default, the mongoexport attempts to connect to a MongoDB instance running "
+                                    "on the localhost on port number 27017.",
+                     dest="host",
+                     default=None)
+
     # fs-to-mongo subparser
     ftm = subp.add_parser(
         "fs-to-mongo",
         help="Import database from filesystem to mongodb. By default, the database will be import to the local "
              "mongodb. The database can also be imported to the destination specified by the 'database':'dst_url' key."
-             " For this to work, ensure that the username, password, and database are included in the dst_url, and that"
-             " local is set to true."
+             " For this to work, ensure that the database is included in the dst_url, and that local is set to true."
     )
 
     ftm.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "

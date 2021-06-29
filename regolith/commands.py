@@ -202,6 +202,21 @@ def fs_to_mongo(rc: RunControl) -> None:
     return
 
 
+def mongo_to_fs(rc: RunControl) -> None:
+    """Convert database collection from filesystem to mongo db.
+
+    Parameters
+    ----------
+    rc : RunControl
+        The RunControl. The mongo client will be created according to 'mongodbpath' in it. The databases will
+        be loaded according to the 'databases' in it.
+    """
+    dbs = getattr(rc, 'databases')
+    for db in dbs:
+        rc.client.export_database(db)
+    return
+
+
 def validate(rc):
     """Validate the combined database against the schemas"""
     from regolith.schemas import validate

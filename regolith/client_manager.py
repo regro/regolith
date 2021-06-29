@@ -75,6 +75,11 @@ class ClientManager:
             if isinstance(client, MongoClient):
                 client.import_database(db)
 
+    def export_database(self, db: dict):
+        for client in self.clients:
+            if isinstance(client, MongoClient):
+                client.export_database(db)
+
     def dump_database(self, db):
         for client in self.clients:
             if isinstance(client, CLIENTS[db["backend"]]):

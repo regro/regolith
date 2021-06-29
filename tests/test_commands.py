@@ -27,6 +27,18 @@ def test_fs_to_mongo_python(make_db):
     assert cp1.returncode == 0
 
 
+def test_mongo_to_fs_python(make_mongo_to_fs_backup_db):
+    repo = make_mongo_to_fs_backup_db
+    os.chdir(repo)
+    try:
+        main(['mongo-to-fs'])
+    except Exception as e:
+        print(e)
+        assert True == False
+    else:
+        assert True == True
+
+
 def test_fs_to_mongo_python(make_fs_to_mongo_migration_db):
     if BILLINGE_TEST:
         repo = str(Path(__file__).parent.parent.parent.joinpath('rg-db-group', 'local'))
