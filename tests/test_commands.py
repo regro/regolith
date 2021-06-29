@@ -37,6 +37,17 @@ def test_mongo_to_fs_python(make_mongo_to_fs_backup_db):
         assert True == False
     else:
         assert True == True
+    replace_rc_dbs(repo)
+    os.chdir(repo)
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(load_rcfile("regolithrc.json"))
+    with connect(rc) as rc.client:
+        fs_db = rc.client[FS_DB_NAME]
+        mongo_db = rc.client[ALTERNATE_REGOLITH_MONGODB_NAME]
+        for coll in mongo_db.list_collection_names():
+            migrated_fs_collection = fs_db[coll]
+            original_mongo_collection = load_mongo_col(mongo_db[coll])
+            assert migrated_fs_collection == original_mongo_collection
 
 
 def test_fs_to_mongo_python(make_fs_to_mongo_migration_db):
@@ -59,7 +70,7 @@ def test_fs_to_mongo_python(make_fs_to_mongo_migration_db):
     with connect(rc) as rc.client:
         fs_db = rc.client[FS_DB_NAME]
         mongo_db = rc.client[ALTERNATE_REGOLITH_MONGODB_NAME]
-        for coll in mongo_db.list_collection_names():
+        for coll in fs_db.keys():
             original_fs_collection = fs_db[coll]
             migrated_mongo_collection = load_mongo_col(mongo_db[coll])
             for k, v in migrated_mongo_collection.items():
