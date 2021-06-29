@@ -62,6 +62,8 @@ def subparser(subpi):
                        help="Same behavior as default.  Here for consistency")
     subpi.add_argument("--finished", action="store_true",
                        help=f"Lists all finished milestones, i.e., status is in {FINISHED_STATI}")
+    subpi.add_argument("--by_prum", action="store_true",
+                       help=f"Valid milestones are listed in time-order but grouped by prum")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='increase verbosity of output')
     # The --filter and --keys flags should be in every lister
@@ -180,13 +182,20 @@ class MilestonesListerHelper(SoutHelperBase):
                     'log_url': projectum.get('log_url'),
                     'pi': projectum.get('pi_id')
                 })
-                all_milestones.append(ms)
-        all_milestones.sort(key=lambda x: x['due_date'], reverse=True)
+            milestones.sort(key=lambda x: x['due_date'], reverse=True)
+            all_milestones.extend(milestones)
         if rc.keys:
             results = (collection_str(all_milestones, rc.keys))
             print(results, end="")
             return
+        if not rc.by_prum:
+            all_milestones.sort(key=lambda x: x['due_date'], reverse=True)
+        prum = ""
         for ms in all_milestones:
+            if rc.by_prum:
+                if prum != ms.get("id"):
+                    print("-"*50)
+                    prum = ms.get("id")
             if rc.verbose:
                 print(
                     f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
