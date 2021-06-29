@@ -7,6 +7,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
 )
+from argparse import ArgumentParser
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
@@ -35,9 +36,15 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file."
                        )
-    subpi.add_argument("--date",
-                       help="The date that will be used for testing."
-                       )
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("--date",
+                           help="The date that will be used for testing."
+                           )
+    else:
+        subpi.add_argument("--date",
+                           help="The date that will be used for testing.",
+                           widget='DateChooser'
+                           )
     return subpi
 
 class GrpPubReadListAdderHelper(DbHelperBase):

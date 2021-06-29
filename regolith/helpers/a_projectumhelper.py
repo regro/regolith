@@ -14,6 +14,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from argparse import ArgumentParser
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = ["nsf", "doe", "other"]
@@ -32,11 +33,6 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file."
                        )
-    # Do not delete --date arg
-    subpi.add_argument("--date",
-                       help="The begin_date for the projectum  Defaults to "
-                            "today's date."
-                       )
     subpi.add_argument("-d", "--description",
                        help="Slightly longer description of the projectum"
                        )
@@ -50,12 +46,28 @@ def subparser(subpi):
     subpi.add_argument("-g", "--grants", nargs="+",
                        help="grant or (occasionally) list of grants that support this work"
                        )
-    subpi.add_argument("-u", "--due_date",
-                       help="proposed due date for the deliverable"
-                       )
     subpi.add_argument("--checklist", action='store_true',
                        help="Create manuscript checklist if specified"
                        )
+    if isinstance(subpi, ArgumentParser):
+        # Do not delete --date arg
+        subpi.add_argument("--date",
+                           help="The begin_date for the projectum  Defaults to "
+                                "today's date."
+                           )
+        subpi.add_argument("-u", "--due_date",
+                           help="proposed due date for the deliverable"
+                           )
+    else:
+        subpi.add_argument("--date",
+                           help="The begin_date for the projectum  Defaults to "
+                                "today's date.",
+                           widget='DateChooser'
+                           )
+        subpi.add_argument("-u", "--due_date",
+                           help="proposed due date for the deliverable",
+                           widget='DateChooser'
+                           )
     return subpi
 
 

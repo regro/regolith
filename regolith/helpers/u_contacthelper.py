@@ -9,6 +9,7 @@ import uuid
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
+from argparse import ArgumentParser
 
 
 TARGET_COLL = "contacts"
@@ -22,10 +23,6 @@ def subparser(subpi):
                                                    "institution id or anything in the "
                                                    "aka or name from institutions collection. "
                                                    "It is required to create a new contact.")
-    subpi.add_argument("-t","--notes", nargs='+',
-                        help="Notes.  As many notes as you like, each one in "
-                             "quotes and separated by a space, such as where "
-                             "and when met, what discussed.")
     subpi.add_argument("-d", "--department", help="Department at the institution.")
     subpi.add_argument("--id", help="id of the person, e.g., first letter first name "
                                           "plus last name, but unique.")
@@ -33,11 +30,6 @@ def subparser(subpi):
                        help="All the different ways that the person may "
                             "be referred to as.  As many as you like, in "
                             "quotes separated by a space")
-    # Do not delete --date arg
-    subpi.add_argument("--date",
-                       help="The date when the contact was created in ISO format. "
-                            "Defaults to today's date."
-                       )
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -45,7 +37,27 @@ def subparser(subpi):
     # FIXME
     # subpi.add_argument("-e", "--email",
     #                    help="email address")
-
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("-t", "--notes", nargs='+',
+                           help="Notes.  As many notes as you like, each one in "
+                                "quotes and separated by a space, such as where "
+                                "and when met, what discussed.")
+        # Do not delete --date arg
+        subpi.add_argument("--date",
+                           help="The date when the contact was created in ISO format. "
+                                "Defaults to today's date."
+                           )
+    else:
+        subpi.add_argument("-t", "--notes", nargs='+',
+                           help="Notes.  As many notes as you like, each one in "
+                                "quotes and separated by a space, such as where "
+                                "and when met, what discussed.",
+                           widget='Textarea')
+        subpi.add_argument("--date",
+                           help="The date when the contact was created. "
+                                "Defaults to today's date.",
+                           widget='DateChooser'
+                           )
     return subpi
 
 class ContactUpdaterHelper(DbHelperBase):

@@ -10,6 +10,7 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
 from regolith.dates import get_due_date
+from argparse import ArgumentParser
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m": "meeting", "r": "release", "p": "pull request",
@@ -30,9 +31,6 @@ def subparser(subpi):
     subpi.add_argument("-c", "--current", action="store_true",
                        help="only list current (unfinished, unpaused) milestones",
                        )
-    subpi.add_argument("-d", "--due_date",
-                       help="New due date of the milestone in ISO format(YYYY-MM-DD). "
-                            "Required for a new milestone.")
     subpi.add_argument("-n", "--name",
                        help="Name of the milestone. "
                             "Required for a new milestone.")
@@ -54,10 +52,6 @@ def subparser(subpi):
                        help="Audience of the milestone. "
                             "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
                        )
-    subpi.add_argument("--notes",
-                       nargs='+',
-                       help="Any notes you want to add to the milestone.",
-                       )
     subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
                        )
@@ -65,9 +59,30 @@ def subparser(subpi):
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
-    subpi.add_argument("--date",
-                       help="The date that will be used for testing."
-                       )
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("-d", "--due_date",
+                           help="New due date of the milestone in ISO format(YYYY-MM-DD). "
+                                "Required for a new milestone.")
+        subpi.add_argument("--notes",
+                           nargs='+',
+                           help="Any notes you want to add to the milestone.",
+                           )
+        subpi.add_argument("--date",
+                           help="The date that will be used for testing."
+                           )
+    else:
+        subpi.add_argument("-d", "--due_date",
+                           help="New due date of the milestone. "
+                                "Required for a new milestone.",
+                           widget='DateChooser')
+        subpi.add_argument("--notes",
+                           nargs='+',
+                           help="Any notes you want to add to the milestone.",
+                           widget='Textarea')
+        subpi.add_argument("--date",
+                           help="The date that will be used for testing.",
+                           widget='DateChooser'
+                           )
     return subpi
 
 

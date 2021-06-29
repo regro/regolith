@@ -18,6 +18,7 @@ from regolith.tools import (
     key_value_pair_filter,
     collection_str
 )
+from argparse import ArgumentParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
@@ -29,18 +30,27 @@ def subparser(subpi):
     subpi.add_argument("-l", "--lead",
                        help="Filter projecta for this project lead"
                        )
-    subpi.add_argument("-s", "--stati", nargs="+",
-                       choices=ALLOWED_STATI,
-                       help=f"Filter projecta for these stati from {ALLOWED_STATI}."
-                            f" Default is all projecta",
-                       default=None
-                       )
     # The --filter and --keys flags should be in every lister
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs"
                        )
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when running "
                                                        "--filter. If no argument is given the default is just the id.")
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("-s", "--stati", nargs="+",
+                           choices=ALLOWED_STATI,
+                           help=f"Filter projecta for these stati from {ALLOWED_STATI}."
+                                f" Default is all projecta",
+                           default=None
+                           )
+    else:
+        subpi.add_argument("-s", "--stati", nargs="+",
+                           choices=ALLOWED_STATI,
+                           help=f"Filter projecta for these stati."
+                                f" Default is all projecta",
+                           default=None,
+                           widget='Listbox'
+                           )
     return subpi
 
 def print_projectum(selected_projecta,rc):

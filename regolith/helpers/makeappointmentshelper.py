@@ -29,6 +29,7 @@ from regolith.dates import (
 )
 import matplotlib
 import matplotlib.pyplot as plt
+from argparse import ArgumentParser
 
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
@@ -60,16 +61,6 @@ _future_grant = {
 
 def subparser(subpi):
 
-    subpi.add_argument("run",
-                       help='run the helper. to see optional arguments, enter '
-                            '"regolith helper makeappointments".'
-                            'The grant "future_grant" is available internally '
-                            'to assign people to for making projections.  It '
-                            'will be plotted to show when you need new funding '
-                            'by and how much.')
-    subpi.add_argument("-d", "--projection-from-date",
-                       help='the date from which projections into the future '
-                            'will be calculated')
     subpi.add_argument("--no-plot", action="store_true",
                        help='suppress plotting feature')
     subpi.add_argument("--no-gui", action="store_true",
@@ -81,7 +72,22 @@ def subparser(subpi):
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated. Defaults to first database in regolithrc.json")
-
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("run",
+                           help='run the helper. to see optional arguments, enter '
+                                '"regolith helper makeappointments".'
+                                'The grant "future_grant" is available internally '
+                                'to assign people to for making projections.  It '
+                                'will be plotted to show when you need new funding '
+                                'by and how much.')
+        subpi.add_argument("-d", "--projection-from-date",
+                           help='the date from which projections into the future '
+                                'will be calculated')
+    else:
+        subpi.add_argument("-d", "--projection-from-date",
+                           help='the date from which projections into the future '
+                                'will be calculated',
+                           widget='DateChooser')
     return subpi
 
 def plotter(datearray, student=None, pd=None, ss=None, title=None):

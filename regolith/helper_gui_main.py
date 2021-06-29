@@ -47,7 +47,7 @@ NEED_RC |= {"rc", "deploy", "store"}
 @Gooey()
 def create_parser():
     p = GooeyParser()
-    p = ArgumentParser()
+    #p = ArgumentParser()
     subp = p.add_subparsers(title="helper_target", dest="helper_target")
     for k, v in HELPERS.items():
         subpi = subp.add_parser(k)

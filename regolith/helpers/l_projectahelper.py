@@ -18,6 +18,7 @@ from regolith.tools import (
     key_value_pair_filter,
     collection_str
 )
+from argparse import ArgumentParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"
@@ -45,12 +46,6 @@ def subparser(subpi):
     subpi.add_argument("-e", "--ended", action="store_true",
                        help="Lists projecta that have ended. Use the -d and -r flags to specify up to "
                             "what date and how many days before then. The default is 7 days before today.")
-    subpi.add_argument("-d", "--date",
-                       help="projecta with end_date within RANGE before this date will be listed. "
-                            "The default is today. Some projecta don't have an end date and won't appear in a search")
-    subpi.add_argument("-r", "--range",
-                       help="date range back from DATE to search over in days. "
-                            "If no range is specified, search range will be 7 days")
     subpi.add_argument("-g", "--grant",
                        help="Filter projecta by a grant ID")
     subpi.add_argument("--grp_by_lead", action='store_true',
@@ -60,6 +55,22 @@ def subparser(subpi):
     subpi.add_argument("-k", "--keys", nargs="+",
                        help="Specify what keys to return values from when running --filter. "
                             "If no argument is given the default is just the id.")
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("-r", "--range",
+                           help="date range back from DATE to search over in days. "
+                                "If no range is specified, search range will be 7 days")
+        subpi.add_argument("-d", "--date",
+                           help="projecta with end_date within RANGE before this date will be listed. "
+                                "The default is today. Some projecta don't have an end date and won't appear in a search")
+    else:
+        subpi.add_argument("-r", "--range",
+                           help="date range back from DATE to search over in days. "
+                                "If no range is specified, search range will be 7 days",
+                           widget='IntegerField')
+        subpi.add_argument("-d", "--date",
+                           help="projecta with end_date within RANGE before this date will be listed. "
+                                "The default is today. Some projecta don't have an end date and won't appear in a search",
+                           widget='DateChooser')
     return subpi
 
 

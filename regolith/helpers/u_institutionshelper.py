@@ -7,6 +7,7 @@ from regolith.tools import all_docs_from_collection, fragment_retrieval
 from itertools import chain
 import uuid
 import datetime as dt
+from argparse import ArgumentParser
 
 TARGET_COLL = "institutions"
 
@@ -54,11 +55,16 @@ def subparser(subpi):
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
-    # Do not delete --date arg
-    subpi.add_argument("--date",
-                       help="The date when the institution was created in ISO format. "
-                            "Defaults to today's date."
-                       )
+    if isinstance(subpi, ArgumentParser):
+        # Do not delete --date arg
+        subpi.add_argument("--date",
+                           help="The date when the institution was created in ISO format. "
+                                "Defaults to today's date.")
+    else:
+        subpi.add_argument("--date",
+                           help="The date when the institution was created. "
+                                "Defaults to today's date.",
+                           widget='DateChooser')
     return subpi
 
 class InstitutionsUpdaterHelper(DbHelperBase):

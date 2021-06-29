@@ -16,6 +16,7 @@ from regolith.tools import (
 )
 from regolith.schemas import PROJECTUM_STATUS, PROJECTUM_PAUSED_STATI, \
     PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI, PROJECTUM_ACTIVE_STATI
+from argparse import ArgumentParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
@@ -51,12 +52,6 @@ def subparser(subpi):
                        )
     subpi.add_argument("-p", "--person",
                        help="Filter milestones for this person whether lead or not")
-    subpi.add_argument("-s", "--stati", nargs="+",
-                       choices=ALLOWED_STATI,
-                       help=f"Filter milestones for these stati from {ALLOWED_STATI}."
-                            f" Default is active projecta, i.e. {ACTIVE_STATI}",
-                       default=None
-                       )
     subpi.add_argument("--all", action="store_true",
                        help="Lists all milestones in general")
     subpi.add_argument("-c", "--current", action="store_true",
@@ -71,6 +66,21 @@ def subparser(subpi):
                        )
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when running "
                                                        "--filter. If no argument is given the default is just the id.")
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("-s", "--stati", nargs="+",
+                           choices=ALLOWED_STATI,
+                           help=f"Filter milestones for these stati from {ALLOWED_STATI}."
+                                f" Default is active projecta, i.e. {ACTIVE_STATI}",
+                           default=None
+                           )
+    else:
+        subpi.add_argument("-s", "--stati", nargs="+",
+                           choices=ALLOWED_STATI,
+                           help=f"Filter milestones for these stati."
+                                f" Default is active projecta, i.e. {ACTIVE_STATI}",
+                           default=None,
+                           widget='Listbox'
+                           )
     return subpi
 
 

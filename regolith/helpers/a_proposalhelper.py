@@ -12,6 +12,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from argparse import ArgumentParser
 
 TARGET_COLL = "proposals"
 
@@ -20,22 +21,7 @@ def subparser(subpi):
     # Do not delete --database arg
     subpi.add_argument("name", help="A short but unique name for the proposal",
                        )
-    subpi.add_argument("amount", help="value of award",
-                       )
     subpi.add_argument("title", help="Actual title of the proposal"
-                       )
-    subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
-                                            "in format YYYY-MM-DD."
-                       )
-    subpi.add_argument("--end_date", help="The end date for the proposed grant in "
-                                          "format YYYY-MM-DD. Please enter either an "
-                                          "end date or a duration"
-                       )
-    subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
-                                          "Please enter either an end date or a duration. "
-                                          "Non-integer values are rounded down."
-                       )
-    subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD",
                        )
     subpi.add_argument("-a", "--authors", nargs="+",
                        help="Other investigator names", default=[]
@@ -75,16 +61,60 @@ def subparser(subpi):
     subpi.add_argument("-f", "--funder", help="Agency where the proposal is being submitted",
                        default=''
                        )
-    subpi.add_argument("-n", "--notes", nargs="+",
-                       help="Anything to note", default=[]
-                       )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file."
                        )
-    subpi.add_argument("--date",
-                       help="The date that will be used for testing."
-                       )
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("amount", help="value of award",
+                           )
+        subpi.add_argument("--begin_date", help="The begin date for the proposed grant "
+                                                "in format YYYY-MM-DD."
+                           )
+        subpi.add_argument("--end_date", help="The end date for the proposed grant in "
+                                              "format YYYY-MM-DD. Please enter either an "
+                                              "end date or a duration"
+                           )
+        subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
+                                              "Please enter either an end date or a duration. "
+                                              "Non-integer values are rounded down."
+                           )
+        subpi.add_argument("--due_date", help="The due date for the proposal in format YYYY-MM-DD",
+                           )
+        subpi.add_argument("-n", "--notes", nargs="+",
+                           help="Anything to note", default=[]
+                           )
+        subpi.add_argument("--date",
+                           help="The date that will be used for testing."
+                           )
+    else:
+        subpi.add_argument("amount", help="value of award",
+                           widget='DecimalField',
+                           gooey_options={'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision': 2}
+                           )
+        subpi.add_argument("--begin_date", help="The begin date for the proposed grant ",
+                           widget='DateChooser'
+                           )
+        subpi.add_argument("--end_date", help="The end date for the proposed grant."
+                                              " Please enter either an "
+                                              "end date or a duration",
+                           widget='DateChooser'
+                           )
+        subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
+                                              "Please enter either an end date or a duration. ",
+                           widget='IntegerField'
+                           )
+        subpi.add_argument("--due_date", help="The due date for the proposal",
+                           widget='DateChooser'
+                           )
+        subpi.add_argument("-n", "--notes", nargs="+",
+                           help="Anything to note", default=[],
+                           widget='Textarea'
+                           )
+        subpi.add_argument("--date",
+                           help="The date that will be used for testing.",
+                           widget='DateChooser'
+                           )
     return subpi
 
 

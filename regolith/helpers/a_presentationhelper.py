@@ -11,6 +11,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from argparse import ArgumentParser
 
 TARGET_COLL = "presentations"
 ALLOWED_TYPES = ["award", "keynote", "plenary", "invited", "contributed_oral",
@@ -26,14 +27,6 @@ def subparser(subpi):
                        )
     subpi.add_argument("name", help="name of the presentation, meeting name if meeting,"
                                     "department if seminar",
-                       )
-    subpi.add_argument("begin_date",
-                       help="Input begin date for this presentation "
-                            "in YYYY-MM-DD format",
-                       )
-    subpi.add_argument("end_date",
-                       help="Input end date for this presentation"
-                            "in YYYY-MM-DD format",
                        )
     subpi.add_argument("-p", "--person",
                        help="the person submitting the presentation, used for presentation name,"
@@ -69,6 +62,24 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file."
                        )
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("begin_date",
+                           help="Input begin date for this presentation "
+                                "in YYYY-MM-DD format",
+                           )
+        subpi.add_argument("end_date",
+                           help="Input end date for this presentation"
+                                "in YYYY-MM-DD format",
+                           )
+    else:
+        subpi.add_argument("begin_date",
+                           help="Input begin date for this presentation ",
+                           widget='DateChooser'
+                           )
+        subpi.add_argument("end_date",
+                           help="Input end date for this presentation",
+                           widget='DateChooser'
+                           )
     return subpi
 
 

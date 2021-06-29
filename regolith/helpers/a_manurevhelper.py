@@ -11,6 +11,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
 )
+from argparse import ArgumentParser
 
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
                  "submitted", "cancelled"]
@@ -19,13 +20,9 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 def subparser(subpi):
     subpi.add_argument("name", help="Full name, or last name, of the first author",
                        )
-    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD in quotes", default=''
-                       )
     subpi.add_argument("journal", help="journal to be published on", default=''
                        )
     subpi.add_argument("title", help="the title of the Manuscript", default=''
-                       )
-    subpi.add_argument("-d", "--submitted_date", help="submitted date in ISO YYYY-MM-DD format in quotes"
                        )
     subpi.add_argument("-q", "--requester",
                        help="name, or id in contacts, of the editor requesting the review"
@@ -41,6 +38,18 @@ def subparser(subpi):
                        help="The database that will be updated. Defaults to "
                             "first database in the regolithrc.json file."
                        )
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("due_date", help="due date in form YYYY-MM-DD in quotes", default=''
+                           )
+        subpi.add_argument("-d", "--submitted_date", help="submitted date in ISO YYYY-MM-DD format in quotes"
+                           )
+    else:
+        subpi.add_argument("due_date", help="Due date", default='',
+                           widget='DateChooser'
+                           )
+        subpi.add_argument("-d", "--submitted_date", help="Submitted date",
+                           widget='DateChooser'
+                           )
     return subpi
 
 

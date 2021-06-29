@@ -15,15 +15,13 @@ from regolith.tools import (
     fuzzy_retrieval,
     search_collection,
 )
+from argparse import ArgumentParser
 
 TARGET_COLL = "contacts"
 HELPER_TARGET = "l_contacts"
 
 
 def subparser(subpi):
-    subpi.add_argument(
-        "run",
-        help='run the lister. To see allowed optional arguments, type "regolith helper l_contacts".')
     subpi.add_argument(
         "-v",
         "--verbose",
@@ -37,16 +35,6 @@ def subparser(subpi):
         "-i",
         "--inst",
         help='institution or an institution fragment (single argument only) to use to find contacts.')
-    subpi.add_argument(
-        "-d",
-        "--date",
-        help='approximate date in ISO format (YYYY-MM-DD) corresponding to when the contact was entered in the database. '
-             'Comes with a default range of 4 months centered around the date; change range using --range argument.')
-    subpi.add_argument(
-        "-r",
-        "--range",
-        help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2).',
-        default=4)
     subpi.add_argument(
         "-o",
         "--notes",
@@ -65,6 +53,33 @@ def subparser(subpi):
         help='Specify what keys to return values from when running --filter. '
              'If no argument is given the default is just the id.'
     )
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument(
+            "run",
+            help='run the lister. To see allowed optional arguments, type "regolith helper l_contacts".')
+        subpi.add_argument(
+            "-d",
+            "--date",
+            help='approximate date in ISO format (YYYY-MM-DD) corresponding to when the contact was entered in the database. '
+                 'Comes with a default range of 4 months centered around the date; change range using --range argument.')
+        subpi.add_argument(
+            "-r",
+            "--range",
+            help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2).',
+            default=4)
+    else:
+        subpi.add_argument(
+            "-d",
+            "--date",
+            help='approximate date corresponding to when the contact was entered in the database. '
+                 'Comes with a default range of 4 months centered around the date; change range using --range argument.',
+            widget='DateChooser')
+        subpi.add_argument(
+            "-r",
+            "--range",
+            help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2).',
+            default=4,
+            widget='IntegerField')
     return subpi
 
 class ContactsListerHelper(SoutHelperBase):

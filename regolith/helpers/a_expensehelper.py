@@ -12,6 +12,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from argparse import ArgumentParser
 
 TARGET_COLL = "expenses"
 ALLOWED_TYPES = ["business", "travel"] # need to check all expense types.
@@ -23,8 +24,6 @@ def subparser(subpi):
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file."
-                       )
-    subpi.add_argument("amount", help="expense amount",
                        )
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
@@ -50,19 +49,43 @@ def subparser(subpi):
     subpi.add_argument("-w", "--where",
                        help="Where the expense has been submitted"
                        )
-    subpi.add_argument("-n", "--notes", nargs="+",
-                       help="List of notes for the expense. Defaults to empty list",
-                       default= []
-                       )
-    subpi.add_argument("-d", "--begin_date",
-                       help="Input begin date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date",
+    if isinstance(subpi, ArgumentParser): #Command Line parser
+        subpi.add_argument("amount", help="expense amount",
+                           )
+        subpi.add_argument("-n", "--notes", nargs="+",
+                           help="List of notes for the expense. Defaults to empty list",
+                           default=[]
+                           )
+        subpi.add_argument("-d", "--begin_date",
+                           help="Input begin date for this expense. "
+                                "In YYYY-MM-DD format. Defaults to today's date",
 
-                       )
-    subpi.add_argument("-e,", "--end_date",
-                       help="Input end date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date",
-                       )
+                           )
+        subpi.add_argument("-e,", "--end_date",
+                           help="Input end date for this expense. "
+                                "In YYYY-MM-DD format. Defaults to today's date",
+                           )
+    else: #Gooey parser
+        subpi.add_argument("amount", help="expense amount",
+                           widget='DecimalField',
+                           gooey_options={'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision': 2}
+                           )
+        subpi.add_argument("-n", "--notes", nargs="+",
+                           help="List of notes for the expense. Defaults to empty list",
+                           default=[],
+                           widget='Textarea'
+                           )
+        subpi.add_argument("-d", "--begin_date",
+                           help="Input begin date for this expense. "
+                                "Defaults to today's date",
+                           widget='DateChooser'
+                           )
+        subpi.add_argument("-e,", "--end_date",
+                           help="Input end date for this expense. "
+                                "Defaults to today's date",
+                           widget='DateChooser'
+                           )
+
     return subpi
 
 

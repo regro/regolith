@@ -15,6 +15,7 @@ from regolith.tools import (
     filter_grants,
     fuzzy_retrieval,
 )
+from argparse import ArgumentParser
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
@@ -27,7 +28,6 @@ def subparser(subpi):
     subpi.add_argument("type",
                        choices=ALLOWED_TYPES,
                        help=f"{ALLOWED_TYPES}", default=None)
-    subpi.add_argument("due_date", help="due date in form YYYY-MM-DD")
     subpi.add_argument("-d", "--database",
                         help="The database that will be updated.  Defaults to "
                              "first database in the regolithrc.json file."
@@ -42,6 +42,11 @@ def subparser(subpi):
                         help=f"status, from {ALLOWED_STATI}. default is accepted")
     subpi.add_argument("-t", "--title",
                         help="the title of the proposal")
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument("due_date", help="due date in form YYYY-MM-DD")
+    else:
+        subpi.add_argument("due_date", help="Due date",
+                           widget='DateChooser')
     return subpi
 
 class PropRevAdderHelper(DbHelperBase):

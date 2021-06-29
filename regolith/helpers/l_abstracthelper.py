@@ -6,6 +6,7 @@ from regolith.tools import (
     get_pi_id,
     get_person_contact
 )
+from argparse import ArgumentParser
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
@@ -18,11 +19,6 @@ def subparser(subpi):
         help='authors group ID(single argument only) to use to find '
              'presentation abstract')
     subpi.add_argument(
-        "-y",
-        "--year",
-        help='start or end year of the presentation (single argument only) to '
-             'use to find presentation')
-    subpi.add_argument(
         "-l",
         "--loc_inst",
         help='location of presentation, either a fragment of an institution, '
@@ -34,6 +30,21 @@ def subparser(subpi):
         "--title",
         help='fragment of the title of the abstract or talk to use to '
              'filter presentations')
+    if isinstance(subpi, ArgumentParser):
+        subpi.add_argument(
+            "-y",
+            "--year",
+            help='start or end year of the presentation (single argument only) to '
+                 'use to find presentation')
+    else:
+        subpi.add_argument(
+            "-y",
+            "--year",
+            help='start or end year of the presentation (single argument only) to '
+                 'use to find presentation',
+            default=2021,
+            widget='IntegerField', gooey_options={'min': 2000, 'max': 2100}
+        )
     return subpi
 
 
