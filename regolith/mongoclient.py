@@ -1,4 +1,6 @@
-"""Client interface for MongoDB."""
+"""Client interface for MongoDB.
+Maintained such that only pymongo is necessary when using helper/builders, and additional command-line tools
+are necessary to install for maintenance tasks, such as fs-to-mongo."""
 import itertools
 import os
 import shutil
@@ -72,7 +74,16 @@ def import_jsons(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
         if uri is not None:
             cmd += ['--uri', uri]
         cmd += ["--collection", json_path.stem, "--file", str(json_path)]
-        subprocess.check_call(cmd)
+        try:
+            subprocess.check_call(cmd)
+        except FileNotFoundError:
+            print("mongoimport command not found in environment path.\n\n"
+                  "If mongo server v4.4+ installed, download MongoDB Database Tools from:"
+                  " https://www.mongodb.com/try/download/database-tools\n"
+                  "and add C:\\Program Files\\MongoDB\\Tools\\<ToolsVersion>\\bin\\ to path.\n\n"
+                  "If mongo server <v4.4, ensure that C:\\Program Files\\MongoDB\\Server\\<ServerVersion>\\bin\\ \n"
+                  "has been added to the environment path.\n")
+            print("..................Upload failed..................")
     return
 
 
@@ -352,6 +363,10 @@ class MongoClient:
         """
         host = getattr(self.rc, 'host', None)
         uri = db.get('dst_url', None)
+        # Catch the easy/common regolith rc error of putting the db uri as localhost rather than host
+        if uri == 'localhost':
+            uri = None
+            host = 'localhost'
         dbpath = dbpathname(db, self.rc)
         dbname = db['name']
         import_jsons(dbpath, dbname, host=host, uri=uri)
@@ -387,7 +402,7 @@ class MongoClient:
         return
 
     def keys(self):
-        return self.client.database_names()
+        return self.client.list_database_names()
 
     def __getitem__(self, key):
         return self.client[key]

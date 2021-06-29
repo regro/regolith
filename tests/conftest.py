@@ -15,7 +15,10 @@ from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
 
 OUTPUT_FAKE_DB = False  # always turn it to false after you used it
+# Currently the first two must be named test solely to match the helper map test output text
 REGOLITH_MONGODB_NAME = "test"
+FS_DB_NAME = 'test'
+ALTERNATE_REGOLITH_MONGODB_NAME = "mongo_test"
 
 
 @pytest.fixture(scope="session")
@@ -81,6 +84,7 @@ def make_mongodb():
     This will yield the path to the repo.
     """
     cwd = os.getcwd()
+    forked = False
     name = "regolith_mongo_fake"
     repo = os.path.join(tempfile.gettempdir(), name)
     if os.path.exists(repo):
@@ -135,6 +139,7 @@ def make_mongodb():
         cmd = ["mongostat", "--host", "localhost", "-n", "1"]
     else:
         cmd = ['mongod', '--fork', '--syslog', '--dbpath', mongodbpath]
+        forked = True
     try:
         subprocess.check_call(cmd, cwd=repo)
     except subprocess.CalledProcessError:
@@ -152,7 +157,7 @@ def make_mongodb():
         except Exception as e:
             yield False
             return
-        db = client['test']
+        db = client[REGOLITH_MONGODB_NAME]
         col = db[col_name]
         try:
             if isinstance(example, list):
@@ -173,6 +178,7 @@ def make_mongodb():
     except subprocess.CalledProcessError:
         print(f'Deleting the test database failed, insert \"mongo {REGOLITH_MONGODB_NAME} --eval '
               f'\"db.dropDatabase()\"\" into command line manually')
+    shut_down_fork(forked, repo)
     if not OUTPUT_FAKE_DB:
         rmtree(repo)
 
@@ -186,6 +192,7 @@ def make_mixed_db():
     abstracts test collections in EXEMPLARS respectively.
     """
     cwd = os.getcwd()
+    forked = False
     name = "regolith_mongo_fake"
     repo = os.path.join(tempfile.gettempdir(), name)
     if os.path.exists(repo):
@@ -212,7 +219,7 @@ def make_mixed_db():
                         "backend": "mongodb"
                     },
                     {
-                        "name": "test",
+                        "name": FS_DB_NAME,
                         "url": repo,
                         "public": True,
                         "path": "db",
@@ -250,6 +257,7 @@ def make_mixed_db():
         cmd = ["mongostat", "--host", "localhost", "-n", "1"]
     else:
         cmd = ['mongod', '--fork', '--syslog', '--dbpath', mongodbpath]
+        forked = True
     try:
         subprocess.check_call(cmd, cwd=repo)
     except subprocess.CalledProcessError:
@@ -268,7 +276,7 @@ def make_mixed_db():
     except Exception as e:
         yield False
         return
-    db = client['test']
+    db = client[REGOLITH_MONGODB_NAME]
     col = db[mongo_coll]
     try:
         mongo_example['_id'].replace('.', '')
@@ -290,6 +298,7 @@ def make_mixed_db():
     except subprocess.CalledProcessError:
         print(f'Deleting the test database failed, insert \"mongo {REGOLITH_MONGODB_NAME} --eval '
               f'\"db.dropDatabase()\"\" into command line manually')
+    shut_down_fork(forked, repo)
     os.chdir(cwd)
     if not OUTPUT_FAKE_DB:
         rmtree(repo)
@@ -350,3 +359,105 @@ def make_bad_db():
     yield repo
     os.chdir(cwd)
     rmtree(repo)
+
+
+@pytest.fixture(scope="module")
+def make_fs_to_mongo_migration_db():
+    """A test fixture that creates and destroys a git repo in a temporary
+    directory, as well as a mongo database.
+    This will yield the path to the repo.
+
+    This specific test fixture points to a repo that mixes mongo and filesystem backends for the assignments and
+    abstracts test collections in EXEMPLARS respectively.
+    """
+    cwd = os.getcwd()
+    forked = False
+    name = "regolith_mongo_fake"
+    repo = os.path.join(tempfile.gettempdir(), name)
+    if os.path.exists(repo):
+        rmtree(repo)
+    subprocess.run(["git", "init", repo])
+    os.chdir(repo)
+    with open("README", "w") as f:
+        f.write("testing " + name)
+    mongodbpath = os.path.join(repo, 'dbs')
+    os.mkdir(mongodbpath)
+    fspath = os.path.join(repo, 'db')
+    os.mkdir(fspath)
+    with open("regolithrc.json", "w") as f:
+        json.dump(
+            {
+                "groupname": "ERGS",
+                "databases": [
+                    {
+                        "name": ALTERNATE_REGOLITH_MONGODB_NAME,
+                        "dst_url": 'localhost',
+                        "url": repo,
+                        "path": "db",
+                        "public": True,
+                        "local": True,
+                        "backend": "mongodb"
+                    }
+                ],
+                "mongodbpath": mongodbpath,
+            },
+            f,
+        )
+    if os.name == 'nt':
+        # If on windows, the mongod command cannot be run with the fork or syslog options. Instead, it is installed as
+        # a service and the exceptions that would typically be log outputs are handled by the exception handlers below.
+        # In addition, the database must always be manually deleted from the windows mongo instance before running a
+        # fresh test.
+        cmd = ["mongo", ALTERNATE_REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
+        try:
+            subprocess.check_call(cmd, cwd=repo)
+        except subprocess.CalledProcessError:
+            print(
+                "Mongod likely has not been installed as a service. In order to run mongodb tests, make sure\n"
+                "to install the mongodb community edition with the following link: \n"
+                "https://docs.mongodb.com/manual/installation/")
+            yield False
+            return
+        cmd = ["mongostat", "--host", "localhost", "-n", "1"]
+    else:
+        cmd = ['mongod', '--fork', '--syslog', '--dbpath', mongodbpath]
+        forked = True
+    try:
+        subprocess.check_call(cmd, cwd=repo)
+    except subprocess.CalledProcessError:
+        print("If on linux/mac, Mongod command failed to execute. If on windows, the status of mongo could not be\n"
+              "retrieved. In order to run mongodb tests, make sure to install the mongodb community edition with\n"
+              "the following link:\n"
+              "https://docs.mongodb.com/manual/installation/")
+        yield False
+        return
+    # Write collection docs
+    os.chdir(fspath)
+    for coll, example in deepcopy(EXEMPLARS).items():
+        if isinstance(example, list):
+            d = {dd["_id"]: dd for dd in example}
+        else:
+            d = {example["_id"]: example}
+        dump_yaml("{}.yaml".format(coll), d)
+    os.chdir(repo)
+    yield repo
+    cmd = ["mongo", ALTERNATE_REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
+    try:
+        subprocess.check_call(cmd, cwd=repo)
+    except subprocess.CalledProcessError:
+        print(f'Deleting the test database failed, insert \"mongo {ALTERNATE_REGOLITH_MONGODB_NAME} --eval '
+              f'\"db.dropDatabase()\"\" into command line manually')
+    shut_down_fork(forked, repo)
+    os.chdir(cwd)
+    if not OUTPUT_FAKE_DB:
+        rmtree(repo)
+
+
+def shut_down_fork(forked, repo):
+    if forked:
+        cmd = ["mongo", "admin", "--eval", "db.shutdownServer()"]
+        try:
+            subprocess.check_call(cmd, cwd=repo)
+        except subprocess.CalledProcessError:
+            print(f'Deleting the test database failed, insert \"mongo admin --eval '
+                  f'\"db.shutdownServer()\"\" into command line manually')

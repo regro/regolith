@@ -165,6 +165,9 @@ class RunControl(object):
         else:
             return NotImplemented
 
+    def __copy__(self):
+        return type(self)(_updaters=self._updaters, _validators=self._validators, **self._dict)
+
     def _update(self, other):
         """Updates the rc with values from another mapping.  If this rc has
         if a key is in self, other, and self._updaters, then the updaters

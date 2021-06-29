@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import pytest
+import copy
 
 from regolith.main import main
 
@@ -603,10 +604,10 @@ def test_helper_python(hm, make_db, db_src, make_mongodb, capsys):
             from regolith.database import connect
             from regolith.runcontrol import DEFAULT_RC, load_rcfile
             os.chdir(repo)
-            rc = DEFAULT_RC
+            rc = copy.copy(DEFAULT_RC)
             rc._update(load_rcfile("regolithrc.json"))
             with connect(rc) as client:
-                mongo_database = client[rc.db]
+                mongo_database = client[rc.databases[0]['name']]
                 assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
 
 
