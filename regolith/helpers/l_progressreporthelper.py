@@ -18,12 +18,17 @@ from regolith.tools import (
     key_value_pair_filter,
     collection_str
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
 ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
 
 def subparser(subpi):
+    listbox_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        listbox_kwargs['widget'] = 'Listbox'
+
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='increase verbosity of output')
     subpi.add_argument("-l", "--lead",
@@ -34,7 +39,7 @@ def subparser(subpi):
                        help=f"Filter projecta for these stati."
                             f" Default is all projecta",
                        default=None,
-                       widget='Listbox'
+                       **listbox_kwargs
                        )
     # The --filter and --keys flags should be in every lister
     subpi.add_argument("-f", "--filter", nargs="+",

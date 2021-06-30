@@ -17,6 +17,7 @@ from regolith.tools import (
     collection_str,
     merge_collections_superior
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "grants"
 HELPER_TARGET = "l_grants"
@@ -24,9 +25,13 @@ BLACKLIST = ["they_pay", "collgf", "physmatch", "ta", "chemmatch",
              "summer@seas"]
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+
     subpi.add_argument("-d", "--date",
                        help="Filter grants by a date",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")

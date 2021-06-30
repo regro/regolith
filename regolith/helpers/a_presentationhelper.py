@@ -13,12 +13,16 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "presentations"
 EXPENSES_COLL = "expenses"
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
 
     subpi.add_argument("place", help="the place of the presentation, location if conference,"
                                      "institution for seminars"
@@ -28,11 +32,11 @@ def subparser(subpi):
                        )
     subpi.add_argument("begin_date",
                        help="Input begin date for this presentation ",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("end_date",
                        help="Input end date for this presentation",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("-p", "--person",
                        help="the person submitting the presentation, used for presentation name,"
@@ -79,7 +83,6 @@ def subparser(subpi):
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
-                       widget='FileChooser'
                        )
     return subpi
 

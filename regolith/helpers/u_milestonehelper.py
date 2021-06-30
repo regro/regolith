@@ -11,6 +11,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
 from regolith.dates import get_due_date
 from regolith.schemas import PROJECTUM_ACTIVE_STATI
+from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m": "meeting", "r": "release", "p": "pull request",
@@ -21,6 +22,12 @@ PROJECTUM_ACTIVE_STATI = ["proposed", "started", "converged"]
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    notes_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+        notes_kwargs['widget'] = 'Textarea'
+
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help="Increases the verbosity of the output.")
@@ -34,7 +41,7 @@ def subparser(subpi):
     subpi.add_argument("-d", "--due_date",
                        help="New due date of the milestone. "
                             "Required for a new milestone.",
-                       widget='DateChooser')
+                       **date_kwargs)
     subpi.add_argument("-n", "--name",
                        help="Name of the milestone. "
                             "Required for a new milestone.")
@@ -59,7 +66,7 @@ def subparser(subpi):
     subpi.add_argument("--notes",
                        nargs='+',
                        help="Any notes you want to add to the milestone.",
-                       widget='Textarea'
+                       **notes_kwargs
                        )
     subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
@@ -70,7 +77,7 @@ def subparser(subpi):
                             "first database in the regolithrc.json file.")
     subpi.add_argument("--date",
                        help="The date that will be used for testing.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     return subpi
 

@@ -15,6 +15,7 @@ from regolith.tools import (
     filter_grants,
     fuzzy_retrieval,
 )
+from gooey import GooeyParser
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
@@ -22,13 +23,17 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+
     subpi.add_argument("name", help="pi first name space last name in quotes",
                         default=None)
     subpi.add_argument("type",
                        choices=ALLOWED_TYPES,
                        help=f"Report type", default=None)
     subpi.add_argument("due_date", help="Due date",
-                       widget='DateChooser')
+                       **date_kwargs)
     subpi.add_argument("-d", "--database",
                         help="The database that will be updated.  Defaults to "
                              "first database in the regolithrc.json file."
