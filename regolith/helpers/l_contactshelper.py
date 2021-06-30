@@ -15,15 +15,22 @@ from regolith.tools import (
     fuzzy_retrieval,
     search_collection,
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "contacts"
 HELPER_TARGET = "l_contacts"
 
 
 def subparser(subpi):
-    subpi.add_argument(
-        "run",
-        help='Run the lister')
+    date_kwargs = {}
+    int_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+        int_kwargs['widget'] = 'IntegerField'
+    else:
+        subpi.add_argument(
+            "run",
+            help='run the lister. To see allowed optional arguments, type "regolith helper l_contacts".')
     subpi.add_argument(
         "-v",
         "--verbose",
@@ -42,13 +49,13 @@ def subparser(subpi):
         "--date",
         help='approximate date corresponding to when the contact was entered in the database. '
              'Comes with a default range of 4 months centered around the date; change range using --range argument.',
-        widget='DateChooser')
+        **date_kwargs)
     subpi.add_argument(
         "-r",
         "--range",
         help='range (in months) centered around date d specified by --date, i.e. (d +/- r/2).',
         default=4,
-        widget='IntegerField')
+        **int_kwargs)
     subpi.add_argument(
         "-o",
         "--notes",

@@ -13,23 +13,30 @@ from regolith.tools import (
     get_pi_id,
     document_by_value,
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    int_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+        int_kwargs['widget'] = 'IntegerField'
+        int_kwargs['gooey_options'] = {'min': 0, 'max': 10000}
     subpi.add_argument("description",
                        help="the description of the to_do task. If the description has more than one "
                             "word, please enclose it in quotation marks.",
                        default=None)
     subpi.add_argument("due_date",
                        help="Due date of the task.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
-                       widget='IntegerField', gooey_options={'min': 0, 'max': 10000}
+                       **int_kwargs
                        )
     subpi.add_argument("-d", "--deadline", action="store_true",
                        help=f"Is the due date a hard deadline?",
@@ -53,11 +60,11 @@ def subparser(subpi):
                        help="ID of the member that assigns the task. Default id is saved in user.json. ")
     subpi.add_argument("--begin_date",
                        help="Begin date of the task. Default is today.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.",
-                       widget='DateChooser')
+                       **date_kwargs)
 
     return subpi
 

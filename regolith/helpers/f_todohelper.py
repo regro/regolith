@@ -16,19 +16,26 @@ from regolith.tools import (
     print_task,
     key_value_pair_filter
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [0, 1, 2]
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    int_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+        int_kwargs['widget'] = 'IntegerField'
+
     subpi.add_argument("-i", "--index",
                        help="Enter the index of a certain task in the enumerated list to mark as finished.",
                        type=int,
-                       widget='IntegerField')
+                       **int_kwargs)
     subpi.add_argument("--end_date",
                        help="Add the end date of the task. Default is today.",
-                       widget='DateChooser')
+                       **date_kwargs)
     subpi.add_argument("-t", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
@@ -36,7 +43,7 @@ def subparser(subpi):
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.",
-                       widget='DateChooser')
+                       **date_kwargs)
     return subpi
 
 

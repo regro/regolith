@@ -17,6 +17,7 @@ from regolith.tools import (
     print_task,
     key_value_pair_filter
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
@@ -24,14 +25,27 @@ TODO_STATI = ["started", "finished", "cancelled"]
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
 def subparser(subpi):
+    deci_kwargs = {}
+    notes_kwargs = {}
+    date_kwargs = {}
+    int_kwargs = {}
+    listbox_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        deci_kwargs['widget'] = 'DecimalField'
+        deci_kwargs['gooey_options'] = {'min': 0.0, 'max': 10000.0, 'increment': 1, 'precision': 1}
+        notes_kwargs['widget'] = 'Textarea'
+        date_kwargs['widget'] = 'DateChooser'
+        int_kwargs['widget'] = 'IntegerField'
+        listbox_kwargs['widget'] = 'Listbox'
+        listbox_kwargs['choices'] = TODO_STATI
+
     subpi.add_argument("-i", "--index",
                        help="Enter the index of a certain task in the enumerated list to update that task.",
                        type=int,
-                       widget='IntegerField')
+                       **int_kwargs)
     subpi.add_argument("-s", "--stati", nargs='+', help=f'Update tasks with specific stati"',
                        default=["started"],
-                       choices=TODO_STATI,
-                       widget='Listbox')
+                       **listbox_kwargs)
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("-r", "--renumber", action="store_true",
                        help="Renumber the indices."
@@ -42,13 +56,12 @@ def subparser(subpi):
                        )
     subpi.add_argument("-u", "--due_date",
                        help="Change the due date of the task.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("-e", "--estimated_duration",
                        help="Change the estimated duration the task will take in minutes. ",
                        type=float,
-                       widget='DecimalField',
-                       gooey_options = {'min': 0.0, 'max': 10000.0, 'increment': 1, 'precision': 1}
+                       **deci_kwargs
                        )
     subpi.add_argument("--deadline",
                        help="give value 't' if due_date is a hard deadline, else 'f' if not",
@@ -65,15 +78,15 @@ def subparser(subpi):
                        )
     subpi.add_argument("-n", "--notes", nargs="+", help="The new notes for this task. Each note should be enclosed "
                                                         "in quotation marks.",
-                       widget='Textarea')
+                       **notes_kwargs)
     subpi.add_argument("-t", "--tags", nargs="+", help="The new tags to add for this task.")
     subpi.add_argument("--begin_date",
                        help="Change the begin date of the task.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("--end_date",
                        help="Change the end date of the task.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
@@ -81,7 +94,7 @@ def subparser(subpi):
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.",
-                       widget='DateChooser')
+                       **date_kwargs)
 
     return subpi
 

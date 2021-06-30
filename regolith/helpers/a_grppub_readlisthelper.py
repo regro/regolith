@@ -7,6 +7,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
 )
+from gooey import GooeyParser
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
@@ -14,6 +15,10 @@ ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+
     subpi.add_argument("list_name", help="A short but unique name for the list. "
                                          "If the list exists it will be updated.",
                         default=None)
@@ -37,7 +42,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("--date",
                        help="The date that will be used for testing.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     return subpi
 

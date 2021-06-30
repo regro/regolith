@@ -5,16 +5,21 @@ from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval, collection_str
 import datetime as dt
 from dateutil import parser as date_parser
+from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+
     subpi.add_argument("projectum_id",
                        help="the ID or fragment of the ID of the projectum to be updated, e.g., 20sb")
     subpi.add_argument("--end_date",
                        help="End date of the projectum. "
                             "Defaults to today.",
-                       widget='DateChooser')
+                       **date_kwargs)
     # Do not delete --database arg
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated.  Defaults to "

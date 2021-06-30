@@ -14,6 +14,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = ["nsf", "doe", "other"]
@@ -23,6 +24,10 @@ MILESTONES_ALLOWED_STATI = ["proposed", "scheduled", "finished", "cancelled"]
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+
     subpi.add_argument("name", help="A short but unique name for the projectum",
                        default=None)
     subpi.add_argument("lead", help="id of the group lead or tbd",
@@ -36,7 +41,7 @@ def subparser(subpi):
     subpi.add_argument("--date",
                        help="The begin_date for the projectum  Defaults to "
                             "today's date.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("-d", "--description",
                        help="Slightly longer description of the projectum"
@@ -53,7 +58,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("-u", "--due_date",
                        help="proposed due date for the deliverable",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("--checklist", action='store_true',
                        help="Create manuscript checklist if specified"
