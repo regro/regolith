@@ -18,6 +18,7 @@ from regolith.tools import (
     key_value_pair_filter,
     collection_str
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"
@@ -29,6 +30,12 @@ FINISHED_STATI = ["finished"]
 INACTIVE_STATI = PAUSED_STATI + CANCELLED_STATI
 
 def subparser(subpi):
+    date_kwargs = {}
+    int_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+        int_kwargs['widget'] = 'IntegerField'
+
     subpi.add_argument("--all", action="store_true",
                        help="Lists all projecta in general")
     subpi.add_argument("-c", "--current", action="store_true",
@@ -44,15 +51,15 @@ def subparser(subpi):
                             "non active person as lead")
     subpi.add_argument("-e", "--ended", action="store_true",
                        help="Lists projecta that have ended. Use the -d and -r flags to specify up to "
-                            "what date and how many days before then. The default is 7 days before today.",
-                       widget='IntegerField')
+                            "what date and how many days before then. The default is 7 days before today.",)
     subpi.add_argument("-d", "--date",
                        help="projecta with end_date within RANGE before this date will be listed. "
                             "The default is today. Some projecta don't have an end date and won't appear in a search",
-                       widget='DateChooser')
+                       **date_kwargs)
     subpi.add_argument("-r", "--range",
                        help="date range back from DATE to search over in days. "
-                            "If no range is specified, search range will be 7 days")
+                            "If no range is specified, search range will be 7 days",
+                       **int_kwargs)
     subpi.add_argument("-g", "--grant",
                        help="Filter projecta by a grant ID")
     subpi.add_argument("--grp_by_lead", action='store_true',

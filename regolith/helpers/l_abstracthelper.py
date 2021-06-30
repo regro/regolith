@@ -6,12 +6,18 @@ from regolith.tools import (
     get_pi_id,
     get_person_contact
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
 
 
 def subparser(subpi):
+    int_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        int_kwargs['widget'] = 'IntegerField'
+        int_kwargs['gooey_options'] = {'min': 2000, 'max': 2100}
+
     subpi.add_argument(
         "-a",
         "--author",

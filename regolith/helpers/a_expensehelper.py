@@ -12,21 +12,29 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "expenses"
 ALLOWED_TYPES = ["business", "travel"] # need to check all expense types.
 ALLOWED_STATI = ["submitted", "unsubmitted", "reimbursed"]
 
-
 def subparser(subpi):
+    amount_kwargs = {}
+    notes_kwargs = {}
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        amount_kwargs['widget'] = 'DecimalField'
+        amount_kwargs['gooey_options'] = {'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision' : 2}
+        notes_kwargs['widget'] = 'Textarea'
+        date_kwargs['widget'] = 'DateChooser'
+
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file."
                        )
     subpi.add_argument("amount", help="expense amount",
-                       widget='DecimalField',
-                       gooey_options={'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision' : 2}
+                       **amount_kwargs
                        )
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
@@ -55,17 +63,17 @@ def subparser(subpi):
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="List of notes for the expense. Defaults to empty list",
                        default= [],
-                       widget='Textarea'
+                       **notes_kwargs
                        )
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
                             "Defaults to today's date",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("-e,", "--end_date",
                        help="Input end date for this expense. "
                             "Defaults to today's date",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     return subpi
 

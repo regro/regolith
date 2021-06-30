@@ -11,23 +11,28 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
 )
+from gooey import GooeyParser
 
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
                  "submitted", "cancelled"]
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+
     subpi.add_argument("name", help="Full name, or last name, of the first author",
                        )
     subpi.add_argument("due_date", help="Due date", default='',
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("journal", help="journal to be published on", default=''
                        )
     subpi.add_argument("title", help="the title of the Manuscript", default=''
                        )
     subpi.add_argument("-d", "--submitted_date", help="Submitted date",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     subpi.add_argument("-q", "--requester",
                        help="name, or id in contacts, of the editor requesting the review"

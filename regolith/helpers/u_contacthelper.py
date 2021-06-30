@@ -9,11 +9,18 @@ import uuid
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
+from gooey import GooeyParser
 
 
 TARGET_COLL = "contacts"
 
 def subparser(subpi):
+    date_kwargs = {}
+    notes_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+        notes_kwargs['widget'] = 'Textarea'
+
     subpi.add_argument("fragmentname", help="Fragment of name, id, or aliases to search for contacts.")
     subpi.add_argument("-i", "--index", help="Index of the item in the enumerated list chosen to update.",
                        type=int)
@@ -26,7 +33,7 @@ def subparser(subpi):
                         help="Notes.  As many notes as you like, each one in "
                              "quotes and separated by a space, such as where "
                              "and when met, what discussed.",
-                       widget='Textarea')
+                       **notes_kwargs)
     subpi.add_argument("-d", "--department", help="Department at the institution.")
     subpi.add_argument("--id", help="id of the person, e.g., first letter first name "
                                           "plus last name, but unique.")
@@ -38,7 +45,7 @@ def subparser(subpi):
     subpi.add_argument("--date",
                        help="The date when the contact was created. "
                             "Defaults to today's date.",
-                       widget='DateChooser'
+                       **date_kwargs
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",
