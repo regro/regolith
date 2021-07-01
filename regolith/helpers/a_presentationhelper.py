@@ -7,16 +7,13 @@ import sys
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
+from regolith.schemas import PRESENTATION_TYPES, PRESENTATION_STATI
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
 
 TARGET_COLL = "presentations"
-ALLOWED_TYPES = ["award", "keynote", "plenary", "invited", "contributed_oral",
-                 "poster", "colloquium", "seminar","other"]
-ALLOWED_STATI = ["in-prep", "submitted", "accepted", "declined",
-                         "cancelled"]
 
 
 def subparser(subpi):
@@ -48,10 +45,10 @@ def subparser(subpi):
                        default='tbd'
                        )
     subpi.add_argument("-s", "--status",
-                       help=f"status, from {ALLOWED_STATI}, default is accepted",
+                       help=f"status, from {PRESENTATION_STATI}, default is accepted",
                        default="accepted"
                        )
-    subpi.add_argument("-y", "--type", help=f"types, from {ALLOWED_TYPES}. Default",
+    subpi.add_argument("-y", "--type", help=f"types, from {PRESENTATION_TYPES}. Default",
                        default="invited"
                        )
     subpi.add_argument("-w", "--webinar", help=f"true if the presentation was a "

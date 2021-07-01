@@ -47,7 +47,7 @@ helper_map = [
       "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
       "    team:\n"
       "        group_members: ascopatz\n"
-      "        collaborators: aeinstein, pdirac\n"
+      "        collaboratorsu aeinstein, pdirac\n"
       "    deliverable:\n"
       "        audience: beginning grad in chemistry\n"
       "        scope: 1. UCs that are supported or some other scope description if it is software\n"

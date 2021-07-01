@@ -8,15 +8,15 @@ import sys
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
+from regolith.schemas import EXPENSES_STATI, EXPENSES_TYPES
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
 
 TARGET_COLL = "expenses"
-ALLOWED_TYPES = ["business", "travel"] # need to check all expense types.
-ALLOWED_STATI = ["submitted", "unsubmitted", "reimbursed"]
 
+# def travel_expense_builder():
 
 def subparser(subpi):
     # Do not delete --database arg
@@ -43,7 +43,7 @@ def subparser(subpi):
                        help="grant, or list of grants that cover this expense. Defaults to tbd"
                        )
     subpi.add_argument("-s", "--status",
-                       help=f"status, from {ALLOWED_STATI}. Default is unsubmitted",
+                       help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
                        default='unsubmitted'
                        )
     subpi.add_argument("-w", "--where",
@@ -110,7 +110,6 @@ class ExpenseAdderHelper(DbHelperBase):
                      'begin_date': begin_date,
                      'end_date': end_date,
                      })
-        # expense_type
 
 
         if rc.business:
