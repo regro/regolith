@@ -11,7 +11,6 @@ from gooey import GooeyParser
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
 
-
 def subparser(subpi):
     int_kwargs = {}
     if isinstance(subpi, GooeyParser):
@@ -28,7 +27,6 @@ def subparser(subpi):
         "--year",
         help='start or end year of the presentation (single argument only) to '
              'use to find presentation',
-        default=2021,
         **int_kwargs
     )
     subpi.add_argument(
