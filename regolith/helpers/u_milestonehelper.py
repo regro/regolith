@@ -30,9 +30,7 @@ def subparser(subpi):
         date_kwargs['widget'] = 'DateChooser'
         notes_kwargs['widget'] = 'Textarea'
         status_kwargs['widget'] = 'Dropdown'
-        status_kwargs['choices'] = ALLOWED_STATI
         type_kwargs['widget'] = 'Dropdown'
-        type_kwargs['choices'] = ALLOWED_TYPES
 
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
