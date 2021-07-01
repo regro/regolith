@@ -5,6 +5,7 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
+from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.schemas import PRESENTATION_TYPES, PRESENTATION_STATI
@@ -14,6 +15,7 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "presentations"
+EXPENSES_COLL = "expenses"
 
 
 def subparser(subpi):
@@ -55,9 +57,18 @@ def subparser(subpi):
                                                f"webinar. Default False",
                        action="store_true"
                        )
+    subpi.add_argument("--no-expense", help=f"Do not add a template expense item to the "
+                                            f"expenses collection.  Default is to add "
+                                            f"an expense if the presentation is not a "
+                                            f"webinar.",
+                       action="store_true"
+                       )
     subpi.add_argument("-u", "--authors", nargs="+",
                        help="specify the authors of this presentation, "
                             "defaults to person submitting the presentation",
+                       )
+    subpi.add_argument("-g", "--grants", nargs="+",
+                       help="grant, or list of grants, that support this presentation. Defaults to tbd"
                        )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -132,6 +143,7 @@ class PresentationAdderHelper(DbHelperBase):
                      'end_date': end_date,
                      })
         if rc.webinar:
+            rc.no_expense = True
             pdoc.update({"webinar": True})
         if rc.type in ['seminar', 'colloquium']:
             pdoc.update({"institution": rc.place,
@@ -146,7 +158,16 @@ class PresentationAdderHelper(DbHelperBase):
                      })
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
-
         print(f"{key} has been added in {TARGET_COLL}")
+
+        if not rc.no_expense:
+            rc.business = False
+            rc.payee = authors[0]
+            rc.purpose = f"give {rc.type} presentation at {rc.name}, {rc.place}"
+            rc.where = "tbd"
+            rc.status = "unsubmitted"
+            edoc = expense_constructor(key, begin_date, end_date, rc)
+            rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
+            print(f"{key} has been added in {EXPENSES_COLL}")
 
         return

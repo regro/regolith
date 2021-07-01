@@ -29,10 +29,10 @@ helper_map = [
       "--where", "bank", "--begin_date", "2020-06-20", "--end_date", "2020-06-25"],
      "2006as_timbuktoo has been added in expenses\n"),
     (["helper", "a_presentation", "Mars", "flat earth", "2020-06-26", "2020-06-26",
-      "--type", "contributed_oral", "--person", "ashaaban",
+      "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
       "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
-      "--title", "On the roundness of the Earth", "--status", "in-prep", "--webinar"],
-     "2006as_mars has been added in presentations\n"),
+      "--title", "On the roundness of the Earth", "--status", "in-prep"],
+     "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\n"),
     (["helper", "l_progress", "-l", "ascopatz"],
      "*************************[Started Projecta]**************************\n"
       "sb_firstprojectum\n"
