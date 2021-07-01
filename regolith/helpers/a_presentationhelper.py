@@ -5,18 +5,17 @@ import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import sys
 
+from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
+from regolith.schemas import PRESENTATION_TYPES, PRESENTATION_STATI
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
 
 TARGET_COLL = "presentations"
-ALLOWED_TYPES = ["award", "keynote", "plenary", "invited", "contributed_oral",
-                 "poster", "colloquium", "seminar","other"]
-ALLOWED_STATI = ["in-prep", "submitted", "accepted", "declined",
-                         "cancelled"]
+EXPENSES_COLL = "expenses"
 
 
 def subparser(subpi):
@@ -48,19 +47,28 @@ def subparser(subpi):
                        default='tbd'
                        )
     subpi.add_argument("-s", "--status",
-                       help=f"status, from {ALLOWED_STATI}, default is accepted",
+                       help=f"status, from {PRESENTATION_STATI}, default is accepted",
                        default="accepted"
                        )
-    subpi.add_argument("-y", "--type", help=f"types, from {ALLOWED_TYPES}. Default",
+    subpi.add_argument("-y", "--type", help=f"types, from {PRESENTATION_TYPES}. Default",
                        default="invited"
                        )
     subpi.add_argument("-w", "--webinar", help=f"true if the presentation was a "
                                                f"webinar. Default False",
                        action="store_true"
                        )
+    subpi.add_argument("--no-expense", help=f"Do not add a template expense item to the "
+                                            f"expenses collection.  Default is to add "
+                                            f"an expense if the presentation is not a "
+                                            f"webinar.",
+                       action="store_true"
+                       )
     subpi.add_argument("-u", "--authors", nargs="+",
                        help="specify the authors of this presentation, "
                             "defaults to person submitting the presentation",
+                       )
+    subpi.add_argument("-g", "--grants", nargs="+",
+                       help="grant, or list of grants, that support this presentation. Defaults to tbd"
                        )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -75,7 +83,7 @@ class PresentationAdderHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "a_presentation"
-    needed_dbs = [f'{TARGET_COLL}', 'groups', 'people']
+    needed_dbs = [f'{TARGET_COLL}', 'groups', 'people', 'expenses']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -135,6 +143,7 @@ class PresentationAdderHelper(DbHelperBase):
                      'end_date': end_date,
                      })
         if rc.webinar:
+            rc.no_expense = True
             pdoc.update({"webinar": True})
         if rc.type in ['seminar', 'colloquium']:
             pdoc.update({"institution": rc.place,
@@ -149,7 +158,16 @@ class PresentationAdderHelper(DbHelperBase):
                      })
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
-
         print(f"{key} has been added in {TARGET_COLL}")
+
+        if not rc.no_expense:
+            rc.business = False
+            rc.payee = authors[0]
+            rc.purpose = f"give {rc.type} presentation at {rc.name}, {rc.place}"
+            rc.where = "tbd"
+            rc.status = "unsubmitted"
+            edoc = expense_constructor(key, begin_date, end_date, rc)
+            rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
+            print(f"{key} has been added in {EXPENSES_COLL}")
 
         return

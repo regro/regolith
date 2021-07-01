@@ -8,42 +8,173 @@ import sys
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
+from regolith.schemas import EXPENSES_STATI, EXPENSES_TYPES
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
 
 TARGET_COLL = "expenses"
-ALLOWED_TYPES = ["business", "travel"] # need to check all expense types.
-ALLOWED_STATI = ["submitted", "unsubmitted", "reimbursed"]
+
+def expense_constructor(key, begin_date, end_date, rc):
+    '''
+    constructs a document with default fields for an expense
+
+    Parameters
+    ----------
+    key str
+      The key for ('_id') for this entry in the expenses collection
+    begin_date datetime.date
+      The date of the start of the travel/expense
+    end_date datetime.date
+      The date of the end of the travel/expense
+    rc runcontrol object
+      The runcontrol object.  Should contain:
+         required:
+         rc.business (bool) True if a business expense, false if a travel one.
+         rc.grants (list) The list of grants that will be charged
+         rc.purpose (str) The purpose of the trip/expense
+         rc.payee (str) id of the payee
+         rc.where (str) where submitted/reimbursed (e.g., which institution/person
+            it was submitted to or which bank account it was reimbursed to
+         required if rc.business:
+         rc.amount (float) The amount of the expense if it is a business expense
+         optional:
+         rc.notes (list of strings) notes to add if there are any
+         rc.status (str) the status of the expense (defaults to unsubmitted)
+
+    Returns
+    -------
+    The constructed expense document
+
+    '''
+    pdoc = {}
+    pdoc.update({'_id': key,
+                 'begin_date': begin_date,
+                 'end_date': end_date,
+                 })
+
+    if rc.business:
+        expense_type = 'business'
+    else:
+        expense_type = 'travel'
+    pdoc.update({'expense_type': expense_type})
+
+    if rc.grants:
+        percentages = [100 / len(rc.grants) for i in rc.grants]
+    else:
+        percentages = [100]
+    pdoc.update({'grant_percentages': percentages,
+                 'grants': rc.grants})
+
+    if expense_type == 'travel':
+        pdoc.update({'itemized_expenses': [
+            {
+                'date': begin_date,
+                'purpose': 'registration',
+                'unsegregated_expense': 0,
+                'segregated_expense': 0
+            },
+            {
+                'date': begin_date,
+                'purpose': 'home to airport',
+                'unsegregated_expense': 0,
+                'segregated_expense': 0
+            },
+            {
+                'date': begin_date,
+                'purpose': 'flights',
+                'unsegregated_expense': 0,
+                'segregated_expense': 0
+            },
+            {
+                'date': begin_date,
+                'purpose': 'airport to hotel',
+                'unsegregated_expense': 0,
+                'segregated_expense': 0
+            },
+            {
+                'date': begin_date,
+                'purpose': 'hotel',
+                'unsegregated_expense': 0,
+                'segregated_expense': 0
+            },
+            {
+                'date': begin_date,
+                'purpose': 'hotel to airport',
+                'unsegregated_expense': 0,
+                'segregated_expense': 0
+            },
+            {
+                'date': begin_date,
+                'purpose': 'airport to home',
+                'unsegregated_expense': 0,
+                'segregated_expense': 0
+            },
+            {
+                'date': begin_date,
+                'purpose': 'meals',
+                'unsegregated_expense': 0,
+                'segregated_expense': 0
+            }
+        ]
+        })
+    else:
+        pdoc.update({'itemized_expenses': [
+            {
+                'date': begin_date,
+                'purpose': rc.purpose,
+                'unsegregated_expense': float(rc.amount),
+                'segregated_expense': 0
+            }]
+        })
+    pdoc.update({'notes': rc.notes,
+                 'overall_purpose': rc.purpose,
+                 'payee': rc.payee,
+                 })
+    if rc.status == 'submitted':
+        submission_date = dt.date.today()
+
+    else:
+        submission_date = 'tbd'
+
+    pdoc.update({'reimbursements': [
+        {
+            'amount': 0,
+            'date': 'tbd',
+            'submission_date': submission_date,
+            'where': rc.where,
+        }
+    ]
+    })
+    pdoc.update({
+        'status': rc.status
+    })
+    return pdoc
 
 
 def subparser(subpi):
-    # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
-                       )
-    subpi.add_argument("amount", help="expense amount",
-                       )
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
                        )
-    subpi.add_argument("purpose", help="A short description of expense purpose",
+    subpi.add_argument("purpose", help="A short description of the business "
+                                       "purpose of the expense",
                        default=None)
 
     subpi.add_argument("-b", "--business", action='store_true',
                        help="expense type is business. If not specified defaults to travel"
                        )
+    subpi.add_argument("-a", "--amount", help="expense amount. required if a business"
+                                        "expense.",
+                       )
     subpi.add_argument("-y", "--payee",
-                       help="payee of the expense. defaults to sbillinge",
-                       default="sbillinge"
+                       help="payee of the expense. defaults to rc.default_user_id"
                        )
     subpi.add_argument("-g", "--grants", nargs="+",
                        help="grant, or list of grants that cover this expense. Defaults to tbd"
                        )
     subpi.add_argument("-s", "--status",
-                       help=f"status, from {ALLOWED_STATI}. Default is unsubmitted",
+                       help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
                        default='unsubmitted'
                        )
     subpi.add_argument("-w", "--where",
@@ -62,6 +193,11 @@ def subparser(subpi):
                        help="Input end date for this expense. "
                             "In YYYY-MM-DD format. Defaults to today's date",
                        )
+    # Do not delete --database arg
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file."
+                       )
     return subpi
 
 
@@ -76,6 +212,15 @@ class ExpenseAdderHelper(DbHelperBase):
         rc = self.rc
         rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
+        try:
+            rc.payee
+        except AttributeError:
+            try:
+                rc.payee = rc.default_user_id
+            except AttributeError as a:
+                raise type(a)(a.message + " No default_user_id set.  Please specify this "
+                          f"either in the ~/.conf/regolith/user.json or in"
+                          f" regolithrc.json")
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         gtx[rc.coll] = sorted(
@@ -106,112 +251,8 @@ class ExpenseAdderHelper(DbHelperBase):
                 "This entry appears to already exist in the collection")
         else:
             pdoc = {}
-        pdoc.update({'_id': key,
-                     'begin_date': begin_date,
-                     'end_date': end_date,
-                     })
-        # expense_type
 
-
-        if rc.business:
-            expense_type = 'business'
-        else:
-            expense_type = 'travel'
-        pdoc.update({'expense_type': expense_type})
-
-        if rc.grants:
-            percentages = [100/len(rc.grants) for i in rc.grants]
-
-
-        else:
-            percentages = [100]
-        pdoc.update({'grant_percentages':percentages,
-                     'grants': rc.grants})
-
-        if expense_type == 'travel':
-            pdoc.update({'itemized_expenses': [
-                {
-                    'date': begin_date,
-                    'purpose': 'registration',
-                    'unsegregated_expense': 0,
-                    'segregated_expense': 0
-                },
-                {
-                    'date': begin_date,
-                    'purpose': 'home to airport',
-                    'unsegregated_expense': 0,
-                    'segregated_expense': 0
-                },
-                {
-                    'date': begin_date,
-                    'purpose': 'flights',
-                    'unsegregated_expense': 0,
-                    'segregated_expense': 0
-                },
-                {
-                    'date': begin_date,
-                    'purpose': 'airport to hotel',
-                    'unsegregated_expense': 0,
-                    'segregated_expense': 0
-                },
-                {
-                    'date': begin_date,
-                    'purpose': 'hotel',
-                    'unsegregated_expense': 0,
-                    'segregated_expense': 0
-                },
-                {
-                    'date': begin_date,
-                    'purpose': 'hotel to airport',
-                    'unsegregated_expense': 0,
-                    'segregated_expense': 0
-                },
-                {
-                    'date': begin_date,
-                    'purpose': 'airport to home',
-                    'unsegregated_expense': 0,
-                    'segregated_expense': 0
-                },
-                {
-                    'date': begin_date,
-                    'purpose': 'meals',
-                    'unsegregated_expense': 0,
-                    'segregated_expense': 0
-                }
-                ]
-            })
-        else:
-            pdoc.update({'itemized_expenses': [
-                {
-                    'date': begin_date,
-                    'purpose': rc.purpose,
-                    'unsegregated_expense': float(rc.amount),
-                    'segregated_expense': 0
-                }]
-            })
-        pdoc.update({'notes': rc.notes,
-                     'overall_purpose': rc.purpose,
-                     'payee': rc.payee,
-                     })
-        if rc.status == 'submitted':
-            submission_date = dt.date.today()
-
-        else:
-            submission_date = 'tbd'
-
-        pdoc.update({'reimbursements': [
-            {
-                'amount': 0,
-                'date': 'tbd',
-                'submission_date': submission_date,
-                'where': rc.where,
-            }
-            ]
-        })
-        pdoc.update({
-            'status': rc.status
-        })
-
+        pdoc = expense_constructor(key, begin_date, end_date, rc)
 
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
