@@ -24,7 +24,7 @@ helper_map = [
       "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "--currency", "Bitcoin",
       "--other_agencies", "Flatland", "--notes", "this is a sample added proposal", "--date", "2020-08-01"],
      "20_anewproposal has been added in proposals\n"),
-    (["helper", "a_expense", "159.18", "timbuktoo", "travel to timbuktoo",
+    (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount", "159.18",
       "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
       "--where", "bank", "--begin_date", "2020-06-20", "--end_date", "2020-06-25"],
      "2006as_timbuktoo has been added in expenses\n"),
@@ -47,7 +47,7 @@ helper_map = [
       "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
       "    team:\n"
       "        group_members: ascopatz\n"
-      "        collaboratorsu aeinstein, pdirac\n"
+      "        collaborators: aeinstein, pdirac\n"
       "    deliverable:\n"
       "        audience: beginning grad in chemistry\n"
       "        scope: 1. UCs that are supported or some other scope description if it is software\n"
