@@ -52,16 +52,11 @@ def subparser(subpi):
                        )
     subpi.add_argument("-s", "--status",
                        help=f"status, from {PRESENTATION_STATI}, default is accepted",
+                       choices=PRESENTATION_STATI,
                        default="accepted"
                        )
-    subpi.add_argument("-y", "--type", help=f"types, from {PRESENTATION_TYPES}. Default",
-                       choices=ALLOWED_STATI,
-                       help=f"Presentation status",
-                       default="accepted"
-                       )
-    subpi.add_argument("-y", "--type",
-                       choices=ALLOWED_TYPES,
-                       help=f"Presentation type",
+    subpi.add_argument("-y", "--type", help=f"types, from {PRESENTATION_TYPES}, default is invited",
+                       choices=PRESENTATION_TYPES,
                        default="invited"
                        )
     subpi.add_argument("-w", "--webinar", help=f"Is the presentation a webinar?",

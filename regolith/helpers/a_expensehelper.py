@@ -153,6 +153,7 @@ def expense_constructor(key, begin_date, end_date, rc):
     })
     return pdoc
 
+
 def subparser(subpi):
     amount_kwargs = {}
     notes_kwargs = {}
@@ -163,14 +164,6 @@ def subparser(subpi):
         notes_kwargs['widget'] = 'Textarea'
         date_kwargs['widget'] = 'DateChooser'
 
-    # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
-                       )
-    subpi.add_argument("amount", help="expense amount",
-                       **amount_kwargs
-                       )
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
                        )
@@ -183,6 +176,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("-a", "--amount", help="expense amount. required if a business"
                                         "expense.",
+                       **amount_kwargs
                        )
     subpi.add_argument("-y", "--payee",
                        help="payee of the expense. defaults to rc.default_user_id"
@@ -192,8 +186,6 @@ def subparser(subpi):
                        )
     subpi.add_argument("-s", "--status",
                        help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
-                       choices = ALLOWED_STATI,
-                       help=f"status",
                        default='unsubmitted'
                        )
     subpi.add_argument("-w", "--where",
