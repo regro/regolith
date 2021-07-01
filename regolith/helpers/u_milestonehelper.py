@@ -24,9 +24,15 @@ PROJECTUM_ACTIVE_STATI = ["proposed", "started", "converged"]
 def subparser(subpi):
     date_kwargs = {}
     notes_kwargs = {}
+    status_kwargs = {}
+    type_kwargs = {}
     if isinstance(subpi, GooeyParser):
         date_kwargs['widget'] = 'DateChooser'
         notes_kwargs['widget'] = 'Textarea'
+        status_kwargs['widget'] = 'Dropdown'
+        status_kwargs['choices'] = ALLOWED_STATI
+        type_kwargs['widget'] = 'Dropdown'
+        type_kwargs['choices'] = ALLOWED_TYPES
 
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
@@ -49,15 +55,15 @@ def subparser(subpi):
                        help="Objective of the milestone. "
                             "Required for a new milestone.")
     subpi.add_argument("-s", "--status",
-                       choices=ALLOWED_STATI,
                        help="Status of the milestone/deliverable: "
                             f"{ALLOWED_STATI}. "
-                            "Defaults to proposed for a new milestone.")
+                            "Defaults to proposed for a new milestone.",
+                       **status_kwargs)
     subpi.add_argument("-t", "--type",
-                       choices=ALLOWED_TYPES,
                        help="Type of the milestone: "
                             f"{ALLOWED_TYPES} "
-                            "Defaults to meeting for a new milestone.")
+                            "Defaults to meeting for a new milestone.",
+                       **type_kwargs)
     subpi.add_argument("-a", "--audience",
                        nargs='+',
                        help="Audience of the milestone. "

@@ -50,7 +50,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
                                           "Please enter either an end date or a duration. ",
-                       widget='IntegerField'
+                       **int_kwargs
                        )
     subpi.add_argument("--due_date", help="The due date for the proposal",
                        **date_kwargs

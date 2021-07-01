@@ -29,7 +29,7 @@ def subparser(subpi):
         help='start or end year of the presentation (single argument only) to '
              'use to find presentation',
         default=2021,
-        widget='IntegerField', gooey_options={'min': 2000, 'max': 2100}
+        **int_kwargs
     )
     subpi.add_argument(
         "-l",
