@@ -10,13 +10,14 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
 from regolith.dates import get_due_date
+from regolith.schemas import PROJECTUM_ACTIVE_STATI
 
 TARGET_COLL = "projecta"
 ALLOWED_TYPES = {"m": "meeting", "r": "release", "p": "pull request",
                  "o": "other"}
 ALLOWED_STATI = {"p": "proposed", "s": "started", "f": "finished",
-                 "b": "back_burner", "c": "converged", "l": "cancelled"}
-CURRENT_STATI = ["proposed", "started", "converged"]
+                 "b": "backburner", "c": "converged", "l": "cancelled"}
+PROJECTUM_ACTIVE_STATI = ["proposed", "started", "converged"]
 
 
 def subparser(subpi):
@@ -131,7 +132,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             print("1. new milestone")
             for i, j in zip(index_list, all_milestones):
                 if rc.current:
-                    if j.get("status") not in CURRENT_STATI:
+                    if j.get("status") not in PROJECTUM_ACTIVE_STATI:
                         del j['identifier']
                         continue
                 print(

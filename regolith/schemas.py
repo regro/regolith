@@ -32,7 +32,7 @@ PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
 PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
 PROJECTUM_CANCELLED_STATI = ["cancelled"]
 PROJECTUM_FINISHED_STATI = ["finished"]
-PROJECTUM_STATUS = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
+PROJECTUM_STATI = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 PROPOSAL_STATI = ["pending", "declined", "accepted", "inprep", "submitted"]
 PUBLICITY_TYPE = ["online", "article"]
 REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
@@ -3794,10 +3794,10 @@ SCHEMAS = {
                           "required": False,
                           "type": "list"},
                 "status": {"description": f"status of the deliverable. "
-                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                                          f"Allowed values are {', '.join(PROJECTUM_STATI)}",
                            "required": True,
                            "type": "string",
-                           "eallowed": PROJECTUM_STATUS},
+                           "eallowed": PROJECTUM_STATI},
                 "type": {"description": "type of deliverable",
                          "required": False,
                          "type": "string"}
@@ -3851,10 +3851,10 @@ SCHEMAS = {
                           "required": False,
                           "type": "list"},
                 "status": {"description": f"status of the kickoff. "
-                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                                          f"Allowed values are {', '.join(PROJECTUM_STATI)}",
                            "required": False,
                            "type": "string",
-                           "eallowed": PROJECTUM_STATUS},
+                           "eallowed": PROJECTUM_STATI},
             }
         },
         "lead": {
@@ -3917,10 +3917,10 @@ SCHEMAS = {
                                  "required": False,
                                  "type": "list"},
                     "status": {"description": f"status of the milestone. "
-                                              f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                                              f"Allowed values are {', '.join(PROJECTUM_STATI)}",
                                "required": False,
                                "type": "string",
-                               "eallowed": PROJECTUM_STATUS},
+                               "eallowed": PROJECTUM_STATI},
                     "type": {"description": f"type of milestone deliverable. "
                                             f"Allowed values are {', '.join(MILESTONE_TYPE)}",
                              "required": False,
@@ -3942,10 +3942,10 @@ SCHEMAS = {
                   "required": False,
                   "type": "string"},
         "status": {"description": f"status of the projectum. "
-                                  f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                                  f"Allowed values are {', '.join(PROJECTUM_STATI)}",
                    "required": True,
                    "type": "string",
-                   "eallowed": PROJECTUM_STATUS},
+                   "eallowed": PROJECTUM_STATI},
         "other_urls": {"description": "link to remote repository. e.g. analysis or data repositories",
                          "required": False,
                          "type": "list"},

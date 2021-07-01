@@ -6,7 +6,6 @@
 import datetime as dt
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
-import sys
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -16,11 +15,6 @@ from regolith.tools import (
 )
 
 TARGET_COLL = "projecta"
-ALLOWED_TYPES = ["nsf", "doe", "other"]
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused",
-                 "cancelled"]
-MILESTONES_ALLOWED_STATI = ["proposed", "scheduled", "finished", "cancelled"]
-
 
 def subparser(subpi):
     subpi.add_argument("name", help="A short but unique name for the projectum",
