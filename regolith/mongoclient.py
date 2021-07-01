@@ -12,9 +12,7 @@ from tempfile import TemporaryDirectory
 
 from ruamel.yaml import YAML
 
-#
-# setup mongo
-#
+
 try:
     import pymongo
 
