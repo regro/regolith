@@ -1,6 +1,7 @@
 """Generic builder."""
 
 from regolith.builders.cvbuilder import CVBuilder
+from regolith.builders.grpsummarybuilder import GrpSummaryBuilder
 from regolith.builders.htmlbuilder import HtmlBuilder
 from regolith.builders.postdocadbuilder import PostdocadBuilder
 from regolith.builders.preslistbuilder import PresListBuilder
@@ -27,6 +28,7 @@ BUILDERS = {
     "figure": FigureBuilder,
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,
+    "grpsummary": GrpSummaryBuilder,
     "html": HtmlBuilder,
     "internalhtml": InternalHtmlBuilder,
     "postdocad": PostdocadBuilder,

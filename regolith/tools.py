@@ -7,7 +7,7 @@ import re
 import sys
 from copy import copy
 from copy import deepcopy
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
 from habanero import Crossref
@@ -321,6 +321,47 @@ def filter_employment_for_advisees(people, begin_period, status, active=False):
                     p['status'] = status
                     p['end_year'] = end_date.year
                     p['position'] = i.get("position")
+                    advisees.append(p)
+                    advisees.sort(key=lambda x: x['end_year'], reverse=True)
+    return advisees
+
+def get_age(person, dobkey="dob"):
+    today = date.today()
+    if isinstance(person.get(dobkey), str):
+        dob = date_parser.parse(person.get(dobkey)).date()
+    else:
+        dob = person.get(dobkey)
+    
+    try: 
+        birthday = dob.replace(year=today.year)
+    except ValueError: # raised when birth date is February 29 and the current year is not a leap year
+        birthday = dob.replace(year=today.year, month=dob.month+1, day=1)
+    if today.month - birthday.month < 0:
+        months = today.month + 12 - birthday.month
+    else:
+        months = today.month - birthday.month
+    if birthday > today:
+        years = today.year - dob.year - 1
+    else:
+        years =  today.year - dob.year
+    return years, months
+
+def filter_employment_for_group_members(people, begin_period, groupid):
+    advisees = []
+    for p in people:
+        for i in p.get("employment", []):
+            if i.get("group") == groupid:
+                emp_dates = get_dates(i)
+                end_date = emp_dates.get("end_date")
+                if not end_date:
+                    end_date = date.today()
+                i["end_year"] = end_date.year
+                if end_date >= begin_period:
+                    p['role'] = i.get("position")
+                    p['status'] = i.get("status")
+                    p['end_year'] = end_date.year
+                    p['position'] = i.get("position")
+                    p['empl_begin_date'] = i.get("begin_date")
                     advisees.append(p)
                     advisees.sort(key=lambda x: x['end_year'], reverse=True)
     return advisees
