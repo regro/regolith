@@ -33,39 +33,43 @@ def subparser(subpi):
         date_kwargs['widget'] = 'DateChooser'
         int_kwargs['widget'] = 'IntegerField'
 
-    subpi.add_argument("--all", action="store_true",
-                       help="Lists all projecta in general")
+    subpi.add_argument("-l", "--lead",
+                       help="Filter milestones for this project lead, "
+                            "specified by id, e.g., sbillinge")
+    subpi.add_argument("-p", "--person",
+                       help="Filter milestones for this person whether lead or "
+                            "not, specified by id, e.g., sbillinge")
+    subpi.add_argument("-g", "--grant",
+                       help="Filter projecta by a grant ID")
     subpi.add_argument("-c", "--current", action="store_true",
-                       help="Lists all active projecta")
+                       help=f"Lists only active projecta")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help="increase verbosity of output")
-    subpi.add_argument("-l", "--lead",
-                       help="Filter milestones for this project lead")
-    subpi.add_argument("-p", "--person",
-                       help="Filter milestones for this person whether lead or not")
+    subpi.add_argument("--grp_by_lead", action='store_true',
+                       help="Lists all projecta by their lead")
     subpi.add_argument("-o", "--orphans", action="store_true",
                        help="Find all orphans: prums that are assigned to 'tbd' or have a "
                             "non active person as lead")
+    subpi.add_argument("--all", action="store_true",
+                       help=f"Lists all projecta including those with statuses "
+                            f"in {*INACTIVE_STATI,} that are excluded by default")
     subpi.add_argument("-e", "--ended", action="store_true",
                        help="Lists projecta that have ended. Use the -d and -r flags to specify up to "
                             "what date and how many days before then. The default is 7 days before today.",)
-    subpi.add_argument("-d", "--date",
-                       help="projecta with end_date within RANGE before this date will be listed. "
-                            "The default is today. Some projecta don't have an end date and won't appear in a search",
-                       **date_kwargs)
     subpi.add_argument("-r", "--range",
                        help="date range back from DATE to search over in days. "
                             "If no range is specified, search range will be 7 days",
-                       **int_kwargs)
-    subpi.add_argument("-g", "--grant",
-                       help="Filter projecta by a grant ID")
-    subpi.add_argument("--grp_by_lead", action='store_true',
-                       help="Lists all projecta by their lead")
+                       )
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs")
     subpi.add_argument("-k", "--keys", nargs="+",
                        help="Specify what keys to return values from when running --filter. "
                             "If no argument is given the default is just the id.")
+    subpi.add_argument("-d", "--date",
+                       help="projecta with end_date within RANGE before this date will be listed. "
+                            "The default is today. Some projecta don't have an end date and won't appear in a search. "
+                            "mostly used for testing.",
+                       **date_kwargs)
     return subpi
 
 

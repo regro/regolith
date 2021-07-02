@@ -40,17 +40,18 @@ def subparser(subpi):
         int_kwargs['widget'] = 'IntegerField'
         int_kwargs['gooey_options'] = {'min': 0, 'max': 1000}
 
+    subpi.add_argument("--short", nargs='?', const=30,
+                       help='Filter for tasks of short duration. '
+                            'All items with a duration <= # mins, will be returned '
+                            'if the number # is specified.',
+                       )
+    subpi.add_argument("-t", "--tags", nargs='+',
+                       help="Filter tasks by tags. Items are returned if they contain any of the tags listed")
     subpi.add_argument("-s", "--stati", nargs='+',
                        choices=TODO_STATI,
-                       #widget="Listbox",
                        help=f'Filter tasks with specific stati',
                        default=["started"],
                        **listbox_kwargs)
-    subpi.add_argument("--short", nargs='?', const=30,
-                       help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.',
-                       **int_kwargs)
-    subpi.add_argument("-t", "--tags", nargs='+',
-                       help="Filter tasks by tags. Items are returned if they contain any of the tags listed")
     subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",

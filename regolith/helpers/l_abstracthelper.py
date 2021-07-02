@@ -21,14 +21,12 @@ def subparser(subpi):
     subpi.add_argument(
         "-a",
         "--author",
-        help='authors group ID(single argument only) to use to find '
-             'presentation abstract')
+        help="Filter abstracts or this author ID (e.g., sbillinge)."
+             )
     subpi.add_argument(
         "-y",
         "--year",
-        help='start or end year of the presentation (single argument only) to '
-             'use to find presentation',
-        **int_kwargs
+        help='Get presentations since this year'
     )
     subpi.add_argument(
         "-l",
@@ -92,34 +90,35 @@ class AbstractListerHelper(SoutHelperBase):
             return
 
         if rc.title:
-            filtered_title = [presentation for presentation in presentations
+            presentations = [presentation for presentation in presentations
                               if rc.title.casefold() in presentation.get('title').casefold()]
         if rc.author:
-            filtered_authors = [presentation for presentation in presentations
+            presentations = [presentation for presentation in presentations
                                 if rc.author in presentation.get('authors')]
         if rc.year:
-            filtered_years = [presentation for presentation in presentations
+            presentations = [presentation for presentation in presentations
                               if get_dates(presentation).get("date",
                                                              get_dates(presentation).get("end_date",
                                                              get_dates(presentation).get("begin_date"))).year == int(rc.year)]
         if rc.loc_inst:
-            filtered_inst = [presentation for presentation in presentations
+            filtered_loc = [presentation for presentation in presentations
                              if presentation.get('type') in SEMINAR_TYPES and
                              rc.loc_inst.casefold() in presentation.get('institution').casefold()]
-            filtered_loc = [presentation for presentation in presentations
+            filtered_loc.append([presentation for presentation in presentations
                             if rc.loc_inst.casefold() in presentation.get('location', 'institution').casefold()
-                            and rc.loc_inst.casefold() not in presentation.get('institution').casefold()]
+                            and rc.loc_inst.casefold() not in presentation.get('institution').casefold()])
+            presentations = list(set(filtered_loc))
 
-        filtered_presentations_by_args = [filtered_inst, filtered_years, filtered_title,
-                                          filtered_authors, filtered_loc]
-        nonempty_filtered_presentations_by_args = [filtered_presentations
-                                                   for filtered_presentations in filtered_presentations_by_args
-                                                   if filtered_presentations]
-        filtered_presentations = [talk for presentations in nonempty_filtered_presentations_by_args
-                                  for talk in presentations
-                                  if all(talk in presentations
-                                         for presentations in nonempty_filtered_presentations_by_args)]
-        flat_filtered_presentations = list({talk['_id']: talk for talk in filtered_presentations}.values())
+        # filtered_presentations_by_args = [filtered_inst, filtered_years, filtered_title,
+        #                                   filtered_authors, filtered_loc]
+        # nonempty_filtered_presentations_by_args = [filtered_presentations
+        #                                            for filtered_presentations in filtered_presentations_by_args
+        #                                            if filtered_presentations]
+        # filtered_presentations = [talk for presentations in nonempty_filtered_presentations_by_args
+        #                           for talk in presentations
+        #                           if all(talk in presentations
+        #                                  for presentations in nonempty_filtered_presentations_by_args)]
+        flat_filtered_presentations = list({talk['_id']: talk for talk in presentations}.values())
 
         for presentation in flat_filtered_presentations:
             print("---------------------------------------")

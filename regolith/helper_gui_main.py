@@ -3,29 +3,16 @@ from __future__ import print_function
 
 import copy
 import os
-from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
 
 from regolith.database import connect
 
 from regolith import commands
 from regolith import storage
-from regolith.builder import BUILDERS
-from regolith.commands import INGEST_COLL_LU
 from regolith.helper import HELPERS
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
-from regolith.helpers.a_expensehelper import subparser as exp_subparser
-from regolith.helpers.l_todohelper import subparser as todo_subparser
 from gooey import Gooey, GooeyParser
-
-DISCONNECTED_COMMANDS = {
-    "rc": lambda rc: print(rc._pformat()),
-    "deploy": commands.deploy,
-    "store": storage.main,
-    "json-to-yaml": commands.json_to_yaml,
-    "yaml-to-json": commands.yaml_to_json,
-}
 
 CONNECTED_COMMANDS = {
     "add": commands.add_cmd,
@@ -52,15 +39,10 @@ NEED_RC |= {"rc", "deploy", "store"}
        program_name='Regolith Helpers')
 def create_parser():
     p = GooeyParser()
-    #p = ArgumentParser()
     subp = p.add_subparsers(title="helper_target", dest="helper_target")
     for k, v in HELPERS.items():
         subpi = subp.add_parser(k)
         v[1](subpi)
-    # subpi = subp.add_parser("a_expense")
-    # subpl = subp.add_parser("l_todo")
-    # exp_subparser(subpi)
-    # todo_subparser(subpl)
 
     return p
 
