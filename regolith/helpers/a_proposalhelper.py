@@ -60,8 +60,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("--not-cpp", action='store_true',
                        help="Check if the proposal should not appear in the "
-                            "current and pending support form",
-                       **dropdown_kwargs
+                            "current and pending support form"
                        )
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
                                                 "submitted. Defaults to None", default='None'
