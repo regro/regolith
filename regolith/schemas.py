@@ -8,37 +8,37 @@ from .sorters import POSITION_LEVELS
 
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 
-ACTIVITIES_TYPE = ["teaching", "research"]
+ACTIVITIES_TYPES = ["teaching", "research"]
 AGENCIES = ["nsf", "doe", "other"]
-APPOINTMENTS_TYPE = ["gra", "ss", "pd", "ug"]
+APPOINTMENTS_TYPES = ["gra", "ss", "pd", "ug"]
 APPOINTMENTS_STATI = ["proposed", "finalized", "appointed"]
-COMMITTEES_TYPE = ["phdoral", "phddefense", "phdproposal", "promotion"]
-COMMITTEES_LEVEL = ["department", "school", "university", "external"]
-EXPENSES_STATUS = ["unsubmitted", "submitted", "reimbursed"]
-EXPENSES_TYPE = ["travel", "business"]
-FACILITIES_TYPE = ["teaching", "research", "shared", "other", "teaching_wish",
+COMMITTEES_TYPES = ["phdoral", "phddefense", "phdproposal", "promotion"]
+COMMITTEES_LEVELS = ["department", "school", "university", "external"]
+EXPENSES_STATI = ["unsubmitted", "submitted", "reimbursed"]
+EXPENSES_TYPES = ["travel", "business"]
+FACILITIES_TYPES = ["teaching", "research", "shared", "other", "teaching_wish",
                    "research_wish"]
-GRANT_STATUS = ["pending", "declined", "accepted", "in-prep"]
-MILESTONE_TYPE = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin",
+GRANT_STATI = ["pending", "declined", "accepted", "in-prep"]
+MILESTONE_TYPES = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
-POSITION_STATUS = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
+POSITION_STATI = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
                    "postdoc", "visitor-supported", "visitor-unsupported"]
-PRESENTATION_TYPE = ["award", "colloquium", "contributed_oral", "invited", "keynote",
-                     "plenary", "poster", "seminar", "tutorial"]
-PRESENTATION_STATUS = ["in-prep", "submitted", "accepted", "declined",
+PRESENTATION_TYPES = ["award", "colloquium", "contributed_oral", "invited", "keynote",
+                     "plenary", "poster", "seminar", "tutorial", "other"]
+PRESENTATION_STATI = ["in-prep", "submitted", "accepted", "declined",
                        "cancelled", "postponed"]
-PROJECT_TYPE = ["ossoftware", "funded", "outreach"]
+PROJECT_TYPES = ["ossoftware", "funded", "outreach"]
 PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
 PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
 PROJECTUM_CANCELLED_STATI = ["cancelled"]
 PROJECTUM_FINISHED_STATI = ["finished"]
-PROJECTUM_STATUS = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
+PROJECTUM_STATI = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 PROPOSAL_STATI = ["pending", "declined", "accepted", "inprep", "submitted"]
-PUBLICITY_TYPE = ["online", "article"]
+PUBLICITY_TYPES = ["online", "article"]
 REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
                 "submitted", "cancelled"]
-REVIEW_RECOMMENDATION = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
-SERVICE_TYPE = ["profession", "university", "school", "department"]
+REVIEW_RECOMMENDATIONS = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
+SERVICE_TYPES = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
 # for status of kickoff, deliverable, milestones, and the projectum
 
@@ -2404,7 +2404,7 @@ SCHEMAS = {
         },
         "status": {
             "description": "The status of the expense",
-            "eallowed": EXPENSES_STATUS,
+            "eallowed": EXPENSES_STATI,
             "required": False,
             "type": "string"
         },
@@ -2455,7 +2455,7 @@ SCHEMAS = {
         },
         "expense_type": {
             "description": "The type of expense",
-            "eallowed": EXPENSES_TYPE,
+            "eallowed": EXPENSES_TYPES,
             "required": True,
         },
     },
@@ -2616,7 +2616,7 @@ SCHEMAS = {
         },
         # TODO: maybe this should be moved to proposals?
         "status": {
-            "eallowed": GRANT_STATUS,
+            "eallowed": GRANT_STATI,
             "description": "status of the grant",
             "required": False,
             "type": "string",
@@ -3044,7 +3044,7 @@ SCHEMAS = {
                         "required": True,
                         "description": "the type of the acitivity",
                         "type": "string",
-                        "eallowed": ACTIVITIES_TYPE
+                        "eallowed": ACTIVITIES_TYPES
                     },
                     "month": {
                         "required": False,
@@ -3108,12 +3108,12 @@ SCHEMAS = {
                              "description": "name of department or school etc."},
                     "type": {"required": False, "type": "string",
                              "description": "type of committee, department, school, university, external",
-                             "eallowed": COMMITTEES_TYPE},
+                             "eallowed": COMMITTEES_TYPES},
                     "level": {
                         "required": True,
                         "type": "string",
                         "description": "department or school or university, or external",
-                        "eallowed": COMMITTEES_LEVEL
+                        "eallowed": COMMITTEES_LEVELS
                     },
                     "group": {
                         "required": False,
@@ -3224,7 +3224,7 @@ SCHEMAS = {
                         "required": False,
                         "type": "string",
                     },
-                    "status": {"required": False, "type": "string", "eallowed": POSITION_STATUS,
+                    "status": {"required": False, "type": "string", "eallowed": POSITION_STATI,
                                },
                 },
             },
@@ -3253,7 +3253,7 @@ SCHEMAS = {
                                        "for wished-for facilities, so there are "
                                        "teaching-wish and research-wish fields.",
                         "type": "string",
-                        "eallowed": FACILITIES_TYPE
+                        "eallowed": FACILITIES_TYPES
                     },
                     "begin_month": {
                         "required": False,
@@ -3453,7 +3453,7 @@ SCHEMAS = {
                 "type": "dict",
                 "schema": {
                     "type": {"required": True, "type": "string",
-                             "eallowed": PUBLICITY_TYPE},
+                             "eallowed": PUBLICITY_TYPES},
                     "topic": {"required": False, "type": "string",
                               "description": "The short sentence of what the "
                                              "publicity was about",
@@ -3556,7 +3556,7 @@ SCHEMAS = {
                               "anyof_type": ["string", "list"]},
                     "type": {"required": True, "type": "string",
                              "description": "profession, department, school, university",
-                             "eallowed": SERVICE_TYPE},
+                             "eallowed": SERVICE_TYPES},
                 },
             },
             "type": "list",
@@ -3721,7 +3721,7 @@ SCHEMAS = {
                            "the trip cancelled?",
             "required": True,
             "type": "string",
-            "eallowed": PRESENTATION_STATUS,
+            "eallowed": PRESENTATION_STATI,
         },
         "title": {
             "description": "title of the presentation",
@@ -3730,7 +3730,7 @@ SCHEMAS = {
         },
         "type": {
             "description": "type of presentation",
-            "eallowed": PRESENTATION_TYPE,
+            "eallowed": PRESENTATION_TYPES,
             "required": True,
             "type": "string",
         },
@@ -3794,10 +3794,10 @@ SCHEMAS = {
                           "required": False,
                           "type": "list"},
                 "status": {"description": f"status of the deliverable. "
-                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                                          f"Allowed values are {', '.join(PROJECTUM_STATI)}",
                            "required": True,
                            "type": "string",
-                           "eallowed": PROJECTUM_STATUS},
+                           "eallowed": PROJECTUM_STATI},
                 "type": {"description": "type of deliverable",
                          "required": False,
                          "type": "string"}
@@ -3851,10 +3851,10 @@ SCHEMAS = {
                           "required": False,
                           "type": "list"},
                 "status": {"description": f"status of the kickoff. "
-                                          f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                                          f"Allowed values are {', '.join(PROJECTUM_STATI)}",
                            "required": False,
                            "type": "string",
-                           "eallowed": PROJECTUM_STATUS},
+                           "eallowed": PROJECTUM_STATI},
             }
         },
         "lead": {
@@ -3917,15 +3917,15 @@ SCHEMAS = {
                                  "required": False,
                                  "type": "list"},
                     "status": {"description": f"status of the milestone. "
-                                              f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                                              f"Allowed values are {', '.join(PROJECTUM_STATI)}",
                                "required": False,
                                "type": "string",
-                               "eallowed": PROJECTUM_STATUS},
+                               "eallowed": PROJECTUM_STATI},
                     "type": {"description": f"type of milestone deliverable. "
-                                            f"Allowed values are {', '.join(MILESTONE_TYPE)}",
+                                            f"Allowed values are {', '.join(MILESTONE_TYPES)}",
                              "required": False,
                              "type": "string",
-                             "eallowed": MILESTONE_TYPE},
+                             "eallowed": MILESTONE_TYPES},
                     "end_date": {"description": "end date of milestone, yyyy-mm-dd",
                                  "required": False,
                                  "anyof_type": ["date", "string"]},
@@ -3942,10 +3942,10 @@ SCHEMAS = {
                   "required": False,
                   "type": "string"},
         "status": {"description": f"status of the projectum. "
-                                  f"Allowed values are {', '.join(PROJECTUM_STATUS)}",
+                                  f"Allowed values are {', '.join(PROJECTUM_STATI)}",
                    "required": True,
                    "type": "string",
-                   "eallowed": PROJECTUM_STATUS},
+                   "eallowed": PROJECTUM_STATI},
         "other_urls": {"description": "link to remote repository. e.g. analysis or data repositories",
                          "required": False,
                          "type": "list"},
@@ -4050,7 +4050,7 @@ SCHEMAS = {
             "description": "The type of project",
             "required": False,
             "anyof_type": ["string"],
-            "eallowed": PROJECT_TYPE
+            "eallowed": PROJECT_TYPES
         },
         "website": {
             "description": "URL of the website.",
@@ -4536,7 +4536,7 @@ SCHEMAS = {
             "description": "Your publication recommendation",
             "required": True,
             "type": "string",
-            "eallowed": REVIEW_RECOMMENDATION,
+            "eallowed": REVIEW_RECOMMENDATIONS,
         },
         "requester": {
             "description": "Name of the program officer who requested the review",

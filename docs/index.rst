@@ -65,7 +65,15 @@ Next, clone the GitHub repository with the handy beginning database template
 
 .. code-block:: sh
 
-    $ git clone git@github.com/sbillinge/regolithdb-cookiecutter
+    $ git clone git@github.com/sbillinge/regolithdb-cookiecutter.git
+
+to get it using SSH or
+
+.. code-block:: sh
+
+    $ git clone https://github.com/sbillinge/regolithdb-cookiecutter.git
+
+to get it using the HTTPS protocol (just use whichever works for you)
 
 Make a note of the path to the resulting :bash:`regolithdb-cookiecutter` directory,
 (e.g., :bash:`/c/Users/me/scratch/regolithdb-cookiecutter` but yours will be different).

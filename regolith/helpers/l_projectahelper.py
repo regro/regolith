@@ -11,6 +11,8 @@ import sys
 from regolith.dates import get_due_date, get_dates, is_current, has_finished
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
+from regolith.schemas import (PROJECTUM_ACTIVE_STATI, PROJECTUM_PAUSED_STATI,
+   PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI)
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
@@ -22,12 +24,7 @@ from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"
-
-ACTIVE_STATI = ["proposed", "started"]
-PAUSED_STATI = ["back_burner", "paused"]
-CANCELLED_STATI = ["cancelled"]
-FINISHED_STATI = ["finished"]
-INACTIVE_STATI = PAUSED_STATI + CANCELLED_STATI
+INACTIVE_STATI = PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI
 
 def subparser(subpi):
     date_kwargs = {}
@@ -141,7 +138,7 @@ class ProjectaListerHelper(SoutHelperBase):
                              if not person.get("active")]
             collection = [prum for prum in collection
                           if prum.get('lead') in dead_parents
-                          and prum.get('status') in ACTIVE_STATI + PAUSED_STATI
+                          and prum.get('status') in PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI
                           or prum.get('lead').lower() == 'tbd']
         if rc.lead:
             if rc.person or rc.orphans:
@@ -162,7 +159,7 @@ class ProjectaListerHelper(SoutHelperBase):
                         set(rc.person)))]
         if rc.current:
             collection = [prum for prum in collection if
-                          prum.get('status') in ACTIVE_STATI]
+                          prum.get('status') in PROJECTUM_ACTIVE_STATI]
         if not rc.all:
             collection = [prum for prum in collection if
                           prum.get('status') not in INACTIVE_STATI
@@ -170,10 +167,10 @@ class ProjectaListerHelper(SoutHelperBase):
 
         for projectum in collection:
             if rc.ended:
-                if projectum.get('status') not in ACTIVE_STATI:
+                if projectum.get('status') not in PROJECTUM_ACTIVE_STATI:
                     if projectum.get('status') in INACTIVE_STATI:
                         continue
-                    elif projectum.get('status') not in FINISHED_STATI \
+                    elif projectum.get('status') not in PROJECTUM_FINISHED_STATI \
                             or not isinstance(projectum.get('end_date'),
                                               dt.date):
                         error_projecta.append(projectum)

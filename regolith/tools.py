@@ -15,7 +15,7 @@ from habanero import Crossref
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
-from regolith.schemas import APPOINTMENTS_TYPE
+from regolith.schemas import APPOINTMENTS_TYPES
 from requests import HTTPError
 
 try:
@@ -1716,7 +1716,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
         if not p_appts:
             continue
         for a in p_appts:
-            if p_appts[a].get('type') not in APPOINTMENTS_TYPE:
+            if p_appts[a].get('type') not in APPOINTMENTS_TYPES:
                 raise ValueError(
                     "invalid  type {} for appointment {} of {}".format(
                         p_appts[a].get('type'), a, p.get('_id')))

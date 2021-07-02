@@ -14,19 +14,14 @@ from regolith.tools import (
     key_value_pair_filter,
     collection_str
 )
-from regolith.schemas import PROJECTUM_STATUS, PROJECTUM_PAUSED_STATI, \
+from regolith.schemas import PROJECTUM_STATI, PROJECTUM_PAUSED_STATI, \
     PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI, PROJECTUM_ACTIVE_STATI
 from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
-ALLOWED_STATI = PROJECTUM_STATUS
-ALLOWED_STATI.append("all")
-PAUSED_STATI = PROJECTUM_PAUSED_STATI
-CANCELLED_STATI = PROJECTUM_CANCELLED_STATI
-FINISHED_STATI = PROJECTUM_FINISHED_STATI
-ACTIVE_STATI = PROJECTUM_ACTIVE_STATI
-INACTIVE_STATI = PAUSED_STATI + CANCELLED_STATI + FINISHED_STATI
+PROJECTUM_STATI.append("all")
+INACTIVE_STATI = PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
 ROLES = ['pi', 'lead', 'group_members', 'collaborators']
 
 
@@ -39,7 +34,7 @@ def subparser(subpi):
                         help=f'This helper will list all ACTIVE milestones by default. To'
                              f'be active the projectum itself must be active and the '
                              f'milestone within the prum also active.  Active states '
-                             f'have status from {ACTIVE_STATI}. '
+                             f'have status from {PROJECTUM_ACTIVE_STATI}. '
                              f''
                              f'Rerun specifying '
                              f'--lead PERSON or --person PERSON to get the milestones for projecta '
@@ -57,9 +52,9 @@ def subparser(subpi):
     subpi.add_argument("-p", "--person",
                        help="Filter milestones for this person whether lead or not")
     subpi.add_argument("-s", "--stati", nargs="+",
-                       choices=ALLOWED_STATI,
-                       help=f"Filter milestones for these stati."
-                            f" Default is active projecta, i.e. {ACTIVE_STATI}",
+                       choices = PROJECTUM_STATI,
+                       help=f"Filter milestones for these stati from {PROJECTUM_STATI}. "
+                            f"Default is active projecta, i.e. {PROJECTUM_ACTIVE_STATI}",
                        default=None,
                        **listbox_kwargs
                        )
@@ -68,7 +63,7 @@ def subparser(subpi):
     subpi.add_argument("-c", "--current", action="store_true",
                        help="Same behavior as default.  Here for consistency")
     subpi.add_argument("--finished", action="store_true",
-                       help=f"Lists all finished milestones, i.e., status is in {FINISHED_STATI}")
+                       help=f"Lists all finished milestones, i.e., status is in {PROJECTUM_FINISHED_STATI}")
     subpi.add_argument("--by_prum", action="store_true",
                        help=f"Valid milestones are listed in time-order but grouped by prum")
     subpi.add_argument("-v", "--verbose", action="store_true",
@@ -163,11 +158,11 @@ class MilestonesListerHelper(SoutHelperBase):
 
         all_milestones = []
         if not rc.stati and not rc.all and not rc.finished:
-            rc.stati = ACTIVE_STATI
+            rc.stati = PROJECTUM_ACTIVE_STATI
         elif rc.finished:
-            rc.stati = FINISHED_STATI
+            rc.stati = PROJECTUM_FINISHED_STATI
         elif rc.all:
-            rc.stati = ALLOWED_STATI
+            rc.stati = PROJECTUM_STATI
         for projectum in collection:
             projectum["deliverable"].update({"name": "deliverable",
                                              "objective": "deliver"})
