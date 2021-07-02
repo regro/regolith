@@ -7,10 +7,15 @@ from regolith.tools import all_docs_from_collection, fragment_retrieval
 from itertools import chain
 import uuid
 import datetime as dt
+from gooey import GooeyParser
 
 TARGET_COLL = "institutions"
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+
     subpi.add_argument("institution_id",
                        help="id of the institution, e.g., columbiau.")
     subpi.add_argument("-n","--name",
@@ -35,7 +40,7 @@ def subparser(subpi):
                        help="List of all the different names this "
                             "institution is known by.")
     subpi.add_argument("--dept_id",
-                       help="e.g. physics.")
+                       help="dept_id, e.g. physics.")
     subpi.add_argument("--dept_name",
                        help="Department canonical name, e.g., Department of Physics. "
                             "Required if --dept_id supplied and it is a new department")
@@ -56,8 +61,9 @@ def subparser(subpi):
                             "first database in the regolithrc.json file.")
     # Do not delete --date arg
     subpi.add_argument("--date",
-                       help="The date when the institution was created in ISO format. "
-                            "Defaults to today's date."
+                       help="The date when the institution was created. "
+                            "Defaults to today's date.",
+                       **date_kwargs
                        )
     return subpi
 

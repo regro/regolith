@@ -13,28 +13,38 @@ from regolith.tools import (
     get_pi_id,
     document_by_value,
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    int_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+        int_kwargs['widget'] = 'IntegerField'
+        int_kwargs['gooey_options'] = {'min': 0, 'max': 10000}
     subpi.add_argument("description",
                        help="the description of the to_do task. If the description has more than one "
                             "word, please enclose it in quotation marks.",
                        default=None)
     subpi.add_argument("due_date",
-                       help="Due date of the task. Either enter a date in format YYYY-MM-DD or an "
-                            "integer. Integer 5 means 5 days from today (or from a date assigned in --date."
+                       help="Due date of the task.",
+                       **date_kwargs
                        )
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes.",
+                       **int_kwargs
                        )
     subpi.add_argument("-d", "--deadline", action="store_true",
-                       help=f"The due date is treated as a hard deadline when -d is set. Default is False"
+                       help=f"Is the due date a hard deadline?",
                        )
     subpi.add_argument("-m", "--importance",
-                       help=f"The importance of the task from {ALLOWED_IMPORTANCE}. Default is 1. "
+                       choices=ALLOWED_IMPORTANCE,
+                       type=int,
+                       help=f"The importance of the task. "
                             f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the eigenhower matrix of "
                             f"importance vs. urgency",
                        default=1
@@ -49,10 +59,12 @@ def subparser(subpi):
     subpi.add_argument("-b", "--assigned_by",
                        help="ID of the member that assigns the task. Default id is saved in user.json. ")
     subpi.add_argument("--begin_date",
-                       help="Begin date of the task in format YYYY-MM-DD. Default is today."
+                       help="Begin date of the task. Default is today.",
+                       **date_kwargs
                        )
     subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.")
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.",
+                       **date_kwargs)
 
     return subpi
 
@@ -120,10 +132,12 @@ class TodoAdderHelper(DbHelperBase):
             due_date = date_parser.parse(rc.due_date).date()
         if begin_date > due_date:
             raise ValueError("begin_date can not be after due_date")
-        importance = int(rc.importance)
-        if importance not in ALLOWED_IMPORTANCE:
+        if rc.importance not in ALLOWED_IMPORTANCE:
             raise ValueError(
                 f"importance should be chosen from {ALLOWED_IMPORTANCE}")
+        else:
+            importance = int(rc.importance)
+
         todolist = person.get("todos", [])
         if not rc.deadline:
             rc.deadline = False

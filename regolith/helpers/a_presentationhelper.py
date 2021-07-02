@@ -13,12 +13,16 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "presentations"
 EXPENSES_COLL = "expenses"
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
 
     subpi.add_argument("place", help="the place of the presentation, location if conference,"
                                      "institution for seminars"
@@ -27,12 +31,12 @@ def subparser(subpi):
                                     "department if seminar",
                        )
     subpi.add_argument("begin_date",
-                       help="Input begin date for this presentation "
-                            "in YYYY-MM-DD format",
+                       help="Input begin date for this presentation ",
+                       **date_kwargs
                        )
     subpi.add_argument("end_date",
-                       help="Input end date for this presentation"
-                            "in YYYY-MM-DD format",
+                       help="Input end date for this presentation",
+                       **date_kwargs
                        )
     subpi.add_argument("-p", "--person",
                        help="the person submitting the presentation, used for presentation name,"
@@ -47,14 +51,16 @@ def subparser(subpi):
                        default='tbd'
                        )
     subpi.add_argument("-s", "--status",
+                       choices=PRESENTATION_STATI,
                        help=f"status, from {PRESENTATION_STATI}, default is accepted",
                        default="accepted"
                        )
-    subpi.add_argument("-y", "--type", help=f"types, from {PRESENTATION_TYPES}. Default",
+    subpi.add_argument("-y", "--type", 
+                       choices=PRESENTATION_TYPES,
+                       help=f"types, from {PRESENTATION_TYPES}. Default is invited",
                        default="invited"
                        )
-    subpi.add_argument("-w", "--webinar", help=f"true if the presentation was a "
-                                               f"webinar. Default False",
+    subpi.add_argument("-w", "--webinar", help=f"Is the presentation a webinar?",
                        action="store_true"
                        )
     subpi.add_argument("--no-expense", help=f"Do not add a template expense item to the "
@@ -72,7 +78,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
+                            "first database in the regolithrc.json file.",
                        )
     return subpi
 

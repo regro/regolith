@@ -13,6 +13,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "expenses"
 
@@ -152,8 +153,14 @@ def expense_constructor(key, begin_date, end_date, rc):
     })
     return pdoc
 
-
 def subparser(subpi):
+    amount_gooey_kwargs, notes_gooey_kwargs, date_gooey_kwargs = {}, {}, {}
+    if isinstance(subpi, GooeyParser):
+        amount_gooey_kwargs['widget'] = 'DecimalField'
+        amount_gooey_kwargs['gooey_options'] = {'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision' : 2}
+        notes_gooey_kwargs['widget'] = 'Textarea'
+        date_gooey_kwargs['widget'] = 'DateChooser'
+
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
                        )
@@ -162,10 +169,11 @@ def subparser(subpi):
                        default=None)
 
     subpi.add_argument("-b", "--business", action='store_true',
-                       help="expense type is business. If not specified defaults to travel"
+                       help="Is the expense type business? If not specified, defaults to travel"
                        )
     subpi.add_argument("-a", "--amount", help="expense amount. required if a business"
                                         "expense.",
+                       **amount_gooey_kwargs
                        )
     subpi.add_argument("-y", "--payee",
                        help="payee of the expense. defaults to rc.default_user_id"
@@ -174,6 +182,7 @@ def subparser(subpi):
                        help="grant, or list of grants that cover this expense. Defaults to tbd"
                        )
     subpi.add_argument("-s", "--status",
+                       choices = EXPENSES_STATI,
                        help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
                        default='unsubmitted'
                        )
@@ -182,16 +191,18 @@ def subparser(subpi):
                        )
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="List of notes for the expense. Defaults to empty list",
-                       default= []
+                       default= [],
+                       **notes_gooey_kwargs
                        )
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date",
-
+                            "Defaults to today's date",
+                       **date_gooey_kwargs
                        )
     subpi.add_argument("-e,", "--end_date",
                        help="Input end date for this expense. "
-                            "In YYYY-MM-DD format. Defaults to today's date",
+                            "Defaults to today's date",
+                       **date_gooey_kwargs
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",

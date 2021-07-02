@@ -6,22 +6,28 @@ from regolith.tools import (
     get_pi_id,
     get_person_contact
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
 
 
 def subparser(subpi):
+    int_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        int_kwargs['widget'] = 'IntegerField'
+        int_kwargs['gooey_options'] = {'min': 2000, 'max': 2100}
+
     subpi.add_argument(
         "-a",
         "--author",
-        help='authors group ID(single argument only) to use to find '
-             'presentation abstract')
+        help="Filter abstracts or this author ID (e.g., sbillinge)."
+             )
     subpi.add_argument(
         "-y",
         "--year",
-        help='start or end year of the presentation (single argument only) to '
-             'use to find presentation')
+        help='Get presentations since this year'
+    )
     subpi.add_argument(
         "-l",
         "--loc_inst",

@@ -20,6 +20,7 @@ from regolith.tools import (
     print_task,
     key_value_pair_filter
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 TARGET_COLL2 = "projecta"
@@ -30,19 +31,34 @@ ACTIVE_STATI = ["started", "converged", "proposed"]
 
 
 def subparser(subpi):
-    subpi.add_argument("-s", "--stati", nargs='+',
-                       help=f'Filter tasks with specific status from {TODO_STATI}. '
-                            f'Default is started.', default=["started"])
+    listbox_kwargs = {}
+    date_kwargs = {}
+    int_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        listbox_kwargs['widget'] = 'Listbox'
+        date_kwargs['widget'] = 'DateChooser'
+        int_kwargs['widget'] = 'IntegerField'
+        int_kwargs['gooey_options'] = {'min': 0, 'max': 1000}
+
     subpi.add_argument("--short", nargs='?', const=30,
-                       help='Filter tasks with estimated duration <= 30 mins, but if a number is specified, the duration of the filtered tasks will be less than that number of minutes.')
+                       help='Filter for tasks of short duration. '
+                            'All items with a duration <= # mins, will be returned '
+                            'if the number # is specified.',
+                       )
     subpi.add_argument("-t", "--tags", nargs='+',
                        help="Filter tasks by tags. Items are returned if they contain any of the tags listed")
+    subpi.add_argument("-s", "--stati", nargs='+',
+                       choices=TODO_STATI,
+                       help=f'Filter tasks with specific stati',
+                       default=["started"],
+                       **listbox_kwargs)
     subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.")
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.",
+                       **date_kwargs)
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
 

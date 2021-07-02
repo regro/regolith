@@ -17,6 +17,7 @@ from regolith.tools import (
     print_task,
     key_value_pair_filter
 )
+from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
@@ -24,11 +25,27 @@ TODO_STATI = ["started", "finished", "cancelled"]
 ACTIVE_STATI = ["started", "converged", "proposed"]
 
 def subparser(subpi):
+    deci_kwargs = {}
+    notes_kwargs = {}
+    date_kwargs = {}
+    int_kwargs = {}
+    listbox_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        deci_kwargs['widget'] = 'DecimalField'
+        deci_kwargs['gooey_options'] = {'min': 0.0, 'max': 10000.0, 'increment': 1, 'precision': 1}
+        notes_kwargs['widget'] = 'Textarea'
+        date_kwargs['widget'] = 'DateChooser'
+        int_kwargs['widget'] = 'IntegerField'
+        listbox_kwargs['widget'] = 'Listbox'
+        listbox_kwargs['choices'] = TODO_STATI
+
     subpi.add_argument("-i", "--index",
                        help="Enter the index of a certain task in the enumerated list to update that task.",
-                       type=int)
-    subpi.add_argument("-s", "--stati", nargs='+', help=f'Update tasks with specific status from {TODO_STATI}. '
-                                                        f'Default is started.', default=["started"])
+                       type=int,
+                       **int_kwargs)
+    subpi.add_argument("-s", "--stati", nargs='+', help=f'Update tasks with specific stati"',
+                       default=["started"],
+                       **listbox_kwargs)
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
     subpi.add_argument("-r", "--renumber", action="store_true",
                        help="Renumber the indices."
@@ -38,38 +55,46 @@ def subparser(subpi):
                             "word, please enclose it in quotation marks."
                        )
     subpi.add_argument("-u", "--due_date",
-                       help="Change the due date of the task. Either enter a date in format YYYY-MM-DD or an "
-                            "integer. Integer 5 means 5 days from today or from a certain date assigned by --certain_date. "
+                       help="Change the due date of the task.",
+                       **date_kwargs
                        )
     subpi.add_argument("-e", "--estimated_duration",
                        help="Change the estimated duration the task will take in minutes. ",
-                       type=float
+                       type=float,
+                       **deci_kwargs
                        )
     subpi.add_argument("--deadline",
                        help="give value 't' if due_date is a hard deadline, else 'f' if not",
+                       choices = ['t','f']
                        )
     subpi.add_argument("-m", "--importance",
-                       help=f"Change the importance of the task from {ALLOWED_IMPORTANCE}.",
+                       choices=ALLOWED_IMPORTANCE,
+                       help=f"Change the importance of the task.",
                        type=int
                        )
     subpi.add_argument("--status",
-                       help=f"Change the status of the task choosing from {TODO_STATI}."
+                       choices=TODO_STATI,
+                       help=f"Change the status of the task."
                        )
     subpi.add_argument("-n", "--notes", nargs="+", help="The new notes for this task. Each note should be enclosed "
-                                                        "in quotation marks.")
+                                                        "in quotation marks.",
+                       **notes_kwargs)
     subpi.add_argument("-t", "--tags", nargs="+", help="The new tags to add for this task.")
     subpi.add_argument("--begin_date",
-                       help="Change the begin date of the task in format YYYY-MM-DD."
+                       help="Change the begin date of the task.",
+                       **date_kwargs
                        )
     subpi.add_argument("--end_date",
-                       help="Change the end date of the task in format YYYY-MM-DD."
+                       help="Change the end date of the task.",
+                       **date_kwargs
                        )
     subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("--date",
-                       help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.")
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.",
+                       **date_kwargs)
 
     return subpi
 

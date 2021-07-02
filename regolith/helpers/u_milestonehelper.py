@@ -5,6 +5,7 @@
 from itertools import chain
 import datetime as dt
 import dateutil.parser as date_parser
+from gooey import GooeyParser
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -21,6 +22,12 @@ PROJECTUM_ACTIVE_STATI = ["proposed", "started", "converged"]
 
 
 def subparser(subpi):
+    date_kwargs = {}
+    notes_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        date_kwargs['widget'] = 'DateChooser'
+        notes_kwargs['widget'] = 'Textarea'
+
     subpi.add_argument("projectum_id", help="The id of the projectum.")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help="Increases the verbosity of the output.")
@@ -32,8 +39,9 @@ def subparser(subpi):
                        help="only list current (unfinished, unpaused) milestones",
                        )
     subpi.add_argument("-d", "--due_date",
-                       help="New due date of the milestone in ISO format(YYYY-MM-DD). "
-                            "Required for a new milestone.")
+                       help="New due date of the milestone. "
+                            "Required for a new milestone.",
+                       **date_kwargs)
     subpi.add_argument("-n", "--name",
                        help="Name of the milestone. "
                             "Required for a new milestone.")
@@ -56,6 +64,7 @@ def subparser(subpi):
     subpi.add_argument("--notes",
                        nargs='+',
                        help="Any notes you want to add to the milestone.",
+                       **notes_kwargs
                        )
     subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
@@ -65,7 +74,8 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
     subpi.add_argument("--date",
-                       help="The date that will be used for testing."
+                       help="The date that will be used for testing.",
+                       **date_kwargs
                        )
     return subpi
 

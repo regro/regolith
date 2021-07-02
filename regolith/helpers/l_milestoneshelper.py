@@ -16,6 +16,7 @@ from regolith.tools import (
 )
 from regolith.schemas import PROJECTUM_STATI, PROJECTUM_PAUSED_STATI, \
     PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI, PROJECTUM_ACTIVE_STATI
+from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
@@ -25,6 +26,10 @@ ROLES = ['pi', 'lead', 'group_members', 'collaborators']
 
 
 def subparser(subpi):
+    listbox_kwargs = {}
+    if isinstance(subpi, GooeyParser):
+        listbox_kwargs['widget'] = 'Listbox'
+
     subpi.add_argument('--helper_help',
                         help=f'This helper will list all ACTIVE milestones by default. To'
                              f'be active the projectum itself must be active and the '
@@ -47,9 +52,11 @@ def subparser(subpi):
     subpi.add_argument("-p", "--person",
                        help="Filter milestones for this person whether lead or not")
     subpi.add_argument("-s", "--stati", nargs="+",
-                       help=f"Filter milestones for these stati from {PROJECTUM_STATI}."
-                            f" Default is active projecta, i.e. {PROJECTUM_ACTIVE_STATI}",
-                       default=None
+                       choices = PROJECTUM_STATI,
+                       help=f"Filter milestones for these stati from {PROJECTUM_STATI}. "
+                            f"Default is active projecta, i.e. {PROJECTUM_ACTIVE_STATI}",
+                       default=None,
+                       **listbox_kwargs
                        )
     subpi.add_argument("--all", action="store_true",
                        help="Lists all milestones in general")
