@@ -48,12 +48,10 @@ def subparser(subpi):
                        help="Objective of the milestone. "
                             "Required for a new milestone.")
     subpi.add_argument("-s", "--status",
-                       choices=ALLOWED_STATI,
                        help="Status of the milestone/deliverable: "
                             f"{ALLOWED_STATI}. "
                             "Defaults to proposed for a new milestone.")
     subpi.add_argument("-t", "--type",
-                       choices=ALLOWED_TYPES,
                        help="Type of the milestone: "
                             f"{ALLOWED_TYPES} "
                             "Defaults to meeting for a new milestone.")
