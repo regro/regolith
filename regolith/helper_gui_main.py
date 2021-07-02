@@ -63,11 +63,7 @@ def main(args=None):
     else:
         rc.schemas = SCHEMAS
     filter_databases(rc)
-    dbs = None
-    if rc.cmd == 'build':
-        dbs = commands.build_db_check(rc)
-    elif rc.cmd == 'helper':
-        dbs = commands.helper_db_check(rc)
+    dbs = commands.helper_db_check(rc)
     with connect(rc, dbs=dbs) as rc.client:
         CONNECTED_COMMANDS[rc.cmd](rc)
 
