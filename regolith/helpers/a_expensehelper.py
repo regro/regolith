@@ -154,21 +154,13 @@ def expense_constructor(key, begin_date, end_date, rc):
     return pdoc
 
 def subparser(subpi):
-    amount_gooey_kwargs, notes_gooey_kwargs, date_gooey_kwargs = {}
+    amount_gooey_kwargs, notes_gooey_kwargs, date_gooey_kwargs = {}, {}, {}
     if isinstance(subpi, GooeyParser):
         amount_gooey_kwargs['widget'] = 'DecimalField'
         amount_gooey_kwargs['gooey_options'] = {'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision' : 2}
         notes_gooey_kwargs['widget'] = 'Textarea'
         date_gooey_kwargs['widget'] = 'DateChooser'
 
-    # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
-                       )
-    subpi.add_argument("amount", help="expense amount",
-                       **amount_gooey_kwargs
-                       )
     subpi.add_argument("name", help="A short name for the expense",
                        default=None
                        )
@@ -181,6 +173,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("-a", "--amount", help="expense amount. required if a business"
                                         "expense.",
+                       **amount_gooey_kwargs
                        )
     subpi.add_argument("-y", "--payee",
                        help="payee of the expense. defaults to rc.default_user_id"

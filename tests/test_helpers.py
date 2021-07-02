@@ -31,7 +31,8 @@ helper_map = [
     (["helper", "a_presentation", "Mars", "flat earth", "2020-06-26", "2020-06-26",
       "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
       "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
-      "--title", "On the roundness of the Earth", "--status", "in-prep"],
+      "--title", "On the roundness of the Earth", "--status", "in-prep",
+      "--notes", "this is a sample added presentation"],
      "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\n"),
     (["helper", "l_progress", "-l", "ascopatz"],
      "*************************[Started Projecta]**************************\n"
