@@ -24,11 +24,11 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         date_kwargs['widget'] = 'DateChooser'
 
-    subpi.add_argument("place", help="the place of the presentation, location if conference,"
-                                     "institution for seminars"
-                       )
-    subpi.add_argument("name", help="name of the presentation, meeting name if meeting,"
+    subpi.add_argument("name", help="name of the event of the presentation. Meeting name if meeting, "
                                     "department if seminar",
+                       )
+    subpi.add_argument("place", help="the place of the presentation, Location if conference, "
+                                     "institution for seminars"
                        )
     subpi.add_argument("begin_date",
                        help="Input begin date for this presentation ",
@@ -38,10 +38,6 @@ def subparser(subpi):
                        help="Input end date for this presentation",
                        **date_kwargs
                        )
-    subpi.add_argument("-p", "--person",
-                       help="the person submitting the presentation, used for presentation name,"
-                            " defaults to name in user.config",
-                       )
     subpi.add_argument("-t", "--title",
                        help="the title of the presentation, default is tbd",
                        default='tbd'
@@ -49,6 +45,17 @@ def subparser(subpi):
     subpi.add_argument("-a", "--abstract",
                        help="abstract of the presentation, defaults to tbd",
                        default='tbd'
+                       )
+    subpi.add_argument("-p", "--person",
+                       help="the person presenting the presentation, used for presentation name,"
+                            " defaults to name in user.config",
+                       )
+    subpi.add_argument("-u", "--authors", nargs="+",
+                       help="specify the authors of this presentation, "
+                            "defaults to person submitting the presentation",
+                       )
+    subpi.add_argument("-g", "--grants", nargs="+",
+                       help="grant, or grants (separated by spaces), that support this presentation. Defaults to tbd"
                        )
     subpi.add_argument("-s", "--status",
                        choices=PRESENTATION_STATI,
@@ -68,13 +75,6 @@ def subparser(subpi):
                                             f"an expense if the presentation is not a "
                                             f"webinar.",
                        action="store_true"
-                       )
-    subpi.add_argument("-u", "--authors", nargs="+",
-                       help="specify the authors of this presentation, "
-                            "defaults to person submitting the presentation",
-                       )
-    subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant, or list of grants, that support this presentation. Defaults to tbd"
                        )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "

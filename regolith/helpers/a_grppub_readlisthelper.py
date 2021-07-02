@@ -25,9 +25,11 @@ def subparser(subpi):
     subpi.add_argument("tags", help="list of tags, separated by spaces, to use "
                                     "to find papers in citations collection that "
                                     "will be added to the list.  OR logic is used "
-                                    "so this that will return all papers that "
+                                    "so this will return all papers that "
                                     "contain this OR that tag in the tags string in "
-                                    "citations",
+                                    "citations.  for example, 'neutron superconductor' "
+                                    "(without the quotes) will return all neutron "
+                                    "and all superconductor papers.",
                        nargs="+")
     subpi.add_argument("-t", "--title", help="A title for the list that will be "
                                      "rendered when the list is built. Required if "
