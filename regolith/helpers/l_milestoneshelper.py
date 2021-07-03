@@ -30,15 +30,13 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         listbox_kwargs['widget'] = 'Listbox'
 
-    subpi.add_argument('--helper_help',
-                        help=f'This helper will list all ACTIVE milestones by default. To'
+    subpi.add_argument('--helper_help', action="store_true",
+                        help=f'This helper will list all ACTIVE milestones by default. To '
                              f'be active the projectum itself must be active and the '
-                             f'milestone within the prum also active.  Active states '
-                             f'have status from {PROJECTUM_ACTIVE_STATI}. '
-                             f''
-                             f'Rerun specifying '
-                             f'--lead PERSON or --person PERSON to get the milestones for projecta '
-                             f'where PERSON is lead, or has any role, respectively. '
+                             f'milestone within the prum also active.  Active milestones '
+                             f'have a status from {*PROJECTUM_ACTIVE_STATI,}.\n '
+                             f'Please erun specifying '
+                             f'--lead PERSON or --person PERSON. '
                              f'Rerun with --all, --current, or --finished to get '
                              f'all, active or finished milestones, respectively. '
                              f'filters work with AND logic so -l PERSON -c will list '
@@ -47,19 +45,13 @@ def subparser(subpi):
                              f'u_milestone to see those.'
                         )
     subpi.add_argument("-l", "--lead",
-                       help="Filter milestones for this project lead"
+                       help="Filter milestones for this project lead specified as an ID,"
+                            "e.g., sbillinge"
                        )
     subpi.add_argument("-p", "--person",
-                       help="Filter milestones for this person whether lead or not")
-    subpi.add_argument("-s", "--stati", nargs="+",
-                       choices = PROJECTUM_STATI,
-                       help=f"Filter milestones for these stati from {PROJECTUM_STATI}. "
-                            f"Default is active projecta, i.e. {PROJECTUM_ACTIVE_STATI}",
-                       default=None,
-                       **listbox_kwargs
+                       help="Filter milestones for this person whether lead or not, specified "
+                            "by id, e.g., sbillinge"
                        )
-    subpi.add_argument("--all", action="store_true",
-                       help="Lists all milestones in general")
     subpi.add_argument("-c", "--current", action="store_true",
                        help="Same behavior as default.  Here for consistency")
     subpi.add_argument("--finished", action="store_true",
@@ -68,6 +60,15 @@ def subparser(subpi):
                        help=f"Valid milestones are listed in time-order but grouped by prum")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='increase verbosity of output')
+    subpi.add_argument("-s", "--stati", nargs="+",
+                       choices = PROJECTUM_STATI,
+                       help=f"Filter milestones for these stati from {*PROJECTUM_STATI,}. "
+                            f"Default is active projecta, i.e. {*PROJECTUM_ACTIVE_STATI,}",
+                       default=None,
+                       **listbox_kwargs
+                       )
+    subpi.add_argument("--all", action="store_true",
+                       help="Lists all milestones in general")
     # The --filter and --keys flags should be in every lister
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs"
