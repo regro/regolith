@@ -119,6 +119,25 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
     return
 
 
+def export_json(collection: str, dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
+    cmd = ["mongoexport", "--collection", collection, "--db", dbname]
+    if host is not None:
+        cmd += ['--host', host]
+    if uri is not None:
+        cmd += ['--uri', uri]
+    cmd += ["--out", str(os.path.join(dbpath, collection + ".json"))]
+    try:
+        subprocess.check_call(cmd)
+    except FileNotFoundError:
+        print("mongoexport command not found in environment path.\n\n"
+              "If mongo server v4.4+ installed, download MongoDB Database Tools from:"
+              " https://www.mongodb.com/try/download/database-tools\n"
+              "and add C:\\Program Files\\MongoDB\\Tools\\<ToolsVersion>\\bin\\ to path.\n\n"
+              "If mongo server <v4.4, ensure that C:\\Program Files\\MongoDB\\Server\\<ServerVersion>\\bin\\ \n"
+              "has been added to the environment path.\n")
+        print("..................Upload failed..................")
+
+
 def load_mongo_col(col: Collection) -> dict:
     """Load the pymongo collection to a dictionary.
 
@@ -371,6 +390,26 @@ class MongoClient:
         dbname = db['name']
         import_jsons(dbpath, dbname, host=host, uri=uri)
         import_yamls(dbpath, dbname, host=host, uri=uri)
+        return
+
+    def export_database(self, db: dict):
+        """Exports the database from mongo backend to the filesystem.
+
+        Parameters
+        ----------
+        db : dict
+            The dictionary of data base information, such as 'name'.
+        """
+        host = getattr(self.rc, 'host', None)
+        uri = db.get('dst_url', None)
+        # Catch the easy/common regolith rc error of putting the db uri as localhost rather than host
+        if uri == 'localhost':
+            uri = None
+            host = 'localhost'
+        dbpath = dbpathname(db, self.rc)
+        dbname = db['name']
+        for collection in self.dbs[dbname].keys():
+            export_json(collection, dbpath, dbname, host=host, uri=uri)
         return
 
     def dump_database(self, db):

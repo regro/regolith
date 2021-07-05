@@ -61,14 +61,9 @@ def make_db():
             },
             f,
         )
-    os.mkdir("db")
-    # Write collection docs
-    for coll, example in deepcopy(EXEMPLARS).items():
-        if isinstance(example, list):
-            d = {dd["_id"]: dd for dd in example}
-        else:
-            d = {example["_id"]: example}
-        dump_yaml("db/{}.yaml".format(coll), d)
+    fspath = os.path.join(repo, 'db')
+    os.mkdir(fspath)
+    exemplars_to_fs(fspath)
     subprocess.run(["git", "add", "."])
     subprocess.run(["git", "commit", "-am", "Initial readme"])
     yield repo
@@ -149,28 +144,11 @@ def make_mongodb():
               "https://docs.mongodb.com/manual/installation/")
         yield False
         return
-    # Write collection docs
-    for col_name, example in deepcopy(EXEMPLARS).items():
-        try:
-            client = MongoClient('localhost', serverSelectionTimeoutMS=2000)
-            client.server_info()
-        except Exception as e:
-            yield False
-            return
-        db = client[REGOLITH_MONGODB_NAME]
-        col = db[col_name]
-        try:
-            if isinstance(example, list):
-                for doc in example:
-                    doc['_id'].replace('.', '')
-                col.insert_many(example)
-            else:
-                example['_id'].replace('.', '')
-                col.insert_one(example)
-        except mongo_errors.DuplicateKeyError:
-            print('Duplicate key error, check exemplars for duplicates if tests fail')
-        except mongo_errors.BulkWriteError:
-            print('Duplicate key error, check exemplars for duplicates if tests fail')
+    try:
+        exemplars_to_mongo(REGOLITH_MONGODB_NAME)
+    except:
+        yield False
+        return
     yield repo
     cmd = ["mongo", REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
     try:
@@ -269,28 +247,14 @@ def make_mixed_db():
         return
     # Write one collection doc in mongo
     mongo_coll = 'assignments'
-    mongo_example = deepcopy(EXEMPLARS[mongo_coll])
     try:
-        client = MongoClient('localhost', serverSelectionTimeoutMS=2000)
-        client.server_info()
-    except Exception as e:
+        exemplars_to_mongo(REGOLITH_MONGODB_NAME, collection_list=[mongo_coll])
+    except:
         yield False
         return
-    db = client[REGOLITH_MONGODB_NAME]
-    col = db[mongo_coll]
-    try:
-        mongo_example['_id'].replace('.', '')
-        col.insert_one(mongo_example)
-    except mongo_errors.DuplicateKeyError:
-        print('Duplicate key error, check exemplars for duplicates if tests fail')
-    except mongo_errors.BulkWriteError:
-        print('Duplicate key error, check exemplars for duplicates if tests fail')
     # Write one collection doc in file system
     fs_coll = 'abstracts'
-    fs_example = deepcopy(EXEMPLARS[fs_coll])
-    d = {fs_example["_id"]: fs_example}
-    os.chdir(repo)
-    dump_yaml("db/{}.yaml".format(fs_coll), d)
+    exemplars_to_fs(fspath, collection_list=[fs_coll])
     yield repo, fs_coll, mongo_coll
     cmd = ["mongo", REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
     try:
@@ -361,15 +325,31 @@ def make_bad_db():
     rmtree(repo)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def make_fs_to_mongo_migration_db():
     """A test fixture that creates and destroys a git repo in a temporary
     directory, as well as a mongo database.
     This will yield the path to the repo.
 
-    This specific test fixture points to a repo that mixes mongo and filesystem backends for the assignments and
-    abstracts test collections in EXEMPLARS respectively.
+    This specific test fixture points to a repo that contains mongo and filesystem backends with only the
+    filesystem containing the exemplars. This is meant for use in migration testing.
     """
+    yield from make_migration_db(True)
+
+
+@pytest.fixture(scope="function")
+def make_mongo_to_fs_backup_db():
+    """A test fixture that creates and destroys a git repo in a temporary
+    directory, as well as a mongo database.
+    This will yield the path to the repo.
+
+    This specific test fixture points to a repo that contains mongo and filesystem backends with only the
+    filesystem containing the exemplars. This is meant for use in migration testing.
+    """
+    yield from make_migration_db(False)
+
+
+def make_migration_db(fs_to_mongo_true__mongo_to_fs_false):
     cwd = os.getcwd()
     forked = False
     name = "regolith_mongo_fake"
@@ -431,15 +411,10 @@ def make_fs_to_mongo_migration_db():
               "https://docs.mongodb.com/manual/installation/")
         yield False
         return
-    # Write collection docs
-    os.chdir(fspath)
-    for coll, example in deepcopy(EXEMPLARS).items():
-        if isinstance(example, list):
-            d = {dd["_id"]: dd for dd in example}
-        else:
-            d = {example["_id"]: example}
-        dump_yaml("{}.yaml".format(coll), d)
-    os.chdir(repo)
+    if fs_to_mongo_true__mongo_to_fs_false:
+        exemplars_to_fs(fspath)
+    else:
+        exemplars_to_mongo(ALTERNATE_REGOLITH_MONGODB_NAME)
     yield repo
     cmd = ["mongo", ALTERNATE_REGOLITH_MONGODB_NAME, "--eval", "db.dropDatabase()"]
     try:
@@ -461,3 +436,45 @@ def shut_down_fork(forked, repo):
         except subprocess.CalledProcessError:
             print(f'Deleting the test database failed, insert \"mongo admin --eval '
                   f'\"db.shutdownServer()\"\" into command line manually')
+
+
+def exemplars_to_fs(fspath, collection_list=None):
+    exemplars_copy = deepcopy(EXEMPLARS)
+    if collection_list is None:
+        exemplars = exemplars_copy
+    else:
+        exemplars = {k: exemplars_copy[k] for k in collection_list if k in exemplars_copy}
+    cwd = os.getcwd()
+    os.chdir(fspath)
+    for coll, example in exemplars.items():
+        if isinstance(example, list):
+            d = {dd["_id"]: dd for dd in example}
+        else:
+            d = {example["_id"]: example}
+        dump_yaml("{}.yaml".format(coll), d)
+    os.chdir(cwd)
+
+
+def exemplars_to_mongo(mongo_db_name, collection_list=None):
+    exemplars_copy = deepcopy(EXEMPLARS)
+    if collection_list is None:
+        exemplars = exemplars_copy
+    else:
+        exemplars = {k: exemplars_copy[k] for k in collection_list if k in exemplars_copy}
+    client = MongoClient('localhost', serverSelectionTimeoutMS=2000)
+    client.server_info()
+    for col_name, example in exemplars.items():
+        db = client[mongo_db_name]
+        col = db[col_name]
+        try:
+            if isinstance(example, list):
+                for doc in example:
+                    doc['_id'].replace('.', '')
+                col.insert_many(example)
+            else:
+                example['_id'].replace('.', '')
+                col.insert_one(example)
+        except mongo_errors.DuplicateKeyError:
+            print('Duplicate key error, check exemplars for duplicates if tests fail')
+        except mongo_errors.BulkWriteError:
+            print('Duplicate key error, check exemplars for duplicates if tests fail')
