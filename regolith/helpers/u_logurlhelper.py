@@ -74,16 +74,16 @@ class LogUrlUpdaterHelper(DbHelperBase):
                 for i in range(len(pra)):
                     print(f"{i + 1}. {pra[i].get('_id')}     current url: {pra[i].get('log_url')}")
                 print("Please rerun the u_logurl helper with the same name as previously inputted, "
-                      "but with the addition of -n followed by a number corresponding to one of the above listed "
+                      "but with the addition of -i followed by a number corresponding to one of the above listed "
                       "projectum ids that you would like to update.")
 
             # id fragment and inputted number
             else:
-                if int(rc.number) < 1 or int(rc.number) > len(pra):
+                if int(rc.index) < 1 or int(rc.index) > len(pra):
                     raise RuntimeError("Sorry, you picked an invalid number.")
                 else:
-                    filterid = {'_id': pra[int(rc.number) - 1].get('_id')}
+                    filterid = {'_id': pra[int(rc.index) - 1].get('_id')}
                     rc.client.update_one(rc.database, rc.coll, filterid, {'log_url': rc.log_url})
-                    print(f"{pra[int(rc.number) - 1].get('_id')} has been updated with a log_url of {rc.log_url}")
+                    print(f"{pra[int(rc.index) - 1].get('_id')} has been updated with a log_url of {rc.log_url}")
 
         return

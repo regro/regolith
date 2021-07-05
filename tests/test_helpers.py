@@ -313,7 +313,7 @@ helper_map = [
      "4. planning meeting    due date: 2020-05-27    status: proposed\n"
      "5. deliverable    due date: 2020-06-01    status: converged\n"
      ),
-    (["helper", "u_logurl", "sb", "--number", "1", "https://docs.google.com/document/d/1pQMFpuI"],
+    (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
      ),
     (["helper", "u_logurl", "ly", "https://docs.google.com/document/d/1pQMFpuI"],
@@ -321,7 +321,7 @@ helper_map = [
      "However, there are projecta with similar names: \n"
      "1. ly_newprojectum     current url: \n"
      "Please rerun the u_logurl helper with the same name as previously inputted, "
-     "but with the addition of -n followed by a number corresponding to one of the "
+     "but with the addition of -i followed by a number corresponding to one of the "
      "above listed projectum ids that you would like to update.\n"
      ),
     (["helper", "u_contact", "afriend", "--index", "2",
