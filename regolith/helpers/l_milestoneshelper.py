@@ -40,12 +40,12 @@ def subparser(subpi):
                              f'Rerun with --all, --current, or --finished to get '
                              f'all, active or finished milestones, respectively. '
                              f'filters work with AND logic so -l PERSON -c will list '
-                             f'the active milestones for projecta where PERSON is lead.'
-                             f'Note that "checklist" prums are not listed. Please use'
+                             f'the active milestones for projecta where PERSON is lead. '
+                             f'Note that "checklist" prums are not listed. Please use '
                              f'u_milestone to see those.'
                         )
     subpi.add_argument("-l", "--lead",
-                       help="Filter milestones for this project lead specified as an ID,"
+                       help="Filter milestones for this project lead specified as an ID, "
                             "e.g., sbillinge"
                        )
     subpi.add_argument("-p", "--person",
@@ -55,7 +55,7 @@ def subparser(subpi):
     subpi.add_argument("-c", "--current", action="store_true",
                        help="Same behavior as default.  Here for consistency")
     subpi.add_argument("--finished", action="store_true",
-                       help=f"Lists all finished milestones, i.e., status is in {PROJECTUM_FINISHED_STATI}")
+                       help=f"Lists all finished milestones, i.e., status is in {*PROJECTUM_FINISHED_STATI,}")
     subpi.add_argument("--by_prum", action="store_true",
                        help=f"Valid milestones are listed in time-order but grouped by prum")
     subpi.add_argument("-v", "--verbose", action="store_true",

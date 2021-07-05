@@ -17,24 +17,28 @@ def subparser(subpi):
         date_kwargs['widget'] = 'DateChooser'
 
     subpi.add_argument("institution_id",
-                       help="id of the institution, e.g., columbiau.")
-    subpi.add_argument("-n","--name",
-                        help="Full name of the institution")
+                       help="id of the institution, e.g., columbiau. "
+                            "If an index is not specified, this will return "
+                            "a numbered list of all institutions that contain this id "
+                            "fragment.  Specify -i # to update institution number # "
+                            "in the list. #1 is always used for a new institution.")
     subpi.add_argument("-i","--index",
                        help="Index of the item in the enumerated list to update.",
                        type=int)
+    subpi.add_argument("-n","--name",
+                        help="Full name of the institution")
     subpi.add_argument("--city",
                        help="The city where the institution is. "
                             "Required for a new institution.")
-    subpi.add_argument("--country",
-                       help="The country where the institution is. "
-                            "Required for a new institution")
     subpi.add_argument("--state",
                        help="The state where the institution is. "
                             "Required for a new institution if institution's country is US.")
     subpi.add_argument("--zip",
                        help="zipcode of the institution. "
                             "Required for a new institution if institution's country is US.")
+    subpi.add_argument("--country",
+                       help="The country where the institution is. "
+                            "Required for a new institution")
     subpi.add_argument("-a", "--aka",
                        nargs='+',
                        help="List of all the different names this "
@@ -46,9 +50,9 @@ def subparser(subpi):
                             "Required if --dept_id supplied and it is a new department")
     subpi.add_argument("--dept_aka",
                        nargs='+',
-                       help="Department aliases, e.g., dept. of physics.")
+                       help="Department aliases, e.g., Physics Dept.")
     subpi.add_argument("--school_id",
-                       help="Short name for the school, e.g., SEAS.")
+                       help="id for the school, e.g., SEAS.")
     subpi.add_argument("--school_name",
                        help="Full canonical name, e.g., School of Engineering and Applied Science. "
                             "Required if --school_id supplied and it is a new school")

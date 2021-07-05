@@ -9,10 +9,14 @@ TARGET_COLL = "projecta"
 
 
 def subparser(subpi):
-    subpi.add_argument("projectum_id", help="the ID or fragment of the ID of the Projectum to be updated, e.g., 20vl",
+    subpi.add_argument("projectum_id", help="the ID or fragment of the ID of the "
+                                            "Projectum to be updated, e.g., "
+                                            "vl_m.",
                        default=None)
     subpi.add_argument("log_url", help="Google Doc url link to project's Projectum Agenda Log")
-    subpi.add_argument("-n", "--number", help="The id you would like to choose from the listed projectum ids")
+    subpi.add_argument("-i", "--index", help="The index of the id you would like "
+                                             "to update, from the returned list "
+                                             "of projectum ids.")
     # Do not delete --database arg
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated.  Defaults to "
