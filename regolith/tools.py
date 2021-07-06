@@ -306,23 +306,45 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     return grants, total_amount, subaward_amount
 
 
-def filter_employment_for_advisees(people, begin_period, status, active=False):
+def filter_employment_for_advisees(peoplecoll, begin_period, status, now=None):
+    """Filter people to get advisees since begin_period
+
+    Parameters
+    ----------
+    people: list of dicts
+        The people collection
+    begin_period: date
+        Only select advisees who were active after this date (i.e., their end date
+        is after begin_period
+    status: str
+        the status of the person in the group to filter for,  e.g., ms, phd, postdoc
+    """
+    people = deepcopy(peoplecoll)
+    if not now:
+        now = date.today()
     advisees = []
+    if isinstance(begin_period, str):
+        begin_period = date_parser.parse(begin_period).date()
     for p in people:
         for i in p.get("employment", []):
             if i.get("status") == status:
                 emp_dates = get_dates(i)
+                begin_date = emp_dates.get("begin_date")
                 end_date = emp_dates.get("end_date")
                 if not end_date:
-                    end_date = date.today()
-                i["end_year"] = end_date.year
+                    end_date = now
                 if end_date >= begin_period:
                     p['role'] = i.get("position")
+                    p['begin_year'] = begin_date.year
+                    if not emp_dates.get("end_date"):
+                        p['end_year'] = "present"
+                    else:
+                        p['end_year'] = end_date.year
                     p['status'] = status
-                    p['end_year'] = end_date.year
                     p['position'] = i.get("position")
+                    p['end_date'] = end_date
                     advisees.append(p)
-                    advisees.sort(key=lambda x: x['end_year'], reverse=True)
+                    advisees.sort(key=lambda x: x['end_date'], reverse=True)
     return advisees
 
 
@@ -1966,3 +1988,33 @@ def get_formatted_crossref_reference(doi):
     ref_date = date(*ref_date_list)
 
     return ref, ref_date
+
+def remove_duplicate_docs(coll,key):
+    '''
+    find all docs where the target key has the same value and remove duplicates
+    
+    The doc found first will be kept and subsequent docs will be removed
+    
+    parameters
+    ----------
+    target iterable of dicts
+      the list of documents
+    key string
+      the key that will be used to compare
+
+    return
+    ------
+    The list of docs with duplicates (as described above) removed
+
+    '''
+    values, newcoll = [], []
+    for doc in coll:
+        if doc.get(key) in values:
+            continue
+        elif not doc.get(key):
+            raise RuntimeError(f"ERROR: Target key, {key} not found in {doc}")
+        else:
+            newcoll.append(doc)
+            values.append(doc.get(key))
+        
+    return newcoll

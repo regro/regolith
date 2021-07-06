@@ -718,11 +718,15 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
 {% else %}
     \begin{itemize}[label=$-$]
         {% for s in prof_service %}
-            \item   {{ s['name']-}}{%-if s['role']-%}
+            \item   {{ latex_safe(s['name'])-}}{%-if s['role']-%}
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
-                \\ {{s['other']}}
+                    \begin{itemize}[label=$-$]
+                            {% for otherthing in s['other'] %}
+                \item {{latex_safe(otherthing)}}
+                {% endfor %}
+                \end{itemize}
                 {%-endif-%}
                         {% endfor%}
     \end{itemize}
@@ -739,7 +743,11 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
                 \\ {\it {{s['role']}} }
                 {%endif-%}
                 {%-if s['other']-%}
-                \\ {{s['other']}}
+                    \begin{itemize}[label=$-$]
+                            {% for otherthing in s['other'] %}
+                \item {{latex_safe(otherthing)}}
+                {% endfor %}
+                \end{itemize}
                 {%-endif-%}
                         {% endfor%}
     \end{itemize}
