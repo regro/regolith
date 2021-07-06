@@ -567,7 +567,7 @@ Tutorials
 .. toctree::
     :maxdepth: 1
 
-    broker
+    tutorials/index
 
 Run Control
 ===========
