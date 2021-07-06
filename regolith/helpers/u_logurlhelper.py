@@ -68,7 +68,7 @@ class LogUrlUpdaterHelper(DbHelperBase):
                 raise RuntimeError("Please input a valid projectum id or a valid fragment of a projectum id")
 
             # id fragment and no inputted number
-            elif not rc.number:
+            elif not rc.index:
                 print("There does not seem to be a projectum with this exact name in this database.")
                 print("However, there are projecta with similar names: ")
                 for i in range(len(pra)):
