@@ -54,10 +54,14 @@ def subparser(subpi):
                        help=f"Lists all projecta including those with statuses "
                             f"in {*INACTIVE_STATI,} that are excluded by default")
     subpi.add_argument("-e", "--ended", action="store_true",
-                       help="Lists projecta that have ended. Use the -d and -r flags to specify up to "
-                            "what date and how many days before then. The default is 7 days before today.",)
+                       help="Lists projecta that have ended. Use the -r flag to specify "
+                            "how many days prior to today to search over for finished"
+                            "prums (default is 7 days). "
+                            "You may also use -d to change date used to search back"
+                            "from (mostly used for testing)",)
     subpi.add_argument("-r", "--range",
-                       help="date range back from DATE to search over in days. "
+                       help="date range back from DATE, in days, to search over "
+                            "for finished prums."
                             "If no range is specified, search range will be 7 days",
                        )
     subpi.add_argument("-f", "--filter", nargs="+",

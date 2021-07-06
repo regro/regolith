@@ -31,8 +31,7 @@ def subparser(subpi):
 
     subpi.add_argument("-i", "--index",
                        help="Enter the index of a certain task in the enumerated list to mark as finished.",
-                       type=int,
-                       **int_kwargs)
+                       type=int)
     subpi.add_argument("--end_date",
                        help="Add the end date of the task. Default is today.",
                        **date_kwargs)

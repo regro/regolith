@@ -3,8 +3,6 @@ Helper to add expenses.
 """
 import datetime as dt
 import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
-import sys
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -61,10 +59,8 @@ def expense_constructor(key, begin_date, end_date, rc):
         expense_type = 'travel'
     pdoc.update({'expense_type': expense_type})
 
-    if rc.grants:
-        percentages = [100 / len(rc.grants) for i in rc.grants]
-    else:
-        percentages = [100]
+    percentages = [round(100 / len(rc.grants),2) for i in rc.grants]
+
     pdoc.update({'grant_percentages': percentages,
                  'grants': rc.grants})
 
@@ -171,28 +167,9 @@ def subparser(subpi):
     subpi.add_argument("-b", "--business", action='store_true',
                        help="Is the expense type business? If not specified, defaults to travel"
                        )
-    subpi.add_argument("-a", "--amount", help="expense amount. required if a business"
+    subpi.add_argument("-a", "--amount", help="expense amount. required if a business "
                                         "expense.",
                        **amount_gooey_kwargs
-                       )
-    subpi.add_argument("-y", "--payee",
-                       help="payee of the expense. defaults to rc.default_user_id"
-                       )
-    subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant, or list of grants that cover this expense. Defaults to tbd"
-                       )
-    subpi.add_argument("-s", "--status",
-                       choices = EXPENSES_STATI,
-                       help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
-                       default='unsubmitted'
-                       )
-    subpi.add_argument("-w", "--where",
-                       help="Where the expense has been submitted"
-                       )
-    subpi.add_argument("-n", "--notes", nargs="+",
-                       help="List of notes for the expense. Defaults to empty list",
-                       default= [],
-                       **notes_gooey_kwargs
                        )
     subpi.add_argument("-d", "--begin_date",
                        help="Input begin date for this expense. "
@@ -203,6 +180,26 @@ def subparser(subpi):
                        help="Input end date for this expense. "
                             "Defaults to today's date",
                        **date_gooey_kwargs
+                       )
+    subpi.add_argument("-g", "--grants", nargs="+",
+                       help="grant, or list of grants that cover this expense. Defaults to tbd",
+                       default="tbd")
+    subpi.add_argument("-s", "--status",
+                       choices = EXPENSES_STATI,
+                       help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
+                       default='unsubmitted'
+                       )
+    subpi.add_argument("-w", "--where",
+                       help="Where the expense has been submitted.",
+                       default=""
+                       )
+    subpi.add_argument("-n", "--notes", nargs="+",
+                       help="List of notes for the expense. Defaults to empty list",
+                       default= [],
+                       **notes_gooey_kwargs
+                       )
+    subpi.add_argument("-y", "--payee",
+                       help="payee of the expense. defaults to rc.default_user_id"
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",
@@ -223,13 +220,11 @@ class ExpenseAdderHelper(DbHelperBase):
         rc = self.rc
         rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
-        try:
-            rc.payee
-        except AttributeError:
-            try:
+        if not rc.payee:
+            if rc.default_user_id:
                 rc.payee = rc.default_user_id
-            except AttributeError as a:
-                raise type(a)(a.message + " No default_user_id set.  Please specify this "
+            else:
+                raise RuntimeError(" No default_user_id set.  Please specify this "
                           f"either in the ~/.conf/regolith/user.json or in"
                           f" regolithrc.json")
         if not rc.database:

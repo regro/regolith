@@ -28,17 +28,24 @@ def subparser(subpi):
         date_kwargs['widget'] = 'DateChooser'
         notes_kwargs['widget'] = 'Textarea'
 
-    subpi.add_argument("projectum_id", help="The id of the projectum.")
-    subpi.add_argument("-v", "--verbose", action="store_true",
-                       help="Increases the verbosity of the output.")
-    subpi.add_argument("-i", "--index",
-                       help="Index of the item in the enumerated list to update. "
-                            "Please enter in the format of 2,5,7 or 3-7 for multiple indices, or just enter one index.",
-                       type=str)
+    subpi.add_argument("projectum_id", help="The id of the projectum.  If you just "
+                                            "specify this the program will return a "
+                                            "numbered list of milestones to select for "
+                                            "updating. #1 in the list is always used "
+                                            "to add a new milestone.")
     subpi.add_argument("-c", "--current", action="store_true",
                        help="only list current (unfinished, unpaused) milestones",
                        )
-    subpi.add_argument("-d", "--due_date",
+    subpi.add_argument("-i", "--index",
+                       help="Index of the item in the enumerated list to update. "
+                            "To update multiple milestones with the same edits "
+                            "(often used for finishing checklist items), "
+                            "please enter in the "
+                            "format of 2,5,7 or 3-7 for multiple indices.",
+                       type=str)
+    subpi.add_argument("-v", "--verbose", action="store_true",
+                       help="Increases the verbosity of the output.")
+    subpi.add_argument("-u", "--due_date",
                        help="New due date of the milestone. "
                             "Required for a new milestone.",
                        **date_kwargs)
@@ -50,11 +57,11 @@ def subparser(subpi):
                             "Required for a new milestone.")
     subpi.add_argument("-s", "--status",
                        help="Status of the milestone/deliverable: "
-                            f"{ALLOWED_STATI}. "
+                            f"{*ALLOWED_STATI,}. "
                             "Defaults to proposed for a new milestone.")
     subpi.add_argument("-t", "--type",
                        help="Type of the milestone: "
-                            f"{ALLOWED_TYPES} "
+                            f"{*ALLOWED_TYPES,} "
                             "Defaults to meeting for a new milestone.")
     subpi.add_argument("-a", "--audience",
                        nargs='+',

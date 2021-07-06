@@ -26,6 +26,31 @@ def subparser(subpi):
                        default=None)
     subpi.add_argument("lead", help="id of the group lead or tbd",
                        default=None)
+    subpi.add_argument("-d", "--description",
+                       help="Slightly longer description of the projectum"
+                       )
+    subpi.add_argument("-c", "--collaborators", nargs="+",
+                       help="list of outside collaborator ids separated by spaces, "
+                            "'aeinstein efermi'.  Builders will get the full names "
+                            "from the contacts collection"
+                       )
+    subpi.add_argument("-m", "--group_members", nargs="+",
+                       help="list of group member ids, e.g., 'astudent acolleague'. "
+                            "Builders will get full names from people collection."
+                            "Do not add the lead or the group"
+                            "the pi who are added by default."
+                       )
+    subpi.add_argument("-g", "--grants", nargs="+",
+                       help="grant or (occasionally) list of grants that support this work"
+                       )
+    subpi.add_argument("-u", "--due_date",
+                       help="proposed due date for the deliverable",
+                       **date_kwargs
+                       )
+    subpi.add_argument("--checklist", action='store_true',
+                       help="Use this to turn the prum into a paper submission"
+                            "checklist."
+                       )
     # Do not delete --database arg
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -36,26 +61,6 @@ def subparser(subpi):
                        help="The begin_date for the projectum  Defaults to "
                             "today's date.",
                        **date_kwargs
-                       )
-    subpi.add_argument("-d", "--description",
-                       help="Slightly longer description of the projectum"
-                       )
-    subpi.add_argument("-c", "--collaborators", nargs="+",
-                       help="list of outside collaborators who should  be in contacts"
-                            "collection"
-                       )
-    subpi.add_argument("-m", "--group_members", nargs="+",
-                       help="list of group members other than the lead who are involved"
-                       )
-    subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant or (occasionally) list of grants that support this work"
-                       )
-    subpi.add_argument("-u", "--due_date",
-                       help="proposed due date for the deliverable",
-                       **date_kwargs
-                       )
-    subpi.add_argument("--checklist", action='store_true',
-                       help="Create manuscript checklist if specified"
                        )
     return subpi
 

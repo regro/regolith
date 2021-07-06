@@ -26,13 +26,13 @@ ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "ca
 
 
 def subparser(subpi):
-    subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-c", "--current", action="store_true", help='get only current group members ')
+    subpi.add_argument("-p", "--prior", action="store_true", help='get only former group members ')
+    subpi.add_argument("-v", "--verbose", action="store_true", help='increase verbosity of output')
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when running "
                                                        "--filter. If no argument is given the default is just the id.")
 
-    subpi.add_argument("-p", "--prior", action="store_true", help='get only former group members ')
     return subpi
 
 

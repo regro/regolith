@@ -28,7 +28,7 @@ helper_map = [
       "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
       "--where", "bank", "--begin_date", "2020-06-20", "--end_date", "2020-06-25"],
      "2006as_timbuktoo has been added in expenses\n"),
-    (["helper", "a_presentation", "Mars", "flat earth", "2020-06-26", "2020-06-26",
+    (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
       "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
       "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
       "--title", "On the roundness of the Earth", "--status", "in-prep",
@@ -313,7 +313,7 @@ helper_map = [
      "4. planning meeting    due date: 2020-05-27    status: proposed\n"
      "5. deliverable    due date: 2020-06-01    status: converged\n"
      ),
-    (["helper", "u_logurl", "sb", "--number", "1", "https://docs.google.com/document/d/1pQMFpuI"],
+    (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
      ),
     (["helper", "u_logurl", "ly", "https://docs.google.com/document/d/1pQMFpuI"],
@@ -321,7 +321,7 @@ helper_map = [
      "However, there are projecta with similar names: \n"
      "1. ly_newprojectum     current url: \n"
      "Please rerun the u_logurl helper with the same name as previously inputted, "
-     "but with the addition of -n followed by a number corresponding to one of the "
+     "but with the addition of -i followed by a number corresponding to one of the "
      "above listed projectum ids that you would like to update.\n"
      ),
     (["helper", "u_contact", "afriend", "--index", "2",

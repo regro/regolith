@@ -15,7 +15,7 @@ from habanero import Crossref
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
-from regolith.schemas import APPOINTMENTS_TYPES
+from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, PRESENTATION_STATI
 from requests import HTTPError
 
 try:
@@ -533,9 +533,9 @@ def filter_activities(people, begin_period, type, verbose=False):
 
 
 def filter_presentations(people, presentations, institutions, target,
-                         types=["all"],
-                         since=None, before=None, statuses=["accepted"]):
-    '''
+                         types=None,
+                         since=None, before=None, statuses=None):
+    f'''
     filters presentations for different types and date ranges
 
     Parameters
@@ -550,32 +550,24 @@ def filter_presentations(people, presentations, institutions, target,
       The id of the person you will build the list for
     types: list of strings.  Optional, default = all
       The types to filter for.  Allowed types are
-        "all",
-        "award"
-        "plenary"
-        "keynote"
-        "invited"
-        "colloquium"
-        "seminar"
-        "tutorial"
-        "contributed-oral"
-        "poster"
+      {*PRESENTATION_TYPES,}
     since: date.  Optional, default is None
         The begin date to filter from
     before: date. Optional, default is None
         The end date to filter for.  None does not apply this filter
     statuses: list of str.  Optional. Default is accepted
       The list of statuses to filter for.  Allowed statuses are
-        "all"
-        "accepted"
-        "declined"
-        "cancelled"
+        {PRESENTATION_STATI}
 
     Returns
     -------
     list of presentation documents
 
     '''
+    if not types:
+        types = ["all"]
+    if not statuses:
+        statuses = ["accepted"]
     presentations = deepcopy(presentations)
 
     firstclean = list()

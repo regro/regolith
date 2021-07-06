@@ -27,23 +27,24 @@ def subparser(subpi):
     subpi.add_argument("due_date", help="Due date", default='',
                        **date_kwargs
                        )
-    subpi.add_argument("journal", help="journal to be published on", default=''
+    subpi.add_argument("journal", help="journal to be published in", default=''
                        )
     subpi.add_argument("title", help="the title of the Manuscript", default=''
                        )
-    subpi.add_argument("-d", "--submitted_date", help="Submitted date",
-                       **date_kwargs
-                       )
     subpi.add_argument("-q", "--requester",
                        help="name, or id in contacts, of the editor requesting the review"
-                       )
-    subpi.add_argument("-r", "--reviewer",
-                       help="name of the reviewer. Defaults to the one saved in user.json. "
                        )
     subpi.add_argument("-s", "--status",
                        choices=ALLOWED_STATI,
                        help=f"Manuscript status",
                        default='accepted'
+                       )
+    subpi.add_argument("-d", "--submitted_date", help="Submitted date. Defaults "
+                                                      "to tbd",
+                       **date_kwargs
+                       )
+    subpi.add_argument("-r", "--reviewer",
+                       help="name of the reviewer. Defaults to the one saved in user.json. "
                        )
     subpi.add_argument("-t", "--database",
                        help="The database that will be updated. Defaults to "

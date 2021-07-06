@@ -43,14 +43,14 @@ def subparser(subpi):
     subpi.add_argument("--begin_date", help="The begin date for the proposed grant ",
                        **date_kwargs
                        )
+    subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
+                                          "Please enter either an end date or a duration. ",
+                       **int_kwargs
+                       )
     subpi.add_argument("--end_date", help="The end date for the proposed grant."
                                           " Please enter either an "
                                           "end date or a duration",
                        **date_kwargs
-                       )
-    subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
-                                          "Please enter either an end date or a duration. ",
-                       **int_kwargs
                        )
     subpi.add_argument("--due_date", help="The due date for the proposal",
                        **date_kwargs
@@ -58,17 +58,9 @@ def subparser(subpi):
     subpi.add_argument("-a", "--authors", nargs="+",
                        help="Other investigator names", default=[]
                        )
-    subpi.add_argument("-c", "--currency",
-                       help="Currency in which amount is specified. Defaults to USD",
-                       default = 'USD'
-                       )
-    subpi.add_argument("-p", "--pi",
-                       help="ID of principal investigator. Defaults to "
-                            "group pi id in regolithrc.json"
-                       )
-    subpi.add_argument("--cppflag", help="Current and pending form (True or False). Defaults to True)",
-                       default=True,
-                       **dropdown_kwargs
+    subpi.add_argument("--not-cpp", action='store_true',
+                       help="Check if the proposal should not appear in the "
+                            "current and pending support form"
                        )
     subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
                                                 "submitted. Defaults to None", default='None'
@@ -76,6 +68,10 @@ def subparser(subpi):
     subpi.add_argument("-i", "--institution",
                        help="The institution where the work will primarily "
                             "be carried out", default=''
+                       )
+    subpi.add_argument("-p", "--pi",
+                       help="ID of principal investigator. Defaults to "
+                            "group pi id in regolithrc.json"
                        )
     subpi.add_argument("--months_academic", help="Number of working months in the academic year "
                                                  "to be stated on the current and pending form. "
@@ -99,6 +95,10 @@ def subparser(subpi):
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="Anything to note", default=[],
                        **notes_kwargs
+                       )
+    subpi.add_argument("-c", "--currency",
+                       help="Currency in which amount is specified. Defaults to USD",
+                       default = 'USD'
                        )
     subpi.add_argument("--database",
                        help="The database that will be updated.  Defaults to "
@@ -180,10 +180,10 @@ class ProposalAdderHelper(DbHelperBase):
         else:
             pdoc.update({'begin_date': 'tbd'})
         cpp_info = {}
-        if rc.cppflag:
-            cpp_info['cppflag'] = True
-        else:
+        if rc.not_cpp:
             cpp_info['cppflag'] = False
+        else:
+            cpp_info['cppflag'] = True
         cpp_info['other_agencies_submitted'] = rc.other_agencies
         cpp_info['institution'] = rc.institution
         cpp_info['person_months_academic'] = float(rc.months_academic)

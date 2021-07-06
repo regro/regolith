@@ -31,33 +31,35 @@ def subparser(subpi):
                             "word, please enclose it in quotation marks.",
                        default=None)
     subpi.add_argument("due_date",
-                       help="Due date of the task.",
-                       **date_kwargs
+                       help="Due date of the task, in days from today (integer), or "
+                            "as a date in iso format (yyyy-mm-dd)",
                        )
     subpi.add_argument("duration",
-                       help="The estimated duration the task will take in minutes.",
+                       help="The estimated duration the task will take in minutes (integer) "
+                            "e.g., 60 would be a duration of 1 hour.",
                        **int_kwargs
                        )
     subpi.add_argument("-d", "--deadline", action="store_true",
-                       help=f"Is the due date a hard deadline?",
+                       help=f"specify if the due date (above) has a hard deadline",
                        )
     subpi.add_argument("-m", "--importance",
                        choices=ALLOWED_IMPORTANCE,
                        type=int,
                        help=f"The importance of the task. "
-                            f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the eigenhower matrix of "
-                            f"importance vs. urgency",
+                            f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the Eisenhower matrix of "
+                            f"importance vs. urgency.  An important and urgent task would be 3.",
                        default=1
                        )
     subpi.add_argument("-t", "--tags", nargs="+",
-                       help="Tags associated with this task.  The todo list can be filtered by these tags")
+                       help="Tags to be associated with this task.  Enter as single words separated by spaces. "
+                            "The todo list can be filtered by these tags")
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="Additional notes for this task. Each note should be enclosed "
-                            "in quotation marks.")
+                            "in quotation marks and different notes separated by spaces")
     subpi.add_argument("-a", "--assigned_to",
-                       help="ID of the member to whom the task is assigned. Default id is saved in user.json. ")
+                       help="ID of the group member to whom the task is assigned. Default is the id saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by",
-                       help="ID of the member that assigns the task. Default id is saved in user.json. ")
+                       help="ID of the member that is assigning the task. Default is the id saved in user.json. ")
     subpi.add_argument("--begin_date",
                        help="Begin date of the task. Default is today.",
                        **date_kwargs
