@@ -3,7 +3,8 @@
 =================
 Database Maintenance
 =================
-The following contain information on maintaining the databases that regolith relies upon.
+These docs are for people maintaining regolith databases in production (and for
+advanced users)
 
 .. toctree::
     :maxdepth: 1

@@ -1,10 +1,10 @@
 Mongo Database Maintenance
 ==========================
 
-Enabling Database Maintenance Functionality
--------------------------------------------
+Enabling Database Functionality
+-----------------------------
 
-| This section is for those who would like to maintain a MongoDB backend (local or remote) to varying extents. (note:
+| This section is for those who would like to maintain a MongoDB backend (local or remote). (note:
   if you are simply doing read-writes to an **existing remote mongo server** with **existing collections** via the
   helpers or gui, please skip)
 

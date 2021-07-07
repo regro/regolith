@@ -10,7 +10,7 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-
+import os
 from collections.abc import MutableMapping
 import json
 import tempfile
@@ -23,6 +23,7 @@ from regolith import __version__ as REGOLITH_VERSION
 from regolith.fsclient import json_to_yaml, dump_json, _id_key
 from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
 from regolith.schemas import SCHEMAS, EXEMPLARS
+
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -125,7 +126,7 @@ html_theme_options = {"roottarget": "index"}
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
 # html_theme_path = [csp.get_theme_dir()]
-html_theme_path = ["_themes", csp.get_theme_dir()]
+#html_theme_path = ["_themes", csp.get_theme_dir()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -331,21 +332,24 @@ def build_schema_doc(key):
         s += "\n\n"
         s += "YAML Example\n------------\n\n"
         s += ".. code-block:: yaml\n\n"
-        temp = tempfile.NamedTemporaryFile()
-        temp2 = tempfile.NamedTemporaryFile()
+        # temp = tempfile.NamedTemporaryFile()
+        # temp = tempfile.NamedTemporaryFile()
+        temp = os.path.join(tempfile.gettempdir(), os.urandom(24).hex())
+        temp2 = os.path.join(tempfile.gettempdir(), os.urandom(24).hex())
+        # temp2 = tempfile.NamedTemporaryFile()
         documents = EXEMPLARS[key]
         if isinstance(documents, MutableMapping):
             documents = [documents]
         documents = {doc["_id"]: doc for doc in documents}
-        dump_json(temp.name, documents)
+        dump_json(temp, documents)
         docs = sorted(documents.values(), key=_id_key)
         lines = [
             json.dumps(doc, sort_keys=True, indent=4, separators=(",", ": "))
             for doc in docs
         ]
         jd = "\n".join(lines)
-        json_to_yaml(temp.name, temp2.name)
-        with open(temp2.name, "r") as ff:
+        json_to_yaml(temp, temp2)
+        with open(temp2, "r", encoding="utf8") as ff:
             s += indent(ff.read(), "\t")
         s += "\n\n"
         s += "JSON/Mongo Example\n------------------\n\n"
