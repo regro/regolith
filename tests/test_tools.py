@@ -2015,17 +2015,15 @@ person1 = {"_id":"tstark", "aka":"iron man", "name":"tony stark"}
 person2 = {"_id":"nromanov", "aka":"black widow", "name":"natasha romanov"}
 PEOPLE = [person1, person2]
 
-presentation1 = {"_id":"abc", "authors":["tstark"], "begin_year":2018, "begin_month":1, "begin_day":1,
-                 "department":"apam", "institution":"columbiau", "status":"accepted", "type":"award"}
-presentation2 = {"_id":"ghi", "authors":["tstark","nromanov"], "begin_year":2019, "begin_month":1, "begin_day":2,
-                 "end_year":2019, "end_month":1, "end_day":8, "department":"physics", "institution":"rutgersu",
-                 "status":"cancelled", "type":"poster"}
+presentation1 = {"_id":"abc", "authors":"tstark", "date":"2018-01-01", "department":"apam",
+                 "institution":"columbiau", "status":"accepted", "type":"award"}
+presentation2 = {"_id":"ghi", "authors":["tstark","nromanov"], "begin_date":"2019-01-02", "end_date":"2019-01-08",
+                 "department":"physics", "institution":"rutgersu", "status":"cancelled", "type":"poster"}
 PRESENTATIONS = [presentation1, presentation2]
 
 institution1 = {"_id":"columbiau", "city":"New York", "country":"USA", "name":"Columbia University", "state":"NY"}
 institution2 = {"_id":"rutgersu", "city":"New Brunswick", "country":"USA", "name":"Rutgers University", "state":"NJ"}
 INSTITUTIONS = [institution1, institution2]
-
 @pytest.mark.parametrize(
     "args, kwargs, expected",[
 
@@ -2054,17 +2052,17 @@ INSTITUTIONS = [institution1, institution2]
     {"statuses" : ["all"]},
     [{"_id": "ghi",
     "authors": "tony stark, natasha romanov",
+    "begin_date": "2019-01-02",
     "begin_day_suffix": "nd",
     "begin_year": 2019,
     "begin_month": 1,
     "begin_day": 2,
     "date": dt.date(2019, 1, 2),
     "day_suffix": "nd",
-    "end_year": 2019,
-    "end_month": 1,
     "end_day": 8,
     "end_day_suffix": "th",
     "department": {'name': 'physics'},
+    "end_date": "2019-01-08",
     "institution": {'city': 'New Brunswick',
                    'country': 'USA',
                    'name': 'Rutgers University',
@@ -2093,17 +2091,17 @@ INSTITUTIONS = [institution1, institution2]
     {"statuses" : ["all"], "types" : ["poster"]},
     [{"_id": "ghi",
     "authors": "tony stark, natasha romanov",
+    "begin_date": "2019-01-02",
     "begin_day_suffix": "nd",
     "begin_year": 2019,
     "begin_month": 1,
     "begin_day": 2,
     "date": dt.date(2019, 1, 2),
     "day_suffix": "nd",
-    "end_year": 2019,
-    "end_month": 1,
     "end_day": 8,
     "end_day_suffix": "th",
     "department": {'name': 'physics'},
+    "end_date": "2019-01-08",
     "institution": {'city': 'New Brunswick',
                    'country': 'USA',
                    'name': 'Rutgers University',
@@ -2117,17 +2115,17 @@ INSTITUTIONS = [institution1, institution2]
     {"statuses" : ["all"], "since" : dt.date(2019, 1, 1)},
     [{"_id": "ghi",
     "authors": "tony stark, natasha romanov",
+    "begin_date": "2019-01-02",
     "begin_day_suffix": "nd",
     "begin_year": 2019,
     "begin_month": 1,
     "begin_day": 2,
     "date": dt.date(2019, 1, 2),
     "day_suffix": "nd",
-    "end_year": 2019,
-    "end_month": 1,
     "end_day": 8,
     "end_day_suffix": "th",
     "department": {'name': 'physics'},
+    "end_date": "2019-01-08",
     "institution": {'city': 'New Brunswick',
                    'country': 'USA',
                    'name': 'Rutgers University',
