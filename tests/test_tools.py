@@ -5,6 +5,7 @@ from requests import HTTPError
 
 from regolith.tools import (
     filter_publications,
+    filter_presentations,
     fuzzy_retrieval,
     fragment_retrieval,
     number_suffix,
@@ -2008,4 +2009,156 @@ def test_remove_duplicate_docs(inp, expected):
     ])
 def test_filter_employment_for_advisees(inp, expected):
     actual = filter_employment_for_advisees(inp[0], inp[1], "ms", dt.date(2021,6,3))
+    assert actual == expected
+
+person1 = {"_id":"tstark", "aka":"iron man", "name":"tony stark"}
+person2 = {"_id":"nromanov", "aka":"black widow", "name":"natasha romanov"}
+PEOPLE = [person1, person2]
+
+presentation1 = {"_id":"abc", "authors":["tstark"], "begin_year":2018, "begin_month":1, "begin_day":1,
+                 "department":"apam", "institution":"columbiau", "status":"accepted", "type":"award"}
+presentation2 = {"_id":"ghi", "authors":["tstark","nromanov"], "begin_year":2019, "begin_month":1, "begin_day":2,
+                 "end_year":2019, "end_month":1, "end_day":8, "department":"physics", "institution":"rutgersu",
+                 "status":"cancelled", "type":"poster"}
+PRESENTATIONS = [presentation1, presentation2]
+
+institution1 = {"_id":"columbiau", "city":"New York", "country":"USA", "name":"Columbia University", "state":"NY"}
+institution2 = {"_id":"rutgersu", "city":"New Brunswick", "country":"USA", "name":"Rutgers University", "state":"NJ"}
+INSTITUTIONS = [institution1, institution2]
+
+@pytest.mark.parametrize(
+    "args, kwargs, expected",[
+
+    #this tests no kwargs
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {},
+    [{"_id": "abc",
+    "authors": "tony stark",
+    "begin_day_suffix": "st",
+    "begin_year": 2018,
+    "begin_month": 1,
+    "begin_day": 1,
+    "date": dt.date(2018, 1, 1),
+    "day_suffix": "st",
+    "department": {'name': 'apam'},
+    "institution": {'city': 'New York',
+                   'country': 'USA',
+                   'name': 'Columbia University',
+                   'state': 'NY'},
+    "status": "accepted",
+    "type": "award"}]
+    ),
+
+    #this tests 'statuses' kwarg
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {"statuses" : ["all"]},
+    [{"_id": "ghi",
+    "authors": "tony stark, natasha romanov",
+    "begin_day_suffix": "nd",
+    "begin_year": 2019,
+    "begin_month": 1,
+    "begin_day": 2,
+    "date": dt.date(2019, 1, 2),
+    "day_suffix": "nd",
+    "end_year": 2019,
+    "end_month": 1,
+    "end_day": 8,
+    "end_day_suffix": "th",
+    "department": {'name': 'physics'},
+    "institution": {'city': 'New Brunswick',
+                   'country': 'USA',
+                   'name': 'Rutgers University',
+                   'state': 'NJ'},
+    "status": "cancelled",
+    "type": "poster"},
+    {"_id": "abc",
+    "authors": "tony stark",
+    "begin_day_suffix": "st",
+    "begin_year": 2018,
+    "begin_month": 1,
+    "begin_day": 1,
+    "date": dt.date(2018, 1, 1),
+    "day_suffix": "st",
+    "department": {'name': 'apam'},
+    "institution": {'city': 'New York',
+                   'country': 'USA',
+                   'name': 'Columbia University',
+                   'state': 'NY'},
+    "status": "accepted",
+    "type": "award"}]
+    ),
+
+    #this tests 'statuses' and 'types' kwargs together
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {"statuses" : ["all"], "types" : ["poster"]},
+    [{"_id": "ghi",
+    "authors": "tony stark, natasha romanov",
+    "begin_day_suffix": "nd",
+    "begin_year": 2019,
+    "begin_month": 1,
+    "begin_day": 2,
+    "date": dt.date(2019, 1, 2),
+    "day_suffix": "nd",
+    "end_year": 2019,
+    "end_month": 1,
+    "end_day": 8,
+    "end_day_suffix": "th",
+    "department": {'name': 'physics'},
+    "institution": {'city': 'New Brunswick',
+                   'country': 'USA',
+                   'name': 'Rutgers University',
+                   'state': 'NJ'},
+    "status": "cancelled",
+    "type": "poster"}]
+    ),
+
+    #this tests 'statuses' and 'since' kwargs together
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {"statuses" : ["all"], "since" : dt.date(2019, 1, 1)},
+    [{"_id": "ghi",
+    "authors": "tony stark, natasha romanov",
+    "begin_day_suffix": "nd",
+    "begin_year": 2019,
+    "begin_month": 1,
+    "begin_day": 2,
+    "date": dt.date(2019, 1, 2),
+    "day_suffix": "nd",
+    "end_year": 2019,
+    "end_month": 1,
+    "end_day": 8,
+    "end_day_suffix": "th",
+    "department": {'name': 'physics'},
+    "institution": {'city': 'New Brunswick',
+                   'country': 'USA',
+                   'name': 'Rutgers University',
+                   'state': 'NJ'},
+    "status": "cancelled",
+    "type": "poster"}]
+    ),
+
+    #this tests the 'statuses' and 'before' kwargs together
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {"statuses" : ["all"], "before" : dt.date(2018, 1, 2)},
+    [{"_id": "abc",
+    "authors": "tony stark",
+    "begin_day_suffix": "st",
+    "begin_year": 2018,
+    "begin_month": 1,
+    "begin_day": 1,
+    "date": dt.date(2018, 1, 1),
+    "day_suffix": "st",
+    "department": {'name': 'apam'},
+    "institution": {'city': 'New York',
+                   'country': 'USA',
+                   'name': 'Columbia University',
+                   'state': 'NY'},
+    "status": "accepted",
+    "type": "award"}]
+    )
+  ]
+)
+
+
+def test_filter_presentations(args, kwargs, expected):
+    actual = filter_presentations(*args, **kwargs)
     assert actual == expected
