@@ -5,6 +5,7 @@ from requests import HTTPError
 
 from regolith.tools import (
     filter_publications,
+    filter_presentations,
     fuzzy_retrieval,
     fragment_retrieval,
     number_suffix,
@@ -2008,4 +2009,104 @@ def test_remove_duplicate_docs(inp, expected):
     ])
 def test_filter_employment_for_advisees(inp, expected):
     actual = filter_employment_for_advisees(inp[0], inp[1], "ms", dt.date(2021,6,3))
+    assert actual == expected
+
+person1 = {"_id":"tstark", "aka":"iron man", "name":"tony stark"}
+person2 = {"_id":"nromanov", "aka":"black widow", "name":"natasha romanov"}
+PEOPLE = [person1, person2]
+
+presentation1 = {"_id":"abc", "authors":"tstark", "date":"2018-01-01", "department":"apam",
+                 "institution":"columbiau", "status":"accepted", "type":"award"}
+presentation2 = {"_id":"ghi", "authors":["tstark","nromanov"], "begin_date":"2019-01-02", "end_date":"2019-01-08",
+                 "department":"physics", "institution":"rutgersu", "status":"cancelled", "type":"poster"}
+presentation3 = {"_id":"jkl", "authors":["nromanov"], "begin_year":2020, "begin_month":2, "begin_day":2,
+                 "end_year":2020, "end_month":12, "end_day":12, "department":"math", "institution":"rutgersu",
+                 "status":"declined", "type":"webinar"}
+PRESENTATIONS = [presentation1, presentation2, presentation3]
+
+institution1 = {"_id":"columbiau", "city":"New York", "country":"USA", "name":"Columbia University", "state":"NY"}
+institution2 = {"_id":"rutgersu", "city":"New Brunswick", "country":"USA", "name":"Rutgers University", "state":"NJ"}
+INSTITUTIONS = [institution1, institution2]
+
+expected1 = {"_id": "abc",
+    "authors": "tony stark",
+    "begin_day_suffix": "st",
+    "begin_year": 2018,
+    "begin_month": 1,
+    "begin_day": 1,
+    "date": dt.date(2018, 1, 1),
+    "day_suffix": "st",
+    "department": {'name': 'apam'},
+    "institution": {'city': 'New York',
+                   'country': 'USA',
+                   'name': 'Columbia University',
+                   'state': 'NY'},
+    "status": "accepted",
+    "type": "award"}
+expected2 = {"_id": "ghi",
+    "authors": "tony stark, natasha romanov",
+    "begin_date": "2019-01-02",
+    "begin_day_suffix": "nd",
+    "begin_year": 2019,
+    "begin_month": 1,
+    "begin_day": 2,
+    "date": dt.date(2019, 1, 2),
+    "day_suffix": "nd",
+    "end_day": 8,
+    "end_day_suffix": "th",
+    "department": {'name': 'physics'},
+    "end_date": "2019-01-08",
+    "institution": {'city': 'New Brunswick',
+                   'country': 'USA',
+                   'name': 'Rutgers University',
+                   'state': 'NJ'},
+    "status": "cancelled",
+    "type": "poster"}
+expected3 = {'_id': 'jkl',
+    "authors": "natasha romanov",
+    "begin_day": 2,
+    "begin_day_suffix": "nd",
+    "begin_month": 2,
+    "begin_year": 2020,
+    "date": dt.date(2020, 2, 2),
+    "day_suffix": 'nd',
+    "department": {'name': 'math'},
+    "end_day": 12,
+    "end_day_suffix": 'th',
+    "end_month": 12,
+    "end_year": 2020,
+    "institution": {'city': 'New Brunswick',
+                    'country': 'USA',
+                    'name': 'Rutgers University',
+                    'state': 'NJ'},
+    "status": "declined",
+    "type": "webinar"}
+@pytest.mark.parametrize(
+    "args, kwargs, expected",[
+
+    #this tests no kwargs
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {}, [expected1]),
+
+    #this tests 'statuses' kwarg
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {"statuses" : ["all"]}, [expected2, expected1]),
+
+    #this tests 'statuses' and 'types' kwargs together
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {"statuses" : ["all"], "types" : ["poster"]}, [expected2]),
+
+    #this tests 'statuses' and 'since' kwargs together
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "nromanov"],
+    {"statuses" : ["all"], "since" : dt.date(2019, 1, 1)}, [expected3, expected2]),
+
+    #this tests the 'statuses' and 'before' kwargs together
+    ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
+    {"statuses" : ["all"], "before" : dt.date(2018, 1, 2)}, [expected1])
+  ]
+)
+
+
+def test_filter_presentations(args, kwargs, expected):
+    actual = filter_presentations(*args, **kwargs)
     assert actual == expected
