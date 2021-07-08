@@ -119,10 +119,10 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
     return
 
 
-def export_json(collection: str, dbpath: str, host: str = None, uri: str = None) -> None:
+def export_json(collection: str, dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
     cmd = ["mongoexport", "--collection", collection]
     if host is not None:
-        cmd += ['--host', host]
+        cmd += ['--host', host, "--db", dbname]
     if uri is not None:
         cmd += ['--uri', uri]
     cmd += ["--out", str(os.path.join(dbpath, collection + ".json"))]
@@ -410,7 +410,7 @@ class MongoClient:
         dbpath = os.path.abspath(dbpathname(db, self.rc))
         dbname = db['name']
         for collection in self.dbs[dbname].keys():
-            export_json(collection, dbpath, host=host, uri=uri)
+            export_json(collection, dbpath, dbname, host=host, uri=uri)
         return
 
     def dump_database(self, db):
