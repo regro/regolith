@@ -119,8 +119,8 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
     return
 
 
-def export_json(collection: str, dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
-    cmd = ["mongoexport", "--collection", collection, "--db", dbname]
+def export_json(collection: str, dbpath: str, host: str = None, uri: str = None) -> None:
+    cmd = ["mongoexport", "--collection", collection]
     if host is not None:
         cmd += ['--host', host]
     if uri is not None:
@@ -324,6 +324,7 @@ class MongoClient:
                             "pwd_from_config", urllib.parse.quote_plus(password))
                         rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace(
                             "uname_from_config", urllib.parse.quote_plus(rc.mongo_id))
+                        host = rc.databases[0]["dst_url"]
                 except AttributeError:
                     print("ERROR:\n"
                           "Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
@@ -406,10 +407,10 @@ class MongoClient:
         if uri == 'localhost':
             uri = None
             host = 'localhost'
-        dbpath = dbpathname(db, self.rc)
+        dbpath = os.path.abspath(dbpathname(db, self.rc))
         dbname = db['name']
         for collection in self.dbs[dbname].keys():
-            export_json(collection, dbpath, dbname, host=host, uri=uri)
+            export_json(collection, dbpath, host=host, uri=uri)
         return
 
     def dump_database(self, db):
