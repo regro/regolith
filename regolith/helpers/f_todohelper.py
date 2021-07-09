@@ -122,6 +122,8 @@ class TodoFinisherHelper(DbHelperBase):
                     person_update = rc.client.find_one(db_name, rc.coll, filterid)
                     if person_update:
                         todolist_update = person_update.get("todos", [])
+                    else:
+                        continue
                     if len(todolist_update) != 0:
                         for i, todo_u in enumerate(todolist_update):
                             if rc.index == todo_u.get("running_index"):
