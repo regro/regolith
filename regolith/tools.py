@@ -2008,3 +2008,4 @@ def validate_doc(collection_name, doc, rc):
         error_message += ("-" * 15)
         error_message += "\n"
     return v[0], error_message
+
