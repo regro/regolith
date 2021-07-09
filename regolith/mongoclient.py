@@ -75,7 +75,7 @@ def import_jsons(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
             cmd += ['--uri', uri]
         cmd += ["--collection", json_path.stem, "--file", str(json_path)]
         try:
-            subprocess.check_call(cmd)
+            subprocess.check_call(cmd, stderr=subprocess.STDOUT)
         except FileNotFoundError:
             print("mongoimport command not found in environment path.\n\n"
                   "If mongo server v4.4+ installed, download MongoDB Database Tools from:"
@@ -84,6 +84,9 @@ def import_jsons(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
                   "If mongo server <v4.4, ensure that C:\\Program Files\\MongoDB\\Server\\<ServerVersion>\\bin\\ \n"
                   "has been added to the environment path.\n")
             print("..................Upload failed..................")
+        except subprocess.CalledProcessError as exc:
+            print("Status : FAIL", exc.returncode, exc.output)
+            raise exc
     return
 
 
@@ -120,14 +123,14 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
 
 
 def export_json(collection: str, dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
-    cmd = ["mongoexport", "--collection", collection, "--db", dbname]
+    cmd = ["mongoexport", "--collection", collection]
     if host is not None:
-        cmd += ['--host', host]
+        cmd += ['--host', host, "--db", dbname]
     if uri is not None:
         cmd += ['--uri', uri]
     cmd += ["--out", str(os.path.join(dbpath, collection + ".json"))]
     try:
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, stderr=subprocess.STDOUT)
     except FileNotFoundError:
         print("mongoexport command not found in environment path.\n\n"
               "If mongo server v4.4+ installed, download MongoDB Database Tools from:"
@@ -136,6 +139,10 @@ def export_json(collection: str, dbpath: str, dbname: str, host: str = None, uri
               "If mongo server <v4.4, ensure that C:\\Program Files\\MongoDB\\Server\\<ServerVersion>\\bin\\ \n"
               "has been added to the environment path.\n")
         print("..................Upload failed..................")
+    except subprocess.CalledProcessError as exc:
+        print("Status : FAIL", exc.returncode, exc.output)
+        raise exc
+
 
 
 def load_mongo_col(col: Collection) -> dict:
@@ -281,9 +288,10 @@ class MongoClient:
             else:
                 cmd = ["mongostat", "--host", "localhost", "-n", "1"]
                 try:
-                    subprocess.check_call(cmd)
+                    subprocess.check_call(cmd, stderr=subprocess.STDOUT)
                     alive = True
-                except subprocess.CalledProcessError:
+                except subprocess.CalledProcessError as exc:
+                    print("Status : FAIL", exc.returncode, exc.output)
                     alive = False
             return alive
         else:
@@ -324,6 +332,7 @@ class MongoClient:
                             "pwd_from_config", urllib.parse.quote_plus(password))
                         rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace(
                             "uname_from_config", urllib.parse.quote_plus(rc.mongo_id))
+                        host = rc.databases[0]["dst_url"]
                 except AttributeError:
                     print("ERROR:\n"
                           "Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
@@ -406,7 +415,7 @@ class MongoClient:
         if uri == 'localhost':
             uri = None
             host = 'localhost'
-        dbpath = dbpathname(db, self.rc)
+        dbpath = os.path.abspath(dbpathname(db, self.rc))
         dbname = db['name']
         for collection in self.dbs[dbname].keys():
             export_json(collection, dbpath, dbname, host=host, uri=uri)
@@ -431,7 +440,11 @@ class MongoClient:
                 "--out",
                 f,
             ]
-            subprocess.check_call(cmd)
+            try:
+                subprocess.check_call(cmd, stderr=subprocess.STDOUT)
+            except subprocess.CalledProcessError as exc:
+                print("Status : FAIL", exc.returncode, exc.output)
+                raise exc
             to_add.append(os.path.join(db["path"], collection + ".json"))
         return to_add
 
