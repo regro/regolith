@@ -1,22 +1,17 @@
 """Builder for Current and Pending Reports."""
-import datetime
-import time
-from argparse import RawTextHelpFormatter
 
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.dates import month_to_int
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_grants,
-    fuzzy_retrieval,
 )
+
 
 def subparser(subpi):
     subpi.add_argument("--person", help="pi first name space last name in quotes",
                         default=None)
     return subpi
+
 
 class HelloHelper(SoutHelperBase):
     """Build a helper"""
@@ -39,7 +34,6 @@ class HelloHelper(SoutHelperBase):
     def sout(self):
         person = self.rc.person
         return print(f"hello {person}")
-
 
     def latex(self):
         """Render latex template"""

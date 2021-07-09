@@ -36,7 +36,7 @@ NEED_RC |= {"rc", "deploy", "store"}
        required_cols=1,
        optional_cols=1,
        sidebar_title='Helpers',
-       program_name='Regolith Helpers')
+       program_name='Regolith Helper GUI')
 def create_parser():
     p = GooeyParser()
     subp = p.add_subparsers(title="helper_target", dest="helper_target")

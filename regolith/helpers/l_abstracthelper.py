@@ -58,11 +58,6 @@ class AbstractListerHelper(SoutHelperBase):
         if "groups" in self.needed_dbs:
             rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
-        try:
-            if not rc.database:
-                rc.database = rc.databases[0]
-        except BaseException:
-            pass
         colls = [
             sorted(
                 all_docs_from_collection(rc.client, collname), key=_id_key

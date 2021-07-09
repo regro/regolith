@@ -165,6 +165,9 @@ class RunControl(object):
         else:
             return NotImplemented
 
+    def __copy__(self):
+        return type(self)(_updaters=self._updaters, _validators=self._validators, **self._dict)
+
     def _update(self, other):
         """Updates the rc with values from another mapping.  If this rc has
         if a key is in self, other, and self._updaters, then the updaters
@@ -233,10 +236,8 @@ def ishashable(x):
 
 DEFAULT_RC = RunControl(
     _validators=DEFAULT_VALIDATORS,
-    backend="filesystem",
     builddir="_build",
     mongodbpath=property(lambda self: os.path.join(self.builddir, "_dbpath")),
-    local=False,
     user_config=os.path.expanduser("~/.config/regolith/user.json"),
     force=False,
 )
@@ -273,6 +274,7 @@ def filter_databases(rc):
     elif len(dbs) == 1:
         rc.db = dbs[0]["name"]
     rc.databases = dbs
+
 
 def connect_db(rc, colls=None):
     '''

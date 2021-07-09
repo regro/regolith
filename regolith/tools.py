@@ -33,8 +33,6 @@ if sys.version_info[0] >= 3:
     unicode_type = str
 else:
     pass
-    # string_types = (str, unicode)
-    # unicode_type = unicode
 
 DEFAULT_ENCODING = sys.getdefaultencoding()
 
@@ -530,18 +528,6 @@ def filter_activities(people, begin_period, type, verbose=False):
         svc = copy(p.get("activities", []))
         for i in svc:
             if i.get("type") == type:
-                # if i.get('year'):
-                #     end_year = i.get('year')
-                #     if verbose: print("end_year from 'year' = {}".format(end_year))
-                # elif i.get('end_year'):
-                #     end_year = i.get('end_year')
-                #     if verbose: print("end_year from 'end_year' = {}".format(end_year))
-                # else:
-                #     end_year = date.today().year
-                #     if verbose: print("no end_year, using today = {}".format(end_year))                                i.get("end_month", 12),
-                #                 i.get("end_day", last_day(end_year,  i.get("end_month")))
-                # if verbose: print("end_date = {} and begin_period = {}".format(end_date,begin_period))
-                # if verbose: print("condition end_date >= begin_period will be used")
                 idates = get_dates(i)
                 if idates["end_date"] >= begin_period:
                     usedate = idates.get('begin_date', idates.get('date'))
@@ -616,7 +602,7 @@ def filter_presentations(people, presentations, institutions, target,
         authorids = [
             author["_id"] if author is not None
             else author
-            for author in authors 
+            for author in authors
         ]
         if target in authorids:
             firstclean.append(pres)
@@ -1911,16 +1897,6 @@ def print_task(task_list, stati, index=True):
             for note in task.get('notes'):
                 print(f"     - {note}")
     print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
-
-    #        else:
-    #            for task in task_list:
-    #                if task.get('status') == status:
-    #                    print(
-    #                        f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags',[]))}|{task.get('assigned_by')})")
-    #                    if task.get('notes'):
-    #                        for note in task.get('notes'):
-    #                            print(f"     - {note}")
-
     return
 
 
@@ -1992,9 +1968,9 @@ def get_formatted_crossref_reference(doi):
 def remove_duplicate_docs(coll,key):
     '''
     find all docs where the target key has the same value and remove duplicates
-    
+
     The doc found first will be kept and subsequent docs will be removed
-    
+
     parameters
     ----------
     target iterable of dicts
@@ -2016,5 +1992,20 @@ def remove_duplicate_docs(coll,key):
         else:
             newcoll.append(doc)
             values.append(doc.get(key))
-        
+
     return newcoll
+
+
+def validate_doc(collection_name, doc, rc):
+    from regolith.schemas import validate
+    from pprint import pformat
+    v = validate(collection_name, doc, rc.schemas)
+    error_message = ""
+    if v[0] is False:
+        error_message += f"ERROR in {doc['_id']}:\n{pformat(v[1])}\n"
+        for vv in v[1]:
+            error_message += f"{pformat(doc.get(vv))}\n"
+        error_message += ("-" * 15)
+        error_message += "\n"
+    return v[0], error_message
+

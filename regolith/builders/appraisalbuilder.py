@@ -1,7 +1,5 @@
 """Builder for CVs."""
 import datetime as dt
-import os
-import sys
 from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
@@ -115,7 +113,71 @@ class AppraisalBuilder(LatexBuilderBase):
 
         #########
         # current and pending
-        #########   
+        #########
+        pi = fuzzy_retrieval(
+            self.gtx["people"], ["aka", "name", "_id"], build_target
+        )
+
+        grants = merge_collections_superior(self.gtx["proposals"], self.gtx["grants"],
+                                   "proposal_id")
+        for g in grants:
+            for person in g["team"]:
+                rperson = fuzzy_retrieval(
+                    self.gtx["people"], ["aka", "name"], person["name"]
+                )
+                if rperson:
+                    person["name"] = rperson["name"]
+            if g.get('budget'):
+                amounts = [i.get('amount') for i in g.get('budget')]
+                g['subaward_amount'] = sum(amounts)
+
+
+        current_grants = [
+            dict(g)
+            for g in grants
+            if is_current(g)
+        ]
+
+        current_grants, _, _ = filter_grants(
+            current_grants, {pi["name"]}, pi=False, multi_pi=True
+        )
+
+        pending_grants = [
+            g
+            for g in self.gtx["proposals"]
+            if g["status"] == "pending"
+        ]
+        for g in pending_grants:
+            for person in g["team"]:
+                rperson = fuzzy_retrieval(
+                    self.gtx["people"], ["aka", "name"], person["name"]
+                )
+                if rperson:
+                    person["name"] = rperson["name"]
+        pending_grants, _, _ = filter_grants(
+            pending_grants, {pi["name"]}, pi=False, multi_pi=True
+        )
+        grants = pending_grants + current_grants
+        for grant in grants:
+            grant_dates = get_dates(grant)
+            grant.update(
+                award_start_date="{2}/{1}/{0}".format(
+                    grant_dates.get("begin_day"),
+                    grant_dates.get("begin_month"),
+                    grant_dates.get("begin_year"),
+                ),
+                award_end_date="{2}/{1}/{0}".format(
+                    grant_dates.get("end_day"),
+                    grant_dates.get("end_month"),
+                    grant_dates.get("end_year"),
+                ),
+            )
+        badids = [i["_id"] for i in current_grants if
+                  not i['cpp_info'].get('cppflag', "")]
+        iter = copy(current_grants)
+        for grant in iter:
+            if grant["_id"] in badids:
+                current_grants.remove(grant)
         #########
         # end current and pending
         #########

@@ -1,9 +1,6 @@
 """Helper for adding a presentation to the presentation collection.
 """
-import datetime as dt
 import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
-import sys
 
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
@@ -56,6 +53,11 @@ def subparser(subpi):
                        )
     subpi.add_argument("-g", "--grants", nargs="+",
                        help="grant, or grants (separated by spaces), that support this presentation. Defaults to tbd"
+                       )
+    subpi.add_argument("-n", "--notes", nargs="+",
+                       help="note or notes to be inserted as a list into the notes field, "
+                            "separate notes with spaces.  Place inside quotes if the note "
+                            "itself contains spaces."
                        )
     subpi.add_argument("-s", "--status",
                        choices=PRESENTATION_STATI,
@@ -148,6 +150,8 @@ class PresentationAdderHelper(DbHelperBase):
                      'begin_date': begin_date,
                      'end_date': end_date,
                      })
+        if rc.notes:
+            pdoc.update({"notes": rc.notes})
         if rc.webinar:
             rc.no_expense = True
             pdoc.update({"webinar": True})

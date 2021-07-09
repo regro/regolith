@@ -567,7 +567,7 @@ Tutorials
 .. toctree::
     :maxdepth: 1
 
-    broker
+    tutorials/index
 
 Run Control
 ===========
@@ -619,3 +619,11 @@ Shell commmands for regolith
      :maxdepth: 2
 
      commands/index
+
+
+Database Maintenance
+=========
+.. toctree::
+    :maxdepth: 1
+
+    database_maintenance/index

@@ -4,7 +4,6 @@
    one manuscript.
 """
 
-
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
@@ -96,11 +95,6 @@ class MilestonesListerHelper(SoutHelperBase):
         if "groups" in self.needed_dbs:
             rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
-        try:
-            if not rc.database:
-                rc.database = rc.databases[0]["name"]
-        except:
-            pass
         colls = [
             sorted(
                 all_docs_from_collection(rc.client, collname), key=_id_key

@@ -1,6 +1,6 @@
 """Builder for CVs."""
 from copy import deepcopy
-from datetime import  date 
+from datetime import  date
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key

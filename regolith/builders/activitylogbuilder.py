@@ -33,7 +33,7 @@ class ActivitylogBuilder(LatexBuilderBase):
 
     btype = "annual-activity"
     needed_dbs = ['groups', 'people', 'grants', 'proposals', 'institutions',
-                  'projects', 'presentations', 'patents', 'citations', 
+                  'projects', 'presentations', 'patents', 'citations',
                   'proposalReviews', 'refereeReports', 'recletts', 'contacts']
 
     def construct_global_ctx(self):
@@ -120,15 +120,15 @@ class ActivitylogBuilder(LatexBuilderBase):
         # Recommendation Letters count
         ########
         recletts = self.gtx['recletts']
-        num_recletts = len([reclett["_id"] for reclett in 
-                             recletts if 
+        num_recletts = len([reclett["_id"] for reclett in
+                             recletts if
                             get_dates(reclett).get("end_date") >= begin_period])
         ########
         # Proposal review count
         ########
         proprevs = self.gtx['proprevs']
-        num_proprevs = len([proprev["_id"] for proprev in 
-                             proprevs if 
+        num_proprevs = len([proprev["_id"] for proprev in
+                             proprevs if
                             get_dates(proprev).get("end_date") >= begin_period
                             and proprev.get('status') == 'submitted'])
         ########

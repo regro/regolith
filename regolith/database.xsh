@@ -13,16 +13,7 @@ except:
 
 from regolith.chained_db import ChainDB
 from regolith.tools import dbdirname
-from regolith.fsclient import FileSystemClient
-from regolith.mongoclient import MongoClient
-
-
-CLIENTS = {
-    'mongo': MongoClient,
-    'mongodb': MongoClient,
-    'fs': FileSystemClient,
-    'filesystem': FileSystemClient,
-    }
+from regolith.client_manager import ClientManager
 
 
 def load_git_database(db, client, rc):
@@ -76,7 +67,7 @@ def load_mongo_database(db, client):
 
 def load_database(db, client, rc):
     """Loads a database"""
-    if rc.backend in ('mongo', 'mongodb'):
+    if db['backend'] in ('mongo', 'mongodb'):
         load_mongo_database(db, client)
         return
     url = db['url']
@@ -141,7 +132,7 @@ def dump_local_database(db, client, rc):
 def dump_database(db, client, rc):
     """Dumps a database"""
     # do not dump mongo db
-    if rc.backend in ('mongo', 'mongodb'):
+    if db['backend'] in ('mongo', 'mongodb'):
         return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
@@ -171,7 +162,7 @@ def open_dbs(rc, dbs=None):
     """
     if dbs is None:
         dbs = []
-    client = CLIENTS[rc.backend](rc)
+    client = ClientManager(rc.databases, rc)
     client.open()
     chained_db = {}
     for db in rc.databases:
