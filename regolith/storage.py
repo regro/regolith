@@ -81,22 +81,26 @@ def copydocs(store, path, rc):
         shutil.copy2(doc, dst)
 
 
-def push_git(store, path):
+def push_git(store, path, rc):
     """Pushes the local documents via git."""
     storedir, _ = os.path.split(path)
     cmd = ["git", "add", "."]
     subprocess.check_call(cmd, cwd=storedir)
-    cmd = ["git", "commit", "-m", "regolith auto-store commit"]
-    try:
-        subprocess.check_call(cmd, cwd=storedir)
-    except subprocess.CalledProcessError:
-        warn("Could not git commit to " + storedir, RuntimeWarning)
-        return
-    cmd = ["git", "push"]
-    try:
-        subprocess.check_call(cmd, cwd=storedir)
-    except subprocess.CalledProcessError:
-        warn("Could not git push from " + storedir, RuntimeWarning)
+    if "default_user_id" in rc:
+        cmd = ["git", "commit", "-m", f"{rc.default_user_id} regolith auto-store commit"]
+        try:
+            subprocess.check_call(cmd, cwd=storedir)
+        except subprocess.CalledProcessError:
+            warn("Could not git commit to " + storedir, RuntimeWarning)
+            return
+        cmd = ["git", "push"]
+        try:
+            subprocess.check_call(cmd, cwd=storedir)
+        except subprocess.CalledProcessError:
+            warn("Could not git push from " + storedir, RuntimeWarning)
+            return
+    else:
+        print('Please add default_user_id to user.json in .config/regolith folder')
         return
 
 
@@ -110,11 +114,11 @@ def push_hg(store, path):
     client.push()
 
 
-def push(store, path):
+def push(store, path, rc):
     """Pushes the local documents."""
     url = store["url"]
     if url.startswith("git") or url.endswith(".git"):
-        push_git(store, path)
+        push_git(store, path, rc)
     elif url.startswith("hg+"):
         push_hg(store, path)
     elif not os.path.exists(os.path.expanduser(url)):
@@ -179,7 +183,7 @@ def store_client(rc):
     path = storage_path(store, rc)
     sync(store, path)
     yield StorageClient(rc, store, path)
-    push(store, path)
+    push(store, path, rc)
 
 
 def main(rc):
