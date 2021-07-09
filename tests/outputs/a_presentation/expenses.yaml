@@ -39,7 +39,8 @@
       purpose: meals
       unsegregated_expense: 0
       segregated_expense: 0
-  notes: []
+  notes:
+    - this is a sample added presentation
   overall_purpose: give contributed_oral presentation at flat earth, Mars
   payee: sbillinge
   reimbursements:
