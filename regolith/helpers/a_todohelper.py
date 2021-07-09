@@ -34,8 +34,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("duration",
                        help="The estimated duration the task will take in minutes (integer) "
-                            "e.g., 60 would be a duration of 1 hour.",
-                       **int_kwargs
+                            "e.g., 60 would be a duration of 1 hour."
                        )
     subpi.add_argument("-d", "--deadline", action="store_true",
                        help=f"specify if the due date (above) has a hard deadline",
