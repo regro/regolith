@@ -62,6 +62,10 @@ def subparser(subpi):
                        help="Begin date of the task. Default is today.",
                        **date_kwargs
                        )
+    subpi.add_argument("--database",
+                       help="The database in which the collection will be updated. "
+                            "Defaults to the first database in regolithrc.json if not "
+                            "specified.")
     subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.",
                        **date_kwargs)
@@ -85,7 +89,8 @@ class TodoAdderHelper(DbHelperBase):
             rc.pi_id = get_pi_id(rc)
 
         rc.coll = f"{TARGET_COLL}"
-        rc.database = rc.databases[0]["name"]
+        if not rc.database:
+            rc.database = rc.databases[0]["name"]
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
         )
