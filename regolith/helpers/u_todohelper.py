@@ -114,7 +114,6 @@ class TodoUpdaterHelper(DbHelperBase):
             rc.pi_id = get_pi_id(rc)
 
         rc.coll = f"{TARGET_COLL}"
-        rc.database = rc.databases[0]["name"]
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
         )
@@ -257,7 +256,10 @@ class TodoUpdaterHelper(DbHelperBase):
                 for i in range(0, len(rc.databases)):
                     db_name = rc.databases[i]["name"]
                     person_update = rc.client.find_one(db_name, rc.coll, filterid)
-                    todolist_update = person_update.get("todos", [])
+                    if person_update:
+                        todolist_update = person_update.get("todos", [])
+                    else:
+                        continue
                     if len(todolist_update) != 0:
                         for i, todo_u in enumerate(todolist_update):
                             if rc.index == todo_u.get("running_index"):
