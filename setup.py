@@ -2,8 +2,10 @@
 # coding=utf-8
 """The regolith installer."""
 from __future__ import print_function
+from pathlib import Path
 import os
 import sys
+import platform
 
 try:
     from setuptools import setup
@@ -16,7 +18,6 @@ except ImportError:
     HAVE_SETUPTOOLS = False
 
 from regolith import __version__ as RG_VERSION
-
 
 def main():
     try:
@@ -49,12 +50,17 @@ def main():
                 "*.xsh",
             ]
         },
-        scripts=["scripts/regolith", "scripts/helper_gui"],
+        scripts=["scripts/regolith"],
         zip_safe=False,
     )
     if HAVE_SETUPTOOLS:
         skw["setup_requires"] = []
         # skw['install_requires'] = ['Jinja2', 'pymongo']
+    setup(**skw)
+
+    if 'macOS' in platform.platform():
+        sys.executable = Path('/usr/bin/env pythonw')
+    skw['scripts'] = ['scripts/helper_gui']
     setup(**skw)
 
 
