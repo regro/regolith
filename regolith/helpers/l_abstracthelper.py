@@ -7,7 +7,6 @@ from regolith.tools import (
     get_person_contact
 )
 from gooey import GooeyParser
-from warnings import warn
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
@@ -103,18 +102,15 @@ class AbstractListerHelper(SoutHelperBase):
                           and rc.loc_inst.casefold() in presentation.get('location',"")]
             filtered_inst = [presentation for presentation in presentations
                              if presentation.get('type') in SEMINAR_TYPES and
-                             rc.loc_inst.casefold() in presentation.get('institution',"").casefold()
-                             and presentation not in exceptions]
+                             rc.loc_inst.casefold() in presentation.get('institution',"").casefold()]
             filtered_loc = [presentation for presentation in presentations
-                            if rc.loc_inst.casefold() in presentation.get('location',"").casefold()
-                            and presentation not in exceptions]
+                            if rc.loc_inst.casefold() in presentation.get('location',"").casefold()]
             if exceptions:
-                warn("These presentations have %s in both 'location' and 'institution'" % (rc.loc_inst))
-            for presentation in exceptions:
-                print("---------------------------------------")
-                print(f"Title: {presentation.get('title')}")
-                print(f"location: {presentation.get('location')}")
-                print(f"institution: {presentation.get('institution')}")
+                for presentation in exceptions:
+                    raise Exception("This presentation has %s in both 'location' and 'institution'" % (rc.loc_inst),
+                                    f"Title: {presentation.get('title')}",
+                                    f"location: {presentation.get('location')}",
+                                    f"institution: {presentation.get('institution')}")
 
 
         filtered_presentations_by_args = [filtered_inst, filtered_years, filtered_title,
