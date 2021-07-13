@@ -7,6 +7,7 @@ from regolith.tools import (
     get_person_contact
 )
 from gooey import GooeyParser
+from warnings import warn
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"
@@ -77,6 +78,7 @@ class AbstractListerHelper(SoutHelperBase):
         presentations = self.gtx["presentations"]
         SEMINAR_TYPES = ['seminar', 'colloquium']
         filtered_title, filtered_authors, filtered_years, filtered_inst, filtered_loc = ([] for i in range(5))
+        exceptions = [] #instances where presentations have the same 'location' and 'institution'
 
         if (not rc.author) and (not rc.year) and (not rc.loc_inst) and (not rc.title):
             print("-------------------------------------------")
@@ -96,12 +98,24 @@ class AbstractListerHelper(SoutHelperBase):
                                                              get_dates(presentation).get("end_date",
                                                              get_dates(presentation).get("begin_date"))).year == int(rc.year)]
         if rc.loc_inst:
+            exceptions = [presentation for presentation in presentations
+                          if rc.loc_inst.casefold() in presentation.get('institution',"")
+                          and rc.loc_inst.casefold() in presentation.get('location',"")]
             filtered_inst = [presentation for presentation in presentations
                              if presentation.get('type') in SEMINAR_TYPES and
                              rc.loc_inst.casefold() in presentation.get('institution',"").casefold()
-                             and rc.loc_inst.casefold() not in presentation.get('location',"")]
+                             and presentation not in exceptions]
             filtered_loc = [presentation for presentation in presentations
-                            if rc.loc_inst.casefold() in presentation.get('location',"").casefold()]
+                            if rc.loc_inst.casefold() in presentation.get('location',"").casefold()
+                            and presentation not in exceptions]
+            if exceptions:
+                warn("These presentations have %s in both 'location' and 'institution'" % (rc.loc_inst))
+            for presentation in exceptions:
+                print("---------------------------------------")
+                print(f"Title: {presentation.get('title')}")
+                print(f"location: {presentation.get('location')}")
+                print(f"institution: {presentation.get('institution')}")
+
 
         filtered_presentations_by_args = [filtered_inst, filtered_years, filtered_title,
                                           filtered_authors, filtered_loc]
