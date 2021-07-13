@@ -2,7 +2,7 @@ from copy import deepcopy
 from collections import defaultdict
 
 from regolith.fsclient import FileSystemClient
-from regolith.mongoclient import MongoClient
+from regolith.mongoclient import MongoClient, load_mongo_col
 
 
 CLIENTS = {
@@ -99,9 +99,13 @@ class ClientManager:
 
     def all_documents(self, collname, copy=True):
         """Returns an iteratable over all documents in a collection."""
-        if copy:
-            return deepcopy(self.chained_db.get(collname, {})).values()
-        return self.chained_db.get(collname, {}).values()
+        if isinstance(self.chained_db[collname], dict):
+            if copy:
+                return deepcopy(self.chained_db.get(collname, {})).values()
+            return self.chained_db.get(collname, {}).values()
+        else:
+            # assume we've got a mongo collection
+            return load_mongo_col(self.chained_db[collname])
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""

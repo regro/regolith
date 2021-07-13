@@ -174,11 +174,14 @@ def open_dbs(rc, dbs=None):
         for base, coll in client.dbs[db['name']].items():
             if base not in chained_db:
                 chained_db[base] = {}
-            for k, v in coll.items():
-                if k in chained_db[base]:
-                    chained_db[base][k].maps.append(v)
-                else:
-                    chained_db[base][k] = ChainDB(v)
+            if isinstance(coll, dict):
+                for k, v in coll.items():
+                    if k in chained_db[base]:
+                        chained_db[base][k].maps.append(v)
+                    else:
+                        chained_db[base][k] = ChainDB(v)
+            else:
+                chained_db[base] = coll
     client.chained_db = chained_db
     return client
 
