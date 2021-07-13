@@ -118,7 +118,7 @@ class ProposalAdderHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "a_proposal"
-    needed_dbs = [f'{TARGET_COLL}', 'people', 'groups']
+    needed_colls = [f'{TARGET_COLL}', 'people', 'groups']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

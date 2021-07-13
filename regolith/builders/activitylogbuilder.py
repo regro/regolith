@@ -32,7 +32,7 @@ class ActivitylogBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
     btype = "annual-activity"
-    needed_dbs = ['groups', 'people', 'grants', 'proposals', 'institutions',
+    needed_colls = ['groups', 'people', 'grants', 'proposals', 'institutions',
                   'projects', 'presentations', 'patents', 'citations',
                   'proposalReviews', 'refereeReports', 'recletts', 'contacts']
 

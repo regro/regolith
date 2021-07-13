@@ -26,7 +26,7 @@ class InternalHtmlBuilder(BuilderBase):
     """Build HTML files for website"""
 
     btype = "internalhtml"
-    needed_dbs = ["people", "meetings"]
+    needed_colls = ["people", "meetings"]
 
     def __init__(self, rc):
         super().__init__(rc)
