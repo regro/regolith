@@ -1570,7 +1570,7 @@ EXEMPLARS = {
              'objective': 'develop a detailed plan with dates',
              'audience': ['lead', 'pi', 'group_members'],
              'status': 'proposed',
-             'type': 'pr',
+             'type': 'mergedpr',
              }
         ],
         "name": "First Projectum",
