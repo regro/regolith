@@ -98,10 +98,10 @@ class AbstractListerHelper(SoutHelperBase):
         if rc.loc_inst:
             filtered_inst = [presentation for presentation in presentations
                              if presentation.get('type') in SEMINAR_TYPES and
-                             rc.loc_inst.casefold() in presentation.get('institution',"").casefold()]
+                             rc.loc_inst.casefold() in presentation.get('institution',"").casefold()
+                             and rc.loc_inst.casefold() not in presentation.get('location',"")]
             filtered_loc = [presentation for presentation in presentations
-                            if rc.loc_inst.casefold() in presentation.get('location', 'institution').casefold()
-                            and rc.loc_inst.casefold() not in presentation.get('institution').casefold()]
+                            if rc.loc_inst.casefold() in presentation.get('location',"").casefold()]
 
         filtered_presentations_by_args = [filtered_inst, filtered_years, filtered_title,
                                           filtered_authors, filtered_loc]
