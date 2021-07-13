@@ -643,6 +643,8 @@ EXEMPLARS = {
         "journal_club": {
             "doi": "10.1107/S2053273319005606",
             "presenter": "sbillinge",
+            "link": "https://link/to/my/talk.ppt",
+            "title": "what the paper was about and more"
         },
         "lead": "sbillinge",
         "minutes": [
@@ -2935,8 +2937,13 @@ SCHEMAS = {
                                  "string describing the presenter, e.g., their full name.",
                   "type": "string",
                   "required": True
-                 }
+                 },
+                 "title": {
+                  "description": "The title of the talk.",
+                  "type": "string",
+                  "required": False
                 }
+            }
         },
         "lead": {
             "description": "person who will be leading the meeting of the current week",
