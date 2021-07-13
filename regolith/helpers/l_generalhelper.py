@@ -45,16 +45,16 @@ class GeneralListerHelper(SoutHelperBase):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        needed_cols = [rc.coll]
-        if "groups" in needed_cols:
+        needed_colls = [rc.coll]
+        if "groups" in needed_colls:
             rc.pi_id = get_pi_id(rc)
         colls = [
             sorted(
                 all_docs_from_collection(rc.client, collname), key=_id_key
             )
-            for collname in needed_cols
+            for collname in needed_colls
         ]
-        for db, coll in zip(needed_cols, colls):
+        for db, coll in zip(needed_colls, colls):
             gtx[db] = coll
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float

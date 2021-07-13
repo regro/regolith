@@ -11,7 +11,7 @@ class PostdocadBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
 
     btype = "postdocads"
-    needed_cols = ['postdocads']
+    needed_colls = ['postdocads']
 
 
     def construct_global_ctx(self):

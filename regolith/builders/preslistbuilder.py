@@ -37,7 +37,7 @@ class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""
 
     btype = "preslist"
-    needed_cols = ['groups', 'institutions', 'people', 'grants',
+    needed_colls = ['groups', 'institutions', 'people', 'grants',
                   'presentations', 'contacts']
 
 

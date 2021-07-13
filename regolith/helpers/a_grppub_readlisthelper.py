@@ -51,7 +51,7 @@ def subparser(subpi):
 class GrpPubReadListAdderHelper(DbHelperBase):
     """Build a helper"""
     btype = "a_grppub_readlist"
-    needed_cols = ['citations', "reading_lists"]
+    needed_colls = ['citations', "reading_lists"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""

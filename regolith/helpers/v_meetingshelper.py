@@ -27,14 +27,14 @@ class MeetingsValidatorHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_cols = [f'{TARGET_COLL}', 'institutions']
+    needed_colls = [f'{TARGET_COLL}', 'institutions']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        if "groups" in self.needed_cols:
+        if "groups" in self.needed_colls:
             rc.pi_id = get_pi_id(rc)
         rc.coll = f"{TARGET_COLL}"
         try:
@@ -46,9 +46,9 @@ class MeetingsValidatorHelper(SoutHelperBase):
             sorted(
                 all_docs_from_collection(rc.client, collname), key=_id_key
             )
-            for collname in self.needed_cols
+            for collname in self.needed_colls
         ]
-        for db, coll in zip(self.needed_cols, colls):
+        for db, coll in zip(self.needed_colls, colls):
             gtx[db] = coll
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float

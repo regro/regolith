@@ -54,7 +54,7 @@ def subparser(subpi):
 
 class ManuRevAdderHelper(DbHelperBase):
     btype = "a_manurev"
-    needed_cols = ['refereeReports']
+    needed_colls = ['refereeReports']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

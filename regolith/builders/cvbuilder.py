@@ -24,7 +24,7 @@ class CVBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
     btype = "cv"
-    needed_cols = ['institutions', 'people', 'grants', 'citations', 'projects',
+    needed_colls = ['institutions', 'people', 'grants', 'citations', 'projects',
                   'proposals', 'presentations']
 
     def construct_global_ctx(self):

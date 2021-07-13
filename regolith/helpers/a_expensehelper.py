@@ -211,7 +211,7 @@ def subparser(subpi):
 
 class ExpenseAdderHelper(DbHelperBase):
     btype = "a_expense"
-    needed_cols = [f'{TARGET_COLL}', 'people', 'groups']
+    needed_colls = [f'{TARGET_COLL}', 'people', 'groups']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

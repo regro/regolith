@@ -22,7 +22,7 @@ def latex_safe(s):
 
 class GradeReportBuilder(LatexBuilderBase):
     btype = "grades"
-    needed_cols = ['grades', 'courses', 'assignments']
+    needed_colls = ['grades', 'courses', 'assignments']
 
 
     def construct_global_ctx(self):

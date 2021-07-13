@@ -368,7 +368,7 @@ def find_coeditors(person, rc):
 class RecentCollaboratorsBuilder(BuilderBase):
     """Build recent collaborators from database entries"""
     btype = "recent-collabs"
-    needed_cols = ['citations', 'people', 'contacts', 'institutions']
+    needed_colls = ['citations', 'people', 'contacts', 'institutions']
 
     def __init__(self, rc):
         """Initiate the class instance."""
