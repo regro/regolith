@@ -73,7 +73,7 @@ class ProjectumAdderHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "a_projectum"
-    needed_dbs = [f'{TARGET_COLL}', 'groups', 'people']
+    needed_cols = [f'{TARGET_COLL}', 'groups', 'people']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

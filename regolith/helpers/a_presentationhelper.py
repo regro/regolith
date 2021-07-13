@@ -91,7 +91,7 @@ class PresentationAdderHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "a_presentation"
-    needed_dbs = [f'{TARGET_COLL}', 'groups', 'people', 'expenses']
+    needed_cols = [f'{TARGET_COLL}', 'groups', 'people', 'expenses']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

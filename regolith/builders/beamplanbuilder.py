@@ -23,7 +23,7 @@ class BeamPlanBuilder(LatexBuilderBase):
         Render latex template.
     """
     btype = "beamplan"
-    needed_dbs = ['beamplan', "beamtime"]
+    needed_cols = ['beamplan', "beamtime"]
 
     def construct_global_ctx(self):
         """Constructs the global context."""

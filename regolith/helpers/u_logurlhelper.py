@@ -31,7 +31,7 @@ class LogUrlUpdaterHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "u_logurl"
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_cols = [f'{TARGET_COLL}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

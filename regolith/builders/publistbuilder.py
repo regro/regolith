@@ -19,7 +19,7 @@ LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
 class PubListBuilder(LatexBuilderBase):
     btype = "publist"
-    needed_dbs = ['citations', 'people']
+    needed_cols = ['citations', 'people']
 
     def construct_global_ctx(self):
         super().construct_global_ctx()

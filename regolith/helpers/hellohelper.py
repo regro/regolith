@@ -16,7 +16,7 @@ def subparser(subpi):
 class HelloHelper(SoutHelperBase):
     """Build a helper"""
     btype = "hello"
-    needed_dbs = ['test']
+    needed_cols = ['test']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

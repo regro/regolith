@@ -31,7 +31,7 @@ class AppraisalBuilder(LatexBuilderBase):
     """Build CV from database entries"""
 
     btype = "annual-activity"
-    needed_dbs = ['groups', 'people', 'grants', 'proposals', 'institutions',
+    needed_cols = ['groups', 'people', 'grants', 'proposals', 'institutions',
                   'projects', 'presentations', 'patents', 'citations']
 
     def construct_global_ctx(self):

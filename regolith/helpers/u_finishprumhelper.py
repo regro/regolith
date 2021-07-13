@@ -33,7 +33,7 @@ class FinishprumUpdaterHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "f_prum"
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_cols = [f'{TARGET_COLL}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
