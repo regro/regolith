@@ -21,6 +21,8 @@ FACILITIES_TYPES = ["teaching", "research", "shared", "other", "teaching_wish",
 GRANT_STATI = ["pending", "declined", "accepted", "in-prep"]
 MILESTONE_TYPES = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
+NOT_SEMINAR_TYPES = ["award", "contributed_oral", "invited", "keynote",
+                     "plenary", "poster", "tutorial", "other"]
 POSITION_STATI = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
                    "postdoc", "visitor-supported", "visitor-unsupported"]
 PRESENTATION_TYPES = ["award", "colloquium", "contributed_oral", "invited", "keynote",
@@ -38,6 +40,7 @@ PUBLICITY_TYPES = ["online", "article"]
 REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
                 "submitted", "cancelled"]
 REVIEW_RECOMMENDATIONS = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
+SEMINAR_TYPES = ["seminar", "colloquium"]
 SERVICE_TYPES = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
 # for status of kickoff, deliverable, milestones, and the projectum
@@ -3693,6 +3696,7 @@ SCHEMAS = {
                            "applicable.",
             "required": False,
             "type": "string",
+            "diff_str": "location"
         },
         "meeting_name": {
             "description": "full name of the conference or "
@@ -3703,12 +3707,11 @@ SCHEMAS = {
             "required": False,
             "type": "string",
         },
-        # TODO: conditional validation.  If type=colloq or seminar, required is
-        # institution and department, otherwise location
         "location": {
             "description": "city and {state or country} of meeting",
             "required": False,
             "type": "string",
+            "diff_str": "institution"
         },
         "notes": {
             "description": "any reminder or memory aid about anything",
@@ -3737,9 +3740,10 @@ SCHEMAS = {
         },
         "type": {
             "description": "type of presentation",
-            "eallowed": PRESENTATION_TYPES,
             "required": True,
             "type": "string",
+            "oneof": [{"allowed": SEMINAR_TYPES, 'dependencies': ["institution", "department"]},
+                      {"allowed": NOT_SEMINAR_TYPES, 'dependencies': "location"}]
         },
         "webinar": {
             "description": "true if a webinar. Default to False",
@@ -4709,6 +4713,16 @@ class NoDescriptionValidator(Validator):
                 "consider changing this entry to conform or add this to the "
                 "``eallowed`` field in the schema.".format(value, field)
             )
+
+    def _validate_diff_str(self, other, field, value):
+        """Test the values of two different fields to make sure they're not equal
+        The rule's arguments are validated against this schema:
+        {'type': 'string'}
+        """
+        if other not in self.document:
+            return True
+        if value == self.document[other]:
+            self._error(field, f"'{field}' and '{other}' must be different")
 
 
 def validate(coll, record, schemas):
