@@ -4,7 +4,6 @@ from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.builders.cpbuilder import is_pending, CPBuilder
-from regolith.fsclient import _id_key
 from regolith.dates import month_to_int, is_current, get_dates
 from regolith.sorters import position_key, doc_date_key
 from regolith.stylers import sentencecase, month_fullnames
@@ -24,7 +23,10 @@ from regolith.tools import (
     filter_patents,
     filter_licenses,
     merge_collections_superior,
-    get_id_from_name, merge_collections_all)
+    get_id_from_name,
+    merge_collections_all,
+    _id_key
+)
 
 
 class AppraisalBuilder(LatexBuilderBase):

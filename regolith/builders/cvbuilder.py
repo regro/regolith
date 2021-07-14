@@ -3,7 +3,6 @@ from copy import deepcopy
 from datetime import  date
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
@@ -17,6 +16,7 @@ from regolith.tools import (
     dereference_institution,
     merge_collections_superior,
     filter_presentations, remove_duplicate_docs,
+    _id_key
 )
 
 

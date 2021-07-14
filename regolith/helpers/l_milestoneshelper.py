@@ -6,12 +6,12 @@
 
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     key_value_pair_filter,
-    collection_str
+    collection_str,
+    _id_key
 )
 from regolith.schemas import PROJECTUM_STATI, PROJECTUM_PAUSED_STATI, \
     PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI, PROJECTUM_ACTIVE_STATI

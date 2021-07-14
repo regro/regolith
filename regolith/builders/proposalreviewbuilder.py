@@ -2,11 +2,12 @@
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
-    fuzzy_retrieval, dereference_institution,
+    fuzzy_retrieval,
+    dereference_institution,
+    _id_key
 )
 
 

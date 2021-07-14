@@ -3,9 +3,9 @@ import datetime as dt
 import dateutil.parser as date_parser
 
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
+    _id_key
 )
 from gooey import GooeyParser
 

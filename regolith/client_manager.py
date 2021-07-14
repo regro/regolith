@@ -105,7 +105,8 @@ class ClientManager:
             return self.chained_db.get(collname, {}).values()
         else:
             # assume we've got a mongo collection
-            return load_mongo_col(self.chained_db[collname])
+            mongo_col = load_mongo_col(self.chained_db[collname]).values()
+            return mongo_col
 
     def insert_one(self, dbname, collname, doc):
         """Inserts one document to a database/collection."""

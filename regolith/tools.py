@@ -42,6 +42,10 @@ ON_LINUX = platform.system() == "Linux"
 ON_POSIX = os.name == "posix"
 
 
+def _id_key(doc):
+    return doc["_id"]
+
+
 def dbdirname(db, rc):
     """Gets the database dir name."""
     if db.get("local", False) is False:

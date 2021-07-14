@@ -9,8 +9,7 @@ import dateutil.parser as date_parser
 from gooey import GooeyParser
 
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from regolith.tools import all_docs_from_collection, fragment_retrieval, _id_key
 from regolith.dates import get_due_date
 from regolith.schemas import PROJECTUM_ACTIVE_STATI, \
     MILESTONE_TYPES, PROJECTUM_STATI

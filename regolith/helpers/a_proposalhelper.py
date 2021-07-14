@@ -6,10 +6,10 @@ from dateutil.relativedelta import relativedelta
 from math import floor
 
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
+    _id_key
 )
 from gooey import GooeyParser
 

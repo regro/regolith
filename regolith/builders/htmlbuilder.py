@@ -4,7 +4,6 @@ import shutil
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
-from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
     all_docs_from_collection,
@@ -13,6 +12,7 @@ from regolith.tools import (
     make_bibtex_file,
     document_by_value,
     dereference_institution,
+    _id_key
 )
 
 

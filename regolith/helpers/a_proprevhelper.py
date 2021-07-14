@@ -6,9 +6,9 @@ import nameparser
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.dates import month_to_str_int
-from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
+    _id_key
 )
 from gooey import GooeyParser
 
@@ -59,10 +59,14 @@ class PropRevAdderHelper(DbHelperBase):
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         rc.coll = "proposalReviews"
-        gtx["proposalReviews"] = sorted(
-            all_docs_from_collection(rc.client, "proposalReviews"), key=_id_key
-        )
-        gtx["all_docs_from_collection"] = all_docs_from_collection
+        if isinstance(rc.client.chained_db[rc.coll], dict):
+            gtx[rc.coll] = sorted(
+                all_docs_from_collection(rc.client, rc.coll), key=_id_key
+            )
+            gtx["all_docs_from_collection"] = all_docs_from_collection
+        else:
+            # assume it is a mongo collection
+            gtx[rc.coll] = rc.client.chained_db[rc.coll]
         gtx["float"] = float
         gtx["str"] = str
         gtx["zip"] = zip
@@ -78,7 +82,11 @@ class PropRevAdderHelper(DbHelperBase):
             name.first.casefold().strip("."))
 
         coll = self.gtx[rc.coll]
-        pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
+        if isinstance(coll, list):
+            pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
+        else:
+            # assume mongo collection
+            pdocl = list(coll.find({"_id": key}))
         if len(pdocl) > 0:
             sys.exit("This entry appears to already exist in the collection")
         else:

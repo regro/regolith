@@ -4,11 +4,11 @@ import dateutil.parser as date_parser
 
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
 from regolith.schemas import PRESENTATION_TYPES, PRESENTATION_STATI
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
+    _id_key
 )
 from gooey import GooeyParser
 

@@ -172,16 +172,19 @@ def open_dbs(rc, dbs=None):
             db['blacklist'] = ['.travis.yml', '.travis.yaml']
         load_database(db, client, rc)
         for base, coll in client.dbs[db['name']].items():
-            if base not in chained_db:
-                chained_db[base] = {}
             if isinstance(coll, dict):
+                if base not in chained_db:
+                    chained_db[base] = {}
                 for k, v in coll.items():
                     if k in chained_db[base]:
                         chained_db[base][k].maps.append(v)
                     else:
                         chained_db[base][k] = ChainDB(v)
             else:
-                chained_db[base] = coll
+                if base not in chained_db:
+                    chained_db[base] = coll
+                else:
+                    raise NotImplementedError("Mongo has an overlapping collection name. Only pure FS allows this.")
     client.chained_db = chained_db
     return client
 

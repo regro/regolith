@@ -2,8 +2,7 @@
 Helper for updating/adding  to the projecta collection.
 """
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from regolith.tools import all_docs_from_collection, fragment_retrieval, _id_key
 import uuid
 import datetime as dt
 from gooey import GooeyParser

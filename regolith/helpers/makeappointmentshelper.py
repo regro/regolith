@@ -13,13 +13,14 @@ from dateutil import parser as date_parser
 from datetime import timedelta, date
 
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     is_fully_appointed,
     collect_appts,
-    grant_burn, group_member_employment_start_end,
+    grant_burn,
+    group_member_employment_start_end,
+    _id_key
 )
 from regolith.dates import (
     get_dates,

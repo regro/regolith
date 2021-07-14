@@ -7,14 +7,14 @@ from dateutil.relativedelta import relativedelta
 import math
 
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
 from regolith.schemas import (TODO_STATI)
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     document_by_value,
     print_task,
-    key_value_pair_filter
+    key_value_pair_filter,
+    _id_key
 )
 from gooey import GooeyParser
 

@@ -53,10 +53,6 @@ def _rec_re_type(i):
     return base
 
 
-def _id_key(doc):
-    return doc["_id"]
-
-
 def load_json(filename):
     """Loads a JSON file and returns a dict of its documents."""
     docs = {}
