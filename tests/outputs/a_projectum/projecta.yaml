@@ -129,7 +129,7 @@ sb_firstprojectum:
         - pi
         - group_members
       status: proposed
-      type: pr
+      type: mergedpr
   name: First Projectum
   other_urls:
     - https://docs.google.com/document/d/analysis

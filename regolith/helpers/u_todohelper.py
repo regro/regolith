@@ -103,14 +103,14 @@ class TodoUpdaterHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "u_todo"
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_colls = [f'{TARGET_COLL}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        if "groups" in self.needed_dbs:
+        if "groups" in self.needed_colls:
             rc.pi_id = get_pi_id(rc)
 
         rc.coll = f"{TARGET_COLL}"

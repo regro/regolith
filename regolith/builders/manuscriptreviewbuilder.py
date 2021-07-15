@@ -10,7 +10,7 @@ from regolith.tools import (
 class ManRevBuilder(LatexBuilderBase):
     """Build a manuscript review from database entries"""
     btype = "review-man"
-    needed_dbs = ['refereeReports']
+    needed_colls = ['refereeReports']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

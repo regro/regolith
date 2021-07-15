@@ -35,7 +35,6 @@ def subparser(subpi):
     subpi.add_argument("name", help="A short but unique name for the proposal",
                        )
     subpi.add_argument("amount", help="value of award",
-                       **amount_kwargs
                        )
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
@@ -118,7 +117,7 @@ class ProposalAdderHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "a_proposal"
-    needed_dbs = [f'{TARGET_COLL}', 'people', 'groups']
+    needed_colls = [f'{TARGET_COLL}', 'people', 'groups']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

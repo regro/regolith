@@ -371,7 +371,11 @@ class MongoClient:
         except OperationFailure:
             print('WARNING: Database name provided in regolithrc.json not found in mongodb')
         try:
-            for colname in mongodb.list_collection_names():
+            for colname in [coll for coll in mongodb.list_collection_names()
+                            if coll not in db["blacklist"]
+                               and len(db["whitelist"]) == 0
+                               or coll in db["whitelist"]
+                            ]:
                 col = mongodb[colname]
                 dbs[db['name']][colname] = load_mongo_col(col)
         except OperationFailure as fail:

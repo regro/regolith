@@ -26,7 +26,7 @@ class InternalHtmlBuilder(BuilderBase):
     """Build HTML files for website"""
 
     btype = "internalhtml"
-    needed_dbs = ["people", "meetings"]
+    needed_colls = ["people", "meetings"]
 
     def __init__(self, rc):
         super().__init__(rc)
@@ -113,9 +113,16 @@ class InternalHtmlBuilder(BuilderBase):
                         "WARNING: {} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
                     prsn = {"name": prsn_id }
                 mtg["journal_club"]["presenter"] = prsn["name"]
-                if mtg["journal_club"].get("doi", "tbd").casefold() != 'tbd':
-                    ref, _ = get_formatted_crossref_reference(mtg["journal_club"].get("doi"))
-                    mtg["journal_club"]["doi"] = ref
+                mtg_jc_doi = mtg["journal_club"].get("doi", "tbd")
+                mtg_jc_doi_casefold = mtg_jc_doi.casefold()
+                if mtg_jc_doi_casefold == 'na':
+                    mtg["journal_club"]["doi"] = 'N/A'
+                elif mtg_jc_doi_casefold != 'tbd':
+                    if not mtg_jc_doi_casefold.startswith('arxiv'):
+                        ref, _ = get_formatted_crossref_reference(mtg["journal_club"].get("doi"))
+                        mtg["journal_club"]["doi"] = ref
+                    else:
+                        ref = mtg_jc_doi
                     jclub_cumulative.append((ref, get_dates(mtg).get("date","no date")))
 
             if mtg.get("presentation"):
