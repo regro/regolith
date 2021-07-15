@@ -91,7 +91,7 @@ sb_firstprojectum:
     - ascopatz
   kickoff:
     date: '2020-05-05'
-    due_date: 2020-05-06
+    due_date: '2020-05-06'
     name: Kick off meeting
     objective: introduce project to the lead
     audience:
@@ -104,7 +104,7 @@ sb_firstprojectum:
   lead: ascopatz
   log_url: https://docs.google.com/document/d/1pQMFpuI
   milestones:
-    - due_date: 2020-05-20
+    - due_date: '2020-05-20'
       name: Project lead presentation
       notes:
         - do background reading
@@ -123,7 +123,7 @@ sb_firstprojectum:
             db
           slides_url: url to slides describing the development, e.g. Google slides
             url
-    - due_date: 2020-05-27
+    - due_date: '2020-05-27'
       name: planning meeting
       objective: develop a detailed plan with dates
       audience:
