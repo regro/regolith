@@ -35,7 +35,6 @@ def subparser(subpi):
     subpi.add_argument("name", help="A short but unique name for the proposal",
                        )
     subpi.add_argument("amount", help="value of award",
-                       **amount_kwargs
                        )
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
