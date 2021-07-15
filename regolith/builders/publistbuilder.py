@@ -27,6 +27,8 @@ class PubListBuilder(LatexBuilderBase):
         rc = self.rc
         if not rc.people:
             rc.people = ['all']
+        if isinstance(rc.people, str):
+            rc.people = [rc.people]
 
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
@@ -62,91 +64,95 @@ class PubListBuilder(LatexBuilderBase):
                 grants = [grants]
             if len(grants) > 2:
                 text_grants = ", and ".join([",".join(grants[:-1]), grants[-1]])
+                pl = "s"
             elif len(grants) == 2:
                 text_grants = "and ".join([grants[0], grants[1]])
+                pl = "s"
             elif len(grants) == 1:
                 text_grants = grants[0]
+                pl = ""
             cat_grants, all_grants = "", ""
             for g in grants:
                 cat_grants = cat_grants + "_" + g
-            filestub = filestub + "".format(cat_grants)
-            qualifiers = qualifiers + " from grants {}".format(text_grants)
+            filestub = filestub + "{}".format(cat_grants)
+            qualifiers = qualifiers + " from Grant{} {}".format(pl, text_grants)
 
         for p in self.gtx["people"]:
-            if self.rc.people[0] != 'all':
-                if p.get("_id") != self.rc.people[0]:
-                    continue
-            outfile = p["_id"] + filestub
-            p['qualifiers'] = qualifiers
-            names = frozenset(p.get("aka", []) + [p["name"]])
-            citations = list(self.gtx["citations"])
-            grants = self.rc.grants
+            if p.get("_id") in self.rc.people or self.rc.people == ['all']:
+                # if self.rc.people[0] != 'all':
+                #     if p.get("_id") != self.rc.people[0]:
+                #         continue
+                outfile = p["_id"] + filestub
+                p['qualifiers'] = qualifiers
+                names = frozenset(p.get("aka", []) + [p["name"]])
+                citations = list(self.gtx["citations"])
+                grants = self.rc.grants
 
-            pubs_nobold = filter_publications(citations, names, reverse=True, bold=False,
-                                              ackno=False, since=from_date,
-                                              before=to_date, grants=grants)
-            pubs_ackno = filter_publications(citations, names, reverse=True,
-                                             bold=False, ackno=True,
-                                             since=from_date,
-                                             before=to_date, grants=grants)
-            pubs = filter_publications(citations, names, reverse=True, ackno=False,
-                                       bold=True, since=from_date,
-                                       before=to_date, grants=grants)
+                pubs_nobold = filter_publications(citations, names, reverse=True, bold=False,
+                                                  ackno=False, since=from_date,
+                                                  before=to_date, grants=grants)
+                pubs_ackno = filter_publications(citations, names, reverse=True,
+                                                 bold=False, ackno=True,
+                                                 since=from_date,
+                                                 before=to_date, grants=grants)
+                pubs = filter_publications(citations, names, reverse=True, ackno=False,
+                                           bold=True, since=from_date,
+                                           before=to_date, grants=grants)
 
-            bibfile = self.make_bibtex_file(
-                pubs, pid=p["_id"], person_dir=self.bldir
-            )
-            bibfile_nobold = self.make_bibtex_file(
-                pubs_nobold, pid=f"{p['_id']}_nobold", person_dir=self.bldir
-            )
-            bibfile_ackno = self.make_bibtex_file(
-                pubs_ackno, pid=f"{p['_id']}_ackno", person_dir=self.bldir
-            )
-            if not p.get('email'):
-                p['email'] = ""
-            emp = p.get("employment", [{'organization': ""}])
-            emp.sort(key=ene_date_key, reverse=True)
-            self.render(
-                "publist.tex",
-                outfile + ".tex",
-                p=p,
-                title=p.get("name", ""),
-                pubs=pubs,
-                names=names,
-                bibfile=bibfile,
-                employment=emp,
-            )
-            self.render(
-                "publist_nobold.tex",
-                outfile + "_nobold.tex",
-                p=p,
-                title=p.get("name", ""),
-                pubs=pubs_nobold,
-                names=names,
-                bibfile=bibfile_nobold,
-                employment=emp,
-            )
-            self.render(
-                "publist_ackno.tex",
-                outfile + "_ackno.tex",
-                p=p,
-                title=p.get("name", ""),
-                pubs=pubs_ackno,
-                names=names,
-                bibfile=bibfile_ackno,
-                employment=emp,
-            )
-            self.pdf(p["_id"])
-            self.render(
-                "publist_pandoc_friendly.tex",
-                outfile + "_pandoc.tex",
-                p=p,
-                title=p.get("name", ""),
-                pubs=pubs_nobold,
-                names=names,
-                bibfile=bibfile_nobold,
-                employment=emp,
-            )
+                bibfile = self.make_bibtex_file(
+                    pubs, pid=p["_id"], person_dir=self.bldir
+                )
+                bibfile_nobold = self.make_bibtex_file(
+                    pubs_nobold, pid=f"{p['_id']}_nobold", person_dir=self.bldir
+                )
+                bibfile_ackno = self.make_bibtex_file(
+                    pubs_ackno, pid=f"{p['_id']}_ackno", person_dir=self.bldir
+                )
+                if not p.get('email'):
+                    p['email'] = ""
+                emp = p.get("employment", [{'organization': ""}])
+                emp.sort(key=ene_date_key, reverse=True)
+                self.render(
+                    "publist.tex",
+                    outfile + ".tex",
+                    p=p,
+                    title=p.get("name", ""),
+                    pubs=pubs,
+                    names=names,
+                    bibfile=bibfile,
+                    employment=emp,
+                )
+                self.render(
+                    "publist_nobold.tex",
+                    outfile + "_nobold.tex",
+                    p=p,
+                    title=p.get("name", ""),
+                    pubs=pubs_nobold,
+                    names=names,
+                    bibfile=bibfile_nobold,
+                    employment=emp,
+                )
+                self.render(
+                    "publist_ackno.tex",
+                    outfile + "_ackno.tex",
+                    p=p,
+                    title=p.get("name", ""),
+                    pubs=pubs_ackno,
+                    names=names,
+                    bibfile=bibfile_ackno,
+                    employment=emp,
+                )
+                self.pdf(p["_id"])
+                self.render(
+                    "publist_pandoc_friendly.tex",
+                    outfile + "_pandoc.tex",
+                    p=p,
+                    title=p.get("name", ""),
+                    pubs=pubs_nobold,
+                    names=names,
+                    bibfile=bibfile_nobold,
+                    employment=emp,
+                )
 
     def filter_pubs_by_grant(self, pubs, grants):
         if isinstance(grants, str):
