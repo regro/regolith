@@ -269,7 +269,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     pdoc.update({'milestones': new_mil})
                 else:
                     pdoc.update({identifier: doc})
-            pdoc[identifier].pop('identifier', None)
+            for i in pdoc[identifier]:
+                i.pop('identifier', None)
             rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         for i in all_milestones:
             i.pop('identifier', None)
