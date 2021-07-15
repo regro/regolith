@@ -203,7 +203,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 milestones.append(mil)
                 pdoc = {'milestones': milestones}
             if idx > 1:
-                doc = all_milestones[idx - 2]
+                doc = deepcopy(all_milestones[idx - 2])
                 identifier = doc['identifier']
                 if not doc.get(
                         'type') and not rc.type and identifier == 'milestones':
@@ -246,7 +246,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     if rc.objective:
                         doc.update({'objective': rc.objective})
                     new_mil = []
-                    for i, j in zip(index_list, all_milestones):
+                    new_all = deepcopy(all_milestones)
+                    for i, j in zip(index_list, new_all):
                         if j['identifier'] == 'milestones' and i != idx:
                             new_mil.append(j)
                     new_mil.append(doc)
