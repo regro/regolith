@@ -2,7 +2,7 @@ sudo: False
 
 language: python
 python:
-  - "3.8"
+  - "3.9"
 
 env:
   global:
@@ -10,7 +10,7 @@ env:
 
 matrix:
   include:
-    - python: 3.8
+    - python: 3.9
 
 install:
   # Install conda
@@ -22,7 +22,7 @@ install:
   - conda update conda
 
   # Install dependencies
-  - conda create -n test --file requirements/run.txt python=3.8
+  - conda create -n test --file requirements/run.txt python=3.9
   - source activate test
   - python setup.py install
 
