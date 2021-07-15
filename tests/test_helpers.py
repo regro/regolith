@@ -263,9 +263,9 @@ helper_map = [
      "Anthony Scopatz\n\n"
      "Abstract: We made the case for local structure\n"
      ),
-    (["helper", "u_milestone", "sb_firstprojectum", "--index", "5",
+    (["helper", "u_milestone", "sb_firstprojectum", "--index", "4,5",
       "--status", "converged", "--due_date", "2020-06-01", "--notes", "do this",
-      "do that"],
+      "do that", "--type", "meeting"],
      "sb_firstprojectum has been updated in projecta\n"
      ),
     (["helper", "u_milestone", "sb"],
@@ -278,8 +278,8 @@ helper_map = [
      "1. new milestone\n"
      "2. Kick off meeting    due date: 2020-05-06    status: finished\n"
      "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
-     "4. planning meeting    due date: 2020-05-27    status: proposed\n"
-     "5. deliverable    due date: 2020-06-01    status: converged\n"
+     "4. deliverable    due date: 2020-06-01    status: converged\n"
+     "5. planning meeting    due date: 2020-06-01    status: converged\n"
      ),
     (["helper", "u_milestone", "sb_firstprojectum", "--verbose"],
      "Please choose from one of the following to update/add:\n"
@@ -296,14 +296,18 @@ helper_map = [
      "     notes:\n"
      "       - do background reading\n"
      "       - understand math\n"
-     "4. planning meeting    due date: 2020-05-27    status: proposed\n"
-     "     audience: ['lead', 'pi', 'group_members']\n"
-     "     objective: develop a detailed plan with dates\n"
-     "     type: mergedpr\n"
-     "5. deliverable    due date: 2020-06-01    status: converged\n"
+     "4. deliverable    due date: 2020-06-01    status: converged\n"
      "     audience: ['beginning grad in chemistry']\n"
+     "     type: meeting\n"
      "     notes:\n"
      "       - deliverable note\n"
+     "       - do this\n"
+     "       - do that\n"
+     "5. planning meeting    due date: 2020-06-01    status: converged\n"
+     "     audience: ['lead', 'pi', 'group_members']\n"
+     "     objective: develop a detailed plan with dates\n"
+     "     type: meeting\n"
+     "     notes:\n"
      "       - do this\n"
      "       - do that\n"
      ),
@@ -311,8 +315,8 @@ helper_map = [
      "Please choose from one of the following to update/add:\n"
      "1. new milestone\n"
      "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
-     "4. planning meeting    due date: 2020-05-27    status: proposed\n"
-     "5. deliverable    due date: 2020-06-01    status: converged\n"
+     "4. deliverable    due date: 2020-06-01    status: converged\n"
+     "5. planning meeting    due date: 2020-06-01    status: converged\n"
      ),
     (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
