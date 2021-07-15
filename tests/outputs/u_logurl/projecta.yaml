@@ -84,6 +84,7 @@ sb_firstprojectum:
       - do this
       - do that
     status: converged
+    type: meeting
   description: My first projectum
   end_date: '2020-06-05'
   grants: SymPy-1.1
@@ -104,7 +105,7 @@ sb_firstprojectum:
   lead: ascopatz
   log_url: https://docs.google.com/document/d/1pQMFpuI
   milestones:
-    - due_date: '2020-05-20'
+    - due_date: 2020-05-20
       name: Project lead presentation
       notes:
         - do background reading
@@ -123,15 +124,18 @@ sb_firstprojectum:
             db
           slides_url: url to slides describing the development, e.g. Google slides
             url
-    - due_date: '2020-05-27'
+    - due_date: 2020-06-01
       name: planning meeting
       objective: develop a detailed plan with dates
       audience:
         - lead
         - pi
         - group_members
-      status: proposed
-      type: pr
+      status: converged
+      type: meeting
+      notes:
+        - do this
+        - do that
   name: First Projectum
   other_urls:
     - https://docs.google.com/document/d/analysis

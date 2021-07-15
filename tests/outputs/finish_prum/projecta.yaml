@@ -101,7 +101,7 @@
         - pi
         - group_members
       status: finished
-      type: pr
+      type: meeting
   name: First Projectum
   other_urls:
     - https://docs.google.com/document/d/analysis
