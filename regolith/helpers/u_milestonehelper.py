@@ -176,7 +176,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
             idx_parsed = [int(i) for i in rc.index.split(',')]
         else:
             idx_parsed = [int(rc.index)]
-        print(idx_parsed)
         for idx in idx_parsed:
             pdoc = {}
             if idx == 1:
