@@ -115,12 +115,12 @@ def build_db_check(rc):
     dbs = set()
     for t in rc.build_targets:
         bldr = BUILDERS[t]
-        needed_dbs = getattr(bldr, 'needed_dbs', None)
+        needed_colls = getattr(bldr, 'needed_colls', None)
         # If the requested builder doesn't state DB deps then it requires
         # all dbs!
-        if not needed_dbs:
+        if not needed_colls:
             return None
-        dbs.update(needed_dbs)
+        dbs.update(needed_colls)
     return dbs
 
 
@@ -128,12 +128,12 @@ def helper_db_check(rc):
     """Checks which DBs a builder needs"""
     dbs = set()
     bldr = HELPERS[rc.helper_target][0]
-    needed_dbs = getattr(bldr, 'needed_dbs', None)
+    needed_colls = getattr(bldr, 'needed_colls', None)
     # If the requested builder doesn't state DB deps then it requires
     # all dbs!
-    if not needed_dbs:
+    if not needed_colls:
         return None
-    dbs.update(needed_dbs)
+    dbs.update(needed_colls)
     return dbs
 
 

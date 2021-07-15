@@ -76,7 +76,7 @@ class InstitutionsUpdaterHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "u_institution"
-    needed_dbs = [f'{TARGET_COLL}']
+    needed_colls = [f'{TARGET_COLL}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
