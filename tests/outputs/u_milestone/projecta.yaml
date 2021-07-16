@@ -59,6 +59,8 @@ ly_newprojectum:
       status: proposed
       type: meeting
   name: New projectum
+  notes:
+    - new note
   pi_id: scopatz
   status: started
 sb_firstprojectum:

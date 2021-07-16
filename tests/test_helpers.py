@@ -18,7 +18,7 @@ helper_map = [
      "test_the_lister has been added/updated in reading_lists\n"),
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
-      "--group_members", "ascopatz", "--grants", "SymPy-1.1", "--due_date", "2021-01-01"],
+      "--group_members", "ascopatz", "--grants", "SymPy-1.1", "--due_date", "2021-01-01", '--notes', 'new note'],
      "ly_newprojectum has been added in projecta\n"),
     (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
       "--begin_date", "2020-09-15", "--end_date", "2022-02-14", "--duration", "16.89",

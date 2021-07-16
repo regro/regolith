@@ -26,6 +26,9 @@ def subparser(subpi):
                        default=None)
     subpi.add_argument("lead", help="id of the group lead or tbd",
                        default=None)
+    subpi.add_argument("-n", "--notes", nargs="+",
+                       help="Anything to note", default=[]
+                       )
     subpi.add_argument("-d", "--description",
                        help="Slightly longer description of the projectum"
                        )
@@ -118,6 +121,7 @@ class ProjectumAdderHelper(DbHelperBase):
             'name': rc.name,
             'pi_id': rc.pi_id,
             'lead': rc.lead,
+            'notes': rc.notes
         })
         if rc.lead == "tbd":
             pdoc.update({

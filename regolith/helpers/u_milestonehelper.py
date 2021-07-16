@@ -23,10 +23,8 @@ PROJECTUM_STATI = PROJECTUM_STATI
 
 def subparser(subpi):
     date_kwargs = {}
-    notes_kwargs = {}
     if isinstance(subpi, GooeyParser):
         date_kwargs['widget'] = 'DateChooser'
-        notes_kwargs['widget'] = 'Textarea'
 
     subpi.add_argument("projectum_id", help="The id of the projectum.  If you just "
                                             "specify this the program will return a "
@@ -70,8 +68,7 @@ def subparser(subpi):
                        )
     subpi.add_argument("--notes",
                        nargs='+',
-                       help="Any notes you want to add to the milestone.",
-                       **notes_kwargs
+                       help="Any notes you want to add to the milestone."
                        )
     subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
