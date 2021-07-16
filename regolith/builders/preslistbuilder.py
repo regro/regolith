@@ -11,12 +11,12 @@ editing this file but may appear as command-line options later.  It will also
 get institution and department information from institutions.yml if they are
 there.
 
-The author list is built from information in people.yml where possible.  The
-does a fuzzy search for the person in people.yml but if the person is absent
-from people, it will still build but using the string name given in
-the presentations.yml.
-
-The presentations are output in a ./_build directory."""
+The author list is built from information in people.yml where possible and
+contacts.yml as a fallback.  The author list is built by first performing a
+fuzzy search for the person in people.yml, followed by a fuzzy search through
+contacts.yml (if the person was not found in people.yml), but if the person is
+absent both database files, it will still build but using the string name given
+in the presentations.yml. The presentations are output in a ./_build directory."""
 
 from copy import deepcopy
 
