@@ -1,16 +1,9 @@
 sudo: False
 
-language: python
-python:
-  - "3.8"
 
 env:
   global:
     - secure: "Ix5OqT8HIbGUSx3ZTW/RJxnP6byxnR6t7poGp4iiNRUQekGdPogf8Os8irMZZPSAWaAkya/Q83kqAoWhS8r0am9ij6JyfzSTn6G14afdSu6CyggUrmD5QGeYp2V/SValJFrkwxSWQiGov0MRMbeG8HMIPOaOwjs1j4soVWEE8X/I1ha/d3oNRDB9OaO+5k/DAxJCGWnmHcZVibFN9opjP0/U2Rio6mk6sGCioAmBLXvpyxr1upmbKeS7K+vLwniED6cbRVc6UmdHkFZp0mBW6F3dN830mmh7A9u0wEC1gYpHpZ0daD3Ky8xQhDHX5J6ibH5lnKeCbtI1AkuiFBpUuVhpcbT7tr6jNwPq9Ywbv/fAwv7g3AxWx2gmZsgkVZIEy3bBdQSJhRO10NT5QRs2YSCws+iPTDJQxX+V1FZ4M/aH5zyWO2EdZ5tnsvF2NzgJkt08gl6fiMm5DYwXOIolSNomW+EzrzhYeVWaNw+dfRQlT3PwWXkDcH0Sb9uut6qc71Px+GJM5CbCfNy7nIcKfGPNi8Qaj/4WVmvRROGS+bkjGBpk+Qe+pe7+aV8ExqTGjpQEnHlSt82ypoSS5NTKWL5nSXZOHKauaMQmbWb0FDShzpJdMLA63jSoqWu+YEBfoiHPqWBK5bvV+u4GHmVw1SBTjZd6Ismo6sH/3zTa5Qc="
-
-matrix:
-  include:
-    - python: 3.8
 
 install:
   # Install conda
@@ -22,7 +15,7 @@ install:
   - conda update conda
 
   # Install dependencies
-  - conda create -n test --file requirements/run.txt python=3.8
+  - conda create -n test --file requirements/run.txt python=3
   - source activate test
   - python setup.py install
 
