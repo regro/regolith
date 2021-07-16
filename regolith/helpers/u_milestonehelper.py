@@ -176,6 +176,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             idx_parsed = [int(i) for i in rc.index.split(',')]
         else:
             idx_parsed = [int(rc.index)]
+        new_mil = []
         for idx in idx_parsed:
             pdoc = {}
             if idx == 1:
@@ -245,19 +246,19 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         doc.update({'name': rc.name})
                     if rc.objective:
                         doc.update({'objective': rc.objective})
-                    new_mil = []
-                    new_all = deepcopy(all_milestones)
-                    for i, j in zip(index_list, new_all):
-                        if j['identifier'] == 'milestones' and i != idx:
-                            new_mil.append(j)
                     new_mil.append(doc)
-                    for mile in new_mil:
-                        del mile['identifier']
-                    pdoc.update({'milestones': new_mil})
                 else:
                     del doc['identifier']
                     pdoc.update({identifier: doc})
-            rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
+        new_all = deepcopy(all_milestones)
+        for i, j in zip(index_list, new_all):
+            if j['identifier'] == 'milestones' and i not in idx_parsed:
+                new_mil.append(j)
+        for mile in new_mil:
+            del mile['identifier']
+        new_mil.sort(key=lambda x: x['due_date'], reverse=False)
+        pdoc.update({'milestones': new_mil})
+        rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         print("{} has been updated in projecta".format(key))
 
         return
