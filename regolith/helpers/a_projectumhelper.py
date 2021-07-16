@@ -19,18 +19,15 @@ TARGET_COLL = "projecta"
 
 def subparser(subpi):
     date_kwargs = {}
-    notes_kwargs = {}
     if isinstance(subpi, GooeyParser):
         date_kwargs['widget'] = 'DateChooser'
-        notes_kwargs['widget'] = 'Textarea'
 
     subpi.add_argument("name", help="A short but unique name for the projectum",
                        default=None)
     subpi.add_argument("lead", help="id of the group lead or tbd",
                        default=None)
     subpi.add_argument("-n", "--notes", nargs="+",
-                       help="Anything to note", default=[],
-                       **notes_kwargs
+                       help="Anything to note", default=[]
                        )
     subpi.add_argument("-d", "--description",
                        help="Slightly longer description of the projectum"
