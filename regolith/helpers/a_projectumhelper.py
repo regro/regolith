@@ -124,6 +124,7 @@ class ProjectumAdderHelper(DbHelperBase):
             'name': rc.name,
             'pi_id': rc.pi_id,
             'lead': rc.lead,
+            'notes': rc.notes
         })
         if rc.lead == "tbd":
             pdoc.update({
@@ -159,10 +160,6 @@ class ProjectumAdderHelper(DbHelperBase):
         else:
             pdoc.update({
                 'collaborators': [],
-            })
-        if rc.notes:
-            pdoc.update({
-                'notes': rc.notes
             })
 
         pdoc.update({"_id": key})
