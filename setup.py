@@ -58,8 +58,19 @@ def main():
         # skw['install_requires'] = ['Jinja2', 'pymongo']
     setup(**skw)
 
+
     if 'macOS' in platform.platform():
-        sys.executable = Path('/usr/bin/env pythonw')
+    #The following lines find the python.app script, parses the script to find the path of its executable, and sets
+    #the sys.executable to that executable. The shebang line created will be that of the new sys.executable
+        import subprocess
+        py_app_path = subprocess.check_output('which python.app', shell=True)
+        py_app_path = py_app_path.decode('utf-8')[:-1]
+        py_app_contents = subprocess.check_output('cat ' + py_app_path, shell=True)
+        py_app_contents = py_app_contents.decode('utf-8')
+        new_sys_executable = py_app_contents.splitlines()[-1]
+        new_sys_executable = new_sys_executable.split(' ')[0]
+        sys.executable = new_sys_executable
+
     skw['scripts'] = ['scripts/helper_gui']
     setup(**skw)
 
