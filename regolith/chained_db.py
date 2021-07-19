@@ -8,8 +8,11 @@ import itertools
 
 from collections import ChainMap
 from collections.abc import MutableMapping
+from itertools import chain
 
-# from pymongo.collection import Collection as MongoCollection
+from pymongo.collection import Collection as MongoCollection
+
+from regolith.mongoclient import load_mongo_col
 
 
 class ChainDBSingleton(object):
@@ -26,11 +29,54 @@ class ChainDBSingleton(object):
 Singleton = ChainDBSingleton()
 
 
-class ChainDB(ChainMap):
-    """ A ChainMap who's ``_getitem__`` returns either a ChainDB or
-    the result"""
+class ChainCollection:
 
-    # _mongo_maps = {}
+    mongo_maps = []
+
+    def __init__(self, *maps):
+        '''Initialize a ChainCollection by setting *maps* to the given mappings.
+        If no mappings are provided, a single empty dictionary is used.
+        '''
+        map_list = list(maps)
+
+        if all([isinstance(map, MongoCollection) for map in map_list]):
+            self.mongo_maps = map_list
+        elif len(map_list)==0:
+            self.mongo_maps = [{}]
+
+    def __iter__(self):
+        # load all docs from each mongo map, create list of dicts, chainmap them together, get iter of the chainmap
+        return iter(ChainMap(*reversed([load_mongo_col(collection) for collection in self.mongo_maps])))
+
+    def __getitem__(self, doc_id):
+        chained_collection = ChainMap(*reversed([collection.find_one({"_id": doc_id}) for collection in self.mongo_maps]))
+        return chained_collection[doc_id]
+
+    def __setitem__(self, doc_id, document):
+        for db_coll in self.mongo_maps:
+            db_coll.find_one_and_update({"_id": doc_id}, {"$set": document})
+
+    def __getattr__(self, method):
+        if hasattr(MongoCollection, method):
+            results = []
+            for db_coll in self.mongo_maps:
+                results.append(getattr(db_coll, method))
+
+            # This is a closure that forces the evaluation of the mongo method on every collection w/ the same name.
+            def multi_call(args):
+                mongo_results = []
+                for result in results:
+                    mongo_results.extend(result(args))
+                return mongo_results
+
+            return multi_call
+        else:
+            raise AttributeError
+
+
+class ChainDocument(ChainMap):
+    """ A ChainMap who's ``_getitem__`` returns either a ChainDocument or
+    the result"""
 
     def __getitem__(self, key):
         res = None
@@ -38,11 +84,11 @@ class ChainDB(ChainMap):
         # Try to get all the data from all the mappings
         for mapping in self.maps:
             results.append(mapping.get(key, Singleton))
-        # if all the results are mapping create a ChainDB
+        # if all the results are mapping create a ChainDocument
         if all([isinstance(result, MutableMapping) for result in results]):
             for result in results:
                 if res is None:
-                    res = ChainDB(result)
+                    res = ChainDocument(result)
                 else:
                     res.maps.append(result)
         elif all([isinstance(result, list) for result in results]):
@@ -63,12 +109,6 @@ class ChainDB(ChainMap):
         return res
 
     def __setitem__(self, key, value):
-        # if isinstance(value, MongoCollection):
-        #     if key not in self._mongo_maps:
-        #         self._mongo_maps[key] = [value]
-        #     else:
-        #         self._mongo_maps[key].append[value]
-        #     return
         if key not in self:
             super().__setitem__(key, value)
         else:
@@ -77,17 +117,10 @@ class ChainDB(ChainMap):
                 if key in mapping:
                     mapping[key] = value
 
-    # def mongo(self, collection, mongo_method, *mongo_args, **mongo_kwargs):
-    #     results = []
-    #     for db_coll in self._mongo_maps[collection]:
-    #         coll_method = getattr(db_coll, mongo_method)
-    #         result = coll_method(db_coll, *mongo_args, **mongo_kwargs)
-    #         results.extend(result)
-    #     return results
 
 
 def _convert_to_dict(cm):
-    if isinstance(cm, (ChainMap, ChainDB)):
+    if isinstance(cm, (ChainMap, ChainDocument)):
         r = {}
         for k, v in cm.items():
             r[k] = _convert_to_dict(v)

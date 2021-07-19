@@ -592,7 +592,7 @@ helper_map = [
 ]
 
 db_srcs = [
-    # "mongo",
+    "mongo",
     "fs"
 ]
 

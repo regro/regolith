@@ -99,13 +99,13 @@ class ClientManager:
 
     def all_documents(self, collname, copy=True):
         """Returns an iteratable over all documents in a collection."""
-        if isinstance(self.chained_db[collname], dict):
+        if isinstance(self.chained_db.get(collname, {}), dict):
             if copy:
                 return deepcopy(self.chained_db.get(collname, {})).values()
             return self.chained_db.get(collname, {}).values()
         else:
             # assume we've got a mongo collection
-            mongo_col = load_mongo_col(self.chained_db[collname]).values()
+            mongo_col = self.chained_db.get(collname, {}).values()
             return mongo_col
 
     def insert_one(self, dbname, collname, doc):

@@ -11,7 +11,7 @@ try:
 except:
     hglib = None
 
-from regolith.chained_db import ChainDB
+from regolith.chained_db import ChainDocument
 from regolith.tools import dbdirname
 from regolith.client_manager import ClientManager
 
@@ -179,12 +179,13 @@ def open_dbs(rc, dbs=None):
                     if k in chained_db[base]:
                         chained_db[base][k].maps.append(v)
                     else:
-                        chained_db[base][k] = ChainDB(v)
+                        chained_db[base][k] = ChainDocument(v)
             else:
                 if base not in chained_db:
-                    chained_db[base] = coll
+                    chained_db[base] = ChainCollection(coll)
                 else:
-                    raise NotImplementedError("Mongo has an overlapping collection name. Only pure FS allows this.")
+                    chained_db[base] = coll
+                    #raise NotImplementedError("Mongo has an overlapping collection name. Only pure FS allows this.")
     client.chained_db = chained_db
     return client
 

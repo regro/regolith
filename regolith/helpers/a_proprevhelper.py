@@ -86,7 +86,7 @@ class PropRevAdderHelper(DbHelperBase):
             pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         else:
             # assume mongo collection
-            pdocl = list(coll.find({"_id": key}))
+            pdocl = coll.find({"_id": key})
         if len(pdocl) > 0:
             sys.exit("This entry appears to already exist in the collection")
         else:

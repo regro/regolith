@@ -208,7 +208,7 @@ v0.3.0
 
 * ``zip`` and ``state`` only apply to ``USA`` institutions
 * added group item in people schema
-* ``KeyError`` for ``ChainDB`` now prints the offending key
+* ``KeyError`` for ``ChainDocument`` now prints the offending key
 None
 
 * preslist now includes end-dates when meeting is longer than one day
