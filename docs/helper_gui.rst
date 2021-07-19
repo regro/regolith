@@ -12,7 +12,7 @@ As with regular regolith, `helper_gui`  must be run from a directory containing 
 Layout
 ======
 
-.. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/layout.png
+.. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/layout.png
     :alt: Layout image
     :width: 600
     :align: center
@@ -55,7 +55,7 @@ l_members
 
 l_members will list group members from the people collection.   l_members doesn’t have any required fields, and if no optional arguments are selected, it will list all the group members in the database regardless of status.
 
-.. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/l_members.png
+.. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/l_members.png
     :alt: l_members image
     :width: 600
     :align: center
@@ -76,7 +76,7 @@ a_projectum
 
 This helper will add a new projectum (i.e., mini-project) to the projecta collection.
 
-.. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/a_projectum.png
+.. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/a_projectum.png
     :alt: a_projectum image
     :width: 600
     :align: center
@@ -96,7 +96,7 @@ u_logurl
 
 u_logurl can be used to update the log url for any projectum in the projecta collection.
 
-.. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/u_logurl.png
+.. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/u_logurl.png
     :alt: u_logurl image
     :width: 600
     :align: center
@@ -115,38 +115,38 @@ This u_milestone helper exemplifies an important pattern in a number of the help
 
 #. Type a fragment of the projectum id that you remember
 
-    .. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/workflow1.png
+    .. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/workflow1.png
         :alt: workflow1 image
         :width: 400
 #. Hit start
 #. The helper will return a list of all projecta that contain that fragment
 
-    .. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/workflow3.png
+    .. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/workflow3.png
         :alt: workflow3 image
         :width: 400
 #. Note the full id of in your target projectum
 #. Click edit to get back to the front page
 #. Now knowing the full id of your target projectum, type it in the projectum_id field
 
-    .. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/workflow6.png
+    .. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/workflow6.png
         :alt: workflow6 image
         :width: 400
 #. Click start again
 #. The helper will return a numbered list of all milestones in for that projectum
 
-    .. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/workflow8.png
+    .. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/workflow8.png
         :alt: workflow8 image
         :width: 400
 #. Without changing the entry in the id field, add the number in the list of your target milestone
 #. Add any edits you would like to make to the milestone via the other fields
 
-    .. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/workflow10.png
+    .. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/workflow10.png
         :alt: workflow10 image
         :width: 400
 #. Click start again
 #. The correct entry will get updated and a message returned that verifies success
 
-    .. image:: https://github.com/regro/regolith/tree/master/docs/helper_gui_images/workflow12.png
+    .. image:: https://github.com/regro/regolith/blob/master/docs/helper_gui_images/workflow12.png
         :alt: workflow12 image
         :width: 400
 Note that unless you specify the right database in the *database* field the update will be inserted in the default database which may, or may not, contain the rest of the projectum information.  This can be confusing until you get the hang of it.
