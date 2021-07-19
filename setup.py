@@ -59,7 +59,7 @@ def main():
     setup(**skw)
 
 
-    if platform.system() == 'Darwin':
+    if platform.system().lower() == 'darwin':
     #The following lines find the python.app script, parses the script to find the path of its executable, and sets
     #the sys.executable to that executable. The shebang line created will be that of the new sys.executable
         import subprocess
