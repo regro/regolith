@@ -18,6 +18,7 @@ except ImportError:
     HAVE_SETUPTOOLS = False
 
 from regolith import __version__ as RG_VERSION
+PW_AFFECTED_OSX_SYSTEMS = ["darwin"]
 
 def main():
     try:
@@ -59,7 +60,7 @@ def main():
     setup(**skw)
 
 
-    if platform.system().lower() == 'darwin':
+    if platform.system().lower() in PW_AFFECTED_OSX_SYSTEMS:
     #The following lines find the python.app script, parses the script to find the path of its executable, and sets
     #the sys.executable to that executable. The shebang line created will be that of the new sys.executable
         import subprocess
