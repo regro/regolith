@@ -50,7 +50,7 @@ class ChainCollection:
 
     def __getitem__(self, doc_id):
         chained_collection = ChainMap(*reversed([collection.find_one({"_id": doc_id}) for collection in self.mongo_maps]))
-        return chained_collection[doc_id]
+        return chained_collection
 
     def __setitem__(self, doc_id, document):
         for db_coll in self.mongo_maps:
@@ -72,6 +72,15 @@ class ChainCollection:
             return multi_call
         else:
             raise AttributeError
+
+    def keys(self):
+        return ChainMap(*reversed(self.mongo_maps)).keys()
+
+    def values(self):
+        return ChainMap(*reversed([load_mongo_col(collection) for collection in self.mongo_maps])).values()
+
+    def items(self):
+        return zip(self.keys(), self.items())
 
 
 class ChainDocument(ChainMap):
