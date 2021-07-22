@@ -8,7 +8,7 @@ import itertools
 
 from collections import ChainMap
 from collections.abc import MutableMapping
-from itertools import chain
+from copy import deepcopy
 
 from pymongo.collection import Collection as MongoCollection
 
@@ -56,7 +56,7 @@ class ChainCollection:
         elif len(map_list) == 1 and isinstance(map_list[0], dict):
             # There is only ever one collection for the filesystem,
             # as it is chained at the document level, not collection
-            self.fs_map = map_list[0]
+            self.fs_map = deepcopy(map_list[0])
 
     def __iter__(self):
         # load all docs from each mongo map, create list of dicts, chainmap them together, get iter of the chainmap
@@ -71,7 +71,7 @@ class ChainCollection:
 
     def __setitem__(self, doc_id, document):
         if isinstance(document, ChainDocument):
-            self.fs_map[doc_id] = document
+            self.fs_map[doc_id] = deepcopy(document)
         elif self.mongo_maps:
             # reached if mongo maps is not empty and the document is not chained
             for db_coll in self.mongo_maps:
