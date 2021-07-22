@@ -59,7 +59,7 @@ class PropRevAdderHelper(DbHelperBase):
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         rc.coll = "proposalReviews"
-        if isinstance(rc.client.chained_db[rc.coll], dict):
+        if rc.client.chained_db[rc.coll].fs_map != {}:
             gtx[rc.coll] = sorted(
                 all_docs_from_collection(rc.client, rc.coll), key=_id_key
             )

@@ -2,6 +2,7 @@
 import os
 from contextlib import contextmanager
 from warnings import warn
+from copy import deepcopy
 
 from xonsh.lib import subprocess
 from xonsh.lib.os import indir
@@ -179,7 +180,7 @@ def open_dbs(rc, colls=None):
                     if k in chained_db[base].fs_map:
                         chained_db[base].fs_map[k].maps.append(v)
                     else:
-                        chained_db[base].fs_map[k] = ChainDocument(v)
+                        chained_db[base].fs_map[k] = deepcopy(ChainDocument(v))
             else:
                 if base not in chained_db:
                     chained_db[base] = ChainCollection(coll)
