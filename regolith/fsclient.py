@@ -11,7 +11,7 @@ import ruamel.yaml
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
-from regolith.tools import dbpathname
+from regolith.tools import dbpathname, _id_key
 
 import signal
 import logging

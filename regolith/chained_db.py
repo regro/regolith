@@ -109,7 +109,7 @@ class ChainCollection:
         return ChainMap(*reversed(full_coll)).values()
 
     def items(self):
-        return zip(self.keys(), self.items())
+        return zip(self.keys(), self.values())
 
 
 class ChainDocument(ChainMap):
