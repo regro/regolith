@@ -82,12 +82,13 @@ class ClientManager:
 
     def dump_database(self, db):
         to_add = []
+        # Iterate through the clients just in case databases on different backends have same name
         for client in self.clients:
             if isinstance(client, CLIENTS[db["backend"]]):
-                temp_add = client.dump_database(db)
-                if temp_add:
-                    to_add.extend(temp_add)
-        # need to take into consideration multiple databases
+                if db["name"] in client.keys():
+                    temp_add = client.dump_database(db)
+                    if temp_add:
+                        to_add.extend(temp_add)
         return to_add
 
     def keys(self):
