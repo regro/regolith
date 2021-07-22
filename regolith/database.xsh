@@ -174,7 +174,7 @@ def open_dbs(rc, dbs=None):
         for base, coll in client.dbs[db['name']].items():
             if isinstance(coll, dict):
                 if base not in chained_db:
-                    chained_db[base] = {}
+                    chained_db[base] = ChainCollection()
                 for k, v in coll.items():
                     if k in chained_db[base]:
                         chained_db[base][k].maps.append(v)
@@ -183,7 +183,7 @@ def open_dbs(rc, dbs=None):
             else:
                 if base not in chained_db:
                     chained_db[base] = ChainCollection(coll)
-                elif :
+                else:
                     chained_db[base].mongo_maps.append(coll)
     client.chained_db = chained_db
     return client

@@ -31,30 +31,41 @@ Singleton = ChainDBSingleton()
 
 class ChainCollection:
 
-    mongo_maps = []
-
     def __init__(self, *maps):
         '''Initialize a ChainCollection by setting *maps* to the given mappings.
         If no mappings are provided, a single empty dictionary is used.
         '''
+
+        self.mongo_maps = []
+        self.fs_map = {}
+
         map_list = list(maps)
 
-        if all([isinstance(map, MongoCollection) for map in map_list]):
+        if map_list and all([isinstance(map, MongoCollection) for map in map_list]):
             self.mongo_maps = map_list
-        elif len(map_list)==0:
-            self.mongo_maps = [{}]
+        elif len(map_list) == 1 and isinstance(map_list[0], dict):
+            # There is only ever one collection for the filesystem,
+            # as it is chained at the document level, not collection
+            self.fs_map = map_list[0]
 
     def __iter__(self):
         # load all docs from each mongo map, create list of dicts, chainmap them together, get iter of the chainmap
-        return iter(ChainMap(*reversed([load_mongo_col(collection) for collection in self.mongo_maps])))
+        mongo_chain = ChainMap(*reversed([load_mongo_col(collection) for collection in self.mongo_maps]))
+        fs_chain = self.fs_map
+        return iter(ChainMap(*[mongo_chain, fs_chain]))
 
     def __getitem__(self, doc_id):
-        chained_collection = ChainMap(*reversed([collection.find_one({"_id": doc_id}) for collection in self.mongo_maps]))
-        return chained_collection
+        chained_mongo_docs = ChainMap(*reversed([collection.find_one({"_id": doc_id}) for collection in self.mongo_maps]))
+        chained_fs_docs = self.fs_map.get(doc_id, {})
+        return ChainMap(*[chained_mongo_docs, chained_fs_docs])
 
     def __setitem__(self, doc_id, document):
-        for db_coll in self.mongo_maps:
-            db_coll.find_one_and_update({"_id": doc_id}, {"$set": document})
+        if isinstance(document, ChainDocument):
+            self.fs_map[doc_id] = document
+        elif self.mongo_maps:
+            # reached if mongo maps is not empty and the document is not chained
+            for db_coll in self.mongo_maps:
+                db_coll.find_one_and_update({"_id": doc_id}, {"$set": document})
 
     def __getattr__(self, method):
         if hasattr(MongoCollection, method):
@@ -74,10 +85,18 @@ class ChainCollection:
             raise AttributeError
 
     def keys(self):
-        return ChainMap(*reversed(self.mongo_maps)).keys()
+        if self.fs_map:
+            key_list = self.mongo_maps + [self.fs_map]
+        else:
+            key_list = self.mongo_maps
+        return ChainMap(*reversed(key_list)).keys()
 
     def values(self):
-        return ChainMap(*reversed([load_mongo_col(collection) for collection in self.mongo_maps])).values()
+        if self.fs_map:
+            full_coll = [load_mongo_col(collection) for collection in self.mongo_maps] + [self.fs_map]
+        else:
+            full_coll = [load_mongo_col(collection) for collection in self.mongo_maps]
+        return ChainMap(*reversed(full_coll)).values()
 
     def items(self):
         return zip(self.keys(), self.items())
