@@ -81,9 +81,14 @@ class ClientManager:
                 client.export_database(db)
 
     def dump_database(self, db):
+        to_add = []
         for client in self.clients:
             if isinstance(client, CLIENTS[db["backend"]]):
-                client.dump_database(db)
+                temp_add = client.dump_database(db)
+                if temp_add:
+                    to_add.extend(temp_add)
+        # need to take into consideration multiple databases
+        return to_add
 
     def keys(self):
         keys = []
