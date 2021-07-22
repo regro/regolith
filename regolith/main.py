@@ -342,12 +342,12 @@ def main(args=None):
     if rc.cmd in DISCONNECTED_COMMANDS:
         DISCONNECTED_COMMANDS[rc.cmd](rc)
     else:
-        dbs = None
+        colls = None
         if rc.cmd == 'build':
-            dbs = commands.build_db_check(rc)
+            colls = commands.build_db_check(rc)
         elif rc.cmd == 'helper':
-            dbs = commands.helper_db_check(rc)
-        with connect(rc, dbs=dbs) as rc.client:
+            colls = commands.helper_db_check(rc)
+        with connect(rc, colls=colls) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)
 
 
