@@ -30,10 +30,20 @@ Singleton = ChainDBSingleton()
 
 
 class ChainCollection:
+    """
+    The chained database has been used as a reference up until the transition to remote mongo, rather than an edit-able
+    object. When using only remote mongo databases, the chained database will become a fully functional chained mongo
+    collection rather than a reference of what all of the databases look like mashed together. Checking to see if the
+    object's fs_map dictionary is empty is a good indicator of whether or not mongo methods can/should be used directly.
+
+    e.g.
+        if rc.client.chained_db[collection_name].fs_map == {}:
+            rc.client.chained_db[collection_name].find_one_and_update({"keyName": "Value"},{"$set": {UpdateDict}})
+    """
 
     def __init__(self, *maps):
-        '''Initialize a ChainCollection by setting *maps* to the given mappings.
-        If no mappings are provided, a single empty dictionary is used.
+        '''
+        Initialize a ChainCollection by setting *maps* to the given mappings.
         '''
 
         self.mongo_maps = []
