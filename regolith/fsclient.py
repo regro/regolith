@@ -181,6 +181,9 @@ class FileSystemClient:
     def load_database(self, db):
         """Loads a database."""
         dbpath = dbpathname(db, self.rc)
+        if db["name"] in self.dbs:
+            print("WARNING: Having two databases with the same name will result in certain changes only happening to"
+                  "the latter.")
         self.load_json(db, dbpath)
         self.load_yaml(db, dbpath)
 
