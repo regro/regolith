@@ -5,13 +5,13 @@ from nameparser import HumanName
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.dates import is_current, get_dates
-from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
     fuzzy_retrieval,
     merge_collections_all,
+    _id_key
 )
 
 

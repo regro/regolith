@@ -4,6 +4,7 @@ import copy
 from regolith.database import dump_database, open_dbs
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.storage import store_client, push
+from regolith.mongoclient import load_mongo_col
 
 
 def load_db(rc_file="regolithrc.json"):
@@ -23,7 +24,7 @@ class Broker:
     >>> # Load the db
     >>> db = Broker.from_rc()
     >>> # Get a docment from the broker
-    >>> ergs =db['group']['ergs']
+    >>> ergs =db['test_db']['group']['ergs']
     >>> # Store a file
     >>> db.add_file(ergs, 'myfile', '/path/to/file/hello.txt')
     >>> # Get a file from the store
@@ -36,6 +37,10 @@ class Broker:
         with store_client(rc) as sclient:
             self.store = sclient
         rc.client = open_dbs(rc)
+        for name, dbs in rc.client.dbs.items():
+            for coll in dbs:
+                if not isinstance(dbs[coll], dict):
+                    dbs[coll] = load_mongo_col(dbs[coll])
         self._dbs = rc.client.dbs
         self.md = rc.client.chained_db
         self.db_client = rc.client
@@ -88,4 +93,4 @@ class Broker:
             return None
 
     def __getitem__(self, item):
-        return self.md[item]
+        return self._dbs[item]

@@ -5,11 +5,11 @@ import datetime as dt
 import dateutil.parser as date_parser
 
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
 from regolith.schemas import EXPENSES_STATI, EXPENSES_TYPES
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
+    _id_key
 )
 from gooey import GooeyParser
 

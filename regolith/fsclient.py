@@ -11,7 +11,7 @@ import ruamel.yaml
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
-from regolith.tools import dbpathname
+from regolith.tools import dbpathname, _id_key
 
 import signal
 import logging
@@ -51,10 +51,6 @@ def _rec_re_type(i):
     else:
         base = i
     return base
-
-
-def _id_key(doc):
-    return doc["_id"]
 
 
 def load_json(filename):
@@ -185,6 +181,9 @@ class FileSystemClient:
     def load_database(self, db):
         """Loads a database."""
         dbpath = dbpathname(db, self.rc)
+        if db["name"] in self.dbs:
+            print("WARNING: Having two databases with the same name will result in certain changes only happening to"
+                  "the latter.")
         self.load_json(db, dbpath)
         self.load_yaml(db, dbpath)
 

@@ -62,9 +62,9 @@ def prep_figure():
         f.write("hello world")
     # load the db and register the file
     db = load_db()
-    print(db.get_file_path(db["groups"]["ergs"], "hello"))
-    if not db.get_file_path(db["groups"]["ergs"], "hello"):
-        db.add_file(db["groups"]["ergs"], "hello", "fig/hello.txt")
+    print(db.get_file_path(db["test"]["groups"]["ergs"], "hello"))
+    if not db.get_file_path(db["test"]["groups"]["ergs"], "hello"):
+        db.add_file(db["test"]["groups"]["ergs"], "hello", "fig/hello.txt")
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")

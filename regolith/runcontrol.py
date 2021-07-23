@@ -294,7 +294,7 @@ def connect_db(rc, colls=None):
     dbs:
        The databases in the form of a runcontrol client
     '''
-    with connect(rc, dbs=colls) as rc.client:
+    with connect(rc, colls=colls) as rc.client:
         dbs = rc.client.dbs
         chained_db = rc.client.chained_db
     return chained_db, dbs

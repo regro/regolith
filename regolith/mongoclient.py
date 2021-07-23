@@ -377,7 +377,7 @@ class MongoClient:
                                or coll in db["whitelist"]
                             ]:
                 col = mongodb[colname]
-                dbs[db['name']][colname] = load_mongo_col(col)
+                dbs[db['name']][colname] = col
         except OperationFailure as fail:
             print("Mongo's Error Message:" + str(fail) + "\n")
             print("The user does not have permission to access " + db['name'] + "\n\n")

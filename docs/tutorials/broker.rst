@@ -46,7 +46,7 @@ directory. Do not paste them into the _build folder, but rather the base directo
 
     plt.plot(range(10), range(10))
     plt.savefig('hello_world.png')
-    doc = db['projects']['regro']
+    doc = db['test_db']['projects']['regro']
     db.add_file(doc, 'hw_file', 'hello_world.png')
 
 This will:
@@ -68,7 +68,7 @@ Importantly, this will only retrieve the path to the file.
     from regolith.broker import Broker
 
     db = Broker.from_rc()
-    doc = db['projects']['regro']
+    doc = db['test_db']['projects']['regro']
     path = db.get_file_path(doc, 'hw_file')
 
 This can be used inside tex documents via the ``FigureBuilder`` class/CLI. In order to do so,

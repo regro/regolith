@@ -2,6 +2,7 @@
 import os
 from contextlib import contextmanager
 from warnings import warn
+from copy import deepcopy
 
 from xonsh.lib import subprocess
 from xonsh.lib.os import indir
@@ -11,7 +12,7 @@ try:
 except:
     hglib = None
 
-from regolith.chained_db import ChainDB
+from regolith.chained_db import ChainDocument, ChainCollection
 from regolith.tools import dbdirname
 from regolith.client_manager import ClientManager
 
@@ -145,14 +146,14 @@ def dump_database(db, client, rc):
         raise ValueError('Do not know how to dump this kind of database')
 
 
-def open_dbs(rc, dbs=None):
+def open_dbs(rc, colls=None):
     """Open the databases
 
     Parameters
     ----------
     rc : RunControl instance
         The rc which has links to the dbs
-    dbs: set or None, optional
+    colls: set or None, optional
         The databases to load. If None load all, defaults to None
 
     Returns
@@ -160,33 +161,39 @@ def open_dbs(rc, dbs=None):
     client : {FileSystemClient, MongoClient}
         The database client
     """
-    if dbs is None:
-        dbs = []
+    if colls is None:
+        colls = []
     client = ClientManager(rc.databases, rc)
     client.open()
     chained_db = {}
     for db in rc.databases:
-        # if we only want to access some dbs and this db is not in that some
-        db['whitelist'] = dbs
+        # if we only want to access some colls and this db is not in that some
+        db['whitelist'] = colls
         if 'blacklist' not in db:
             db['blacklist'] = ['.travis.yml', '.travis.yaml']
         load_database(db, client, rc)
         for base, coll in client.dbs[db['name']].items():
-            if base not in chained_db:
-                chained_db[base] = {}
-            for k, v in coll.items():
-                if k in chained_db[base]:
-                    chained_db[base][k].maps.append(v)
+            if isinstance(coll, dict):
+                if base not in chained_db:
+                    chained_db[base] = ChainCollection()
+                for k, v in coll.items():
+                    if k in chained_db[base].fs_map:
+                        chained_db[base].fs_map[k].maps.append(v)
+                    else:
+                        chained_db[base].fs_map[k] = deepcopy(ChainDocument(v))
+            else:
+                if base not in chained_db:
+                    chained_db[base] = ChainCollection(coll)
                 else:
-                    chained_db[base][k] = ChainDB(v)
+                    chained_db[base].mongo_maps.append(coll)
     client.chained_db = chained_db
     return client
 
 @contextmanager
-def connect(rc, dbs=None):
+def connect(rc, colls=None):
     """Context manager for ensuring that database is properly setup and torn
     down"""
-    client = open_dbs(rc, dbs=dbs)
+    client = open_dbs(rc, colls=colls)
     yield client
     for db in rc.databases:
         dump_database(db, client, rc)

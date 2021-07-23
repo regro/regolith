@@ -5,7 +5,6 @@ import datetime as dt
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
-from regolith.fsclient import _id_key
 from regolith.sorters import position_key, ene_date_key
 from regolith.tools import (
     all_docs_from_collection,
@@ -15,7 +14,8 @@ from regolith.tools import (
     make_bibtex_file,
     document_by_value,
     dereference_institution,
-    fuzzy_retrieval
+    fuzzy_retrieval,
+    _id_key
 )
 
 

@@ -1,9 +1,9 @@
 """Builder for Current and Pending Reports."""
 
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
+    _id_key
 )
 
 

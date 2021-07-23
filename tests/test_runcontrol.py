@@ -16,5 +16,21 @@ def test_connect_db(make_db):
         expected_dbs = rc.client.dbs
         expected_chdb = rc.client.chained_db
     chained_db, dbs = connect_db(rc)
-    assert chained_db == expected_chdb
-    assert dbs == expected_dbs
+    for coll in chained_db.keys():
+        if coll in expected_chdb:
+            for k in chained_db[coll].keys():
+                if k in expected_chdb[coll]:
+                    assert chained_db[coll][k] == expected_chdb[coll][k]
+                else:
+                    assert False
+        else:
+            assert False
+    for coll in dbs.keys():
+        if coll in expected_dbs:
+            for k in dbs[coll].keys():
+                if k in expected_dbs[coll]:
+                    assert dbs[coll][k] == expected_dbs[coll][k]
+                else:
+                    assert False
+        else:
+            assert False

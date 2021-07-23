@@ -4,13 +4,13 @@
 
 from regolith.dates import is_current
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
     key_value_pair_filter, collection_str,
     get_pi_id,
     fuzzy_retrieval,
+    _id_key
 )
 from regolith.dates import get_dates
 
