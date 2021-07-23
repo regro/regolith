@@ -16,6 +16,8 @@ from gooey import GooeyParser
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
 ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
+DEFAULT_STATI = ["proposed", "started", "finished"]
+OPEN_STATI = ["proposed", "started"]
 
 def subparser(subpi):
     listbox_kwargs = {}
@@ -30,8 +32,8 @@ def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs="+",
                        choices=ALLOWED_STATI,
                        help=f"Filter projecta for these stati."
-                            f" Default is all projecta",
-                       default=None,
+                            f" Default is {DEFAULT_STATI}",
+                       default=DEFAULT_STATI,
                        **listbox_kwargs
                        )
     # The --filter and --keys flags should be in every lister
@@ -55,6 +57,8 @@ def print_projectum(selected_projecta,rc):
             else:
                 print(
                     f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
+            if p.get('status') == 'finished':
+                print(f"    finished: {p.get('end_date')}")
             print(f"    description: {p.get('description')}")
             print(f"    log_url: {p.get('log_url')}")
             print("    team:")
@@ -98,6 +102,15 @@ def print_projectum(selected_projecta,rc):
                 print(
                     f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
                 print(f"    description: {p.get('description')}")
+            if p.get('status') == 'finished':
+                print(f"    finished: {p.get('end_date')}")
+            elif p.get('status') in OPEN_STATI:
+                print(f"    log_url: {p.get('log_url')}")
+                if p.get('milestones'):
+                    print('    milestones:')
+                for m in p.get('milestones'):
+                    print(f"        due: {m.get('due_date')}, {m.get('name')}, type: {m.get('type')}, status: {m.get('status')}")
+                    print(f"        objective: {m.get('objective')}")
 
 class ProgressReportHelper(SoutHelperBase):
     """Helper for listing upcoming (and past) projectum milestones.
@@ -150,6 +163,15 @@ class ProgressReportHelper(SoutHelperBase):
 
         selected_projecta = []
         for p in projecta:
+            if p.get('status') != "finished":
+                continue
+            selected_projecta.append(p)
+        if selected_projecta:
+            print(f"*************************[Finished Projecta]*************************")
+            print_projectum(selected_projecta, rc)
+
+        selected_projecta = []
+        for p in projecta:
             if p.get('status') != "proposed":
                 continue
             selected_projecta.append(p)
@@ -166,14 +188,7 @@ class ProgressReportHelper(SoutHelperBase):
             print(f"*************************[Started Projecta]**************************")
             print_projectum(selected_projecta, rc)
 
-        selected_projecta = []
-        for p in projecta:
-            if p.get('status') != "finished":
-                continue
-            selected_projecta.append(p)
-        if selected_projecta:
-            print(f"*************************[Finished Projecta]*************************")
-            print_projectum(selected_projecta, rc)
+
 
         selected_projecta = []
         for p in projecta:

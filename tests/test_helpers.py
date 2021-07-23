@@ -40,6 +40,12 @@ helper_map = [
       "sb_firstprojectum\n"
       "    status: started, begin_date: 2020-04-28, due_date: 2021-05-05\n"
       "    description: My first projectum\n"
+      "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+      "    milestones:\n"
+      "        due: 2020-05-20, Project lead presentation, type: meeting, status: proposed\n"
+      "        objective: lead presents background reading and initial project plan\n"
+      "        due: 2020-05-27, planning meeting, type: mergedpr, status: proposed\n"
+      "        objective: develop a detailed plan with dates\n"
      ),
     (["helper", "l_progress", "-v", "-l", "ascopatz"],
      "*************************[Started Projecta]**************************\n"
