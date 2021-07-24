@@ -1540,6 +1540,7 @@ EXEMPLARS = {
         "kickoff": {
             "date": "2020-05-05",
             "due_date": "2020-05-06",
+            "end_date": "2020-05-07",
             "name": "Kick off meeting",
             "objective": "introduce project to the lead",
             "audience": ["lead", "pi", "group_members"],
@@ -3840,6 +3841,9 @@ SCHEMAS = {
                          "required": False,
                          "anyof_type": ["date", "string"]},
                 "due_date": {"description": "kickoff meeting by date, yyyy-mm-dd.",
+                             "required": False,
+                             "anyof_type": ["date", "string"]},
+                "end_date": {"description": "date when the kickoff was done",
                              "required": False,
                              "anyof_type": ["date", "string"]},
                 "name": {"description": "name of meeting",
