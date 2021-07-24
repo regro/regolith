@@ -88,8 +88,9 @@ def dump_git_database(db, client, rc):
     # dump all of the data
     to_add = client.dump_database(db)
     # update the repo
+    cmd = ['git', 'add', '']
     for file in to_add:
-        cmd = ['git', 'add'] + file
+        cmd[2] = file
         subprocess.check_call(cmd, cwd=dbdir)
     cmd = ['git', 'commit', '-m', 'regolith auto-commit']
     try:
