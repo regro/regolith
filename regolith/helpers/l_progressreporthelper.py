@@ -11,13 +11,11 @@ from regolith.tools import (
     get_pi_id,
     key_value_pair_filter,
 )
+from regolith.schemas import ALLOWED_STATI, DEFAULT_STATI, OPEN_STATI
 from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
-DEFAULT_STATI = ["proposed", "started", "finished"]
-OPEN_STATI = ["proposed", "started"]
 
 def subparser(subpi):
     listbox_kwargs = {}
@@ -110,7 +108,7 @@ def print_projectum(selected_projecta,rc):
                     print('    milestones:')
                 for m in p.get('milestones'):
                     print(f"        due: {m.get('due_date')}, {m.get('name')}, type: {m.get('type')}, status: {m.get('status')}")
-                    print(f"        objective: {m.get('objective')}")
+                    print(f"          objective: {m.get('objective')}")
 
 class ProgressReportHelper(SoutHelperBase):
     """Helper for listing upcoming (and past) projectum milestones.

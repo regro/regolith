@@ -63,6 +63,22 @@ ly_newprojectum:
     - new note
   pi_id: scopatz
   status: started
+pl_firstprojectum:
+  begin_date: '2020-07-25'
+  deliverable:
+    due_date: '2020-08-26'
+    status: finished
+  end_date: 2020-07-27
+  kickoff:
+    due_date: '2021-08-03'
+    name: Kickoff
+    status: backburner
+  lead: pliu
+  milestones:
+    - due_date: '2021-08-03'
+      name: Milestone
+      status: converged
+  status: finished
 sb_firstprojectum:
   begin_date: '2020-04-28'
   collaborators:
