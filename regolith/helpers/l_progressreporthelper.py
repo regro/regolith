@@ -11,7 +11,7 @@ from regolith.tools import (
     get_pi_id,
     key_value_pair_filter,
 )
-from regolith.schemas import ALLOWED_STATI, DEFAULT_STATI, OPEN_STATI
+from regolith.schemas import PROJECTUM_STATI, PROJECTUM_ACTIVE_STATI, PROJECTUM_FINISHED_STATI
 from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
@@ -28,10 +28,10 @@ def subparser(subpi):
                        help="Filter projecta for this project lead"
                        )
     subpi.add_argument("-s", "--stati", nargs="+",
-                       choices=ALLOWED_STATI,
+                       choices=PROJECTUM_STATI,
                        help=f"Filter projecta for these stati."
-                            f" Default is {DEFAULT_STATI}",
-                       default=DEFAULT_STATI,
+                            f" Default is {PROJECTUM_ACTIVE_STATI+PROJECTUM_FINISHED_STATI}",
+                       default=PROJECTUM_ACTIVE_STATI+PROJECTUM_FINISHED_STATI,
                        **listbox_kwargs
                        )
     # The --filter and --keys flags should be in every lister
@@ -102,7 +102,7 @@ def print_projectum(selected_projecta,rc):
                 print(f"    description: {p.get('description')}")
             if p.get('status') == 'finished':
                 print(f"    finished: {p.get('end_date')}")
-            elif p.get('status') in OPEN_STATI:
+            elif p.get('status') in PROJECTUM_ACTIVE_STATI:
                 print(f"    log_url: {p.get('log_url')}")
                 if p.get('milestones'):
                     print('    milestones:')

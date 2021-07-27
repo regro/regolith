@@ -11,12 +11,10 @@ SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 
 ACTIVITIES_TYPES = ["teaching", "research"]
 AGENCIES = ["nsf", "doe", "other"]
-ALLOWED_STATI = ["proposed", "started", "finished", "back_burner", "paused", "cancelled"]
 APPOINTMENTS_TYPES = ["gra", "ss", "pd", "ug"]
 APPOINTMENTS_STATI = ["proposed", "finalized", "appointed"]
 COMMITTEES_TYPES = ["phdoral", "phddefense", "phdproposal", "promotion"]
 COMMITTEES_LEVELS = ["department", "school", "university", "external"]
-DEFAULT_STATI = ["proposed", "started", "finished"]
 EXPENSES_STATI = ["unsubmitted", "submitted", "reimbursed"]
 EXPENSES_TYPES = ["travel", "business"]
 FACILITIES_TYPES = ["teaching", "research", "shared", "other", "teaching_wish",
@@ -24,7 +22,6 @@ FACILITIES_TYPES = ["teaching", "research", "shared", "other", "teaching_wish",
 GRANT_STATI = ["pending", "declined", "accepted", "in-prep"]
 MILESTONE_TYPES = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
-OPEN_STATI = ["proposed", "started"]
 POSITION_STATI = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
                    "postdoc", "visitor-supported", "visitor-unsupported"]
 PRESENTATION_TYPES = ["award", "colloquium", "contributed_oral", "invited", "keynote",
