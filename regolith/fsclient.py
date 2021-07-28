@@ -234,7 +234,7 @@ class FileSystemClient:
 
     def collection_names(self, dbname, include_system_collections=True):
         """Returns the collaction names for a database."""
-        return set(self.dbs[dbname].keys())
+        return set( self.dbs[dbname].keys())
 
     def all_documents(self, collname, copy=True):
         """Returns an iteratable over all documents in a collection."""
