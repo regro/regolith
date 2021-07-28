@@ -11,7 +11,7 @@ from regolith.tools import (
     get_pi_id,
     key_value_pair_filter,
 )
-from gooey import GooeyParser 
+from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
