@@ -108,7 +108,7 @@ class InternalHtmlBuilder(BuilderBase):
                     ["_id", "name", "aka"],
                     prsn_id)
                 if not prsn:
-                    if prsn_id.lower() != "hold":
+                    if prsn_id.lower() not in ["tbd", "hold"]:
                         print(
                         "WARNING: {} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
                     prsn = {"name": prsn_id }
@@ -132,7 +132,7 @@ class InternalHtmlBuilder(BuilderBase):
                     ["_id", "name", "aka"],
                     prsn_id)
                 if not prsn:
-                    if prsn_id.lower() != "hold":
+                    if prsn_id.lower() not in ["tbd", "hold"]:
                         print(
                         "WARNING: {} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
                     prsn = {"name": prsn_id }
