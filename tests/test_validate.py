@@ -49,13 +49,17 @@ def test_validate_bad_python(make_bad_db):
 def test_validate(make_db):
     repo = make_db
     os.chdir(repo)
-    out = subprocess.run(["regolith", "validate"], check=False).stdout
+    out = subprocess.check_output(["regolith", "validate"])
+    if isinstance(out, bytes):
+        out = out.decode('utf-8')
     assert "NO ERRORS IN DBS" in out
 
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 def test_validate_bad(make_bad_db):
     repo = make_bad_db
     os.chdir(repo)
-    out = subprocess.run(["regolith", "validate"], check=False).stdout
-    assert "Errors found in " in out
-    assert "NO ERRORS IN DBS" not in out
+    try:
+        subprocess.check_output(["regolith", "validate"])
+    except subprocess.CalledProcessError as e:
+        assert "Errors found in " in e.output
+        assert "NO ERRORS IN DBS" not in e.output
