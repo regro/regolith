@@ -13,6 +13,7 @@ from dateutil import parser as date_parser
 from datetime import timedelta, date
 
 from regolith.helpers.basehelper import SoutHelperBase
+from regolith.schemas import APPOINTMENTS_TYPES
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
@@ -33,8 +34,6 @@ TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
 BLACKLIST = ['ta', 'physmatch', 'chemmatch', 'bridge16', 'collgf', 'afgrf14',
               'summer@seas', 'frap',  'startup', 'they_pay']
-ALLOWED_TYPES = ["gra", "pd", "ss", "ug"]
-TRACKED_TYPES = ["gra", "pd", "ss", "ug"]
 MONTHLY_COST_QUANTUM = 3262
 
 _future_grant = {
@@ -168,13 +167,15 @@ class MakeAppointmentsHelper(SoutHelperBase):
                           not in BLACKLIST]
         most_grants = [grant for grant in most_grants_id if grant.get('alias')
                        not in BLACKLIST]
+        collecting_grants_with_appts = []
         for person in self.gtx['people']:
             appts = collect_appts([person],filter_key='type',filter_value = 'gra')
             appts.extend(collect_appts([person],filter_key='type',filter_value = 'ss'))
             appts.extend(collect_appts([person],filter_key='type',filter_value = 'pd'))
             if len(appts) > 0:
                 person.update({"appts": appts})
-        grants_with_appts = list(set([appt.get("grant") for appt in appts]))
+                collecting_grants_with_appts.extend([appt.get("grant") for appt in appts])
+        grants_with_appts = list(set(collecting_grants_with_appts))
         appointed_grants = [grant for grant in most_grants
                             if grant.get("_id") in grants_with_appts
                             or grant.get("alias") in grants_with_appts]
@@ -307,11 +308,11 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     if max(grant_dates) >= projection_from_date - timedelta(days=730):
                         plots.append(plotter(grant_dates, student=this_student,
                                          pd=this_pd, ss=this_ss,
-                                         title=grant)[0])
+                                         title=grant.get("alias"))[0])
                 else:
                     plots.append(plotter(grant_dates, student=this_student,
                                      pd=this_pd, ss=this_ss,
-                                     title=grant)[0])
+                                     title=grant.get("alias"))[0])
 
         if outdated:
             outdated.sort(key=lambda mess:mess[-10:])

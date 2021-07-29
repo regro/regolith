@@ -11,7 +11,7 @@ SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 ACTIVITIES_TYPES = ["teaching", "research"]
 AGENCIES = ["nsf", "doe", "other"]
 APPOINTMENTS_TYPES = ["gra", "ss", "pd", "ug"]
-APPOINTMENTS_STATI = ["proposed", "finalized", "appointed"]
+APPOINTMENTS_STATI = ["proposed", "appointed", "finalized"]
 COMMITTEES_TYPES = ["phdoral", "phddefense", "phdproposal", "promotion"]
 COMMITTEES_LEVELS = ["department", "school", "university", "external"]
 EXPENSES_STATI = ["unsubmitted", "submitted", "reimbursed"]
