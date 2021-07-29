@@ -21,6 +21,7 @@ install:
 
 script:
   - set -e
+  - set -x
   - conda install --file requirements/test.txt
   - #python -m pytest
   - coverage run run_tests.py
