@@ -531,15 +531,13 @@ helper_map = [
      "      required ss+gra burn: 0.06\n"
      "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
      "overspent grants:\n"
-     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
+     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "plotting mode is on\n"
      ),
     (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31", "-v"],
-     "skipping ta since it is in the blacklist\n"
      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
-     "skipping sym2.0 since it it does not support any appointments\n"
      "appointments on outdated grants:\n"
      "    person: scopatz, appointment: f19, grant: dmref15,\n"
      "            from 2019-05-02 until 2019-09-01\n"
@@ -559,8 +557,8 @@ helper_map = [
      "      required ss+gra burn: 0.06\n"
      "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
      "overspent grants:\n"
-     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
+     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "plotting mode is on\n"
      ),
     (["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2020-08-31"],
@@ -585,8 +583,8 @@ helper_map = [
      "      required ss+gra burn: 0.06\n"
      "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
      "overspent grants:\n"
-     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
+     "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      ),
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
 ]
