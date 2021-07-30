@@ -8,10 +8,19 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
 
-def add_to_calendar(event):
-    """ Takes a newly created presentation, and adds it to the user's google calendar """
+def add_to_google_calendar(event):
+    """Takes a newly created event, and adds it to the user's google calendar
+
+    Parameters:
+        event - a dictionary containing the event details to be added to google calendar
+                https://developers.google.com/calendar/api/v3/reference/events
+
+    Returns:
+        None
+    """
+
     SCOPES = ['https://www.googleapis.com/auth/calendar.events']
-    tokendir = os.path.join('tokens', 'google_calendar')
+    tokendir = pathlib.Path('tokens', 'google_calendar')
     creds = None
     os.makedirs(tokendir, exist_ok=True)
     tokenfile = os.path.join(tokendir, 'token.json')

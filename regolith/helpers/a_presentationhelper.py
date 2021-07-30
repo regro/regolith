@@ -83,8 +83,8 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
-    subpi.add_argument("-gc", "--google-calendar",
-                       help=f"Add the presentation to your Google calendar?",
+    subpi.add_argument("-nc", "--no-cal",
+                       help=f"Do not add the presentation to google calendar",
                        action="store_true")
     return subpi
 
@@ -184,15 +184,18 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
-        #The following code adds a presentation to google calendar if rc.google_calendar:
-        if rc.google_calendar:
-            from regolith.helpers.Google_Calendar_API.google_calendar_api import add_to_calendar
-            event = {
-                'summary': rc.name,
-                'location': rc.place,
-                'start': {'date': rc.begin_date},
-                'end': {'date': rc.end_date}
-            }
-            add_to_calendar(event)
+        #The following code adds a presentation to google calendar if rc.no_cal:
+        if not rc.no_cal:
+            try:
+                from regolith.helpers.Google_Calendar_API.google_calendar_api import add_to_google_calendar
+                event = {
+                    'summary': rc.name,
+                    'location': rc.place,
+                    'start': {'date': rc.begin_date},
+                    'end': {'date': rc.end_date}
+                }
+                add_to_google_calendar(event)
+            except:
+                pass
 
         return
