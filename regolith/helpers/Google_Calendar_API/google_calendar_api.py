@@ -20,7 +20,7 @@ def add_to_google_calendar(event):
     """
 
     SCOPES = ['https://www.googleapis.com/auth/calendar.events']
-    tokendir = pathlib.Path('tokens', 'google_calendar')
+    tokendir = os.path.expanduser("~/.config/regolith")
     creds = None
     os.makedirs(tokendir, exist_ok=True)
     tokenfile = os.path.join(tokendir, 'token.json')
