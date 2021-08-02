@@ -83,7 +83,7 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
-    subpi.add_argument("-nc", "--no-cal",
+    subpi.add_argument("-gc", "--google-calendar",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
     return subpi
@@ -96,6 +96,10 @@ class PresentationAdderHelper(DbHelperBase):
     # btype must be the same as helper target in helper.py
     btype = "a_presentation"
     needed_colls = [f'{TARGET_COLL}', 'groups', 'people', 'expenses']
+
+    def __init__(self, rc):
+        super().__init__(rc)
+        self.cmds += ['google_cal_updater']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -184,8 +188,12 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
-        #The following code adds a presentation to google calendar if rc.no_cal:
-        if not rc.no_cal:
+        return
+
+    def google_cal_updater(self):
+        rc = self.rc
+        # The following code adds a presentation to google calendar if not rc.google_calendar:
+        if rc.google_calendar:
             try:
                 from regolith.helpers.Google_Calendar_API.google_calendar_api import add_to_google_calendar
                 event = {
@@ -197,5 +205,3 @@ class PresentationAdderHelper(DbHelperBase):
                 add_to_google_calendar(event)
             except:
                 pass
-
-        return
