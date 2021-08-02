@@ -1,5 +1,5 @@
 """Builder for Proposal Reviews."""
-from datetime import datetime
+from datetime import date
 import time
 
 from habanero import Crossref
@@ -41,10 +41,15 @@ def get_crossref_reference(doi):
     try:
         journal = \
             article.get('message').get('short-container-title')[0]
+        paper.update({'journal': journal})
     except IndexError:
-        journal = article.get('message').get('container-title')[
-            0]
-    paper.update({'journal': journal})
+        try:
+            journal = article.get('message').get('container-title')[
+                0]
+            paper.update({'journal': journal})
+        except IndexError:
+            print(f"WARNING: can't find journal in reference {doi}")
+            paper.update({'journal': doi})
     paper.update({'title': article.get('message').get('title')[0],
                   'volume': article.get('message').get('volume'),
                   'pages': article.get('message').get('page'),
@@ -109,11 +114,20 @@ class GrantReportBuilder(LatexBuilderBase):
         rc = self.rc
 
         # Convert Date Strings to Datetime Objects
-        report_dates = {'begin_date': date_parser.parse(rc.from_date).date(),
-                        'end_date': date_parser.parse(rc.to_date).date()}
-        rp_start_date = date_parser.parse(rc.from_date).date()
-        rp_end_date = date_parser.parse(rc.to_date).date()
+        if not rc.from_date:
+            raise ValueError ("ERROR: need begin for the report period."
+                              "Please rerun specifying --from and --to in YYYY-MM-DD format.")
+        else:
+            rp_start_date = date_parser.parse(rc.from_date).date()
+        if not rc.to_date:
+            rp_end_date = date.today()
+        else:
+            rp_end_date = date_parser.parse(rc.to_date).date()
+        report_dates = {'begin_date': rp_start_date,
+                        'end_date': rp_end_date}
 
+        if not rc.people:
+            rc.people = [rc.default_user_id]
         if isinstance(rc.people, str):
             rc.people = [rc.people]
         person_id = rc.people[0]
@@ -208,7 +222,7 @@ class GrantReportBuilder(LatexBuilderBase):
                         grant_id in publ.get("grant", "")]
         for publ in publications:
             doi = publ.get('doi')
-            if doi and doi !='tbd':
+            if doi and doi != 'tbd':
                 publ = get_crossref_reference(doi)
             names = [HumanName(author).full_name for author in publ.get("author")]
             publ['author'] = names
@@ -266,8 +280,8 @@ class GrantReportBuilder(LatexBuilderBase):
             hline="------------------------------------------------------------------------------"
         )
 
-    def months_on(self, grant, person, since=datetime(1970, 1, 1),
-                  before=datetime.today()):
+    def months_on(self, grant, person, since=date(1970, 1, 1),
+                  before=date.today()):
         #    print('Looking at months on grant {} in period since {} until {}'.format(
         #        grant, since, before), )
         total_months = 0
@@ -297,5 +311,5 @@ class GrantReportBuilder(LatexBuilderBase):
                     #    months = months + (before - since).days * loading / 30.4
             if months > 0:
                 total_months = total_months + months
-        months_left = (before - datetime.today().date())
+        months_left = (before - date.today())
         return total_months, months_left
