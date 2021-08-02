@@ -1,6 +1,7 @@
 """Helper for adding a presentation to the presentation collection.
 """
 import dateutil.parser as date_parser
+import threading
 
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
@@ -83,7 +84,7 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
-    subpi.add_argument("-gc", "--google-calendar",
+    subpi.add_argument("-nc", "--no_cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
     return subpi
@@ -96,10 +97,6 @@ class PresentationAdderHelper(DbHelperBase):
     # btype must be the same as helper target in helper.py
     btype = "a_presentation"
     needed_colls = [f'{TARGET_COLL}', 'groups', 'people', 'expenses']
-
-    def __init__(self, rc):
-        super().__init__(rc)
-        self.cmds += ['google_cal_updater']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -123,7 +120,6 @@ class PresentationAdderHelper(DbHelperBase):
         gtx = self.gtx
         rc = self.rc
         # dates
-
         begin_date = date_parser.parse(rc.begin_date).date()
         end_date = date_parser.parse(rc.end_date).date()
 
@@ -188,20 +184,18 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
-        return
-
-    def google_cal_updater(self):
-        rc = self.rc
-        # The following code adds a presentation to google calendar if not rc.google_calendar:
-        if rc.google_calendar:
+        if not rc.no_cal:
             try:
-                from regolith.helpers.Google_Calendar_API.google_calendar_api import add_to_google_calendar
-                event = {
-                    'summary': rc.name,
-                    'location': rc.place,
-                    'start': {'date': rc.begin_date},
-                    'end': {'date': rc.end_date}
-                }
-                add_to_google_calendar(event)
+                rc.events
             except:
-                pass
+                rc.events = []
+
+            event = {
+                        'summary': rc.name,
+                        'location': rc.place,
+                        'start': {'date': rc.begin_date},
+                        'end': {'date': rc.end_date}
+                    }
+            rc.events += [event]
+
+        return

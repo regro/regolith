@@ -1,12 +1,10 @@
 from __future__ import print_function
-import datetime
 import os
 import pathlib
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-
 
 def add_to_google_calendar(event):
     """Takes a newly created event, and adds it to the user's google calendar
@@ -20,7 +18,7 @@ def add_to_google_calendar(event):
     """
 
     SCOPES = ['https://www.googleapis.com/auth/calendar.events']
-    tokendir = os.path.expanduser("~/.config/regolith")
+    tokendir = os.path.expanduser("~/.config/regolith/tokens/google_calendar_api")
     creds = None
     os.makedirs(tokendir, exist_ok=True)
     tokenfile = os.path.join(tokendir, 'token.json')
@@ -47,4 +45,3 @@ def add_to_google_calendar(event):
     service = build('calendar', 'v3', credentials=creds)
     event = service.events().insert(calendarId='primary', body=event).execute()
     print('Event created: %s' % (event.get('htmlLink')))
-
