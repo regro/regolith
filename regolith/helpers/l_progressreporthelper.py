@@ -12,7 +12,7 @@ from regolith.tools import (
     key_value_pair_filter,
 )
 from regolith.schemas import PROJECTUM_STATI, PROJECTUM_ACTIVE_STATI, PROJECTUM_FINISHED_STATI
-from gooey import GooeyParser
+from gooey import GooeyParser 
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
