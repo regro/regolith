@@ -11,7 +11,6 @@ from regolith.emailer import emailer
 from regolith.helper import HELPERS, helpr
 from regolith.runcontrol import RunControl
 from regolith.tools import string_types
-from regolith.helpers.Google_Calendar_API.google_calendar_api import add_to_google_calendar
 
 email = emailer
 
@@ -248,11 +247,3 @@ def validate(rc):
         print("\nNO ERRORS IN DBS\n" + "=" * 15)
     else:
         sys.exit("Validation failed on some records")
-
-def google_calendar_updater(rc):
-    """Adds events to the user's google calendar"""
-    try:
-        for event in rc.events:
-            add_to_google_calendar(event)
-    except:
-        pass

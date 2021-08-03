@@ -14,7 +14,7 @@ from regolith.commands import INGEST_COLL_LU
 from regolith.helper import HELPERS
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS
-from regolith.tools import update_schemas
+from regolith.tools import update_schemas, google_calendar_updater
 
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
@@ -349,7 +349,7 @@ def main(args=None):
             dbs = commands.helper_db_check(rc)
         with connect(rc, dbs=dbs) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)
-        commands.google_calendar_updater(rc)
+        google_calendar_updater(rc)
 
 
 if __name__ == "__main__":
