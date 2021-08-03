@@ -2025,7 +2025,6 @@ def add_to_google_calendar(event):
         None
     """
 
-    SCOPES = ['https://www.googleapis.com/auth/calendar.events']
     tokendir = os.path.expanduser("~/.config/regolith/tokens/google_calendar_api")
     creds = None
     os.makedirs(tokendir, exist_ok=True)
@@ -2034,19 +2033,15 @@ def add_to_google_calendar(event):
     # created automatically when the authorization flow completes for the first
     # time.
     if os.path.exists(tokenfile):
-        creds = Credentials.from_authorized_user_file(tokenfile, SCOPES)
+        creds = Credentials.from_authorized_user_file(tokenfile, ['https://www.googleapis.com/auth/calendar.events'])
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            curr = pathlib.Path(__file__).parent.resolve()
-            print(curr)
-            flow = InstalledAppFlow.from_client_secrets_file(
-                os.path.join(curr, 'credentials.json'),
-                SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
+            print('If you want to enable the google calendar feature, please run the helper with the flag -f or --flow'
+                  'This only has to be done once.')
+            return
         with open(tokenfile, 'w') as token:
             token.write(creds.to_json())
 
@@ -2054,10 +2049,18 @@ def add_to_google_calendar(event):
     event = service.events().insert(calendarId='primary', body=event).execute()
     print('Event created: %s' % (event.get('htmlLink')))
 
-def google_calendar_updater(rc):
-    """Adds events to the user's google calendar"""
-    try:
-        for event in rc.events:
-            add_to_google_calendar(event)
-    except:
-        pass
+def google_cal_auth_flow():
+    """First time authentication, this function opens a window to request user consent to use google calendar API,
+     and then returns a token"""
+    tokendir = os.path.expanduser("~/.config/regolith/tokens/google_calendar_api")
+    os.makedirs(tokendir, exist_ok=True)
+    tokenfile = os.path.join(tokendir, 'token.json')
+    curr = pathlib.Path(__file__).parent.resolve()
+    print(curr)
+    flow = InstalledAppFlow.from_client_secrets_file(
+        os.path.join(curr, 'credentials.json'),
+        ['https://www.googleapis.com/auth/calendar.events'])
+    creds = flow.run_local_server(port=0)
+    with open(tokenfile, 'w') as token:
+        token.write(creds.to_json())
+    # Save the credentials for the next run
