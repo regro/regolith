@@ -24,6 +24,16 @@ def subparser(subpi):
     subpi.add_argument("-d", "--database",
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.")
+    subpi.add_argument("--pub_sum", type = str,
+                       help="The public summary. This will be used in, for example, as web news items. "
+                            "It should capture in a single paragraph the main context, result and importance "
+                            "without jargon in words that a member of the general public can understand. "
+                            "This is required to finish a prum.")
+    subpi.add_argument("--pro_sum", type = str,
+                       help="he professional summary. This may be used in, for example, a progress report to"
+                            " a funding agency, or in your cv, etc.. It should capture in a single paragraph the"
+                            " main context, result and importance in more technical language with the target"
+                            " audience of an expert in an adjacent field. This is required to finish a prum.")
     return subpi
 
 
@@ -66,6 +76,27 @@ class FinishprumUpdaterHelper(DbHelperBase):
             print("Please rerun the helper specifying the complete ID.")
             return
         found_projectum.update({'status':'finished'})
+
+        if found_projectum['professional_summary']:
+            if rc.pro_sum:
+                raise RuntimeError(
+                    "ERROR: please input the professional summary either in field --pro_sum or manually type in the yaml file.")
+        elif rc.pro_sum:
+            found_projectum['professional_summary'] = rc.pro_sum
+        else:
+            raise RuntimeError(
+                "ERROR: please input the professional summary either in field --pro_sum or manually type in the yaml file.")
+
+        if found_projectum['public_summary']:
+            if rc.pub_sum:
+                raise RuntimeError(
+                    "ERROR: please input the public summary either in field --pub_sum or manually type in the yaml file.")
+        elif rc.pub_sum:
+            found_projectum['public_summary'] = rc.pub_sum
+        else:
+            raise RuntimeError(
+                "ERROR: please input the public summary either in field --pub_sum or manually type in the yaml file.")
+
         if rc.end_date:
             found_projectum.update({'end_date': date_parser.parse(rc.end_date).date()})
         else:
