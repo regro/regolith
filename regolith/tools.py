@@ -2039,8 +2039,8 @@ def add_to_google_calendar(event):
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            print('If you want to enable the google calendar feature, please run the helper with the flag -f or --flow'
-                  'This only has to be done once.')
+            print('If you want to activate the google calendar feature, please rerun the helper with the flag'
+                  ' --activate_google_calendar ')
             return
         with open(tokenfile, 'w') as token:
             token.write(creds.to_json())

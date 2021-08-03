@@ -89,9 +89,11 @@ def subparser(subpi):
     subpi.add_argument("--no_cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
-    subpi.add_argument("-f", "--flow",
+    subpi.add_argument("--activate_google_calendar",
                        help=f"Run the google calendar api authentication flow"
-                            f"Do this if this is your first time using the google calendar feature",
+                            f"Do this if this is your first time using the google calendar feature"
+                            f"This only has to be done once. After authenticating, the token is stored"
+                            f"in ~/.config/regolith/tokens",
                        action="store_true")
     return subpi
 
@@ -190,7 +192,7 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
-        if rc.flow:
+        if rc.activate_google_calendar:
             google_cal_auth_flow()
 
         if not rc.no_cal:
