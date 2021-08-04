@@ -55,7 +55,7 @@ def get_crossref_reference(doi):
                   'pages': article.get('message').get('page'),
 #                  'month': article.get('message').get('issued').get('date-parts')[0][1],
                   'year': article.get('message').get('issued').get('date-parts')[0][0]})
-    if article.get('message').get('volume'):
+    if article.get('message').get( 'volume'):
         if len(authorlist) > 1:
             authorlist[-1] = "and {}".format(authorlist[-1])
         sauthorlist = ", ".join(authorlist)
