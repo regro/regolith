@@ -2039,8 +2039,13 @@ def add_to_google_calendar(event):
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            print('If you want to activate the google calendar feature, please rerun the helper with the flag'
-                  ' --activate_google_calendar ')
+            print('The google calendar feature needs authentication information to run. '
+                  'This needs to be done just once for each new device. '
+                  'To do this, please type:\n\n'
+                  '   regolith helper a_presentation --activate-google-calendar\n\n'
+                  'and follow the prompts in the browser popup from Google.'
+                  ' You can then rerun this command and it should work, now and in the future.\n'
+                  'The helper may be run without creating a calendar event by rerunning the command (e.g., use up-arrow) and adding --no-cal')
             return
         with open(tokenfile, 'w') as token:
             token.write(creds.to_json())
