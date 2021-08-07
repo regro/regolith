@@ -7,21 +7,23 @@
 <li>Meeting Lead: {{fmeetings[0].get('lead', '')}}</li>
 <li>Scribe: {{fmeetings[0].get('scribe', '')}}</li>
   {% if fmeetings[0].get('journal_club') %}
-<li>Journal club presentation: {{fmeetings[0].get('journal_club').get('presenter','')}}:</li>
+<li>Journal club presentation: </li>
 <div style="margin-left: 2em;">
-    {{fmeetings[0].get('journal_club').get('doi','')}}
-{%if fmeetings[0].get('journal_club', '').get('link')%}}
-<li>Link: <a href="{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}">"Presentation" </a></li>
+  <li>presenter: {{ fmeetings[0].get('journal_club').get('presenter','') }}
+  <li>doi: {{ fmeetings[0].get('journal_club').get('doi','') }}
+{%if fmeetings[0].get('journal_club', '').get('link')%}
+<li>link: <a href="{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}">{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}</a></li>
   {% else %}
 <li>Link: TBD</li>
   {% endif %}</div>
   {% endif %}
   {% if fmeetings[0].get('presentation') %}
-  <li>Presentation: {{fmeetings[0].get('presentation').get('presenter','')}},
-    {{fmeetings[0].get('presentation').get('title','')}}</li>
+  <li>Research Presentation:</li>
 <div style="margin-left: 2em;">
+    <li>presenter:  {{fmeetings[0].get('presentation').get('presenter','')}}</li>
+    <li>title: {{fmeetings[0].get('presentation').get('title','')}}</li>
 {%if fmeetings[0].get('presentation', '').get('link')%}
-  <li>Link: <a href="{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}">"Presentation" </a></li>
+  <li>link: <a href="{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}">{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}</a></li>
 {%else%}
 <li> Link: TBD
 {%endif%}
