@@ -1,5 +1,6 @@
 """Generic builder."""
 
+from regolith.helpers import attestationshelper as attestations
 from regolith.helpers import a_manurevhelper as a_manurev
 from regolith.helpers import a_proprevhelper as a_proprev
 from regolith.helpers import a_grppub_readlisthelper as a_gprl
@@ -28,6 +29,7 @@ from regolith.helpers import f_todohelper as f_todo
 from regolith.helpers import u_todohelper as u_todo
 
 HELPERS = {
+    "attestations": (attestations.AttestationsHelper, attestations.subparser),
     "a_expense": (a_expense.ExpenseAdderHelper, a_expense.subparser),
     "a_grppub_readlist": (a_gprl.GrpPubReadListAdderHelper, a_gprl.subparser),
     "a_manurev": (a_manurev.ManuRevAdderHelper, a_manurev.subparser),
