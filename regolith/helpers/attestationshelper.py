@@ -1,8 +1,3 @@
-# coding: utf-8
-# print([k for k,v in chained_db['people'].items()])
-
-# to use, set begin and end dates then "> python effortReporting"
-# fixme: make script for doing the appointments so I don't have to edit the db by hand
 import os
 
 from datetime import datetime, timedelta
@@ -27,19 +22,8 @@ from pprint import pprint
 
 MONTH_COST = 3400
 
-# rc = DEFAULT_RC
-# if os.path.exists(rc.user_config):
-#     rc._update(load_rcfile(rc.user_config))
-# rc._update(load_rcfile("regolithrc.json"))
-# filter_databases(rc)
-# needed_dbs = ['people', 'grants', 'proposals', 'expenses']
-#
-# chained_db = connect_db(rc, colls=needed_dbs)[0]
-
-
 def daterange(date1, date2):
     return [date1 + timedelta(n) for n in range(int((date2 - date1).days) + 1)]
-
 
 def subparser(subpi):
     subpi.add_argument("grant",
@@ -125,7 +109,6 @@ class AttestationsHelper(DbHelperBase):
                 for _id, p_appt in person_appts.items():
                     grantid = p_appt.get('grant')
                     if grantid == grant_id:
-                        #accountnr = grant.get('account', grant['alias'])
                         loading = p_appt.get('loading')
                         bd = get_dates(p_appt).get("begin_date")
                         begin = min(begin, bd)
@@ -134,7 +117,6 @@ class AttestationsHelper(DbHelperBase):
                         months_on_grant = (ed - bd).days / 30.4 * loading
                         appt = (person['_id'], bd, ed, loading, months_on_grant)
                         appts.append(appt)
-            #           on_grant = []
         appts.sort(key=lambda x: (x[0], x[1]))
         folks = []
         for app in appts:
@@ -156,7 +138,6 @@ class AttestationsHelper(DbHelperBase):
                     loadingl = []
                     for day in plot_date_list:
                         if app[1] <= day <= app[2]:
-                            #                    if begin_date <= day <= end_date:
                             loadingl.append(app[3])
                         else:
                             loadingl.append(0)
@@ -182,23 +163,9 @@ class AttestationsHelper(DbHelperBase):
                 fig.autofmt_xdate()
                 plots.append(fig)
 
-        # print(plot_date_list)
-        # for person in people_loadings:
-        #     pid = person[0]
-        #     person_loading = people[1]
-        #     for date,ploading in zip(plot_date_list,person_loading:
-        #
-        # index = 0
-        #     if date.day != 1:
-        #         for person in people_loadings:
-        #             loaded += person[1][index]
-        #     pass
-
         if not rc.no_plot:
             fig, ax = plt.subplots()
             ax.plot_date(plot_date_list, loadingc, ls='-', marker="")
-        # for pers in people_loadings:
-        #     ax.plot_date(plot_date_list, pers[1], ls='-', marker="", label=pers[0])
 
         print(f"\n-----------\nLoadings by month\n------------")
         index = 0
