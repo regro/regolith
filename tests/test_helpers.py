@@ -19,11 +19,12 @@ helper_map = [
      "2019-10-01:\n"
      "    scopatz\tloading: 2550.0\n"
      "\n----------------\nExpenses\n----------------\n"
-     "2018-01-10 (reimb date), 2018-01-10 (expense date): amount: 653.0, \n"
+     "2018-01-10 (reimb date), 2018-01-10 (expense date): amount: 500, \n"
+     "2019-09-15 (reimb date), 2018-01-10 (expense date): amount: 1000, \n"
      "  payee: scopatz purpose: testing the databallectionsse\n"
-     "2019-09-01: expenses monthly total = 0\n"
+     "2019-09-01: expenses monthly total = 1000\n"
      "2019-10-01: expenses monthly total = 0\n"
-     "Total spend = 653.0\n"),
+     "Total spend = 1500\n"),
     (["helper", "attestations", "sym", "--no-plot"],
      "Instructions/Notes:\n"
      "  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"

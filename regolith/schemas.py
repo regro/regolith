@@ -233,9 +233,15 @@ EXEMPLARS = {
         "payee": "scopatz",
         "reimbursements": [
             {
-            "amount": 0,
+            "amount": 500,
             "date": "tbd",
             "submission_date": "tbd",
+            "where": "Columbia"
+            },
+            {
+            "amount": 1000,
+            "date": "2019-09-15",
+            "submission_date": "2019-09-05",
             "where": "Columbia"
             }
         ],
