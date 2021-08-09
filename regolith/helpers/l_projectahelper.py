@@ -169,10 +169,13 @@ class ProjectaListerHelper(SoutHelperBase):
                 if projectum.get('status') not in PROJECTUM_ACTIVE_STATI:
                     if projectum.get('status') in INACTIVE_STATI:
                         continue
-                    elif projectum.get('status') not in PROJECTUM_FINISHED_STATI \
-                            or not isinstance(projectum.get('end_date'),
-                                              dt.date):
+                    elif projectum.get('status') not in PROJECTUM_FINISHED_STATI:
                         error_projecta.append(projectum)
+                    elif not isinstance(projectum.get('end_date'), dt.date):
+                        try:
+                            dt.datetime(*[int(num) for num in projectum.get('end_date').split('-')])
+                        except:
+                            error_projecta.append(projectum)
                     else:
                         end_date = projectum.get('end_date')
                         if isinstance(end_date, str):

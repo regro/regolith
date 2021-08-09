@@ -1,6 +1,5 @@
 """Database schemas, examples, and tools"""
 import copy
-import datetime as dt
 from warnings import warn
 
 from cerberus import Validator
@@ -1593,7 +1592,7 @@ EXEMPLARS = {
             "lead": "pliu",
             "status": "finished",
             "begin_date": "2020-07-25",
-            "end_date": dt.date(2020,7,27),
+            "end_date": "2020-07-27",
             "deliverable": {"due_date": "2020-08-26", "status": "finished"},
             "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
             "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]

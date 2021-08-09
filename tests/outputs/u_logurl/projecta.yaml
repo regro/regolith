@@ -68,7 +68,7 @@ pl_firstprojectum:
   deliverable:
     due_date: '2020-08-26'
     status: finished
-  end_date: 2020-07-27
+  end_date: '2020-07-27'
   kickoff:
     due_date: '2021-08-03'
     name: Kickoff
