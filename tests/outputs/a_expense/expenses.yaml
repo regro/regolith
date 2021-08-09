@@ -135,4 +135,9 @@ test:
   overall_purpose: testing the databallectionsse
   payee: scopatz
   project: Cyclus
+  reimbursements:
+    - amount: 0
+      date: tbd
+      submission_date: tbd
+      where: Columbia
   status: submitted

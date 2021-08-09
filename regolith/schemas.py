@@ -231,6 +231,14 @@ EXEMPLARS = {
             for i in range(1, 11)
         ],
         "payee": "scopatz",
+        "reimbursements": [
+            {
+            "amount": 0,
+            "date": "tbd",
+            "submission_date": "tbd",
+            "where": "Columbia"
+            }
+        ],
         "project": "Cyclus",
         "overall_purpose": "testing the databallectionsse",
         "notes": "this expense was used to get the work done",

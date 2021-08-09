@@ -96,7 +96,6 @@ class AttestationsHelper(DbHelperBase):
         begin_date, end_date = None, None
         print("Collecting Appointments for grant {}:".format(grant_id))
         expenses = self.gtx['expenses']
-        #print(expenses)
         people = self.gtx['people']
         jg = self.gtx['grants']
         proposals = self.gtx["proposals"]
@@ -123,21 +122,19 @@ class AttestationsHelper(DbHelperBase):
         for person in people:
             person_appts = person.get('appointments', None)
             if person_appts:
-                for item in person_appts:
-                    for appt_value_list in item.values():
-                        for p_appt in appt_value_list:
-                            grantid = p_appt.get('grant')
-                            if grantid == grant_id:
-                                #accountnr = grant.get('account', grant['alias'])
-                                loading = p_appt.get('loading')
-                                bd = get_dates(p_appt).get("begin_date")
-                                begin = min(begin, bd)
-                                ed = get_dates(p_appt).get("end_date")
-                                end = max(end, ed)
-                                months_on_grant = (ed - bd).days / 30.4 * loading
-                                appt = (person['_id'], bd, ed, loading, months_on_grant)
-                                appts.append(appt)
-            #                    on_grant = []
+                for _id, p_appt in person_appts.items():
+                    grantid = p_appt.get('grant')
+                    if grantid == grant_id:
+                        #accountnr = grant.get('account', grant['alias'])
+                        loading = p_appt.get('loading')
+                        bd = get_dates(p_appt).get("begin_date")
+                        begin = min(begin, bd)
+                        ed = get_dates(p_appt).get("end_date")
+                        end = max(end, ed)
+                        months_on_grant = (ed - bd).days / 30.4 * loading
+                        appt = (person['_id'], bd, ed, loading, months_on_grant)
+                        appts.append(appt)
+            #           on_grant = []
         appts.sort(key=lambda x: (x[0], x[1]))
         folks = []
         for app in appts:
@@ -148,7 +145,6 @@ class AttestationsHelper(DbHelperBase):
                                             app[2].strftime("%Y-%m-%d"), app[3], app[4]))
             folks.append(app[0])
         folks = list(set(folks))
-        print(folks)
         plots = []
         people_loadings = []
         loadingc = np.zeros(len(plot_date_list))

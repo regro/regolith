@@ -7,6 +7,33 @@ from regolith.main import main
 
 dash = "-"
 helper_map = [
+    (["helper", "attestations", "dmref15", "-b", "2019-09-01", "-e", "2019-11-01", "--no-plot"],
+     "Instructions/Notes:\n"
+     "  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"
+     "  Grad salaries are about $3400 per month\n"
+     "Collecting Appointments for grant dmref15:\n"
+     "scopatz, from 2019-09-01 to 2019-10-31, loading 0.75. Total months:   1.48\n"
+     "\n-----------\nLoadings by month\n------------\n"
+     "2019-09-01:\n"
+     "    scopatz\tloading: 2550.0\n"
+     "2019-10-01:\n"
+     "    scopatz\tloading: 2550.0\n"
+     "\n----------------\nExpenses\n----------------\n"
+     "2018-01-10 (reimb date), 2018-01-10 (expense date): amount: 653.0, \n"
+     "  payee: scopatz purpose: testing the databallectionsse\n"
+     "2019-09-01: expenses monthly total = 0\n"
+     "2019-10-01: expenses monthly total = 0\n"
+     "Total spend = 653.0\n"),
+    (["helper", "attestations", "sym", "--no-plot"],
+     "Instructions/Notes:\n"
+     "  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"
+     "  Grad salaries are about $3400 per month\n"
+     "Collecting Appointments for grant sym:\n"
+     "\n-----------\nLoadings by month\n------------\n"
+     "2030-05-01:\n2030-06-01:\n2030-07-01:\n2030-08-01:\n2030-09-01:\n2030-10-01:\n2030-11-01:\n"
+     "\n----------------\nExpenses\n----------------\n"
+     "2030-05-01: expenses monthly total = 0\n2030-06-01: expenses monthly total = 0\n2030-07-01: expenses monthly total = 0\n2030-08-01: expenses monthly total = 0\n2030-09-01: expenses monthly total = 0\n2030-10-01: expenses monthly total = 0\n2030-11-01: expenses monthly total = 0\n"
+     "Total spend = 0\n"),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
       "Tess Guebre", "--status", "downloaded", "--title", "A flat world theory"],
      "A. Einstein proposal has been added/updated in proposal reviews\n"),
