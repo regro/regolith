@@ -30,7 +30,7 @@ def subparser(subpi):
     subpi.add_argument("-s", "--stati", nargs="+",
                        choices=PROJECTUM_STATI,
                        help=f"Filter projecta for these stati."
-                            f" Default is {PROJECTUM_ACTIVE_STATI+PROJECTUM_FINISHED_STATI}",
+                            f" Default is {*(PROJECTUM_ACTIVE_STATI+PROJECTUM_FINISHED_STATI),}",
                        default=PROJECTUM_ACTIVE_STATI+PROJECTUM_FINISHED_STATI,
                        **listbox_kwargs
                        )
