@@ -7,6 +7,7 @@ from regolith.helpers import a_projectumhelper as a_projectum
 from regolith.helpers import a_proposalhelper as a_proposal
 from regolith.helpers import a_expensehelper as a_expense
 from regolith.helpers import a_presentationhelper as a_presentation
+from regolith.helpers import currentappointmentshelper as currentappointments
 from regolith.helpers import l_milestoneshelper as l_milestone
 from regolith.helpers import l_progressreporthelper as l_progress
 from regolith.helpers import l_projectahelper as l_projecta
@@ -54,6 +55,7 @@ HELPERS = {
     "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
     "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
+    "currentappointments": (currentappointments.CurrentAppointmentsHelper, currentappointments.subparser)
 }
 
 
