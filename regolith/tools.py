@@ -1875,7 +1875,10 @@ def print_task(task_list, stati, index=True):
             print(f"{status}:")
         for task in task_list:
             if index:
-                task["preamble"] = f"({task.get('running_index', 0)}) "
+                try:
+                    task["preamble"] = f"({task.get('running_index', 0)}) "
+                except:
+                    task["preamble"] = ""
             else:
                 task["preamble"] = ""
             if task.get('status') == status:
