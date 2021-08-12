@@ -1891,7 +1891,7 @@ EXEMPLARS = {
                        ],
             "title": "A step-by-step pathway towards african swallow understanding.",
         }],
-    "refereeReports": {
+    "refereeReports": [{
         "_id": "1902nature",
         "claimed_found_what": ["gravity waves"],
         "claimed_why_important": ["more money for ice cream"],
@@ -1911,8 +1911,26 @@ EXEMPLARS = {
         "submitted_date": "2019-01-01",
         "title": "a ruler approach to measuring gravity waves",
         "validity_assessment": ["complete rubbish"],
-        "year": 2019,
-    },
+        "year": 2019},
+        {
+        "_id": "2002nature",
+        "claimed_found_what": ["more gravity waves"],
+        "claimed_why_important": ["even more money for ice cream"],
+        "did_how": ["measured with a ruler"],
+        "did_what": ["found an even cheaper way to measure gravity waves"],
+        "due_date": '2021-04-11',
+        "final_assessment": ["The authors should really start over"],
+        "first_author_last_name": "Wingit",
+        "journal": "Nature",
+        "recommendation": "reject",
+        "requester": "Max Planck",
+        "reviewer": "sbillinge",
+        "status": "accepted",
+        "title": "a ruler approach to measuring gravity waves",
+        "validity_assessment": ["complete rubbish"],
+        "year": 2020,
+        }
+    ],
     "students": {
         "_id": "Human A. Person",
         "aka": ["H. A. Person"],

@@ -167,7 +167,6 @@ class TodoListerHelper(SoutHelperBase):
             if 'milestone: ' in todo['description']:
                 milestones += 1
             elif todo["status"] == 'started':
-                todo["description"] = "todo: " + todo["description"]
                 len_of_started_tasks += 1
         len_of_tasks = len(gather_todos) - milestones
         for todo in gather_todos:
@@ -189,18 +188,22 @@ class TodoListerHelper(SoutHelperBase):
             "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
         print("-" * 80)
         if len(gather_todos) != 0:
-            print_task(gather_todos, stati=rc.stati, index=False)
+            print_task(gather_todos, stati=rc.stati)
 
         if rc.outstandingreview:
             prop = self.gtx['proposalReviews']
             man = self.gtx['refereeReports']
             outstanding_todo = []
             for manuscript in man:
+                if manuscript.get("reviewer") != rc.assigned_to:
+                    continue
                 if manuscript.get("status") in STATI:
                     out = f"Manuscript by {manuscript.get('first_author_last_name')} in {manuscript.get('journal')} " \
                           f"is due on {manuscript.get('due_date')}"
                     outstanding_todo.append((out, manuscript.get('due_date'), manuscript.get("status")))
             for proposal in prop:
+                if proposal.get("reviewer") != rc.assigned_to:
+                    continue
                 if proposal.get("status") in STATI:
                     if isinstance(proposal.get('names'), str):
                         name = HumanName(proposal.get('names'))
