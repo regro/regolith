@@ -614,7 +614,20 @@ helper_map = [
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      ),
-    (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
+    (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
+    (["helper", "reimbstatus", "scopatz"],
+     "Reimbursed expenses:\n"
+     "\n"
+     "Submitted expenses:\n"
+     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
+     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: None-None-None\n"
+     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
+     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: None-None-None\n"
+     "   Grants: dmref15, SymPy-1.1\n"
+     "this expense was used to get the work done\n"
+     "\nUnsubmitted expenses:\n"
+     "\nFuture expenses:\n"
+     )
 ]
 
 db_srcs = [
