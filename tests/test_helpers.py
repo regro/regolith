@@ -416,6 +416,28 @@ helper_map = [
     (["helper", "l_todo", "--assigned_to", "wrong_id"],
      "The id you entered can't be found in todos.yml.\n"
      ),
+    (["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned_to", "sbillinge", "--short"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(2) prepare the presentation (-255|0|30.0|downtime|sbillinge)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Outstanding Reviews:\n"
+     "------------------------------\n"
+     "accepted:\n"
+     "Manuscript by Wingit in Nature is due on 2021-04-11\n"
+     "downloaded:\n"
+     "Proposal by Einstein for nsf (Tess Guebre)is due on 2020-04-08\n"
+     ),
     (
         ["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to",
          "sbillinge",
