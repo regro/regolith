@@ -50,6 +50,9 @@ def subparser(subpi):
                        help=f'Filter tasks with specific stati',
                        default=["started"],
                        **listbox_kwargs)
+    subpi.add_argument("-o", "--outstandingreview",
+                       help="List outstanding reviews",
+                       action="store_true")
     subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
@@ -59,9 +62,6 @@ def subparser(subpi):
                        **date_kwargs)
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
-    subpi.add_argument("-o", "--outstandingreview",
-                       help="List outstanding reviews",
-                       action="store_true")
 
     return subpi
 
