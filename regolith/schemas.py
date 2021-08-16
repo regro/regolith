@@ -211,45 +211,111 @@ EXEMPLARS = {
         },
         "year": 2016,
     },
-    "expenses": {
-        "_id": "test",
-        "begin_date": "2018-01-01",
-        "end_date": "2018-01-10",
-        "expense_type": "business",
-        "grant_percentages": ["50", "50"],
-        "grants": ["dmref15", "SymPy-1.1"],
-        "itemized_expenses": [
-            {
-                "day": i,
-                "month": "Jan",
-                "year": 2018,
-                "purpose": "test",
-                "unsegregated_expense": 10 * i,
-                "segregated_expense": 0,
-                "prepaid_expense": 10.3
-            }
-            for i in range(1, 11)
-        ],
-        "payee": "scopatz",
-        "reimbursements": [
-            {
-            "amount": 500,
-            "date": "tbd",
-            "submission_date": "tbd",
-            "where": "Columbia"
-            },
-            {
-            "amount": 1000,
-            "date": "2019-09-15",
-            "submission_date": "2019-09-05",
-            "where": "Columbia"
-            }
-        ],
-        "project": "Cyclus",
-        "overall_purpose": "testing the databallectionsse",
-        "notes": "this expense was used to get the work done",
-        "status": "submitted",
-    },
+    "expenses": [
+        {
+            "_id": "test",
+            "begin_date": "2018-01-01",
+            "end_date": "2018-01-10",
+            "expense_type": "business",
+            "grant_percentages": ["50", "50"],
+            "grants": ["dmref15", "SymPy-1.1"],
+            "itemized_expenses": [
+                {
+                    "day": i,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 10 * i,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                }
+                for i in range(1, 11)
+            ],
+            "payee": "scopatz",
+            "reimbursements": [
+                {
+                "amount": 500,
+                "date": "tbd",
+                "submission_date": "tbd",
+                "where": "Columbia"
+                },
+                {
+                "amount": 1000,
+                "date": "2019-09-15",
+                "submission_date": "2019-09-05",
+                "where": "Columbia"
+                }
+            ],
+            "project": "Cyclus",
+            "overall_purpose": "testing the databallectionsse",
+            "notes": "this expense was used to get the work done",
+            "status": "submitted",
+        },
+        {
+            "_id": "test2",
+            "begin_date": "2019-01-01",
+            "end_date": "2019-01-10",
+            "expense_type": "business",
+            "grant_percentages": ["100"],
+            "grants": ["SymPy-1.1"],
+            "itemized_expenses": [
+                {
+                    "day": 2,
+                    "month": "Jan",
+                    "year": 2019,
+                    "purpose": "test",
+                    "unsegregated_expense": 10,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                }
+            ],
+            "payee": "sbillinge",
+            "reimbursements": [
+                {
+                    "amount": 100,
+                    "date": "2019-09-15",
+                    "submission_date": "tbd",
+                    "where": "Columbia"
+                },
+            ],
+            "project": "reimbursed expense",
+            "overall_purpose": "testing",
+            "notes": "some note",
+            "status": "reimbursed",
+        },
+        {
+            "_id": "test3",
+            "begin_date": "2020-01-01",
+            "end_date": "2020-01-10",
+            "expense_type": "business",
+            "grant_percentages": ["100"],
+            "grants": ["SymPy-1.1"],
+            "itemized_expenses": [
+                {
+                    "day": 3,
+                    "month": "Jan",
+                    "year": 2020,
+                    "purpose": "test",
+                    "unsegregated_expense": 10,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                }
+            ],
+            "payee": "sbillinge",
+            "reimbursements": [
+                {
+                    "amount": 100,
+                    "date": "2020-09-15",
+                    "submission_date": "tbd",
+                    "where": "Columbia"
+                },
+            ],
+            "project": "reimbursed expense",
+            "overall_purpose": "more testing",
+            "notes": "some other note",
+            "status": "bad_status",
+        }
+    ],
     "grades": {
         "_id": "Human A. Person-rx-power-hw02-EMCH-758-2017-S",
         "student": "hap",

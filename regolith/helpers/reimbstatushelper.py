@@ -65,7 +65,7 @@ class ReimbstatusHelper(SoutHelperBase):
                 elif expense.get('status') == 'cancelled':
                     pass
                 else:
-                    unknown.append(k)
+                    unknown.append(expense.get("_id"))
         sorted_reimb = sorted(reimb, key=lambda i: i['end_date'])
         sorted_sub = sorted(sub, key=lambda i: i['end_date'])
         sorted_unsub = sorted(unsub, key=lambda i: i['end_date'])
@@ -105,14 +105,14 @@ class ReimbstatusHelper(SoutHelperBase):
                                  i.get('begin_date'), i.get('end_date'),
                                  )
                       )
+                if j.get('submission_date'):
+                    when = j.get('submission_date')
+                else:
+                    when = '-'.join(j.get('submission_year'), j.get('submission_month'), j.get('submission_day'))
                 print(
-                    "   Expenses: unseg={:.2f}, Seg={:.2f}, Total={:.2f}, Where: {}, When: {}-{}-{}".format(
-                        unseg, seg, total, j.get('where'),
-                        j.get('submission_year'),
-                        j.get('submission_month'),
-                        j.get('submission_day')
+                    "   Expenses: unseg={:.2f}, Seg={:.2f}, Total={:.2f}, Where: {}, When: {}".format(
+                        unseg, seg, total, j.get('where'), when)
                     )
-                )
             grantstring = ", ".join(i.get('grants'))
             print("   Grants: {}".format(grantstring))
             if isinstance(i.get('notes'), str):
@@ -166,6 +166,6 @@ class ReimbstatusHelper(SoutHelperBase):
                 )
 
         if len(unknown) > 0:
-            print("\nThese keys have invalid statuses:")
-            print([i for i in unknown])
+            print("\nThese expenses have invalid statuses:")
+            print(*unknown)
 
