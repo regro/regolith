@@ -1941,8 +1941,9 @@ EXEMPLARS = {
         "email": "haperson@uni.edu",
         "university_id": "HAP42",
     },
-    "todos": {
-        "_id": "sbillinge",
+    "todos": [
+        {"_id": "ascopatz"},
+        {"_id": "sbillinge",
         "todos": [
             {"description": "read paper",
              "due_date": "2020-07-19",
@@ -1966,9 +1967,9 @@ EXEMPLARS = {
              "assigned_by": "sbillinge",
              "running_index": 2,
              "tags": ["downtime"]
-             }
-        ],
-    }
+             }]
+        },
+    ]
 }
 
 SCHEMAS = {

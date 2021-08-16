@@ -380,6 +380,28 @@ helper_map = [
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
      ),
+    (["helper", "l_todo", "--assigned_to", "ascopatz", "--date", "2020-05-01"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(9900) milestone: deliverable (sb_firstprojectum) (31|2|3600||scopatz)\n"
+     "     - deliverable note\n"
+     "     - do this\n"
+     "     - do that\n"
+     "(9902) milestone: planning meeting (sb_firstprojectum) (31|2|3600||scopatz)\n"
+     "     - do this\n"
+     "     - do that\n"
+     "(9901) milestone: Project lead presentation (sb_firstprojectum) (19|2|3600||scopatz)\n"
+     "     - do background reading\n"
+     "     - understand math\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     ),
     (["helper", "l_todo", "--short", "65",
       "--date", "2020-07-13", "--assigned_by", "scopatz", "--assigned_to",
       "sbillinge"],
