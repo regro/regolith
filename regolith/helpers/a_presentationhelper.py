@@ -88,6 +88,10 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
+    subpi.add_argument("--id",
+                       help="Override the default id created from the date, "
+                            "speaker and place by specifying an id here",
+                       )
     subpi.add_argument("--no_cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
@@ -157,7 +161,10 @@ class PresentationAdderHelper(DbHelperBase):
         else:
             name_key = split_person[0][:1].casefold()
 
-        key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{name_key}_{''.join(rc.place.casefold().split()).strip()}"
+        if not rc.id:
+            key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{name_key}_{''.join(rc.place.casefold().split()).strip()}"
+        else:
+            key = rc.id
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
