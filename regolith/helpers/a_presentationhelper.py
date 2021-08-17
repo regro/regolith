@@ -1,5 +1,7 @@
 """Helper for adding a presentation to the presentation collection.
 """
+import time
+
 import dateutil.parser as date_parser
 import threading
 
@@ -130,7 +132,11 @@ class PresentationAdderHelper(DbHelperBase):
             cal_update_bool = add_to_google_calendar(event)
             if not cal_update_bool:
                 google_cal_auth_flow()
-                add_to_google_calendar(event)
+                wait_bool, jump = 0, 0
+                while not wait_bool or jump == 60:
+                    time.sleep(1)
+                    wait_bool = add_to_google_calendar(event)
+                    jump += 1
 
         # dates
         begin_date = date_parser.parse(rc.begin_date).date()
