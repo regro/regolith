@@ -1,6 +1,7 @@
 """Helper for adding a presentation to the presentation collection.
 """
 import dateutil.parser as date_parser
+import threading
 
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
@@ -9,6 +10,8 @@ from regolith.schemas import PRESENTATION_TYPES, PRESENTATION_STATI
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
+    add_to_google_calendar,
+    google_cal_auth_flow
 )
 from gooey import GooeyParser
 
@@ -52,7 +55,8 @@ def subparser(subpi):
                             "defaults to person submitting the presentation",
                        )
     subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant, or grants (separated by spaces), that support this presentation. Defaults to tbd"
+                       help="grant, or grants (separated by spaces), that support this presentation. Defaults to tbd",
+                       default="tbd"
                        )
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="note or notes to be inserted as a list into the notes field, "
@@ -82,6 +86,15 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
+    subpi.add_argument("--no_cal",
+                       help=f"Do not add the presentation to google calendar",
+                       action="store_true")
+    subpi.add_argument("--activate_google_calendar",
+                       help=f"Run the google calendar api authentication flow"
+                            f"Do this if this is your first time using the google calendar feature"
+                            f"This only has to be done once. After authenticating, the token is stored"
+                            f"in ~/.config/regolith/tokens",
+                       action="store_true")
     return subpi
 
 
@@ -115,7 +128,6 @@ class PresentationAdderHelper(DbHelperBase):
         gtx = self.gtx
         rc = self.rc
         # dates
-
         begin_date = date_parser.parse(rc.begin_date).date()
         end_date = date_parser.parse(rc.end_date).date()
 
@@ -179,5 +191,17 @@ class PresentationAdderHelper(DbHelperBase):
             edoc = expense_constructor(key, begin_date, end_date, rc)
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
+
+        if rc.activate_google_calendar:
+            google_cal_auth_flow()
+
+        if not rc.no_cal:
+            event = {
+                        'summary': rc.name,
+                        'location': rc.place,
+                        'start': {'date': rc.begin_date},
+                        'end': {'date': rc.end_date}
+                    }
+            add_to_google_calendar(event)
 
         return
