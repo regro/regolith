@@ -472,10 +472,10 @@ helper_map = [
         "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge",
-      "--end_date", "2020-07-20", "--date", "2020-07-13"],
-     "The task \"(3) test a_todo\" in test for sbillinge has been marked as finished.\n"
-     ),
-    (["helper", "f_todo", "--assigned_to", "sbillinge", "--date",
+       "--end_date", "2020-07-20", "--date", "2020-07-13"],
+      "The task \"(3) test a_todo\" in test for sbillinge has been marked as finished.\n"
+      ),
+     (["helper", "f_todo", "--assigned_to", "sbillinge", "--date",
       "2020-07-13"],
      "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
@@ -494,7 +494,10 @@ helper_map = [
      "Deadlines:\n"
      "------------------------------\n"
      ),
-    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge",
+ (["helper", "f_todo", "--index", "99100"],
+  "WARNING: indices >= 9900 are used for milestones which should be finished using u_milestone and not f_todo\n"
+  ),
+ (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge",
       "--description", "update the description", "--due_date", "2020-07-06",
       "--estimated_duration", "35", "--importance", "2", "--status", "finished",
       "--notes", "some new notes", "notes2", "--tags", "newtag1", "newtag2",
@@ -531,7 +534,10 @@ helper_map = [
      "Deadlines:\n"
      "------------------------------\n"
      ),
-    (["helper", "f_prum", "sb_firstprojectum", "--end_date", "2020-07-01"],
+ (["helper", "u_todo", "--index", "99100"],
+  "WARNING: indices >= 9900 are used for milestones which should be updated using u_milestone and not u_todo\n"
+  ),
+ (["helper", "f_prum", "sb_firstprojectum", "--end_date", "2020-07-01"],
      "sb_firstprojectum status has been updated to finished\n"
      ),
     (["helper", "f_prum", "sb_"],
@@ -702,12 +708,12 @@ def test_helper_python(hm, make_db, db_src, make_mongodb, capsys):
                 assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
 
 helper_map_loose = [
-    (["helper", "l_abstract"],
+  (["helper", "l_abstract"],
      "-------------------------------------------\n"
      "please rerun specifying at least one filter\n"
      "-------------------------------------------\n"
-     )
-    ]
+   ),
+]
 @pytest.mark.parametrize("hm", helper_map_loose)
 def test_helper_python_loose(hm, make_db, capsys):
     repo = Path(make_db)

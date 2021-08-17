@@ -74,8 +74,9 @@ class TodoFinisherHelper(DbHelperBase):
         rc = self.rc
         if rc.index:
             if rc.index >= 9900:
-                sys.exit("WARNING: indices >= 9900 are used for milestones which "
+                print("WARNING: indices >= 9900 are used for milestones which "
                          "should be finished using u_milestone and not f_todo")
+                return
         if not rc.assigned_to:
             try:
                 rc.assigned_to = rc.default_user_id
