@@ -159,12 +159,13 @@ class PresentationAdderHelper(DbHelperBase):
         if len(split_person) >= 2:
             name_key = split_person[0][0].casefold() + split_person[-1][0].casefold()
         else:
-            name_key = split_person[0][:1].casefold()
+            name_key = split_person[0][:2].casefold()
 
         if not rc.id:
             key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{name_key}_{''.join(rc.place.casefold().split()).strip()}"
         else:
             key = rc.id
+
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
