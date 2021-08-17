@@ -9,7 +9,8 @@ from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.schemas import (
-    TODO_STATI
+    TODO_STATI,
+    PROJECTUM_ACTIVE_STATI
 )
 from regolith.tools import (
     all_docs_from_collection,
@@ -25,7 +26,6 @@ TARGET_COLL = "todos"
 HELPER_TARGET = "l_todo"
 Importance = [3, 2, 1, 0, -1,
               -2]  # eisenhower matrix (important|urgent) tt=3, tf=2, ft=1, ff=0
-ACTIVE_STATI = ["started", "converged", "proposed"]
 STATI = ["accepted", "downloaded", "inprep"]
 
 def subparser(subpi):
@@ -50,6 +50,9 @@ def subparser(subpi):
                        help=f'Filter tasks with specific stati',
                        default=["started"],
                        **listbox_kwargs)
+    subpi.add_argument("-o", "--outstandingreview",
+                       help="List outstanding reviews",
+                       action="store_true")
     subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
@@ -59,9 +62,6 @@ def subparser(subpi):
                        **date_kwargs)
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ")
-    subpi.add_argument("-o", "--outstandingreview",
-                       help="List outstanding reviews",
-                       action="store_true")
 
     return subpi
 
@@ -118,7 +118,8 @@ class TodoListerHelper(SoutHelperBase):
         else:
             today = date_parser.parse(rc.date).date()
         if rc.stati == ["started"]:
-            rc.stati = ACTIVE_STATI
+            rc.stati = PROJECTUM_ACTIVE_STATI
+        running_index = 0
         for projectum in self.gtx["projecta"]:
             if projectum.get('lead') != rc.assigned_to:
                 continue
@@ -128,15 +129,19 @@ class TodoListerHelper(SoutHelperBase):
             gather_miles = [projectum["kickoff"], projectum["deliverable"]]
             gather_miles.extend(projectum["milestones"])
             for ms in gather_miles:
-                if projectum["status"] not in ["finished", "cancelled"]:
-                    if ms.get('status') not in \
-                            ["finished", "cancelled"]:
+                if projectum["status"] in PROJECTUM_ACTIVE_STATI:
+                    if ms.get('status') in PROJECTUM_ACTIVE_STATI:
                         due_date = get_due_date(ms)
                         ms.update({
+                            'status': "started",
                             'id': projectum.get('_id'),
                             'due_date': due_date,
-                            'assigned_by': projectum.get('pi_id')
+                            'assigned_by': projectum.get('pi_id'),
+                            'importance': 2,
+                            'duration': 3600,
+                            'running_index': 9900 + running_index
                         })
+                        running_index += 1
                         ms.update({
                                       'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
                         gather_todos.append(ms)
@@ -168,7 +173,7 @@ class TodoListerHelper(SoutHelperBase):
                 milestones += 1
             elif todo["status"] == 'started':
                 len_of_started_tasks += 1
-        len_of_tasks = len(gather_todos) - milestones
+        len_of_tasks = len(gather_todos) #- milestones
         for todo in gather_todos:
             _format_todos(todo, today)
         gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks],

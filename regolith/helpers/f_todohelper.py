@@ -2,6 +2,8 @@
 """
 
 import datetime as dt
+import sys
+
 import dateutil.parser as date_parser
 import math
 
@@ -70,6 +72,10 @@ class TodoFinisherHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
+        if rc.index:
+            if rc.index >= 9900:
+                sys.exit("WARNING: indices >= 9900 are used for milestones which "
+                         "should be finished using u_milestone and not f_todo")
         if not rc.assigned_to:
             try:
                 rc.assigned_to = rc.default_user_id
