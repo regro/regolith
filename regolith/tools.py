@@ -2044,18 +2044,17 @@ def add_to_google_calendar(event):
         else:
             print('The google calendar feature needs authentication information to run. '
                   'This needs to be done just once for each new device. '
-                  'To do this, please type:\n\n'
-                  '   regolith helper a_presentation --activate-google-calendar\n\n'
-                  'and follow the prompts in the browser popup from Google.'
-                  ' You can then rerun this command and it should work, now and in the future.\n'
-                  'The helper may be run without creating a calendar event by rerunning the command (e.g., use up-arrow) and adding --no-cal')
-            return
+                  'Please grant permission to regolith to access your calendar. '
+                  'If this process takes more than 1 minute you will have to rerun '
+                  'the helper to complete the addition of the presentation.')
+            return 0
         with open(tokenfile, 'w') as token:
             token.write(creds.to_json())
 
     service = build('calendar', 'v3', credentials=creds)
     event = service.events().insert(calendarId='primary', body=event).execute()
     print('Event created: %s' % (event.get('htmlLink')))
+    return 1
 
 def google_cal_auth_flow():
     """First time authentication, this function opens a window to request user consent to use google calendar API,

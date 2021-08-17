@@ -1,5 +1,7 @@
 """Helper for adding a presentation to the presentation collection.
 """
+import time
+
 import dateutil.parser as date_parser
 import threading
 
@@ -86,14 +88,12 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
+    subpi.add_argument("--id",
+                       help="Override the default id created from the date, "
+                            "speaker and place by specifying an id here",
+                       )
     subpi.add_argument("--no_cal",
                        help=f"Do not add the presentation to google calendar",
-                       action="store_true")
-    subpi.add_argument("--activate_google_calendar",
-                       help=f"Run the google calendar api authentication flow"
-                            f"Do this if this is your first time using the google calendar feature"
-                            f"This only has to be done once. After authenticating, the token is stored"
-                            f"in ~/.config/regolith/tokens",
                        action="store_true")
     return subpi
 
@@ -124,9 +124,24 @@ class PresentationAdderHelper(DbHelperBase):
         gtx["zip"] = zip
 
     def db_updater(self):
-        rc = self.rc
         gtx = self.gtx
         rc = self.rc
+        if not rc.no_cal:
+            event = {
+                        'summary': rc.name,
+                        'location': rc.place,
+                        'start': {'date': rc.begin_date},
+                        'end': {'date': rc.end_date}
+                    }
+            cal_update_bool = add_to_google_calendar(event)
+            if not cal_update_bool:
+                google_cal_auth_flow()
+                wait_bool, jump = 0, 0
+                while not wait_bool or jump == 60:
+                    time.sleep(1)
+                    wait_bool = add_to_google_calendar(event)
+                    jump += 1
+
         # dates
         begin_date = date_parser.parse(rc.begin_date).date()
         end_date = date_parser.parse(rc.end_date).date()
@@ -140,8 +155,17 @@ class PresentationAdderHelper(DbHelperBase):
                     "WARNING: no person been set. please rerun specifying authors,"
                     "or add your id, e.g., sbillinge, to the config.json file in ~/.config/regolith"
                 )
+        split_person = rc.person.strip().split()
+        if len(split_person) >= 2:
+            name_key = split_person[0][0].casefold() + split_person[-1][0].casefold()
+        else:
+            name_key = split_person[0][:2].casefold()
 
-        key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{rc.person[0:2]}_{''.join(rc.place.casefold().split()).strip()}"
+        if not rc.id:
+            key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{name_key}_{''.join(rc.place.casefold().split()).strip()}"
+        else:
+            key = rc.id
+
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
@@ -191,17 +215,5 @@ class PresentationAdderHelper(DbHelperBase):
             edoc = expense_constructor(key, begin_date, end_date, rc)
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
-
-        if rc.activate_google_calendar:
-            google_cal_auth_flow()
-
-        if not rc.no_cal:
-            event = {
-                        'summary': rc.name,
-                        'location': rc.place,
-                        'start': {'date': rc.begin_date},
-                        'end': {'date': rc.end_date}
-                    }
-            add_to_google_calendar(event)
 
         return
