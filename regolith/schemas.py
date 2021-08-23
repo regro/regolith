@@ -1601,6 +1601,16 @@ EXEMPLARS = {
             "deliverable": {"due_date": "2021-05-03", "status": "paused"},
             "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner"},
             "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged"}]
+    },
+        {
+            "_id": "pl_firstprojectum",
+            "lead": "pliu",
+            "status": "finished",
+            "begin_date": "2020-07-25",
+            "end_date": "2020-07-27",
+            "deliverable": {"due_date": "2020-08-26", "status": "finished"},
+            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
         }
         ],
     "projects": {
