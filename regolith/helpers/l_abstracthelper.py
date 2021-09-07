@@ -22,7 +22,7 @@ def subparser(subpi):
         "-a",
         "--author",
         help="Filter abstracts or this author ID (e.g., sbillinge)."
-             )
+    )
     subpi.add_argument(
         "-y",
         "--year",
@@ -100,20 +100,21 @@ class AbstractListerHelper(SoutHelperBase):
             filtered_years = [presentation for presentation in filtered_authors
                               if get_dates(presentation).get("date",
                                                              get_dates(presentation).get("end_date",
-                                                             get_dates(presentation).get("begin_date"))).year == int(rc.year)]
+                                                                                         get_dates(presentation).get(
+                                                                                             "begin_date"))).year == int(
+                    rc.year)]
         else:
             filtered_years = filtered_authors
 
         if rc.loc_inst:
             filtered_inst = [presentation for presentation in filtered_years
                              if presentation.get('type') in SEMINAR_TYPES and
-                             rc.loc_inst.casefold() in presentation.get('institution',"").casefold()]
+                             rc.loc_inst.casefold() in presentation.get('institution', "").casefold()]
             filtered_loc = [presentation for presentation in filtered_years
-                            if rc.loc_inst.casefold() in presentation.get('location',"").casefold()]
+                            if rc.loc_inst.casefold() in presentation.get('location', "").casefold()]
         else:
             filtered_inst = filtered_years
             filtered_loc = filtered_years
-
 
         filtered_presentations_by_args = [filtered_inst, filtered_loc]
 
