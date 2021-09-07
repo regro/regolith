@@ -66,44 +66,44 @@ helper_map = [
      "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\n"),
     (["helper", "l_progress", "-l", "ascopatz"],
      "*************************[Started Projecta]**************************\n"
-      "sb_firstprojectum\n"
-      "    status: started, begin_date: 2020-04-28, due_date: 2021-05-05\n"
-      "    description: My first projectum\n"
-      "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
-      "    milestones:\n"
-      "        due: 2020-05-20, Project lead presentation, type: meeting, status: proposed\n"
-      "          objective: lead presents background reading and initial project plan\n"
-      "        due: 2020-05-27, planning meeting, type: mergedpr, status: proposed\n"
-      "          objective: develop a detailed plan with dates\n"
+     "sb_firstprojectum\n"
+     "    status: started, begin_date: 2020-04-28, due_date: 2021-05-05\n"
+     "    description: My first projectum\n"
+     "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+     "    milestones:\n"
+     "        due: 2020-05-20, Project lead presentation, type: meeting, status: proposed\n"
+     "          objective: lead presents background reading and initial project plan\n"
+     "        due: 2020-05-27, planning meeting, type: mergedpr, status: proposed\n"
+     "          objective: develop a detailed plan with dates\n"
      ),
     (["helper", "l_progress", "-l", "pliu"],
      "*************************[Finished Projecta]*************************\n"
-      "pl_firstprojectum\n"
-      "    status: finished, begin_date: 2020-07-25, due_date: 2020-08-26\n"
-      "    description: None\n"
-      "    finished: 2020-07-27\n"
+     "pl_firstprojectum\n"
+     "    status: finished, begin_date: 2020-07-25, due_date: 2020-08-26\n"
+     "    description: None\n"
+     "    finished: 2020-07-27\n"
      ),
     (["helper", "l_progress", "-v", "-l", "ascopatz"],
      "*************************[Started Projecta]**************************\n"
-      "sb_firstprojectum\n"
-      "    status: started, begin_date: 2020-04-28, due_date: 2021-05-05\n"
-      "    description: My first projectum\n"
-      "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
-      "    team:\n"
-      "        group_members: ascopatz\n"
-      "        collaborators: aeinstein, pdirac\n"
-      "    deliverable:\n"
-      "        audience: beginning grad in chemistry\n"
-      "        scope: 1. UCs that are supported or some other scope description if it is software\n"
-      "               2. sketch of science story if it is paper\n"
-      "        platform: description of how and where the audience will access the deliverable.  Journal if it is a paper\n"
-      "    milestones:\n"
-      "        2020-05-20: Project lead presentation\n"
-      "            objective: lead presents background reading and initial project plan\n"
-      "            status: proposed\n"
-      "        2020-05-27: planning meeting\n"
-      "            objective: develop a detailed plan with dates\n"
-      "            status: proposed\n"
+     "sb_firstprojectum\n"
+     "    status: started, begin_date: 2020-04-28, due_date: 2021-05-05\n"
+     "    description: My first projectum\n"
+     "    log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+     "    team:\n"
+     "        group_members: ascopatz\n"
+     "        collaborators: aeinstein, pdirac\n"
+     "    deliverable:\n"
+     "        audience: beginning grad in chemistry\n"
+     "        scope: 1. UCs that are supported or some other scope description if it is software\n"
+     "               2. sketch of science story if it is paper\n"
+     "        platform: description of how and where the audience will access the deliverable.  Journal if it is a paper\n"
+     "    milestones:\n"
+     "        2020-05-20: Project lead presentation\n"
+     "            objective: lead presents background reading and initial project plan\n"
+     "            status: proposed\n"
+     "        2020-05-27: planning meeting\n"
+     "            objective: develop a detailed plan with dates\n"
+     "            status: proposed\n"
      ),
     (["helper", "l_milestones", "--verbose"],
      "2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n2021-05-03: lead: abeing, ab_inactive, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
@@ -112,7 +112,7 @@ helper_map = [
      "2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n2021-05-03: lead: abeing, ab_inactive, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
     (["helper", "l_milestones", "--verbose", "--current", "--by_prum"],
-     f"{dash*50}\n2021-05-03: lead: abeing, ab_inactive, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n{dash*50}\n2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n{dash*50}\n2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
+     f"{dash * 50}\n2021-05-03: lead: abeing, ab_inactive, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n{dash * 50}\n2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n{dash * 50}\n2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
      ),
     (["helper", "l_milestones", "--verbose", "--all"],
      "2021-08-03: lead: pliu, pl_firstprojectum, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n2021-08-03: lead: pliu, pl_firstprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n2021-05-03: lead: abeing, ab_inactive, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n2021-05-03: lead: abeing, ab_inactive, status: paused\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n2021-05-03: lead: abeing, ab_inactive, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: beginning grad in chemistry\n2020-08-26: lead: pliu, pl_firstprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: \n    Purpose: to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.\n    Audience: lyang, scopatz, ascopatz\n2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n2020-05-06: lead: ascopatz, sb_firstprojectum, status: finished\n    Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - kickoff note\n"
@@ -229,7 +229,25 @@ helper_map = [
      "    aka:\n"
      "        -A. B. Friend\n        -AB Friend\n        -Tony Friend\n"
      ),
+    (["helper", "l_abstract", "--year", "2018", "--author", "afriend"],
+     "---------------------------------------\n"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     ),
+    (["helper", "l_abstract", "--year", "2018", "--title", "nanostructure"],
+     "---------------------------------------\n"
+     "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
+     "Anthony Scopatz\n\n"
+     "Abstract: We made the case for local structure\n"
+     ),
     (["helper", "l_abstract", "--title", "graphitic"],
+     "---------------------------------------\n"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     ),
+    (["helper", "l_abstract", "--title", "graphitic", "--loc_inst", "upton"],
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
@@ -245,7 +263,17 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract",  "--year", "2018"],
+    (["helper", "l_abstract", "--loc_inst", "upton", "--year", "2018"],
+     "---------------------------------------\n"
+     "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+     "Anthony Scopatz\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "Title: Graphitic Dephenestration\n\n"
+     "Anthony Scopatz, Anthony B Friend\n\n"
+     "Abstract: We pulled apart graphite with tape\n"
+     ),
+    (["helper", "l_abstract", "--year", "2018"],
      "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"
@@ -486,10 +514,10 @@ helper_map = [
         "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge",
-       "--end_date", "2020-07-20", "--date", "2020-07-13"],
-      "The task \"(3) test a_todo\" in test for sbillinge has been marked as finished.\n"
-      ),
-     (["helper", "f_todo", "--assigned_to", "sbillinge", "--date",
+      "--end_date", "2020-07-20", "--date", "2020-07-13"],
+     "The task \"(3) test a_todo\" in test for sbillinge has been marked as finished.\n"
+     ),
+    (["helper", "f_todo", "--assigned_to", "sbillinge", "--date",
       "2020-07-13"],
      "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
@@ -508,10 +536,10 @@ helper_map = [
      "Deadlines:\n"
      "------------------------------\n"
      ),
- (["helper", "f_todo", "--index", "99100"],
-  "WARNING: indices >= 9900 are used for milestones which should be finished using u_milestone and not f_todo\n"
-  ),
- (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge",
+    (["helper", "f_todo", "--index", "99100"],
+     "WARNING: indices >= 9900 are used for milestones which should be finished using u_milestone and not f_todo\n"
+     ),
+    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge",
       "--description", "update the description", "--due_date", "2020-07-06",
       "--estimated_duration", "35", "--importance", "2", "--status", "finished",
       "--notes", "some new notes", "notes2", "--tags", "newtag1", "newtag2",
@@ -548,10 +576,10 @@ helper_map = [
      "Deadlines:\n"
      "------------------------------\n"
      ),
- (["helper", "u_todo", "--index", "99100"],
-  "WARNING: indices >= 9900 are used for milestones which should be updated using u_milestone and not u_todo\n"
-  ),
- (["helper", "f_prum", "sb_firstprojectum", "--end_date", "2020-07-01"],
+    (["helper", "u_todo", "--index", "99100"],
+     "WARNING: indices >= 9900 are used for milestones which should be updated using u_milestone and not u_todo\n"
+     ),
+    (["helper", "f_prum", "sb_firstprojectum", "--end_date", "2020-07-01"],
      "sb_firstprojectum status has been updated to finished\n"
      ),
     (["helper", "f_prum", "sb_"],
@@ -602,7 +630,7 @@ helper_map = [
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
     (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31"],
-      "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
      "    person: scopatz, appointment: f19, grant: dmref15,\n"
@@ -721,13 +749,16 @@ def test_helper_python(hm, make_db, db_src, make_mongodb, capsys):
                 mongo_database = client[rc.databases[0]['name']]
                 assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
 
+
 helper_map_loose = [
-  (["helper", "l_abstract"],
+    (["helper", "l_abstract"],
      "-------------------------------------------\n"
      "please rerun specifying at least one filter\n"
      "-------------------------------------------\n"
-   ),
+     ),
 ]
+
+
 @pytest.mark.parametrize("hm", helper_map_loose)
 def test_helper_python_loose(hm, make_db, capsys):
     repo = Path(make_db)
@@ -737,6 +768,7 @@ def test_helper_python_loose(hm, make_db, capsys):
     main(args=hm[0])
     out, err = capsys.readouterr()
     assert hm[1] in out
+
 
 def assert_mongo_vs_yaml_outputs(expecteddir, mongo_database):
     from regolith.mongoclient import load_mongo_col
