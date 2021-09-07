@@ -229,6 +229,12 @@ helper_map = [
      "    aka:\n"
      "        -A. B. Friend\n        -AB Friend\n        -Tony Friend\n"
      ),
+    (["helper", "l_abstract", "--year", "2018", "--author", "afriend"],
+    "---------------------------------------\n"
+    "Title: Graphitic Dephenestration\n\n"
+    "Anthony Scopatz, Anthony B Friend\n\n"
+    "Abstract: We pulled apart graphite with tape\n"
+    ),
     (["helper", "l_abstract", "--title", "graphitic"],
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
