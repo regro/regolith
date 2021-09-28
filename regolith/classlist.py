@@ -144,6 +144,8 @@ def add_students_to_db(students, rc):
 def add_students_to_course(students, rc):
     """Add students to the course listed"""
     course = rc.client.find_one(rc.db, "courses", {"_id": rc.course_id})
+    if not course:
+        raise ValueError(f"no course {rc.course_id} found in database")
     registry = {s["_id"] for s in students}
     if rc.op == "add":
         registry |= set(course["students"])
