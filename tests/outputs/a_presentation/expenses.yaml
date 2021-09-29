@@ -196,3 +196,55 @@ test:
       submission_date: '2019-09-05'
       where: Columbia
   status: submitted
+test2:
+  begin_date: '2019-01-01'
+  end_date: '2019-01-10'
+  expense_type: business
+  grant_percentages:
+    - '100'
+  grants:
+    - SymPy-1.1
+  itemized_expenses:
+    - day: 2
+      month: Jan
+      year: 2019
+      purpose: test
+      unsegregated_expense: 10
+      segregated_expense: 0
+      prepaid_expense: 10.3
+  notes: some note
+  overall_purpose: testing
+  payee: sbillinge
+  project: reimbursed expense
+  reimbursements:
+    - amount: 100
+      date: '2019-09-15'
+      submission_date: tbd
+      where: Columbia
+  status: reimbursed
+test3:
+  begin_date: '2020-01-01'
+  end_date: '2020-01-10'
+  expense_type: business
+  grant_percentages:
+    - '100'
+  grants:
+    - SymPy-1.1
+  itemized_expenses:
+    - day: 3
+      month: Jan
+      year: 2020
+      purpose: test
+      unsegregated_expense: 10
+      segregated_expense: 0
+      prepaid_expense: 10.3
+  notes: some other note
+  overall_purpose: more testing
+  payee: sbillinge
+  project: reimbursed expense
+  reimbursements:
+    - amount: 100
+      date: '2020-09-15'
+      submission_date: tbd
+      where: Columbia
+  status: bad_status

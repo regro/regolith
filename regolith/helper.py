@@ -27,6 +27,7 @@ from regolith.helpers import a_todohelper as a_todo
 from regolith.helpers import v_meetingshelper as v_meetings
 from regolith.helpers import f_todohelper as f_todo
 from regolith.helpers import u_todohelper as u_todo
+from regolith.helpers import reimbstatushelper as reimbstatus
 
 HELPERS = {
     "attestations": (attestations.AttestationsHelper, attestations.subparser),
@@ -56,6 +57,7 @@ HELPERS = {
     "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
     "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
+    "reimbstatus": (reimbstatus.ReimbstatusHelper, reimbstatus.subparser)
 }
 
 

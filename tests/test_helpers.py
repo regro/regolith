@@ -706,7 +706,33 @@ helper_map = [
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      ),
-    (["helper", "v_meetings", "--test"], "Meeting validator helper\n")
+    (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
+    (["helper", "reimbstatus", "scopatz"],
+     "Reimbursed expenses:\n"
+     "\n"
+     "Submitted expenses:\n"
+     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
+     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: tbd\n"
+     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
+     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: 2019-09-05\n"
+     "   Grants: dmref15, SymPy-1.1\n"
+     "this expense was used to get the work done\n"
+     "\nUnsubmitted expenses:\n"
+     "\nFuture expenses:\n"
+     ),
+    (["helper", "reimbstatus", "sbillinge"],
+     "Reimbursed expenses:\n"
+     " - 190110 - testing 2019-01-01 to 2019-01-10,\n"
+     "   Requested: 10, Reimbursed: 100, Date: 2019-09-15, Grants: SymPy-1.1\n"
+     "\nSubmitted expenses:\n"
+     "\nUnsubmitted expenses:\n"
+     " - 200626 - give contributed_oral presentation at flat earth, Mars 2020-06-26 to 2020-06-26,\n"
+     "   Expenses: unseg=0.00, Seg=0.00, Total=0.00, Where: tbd\n"
+     "   Grants: mrsec14\n"
+     "\nFuture expenses:\n"
+     "\nThese expenses have invalid statuses:\n"
+     "test3\n"
+     )
 ]
 
 db_srcs = [
