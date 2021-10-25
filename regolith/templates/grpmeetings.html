@@ -10,23 +10,25 @@
 <li>Journal club presentation: </li>
 <div style="margin-left: 2em;">
   <li>presenter: {{ fmeetings[0].get('journal_club').get('presenter','') }}
+  {% if "no jclub" not in fmeetings[0].get('journal_club').get('presenter','').lower() %}
   <li>doi: {{ fmeetings[0].get('journal_club').get('doi','') }}
 {%if fmeetings[0].get('journal_club', '').get('link')%}
 <li>link: <a href="{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}">{{- fmeetings[0].get('journal_club', '').get('link','tbd')-}}</a></li>
   {% else %}
 <li>Link: TBD</li>
-  {% endif %}</div>
+  {% endif %}{% endif %}</div>
   {% endif %}
   {% if fmeetings[0].get('presentation') %}
   <li>Research Presentation:</li>
 <div style="margin-left: 2em;">
     <li>presenter:  {{fmeetings[0].get('presentation').get('presenter','')}}</li>
+  {% if "no pres" not in fmeetings[0].get('presentation').get('presenter','').lower() %}
     <li>title: {{fmeetings[0].get('presentation').get('title','')}}</li>
 {%if fmeetings[0].get('presentation', '').get('link')%}
   <li>link: <a href="{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}">{{- fmeetings[0].get('presentation', '').get('link','tbd')-}}</a></li>
 {%else%}
 <li> Link: TBD
-{%endif%}
+{%endif%}{%endif%}
 </li></div>  {% endif %}
   <h3>Buddies:</h3>
   <li>Please everyone prepare ahead of time by sitting with your buddy and talking.
