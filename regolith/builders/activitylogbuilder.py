@@ -5,9 +5,9 @@ from dateutil.relativedelta import relativedelta
 from copy import deepcopy, copy
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.builders.cpbuilder import is_pending
+from regolith.builders.cpbuilder import is_pending, is_declined
 from regolith.fsclient import _id_key
-from regolith.dates import month_to_int, is_current, get_dates
+from regolith.dates import is_current, get_dates
 from regolith.sorters import position_key, doc_date_key
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.tools import (
@@ -226,6 +226,25 @@ class ActivitylogBuilder(LatexBuilderBase):
         badids = [i["_id"] for i in current_grants if
                   not i.get('cpp_info').get('cppflag', "")]
 
+        declined_proposals = [
+            g for g in self.gtx["proposals"]
+            if is_declined(g["status"])
+        ]
+        for g in declined_proposals:
+            for person in g["team"]:
+                rperson = fuzzy_retrieval(
+                    self.gtx["people"], ["aka", "name"], person["name"]
+                )
+                if rperson:
+                    person["name"] = rperson["name"]
+        declined_proposals, _, _ = filter_grants(
+            declined_proposals, {pi["name"]}, pi=False, multi_pi=True
+        )
+        declined_proposals = [proposal for proposal in declined_proposals if
+                              get_dates(proposal).get('begin_date') >= begin_period
+                              and get_dates(proposal,
+                              date_field_prefix="submitted").get('submitted_date', end_period) <= end_period]
+
         iter = copy(current_grants)
         for grant in iter:
             if grant["_id"] in badids:
@@ -417,6 +436,7 @@ class ActivitylogBuilder(LatexBuilderBase):
             projects=projs,
             pending=pending_grants,
             current=current_grants,
+            declined=declined_proposals,
             undergrads=undergrads,
             masters=masters,
             currentphds=currents,
