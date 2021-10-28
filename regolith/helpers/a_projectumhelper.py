@@ -192,8 +192,8 @@ class ProjectumAdderHelper(DbHelperBase):
                              "all the steps to get to the deliverable",
                              "() think if good due dates for everything and shoot for "
                              "hitting them.  Either work back from a deadline for the "
-                             "deliverable, or work forward to guid you to a reasonable "
-                             "deadline for the prum deliverable."
+                             "deliverable, or work forward to guide you to a reasonable "
+                             "deadline for the prum deliverable.",
                              "() using u_milestones in helper_gui, or otherwise, "
                              "get them entered into the prum",
                              "() schedule a meeting with the PI to go over them "
