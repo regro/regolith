@@ -13,7 +13,7 @@ from regolith.tools import (
 )
 from gooey import GooeyParser
 
-TARGET_COLL = "expenses"
+TARGET_COLL = "expenses" 
 
 def expense_constructor(key, begin_date, end_date, rc):
     '''
