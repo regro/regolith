@@ -58,7 +58,7 @@ HELPERS = {
     "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
     "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
-    "currentappointments": (currentappointments.CurrentAppointmentsHelper, currentappointments.subparser)
+    "currentappointments": (currentappointments.CurrentAppointmentsHelper, currentappointments.subparser),
     "reimbstatus": (reimbstatus.ReimbstatusHelper, reimbstatus.subparser)
 }
 
