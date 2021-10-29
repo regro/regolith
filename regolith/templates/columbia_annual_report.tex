@@ -155,9 +155,9 @@
 
 %\subsection*{Current Projects}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{ Current and Pending grants}
+\resheading{ Current and Pending grants and declined proposals in this period}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for grant_block, name in zip([pending, current], ['Pending', 'Current']) %}
+{% for grant_block, name in zip([pending, current, declined], ['Pending', 'Current', 'Declined']) %}
 {% if len(grant_block) > 0 %}
 {% for g in grant_block %}
 \vskip 12pt\noindent
@@ -509,11 +509,10 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Courses taught in {{ p["begin_period"][-4:] }} - {{ p["end_period"][-4:]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Fall {{p["begin_period"][-4:]}} }
 \begin{itemize}[label=$-$]
 {% for c in p['teaching'] %}
-    {% if c['year']|string in p["begin_period"] and c['semester'] == 'Fall' %}
-        \item  {\bf {{latex_safe(c['course'])-}} }\\
+    {% if c['year'] >= p["begin_period"][-4:]|int and c['semester'] == 'Fall' %}
+        \item  {\bf Fall {{c["year"]}}: {{latex_safe(c['course'])-}} }\\
                 {% if 'none' not in c['courseid'] %}
                 Enrollment: {{ latex_safe(c['enrollment']|string) }} \\
                 {% if c.get('evaluation')%}
@@ -525,21 +524,24 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
     {% endif %}
 {%endfor%}
 \end{itemize}
-\subsection*{Spring {{p["end_period"][-4:]}} }
 \begin{itemize}[label=$-$]
+    {% set itemcount = 0 %}
 {% for c in p['teaching'] %}
-    {% if c['year']|string in p["end_period"]  and c['semester'] == 'Spring' %}
-        \item  {\bf {{latex_safe(c['course'])-}} }\\
-                {% if 'none' not in c['courseid'] %}
+    {% if c['year'] <= p["end_period"][4:]|int  and c['semester'] == 'Spring' %}
+            {% set itemcount = itemcount + 1 %}
+        \item  {\bf Spring {{c["year"]}}: {{latex_safe(c['course'])-}} }\\
+                {%- if 'none' not in c['courseid'] -%}
                 Enrollment: {{ latex_safe(c['enrollment']|string) }} \\
-                {% if c.get('evaluation')%}
+                {%- if c.get('evaluation')-%}
                 Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
                 Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
                 Selected student comment:
                 \begin{itemize}[label=$-$]\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
-                {% endif%}{%endif%}
-    {% endif %}
+                {%- endif-%}{%-endif-%}
+    {%- endif -%}
 {%endfor%}
+                        {%-if itemcount == 0-%}
+                        \item See Below {%- endif %}
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Courses expected to teach in {{ p["end_period"][-4:] }} to {{ p["post_end_period"][-4:]}}}

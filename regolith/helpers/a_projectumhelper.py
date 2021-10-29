@@ -162,12 +162,12 @@ class ProjectumAdderHelper(DbHelperBase):
         pdoc.update({"_id": key})
         pdoc.update({"deliverable": {
             "due_date": due_date,
-            "audience": ["beginning grad in chemistry"],
+            "audience": ["e.g., beginning grad in chemistry"],
             "success_def": "audience is happy",
             "scope": [
-                "UCs that are supported or some other scope description if it software",
+                "list of UCs that are supported or some other scope description if it software",
                 "sketch of science story if it is paper"],
-            "platform": "description of how and where the audience will access the deliverable.  journal if it is a paper",
+            "platform": "description of how and where the audience will access the deliverable.  The journal where it will be submitted if it is a paper",
             "roll_out": [
                 "steps that the audience will take to access and interact with the deliverable",
                 "not needed for paper submissions"],
@@ -181,10 +181,23 @@ class ProjectumAdderHelper(DbHelperBase):
             "status": "proposed"
         }})
         secondm = {'due_date': now + relativedelta(days=21),
-                   'name': 'Project lead presentation',
-                   'objective': 'to act as an example milestone.  The date is the date it was finished.  delete the field until it is finished.  In this case, the lead will present what they think is the project after their reading. Add more milestones as needed.',
+                   'name': 'Project planning meeting',
+                   'objective': 'to act as an example milestone.',
                    'audience': ['lead', 'pi', 'group_members'],
                    'status': 'proposed',
+                   'notes': ["() get a clear picture of the deliverable and what "
+                             "needs to be done to get there",
+                             "() make milestones which should also be deliverables "
+                             "(e.g., presentation, meeting, etc.) that accomplish "
+                             "all the steps to get to the deliverable",
+                             "() think if good due dates for everything and shoot for "
+                             "hitting them.  Either work back from a deadline for the "
+                             "deliverable, or work forward to guide you to a reasonable "
+                             "deadline for the prum deliverable.",
+                             "() using u_milestones in helper_gui, or otherwise, "
+                             "get them entered into the prum",
+                             "() schedule a meeting with the PI to go over them "
+                             "and converge them"],
                    'type': 'meeting'
                    }
         pdoc.update({"milestones": [secondm]})

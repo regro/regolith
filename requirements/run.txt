@@ -1,5 +1,5 @@
 ruamel.yaml
-docutils
+docutils=0.17.1
 python-dateutil
 jinja2
 cerberus
@@ -12,3 +12,5 @@ pymongo
 matplotlib-base
 habanero
 gooey
+google-api-python-client
+google-auth-oauthlib

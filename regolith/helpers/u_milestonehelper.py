@@ -198,8 +198,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     mil.update({'status': 'proposed'})
                 if rc.notes:
                     mil.update({'notes': rc.notes})
-                milestones.append(mil)
-                pdoc = {'milestones': milestones}
+                mil.update({'identifier': "milestones"})
+                new_mil.append(mil)
+                pdoc = {'milestones': mil}
             if idx > 1:
                 doc = deepcopy(all_milestones[idx - 2])
                 identifier = doc['identifier']
@@ -234,6 +235,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 if rc.due_date:
                     doc.update({'due_date': rc.due_date})
                 doc['due_date'] = get_due_date(doc)
+                if rc.objective:
+                    doc.update({'objective': rc.objective})
                 if rc.notes:
                     notes = doc.get("notes", [])
                     notes.extend(rc.notes)
@@ -241,8 +244,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 if identifier == 'milestones':
                     if rc.name:
                         doc.update({'name': rc.name})
-                    if rc.objective:
-                        doc.update({'objective': rc.objective})
                     new_mil.append(doc)
                 else:
                     del doc['identifier']

@@ -9,7 +9,8 @@ from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.schemas import (
-    TODO_STATI
+    TODO_STATI,
+    PROJECTUM_ACTIVE_STATI
 )
 from regolith.tools import (
     all_docs_from_collection,
@@ -18,15 +19,14 @@ from regolith.tools import (
     print_task,
     key_value_pair_filter
 )
+from nameparser import HumanName
 from gooey import GooeyParser
 
 TARGET_COLL = "todos"
-TARGET_COLL2 = "projecta"
 HELPER_TARGET = "l_todo"
 Importance = [3, 2, 1, 0, -1,
               -2]  # eisenhower matrix (important|urgent) tt=3, tf=2, ft=1, ff=0
-ACTIVE_STATI = ["started", "converged", "proposed"]
-
+STATI = ["accepted", "downloaded", "inprep"]
 
 def subparser(subpi):
     listbox_kwargs = {}
@@ -50,6 +50,9 @@ def subparser(subpi):
                        help=f'Filter tasks with specific stati',
                        default=["started"],
                        **listbox_kwargs)
+    subpi.add_argument("-o", "--outstandingreview",
+                       help="List outstanding reviews",
+                       action="store_true")
     subpi.add_argument("-a", "--assigned_to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
     subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
@@ -68,7 +71,7 @@ class TodoListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_colls = [f'{TARGET_COLL}', f'{TARGET_COLL2}']
+    needed_colls = [f'{TARGET_COLL}', 'projecta', 'refereeReports', 'proposalReviews']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -115,7 +118,8 @@ class TodoListerHelper(SoutHelperBase):
         else:
             today = date_parser.parse(rc.date).date()
         if rc.stati == ["started"]:
-            rc.stati = ACTIVE_STATI
+            rc.stati = PROJECTUM_ACTIVE_STATI
+        running_index = 0
         for projectum in self.gtx["projecta"]:
             if projectum.get('lead') != rc.assigned_to:
                 continue
@@ -125,15 +129,19 @@ class TodoListerHelper(SoutHelperBase):
             gather_miles = [projectum["kickoff"], projectum["deliverable"]]
             gather_miles.extend(projectum["milestones"])
             for ms in gather_miles:
-                if projectum["status"] not in ["finished", "cancelled"]:
-                    if ms.get('status') not in \
-                            ["finished", "cancelled"]:
+                if projectum["status"] in PROJECTUM_ACTIVE_STATI:
+                    if ms.get('status') in PROJECTUM_ACTIVE_STATI:
                         due_date = get_due_date(ms)
                         ms.update({
+                            'status': "started",
                             'id': projectum.get('_id'),
                             'due_date': due_date,
-                            'assigned_by': projectum.get('pi_id')
+                            'assigned_by': projectum.get('pi_id'),
+                            'importance': 2,
+                            'duration': 3600,
+                            'running_index': 9900 + running_index
                         })
+                        running_index += 1
                         ms.update({
                                       'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
                         gather_todos.append(ms)
@@ -165,7 +173,7 @@ class TodoListerHelper(SoutHelperBase):
                 milestones += 1
             elif todo["status"] == 'started':
                 len_of_started_tasks += 1
-        len_of_tasks = len(gather_todos) - milestones
+        len_of_tasks = len(gather_todos) #- milestones
         for todo in gather_todos:
             _format_todos(todo, today)
         gather_todos[:len_of_tasks] = sorted(gather_todos[:len_of_tasks],
@@ -184,10 +192,46 @@ class TodoListerHelper(SoutHelperBase):
         print(
             "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
         print("-" * 80)
-        if milestones != 0:
-            print_task(gather_todos[len_of_tasks:], stati=rc.stati, index=False)
-        if len_of_tasks != 0:
-            print_task(gather_todos[:len_of_tasks], stati=rc.stati)
+        if len(gather_todos) != 0:
+            print_task(gather_todos, stati=rc.stati)
+
+        if rc.outstandingreview:
+            prop = self.gtx['proposalReviews']
+            man = self.gtx['refereeReports']
+            outstanding_todo = []
+            for manuscript in man:
+                if manuscript.get("reviewer") != rc.assigned_to:
+                    continue
+                if manuscript.get("status") in STATI:
+                    out = f"Manuscript by {manuscript.get('first_author_last_name')} in {manuscript.get('journal')} " \
+                          f"is due on {manuscript.get('due_date')}"
+                    outstanding_todo.append((out, manuscript.get('due_date'), manuscript.get("status")))
+            for proposal in prop:
+                if proposal.get("reviewer") != rc.assigned_to:
+                    continue
+                if proposal.get("status") in STATI:
+                    if isinstance(proposal.get('names'), str):
+                        name = HumanName(proposal.get('names'))
+                    else:
+                        name = HumanName(proposal.get('names')[0])
+                    out = f"Proposal by {name.last} for {proposal.get('agency')} ({proposal.get('requester')})" \
+                          f"is due on {proposal.get('due_date')}"
+                    outstanding_todo.append((out, proposal.get('due_date'), proposal.get("status")))
+
+            if len(outstanding_todo) != 0:
+                print("-" * 30)
+                print("Outstanding Reviews:")
+                print("-" * 30)
+            outstanding_todo = sorted(outstanding_todo, key=lambda k: str(k[1]))
+            for stati in STATI:
+                if stati in [output[2] for output in outstanding_todo]:
+                    print(f'{stati}:')
+                else:
+                    continue
+                for output in outstanding_todo:
+                    if output[2] == stati:
+                        print(output[0])
+
         return
 
 

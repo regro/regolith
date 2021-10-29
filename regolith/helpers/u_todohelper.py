@@ -2,13 +2,15 @@
 """
 
 import datetime as dt
+import sys
+
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
 import math
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.schemas import (TODO_STATI)
+from regolith.schemas import (TODO_STATI, PROJECTUM_ACTIVE_STATI)
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
@@ -20,8 +22,6 @@ from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
-TODO_STATI = ["started", "finished", "cancelled"]
-ACTIVE_STATI = ["started", "converged", "proposed"]
 
 def subparser(subpi):
     deci_kwargs = {}
@@ -124,6 +124,11 @@ class TodoUpdaterHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
+        if rc.index:
+            if rc.index >= 9900:
+                print("WARNING: indices >= 9900 are used for milestones which "
+                         "should be updated using u_milestone and not u_todo")
+                return
         if not rc.assigned_to:
             try:
                 rc.assigned_to = rc.default_user_id
@@ -194,7 +199,7 @@ class TodoUpdaterHelper(DbHelperBase):
             if rc.filter:
                 todolist = key_value_pair_filter(todolist, rc.filter)
             if rc.stati == ["started"]:
-                rc.stati = ACTIVE_STATI
+                rc.stati = PROJECTUM_ACTIVE_STATI
             print("If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r")
             print("Please choose from one of the following to update:")
             print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
