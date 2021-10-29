@@ -18,6 +18,9 @@ from regolith.tools import (
 def is_pending(status):
     return status in "pending"
 
+def is_declined(status):
+    return status in "declined"
+
 
 class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
