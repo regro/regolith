@@ -706,6 +706,12 @@ helper_map = [
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      ),
+    (["helper", "currentappointments", "-d", "2021-08-10"],
+     "scopatz future_grant n/a 1.0 2020-09-01 2021-08-31\n"),
+    (["helper", "currentappointments", "-d", "2020-06-01"],
+     "scopatz abc42 abc42 0.8 2020-06-01 2020-08-31\n"),
+    (["helper", "currentappointments", "-d", "2020-01-01", "-s"],
+     "scopatz sym sym 1.0 2020-01-01 2020-05-15\n"),
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
     (["helper", "reimbstatus", "scopatz"],
      "Reimbursed expenses:\n"
