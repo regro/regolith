@@ -713,7 +713,7 @@ helper_map = [
     (["helper", "currentappointments", "-d", "2020-01-01", "-s"],
      "scopatz sym sym 1.0 2020-01-01 2020-05-15\n"),
     (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
-    (["helper", "reimbstatus", "scopatz"],
+    (["helper", "l_reimbstatus", "scopatz"],
      "Reimbursed expenses:\n"
      "\n"
      "Submitted expenses:\n"
@@ -726,7 +726,7 @@ helper_map = [
      "\nUnsubmitted expenses:\n"
      "\nFuture expenses:\n"
      ),
-    (["helper", "reimbstatus", "sbillinge"],
+    (["helper", "l_reimbstatus", "sbillinge"],
      "Reimbursed expenses:\n"
      " - 190110 - testing 2019-01-01 to 2019-01-10,\n"
      "   Requested: 10, Reimbursed: 100, Date: 2019-09-15, Grants: SymPy-1.1\n"

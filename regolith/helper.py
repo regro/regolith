@@ -31,7 +31,6 @@ from regolith.helpers import u_todohelper as u_todo
 from regolith.helpers import reimbstatushelper as reimbstatus
 
 HELPERS = {
-    "attestations": (attestations.AttestationsHelper, attestations.subparser),
     "a_expense": (a_expense.ExpenseAdderHelper, a_expense.subparser),
     "a_grppub_readlist": (a_gprl.GrpPubReadListAdderHelper, a_gprl.subparser),
     "a_manurev": (a_manurev.ManuRevAdderHelper, a_manurev.subparser),
@@ -49,6 +48,7 @@ HELPERS = {
     "l_milestones": (l_milestone.MilestonesListerHelper, l_milestone.subparser),
     "l_progress": (l_progress.ProgressReportHelper, l_progress.subparser),
     "l_projecta": (l_projecta.ProjectaListerHelper, l_projecta.subparser),
+    "l_reimbstatus": (reimbstatus.ReimbstatusHelper, reimbstatus.subparser),
     "l_todo": (l_todo.TodoListerHelper, l_todo.subparser),
     "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
     "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
@@ -56,10 +56,9 @@ HELPERS = {
     "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
     "u_todo": (u_todo.TodoUpdaterHelper, u_todo.subparser),
     "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
+    "attestations": (attestations.AttestationsHelper, attestations.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
-    "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
-    "currentappointments": (currentappointments.CurrentAppointmentsHelper, currentappointments.subparser),
-    "reimbstatus": (reimbstatus.ReimbstatusHelper, reimbstatus.subparser)
+    "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser)
 }
 
 
