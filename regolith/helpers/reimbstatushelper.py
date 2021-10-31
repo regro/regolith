@@ -39,7 +39,7 @@ class ReimbstatusHelper(SoutHelperBase):
                 expense['end_month'] = dates["end_date"].month
                 for j in expense.get('itemized_expenses'):
                     if j.get('unsegregated_expense') == 'tbd':
-                        print("WARNING: An expense in {} is tbd".format(k))
+                        print("WARNING: An expense in {} is tbd".format(expense['_id']))
                         j['unsegregated_expense'] = 0
                     if j.get('exchange_rate'):
                         try:
@@ -47,7 +47,7 @@ class ReimbstatusHelper(SoutHelperBase):
                                 'unsegregated_expense') / j.get('exchange_rate')
                         except TypeError:
                             print("exchange rate correction failed for {}, with "
-                                  "expense: {} rate: {}".format(k,j.get(
+                                  "expense: {} rate: {}".format(expense['_id'],j.get(
                                 'unsegregated_expense'),j.get('exchange_rate')))
                         j['segregated_expense'] = j.get(
                             'segregated_expense') / j.get('exchange_rate')
@@ -108,7 +108,7 @@ class ReimbstatusHelper(SoutHelperBase):
                 if j.get('submission_date'):
                     when = j.get('submission_date')
                 else:
-                    when = '-'.join(j.get('submission_year'), j.get('submission_month'), j.get('submission_day'))
+                    when = '-'.join((str(j.get('submission_year')), str(j.get('submission_month')), str(j.get('submission_day'))))
                 print(
                     "   Expenses: unseg={:.2f}, Seg={:.2f}, Total={:.2f}, Where: {}, When: {}".format(
                         unseg, seg, total, j.get('where'), when)

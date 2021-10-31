@@ -18,7 +18,7 @@ def subparser(subpi):
                        action="store_true")
     return subpi
 
-class CurrentAppointmentsHelper(SoutHelperBase):
+class CurrentAppointmentsListerHelper(SoutHelperBase):
     """Helper for managing appointments on grants and studying the burn of grants over time.
     """
 
