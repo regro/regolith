@@ -39,9 +39,11 @@ synchrotron. The tools can also be used to analyze data from other diffraction
 beamlines.
 {{ hline }}
 {%- for prum in majorActivities %}
-    {{ prum.get('name') }}: {{ prum.get('description') }}
+    {{ prum.get('_id') }}| {{ prum.get('name') }}| {{prum.get('lead')}}
+    {{ prum.get('description') }}
         {% for milestone in prum.get('milestones') %}
         {{ milestone.get("objective") }}
+        {{ milestone.get("type") }} | {{ milestone.get("status") }} {{ milestone.get("end_date", "") }}
         {% endfor -%}
 {% endfor -%}
 

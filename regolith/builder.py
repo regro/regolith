@@ -17,7 +17,6 @@ from regolith.builders.beamplanbuilder import BeamPlanBuilder
 from regolith.builders.activitylogbuilder import ActivitylogBuilder
 from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
 from regolith.builders.readinglistsbuilder import ReadingListsBuilder
-from regolith.builders.proposalreportbuilder import PropReportBuilder
 from regolith.builders.grantreportbuilder import GrantReportBuilder
 
 
@@ -29,6 +28,7 @@ BUILDERS = {
     "figure": FigureBuilder,
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,
+    "grantreport": GrantReportBuilder,
     "html": HtmlBuilder,
     "internalhtml": InternalHtmlBuilder,
     "postdocad": PostdocadBuilder,
@@ -39,8 +39,7 @@ BUILDERS = {
     "recent-collabs": RecentCollaboratorsBuilder,
     "resume": ResumeBuilder,
     "review-man": ManRevBuilder,
-    "review-prop": PropRevBuilder,
-    "grantreport": GrantReportBuilder
+    "review-prop": PropRevBuilder
 }
 
 

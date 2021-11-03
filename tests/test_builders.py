@@ -22,7 +22,7 @@ builder_map = [
     "publist",
     "recent-collabs",
     "beamplan",
-    "grantreport"
+    "grantreport",
     "resume",
     "review-man",
     "reimb"
@@ -177,6 +177,9 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
     elif bm == "annual-activity":
         main(["build", bm, "--no-pdf", "--people",
               "sbillinge", "--from", "2017-04-01"])
+    elif bm == "grantreport":
+        main(["build", bm, "--people",
+              "sbillinge", "--from", "2017-04-01", "--to", "2018-03-31"])
     else:
         main(["build", bm, "--no-pdf"])
     os.chdir(os.path.join(repo, "_build", bm))

@@ -38,6 +38,7 @@ def get_crossref_reference(doi):
         "{} {}".format(a['given'].strip(), a['family'].strip())
         for a in article.get('message').get('author')]
     paper = {'author': authorlist}
+    journal = ""
     try:
         journal = \
             article.get('message').get('short-container-title')[0]
@@ -55,7 +56,7 @@ def get_crossref_reference(doi):
                   'pages': article.get('message').get('page'),
 #                  'month': article.get('message').get('issued').get('date-parts')[0][1],
                   'year': article.get('message').get('issued').get('date-parts')[0][0]})
-    if article.get('message').get( 'volume'):
+    if article.get('message').get('volume'):
         if len(authorlist) > 1:
             authorlist[-1] = "and {}".format(authorlist[-1])
         sauthorlist = ", ".join(authorlist)
@@ -154,7 +155,8 @@ class GrantReportBuilder(LatexBuilderBase):
         #        institutions_coll = [inst for inst in self.gtx["institutions"]]
         institutions_coll = self.gtx["institutions"]
         grant_prums = [prum for prum in self.gtx['projecta'] if
-                       grant_id in prum.get('grants')]
+                       grant_id in prum.get('grants') and "checklist" not
+                       in prum.get("deliverable").get("scope")]
         #        for prum in self.gtx['projecta']:
         #            if grant_name in prum['grants']:
         #                begin_date = get_dates(prum).get('begin_date')
@@ -241,6 +243,7 @@ class GrantReportBuilder(LatexBuilderBase):
                      "months_on_grant": int(round(months_on_grant, 0))})
 
         collaborators = {}
+        missing_contacts = []
         for id in grant_prum_collaborators:
             for contact in self.gtx["contacts"]:
                 if contact["_id"] == id:
@@ -261,6 +264,11 @@ class GrantReportBuilder(LatexBuilderBase):
                         "aka": aka, "name": name,
                         "institution": inst_name
                     }
+        missing_contacts = [id for id in grant_prum_collaborators
+                            if not collaborators.get(id)]
+        missing_contacts = list(set(missing_contacts))
+        for person_id in missing_contacts:
+            print(f"WARNING contact {person_id} not found in contacts collection")
 
         # Impacts
         self.render(
