@@ -4,11 +4,6 @@ Regolith Change Log
 
 .. current developments
 
-v0.6.1
-====================
-
-
-
 v0.6.0
 ====================
 
