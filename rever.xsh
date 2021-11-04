@@ -11,3 +11,4 @@ $PUSH_TAG_REMOTE = 'git@github.com:regro/regolith.git'
 
 $GITHUB_ORG = 'regro'
 $GITHUB_REPO = 'regolith'
+$GHRELEASE_TARGET = 'b839663f04377f1a25fb864d0764f7d2aabd991a'
