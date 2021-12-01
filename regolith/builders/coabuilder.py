@@ -171,7 +171,7 @@ def query_people_and_institutions(rc, names):
             if not person_found:
                 print(
                     "WARNING: {} not found in contacts or people. Check aka".format(
-                        person_name).encode('utf-8'))
+                        person_name[0]).encode('utf-8'))
             else:
                 people.append(person_found['name'])
                 inst = fuzzy_retrieval(all_docs_from_collection(
@@ -336,10 +336,10 @@ def get_person(person_id, rc):
         person_id,
         case_sensitive=False
     )
-    if person_found:
-        return person_found
-    print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
-    return None
+    if not person_found:
+        print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
+        person_found = {"name": person_id}
+    return person_found
 
 
 def find_coeditors(person, rc):
