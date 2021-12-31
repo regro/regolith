@@ -1,5 +1,5 @@
 ruamel.yaml
-docutils=0.17.1
+docutils
 python-dateutil
 jinja2
 cerberus
