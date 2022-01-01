@@ -31,7 +31,8 @@ from regolith.tools import (
     validate_meeting,
     get_formatted_crossref_reference,
     compound_dict,
-    compound_list, filter_employment_for_advisees
+    compound_list, filter_employment_for_advisees,
+    get_tags
 )
 
 PEOPLE_COLL = [
@@ -2080,32 +2081,48 @@ expected3 = {'_id': 'jkl',
                     'state': 'NJ'},
     "status": "declined",
     "type": "webinar"}
+
 @pytest.mark.parametrize(
     "args, kwargs, expected",[
-
     #this tests no kwargs
     ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
     {}, [expected1]),
-
     #this tests 'statuses' kwarg
     ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
     {"statuses" : ["all"]}, [expected2, expected1]),
-
     #this tests 'statuses' and 'types' kwargs together
     ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
     {"statuses" : ["all"], "types" : ["poster"]}, [expected2]),
-
     #this tests 'statuses' and 'since' kwargs together
     ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "nromanov"],
     {"statuses" : ["all"], "since" : dt.date(2019, 1, 1)}, [expected3, expected2]),
-
     #this tests the 'statuses' and 'before' kwargs together
     ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
     {"statuses" : ["all"], "before" : dt.date(2018, 1, 2)}, [expected1])
   ]
 )
-
-
 def test_filter_presentations(args, kwargs, expected):
     actual = filter_presentations(*args, **kwargs)
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "coll, expected", [
+        ([{"_id": "id", "name": "test"}], []),
+        ([{"_id": "id", "tags": ""}], []),
+        ([{"_id": "id", "tags": "thing1"}], ["thing1"]),
+        ([{"_id": "id", "tags": "thing2,thing1"}], ["thing1", "thing2"]),
+        ([{"_id": "id", "tags": "thing2 thing1"}], ["thing1", "thing2"]),
+        ([{"_id": "id", "tags": "thing2,thing1 thing3"}], ["thing1", "thing2", "thing3"]),
+    ]
+)
+def test_get_tags(coll, expected):
+    actual = get_tags(coll)
+    assert actual == expected
+
+def test_get_tags_invalid():
+    coll = [{"_id": "id", "tags": ["test"]}]
+    with pytest.raises(TypeError) as e_info:
+        get_tags(coll)
+        assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
+

@@ -5,7 +5,7 @@ import dateutil.parser as date_parser
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
-    all_docs_from_collection,
+    all_docs_from_collection, get_tags
 )
 from gooey import GooeyParser
 
@@ -48,6 +48,7 @@ def subparser(subpi):
                        )
     return subpi
 
+
 class GrpPubReadListAdderHelper(DbHelperBase):
     """Build a helper"""
     btype = "a_grppub_readlist"
@@ -72,9 +73,10 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-
     def db_updater(self):
         rc = self.rc
+        tags = get_tags(self.gtx["citations"])
+        print(f"List of all tags: {tags}")
         if rc.date:
             update_date = date_parser.parse(rc.date).date()
         else:
