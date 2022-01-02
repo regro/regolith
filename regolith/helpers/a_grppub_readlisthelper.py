@@ -110,9 +110,27 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                     dupe_doi = [paper for paper in pdoc.get("papers", []) if cite.get("doi") == paper.get("doi")]
                     if len(dupe_doi) == 0:
                         pprs = pdoc["papers"]
-                        pprs.append({"doi": cite.get("doi"),
-                                     "text": cite.get("synopsis", ""),
-                                     "year": int(cite.get("year"))})
+                        doi = cite.get("doi", '')
+                        url = cite.get("url", '')
+                        year = int(cite.get('year', 0))
+                        if len(doi) > 0 and doi != 'tbd':
+                            pprs.append({"doi": doi,
+                                         "text": cite.get("synopsis",
+                                                          f"no synopsis in {cite.get('_id')}"),
+                                         "year": year
+                                         })
+                        elif len(url) > 0 and url != 'tbd':
+                            pprs.append({"url": url,
+                                         "text": cite.get("synopsis",
+                                                          f"no synopsis in {cite.get('_id')}"),
+                                         "year": year
+                                         })
+                        else:
+                            pprs.append({'doi': 'tbd',
+                                         "text": cite.get("synopsis",
+                                                          f"no synopsis in {cite.get('_id')}"),
+                                         "year": year
+                                         })
                         pdoc["papers"] = pprs
         pprs = pdoc["papers"]
         pprs.sort(key=lambda pper: pper.get('year'),
