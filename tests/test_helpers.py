@@ -43,7 +43,7 @@ helper_map = [
      "Einstein manuscript has been added/updated in manuscript reviews\n"),
     (["helper", "a_grppub_readlist", "test the lister", "pdf",
       "--title", "A list to test the lister", "--purpose", "Test the lister", "--date", "2021-04-01"],
-     "test_the_lister has been added/updated in reading_lists\n"),
+     "List of all tags in citations collection:\n['nomonth', 'pdf']\ntest_the_lister has been added/updated in reading_lists\n"),
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group_members", "ascopatz", "--grants", "SymPy-1.1", "--due_date", "2021-01-01", '--notes', 'new note'],
@@ -746,6 +746,11 @@ db_srcs = [
     "fs"
 ]
 
+# helper_map = [
+#     (["helper", "a_grppub_readlist", "all", "all"
+#      ],
+#      "List of all tags in citations collection:\n['nomonth', 'pdf']\nbuilding lists for all tags in the citation collection\nnomonth has been added/updated in reading_lists\npdf has been added/updated in reading_lists\n"),
+#     ]
 
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hm", helper_map)
@@ -763,7 +768,7 @@ def test_helper_python(hm, make_db, db_src, make_mongodb, capsys):
 
     main(args=hm[0])
     out, err = capsys.readouterr()
-    assert out == hm[1]
+    assert hm[1] == out
 
     expecteddir = testfile.parent / "outputs" / hm[0][1]
 

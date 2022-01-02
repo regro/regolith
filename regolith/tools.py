@@ -2071,3 +2071,35 @@ def google_cal_auth_flow():
     with open(tokenfile, 'w') as token:
         token.write(creds.to_json())
     # Save the credentials for the next run
+
+def get_tags(coll):
+    '''
+    Given a collection with a tags field, returns the set of tags as a list
+
+    The tags field is expected to be a string with comma or space separated tags.
+    get_tags splits the tags and returns the set of unique tags as a list of
+    strings.
+
+    Parameters
+    ----------
+    coll collection
+      the collection
+
+    Returns
+    -------
+    the set of all tags as a list
+
+    '''
+
+    all_tags = []
+    for paper in coll:
+        tag_long = paper.get("tags", "")
+        if not isinstance(tag_long, str):
+            raise TypeError("ERROR: valid tags are comma or space separated strings of tag names")
+        tags = tag_long.split(',')
+        tags = [sub_item for item in tags for sub_item in item.split()]
+        all_tags.extend(tags)
+    all_tags = [item.strip() for item in all_tags]
+    all_tags = list(set(all_tags))
+    all_tags.sort()
+    return all_tags
