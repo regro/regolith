@@ -2094,7 +2094,7 @@ def get_tags(coll):
     all_tags = []
     for paper in coll:
         tag_long = paper.get("tags", "")
-        if not isinstance(str, tag_long):
+        if not isinstance(tag_long, str):
             raise TypeError("ERROR: valid tags are comma or space separated strings of tag names")
         tags = tag_long.split(',')
         tags = [sub_item for item in tags for sub_item in item.split()]

@@ -20,7 +20,10 @@ def subparser(subpi):
         date_kwargs['widget'] = 'DateChooser'
 
     subpi.add_argument("list_name", help="A short but unique name for the list. "
-                                         "If the list exists it will be updated.",
+                                         "If the list already exists it will be updated. "
+                                         "input 'all' here and for the tag argument "
+                                         "to build lists for all the tags found in "
+                                         "the citations collection.",
                         default=None)
     subpi.add_argument("tags", help="list of tags, separated by spaces, to use "
                                     "to find papers in citations collection that "
@@ -73,18 +76,14 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-    def db_updater(self):
+    def build_reading_list(self, update_date):
         rc = self.rc
-        tags = get_tags(self.gtx["citations"])
-        print(f"List of all tags: {tags}")
-        if rc.date:
-            update_date = date_parser.parse(rc.date).date()
+        if rc.list_name == 'all':
+            listname = rc.tags[0].split()
         else:
-            update_date = dt.date.today()
-        key = "{}".format("_".join(rc.list_name.split()).strip())
-
-        coll = self.gtx[rc.coll]
-        pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
+            listname = rc.list_name.split()
+        key = "{}".format("_".join(listname).strip())
+        pdocl = list(filter(lambda doc: doc["_id"] == key, self.gtx[rc.coll]))
         if len(pdocl) > 0:
             pdoc = pdocl[0]
             pdoc["papers"] = []   # rebuild the list from scratch
@@ -95,16 +94,16 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                 'date': update_date,
                 'papers': []
                     })
-
-        if rc.purpose:
+        if rc.purpose and rc.list_name != 'all':
             pdoc.update({'purpose': rc.purpose})
-        if rc.title:
+        if rc.list_name == 'all':
+            pdoc.update({'title': f"List built for tag {rc.tags[0]} from citations collection"})
+        elif rc.title:
             pdoc.update({'title': rc.title})
         try:
             pdoc['title']
         except KeyError:
             raise KeyError("ERROR: a title is required for a new list.  Please rerun specifying -t")
-
         for cite in self.gtx["citations"]:
             for tag in rc.tags:
                 if tag in cite.get("tags", ""):
@@ -120,10 +119,29 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                   reverse=True)
         [ppr.pop("year") for ppr in pprs]
         pdoc["papers"] = pprs
+        return key, pdoc
 
-        rc.client.insert_one(rc.database, rc.coll, pdoc)
+    def db_updater(self):
+        rc = self.rc
+        all_tags = get_tags(self.gtx["citations"])
+        print(f"List of all tags in citations collection:\n{all_tags}")
+        if rc.date:
+            update_date = date_parser.parse(rc.date).date()
+        else:
+            update_date = dt.date.today()
 
-        print(f"{key} has been added/updated in reading_lists")
+        if rc.list_name.strip().lower() == 'all' and rc.tags[0].strip().lower() == 'all':
+            print(f"building lists for all tags in the citation collection")
+            for tag in all_tags:
+                rc.tags = [tag]
+                key, pdoc = self.build_reading_list(update_date)
+                rc.client.insert_one(rc.database, rc.coll, pdoc)
+                print(f"{key} has been added/updated in reading_lists")
+        else:
+            key, pdoc = self.build_reading_list(update_date)
+            rc.client.insert_one(rc.database, rc.coll, pdoc)
+            print(f"{key} has been added/updated in reading_lists")
+
 
         return
 
