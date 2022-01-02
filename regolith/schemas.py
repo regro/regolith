@@ -154,7 +154,7 @@ EXEMPLARS = {
                 "Meurer, Aaron",
                 "Anthony Scopatz",
             ],
-            "doi": "10.1021/nn501591g",
+            "doi": "tbd",
             "entrytype": "article",
             "journal": "PeerJ Computer Science",
             "month": "tbd",
@@ -163,6 +163,7 @@ EXEMPLARS = {
             "synopsis": "A pub with month as tbd",
             "tags": "nomonth",
             "title": "SymPy: Symbolic computing in Python",
+            "url": "https://doi.org/10.1021/nn501591g",
             "volume": "4",
             "year": "2017",
         }
