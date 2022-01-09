@@ -429,8 +429,6 @@ class ActivitylogBuilder(LatexBuilderBase):
             me["miscellaneous"] = {"metrics_for_success": []}
         if me.get("hindex"):
             hindex = sorted(me["hindex"], key=doc_date_key).pop()
-        else:
-            hindex = None
         #########################
         # render
         #########################

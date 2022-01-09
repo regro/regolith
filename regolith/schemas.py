@@ -3885,6 +3885,7 @@ SCHEMAS = {
         "deliverable": {
             "description": "outline of the deliverable for this projectum",
             "type": "dict",
+            "required": True,
             "schema": {
                 "audience": {"description": "the target audience for this deliverable",
                              "required": False,

@@ -87,9 +87,6 @@ class ProgressReportHelper(SoutHelperBase):
                 if p.get("deliverable"):
                     print(
                         f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
-                else:
-                    print(
-                        f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
                 if p.get('status') == 'finished':
                     print(f"    finished: {p.get('end_date')}")
                 print(f"    description: {p.get('description')}")
@@ -109,15 +106,11 @@ class ProgressReportHelper(SoutHelperBase):
                 if d.get('audience'):
                     audience = ', '.join(d.get('audience'))
                 print(f"        audience: {audience}")
-                scope = None
-                if d.get('scope'):
-                    scope = d.get('scope')
-                if len(scope) == 1:
-                    print(f"        scope: {scope}")
-                if len(scope) > 1:
-                    print(f"        scope: 1. {scope[0]}")
-                    for num in range(2, len(scope) + 1):
-                        print(f"               {str(num)}. {scope[num - 1]}")
+                iter, title = 1, "scope:"
+                for scopum in d.get('scope', ["no scope"]):
+                    print(f"        {title} {str(iter)}. {scopum}")
+                    iter += 1
+                    title = "      "
                 print(f"        platform: {d.get('platform')}")
                 print("    milestones:")
                 for m in p.get('milestones'):
@@ -130,10 +123,6 @@ class ProgressReportHelper(SoutHelperBase):
                 if p.get("deliverable"):
                     print(
                         f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
-                    print(f"    description: {p.get('description')}")
-                else:
-                    print(
-                        f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
                     print(f"    description: {p.get('description')}")
                 if p.get('status') == 'finished':
                     print(f"    finished: {p.get('end_date')}")
