@@ -926,7 +926,7 @@ EXEMPLARS = {
              }],
         "education": [
             {
-                "advisor": "ascopatz",
+                "advisor": "scopatz",
                 "begin_year": 2008,
                 "degree": "Ph.D. Mechanical Engineering, "
                           "Nuclear and Radiation Engineering "
@@ -981,7 +981,7 @@ EXEMPLARS = {
         "email": "scopatz@cec.sc.edu",
         "employment": [
             {
-                "advisor": "ascopatz",
+                "advisor": "scopatz",
                 "begin_year": 2015,
                 "coworkers": ["afriend"],
                 "group": "ergs",

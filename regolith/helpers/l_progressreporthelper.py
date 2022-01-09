@@ -3,6 +3,8 @@
    Projecta are small bite-sized project quanta that typically will result in
    one manuscript.
 """
+from gooey import GooeyParser
+import datetime
 
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
@@ -12,7 +14,6 @@ from regolith.tools import (
     key_value_pair_filter,
 )
 from regolith.schemas import PROJECTUM_STATI, PROJECTUM_ACTIVE_STATI, PROJECTUM_FINISHED_STATI
-from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
@@ -22,11 +23,11 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         listbox_kwargs['widget'] = 'Listbox'
 
+    subpi.add_argument("lead",
+                       help="Generate report for this project lead"
+                       )
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='increase verbosity of output')
-    subpi.add_argument("-l", "--lead",
-                       help="Filter projecta for this project lead"
-                       )
     subpi.add_argument("-s", "--stati", nargs="+",
                        choices=PROJECTUM_STATI,
                        help=f"Filter projecta for these stati."
@@ -42,73 +43,6 @@ def subparser(subpi):
                                                        "--filter. If no argument is given the default is just the id.")
     return subpi
 
-def print_projectum(selected_projecta,rc):
-    if selected_projecta == []:
-        return
-    selected_projecta.sort(key=lambda prum: prum.get('begin_date'), reverse=True)
-    for p in selected_projecta:
-        if rc.verbose:
-            print(f"{p.get('_id')}")
-            if p.get("deliverable"):
-                print(
-                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
-            else:
-                print(
-                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
-            if p.get('status') == 'finished':
-                print(f"    finished: {p.get('end_date')}")
-            print(f"    description: {p.get('description')}")
-            print(f"    log_url: {p.get('log_url')}")
-            print("    team:")
-            grp_members = None
-            if p.get('group_members'):
-                grp_members = ', '.join(p.get('group_members'))
-            collaborators = None
-            if p.get('collaborators'):
-                collaborators = ', '.join(p.get('collaborators'))
-            print(f"        group_members: {grp_members}")
-            print(f"        collaborators: {collaborators}")
-            d = p.get('deliverable')
-            print("    deliverable:")
-            audience = None
-            if d.get('audience'):
-                audience = ', '.join(d.get('audience'))
-            print(f"        audience: {audience}")
-            scope = None
-            if d.get('scope'):
-                scope = d.get('scope')
-            if len(scope) == 1:
-                print(f"        scope: {scope}")
-            if len(scope) > 1:
-                print(f"        scope: 1. {scope[0]}")
-                for num in range(2, len(scope)+1):
-                    print(f"               {str(num)}. {scope[num-1]}")
-            print(f"        platform: {d.get('platform')}")
-            print("    milestones:")
-            for m in p.get('milestones'):
-                print(f"        {m.get('due_date')}: {m.get('name')}")
-                print(f"            objective: {m.get('objective')}")
-                print(f"            status: {m.get('status')}")
-
-        else:
-            print(f"{p.get('_id')}")
-            if p.get("deliverable"):
-                print(
-                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
-                print(f"    description: {p.get('description')}")
-            else:
-                print(
-                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
-                print(f"    description: {p.get('description')}")
-            if p.get('status') == 'finished':
-                print(f"    finished: {p.get('end_date')}")
-            elif p.get('status') in PROJECTUM_ACTIVE_STATI:
-                print(f"    log_url: {p.get('log_url')}")
-                if p.get('milestones'):
-                    print('    milestones:')
-                for m in p.get('milestones'):
-                    print(f"        due: {m.get('due_date')}, {m.get('name')}, type: {m.get('type')}, status: {m.get('status')}")
-                    print(f"          objective: {m.get('objective')}")
 
 class ProgressReportHelper(SoutHelperBase):
     """Helper for listing upcoming (and past) projectum milestones.
@@ -141,6 +75,77 @@ class ProgressReportHelper(SoutHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
+    def print_projectum(self, selected_projecta):
+        rc = self.rc
+        if selected_projecta == []:
+            return
+        selected_projecta.sort(key=lambda prum: prum.get('begin_date'),
+                               reverse=True)
+        for p in selected_projecta:
+            if rc.verbose:
+                print(f"{p.get('_id')}")
+                if p.get("deliverable"):
+                    print(
+                        f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
+                else:
+                    print(
+                        f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
+                if p.get('status') == 'finished':
+                    print(f"    finished: {p.get('end_date')}")
+                print(f"    description: {p.get('description')}")
+                print(f"    log_url: {p.get('log_url')}")
+                print("    team:")
+                grp_members = None
+                if p.get('group_members'):
+                    grp_members = ', '.join(p.get('group_members'))
+                collaborators = None
+                if p.get('collaborators'):
+                    collaborators = ', '.join(p.get('collaborators'))
+                print(f"        group_members: {grp_members}")
+                print(f"        collaborators: {collaborators}")
+                d = p.get('deliverable')
+                print("    deliverable:")
+                audience = None
+                if d.get('audience'):
+                    audience = ', '.join(d.get('audience'))
+                print(f"        audience: {audience}")
+                scope = None
+                if d.get('scope'):
+                    scope = d.get('scope')
+                if len(scope) == 1:
+                    print(f"        scope: {scope}")
+                if len(scope) > 1:
+                    print(f"        scope: 1. {scope[0]}")
+                    for num in range(2, len(scope) + 1):
+                        print(f"               {str(num)}. {scope[num - 1]}")
+                print(f"        platform: {d.get('platform')}")
+                print("    milestones:")
+                for m in p.get('milestones'):
+                    print(f"        {m.get('due_date')}: {m.get('name')}")
+                    print(f"            objective: {m.get('objective')}")
+                    print(f"            status: {m.get('status')}")
+
+            else:
+                print(f"{p.get('_id')}")
+                if p.get("deliverable"):
+                    print(
+                        f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
+                    print(f"    description: {p.get('description')}")
+                else:
+                    print(
+                        f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}")
+                    print(f"    description: {p.get('description')}")
+                if p.get('status') == 'finished':
+                    print(f"    finished: {p.get('end_date')}")
+                elif p.get('status') in PROJECTUM_ACTIVE_STATI:
+                    print(f"    log_url: {p.get('log_url')}")
+                    if p.get('milestones'):
+                        print('    milestones:')
+                    for m in p.get('milestones'):
+                        print(
+                            f"        due: {m.get('due_date')}, {m.get('name')}, type: {m.get('type')}, status: {m.get('status')}")
+                        print(f"          objective: {m.get('objective')}")
+
     def sout(self):
         rc = self.rc
         if rc.filter:
@@ -148,51 +153,34 @@ class ProgressReportHelper(SoutHelperBase):
         else:
             collection = self.gtx["projecta"]
 
-        projecta = []
-        for projectum in collection:
-            if (not rc.lead) and (not rc.stati):
-                projecta.append(projectum)
-                continue
-            if rc.lead and projectum.get('lead') != rc.lead:
-                continue
-            if rc.stati and projectum.get('status') not in rc.stati:
-                continue
-            projecta.append(projectum)
+        # remove checklist prums from the report
+        collection = [prum for prum in collection if
+                      "checklist" not in prum.get('deliverable', {}).get('scope', [])]
 
-        selected_projecta = []
-        for p in projecta:
-            if p.get('status') != "finished":
-                continue
-            selected_projecta.append(p)
-        if selected_projecta:
-            print(f"*************************[Finished Projecta]*************************")
-            print_projectum(selected_projecta, rc)
+        title = f"\nProgress report for {rc.lead}, generated {datetime.date.today().isoformat()}"
+        print(title)
+        projecta = [valid_prum for valid_prum in collection if valid_prum.get("lead") == rc.lead]
 
-        selected_projecta = []
-        for p in projecta:
-            if p.get('status') != "proposed":
-                continue
-            selected_projecta.append(p)
-        if selected_projecta:
-            print(f"*************************[Proposed Projecta]*************************")
-            print_projectum(selected_projecta, rc)
+        finishedp, proposedp, startedp, otherp = [], [], [], []
+        for prum in projecta:
+            if prum.get('status') == "finished":
+                finishedp.append(prum)
+            elif prum.get('status') == "proposed":
+                proposedp.append(prum)
+            elif prum.get('status') == "started":
+                startedp.append(prum)
+            else:
+                otherp.append(prum)
+        print(f"*************************[Orphan Projecta]*************************")
+        for prum in otherp:
+            print(f"{prum.get('_id')}, status: {prum.get('status')}")
+        print(f"*************************[Finished Projecta]*************************")
+        for prum in finishedp:
+            print(f"{prum.get('_id')}, grant: {prum.get('grants')}")
+            print(f"  description: {prum.get('description')}")
+            print(f"  finished: {prum.get('end_date')}")
+        print(f"*************************[Proposed Projecta]*************************")
+        self.print_projectum(proposedp)
+        print(f"*************************[In Progress Projecta]*************************")
+        self.print_projectum(startedp)
 
-        selected_projecta = []
-        for p in projecta:
-            if p.get('status') != "started":
-                continue
-            selected_projecta.append(p)
-        if selected_projecta:
-            print(f"*************************[Started Projecta]**************************")
-            print_projectum(selected_projecta, rc)
-
-
-
-        selected_projecta = []
-        for p in projecta:
-            if p.get('status') not in ["back_burner", "paused", "cancelled"]:
-                continue
-            selected_projecta.append(p)
-        if selected_projecta:
-            print(f"*************************[Others]************************************")
-            print_projectum(selected_projecta, rc)

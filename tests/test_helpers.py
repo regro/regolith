@@ -65,7 +65,11 @@ helper_map = [
       "--no_cal"],
      "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\n"),
     (["helper", "l_progress", "-l", "ascopatz"],
-     "*************************[Started Projecta]**************************\n"
+     "\nProgress report for ascopatz, generated 2022-01-09\n"
+     "*************************[Orphan Projecta]*************************\n"
+     "*************************[Finished Projecta]*************************\n"
+     "*************************[Proposed Projecta]*************************\n"
+     "*************************[In Progress Projecta]*************************\n"
      "sb_firstprojectum\n"
      "    status: started, begin_date: 2020-04-28, due_date: 2021-05-05\n"
      "    description: My first projectum\n"
@@ -77,14 +81,21 @@ helper_map = [
      "          objective: develop a detailed plan with dates\n"
      ),
     (["helper", "l_progress", "-l", "pliu"],
+     "\nProgress report for pliu, generated 2022-01-09\n"
+     "*************************[Orphan Projecta]*************************\n"
      "*************************[Finished Projecta]*************************\n"
-     "pl_firstprojectum\n"
-     "    status: finished, begin_date: 2020-07-25, due_date: 2020-08-26\n"
-     "    description: None\n"
-     "    finished: 2020-07-27\n"
+     "pl_firstprojectum, grant: None\n"
+     "  description: None\n"
+     "  finished: 2020-07-27\n"
+     "*************************[Proposed Projecta]*************************\n"
+     "*************************[In Progress Projecta]*************************\n"
      ),
     (["helper", "l_progress", "-v", "-l", "ascopatz"],
-     "*************************[Started Projecta]**************************\n"
+     "\nProgress report for ascopatz, generated 2022-01-09\n"
+     "*************************[Orphan Projecta]*************************\n"
+     "*************************[Finished Projecta]*************************\n"
+     "*************************[Proposed Projecta]*************************\n"
+     "*************************[In Progress Projecta]*************************\n"
      "sb_firstprojectum\n"
      "    status: started, begin_date: 2020-04-28, due_date: 2021-05-05\n"
      "    description: My first projectum\n"

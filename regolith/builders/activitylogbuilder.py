@@ -258,23 +258,25 @@ class ActivitylogBuilder(LatexBuilderBase):
         #########
         undergrads = filter_employment_for_advisees(self.gtx["people"],
                                                     begin_period,
-                                                    "undergrad")
+                                                    "undergrad", rc.people[0])
         masters = filter_employment_for_advisees(self.gtx["people"],
                                                  begin_period,
-                                                 "ms")
+                                                 "ms", rc.people[0])
         currents = filter_employment_for_advisees(self.gtx["people"],
                                                   begin_period,
-                                                  "phd")
+                                                  "phd", rc.people[0])
         graduateds = filter_employment_for_advisees(self.gtx["people"],
                                                     begin_period.replace(
                                                         year=begin_year - 5),
-                                                    "phd")
+                                                    "phd", rc.people[0])
         postdocs = filter_employment_for_advisees(self.gtx["people"],
                                                   begin_period,
-                                                  "postdoc")
+                                                  "postdoc",
+                                                  rc.people[0])
         visitors = filter_employment_for_advisees(self.gtx["people"],
                                                   begin_period,
-                                                  "visitor-unsupported")
+                                                  "visitor-unsupported",
+                                                  rc.people[0])
         iter = deepcopy(graduateds)
         for g in iter:
             if g.get("active"):
@@ -423,8 +425,12 @@ class ActivitylogBuilder(LatexBuilderBase):
         #############
         # hindex
         #############
-        hindex = sorted(me["hindex"], key=doc_date_key).pop()
-
+        if not me.get("miscellaneous"):
+            me["miscellaneous"] = {"metrics_for_success": []}
+        if me.get("hindex"):
+            hindex = sorted(me["hindex"], key=doc_date_key).pop()
+        else:
+            hindex = None
         #########################
         # render
         #########################
