@@ -2,7 +2,7 @@
 from datetime import date
 import time
 
-from habanero import Crossref
+#from habanero import Crossref
 from nameparser import HumanName
 import dateutil.parser as date_parser
 
@@ -20,71 +20,8 @@ from regolith.tools import (
     filter_grants,
     filter_presentations,
     fuzzy_retrieval,
-    filter_publications
+    filter_publications, get_formatted_crossref_reference
 )
-
-
-# def subparser(subpi):
-#    subpi.add_argument("authorFullName", help="full name of the author of this grant report")
-#    subpi.add_argument("start_date", help="start date of the reporting period, formatted as YYYY-MM-DD",
-#                       default=None)
-#    subpi.add_argument("end_date", help="end date of the reporting period, formatted as YYYY-MM-DD")
-#    return subpi
-
-def get_crossref_reference(doi):
-    cr = Crossref()
-    article = cr.works(ids=doi)
-    authorlist = [
-        "{} {}".format(a['given'].strip(), a['family'].strip())
-        for a in article.get('message').get('author')]
-    paper = {'author': authorlist}
-    journal = ""
-    try:
-        journal = \
-            article.get('message').get('short-container-title')[0]
-        paper.update({'journal': journal})
-    except IndexError:
-        try:
-            journal = article.get('message').get('container-title')[
-                0]
-            paper.update({'journal': journal})
-        except IndexError:
-            print(f"WARNING: can't find journal in reference {doi}")
-            paper.update({'journal': doi})
-    paper.update({'title': article.get('message').get('title')[0],
-                  'volume': article.get('message').get('volume'),
-                  'pages': article.get('message').get('page'),
-#                  'month': article.get('message').get('issued').get('date-parts')[0][1],
-                  'year': article.get('message').get('issued').get('date-parts')[0][0]})
-    if article.get('message').get('volume'):
-        if len(authorlist) > 1:
-            authorlist[-1] = "and {}".format(authorlist[-1])
-        sauthorlist = ", ".join(authorlist)
-        ref = "{}, {}, {}, v.{}, pp.{}, ({}).".format(
-            article.get('message').get('title')[0],
-            sauthorlist,
-            journal,
-            article.get('message').get('volume'),
-            article.get('message').get('page'),
-            article.get('message').get('issued').get(
-                'date-parts')[
-                0][
-                0],
-        )
-    else:
-        if len(authorlist) > 1:
-            authorlist[-1] = "and {}".format(authorlist[-1])
-        sauthorlist = ", ".join(authorlist)
-        ref = "{}, {}, {}, pp.{}, ({}).".format(
-            article.get('message').get('title')[0],
-            sauthorlist,
-            journal,
-            article.get('message').get('page'),
-            article.get('message').get('issued').get('date-parts')[
-                0][
-                0],
-        )
-    return paper
 
 class GrantReportBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
@@ -214,7 +151,7 @@ class GrantReportBuilder(LatexBuilderBase):
         for publ in publications:
             doi = publ.get('doi')
             if doi and doi != 'tbd':
-                publ = get_crossref_reference(doi)
+                publ = get_formatted_crossref_reference(doi)
             names = [HumanName(author).full_name for author in publ.get("author")]
             publ['author'] = names
         # Participants/Organizations
