@@ -5,6 +5,7 @@
 """
 from gooey import GooeyParser
 import datetime
+import dateutil.parser as date_parser
 
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
@@ -41,6 +42,8 @@ def subparser(subpi):
                        )
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when running "
                                                        "--filter. If no argument is given the default is just the id.")
+    subpi.add_argument("--date", help="date used in testing. Defaults to "
+                            "today's date.")
     return subpi
 
 
@@ -140,12 +143,16 @@ class ProgressReportHelper(SoutHelperBase):
             collection = key_value_pair_filter(self.gtx["projecta"], rc.filter)
         else:
             collection = self.gtx["projecta"]
+        if not rc.date:
+            now = datetime.date.today()
+        else:
+            now = date_parser.parse(rc.date).date()
 
         # remove checklist prums from the report
         collection = [prum for prum in collection if
                       "checklist" not in prum.get('deliverable', {}).get('scope', [])]
 
-        title = f"\nProgress report for {rc.lead}, generated {datetime.date.today().isoformat()}"
+        title = f"\nProgress report for {rc.lead}, generated {now.isoformat()}"
         print(title)
         projecta = [valid_prum for valid_prum in collection if valid_prum.get("lead") == rc.lead]
 

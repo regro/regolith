@@ -64,7 +64,7 @@ helper_map = [
       "--notes", "this is a sample added presentation",
       "--no_cal"],
      "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\n"),
-    (["helper", "l_progress", "-l", "ascopatz"],
+    (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
      "*************************[Finished Projecta]*************************\n"
@@ -80,7 +80,7 @@ helper_map = [
      "    due: 2020-05-27, planning meeting, type: mergedpr, status: proposed\n"
      "    objective: develop a detailed plan with dates\n"
      ),
-    (["helper", "l_progress", "-l", "pliu"],
+    (["helper", "l_progress", "-l", "pliu", "--date", "2022-01-09"],
      "\nProgress report for pliu, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
      "pl_thirdprojectum, status: backburner\n"
@@ -98,7 +98,7 @@ helper_map = [
      "    objective: None\n"
      "*************************[In Progress Projecta]*************************\n"
      ),
-    (["helper", "l_progress", "-v", "-l", "ascopatz"],
+    (["helper", "l_progress", "-v", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
      "*************************[Finished Projecta]*************************\n"
