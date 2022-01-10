@@ -127,12 +127,6 @@ class GrantReportBuilder(LatexBuilderBase):
         report_dates = {'begin_date': rp_start_date,
                         'end_date': rp_end_date}
 
-        if not rc.people:
-            rc.people = [rc.default_user_id]
-        if isinstance(rc.people, str):
-            rc.people = [rc.people]
-        person_id = rc.people[0]
-
         # NSF Grant _id
         if not rc.grants:
             raise RuntimeError(
