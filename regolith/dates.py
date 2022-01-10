@@ -285,13 +285,13 @@ def get_dates(thing, date_field_prefix=None):
         else:
             date = datetime.date(thing[datenames[2]],
                                        month_to_int(thing[datenames[1]]),
-                                       thing[datenames[0]])
-            begin_date = datetime.date(thing[datenames[2]],
+                                       int(thing[datenames[0]]))
+            begin_date = datetime.date(int(thing[datenames[2]]),
                                        month_to_int(thing[datenames[1]]),
-                                       thing[datenames[0]])
-            end_date = datetime.date(thing[datenames[2]],
+                                       int(thing[datenames[0]]))
+            end_date = datetime.date(int(thing[datenames[2]]),
                                        month_to_int(thing[datenames[1]]),
-                                       thing[datenames[0]])
+                                       int(thing[datenames[0]]))
     if thing.get('begin_date'):
         if isinstance(thing.get('begin_date'), str):
             begin_date = date_parser.parse(thing.get('begin_date')).date()
