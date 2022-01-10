@@ -926,7 +926,7 @@ EXEMPLARS = {
              }],
         "education": [
             {
-                "advisor": "ascopatz",
+                "advisor": "scopatz",
                 "begin_year": 2008,
                 "degree": "Ph.D. Mechanical Engineering, "
                           "Nuclear and Radiation Engineering "
@@ -981,7 +981,7 @@ EXEMPLARS = {
         "email": "scopatz@cec.sc.edu",
         "employment": [
             {
-                "advisor": "ascopatz",
+                "advisor": "scopatz",
                 "begin_year": 2015,
                 "coworkers": ["afriend"],
                 "group": "ergs",
@@ -1674,7 +1674,25 @@ EXEMPLARS = {
             "status": "finished",
             "begin_date": "2020-07-25",
             "end_date": "2020-07-27",
-            "deliverable": {"due_date": "2020-08-26", "status": "finished"},
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
+            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+        },
+        {
+            "_id": "pl_secondprojectum",
+            "lead": "pliu",
+            "status": "proposed",
+            "begin_date": "2020-07-25",
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
+            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+        },
+        {
+            "_id": "pl_thirdprojectum",
+            "lead": "pliu",
+            "status": "backburner",
+            "begin_date": "2020-07-25",
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
             "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
             "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
         }
@@ -3885,6 +3903,7 @@ SCHEMAS = {
         "deliverable": {
             "description": "outline of the deliverable for this projectum",
             "type": "dict",
+            "required": True,
             "schema": {
                 "audience": {"description": "the target audience for this deliverable",
                              "required": False,

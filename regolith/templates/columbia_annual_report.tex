@@ -462,6 +462,7 @@ None
             \item   {{latex_safe(metric)-}}
        {% endfor%}
     \end{itemize}
+    {% if hindex %}
 \textbf{ h-index:}
     \begin{itemize}[label=$-$]
             \item   h = {{ str(hindex['h']) }}
@@ -470,7 +471,7 @@ h-last five years = {{ str(hindex['h_last_five']) }}
 (since = {{ hindex['year']-5 }}, total citations = {{ hindex["citations_last_five"]-}} )\\
 pulled: {{ hindex["month"] }}/{{ hindex["day"] }}/{{ hindex["year"] }}\\
 Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"])) }}\\
-    \end{itemize}{% endif %}
+    \end{itemize}{% endif %}}{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Courses taught in {{ p["pre_begin_period"][-4:] }} - {{ p["begin_period"][-4:] }} }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

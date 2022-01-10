@@ -336,7 +336,8 @@ class AppraisalBuilder(LatexBuilderBase):
         #############
         # hindex
         #############
-        hindex = sorted(me["hindex"], key=doc_date_key).pop()
+        if me.get("hindex"):
+            hindex = sorted(me.get("hindex"), key=doc_date_key).pop()
 
         #########################
         # render
