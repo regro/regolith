@@ -1,4 +1,4 @@
-"""Builder for Proposal Reviews."""
+"""Builder for Grant Reports"""
 from datetime import date
 import time
 
@@ -133,12 +133,6 @@ class GrantReportBuilder(LatexBuilderBase):
             rc.people = [rc.people]
         person_id = rc.people[0]
 
-        for prsn in self.gtx["people"]:
-            if prsn.get("_id") == person_id:
-                person = prsn
-                break
-        authorFullName = HumanName(person["name"]).full_name
-
         # NSF Grant _id
         if not rc.grants:
             raise RuntimeError(
@@ -155,7 +149,7 @@ class GrantReportBuilder(LatexBuilderBase):
         #        institutions_coll = [inst for inst in self.gtx["institutions"]]
         institutions_coll = self.gtx["institutions"]
         grant_prums = [prum for prum in self.gtx['projecta'] if
-                       grant_id in prum.get('grants') and "checklist" not
+                       grant_id in prum.get('grants', []) and "checklist" not
                        in prum.get("deliverable").get("scope")]
         #        for prum in self.gtx['projecta']:
         #            if grant_name in prum['grants']:
@@ -167,9 +161,10 @@ class GrantReportBuilder(LatexBuilderBase):
         #                if (rp_start_date <= due_date <= rp_end_date and prum['status'] is "finished") or is_current(prum):
         #                   grant_prums.append(prum)
         # Get people associated with grant
+
         grant_prums_finished_this_period = [prum for prum in grant_prums if
                                             is_current(report_dates,
-                                                       prum.get('end_date'))]
+                                                       get_dates(prum).get('end_date'))]
         grant_prum_leads = list(set([prum['lead'] for prum in grant_prums]))
         grant_prum_collaborators = list(set(
             [collab for prum in grant_prums for collab in
@@ -271,12 +266,13 @@ class GrantReportBuilder(LatexBuilderBase):
             print(f"WARNING contact {person_id} not found in contacts collection")
 
         # Impacts
+        begin_date_str = rp_start_date.isoformat()
+        end_date_str = rp_end_date.isoformat()
         self.render(
             "grantreport.txt",
-            f"{person_id}_grant_report.txt",
-            authorFullName=authorFullName,
-            beginYear=rp_start_date.year,
-            endYear=rp_end_date.year,
+            f"{grant_id}_report_{begin_date_str}_{end_date_str}.txt",
+            begin_date=begin_date_str,
+            end_date=end_date_str,
             majorActivities=major_activities,
             significantResults=significant_results,
             trainingAndProfessionalDevelopment=training_and_professional_development,

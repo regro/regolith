@@ -1,4 +1,4 @@
-NSF {{beginYear}}-{{endYear}} Annual Report by {{authorFullName}}
+NSF {{begin_date}}-{{end_date}} Annual Report
 
 Accomplishments
 {{ hline }}
