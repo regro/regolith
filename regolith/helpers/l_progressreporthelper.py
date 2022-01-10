@@ -86,54 +86,53 @@ class ProgressReportHelper(SoutHelperBase):
                 print(f"{p.get('_id')}")
                 if p.get("deliverable"):
                     print(
-                        f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
+                        f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
                 if p.get('status') == 'finished':
-                    print(f"    finished: {p.get('end_date')}")
-                print(f"    description: {p.get('description')}")
-                print(f"    log_url: {p.get('log_url')}")
-                print("    team:")
+                    print(f"  finished: {p.get('end_date')}")
+                print(f"  description: {p.get('description')}")
+                print(f"  log_url: {p.get('log_url')}")
+                print("  team:")
                 grp_members = None
                 if p.get('group_members'):
                     grp_members = ', '.join(p.get('group_members'))
                 collaborators = None
                 if p.get('collaborators'):
                     collaborators = ', '.join(p.get('collaborators'))
-                print(f"        group_members: {grp_members}")
-                print(f"        collaborators: {collaborators}")
+                print(f"    group_members: {grp_members}")
+                print(f"    collaborators: {collaborators}")
                 d = p.get('deliverable')
-                print("    deliverable:")
+                print("  deliverable:")
                 audience = None
                 if d.get('audience'):
                     audience = ', '.join(d.get('audience'))
-                print(f"        audience: {audience}")
+                print(f"    audience: {audience}")
                 iter, title = 1, "scope:"
                 for scopum in d.get('scope', ["no scope"]):
-                    print(f"        {title} {str(iter)}. {scopum}")
+                    print(f"    {title} {str(iter)}. {scopum}")
                     iter += 1
                     title = "      "
-                print(f"        platform: {d.get('platform')}")
-                print("    milestones:")
+                print(f"    platform: {d.get('platform')}")
+                print("  milestones:")
                 for m in p.get('milestones'):
-                    print(f"        {m.get('due_date')}: {m.get('name')}")
-                    print(f"            objective: {m.get('objective')}")
-                    print(f"            status: {m.get('status')}")
-
+                    print(f"    {m.get('due_date')}: {m.get('name')}")
+                    print(f"      objective: {m.get('objective')}")
+                    print(f"      status: {m.get('status')}")
             else:
                 print(f"{p.get('_id')}")
                 if p.get("deliverable"):
                     print(
-                        f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
-                    print(f"    description: {p.get('description')}")
+                        f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}")
+                    print(f"  description: {p.get('description')}")
                 if p.get('status') == 'finished':
                     print(f"    finished: {p.get('end_date')}")
                 elif p.get('status') in PROJECTUM_ACTIVE_STATI:
-                    print(f"    log_url: {p.get('log_url')}")
+                    print(f"  log_url: {p.get('log_url')}")
                     if p.get('milestones'):
-                        print('    milestones:')
+                        print('  milestones:')
                     for m in p.get('milestones'):
                         print(
-                            f"        due: {m.get('due_date')}, {m.get('name')}, type: {m.get('type')}, status: {m.get('status')}")
-                        print(f"          objective: {m.get('objective')}")
+                            f"    due: {m.get('due_date')}, {m.get('name')}, type: {m.get('type')}, status: {m.get('status')}")
+                        print(f"    objective: {m.get('objective')}")
 
     def sout(self):
         rc = self.rc

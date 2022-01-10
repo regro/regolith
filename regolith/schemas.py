@@ -1674,7 +1674,25 @@ EXEMPLARS = {
             "status": "finished",
             "begin_date": "2020-07-25",
             "end_date": "2020-07-27",
-            "deliverable": {"due_date": "2020-08-26", "status": "finished"},
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
+            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+        },
+        {
+            "_id": "pl_secondprojectum",
+            "lead": "pliu",
+            "status": "proposed",
+            "begin_date": "2020-07-25",
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
+            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+        },
+        {
+            "_id": "pl_thirdprojectum",
+            "lead": "pliu",
+            "status": "backburner",
+            "begin_date": "2020-07-25",
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
             "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
             "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
         }
