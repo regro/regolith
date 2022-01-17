@@ -142,18 +142,19 @@ class GrantReportBuilder(LatexBuilderBase):
 
         # Products
         # need rg-db-public's citation.yml
-        #        publications = filter_publications(self.gtx["citations"],
-        ##                                           set(grant_people),
-        #                                           since=rp_start_date,
-        #                                          before=rp_end_date)
-        publications = [publ for publ in self.gtx["citations"] if
-                        grant_id in publ.get("grant", "")]
-        for publ in publications:
-            doi = publ.get('doi')
-            if doi and doi != 'tbd':
-                publ = get_formatted_crossref_reference(doi)
-            names = [HumanName(author).full_name for author in publ.get("author")]
-            publ['author'] = names
+        #    publications = filter_publications(self.gtx["citations"],
+        #                                       id,
+        #                                       bold=False,
+        #                                       since=rp_start_date,
+        #                                      before=rp_end_date)
+        # publications = [publ for publ in self.gtx["citations"] if
+        #                 grant_id in publ.get("grant", "")]
+        # for publ in publications:
+        #     doi = publ.get('doi')
+        #     if doi and doi != 'tbd':
+        #         publ = get_formatted_crossref_reference(doi)
+            # names = [HumanName(author).full_name for author in publ.get("author")]
+            # publ['author'] = names
         # Participants/Organizations
         participants = []
         for person in self.gtx["people"]:

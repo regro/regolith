@@ -720,7 +720,7 @@ def awards_grants_honors(p, target_name, funding=True, service_types=None):
                 d = {
                     "description": "{0} ({1}{2:,})".format(
                         latex_safe(x["name"]),
-                        x.get("currency", "$").replace("$", "\$"),
+                        x.get("currency", "$").replace("$", '\$'),
                         x["value"],
                     ),
                     "year": x["year"],
@@ -1936,14 +1936,16 @@ def get_formatted_crossref_reference(doi):
         return None, None
 
     authorlist = [
-        "{} {}".format(a['given'].strip(), a['family'].strip())
+        f"{a['given'].strip()} {a['family'].strip()}"
         for a in article.get('message').get('author')]
     try:
         journal = \
             article.get('message').get('short-container-title')[0]
     except IndexError:
-        journal = article.get('message').get('container-title')[
-            0]
+        try:
+            journal = article.get('message').get('container-title')[0]
+        except IndexError:
+            journal = ""
     if article.get('message').get('volume'):
         if len(authorlist) > 1:
             authorlist[-1] = "and {}".format(authorlist[-1])
