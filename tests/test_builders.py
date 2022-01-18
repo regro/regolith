@@ -212,7 +212,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                     if 'nsf' in fn2:
                         sheet = "NSF COA Template"
                     else:
-                        sheet = "Collaborator Template"
+                        sheet = "Collaborators"
                     expected = openpyxl.load_workbook(fn2)[sheet]
                     expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
                 else:
