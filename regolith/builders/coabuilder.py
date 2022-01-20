@@ -28,7 +28,7 @@ def get_advisors_name_inst(advisee, rc):
     """Get the advisee's advisor. Yield (last name, first name, institution name)."""
 
     phd_advisors = [
-        {"name": i.get("advisor", ""), "type": "advisor", "advis_type": "phd",
+        {"name": i.get("advisor", "missing name"), "type": "advisor", "advis_type": "phd",
          "interaction_date": get_dates(i).get("end_date",
                                               get_dates(i).get("begin_date"))}
         for i in advisee.get("education", [])
@@ -36,7 +36,7 @@ def get_advisors_name_inst(advisee, rc):
         or 'dphil' in i.get("degree", "").lower()
     ]
     pdoc_advisors = [
-        {"name": i.get("advisor", ""), "type": "advisor", "advis_type": "postdoc",
+        {"name": i.get("advisor", "missing name"), "type": "advisor", "advis_type": "postdoc",
          "interaction_date": get_dates(i).get("end_date",
                                               get_dates(i).get("begin_date"))}
         for i in advisee.get("employment", []) if i.get("status") == "postdoc"
@@ -53,7 +53,7 @@ def get_advisees_name_inst(coll, advisor, rc):
         relevant_emes = [i for i in my_eme if
                          i.get("advisor", "") in advisor_names]
         phd_advisees = [
-            {"name": person.get("name"), "type": "advisee", "interaction_date":
+            {"name": person.get("name", "missing name"), "type": "advisee", "interaction_date":
                 get_dates(i).get("end_date", get_dates(i).get("date")),
              "advis_type": "phd"}
             for i in relevant_emes
@@ -61,7 +61,7 @@ def get_advisees_name_inst(coll, advisor, rc):
             or 'dphil' in i.get("degree", "").lower()
         ]
         pdoc_advisees = [
-            {"name": person.get("name"), "type": "advisee",
+            {"name": person.get("name missing name"), "type": "advisee",
              "advis_type": "postdoc", "interaction_date":
                 get_dates(i).get("end_date", get_dates(i).get("date"))}
             for i in relevant_emes if
@@ -116,7 +116,7 @@ def get_coauthors_from_pubs(rc, pubs, not_person):
         pub_date = dt.date(int(pub.get("year")), month_to_int(pub.get("month")),1)
         my_collabs.extend(
             [
-                {"name": collabs, "interaction_date": pub_date, "type": "coauthor"} for collabs in
+                {"name": collabs, "interaction_date": pub_date, "type": "co-author"} for collabs in
                 (names for names in pub.get('author', []))
             ]
         )
@@ -138,8 +138,13 @@ def retrieve_names_and_insts(rc, collabs, not_person_akas=[]):
                 ["name", "aka", "_id"],
                 collab["name"], case_sensitive=False)
             if not person:
-                print(
-                    f"WARNING: {collab['name']} not found in contacts or people.")
+                if collab['name'] == "missing name":
+                    print(f"WARNING: a {collab.get('advis_type')} appointment "
+                          f"was found for the target {collab.get('type')} but "
+                          f"no name was specified. Please add an 'advisor' field "
+                          f"for that education/employment entry in the database.")
+                else:
+                    print(f"WARNING: {collab['name']} not found in contacts or people.")
                 person = {'_id': collab["name"], "name": collab["name"]}
         if person.get("name", ""):
             collab["name"] = HumanName(person.get("name", ""))
@@ -359,6 +364,12 @@ class RecentCollaboratorsBuilder(BuilderBase):
             os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_doe.xlsx"
         )
         self.cmds = ["excel"]
+        try:
+            rc.verbose
+        except AttributeError:
+            rc.verbose = False
+
+
 
     def construct_global_ctx(self):
         """Construct the global ctx including database and methods."""
@@ -439,13 +450,14 @@ class RecentCollaboratorsBuilder(BuilderBase):
         collabs.extend(advisees)
         collabs.extend(advisors)
         collabs.sort(key=lambda d: d['name'].last)
-        output = [f"{my_collab.get('name').last}, "
-               f"{my_collab.get('name').first}, "
-               f"{my_collab.get('institution')}, "
-               f"{my_collab.get('interaction_date')}, "
-               f"{my_collab.get('advis_type', '')}, "
-               f"{my_collab.get('type')}\n" for my_collab in collabs]
-        print(*output)
+        if rc.verbose:
+            output = [f"{my_collab.get('name').last}, "
+                   f"{my_collab.get('name').first}, "
+                   f"{my_collab.get('institution')}, "
+                   f"{my_collab.get('interaction_date')}, "
+                   f"{my_collab.get('advis_type', '')}, "
+                   f"{my_collab.get('type')}\n" for my_collab in collabs]
+            print(*output)
         person["name"] = HumanName(person.get("name"))
         results = {
             'person_info': person,
