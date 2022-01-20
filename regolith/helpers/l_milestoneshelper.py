@@ -161,8 +161,10 @@ class MilestonesListerHelper(SoutHelperBase):
         for projectum in collection:
             projectum["deliverable"].update({"name": "deliverable",
                                              "objective": "deliver"})
-            projectum["kickoff"].update({"type": "meeting"})
-            milestones = [projectum["kickoff"], projectum["deliverable"]]
+            milestones = [projectum["deliverable"]]
+            if projectum.get("kickoff"):
+                projectum["kickoff"].update({"type": "meeting"})
+                milestones = [projectum["kickoff"], projectum["deliverable"]]
             milestones.extend(projectum["milestones"])
             milestones = [ms for ms in milestones if
                               ms.get('status') in rc.stati
