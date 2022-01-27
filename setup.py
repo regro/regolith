@@ -39,7 +39,7 @@ def main():
         author_email="scopatz@gmail.com",
         url="https://github.com/scopatz/regolith",
         platforms="Cross Platform",
-        python_requires='>=3.6',
+        python_requires='>=3.8',
         classifiers=["Programming Language :: Python :: 3"],
         packages=["regolith", "regolith.builders", "regolith.helpers"],
         package_dir={"regolith": "regolith"},

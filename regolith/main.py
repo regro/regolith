@@ -349,6 +349,7 @@ def main(args=None):
             dbs = commands.helper_db_check(rc)
         with connect(rc, dbs=dbs) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)
+    return rc
 
 
 if __name__ == "__main__":

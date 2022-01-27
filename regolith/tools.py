@@ -309,7 +309,8 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     return grants, total_amount, subaward_amount
 
 
-def filter_employment_for_advisees(peoplecoll, begin_period, status, now=None):
+def filter_employment_for_advisees(peoplecoll, begin_period, status,
+                                   advisor, now=None):
     """Filter people to get advisees since begin_period
 
     Parameters
@@ -330,24 +331,25 @@ def filter_employment_for_advisees(peoplecoll, begin_period, status, now=None):
         begin_period = date_parser.parse(begin_period).date()
     for p in people:
         for i in p.get("employment", []):
-            if i.get("status") == status:
-                emp_dates = get_dates(i)
-                begin_date = emp_dates.get("begin_date")
-                end_date = emp_dates.get("end_date")
-                if not end_date:
-                    end_date = now
-                if end_date >= begin_period:
-                    p['role'] = i.get("position")
-                    p['begin_year'] = begin_date.year
-                    if not emp_dates.get("end_date"):
-                        p['end_year'] = "present"
-                    else:
-                        p['end_year'] = end_date.year
-                    p['status'] = status
-                    p['position'] = i.get("position")
-                    p['end_date'] = end_date
-                    advisees.append(p)
-                    advisees.sort(key=lambda x: x['end_date'], reverse=True)
+            if i.get("advisor", "no advisor") == advisor:
+                if i.get("status") == status:
+                    emp_dates = get_dates(i)
+                    begin_date = emp_dates.get("begin_date")
+                    end_date = emp_dates.get("end_date")
+                    if not end_date:
+                        end_date = now
+                    if end_date >= begin_period:
+                        p['role'] = i.get("position")
+                        p['begin_year'] = begin_date.year
+                        if not emp_dates.get("end_date"):
+                            p['end_year'] = "present"
+                        else:
+                            p['end_year'] = end_date.year
+                        p['status'] = status
+                        p['position'] = i.get("position")
+                        p['end_date'] = end_date
+                        advisees.append(p)
+                        advisees.sort(key=lambda x: x['end_date'], reverse=True)
     return advisees
 
 
@@ -2071,3 +2073,35 @@ def google_cal_auth_flow():
     with open(tokenfile, 'w') as token:
         token.write(creds.to_json())
     # Save the credentials for the next run
+
+def get_tags(coll):
+    '''
+    Given a collection with a tags field, returns the set of tags as a list
+
+    The tags field is expected to be a string with comma or space separated tags.
+    get_tags splits the tags and returns the set of unique tags as a list of
+    strings.
+
+    Parameters
+    ----------
+    coll collection
+      the collection
+
+    Returns
+    -------
+    the set of all tags as a list
+
+    '''
+
+    all_tags = []
+    for paper in coll:
+        tag_long = paper.get("tags", "")
+        if not isinstance(tag_long, str):
+            raise TypeError("ERROR: valid tags are comma or space separated strings of tag names")
+        tags = tag_long.split(',')
+        tags = [sub_item for item in tags for sub_item in item.split()]
+        all_tags.extend(tags)
+    all_tags = [item.strip() for item in all_tags]
+    all_tags = list(set(all_tags))
+    all_tags.sort()
+    return all_tags

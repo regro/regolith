@@ -1,0 +1,151 @@
+NSF {{begin_date}}-{{end_date}} Annual Report
+
+Accomplishments
+{{ hline }}
+* What are the major goals of the project?
+{{ hline }}
+In real-world applications, materials are rarely perfect crystals and their properties
+depend sensitively on defects, nanoscale structures, interfaces, surfaces and multi-scale
+heterogeneities. A major challenge is to gain a greater understanding of how such
+"imperfect" materials operate, including on different length and time-scales. In situations
+as complicated as this it is essential to validate theories against experiment, and vice versa.
+A more tightly coupled partnership between experiment and theory is needed, having its roots
+in information theory: the models need to capture all the physics of the problem become more
+complicated, while at the same time the information content of experimental data is reduced,
+due to lower resolution from finite size effects, defects, the presence of multiple components
+with overlapping problems, which yield unreliable and non-unique solutions, a bottleneck to
+predictive materials discovery. We will develop novel mathematical approaches to address this
+problem. We will study as a test case the nanostructure inverse problem (NIP), a well defined
+but generally ill-posed materials inverse problem; however, the methods that we develop will
+have much broader applicability in the world of materials discovery.
+
+Goal 1: Develop databases of nanostructure data from model systems
+Goal 2: Develop data analytic and stochastic optimization methodologies for robust
+nanostructure solutions
+Goal 3: Develop software infrastructure for nanostructure modeling that use the databases
+and the new methodologies for nanostructure solution
+Goal 4: Apply this to real scientific problems
+
+{{ hline }}
+* What was accomplished under these goals (you must provide information for
+at least one of the 4 categories below)?
+{{ hline }}
+- Major Activities (currently worked on projecta):
+PDF in the cloud (PDFitc): Development of a web-based service for determining
+structures from measured PDFs given known structures in structural databases
+xpdTools, xpdAcq, xpdAn, xpdView: Software tools for streaming data analysis
+and visualization of diffraction data from the XPD diffractometer at NSLS-II
+synchrotron. The tools can also be used to analyze data from other diffraction
+beamlines.
+{{ hline }}
+{%- for prum in majorActivities %}
+    {{ prum.get('_id') }}| {{ prum.get('name') }}| {{prum.get('lead')}}
+    {{ prum.get('description') }}
+        {% for milestone in prum.get('milestones') %}
+        {{ milestone.get("objective") }}
+        {{ milestone.get("type") }} | {{ milestone.get("status") }} {{ milestone.get("end_date", "") }}
+        {% endfor -%}
+{% endfor -%}
+
+- Specific Objectives:
+PDF in the cloud (PDFitc): Development of a web-based service for determining
+structures from measured PDFs given known structures in structural databases
+
+- Significant Results (finished projecta):
+{%- for prum in significantResults %}
+    {{ prum.get('name') }}: {{ prum.get('description') }}
+{% endfor -%}
+
+Key outcomes or Other achievements:
+{{ hline }}
+* What opportunities for training and professional development has the project provided?
+{{ hline }}
+{%- for opportunity in trainingAndProfessionalDevelopment %}
+    - Authors: {{ opportunity.get('authors') }}
+    - Title: {{ opportunity.get('title') }}
+    - Location: {{ opportunity.get('meeting_name') }}
+{% endfor -%}}
+{%- for thesis in defendedTheses %}
+    {{thesis}} wrote and successfully defended their thesis.
+{% endfor -%}}
+
+{{ hline }}
+* How have the results been disseminated to communities of interest?
+{{ hline }}
+1. Publications
+2. Software releases and deployment of software packages on conda-forge and pypi for ease of installation
+3. Presentations at conferences and seminars
+
+{{ hline }}
+* What do you plan to do during the next reporting period to accomplish the goals?
+{{ hline }}
+#############################################################
+##                                                         ##
+##                                                         ##
+##      FILL THIS PART IN !!! FILL THIS PART IN !!!        ##
+##                                                         ##
+##                                                         ##
+#############################################################
+
+{{ hline }}
+Products
+{{ hline }}
+{%- for publ in products %}
+    - {{ publ.get('title') }}
+      {% for person in publ.get('author') -%}{{ person }}, {%- endfor %}
+      {{ publ.get('journal') }}, {{ publ.get('volume') }}, pp. {{ publ.get('pages') }}
+      {{ publ.get('month') }}/{{ publ.get('year') }}
+      {{ publ.get('doi') }}
+{% endfor -%}}
+
+{{ hline }}
+Participants/Organizations
+{{ hline }}
+What individuals have worked on the project?
+
+Name, Most Senior Project Role, Nearest Person Month Worked
+{% for person in participants %}
+    - {{ person.get('name') }}, {{ person.get("position") }},
+      email: {{ person.get('email') }}, months on grant this period: {{ person.get("months_on_grant") }}
+{%- endfor -%}}
+
+What International collaborations have there been?
+
+What other organizations have been involved as partners?/What other collaborators or contacts have been involved?
+{%- for contact, info in collaborators.items() %}
+    - {{ info["name"] }} ({{ info["institution"] }})
+{%- endfor -%}}
+
+{{ hline }}
+Impacts
+{{ hline }}
+What is the impact on the development of the principal discipline(s) of the project?
+
+What is the impact on other disciplines?
+
+What is the impact on the development of human resources?
+
+What is the impact on physical resources that form infrastructure?
+
+What is the impact on institutional resources that form infrastructure?
+
+What is the impact on information resources that form infrastructure?
+
+What is the impact on technology transfer?
+
+What is the impact on society beyond science and technology?
+
+{{ hline }}
+Changes/Problems
+{{ hline }}
+Changes in approach and reason for change
+
+Actual or Anticipated problems or delays and actions or plans to resolve them
+
+Changes that have a significant impact on expenditures
+
+Significant changes in use or care of human subjects
+
+Significant changes in use or care of vertebrate animals
+
+Significant changes in use or care of biohazards

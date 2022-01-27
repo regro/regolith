@@ -75,7 +75,7 @@ ly_newprojectum:
 pl_firstprojectum:
   begin_date: '2020-07-25'
   deliverable:
-    due_date: '2020-08-26'
+    due_date: '2021-08-26'
     status: finished
   end_date: '2020-07-27'
   kickoff:
@@ -88,6 +88,36 @@ pl_firstprojectum:
       name: Milestone
       status: converged
   status: finished
+pl_secondprojectum:
+  begin_date: '2020-07-25'
+  deliverable:
+    due_date: '2021-08-26'
+    status: finished
+  kickoff:
+    due_date: '2021-08-03'
+    name: Kickoff
+    status: backburner
+  lead: pliu
+  milestones:
+    - due_date: '2021-08-03'
+      name: Milestone
+      status: converged
+  status: proposed
+pl_thirdprojectum:
+  begin_date: '2020-07-25'
+  deliverable:
+    due_date: '2021-08-26'
+    status: finished
+  kickoff:
+    due_date: '2021-08-03'
+    name: Kickoff
+    status: backburner
+  lead: pliu
+  milestones:
+    - due_date: '2021-08-03'
+      name: Milestone
+      status: converged
+  status: backburner
 sb_firstprojectum:
   begin_date: '2020-04-28'
   collaborators:
