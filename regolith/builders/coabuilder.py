@@ -61,7 +61,7 @@ def get_advisees_name_inst(coll, advisor, rc):
             or 'dphil' in i.get("degree", "").lower()
         ]
         pdoc_advisees = [
-            {"name": person.get("name missing name"), "type": "advisee",
+            {"name": person.get("name", "missing name"), "type": "advisee",
              "advis_type": "postdoc", "interaction_date":
                 get_dates(i).get("end_date", get_dates(i).get("date"))}
             for i in relevant_emes if
@@ -144,7 +144,7 @@ def retrieve_names_and_insts(rc, collabs, not_person_akas=[]):
                           f"no name was specified. Please add an 'advisor' field "
                           f"for that education/employment entry in the database.")
                 else:
-                    print(f"WARNING: {collab['name']} not found in contacts or people.")
+                    print(f"WARNING: {collab.get('name')} not found in contacts or people.")
                 person = {'_id': collab["name"], "name": collab["name"]}
         if person.get("name", ""):
             collab["name"] = HumanName(person.get("name", ""))
@@ -466,8 +466,9 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 if collab.get("name").last == advis.get("name").last \
                         and collab.get("name").first == advis.get("name").first:
                     col_bool = False
-                    if collab.get("interaction_date") > advis.get("interaction_date"):
-                        advis.update({"interaction_date": collab.get("interaction_date")})
+                    if advis.get("interaction_date"):
+                        if collab.get("interaction_date", dt.date.today()) > advis.get("interaction_date", dt.date.today()):
+                            advis.update({"interaction_date": collab.get("interaction_date")})
             if col_bool == True:
                 collabs.append(collab)
         collabs.extend(advisees)
@@ -567,7 +568,8 @@ class RecentCollaboratorsBuilder(BuilderBase):
             ws["D{}".format(row + 8)].value = collabs[row]["name"].first
             ws["F{}".format((row + 8))].value = collabs[row]["institution"]
             ws["G{}".format((row + 8))].value = collabs[row]["type"]
-            ws["H{}".format((row + 8))].value = collabs[row]["interaction_date"].year
+            if isinstance(collabs[row]["interaction_date"], dt.date):
+                ws["H{}".format((row + 8))].value = collabs[row]["interaction_date"].year
         ws["C3"].value = person_info["name"].full_name
         ws["C4"].value = person_info.get("email", "")
         wb.save(os.path.join(self.bldir, "{}_doe.xlsx".format(person_info["_id"])))
