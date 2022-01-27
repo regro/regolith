@@ -455,31 +455,9 @@ class RecentCollaboratorsBuilder(BuilderBase):
         except AttributeError:
             pass
         my_collabs = get_coauthors_from_pubs(rc, pubs, person)
-        # output = [f"{my_collab.get('name').last}, "
-        #        f"{my_collab.get('name').first}, "
-        #        f"{my_collab.get('institution')}, "
-        #        f"{my_collab.get('interaction_date')}, "
-        #        f"{my_collab.get('type')}\n" for my_collab in my_collabs]
-        # print(*output)
         advisors = get_advisors_name_inst(person, rc)
-        # print("advisors:")
-        # output = [f"{my_collab.get('name').last}, "
-        #        f"{my_collab.get('name').first}, "
-        #        f"{my_collab.get('institution')}, "
-        #        f"{my_collab.get('interaction_date')}, "
-        #        f"{my_collab.get('advisor_type')}, "
-        #        f"{my_collab.get('type')}\n" for my_collab in advisors]
-        # print(*output)
         advisees = get_advisees_name_inst(all_docs_from_collection(rc.client, "people"),
                                           person, rc)
-        # print("advisees:")
-        # output = [f"{my_collab.get('name').last}, "
-        #        f"{my_collab.get('name').first}, "
-        #        f"{my_collab.get('institution')}, "
-        #        f"{my_collab.get('interaction_date')}, "
-        #        f"{my_collab.get('advisor_type')}, "
-        #        f"{my_collab.get('type')}\n" for my_collab in advisees]
-        # print(*output)
         collabs = []
         adviseors = advisors + advisees
         for collab in my_collabs:
@@ -506,46 +484,72 @@ class RecentCollaboratorsBuilder(BuilderBase):
         person["name"] = HumanName(person.get("name"))
         results = {
             'person_info': person,
-            # 'ppl_tab1': ppl_tab1,
-            # 'ppl_tab3': ppl_tab3,
-            # 'ppl_tab4': ppl_tab4,
-            # 'ppl_tab5': ppl_tab5,
             'collabs': collabs
         }
         return results
 
     @staticmethod
-    def fill_in_tab(ws, ppl_tups, start_row, template_cell_style=None, cols='ABCDE'):
+    def fill_in_tab(ws, ppl, start_row, template_cell_style=None, cols='ABCDE'):
         """Add the information in person, institution pairs into the table 4 in nsf table."""
-        more_rows = len(ppl_tups) - 1
+        nsf_mappings = {"co-author": "A:", "collaborator": "C:", "phd_advisor": "G:",
+                        "phd_advisee": "T:", "co-editor": "E:"}
+        more_rows = len(ppl) - 1
         if more_rows > 0:
             ws.insert_rows(start_row, amount=more_rows)
-        for row, tup in enumerate(ppl_tups, start=start_row):
-            cells = [ws['{}{}'.format(col, row)] for col in cols]
+        for row, person in enumerate(ppl, start=start_row):
+            cells = [ws[f"{col}{row}"] for col in cols]
             if template_cell_style is not None:
                 apply_cell_style(*cells, style=template_cell_style)
-            for ind, value in enumerate(tup):
-                cells[ind].value = value
+                ws[f"A{row}"].value = nsf_mappings.get(person.get("type"))
+                ws[f"B{row}"].value = f"{person.get('name').last}, " \
+                                f"{person.get('name').first}"
+                ws[f"C{row}"].value = person.get('institution')
+                ws[f"E{row}"].value = person.get('interaction_date', dt.date.today()).strftime("%m/%d/%Y")
         return
 
-    def render_template1(self, person_info, ppl_tab1, ppl_tab3, ppl_tab4, ppl_tab5, **kwargs):
+    def render_template1(self, person_info, collabs, **kwargs):
         """Render the nsf template."""
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
+        nsf_collabs = copy(collabs)
+        advis, coauths, coeditors = [], [], []
+        pi_row_number = 17
+        ws[f"B{pi_row_number}"].value = f"{person_info.get('name').last}, " \
+                              f"{person_info.get('name').first}"
+        ws[f"C{pi_row_number}"].value = person_info.get('institution')
+        ws[f"D{pi_row_number}"].value = person_info.get('interaction_date',
+                                         dt.date.today()).strftime("%m/%d/%Y")
+
+        for collab in nsf_collabs:
+            if collab.get("type") == "advisor" and collab.get('advis_type') == "phd":
+                collab.update({"type": "phd_advisor"})
+                advis.append(collab)
+            if collab.get("type") == "advisee" and collab.get('advis_type') == "phd":
+                collab.update({"type": "phd_advisee"})
+                advis.append(collab)
+            if collab.get("type") == "co-author":
+                coauths.append(collab)
+        if collab.get("type") == "co-editor":
+            coeditors.append(collab)
         style = copy_cell_style(ws['A17'])
-        self.fill_in_tab(
-            ws, ppl_tab5, start_row=44, template_cell_style=style
-        )
-        self.fill_in_tab(
-            ws, ppl_tab4, start_row=37, template_cell_style=style
-        )
-        self.fill_in_tab(
-            ws, ppl_tab3, start_row=30, template_cell_style=style
-        )
-        self.fill_in_tab(
-            ws, ppl_tab1, start_row=17, template_cell_style=style
-        )
+
+        if coauths:
+            self.fill_in_tab(
+                ws, coauths, start_row=52, template_cell_style=style
+            )
+        if advis:
+            self.fill_in_tab(
+                ws, advis, start_row=38, template_cell_style=style
+            )
+        # if person_info:
+        #     self.fill_in_tab(
+        #         ws, [person_info], start_row=17, template_cell_style=style
+        #     )
+        if coeditors:
+            self.fill_in_tab(
+                ws, coeditors, start_row=120, template_cell_style=style
+            )
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
         return locals()
 
@@ -583,6 +587,6 @@ class RecentCollaboratorsBuilder(BuilderBase):
         print(f"filtering coauthors for papers since {rc.pub_since_date}")
         for target in rc.people:
             query_results = self.query_ppl(target)
-            # self.render_template1(**query_results)
+            self.render_template1(**query_results)
             self.render_template2(**query_results)
 
