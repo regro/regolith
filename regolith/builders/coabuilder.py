@@ -185,6 +185,51 @@ def get_recent_org(person_info):
     return organization
 
 
+def query_people_and_institutions(rc, names):
+    """Get the people and institutions names."""
+    people, institutions, latest_active = [], [], []
+    for person_name in names:
+        person_found = fuzzy_retrieval(all_docs_from_collection(
+            rc.client, "people"),
+            ["name", "aka", "_id"],
+            person_name[0], case_sensitive=False)
+        if not person_found:
+            person_found = fuzzy_retrieval(all_docs_from_collection(
+                rc.client, "contacts"),
+                ["name", "aka", "_id"], person_name[0], case_sensitive=False)
+            if not person_found:
+                print(
+                    "WARNING: {} not found in contacts or people. Check aka".format(
+                        person_name[0]).encode('utf-8'))
+            else:
+                people.append(person_found['name'])
+                inst = fuzzy_retrieval(all_docs_from_collection(
+                    rc.client, "institutions"),
+                    ["name", "aka", "_id"],
+                    person_found["institution"], case_sensitive=False)
+                if inst:
+                    institutions.append(inst["name"])
+                else:
+                    institutions.append(person_found.get("institution", "missing"))
+                    print("WARNING: {} missing from institutions".format(
+                        person_found["institution"]))
+        else:
+            people.append(person_found['name'])
+            pinst = get_recent_org(person_found)
+            inst = fuzzy_retrieval(all_docs_from_collection(
+                rc.client, "institutions"), ["name", "aka", "_id"],
+                pinst, case_sensitive=False)
+            if inst:
+                institutions.append(inst["name"])
+            else:
+                institutions.append(pinst)
+                print(
+                    "WARNING: {} missing from institutions".format(
+                        pinst))
+        latest_active.append(person_name[1])
+    return people, institutions, latest_active
+
+
 def get_inst_name(person, rc):
     """Get the name of instituion of the person's latest employment."""
     if 'employment' in person:
@@ -320,10 +365,10 @@ def get_person(person_id, rc):
         person_id,
         case_sensitive=False
     )
-    if person_found:
-        return person_found
-    print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
-    return None
+    if not person_found:
+        print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
+        person_found = {"name": person_id}
+    return person_found
 
 
 def find_coeditors(person, rc):
