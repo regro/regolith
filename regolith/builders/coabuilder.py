@@ -505,7 +505,8 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 ws[f"B{row}"].value = f"{person.get('name').last}, " \
                                 f"{person.get('name').first}"
                 ws[f"C{row}"].value = person.get('institution')
-                ws[f"E{row}"].value = person.get('interaction_date', dt.date.today()).strftime("%m/%d/%Y")
+                if isinstance(person.get("interaction_date"), dt.date):
+                    ws[f"E{row}"].value = person.get('interaction_date', dt.date.today()).strftime("%m/%d/%Y")
         return
 
     def render_template1(self, person_info, collabs, **kwargs):
