@@ -131,10 +131,13 @@ class MilestoneUpdaterHelper(DbHelperBase):
         deliverable = deepcopy(target_prum.get('deliverable'))
         kickoff = deepcopy(target_prum.get('kickoff'))
         deliverable['identifier'] = 'deliverable'
-        kickoff['identifier'] = 'kickoff'
+        all_milestones = [deliverable]
+        if kickoff:
+            kickoff['identifier'] = 'kickoff'
+            kickoff['type'] = 'meeting'
+            all_milestones = [deliverable, kickoff]
         for item in milestones:
             item['identifier'] = 'milestones'
-        all_milestones = [deliverable, kickoff]
         all_milestones.extend(milestones)
         for i in all_milestones:
             i['due_date'] = get_due_date(i)

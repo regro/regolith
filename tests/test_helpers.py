@@ -383,6 +383,7 @@ helper_map = [
      "2. Kick off meeting    due date: 2020-05-06    status: finished\n"
      "     audience: ['lead', 'pi', 'group_members']\n"
      "     objective: introduce project to the lead\n"
+     "     type: meeting\n"
      "     notes:\n"
      "       - kickoff note\n"
      "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
