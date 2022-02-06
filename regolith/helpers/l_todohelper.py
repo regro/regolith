@@ -126,7 +126,10 @@ class TodoListerHelper(SoutHelperBase):
             if "checklist" in projectum.get('deliverable').get('scope'):
                 continue
             projectum["deliverable"].update({"name": "deliverable"})
-            gather_miles = [projectum["kickoff"], projectum["deliverable"]]
+            if projectum.get("kickoff"):
+                gather_miles = [projectum["kickoff"], projectum["deliverable"]]
+            else:
+                gather_miles = [projectum["deliverable"]]
             gather_miles.extend(projectum["milestones"])
             for ms in gather_miles:
                 if projectum["status"] in PROJECTUM_ACTIVE_STATI:
