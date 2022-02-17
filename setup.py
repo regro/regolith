@@ -57,8 +57,6 @@ def main():
     if HAVE_SETUPTOOLS:
         skw["setup_requires"] = []
         # skw['install_requires'] = ['Jinja2', 'pymongo']
-    setup(**skw)
-
 
     if platform.system().lower() in PW_AFFECTED_OSX_SYSTEMS:
     #The following lines find the python.app script, parses the script to find the path of its executable, and sets
@@ -72,7 +70,7 @@ def main():
         new_sys_executable = new_sys_executable.split(' ')[0]
         sys.executable = new_sys_executable
 
-    skw['scripts'] = ['scripts/helper_gui']
+    skw['scripts'] = skw['scripts'] + ['scripts/helper_gui']
     setup(**skw)
 
 
