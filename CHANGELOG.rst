@@ -4,6 +4,194 @@ Regolith Change Log
 
 .. current developments
 
+v0.7.1
+====================
+
+**Added:**
+
+* Ability to utilize multiple backend clients (namely filesystem and mongo) for a single database
+* an adder helper to add new expenses to the expenses collection
+* adder helper for new reading list based on tags in the group citation database
+* an adder helper to add presentations to the presentations collection
+* an adder helper for adding a new projectum to the projecta collection.
+   projecta are small bite-sized project quanta that typically will result in
+   one manuscript.
+* adder helper to add a new proposal to the proposals collection.
+* adder helper that adds a new to-do task to the todos in people collection.
+* Helper for listing grants
+    * New function in dates.py to determine is something is current
+* a builder for annual appraisals modelled on columbia SEAS appraisal
+* a tool in tools in tools.py that will merge two collections, similar to chainDB but they collections are not public/private versions of the same collection but collections of different names.  Intitiall intended for proposals and grants so that when a proposal gets funded its info doesn't have to be copied over to the grant but can be dereferenced
+* a convenience tool to tools.py that gets all the date items (begin_day, end_year, month, etc.) from an entry and returns them as a dict
+* a bunch of bespoke filters to tools.py that return different things from different collections
+* a function that takes regolith dates and returns the beginning and ending date from a document
+* tests for functions in regolith.dates
+* due date as command line arg for projecta adder helper
+- A new builder for the experiment plan of beamtime based on the beamplan and beamtime database
+ - Add pandas in the required packages
+* bio_long field to people schema for longer bio's that are
+   needed for cv's but not necessarily websites
+* add --checklist functionality to the projecta adder that will create a checklist
+   projectum for manuscript submissions.
+* a new function collect_appts in tools that collects all appointments in a people database satisfying certain
+      conditions or lying in a given period of time
+* filter allowing user to list just current milestones in u_milestone
+* publist builder now builds versions where the author is not bolded and a
+   version where the acknowledgement is printed as well for DOE reporting purposes
+* todo items in todo lists can now have tags added and be sorted by tags
+* helper that marks a task as finished in todos of people collection.
+* The --filter flag can now recursively search through a top level target attribute, which can be an object or a list, in order to more effectively search a record
+* a helper for finishing projecta in the projecta collection.
+* Flags to l_projecta to get projecta that finished within a date range
+* New function in tools, fragment_retrieval, that returns a list of documents from a collection where the specified fragment is found in any of the given fields (similar to fuzzy_retrieval)
+* a helper for listing filtered data from collections in the database.
+* The get_dates function in tools.py can now take a prefix string when searching for dates
+* a function grant_burn in tools.py that retrieves the burn of a grant given a collection of appointments
+      for  a given interval of time
+* New flag to l_projecta called --grp_by_lead that groups all projectums by their leads
+* to tools a function to find all group members in a people db
+* A finish argument to finish milestone and record the end datetime.
+ * Multiple indices can be specified for the u_milestone helper.
+* A new helper command for helpers which are like lightweight builders but do
+   more than just build
+* new function is_fully_appointed in tools.py (with tests in test_tools.py) that takes in a person dict and retrieves the person's appointments to check is the person is fully appointed for a given interval of time
+* helper that lists all contacts corresponding to a name, institution, date, or note fragment
+* milestones now handle a notes field in schema and all relevant helpers
+* helper that lists all upcoming milestones from projecta
+ * function to dates.py that fetches due_date from a dict and returns it as a
+   datetime.date object
+* a helper that lists progress by person from their projecta
+* Helper that lists all the to-do tasks. Tasks are gathered from todos of people.yml and milestones.
+* linkedin_url to schema of people
+* a helper makeappointments that helps manage appointments on grants and study the burn of grants over time
+* A validator called v_meetings that makes sure contents of previous group meetings are not empty
+* A lister for the names of members of the group, either current or ever.
+* The "regolith mongo-to-fs" command can now be used to port local and remote mongo backends to the filesystem
+* Validation on all updates and insertion to mongo databases due to potential for lack of PR review
+* get_dates function that will find years, months and days and/or dates in a document and
+   return them as datetime date objects
+* Add test for internalhtmlbuilder in test_builder.py
+* functionality to l_projecta to find prums that either have no lead (lead is
+   tbd) or are assigned to inactive people
+* progress field in milestones in projecta collection
+ * schema for the projecta collection
+* release definition to the delivery milestone in the database
+* publist builder will now build for a single group member if the ID is
+   specified at the CLI
+* tests for proposal and manual review builders
+* All listers now support searching with the --filter and --keys flags
+* reading list builder
+ * function to tools that gets a reference from Crossref
+* tutorial to allowed types in presentation schema
+* a helper to build reading lists from a citations collection using tags
+* an contact helper for adding/updating contacts to the contacts collection.
+* a helper for adding/updating institutions to the institutions collection.
+* An updater helper for updating log_urls of projectum
+      in the projecta collection.
+* a milestones helper for adding/updating milestones to the projecta collection.
+* helper that updates a task in todos of people collection.
+* properties to the schemas for the expenses, meeting, and projecta collections
+Regolith mongo client can transfer database from filesystem and load data from mongo database. Regolith
+builders can run on mongo backend.
+* Add the command "regolith --version" to print the version number.
+* presentation lister now handles webinars
+ * a_presentation helper now handles webinars
+ * get_person_contact() a new tool in tools.py will return a person by looking
+   in the people collection and the contacts collection
+* 'webinar' as a boolean available. True if the presentation was a webinar.
+
+**Changed:**
+
+* cv now separates service and honors
+* small tweaks to cv format to make it more appropriate for longer cvs as will 
+   as shorter ones.
+ * added presentations and former students to cv
+* Beamplanbuilder includes the scan plan code in the report.
+
+* Scanplan schemas changes from string to list of strings.
+
+* Sample information is demonstrated in a list instead of a comma separated line.
+* get_formatted_crossref_reference() in tools.py now returns None if the doi passed can't
+   be found
+ * internalhtmlbuilder now resolves and then prints the Journal Club DOI's
+* is_current, is_before, is_after, has_started, has_finished, and is_between functions now use datetime objects
+* u_contact now only requires institution when adding, but not when updating
+ * u_contact can take an id as an optional argument
+* get_dates now tolerates 'tbd' in a date field
+* get_dates now returns None for all dates if it can't find any dates
+* group_by_lead flag in l_projecta can now be used with other flags
+* makeappointments helper will not look for an end-date when employment
+    attribute 'permanent' is set to true
+* Key value pair filter is now integrated with the other flags for listers
+* l_members now prints emails of members in verbose mode
+* The -v flag in l_projecta now produces a verbose output
+* edited print message in is_fully_appointed function in tools.py
+    * edited edge case logic in is_fully_appointed function in tools.py
+    * removed superfluous help message from returned list in grant_burn function in tools.py
+* merge_collections_all returns all of two collections, where items dererenced
+   are merged
+ * merge_collections_intersect returns just merged items that are dereferenced
+ * merge_collections_superior returns all except the non-dereferenced items in
+   the inferior collection.  e.g., if we are merging grants and proposals and we
+   want all grants, augmented by information in the proposals that led to those
+   grants, we use this.
+* Cleaned code in l_projecta for more readable filtering
+ * a_projectum so that it doesn't automatically prepend a year to the id of new
+   projecta.
+ * updated schema so it doesn't model id pattern with prepended date
+* publist builder now makes a version of the publication list without the main
+   author appearing in bold (_nobold), a version that is pandoc friendly (_pandoc)
+   so it can be converted to MS word and other formats, and a version that also
+   prints the acknowledgement statement along with the reference (in a slightly
+   clunky fashion, _ackno) as well as the previously produced publication list.
+* proposal review builder now accepts lists of institutions for multiple authors
+* yaml-to-json now serializes datetime datetime and date objects
+* reading list items are now sorted by date in reverse chronological order
+* milestone lister updated so that it filters by person and based on milestone
+   status
+
+**Removed:**
+
+* Old date functions from tools.py
+* from preslist builder the method to find all group members in a people db
+* old is_fully_loaded function in tools.py, which is replaced by the new is_fully_appointed function.
+* removed mdy function from reimbursement builder, now using strftime() method.
+* removed mdy function from coabuilder. It was not being used there.
+
+**Fixed:**
+
+* A common interface is being enforced on the backend clients (mongoclient.py and fsclient.py)
+* modified reimbursement builder to handle new date (rather than day, month,
+   year) format in expenses as well as old one
+* fsclient.py dump_yaml function to ignore aliases
+* test_helper.py so that it checks for changes to database collections
+* bug in date_to_float removes extra zero in day float value
+* cv dereferences institutions
+* now using filter_presentations in preslist builder
+* grants lister now returning correct dates
+* bug in grp meeting builder so will build if previous Jclubs are missing
+* l_members does not crash when organization not found in institutions
+   collection
+* bug that person in two groups doesn't iterate over their proposals correctly
+   in current-pending
+* Subprocess calls to mongo now printout the error message that would have gone to the stdout
+* Testing mongo backend added for all helpers as well as a single doc validation tool test
+* Bug in l_projecta helper that meant that specifying --current then didn't
+   filter for other things
+* current and pending now builds properly when there are multiple groups iterated
+   over
+* coabuilder now filters dates correctly
+ * coabuilder finds institution when the person is a student and his/her most
+   recent appointment item is in education and not employment
+* get_dates now handles days, months and years expressed as strings
+* dates now does not strip tbd and replace with None from all fields,
+   only from fields containing date in the key
+* publist will build if year in date is string, not int, in the collection
+* get_dates function works with datetime objects and strings
+Bugs in the old mongo client are fixed.
+
+
+
 v0.5.1
 ====================
 
