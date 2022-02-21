@@ -33,7 +33,7 @@ def main():
         description="A research group content management system",
         long_description=readme,
         license="CC0",
-        version='0.7.1',
+        version='0.7.2',
         author="Anthony Scopatz",
         maintainer="Anthony Scopatz",
         author_email="scopatz@gmail.com",
