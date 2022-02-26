@@ -1657,6 +1657,7 @@ EXEMPLARS = {
         ],
         "name": "First Projectum",
         "pi_id": "scopatz",
+        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
         "status": "started",
         "other_urls": ["https://docs.google.com/document/d/analysis"],
         "product_url": "https://docs.google.com/document/d/manuscript",
