@@ -1,4 +1,5 @@
-**Added:** None
+**Added:**
+ * supplementary_info_urls field to citations and projecta
 
 **Changed:** None
 

@@ -863,6 +863,9 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         ent = dict(pub)
         ent["ID"] = ent.pop("_id")
         ent["ENTRYTYPE"] = ent.pop("entrytype")
+        if ent.get("supplementary_info_urls"):
+            ent.update({"supplementary_info_urls":
+                            ", ".join(ent.get("supplementary_info_urls"))})
         if isinstance(ent.get("editor"), list):
             for n in ["author", "editor"]:
                 if n in ent:

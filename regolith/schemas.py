@@ -141,6 +141,7 @@ EXEMPLARS = {
         "month": "Jan",
         "pages": "e103",
         "publisher": "PeerJ Inc. San Francisco, USA",
+        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
         "synopsis": "The description of symbolic computing in Python",
         "tags": "pdf",
         "title": "SymPy: Symbolic computing in Python",
@@ -1656,6 +1657,7 @@ EXEMPLARS = {
         ],
         "name": "First Projectum",
         "pi_id": "scopatz",
+        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
         "status": "started",
         "other_urls": ["https://docs.google.com/document/d/analysis"],
         "product_url": "https://docs.google.com/document/d/manuscript",
@@ -4011,6 +4013,12 @@ SCHEMAS = {
                            "that is a log of notes and meeting minutes for the projectum",
             "required": False,
             "type": "string"
+        },
+        "supplementary_info_urls": {
+            "description": "list of urls that are links to repos gdocs, etc. "
+                           "that contain supplementary info such as data or code snippets",
+            "required": False,
+            "type": "list"
         },
         "milestones": {
             "description": "smaller deliverables done by a certain date "

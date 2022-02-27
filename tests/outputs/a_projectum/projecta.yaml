@@ -72,6 +72,7 @@ ly_newprojectum:
     - new note
   pi_id: scopatz
   status: started
+  supplementary_info_urls: []
 pl_firstprojectum:
   begin_date: '2020-07-25'
   deliverable:
@@ -194,3 +195,6 @@ sb_firstprojectum:
   pi_id: scopatz
   product_url: https://docs.google.com/document/d/manuscript
   status: started
+  supplementary_info_urls:
+    - https://google.com
+    - https://nytimes.com
