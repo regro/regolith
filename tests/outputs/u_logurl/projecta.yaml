@@ -72,6 +72,7 @@ ly_newprojectum:
     - new note
   pi_id: scopatz
   status: started
+  supplementary_info_urls: []
 pl_firstprojectum:
   begin_date: '2020-07-25'
   deliverable:
