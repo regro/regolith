@@ -118,10 +118,11 @@ class ProjectumAdderHelper(DbHelperBase):
         pdoc.update({
             'begin_date': now,
             'log_url': '',
+            'supplementary_info_urls': [],
             'name': rc.name,
             'pi_id': rc.pi_id,
             'lead': rc.lead,
-            'notes': rc.notes
+            'notes': rc.notes,
         })
         if rc.lead == "tbd":
             pdoc.update({
