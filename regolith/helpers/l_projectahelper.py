@@ -196,9 +196,13 @@ class ProjectaListerHelper(SoutHelperBase):
                         grants = ' ,'.join(p.get('grants'))
                     else:
                         grants = p.get('grants')
+                if p.get('status') == "finished":
+                    ended = f", end_date: {p.get('end_date')}"
+                else:
+                    ended = f""
                 print(p.get('_id'))
                 print(
-                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('due_date')}, end_date: {p.get('end_date')}, grant: {grants}")
+                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable', {}).get('due_date')}{ended}, grant: {grants}")
                 print(f"    description: {p.get('description')}")
                 print("    team:")
                 print(f"        lead: {p.get('lead')}")
