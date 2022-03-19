@@ -164,19 +164,19 @@ helper_map = [
      "ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: 2021-01-01, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\nsb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--grant", "SymPy-1.1"],
-     "ly_newprojectum\nsb_firstprojectum\n"
+     "ly_newprojectum (started)\nsb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--grp_by_lead"],
-     "abeing:\n    ab_inactive\nlyang:\n    ly_newprojectum\npliu:\n    pl_firstprojectum\n    pl_secondprojectum\n    pl_thirdprojectum\nascopatz:\n    sb_firstprojectum\n"
+     "abeing:\n    ab_inactive (backburner)\nlyang:\n    ly_newprojectum (started)\npliu:\n    pl_firstprojectum (finished)\n    pl_secondprojectum (proposed)\n    pl_thirdprojectum (backburner)\nascopatz:\n    sb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--all"],
-     "ab_inactive\nly_newprojectum\npl_firstprojectum\npl_secondprojectum\npl_thirdprojectum\nsb_firstprojectum\n"
+     "ab_inactive (backburner)\nly_newprojectum (started)\npl_firstprojectum (finished)\npl_secondprojectum (proposed)\npl_thirdprojectum (backburner)\nsb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--current"],
-     "ly_newprojectum\npl_secondprojectum\nsb_firstprojectum\n"
+     "ly_newprojectum (started)\npl_secondprojectum (proposed)\nsb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"],
-     "ascopatz:\n    sb_firstprojectum\n"
+     "ascopatz:\n    sb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--verbose"],
      "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    description: a prum that has various inactive states in milestones and overall\n    team:\n        lead: abeing\n        group_members: None\n        collaborators: None\n"

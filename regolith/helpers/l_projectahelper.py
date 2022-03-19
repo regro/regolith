@@ -217,10 +217,11 @@ class ProjectaListerHelper(SoutHelperBase):
 
         if rc.grp_by_lead:
             for p in projecta:
+                output = f"{p.get('_id')} ({p.get('status')})"
                 if p.get('lead') not in grouped_projecta:
-                    grouped_projecta[p.get('lead')] = [p.get('_id')]
+                    grouped_projecta[p.get('lead')] = [output]
                 else:
-                    grouped_projecta[p.get('lead')].append(p.get('_id'))
+                    grouped_projecta[p.get('lead')].append(output)
             for key, values in grouped_projecta.items():
                 print(f"{key}:")
                 for v in values:
@@ -247,7 +248,8 @@ class ProjectaListerHelper(SoutHelperBase):
                     f"\nNo projecta finished within the {rc.range} days leading up to {now}")
 
         for i in projecta:
-            print(i.get("_id"))
+            output = f"{i.get('_id')} ({i.get('status')})"
+            print(output)
 
         if error_projecta:
             print(
