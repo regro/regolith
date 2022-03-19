@@ -1,5 +1,7 @@
 """Helper for finishing prum in the projecta collection
 """
+from datetime import date
+
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
@@ -8,6 +10,7 @@ from dateutil import parser as date_parser
 from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
+
 
 def subparser(subpi):
     date_kwargs = {}
@@ -59,23 +62,26 @@ class FinishprumUpdaterHelper(DbHelperBase):
         if not found_projectum:
             pra = fragment_retrieval(self.gtx["projecta"], ["_id"], key)
             if len(pra) == 0:
-                raise RuntimeError("Please input a valid projectum id or a valid fragment of a projectum id")
+                raise RuntimeError(
+                    "Please input a valid projectum id or a valid fragment of a projectum id")
             print("Projectum not found. Projecta with similar names: ")
             for i in range(len(pra)):
                 print(f"{pra[i].get('_id')}     status:{pra[i].get('status')}")
             print("Please rerun the helper specifying the complete ID.")
             return
-        found_projectum.update({'status':'finished'})
+        found_projectum.update({'status': 'finished'})
         if rc.end_date:
-            found_projectum.update({'end_date': date_parser.parse(rc.end_date).date()})
+            end_date: date = date_parser.parse(rc.end_date).date()
         else:
-            found_projectum.update({'end_date': dt.date.today()})
-        found_projectum['kickoff'].update({'status':'finished'})
-        found_projectum['deliverable'].update({'status': 'finished'})
+            end_date: date = dt.date.today()
+        found_projectum.update(
+                {'end_date': end_date})
+        found_projectum['kickoff'].update({'status': 'finished', 'end_date': end_date})
+        found_projectum['deliverable'].update({'status': 'finished', 'end_date': end_date})
         for i in found_projectum:
-            if i=='milestones':
-                for field in found_projectum['milestones']:
-                    field.update({'status': 'finished'})
+            if i == 'milestones':
+                for field in found_projectum.get('milestones'):
+                    field.update({'status': 'finished', 'end_date': end_date})
         rc.client.update_one(rc.database, rc.coll, filterid, found_projectum)
         print(f"{rc.projectum_id} status has been updated to finished")
         return
