@@ -38,7 +38,7 @@ def subparser(subpi):
     subpi.add_argument("-g", "--grant",
                        help="Filter projecta by a grant ID")
     subpi.add_argument("-c", "--current", action="store_true",
-                       help=f"Lists only active projecta")
+                       help=f"Lists only active projecta. If not specified, will be active and paused but not cancelled")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help="increase verbosity of output")
     subpi.add_argument("--grp_by_lead", action='store_true',
@@ -48,7 +48,7 @@ def subparser(subpi):
                             "non active person as lead")
     subpi.add_argument("--all", action="store_true",
                        help=f"Lists all projecta including those with statuses "
-                            f"in {*INACTIVE_STATI,} that are excluded by default")
+                            f"in {*PROJECTUM_CANCELLED_STATI,} that are excluded by default")
     subpi.add_argument("-e", "--ended", action="store_true",
                        help="Lists projecta that have ended. Use the -r flag to specify "
                             "how many days prior to today to search over for finished"
@@ -132,7 +132,7 @@ class ProjectaListerHelper(SoutHelperBase):
         if rc.orphans:
             if rc.person or rc.lead:
                 raise RuntimeError(
-                    f"you cannot specify lead or person with orphan")
+                    f"you cannot specify lead or person with orphans")
             dead_parents = [person.get("_id") for person in self.gtx["people"]
                              if not person.get("active")]
             collection = [prum for prum in collection
@@ -159,11 +159,10 @@ class ProjectaListerHelper(SoutHelperBase):
         if rc.current:
             collection = [prum for prum in collection if
                           prum.get('status') in PROJECTUM_ACTIVE_STATI]
-        if not rc.all:
+        elif not rc.all:
             collection = [prum for prum in collection if
-                          prum.get('status') not in INACTIVE_STATI
+                          prum.get('status') not in PROJECTUM_CANCELLED_STATI
                           ]
-
         for projectum in collection:
             if rc.ended:
                 if projectum.get('status') not in PROJECTUM_ACTIVE_STATI:

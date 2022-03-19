@@ -1,7 +1,10 @@
 ab_inactive:
+  begin_date: '2020-05-03'
   deliverable:
     due_date: '2021-05-03'
     status: paused
+  description: a prum that has various inactive states in milestones and overall
+  grants: dmref15
   kickoff:
     due_date: '2021-05-03'
     name: Kickoff
@@ -11,7 +14,7 @@ ab_inactive:
     - due_date: '2021-05-03'
       name: Milestone
       status: converged
-  status: started
+  status: backburner
 ly_newprojectum:
   begin_date: 2020-04-29
   collaborators:
@@ -141,7 +144,6 @@ sb_firstprojectum:
       - deliverable note
     status: proposed
   description: My first projectum
-  end_date: '2020-06-05'
   grants: SymPy-1.1
   group_members:
     - ascopatz

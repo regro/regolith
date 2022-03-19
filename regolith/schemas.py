@@ -1615,7 +1615,6 @@ EXEMPLARS = {
             "status": "proposed"
         },
         "description": "My first projectum",
-        "end_date": "2020-06-05",
         "grants": "SymPy-1.1",
         "group_members": ["ascopatz"],
         "kickoff": {
@@ -1665,7 +1664,10 @@ EXEMPLARS = {
         {
             "_id": "ab_inactive",
             "lead": "abeing",
-            "status": "started",
+            "begin_date": "2020-05-03",
+            "status": "backburner",
+            "grants": "dmref15",
+            "description": "a prum that has various inactive states in milestones and overall",
             "deliverable": {"due_date": "2021-05-03", "status": "paused"},
             "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner"},
             "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged"}]
