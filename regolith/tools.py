@@ -720,7 +720,7 @@ def awards_grants_honors(p, target_name, funding=True, service_types=None):
                 d = {
                     "description": "{0} ({1}{2:,})".format(
                         latex_safe(x["name"]),
-                        x.get("currency", "$").replace("$", "\$"),
+                        x.get("currency", "$").replace("$", r"\$"),
                         x["value"],
                     ),
                     "year": x["year"],
