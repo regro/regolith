@@ -71,17 +71,22 @@ class FinishprumUpdaterHelper(DbHelperBase):
             return
         found_projectum.update({'status': 'finished'})
         if rc.end_date:
-            end_date: date = date_parser.parse(rc.end_date).date()
+            end_date = date_parser.parse(rc.end_date).date()
         else:
-            end_date: date = dt.date.today()
+            end_date = dt.date.today()
         found_projectum.update(
                 {'end_date': end_date})
-        found_projectum['kickoff'].update({'status': 'finished', 'end_date': end_date})
-        found_projectum['deliverable'].update({'status': 'finished', 'end_date': end_date})
-        for i in found_projectum:
-            if i == 'milestones':
-                for field in found_projectum.get('milestones'):
-                    field.update({'status': 'finished', 'end_date': end_date})
+
+        for thing in ['kickoff', 'deliverable']:
+            if not found_projectum[thing].get('end_date'):
+                found_projectum[thing].update({'status': 'finished', 'end_date': end_date})
+            else:
+                found_projectum[thing].update({'status': 'finished'})
+        for milestone in found_projectum.get('milestones'):
+            if not milestone.get('end_date'):
+                milestone.update({'status': 'finished', 'end_date': end_date})
+            else:
+                milestone.update({'status': 'finished'})
         rc.client.update_one(rc.database, rc.coll, filterid, found_projectum)
         print(f"{rc.projectum_id} status has been updated to finished")
         return
