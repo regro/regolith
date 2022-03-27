@@ -77,11 +77,11 @@ class FinishprumUpdaterHelper(DbHelperBase):
         found_projectum.update(
                 {'end_date': end_date})
 
-        for thing in ['kickoff', 'deliverable']:
-            if not found_projectum[thing].get('end_date'):
-                found_projectum[thing].update({'status': 'finished', 'end_date': end_date})
-            else:
-                found_projectum[thing].update({'status': 'finished'})
+        if not found_projectum["kickoff"].get('end_date'):
+            found_projectum['kickoff'].update({'status': 'finished', 'end_date': end_date})
+        else:
+            found_projectum['kickoff'].update({'status': 'finished'})
+        found_projectum['deliverable'].update({'status': 'finished'})
         for milestone in found_projectum.get('milestones'):
             if not milestone.get('end_date'):
                 milestone.update({'status': 'finished', 'end_date': end_date})
