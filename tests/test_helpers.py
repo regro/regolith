@@ -610,7 +610,7 @@ helper_map = [
     (["helper", "u_todo", "--index", "99100"],
      "WARNING: indices >= 9900 are used for milestones which should be updated using u_milestone and not u_todo\n"
      ),
-    (["helper", "f_prum", "sb_firstprojectum", "--end_date", "2020-07-01"],
+    (["helper", "f_prum", "sb_firstprojectum", "--end-date", "2020-07-01"],
      "sb_firstprojectum status has been updated to finished\n"
      ),
     (["helper", "f_prum", "sb_"],
