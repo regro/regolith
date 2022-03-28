@@ -102,23 +102,24 @@ class CVBuilder(LatexBuilderBase):
 
             undergrads = filter_employment_for_advisees(self.gtx["people"],
                                                         begin_period,
-                                                        "undergrad")
+                                                        "undergrad", p["_id"])
             masters = filter_employment_for_advisees(self.gtx["people"],
                                                      begin_period,
-                                                     "ms")
+                                                     "ms", p["_id"])
             currents = filter_employment_for_advisees(self.gtx["people"],
                                                       begin_period,
-                                                      "phd")
+                                                      "phd", p["_id"])
             graduateds = filter_employment_for_advisees(self.gtx["people"],
                                                         begin_period,
-                                                        "phd")
+                                                        "phd", p["_id"])
             postdocs = filter_employment_for_advisees(self.gtx["people"],
                                                       begin_period,
-                                                      "postdoc")
+                                                      "postdoc", p["_id"])
             postdocs = remove_duplicate_docs(postdocs, "name")
             visitors = filter_employment_for_advisees(self.gtx["people"],
                                                       begin_period,
-                                                      "visitor-unsupported")
+                                                      "visitor-unsupported",
+                                                      p["_id"])
             visitors = remove_duplicate_docs(visitors, "name")
 
             iter = deepcopy(graduateds)

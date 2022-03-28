@@ -21,6 +21,8 @@ builder_map = [
     "preslist",
     "publist",
     "recent-collabs",
+    "beamplan",
+    "grantreport",
     "resume",
     "review-man",
     "reimb"
@@ -99,6 +101,9 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
     elif bm == "annual-activity":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
                         "sbillinge", "--from", "2017-04-01"], check=True, cwd=repo)
+    elif bm == "grantreport":
+        main(["build", bm, "--no-pdf", "--grant", "SymPy-1.1",
+              "--from", "2017-04-01", "--to", "2018-03-31"])
     else:
         subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo)
     os.chdir(os.path.join(repo, "_build", bm))
@@ -114,7 +119,7 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
                     if 'nsf' in fn1:
                         sheet = "NSF COA Template"
                     else:
-                        sheet = "Collaborator Template"
+                        sheet = "Collaborators"
                     actual = openpyxl.load_workbook(fn1)[sheet]
                     actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
                 else:
@@ -128,7 +133,7 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
                     if 'nsf' in fn2:
                         sheet = "NSF COA Template"
                     else:
-                        sheet = "Collaborator Template"
+                        sheet = "Collaborators"
                     expected = openpyxl.load_workbook(fn2)[sheet]
                     expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
                 else:
@@ -175,6 +180,9 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
     elif bm == "annual-activity":
         main(["build", bm, "--no-pdf", "--people",
               "sbillinge", "--from", "2017-04-01"])
+    elif bm == "grantreport":
+        main(["build", bm, "--no-pdf", "--grant", "SymPy-1.1",
+              "--from", "2017-04-01", "--to", "2018-03-31"])
     else:
         main(["build", bm, "--no-pdf"])
     os.chdir(os.path.join(repo, "_build", bm))
@@ -194,7 +202,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                     if 'nsf' in fn1:
                         sheet = "NSF COA Template"
                     else:
-                        sheet = "Collaborator Template"
+                        sheet = "Collaborators"
                     actual = openpyxl.load_workbook(fn1)[sheet]
                     actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
                 elif bm == 'html':
@@ -217,7 +225,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                     if 'nsf' in fn2:
                         sheet = "NSF COA Template"
                     else:
-                        sheet = "Collaborator Template"
+                        sheet = "Collaborators"
                     expected = openpyxl.load_workbook(fn2)[sheet]
                     expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
                 elif bm == 'html':

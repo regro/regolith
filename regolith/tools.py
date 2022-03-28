@@ -309,7 +309,8 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
     return grants, total_amount, subaward_amount
 
 
-def filter_employment_for_advisees(peoplecoll, begin_period, status, now=None):
+def filter_employment_for_advisees(peoplecoll, begin_period, status,
+                                   advisor, now=None):
     """Filter people to get advisees since begin_period
 
     Parameters
@@ -330,24 +331,25 @@ def filter_employment_for_advisees(peoplecoll, begin_period, status, now=None):
         begin_period = date_parser.parse(begin_period).date()
     for p in people:
         for i in p.get("employment", []):
-            if i.get("status") == status:
-                emp_dates = get_dates(i)
-                begin_date = emp_dates.get("begin_date")
-                end_date = emp_dates.get("end_date")
-                if not end_date:
-                    end_date = now
-                if end_date >= begin_period:
-                    p['role'] = i.get("position")
-                    p['begin_year'] = begin_date.year
-                    if not emp_dates.get("end_date"):
-                        p['end_year'] = "present"
-                    else:
-                        p['end_year'] = end_date.year
-                    p['status'] = status
-                    p['position'] = i.get("position")
-                    p['end_date'] = end_date
-                    advisees.append(p)
-                    advisees.sort(key=lambda x: x['end_date'], reverse=True)
+            if i.get("advisor", "no advisor") == advisor:
+                if i.get("status") == status:
+                    emp_dates = get_dates(i)
+                    begin_date = emp_dates.get("begin_date")
+                    end_date = emp_dates.get("end_date")
+                    if not end_date:
+                        end_date = now
+                    if end_date >= begin_period:
+                        p['role'] = i.get("position")
+                        p['begin_year'] = begin_date.year
+                        if not emp_dates.get("end_date"):
+                            p['end_year'] = "present"
+                        else:
+                            p['end_year'] = end_date.year
+                        p['status'] = status
+                        p['position'] = i.get("position")
+                        p['end_date'] = end_date
+                        advisees.append(p)
+                        advisees.sort(key=lambda x: x['end_date'], reverse=True)
     return advisees
 
 
@@ -718,7 +720,7 @@ def awards_grants_honors(p, target_name, funding=True, service_types=None):
                 d = {
                     "description": "{0} ({1}{2:,})".format(
                         latex_safe(x["name"]),
-                        x.get("currency", "$").replace("$", "\$"),
+                        x.get("currency", "$").replace("$", r"\$"),
                         x["value"],
                     ),
                     "year": x["year"],
@@ -863,6 +865,9 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         ent["ENTRYTYPE"] = ent.pop("entrytype")
         if ent.get('doi') == 'tbd':
             del ent['doi']
+        if ent.get("supplementary_info_urls"):
+            ent.update({"supplementary_info_urls":
+                            ", ".join(ent.get("supplementary_info_urls"))})
         if isinstance(ent.get("editor"), list):
             for n in ["author", "editor"]:
                 if n in ent:

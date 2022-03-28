@@ -28,7 +28,10 @@ Some comments on the validity and areas for improvement are:
 {%- for thing in validityAssessment %}
   - {{ thing -}}
 {% endfor %}
-{% endif %}
+{%- endif %}
+
+Freewrite:
+  {{ freewrite }}
 
 To summarize my assessment of this manuscript:
 {%- for opinion in finalAssessment %}
@@ -36,7 +39,7 @@ To summarize my assessment of this manuscript:
 {% endfor %}
 
 I recommend that this manuscript
-{%- if recommendation == "reject" -%} be rejected
+{%- if recommendation == "reject" %} be rejected
 {%- elif recommendation == "asis" -%}
 be published without revision
 {%- elif recommendation == "smalledits" -%}
@@ -48,8 +51,7 @@ will need major revisions to be worthy of publication
 {%- elif recommendation == "diffjournal" -%}
 is not appropriate for {{ journal }} and should be submitted to a more
 appropriate journal
-
-{{ freewrite }}
-
-
 {% endif -%}
+
+
+

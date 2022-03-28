@@ -6,6 +6,7 @@
 
 **Removed:** None
 
-**Fixed:** None
+**Fixed:**
+ * manuscript review new correctly prints freewrite field
 
 **Security:** None

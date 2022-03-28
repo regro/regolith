@@ -15,6 +15,7 @@ from regolith.helper import HELPERS
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
+from regolith import __version__
 
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
@@ -45,6 +46,11 @@ NEED_RC |= {"rc", "deploy", "store"}
 def create_parser():
     p = ArgumentParser()
     subp = p.add_subparsers(title="cmd", dest="cmd")
+
+    p.add_argument(
+        "--version",
+        action="store_true"
+    )
 
     # helper subparser
     subp.add_parser(
@@ -306,6 +312,9 @@ def main(args=None):
     parser = create_parser()
     args0 = Namespace()
     args1, rest = parser.parse_known_args(args, namespace=args0)
+    if args1.version:
+        print(__version__)
+        return rc
     if args1.cmd == 'helper':
         p = ArgumentParser(prog='regolith helper')
         p.add_argument(
@@ -349,6 +358,7 @@ def main(args=None):
             dbs = commands.helper_db_check(rc)
         with connect(rc, dbs=dbs) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)
+    return rc
 
 
 if __name__ == "__main__":
