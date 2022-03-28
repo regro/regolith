@@ -166,8 +166,6 @@ def filter_publications(citations, authors, reverse=False, bold=True,
                 == 0
         ):
             continue
-        if pub.get('doi') == 'tbd':
-            del pub['doi']
         if bold:
             bold_self = []
             for a in pub["author"]:
@@ -863,6 +861,8 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         ent = dict(pub)
         ent["ID"] = ent.pop("_id")
         ent["ENTRYTYPE"] = ent.pop("entrytype")
+        if ent.get('doi') == 'tbd':
+            del ent['doi']
         if isinstance(ent.get("editor"), list):
             for n in ["author", "editor"]:
                 if n in ent:

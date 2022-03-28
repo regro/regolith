@@ -9,7 +9,7 @@ try:
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, filter_publications
+from regolith.tools import all_docs_from_collection, filter_publications, make_bibtex_file
 from regolith.sorters import ene_date_key, position_key
 from regolith.builders.basebuilder import LatexBuilderBase
 from dateutil import parser as date_parser
@@ -99,13 +99,13 @@ class PubListBuilder(LatexBuilderBase):
                                            bold=True, since=from_date,
                                            before=to_date, grants=grants)
 
-                bibfile = self.make_bibtex_file(
+                bibfile = make_bibtex_file(
                     pubs, pid=p["_id"], person_dir=self.bldir
                 )
-                bibfile_nobold = self.make_bibtex_file(
+                bibfile_nobold = make_bibtex_file(
                     pubs_nobold, pid=f"{p['_id']}_nobold", person_dir=self.bldir
                 )
-                bibfile_ackno = self.make_bibtex_file(
+                bibfile_ackno = make_bibtex_file(
                     pubs_ackno, pid=f"{p['_id']}_ackno", person_dir=self.bldir
                 )
                 if not p.get('email'):
@@ -163,28 +163,3 @@ class PubListBuilder(LatexBuilderBase):
                 if grant in pub.get("grant",""):
                     filtered_pubs.append(pub)
         return filtered_pubs
-
-    def make_bibtex_file(self, pubs, pid, person_dir="."):
-        if not HAVE_BIBTEX_PARSER:
-            return None
-        skip_keys = set(["ID", "ENTRYTYPE", "author"])
-        self.bibdb.entries = ents = []
-        for pub in pubs:
-            ent = dict(pub)
-            ent["ID"] = ent.pop("_id")
-            ent["ENTRYTYPE"] = ent.pop("entrytype")
-            if isinstance(ent.get("editor"), list):
-                for n in ["author", "editor"]:
-                    if n in ent:
-                        ent[n] = " and ".join(ent[n])
-            else:
-                if "author" in ent:
-                    ent["author"] = " and ".join(ent["author"])
-            for key in ent.keys():
-                if key in skip_keys:
-                    continue
-            ents.append(ent)
-        fname = os.path.join(person_dir, pid) + ".bib"
-        with open(fname, "w", encoding='utf-8') as f:
-            f.write(self.bibwriter.write(self.bibdb))
-        return fname

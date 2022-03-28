@@ -215,6 +215,6 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                 if file != "rss.xml":
                     if file.endswith('.html') or file.endswith('.tex'):
                         if not is_same(expected, actual, ['../..', 'tmp']):
-                            assert actual == expected
+                            assert expected == actual
                     else:
-                        assert actual == expected
+                        assert expected == actual
