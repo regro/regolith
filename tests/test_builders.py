@@ -193,6 +193,9 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                         sheet = "Collaborator Template"
                     actual = openpyxl.load_workbook(fn1)[sheet]
                     actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
+                elif bm == 'html':
+                    with open(fn1, "r") as f:
+                        actual = [line.rstrip() for line in f]
                 else:
                     with open(fn1, "r") as f:
                         actual = f.read()
@@ -207,6 +210,9 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                         sheet = "Collaborator Template"
                     expected = openpyxl.load_workbook(fn2)[sheet]
                     expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
+                elif bm == 'html':
+                    with open(fn1, "r") as f:
+                        expected = [line.rstrip() for line in f]
                 else:
                     with open(fn2, "r") as f:
                         expected = f.read()
@@ -214,7 +220,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                 # Skip because of a date time in
                 if file != "rss.xml":
                     if file.endswith('.html') or file.endswith('.tex'):
-                        if not is_same(expected, actual, ['../..', 'tmp']):
+                        # if not is_same(expected, actual, ['../..', 'tmp']):
                             assert expected == actual
                     else:
                         assert expected == actual
