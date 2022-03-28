@@ -182,6 +182,10 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
     for root, dirs, files in os.walk("."):
         for file in files:
             if file in os.listdir(os.path.join(expected_base, bm, root)):
+                html_bool = False
+                if "html" in file:
+                    html_bool = True
+                print(html_bool)
                 fn1 = os.path.join(repo, "_build", bm, root, file)
                 if bm == "reimb":
                     actual = openpyxl.load_workbook(fn1)["T&B"]
@@ -194,12 +198,18 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                     actual = openpyxl.load_workbook(fn1)[sheet]
                     actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
                 elif bm == 'html':
-                    with open(fn1, "r") as f:
-                        actual = [line.rstrip() for line in f]
+                    if html_bool:
+                        with open(fn1, "r") as f:
+                            actual = [line.rstrip() for line in f]
+                        actual = [string for string in actual if '..' not in string]
+                    else:
+                        with open(fn1, "r") as f:
+                            actual = f.read()
                 else:
                     with open(fn1, "r") as f:
                         actual = f.read()
                 fn2 = os.path.join(expected_base, bm, root, file)
+                print(fn2)
                 if bm == "reimb":
                     expected = openpyxl.load_workbook(fn2)["T&B"]
                     expected = [str(expected[b]) for b in xls_check]
@@ -211,16 +221,25 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                     expected = openpyxl.load_workbook(fn2)[sheet]
                     expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
                 elif bm == 'html':
-                    with open(fn1, "r") as f:
-                        expected = [line.rstrip() for line in f]
+                    if html_bool:
+                        with open(fn2, "r") as f:
+                            expected = [line.rstrip() for line in f]
+                            expected = [string for string in expected if
+                                      '..' not in string]
+                    else:
+                        with open(fn2, "r") as f:
+                            expected = f.read()
                 else:
                     with open(fn2, "r") as f:
                         expected = f.read()
+                    print('expected unlined', expected)
 
                 # Skip because of a date time in
                 if file != "rss.xml":
                     if file.endswith('.html') or file.endswith('.tex'):
                         # if not is_same(expected, actual, ['../..', 'tmp']):
+                            print("expected", expected)
+                            print("actual  ", actual)
                             assert expected == actual
                     else:
                         assert expected == actual
