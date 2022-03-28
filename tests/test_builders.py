@@ -210,6 +210,8 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                         with open(fn1, "r") as f:
                             actual = [line.strip() for line in f]
                         actual = [string for string in actual if '..' not in string]
+                        actual = [string for string in actual if
+                                    len(string) != 0]
                     else:
                         with open(fn1, "r") as f:
                             actual = f.read()
@@ -234,6 +236,8 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                             expected = [line.strip() for line in f]
                             expected = [string for string in expected if
                                       '..' not in string]
+                            expected = [string for string in expected if
+                                        len(string) != 0]
                     else:
                         with open(fn2, "r") as f:
                             expected = f.read()
