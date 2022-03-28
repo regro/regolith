@@ -193,7 +193,6 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                 html_bool = False
                 if "html" in file:
                     html_bool = True
-                print(html_bool)
                 fn1 = os.path.join(repo, "_build", bm, root, file)
                 if bm == "reimb":
                     actual = openpyxl.load_workbook(fn1)["T&B"]
@@ -219,7 +218,6 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                     with open(fn1, "r") as f:
                         actual = f.read()
                 fn2 = os.path.join(expected_base, bm, root, file)
-                print(fn2)
                 if bm == "reimb":
                     expected = openpyxl.load_workbook(fn2)["T&B"]
                     expected = [str(expected[b]) for b in xls_check]
@@ -244,14 +242,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                 else:
                     with open(fn2, "r") as f:
                         expected = f.read()
-                    print('expected unlined', expected)
 
                 # Skip because of a date time in
                 if file != "rss.xml":
-                    if file.endswith('.html') or file.endswith('.tex'):
-                        # if not is_same(expected, actual, ['../..', 'tmp']):
-                            print("expected", expected)
-                            print("actual  ", actual)
-                            assert expected == actual
-                    else:
-                        assert expected == actual
+                    assert expected == actual
