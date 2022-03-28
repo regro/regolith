@@ -166,6 +166,8 @@ def filter_publications(citations, authors, reverse=False, bold=True,
                 == 0
         ):
             continue
+        if pub.get('doi') == 'tbd':
+            del pub['doi']
         if bold:
             bold_self = []
             for a in pub["author"]:
