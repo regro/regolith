@@ -141,6 +141,7 @@ EXEMPLARS = {
         "month": "Jan",
         "pages": "e103",
         "publisher": "PeerJ Inc. San Francisco, USA",
+        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
         "synopsis": "The description of symbolic computing in Python",
         "tags": "pdf",
         "title": "SymPy: Symbolic computing in Python",
@@ -927,7 +928,7 @@ EXEMPLARS = {
              }],
         "education": [
             {
-                "advisor": "ascopatz",
+                "advisor": "scopatz",
                 "begin_year": 2008,
                 "degree": "Ph.D. Mechanical Engineering, "
                           "Nuclear and Radiation Engineering "
@@ -982,7 +983,7 @@ EXEMPLARS = {
         "email": "scopatz@cec.sc.edu",
         "employment": [
             {
-                "advisor": "ascopatz",
+                "advisor": "scopatz",
                 "begin_year": 2015,
                 "coworkers": ["afriend"],
                 "group": "ergs",
@@ -1615,7 +1616,6 @@ EXEMPLARS = {
             "status": "proposed"
         },
         "description": "My first projectum",
-        "end_date": "2020-06-05",
         "grants": "SymPy-1.1",
         "group_members": ["ascopatz"],
         "kickoff": {
@@ -1657,6 +1657,7 @@ EXEMPLARS = {
         ],
         "name": "First Projectum",
         "pi_id": "scopatz",
+        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
         "status": "started",
         "other_urls": ["https://docs.google.com/document/d/analysis"],
         "product_url": "https://docs.google.com/document/d/manuscript",
@@ -1664,7 +1665,10 @@ EXEMPLARS = {
         {
             "_id": "ab_inactive",
             "lead": "abeing",
-            "status": "started",
+            "begin_date": "2020-05-03",
+            "status": "backburner",
+            "grants": "dmref15",
+            "description": "a prum that has various inactive states in milestones and overall",
             "deliverable": {"due_date": "2021-05-03", "status": "paused"},
             "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner"},
             "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged"}]
@@ -1675,7 +1679,25 @@ EXEMPLARS = {
             "status": "finished",
             "begin_date": "2020-07-25",
             "end_date": "2020-07-27",
-            "deliverable": {"due_date": "2020-08-26", "status": "finished"},
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
+            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+        },
+        {
+            "_id": "pl_secondprojectum",
+            "lead": "pliu",
+            "status": "proposed",
+            "begin_date": "2020-07-25",
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
+            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+        },
+        {
+            "_id": "pl_thirdprojectum",
+            "lead": "pliu",
+            "status": "backburner",
+            "begin_date": "2020-07-25",
+            "deliverable": {"due_date": "2021-08-26", "status": "finished"},
             "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
             "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
         }
@@ -3886,6 +3908,7 @@ SCHEMAS = {
         "deliverable": {
             "description": "outline of the deliverable for this projectum",
             "type": "dict",
+            "required": True,
             "schema": {
                 "audience": {"description": "the target audience for this deliverable",
                              "required": False,
@@ -3993,6 +4016,12 @@ SCHEMAS = {
                            "that is a log of notes and meeting minutes for the projectum",
             "required": False,
             "type": "string"
+        },
+        "supplementary_info_urls": {
+            "description": "list of urls that are links to repos gdocs, etc. "
+                           "that contain supplementary info such as data or code snippets",
+            "required": False,
+            "type": "list"
         },
         "milestones": {
             "description": "smaller deliverables done by a certain date "

@@ -1955,6 +1955,7 @@ def test_remove_duplicate_docs(inp, expected):
                  {"status": "ms",
                   "begin_date": "2020-05-05",
                   "end_date": "2020-10-10",
+                  "advisor": "awesome",
                   "position": "masters researcher"
                   }]}],
              "2022-01-01"
@@ -1966,6 +1967,7 @@ def test_remove_duplicate_docs(inp, expected):
                  {"status": "ms",
                   "begin_date": "2020-05-05",
                   "end_date": "2020-10-10",
+                  "advisor": "awesome",
                   "position": "masters researcher"
                   }]}],
              "2019-01-01"
@@ -1974,6 +1976,7 @@ def test_remove_duplicate_docs(inp, expected):
              {"status": "ms",
               "begin_date": "2020-05-05",
               "end_date": "2020-10-10",
+              "advisor": "awesome",
               "position": "masters researcher"
               }],
            "role": "masters researcher",
@@ -1987,6 +1990,7 @@ def test_remove_duplicate_docs(inp, expected):
       ([
             [{"_id": "student", "name": "Lancelot", "employment": [
                 {"status": "ms", 
+                 "advisor": "awesome",
                  "begin_date": "2020-05-05",
                  "position": "masters researcher"
                  }]}],
@@ -1995,6 +1999,7 @@ def test_remove_duplicate_docs(inp, expected):
         [{"_id": "student", "name": "Lancelot", 
              "employment": [
                 {"status": "ms", 
+                 "advisor": "awesome",
                  "begin_date": "2020-05-05",
                  "position": "masters researcher"
                  }],
@@ -2008,7 +2013,8 @@ def test_remove_duplicate_docs(inp, expected):
     )
     ])
 def test_filter_employment_for_advisees(inp, expected):
-    actual = filter_employment_for_advisees(inp[0], inp[1], "ms", dt.date(2021,6,3))
+    actual = filter_employment_for_advisees(inp[0], inp[1], "ms", "awesome",
+                                            dt.date(2021,6,3))
     assert actual == expected
 
 person1 = {"_id":"tstark", "aka":"iron man", "name":"tony stark"}
