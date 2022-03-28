@@ -190,9 +190,9 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
     for root, dirs, files in os.walk("."):
         for file in files:
             if file in os.listdir(os.path.join(expected_base, bm, root)):
-                html_bool = False
-                if "html" in file:
-                    html_bool = True
+                html_tex_bool = False
+                if file.endswith('.html') or file.endswith('.tex'):
+                    html_tex_bool = True
                 fn1 = os.path.join(repo, "_build", bm, root, file)
                 if bm == "reimb":
                     actual = openpyxl.load_workbook(fn1)["T&B"]
@@ -204,16 +204,16 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                         sheet = "Collaborators"
                     actual = openpyxl.load_workbook(fn1)[sheet]
                     actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
-                elif bm == 'html':
-                    if html_bool:
-                        with open(fn1, "r") as f:
-                            actual = [line.strip() for line in f]
-                        actual = [string for string in actual if '..' not in string]
-                        actual = [string for string in actual if
-                                    len(string) != 0]
-                    else:
-                        with open(fn1, "r") as f:
-                            actual = f.read()
+                elif html_tex_bool:
+                    with open(fn1, "r") as f:
+                        actual = [line.strip() for line in f]
+                    actual = [string for string in actual if '..' not in string]
+                    actual = [string for string in actual if
+                              'Temp' not in string]
+                    actual = [string for string in actual if
+                              '/tmp/' not in string]
+                    actual = [string for string in actual if
+                                len(string) != 0]
                 else:
                     with open(fn1, "r") as f:
                         actual = f.read()
@@ -228,17 +228,17 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                         sheet = "Collaborators"
                     expected = openpyxl.load_workbook(fn2)[sheet]
                     expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
-                elif bm == 'html':
-                    if html_bool:
-                        with open(fn2, "r") as f:
-                            expected = [line.strip() for line in f]
-                            expected = [string for string in expected if
-                                      '..' not in string]
-                            expected = [string for string in expected if
-                                        len(string) != 0]
-                    else:
-                        with open(fn2, "r") as f:
-                            expected = f.read()
+                elif html_tex_bool:
+                    with open(fn2, "r") as f:
+                        expected = [line.strip() for line in f]
+                    expected = [string for string in expected if
+                              '..' not in string]
+                    expected = [string for string in expected if
+                              'Temp' not in string]
+                    expected = [string for string in expected if
+                              '/tmp/' not in string]
+                    expected = [string for string in expected if
+                                len(string) != 0]
                 else:
                     with open(fn2, "r") as f:
                         expected = f.read()
