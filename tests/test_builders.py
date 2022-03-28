@@ -208,7 +208,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                 elif bm == 'html':
                     if html_bool:
                         with open(fn1, "r") as f:
-                            actual = [line.rstrip() for line in f]
+                            actual = [line.strip() for line in f]
                         actual = [string for string in actual if '..' not in string]
                     else:
                         with open(fn1, "r") as f:
@@ -231,7 +231,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
                 elif bm == 'html':
                     if html_bool:
                         with open(fn2, "r") as f:
-                            expected = [line.rstrip() for line in f]
+                            expected = [line.strip() for line in f]
                             expected = [string for string in expected if
                                       '..' not in string]
                     else:
