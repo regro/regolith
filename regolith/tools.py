@@ -1015,8 +1015,8 @@ def dereference_institution(input_record, institutions, verbose=False):
                                                    state_country)
         if verbose:
             if not db_inst.get("departments"):
-                print("WARNING: no departments in {}. {} sought".format(
-                    db_inst.get("_id"), inst))
+                print(f"WARNING: no departments in {db_inst.get('_id')}. "
+                      f"{input_record.get('department')} sought")
         if "department" in input_record and db_inst.get("departments"):
             for k, v in db_inst.get("departments").items():
                 v.update({"_id": k})
