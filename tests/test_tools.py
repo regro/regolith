@@ -32,7 +32,7 @@ from regolith.tools import (
     get_formatted_crossref_reference,
     compound_dict,
     compound_list, filter_employment_for_advisees,
-    get_tags
+    get_tags, dereference_institution
 )
 
 PEOPLE_COLL = [
@@ -2032,7 +2032,9 @@ PRESENTATIONS = [presentation1, presentation2, presentation3]
 
 institution1 = {"_id":"columbiau", "city":"New York", "country":"USA", "name":"Columbia University", "state":"NY"}
 institution2 = {"_id":"rutgersu", "city":"New Brunswick", "country":"USA", "name":"Rutgers University", "state":"NJ"}
+institution3 = {"_id":"barnardc", "city":"New York", "country":"USA", "name":"Barnard College", "state":"NY", "departments": {"physics": {"name": "Department of Physics", "aka": "Phys"}}}
 INSTITUTIONS = [institution1, institution2]
+organization1 = {"_id":"3m", "city":"Minneapolis", "country":"USA", "name":"3M", "state":"MN"}
 
 expected1 = {"_id": "abc",
     "authors": "tony stark",
@@ -2132,3 +2134,13 @@ def test_get_tags_invalid():
         get_tags(coll)
         assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
 
+@pytest.mark.parametrize(
+    "coll, expected", [
+        ({"institution": "columbiau"}, institution1, institution1),
+        ({"organization": "3m"}, organization1, organization1),
+    ]
+)
+def test_dereference_institution(input, coll, expected):
+    dereference_institution(input, coll, verbose=True)
+    actual = input
+    assert expected == actual

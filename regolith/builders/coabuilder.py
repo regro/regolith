@@ -145,7 +145,7 @@ def retrieve_names_and_insts(rc, collabs, not_person_akas=[]):
                           f"for that education/employment entry in the database.")
                 else:
                     print(f"WARNING: {collab['name']} not found in contacts or people.")
-                person = {'_id': collab["name"], "name": collab["name"]}
+                person = {'_id': collab["name"], "name": collab["name"], "type": collab.get("type")}
         if person.get("name", ""):
             collab["name"] = HumanName(person.get("name", ""))
         else:

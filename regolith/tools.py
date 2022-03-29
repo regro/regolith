@@ -993,6 +993,10 @@ def dereference_institution(input_record, institutions, verbose=False):
         The record to dereference
     institutions : iterable of dicts
         The institutions
+
+    Returns
+    -------
+    nothing
     """
     inst = input_record.get("institution") or input_record.get("organization")
     if verbose:
@@ -1011,8 +1015,7 @@ def dereference_institution(input_record, institutions, verbose=False):
         input_record["city"] = db_inst["city"]
         input_record["state"] = db_inst.get("state")
         input_record["country"] = db_inst.get("country")
-        input_record["location"] = "{}, {}".format(db_inst["city"],
-                                                   state_country)
+        input_record["location"] = f"{db_inst['city']}, {state_country}"
         if verbose:
             if not db_inst.get("departments"):
                 print(f"WARNING: no departments in {db_inst.get('_id')}. "
@@ -1026,7 +1029,7 @@ def dereference_institution(input_record, institutions, verbose=False):
             )
             if extracted_department:
                input_record["department"] = extracted_department.get("name")
-
+    return
 
 def merge_collections_all(a, b, target_id):
     """
