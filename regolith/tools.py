@@ -21,7 +21,7 @@ from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
 from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, PRESENTATION_STATI
-from requests import HTTPError
+from requests.exceptions import HTTPError
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -863,6 +863,8 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         ent = dict(pub)
         ent["ID"] = ent.pop("_id")
         ent["ENTRYTYPE"] = ent.pop("entrytype")
+        if ent.get('doi') == 'tbd':
+            del ent['doi']
         if ent.get("supplementary_info_urls"):
             ent.update({"supplementary_info_urls":
                             ", ".join(ent.get("supplementary_info_urls"))})

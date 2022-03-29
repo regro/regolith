@@ -46,8 +46,10 @@ class ReadingListsBuilder(LatexBuilderBase):
             n = 1
             for paper in rlist['papers']:
                 doi = paper.get('doi')
+                if doi == 'tbd' or doi == '':
+                    doi = None
                 url = paper.get('url')
-                if doi and doi != 'tbd':
+                if doi:
                     ref, ref_date = get_formatted_crossref_reference(doi)
                     paper.update({'reference': ref, 'ref_date': ref_date, 'n': n, 'label': 'DOI'})
                     n += 1
