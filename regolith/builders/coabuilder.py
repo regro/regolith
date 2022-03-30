@@ -54,16 +54,16 @@ def get_advisees_name_inst(coll, advisor, rc):
                          i.get("advisor", "") in advisor_names]
         phd_advisees = [
             {"name": person.get("name", "missing name"), "type": "advisee", "interaction_date":
-                get_dates(i).get("end_date", get_dates(i).get("date")),
+                get_dates(i).get("end_date", get_dates(i).get("date", dt.date.today())),
              "advis_type": "phd"}
             for i in relevant_emes
             if 'phd' in i.get("degree", "").lower()
             or 'dphil' in i.get("degree", "").lower()
         ]
         pdoc_advisees = [
-            {"name": person.get("name missing name"), "type": "advisee",
+            {"name": person.get("name", "missing name"), "type": "advisee",
              "advis_type": "postdoc", "interaction_date":
-                get_dates(i).get("end_date", get_dates(i).get("date"))}
+                get_dates(i).get("end_date", get_dates(i).get("date", dt.date.today()))}
             for i in relevant_emes if
             i.get("status") == "postdoc"
         ]
@@ -488,8 +488,13 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 if collab.get("name").last == advis.get("name").last \
                         and collab.get("name").first == advis.get("name").first:
                     col_bool = False
-                    if collab.get("interaction_date") > advis.get("interaction_date"):
-                        advis.update({"interaction_date": collab.get("interaction_date")})
+                    try:
+                        if collab.get("interaction_date") > advis.get("interaction_date"):
+                            advis.update({"interaction_date": collab.get("interaction_date")})
+                    except TypeError:
+                        print(f"ERROR: incorrect dates for an education/employment in {collab.get('name')}")
+                        print(f"collab date: {collab.get('interaction_date')}, advisee date: {advis.get('interaction_date')}")
+                        raise
             if col_bool == True:
                 collabs.append(collab)
         collabs.extend(advisees)
