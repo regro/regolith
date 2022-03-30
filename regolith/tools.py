@@ -1009,7 +1009,8 @@ def dereference_institution(input_record, institutions, verbose=False):
         print(f"WARNING: {input_record.get('institution', input_record.get('organization', 'unknown'))} not found in institutions")
         db_inst = {"name": input_record.get("institution", input_record.get("organization", "unknown")),
                    "location": input_record.get("location", f"{input_record.get('city','unknown')}, {input_record.get('state','unknown')}"),
-                   "city": input_record.get('city','unknown'), "country": input_record.get('country','unknown'),
+                   "city": input_record.get('city','unknown'),
+                   "country": input_record.get('country','unknown'),
                    "state": input_record.get('state','unknown')}
     if db_inst.get("country") == "USA":
         state_country = db_inst.get("state")
