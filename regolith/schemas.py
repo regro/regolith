@@ -19,7 +19,7 @@ EXPENSES_TYPES = ["travel", "business"]
 FACILITIES_TYPES = ["teaching", "research", "shared", "other", "teaching_wish",
                    "research_wish"]
 GRANT_STATI = ["pending", "declined", "accepted", "in-prep"]
-MILESTONE_TYPES = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin",
+MILESTONE_TYPES = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin", "purchase",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 POSITION_STATI = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
                    "postdoc", "visitor-supported", "visitor-unsupported"]

@@ -539,8 +539,8 @@ class RecentCollaboratorsBuilder(BuilderBase):
                 advis.append(collab)
             if collab.get("type") == "co-author":
                 coauths.append(collab)
-        if collab.get("type") == "co-editor":
-            coeditors.append(collab)
+            if collab.get("type") == "co-editor":
+                coeditors.append(collab)
         style = copy_cell_style(ws['A17'])
 
         if coauths:
