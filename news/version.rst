@@ -1,5 +1,6 @@
-**Added:** 
- * tests for proposal and manual review builders
+**Added:**
+
+* Add the command "regolith --version" to print the version number.
 
 **Changed:** None
 

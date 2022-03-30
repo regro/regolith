@@ -7,7 +7,6 @@
 **Removed:** None
 
 **Fixed:**
- * current and pending now builds properly when there are multiple groups iterated
-   over
+ * manuscript review new correctly prints freewrite field
 
 **Security:** None

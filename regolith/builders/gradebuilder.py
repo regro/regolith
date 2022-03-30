@@ -16,9 +16,6 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.tools import all_docs_from_collection
 
 
-def latex_safe(s):
-    return s.replace("&", "\&").replace("$", "\$").replace("#", "\#")
-
 
 class GradeReportBuilder(LatexBuilderBase):
     btype = "grades"

@@ -20,8 +20,9 @@ from google.oauth2.credentials import Credentials
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
-from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, PRESENTATION_STATI
-from requests import HTTPError
+from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, \
+    PRESENTATION_STATI, OPTIONAL_KEYS_INSTITUTIONS
+from requests.exceptions import HTTPError
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -720,7 +721,7 @@ def awards_grants_honors(p, target_name, funding=True, service_types=None):
                 d = {
                     "description": "{0} ({1}{2:,})".format(
                         latex_safe(x["name"]),
-                        x.get("currency", "$").replace("$", "\$"),
+                        x.get("currency", "$").replace("$", r"\$"),
                         x["value"],
                     ),
                     "year": x["year"],
@@ -863,6 +864,11 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         ent = dict(pub)
         ent["ID"] = ent.pop("_id")
         ent["ENTRYTYPE"] = ent.pop("entrytype")
+        if ent.get('doi') == 'tbd':
+            del ent['doi']
+        if ent.get("supplementary_info_urls"):
+            ent.update({"supplementary_info_urls":
+                            ", ".join(ent.get("supplementary_info_urls"))})
         if isinstance(ent.get("editor"), list):
             for n in ["author", "editor"]:
                 if n in ent:
@@ -988,39 +994,56 @@ def dereference_institution(input_record, institutions, verbose=False):
         The record to dereference
     institutions : iterable of dicts
         The institutions
+
+    Returns
+    -------
+    nothing
     """
     inst = input_record.get("institution") or input_record.get("organization")
     if verbose:
         if not inst:
-            error = input_record.get("position") or input_record.get("degree")
-            print("WARNING: no institution or organization but found {}".format(
-                error))
+            print(f"WARNING: no institution or organization in entry: {input_record}")
+            return
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
-    if db_inst:
-        input_record["institution"] = db_inst["name"]
-        input_record["organization"] = db_inst["name"]
-        if db_inst.get("country") == "USA":
-            state_country = db_inst.get("state")
-        else:
-            state_country = db_inst.get("country")
-        input_record["city"] = db_inst["city"]
-        input_record["state"] = db_inst.get("state")
-        input_record["country"] = db_inst.get("country")
-        input_record["location"] = "{}, {}".format(db_inst["city"],
-                                                   state_country)
-        if verbose:
-            if not db_inst.get("departments"):
-                print("WARNING: no departments in {}. {} sought".format(
-                    db_inst.get("_id"), inst))
-        if "department" in input_record and db_inst.get("departments"):
-            for k, v in db_inst.get("departments").items():
-                v.update({"_id": k})
-            extracted_department = fuzzy_retrieval(
-                db_inst["departments"].values(), ["name", "aka", "_id"],
-                input_record["department"]
-            )
-            if extracted_department:
-               input_record["department"] = extracted_department.get("name")
+    if not db_inst:
+        print(f"WARNING: {input_record.get('institution', input_record.get('organization', 'unknown'))} not found in institutions")
+        db_inst = {"name": input_record.get("institution", input_record.get("organization", "unknown")),
+                   "location": input_record.get("location", f"{input_record.get('city','unknown')}, {input_record.get('state','unknown')}"),
+                   "city": input_record.get('city','unknown'),
+                   "country": input_record.get('country','unknown'),
+                   "state": input_record.get('state','unknown')}
+    if db_inst.get("country") == "USA":
+        state_country = db_inst.get("state")
+    else:
+        state_country = db_inst.get("country")
+    input_record["location"] = db_inst.get("location",
+                                           f"{db_inst['city']}, {state_country}")
+    input_record["institution"] = db_inst["name"]
+    input_record["organization"] = db_inst["name"]
+    input_record["city"] = db_inst["city"]
+    input_record["country"] = db_inst["country"]
+    if verbose:
+        if input_record.get('department') and not db_inst.get("departments"):
+            print(f"WARNING: no departments in {db_inst.get('_id')}. "
+                  f"{input_record.get('department')} sought")
+    if "departments" in OPTIONAL_KEYS_INSTITUTIONS:
+        OPTIONAL_KEYS_INSTITUTIONS.remove("departments")
+    if "schools" in OPTIONAL_KEYS_INSTITUTIONS:
+        OPTIONAL_KEYS_INSTITUTIONS.remove("schools")
+    for optional_key in OPTIONAL_KEYS_INSTITUTIONS:
+        if db_inst.get(optional_key):
+            input_record[optional_key] = db_inst.get(optional_key)
+    if "department" in input_record and db_inst.get("departments"):
+        for k, v in db_inst.get("departments").items():
+            v.update({"_id": k})
+        extracted_department = fuzzy_retrieval(
+            db_inst["departments"].values(), ["name", "aka", "_id"],
+            input_record["department"]
+        )
+        if extracted_department:
+           input_record["department"] = extracted_department.get("name")
+
+    return
 
 
 def merge_collections_all(a, b, target_id):

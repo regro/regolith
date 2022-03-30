@@ -144,9 +144,10 @@ sb_firstprojectum:
       - deliverable note
       - do this
       - do that
-    status: converged
+    status: finished
     type: meeting
   description: My first projectum
+  end_date: 2020-07-01
   grants: SymPy-1.1
   group_members:
     - ascopatz
@@ -176,7 +177,7 @@ sb_firstprojectum:
         - lead
         - pi
         - group_members
-      status: proposed
+      status: finished
       type: meeting
       progress:
         - text: The samples have been synthesized and places in the sample cupboard.
@@ -185,6 +186,7 @@ sb_firstprojectum:
             db
           slides_url: url to slides describing the development, e.g. Google slides
             url
+      end_date: 2020-07-01
     - due_date: 2020-06-01
       name: planning meeting
       objective: develop a detailed plan with dates
@@ -192,17 +194,18 @@ sb_firstprojectum:
         - lead
         - pi
         - group_members
-      status: converged
+      status: finished
       type: meeting
       notes:
         - do this
         - do that
+      end_date: 2020-07-01
   name: First Projectum
   other_urls:
     - https://docs.google.com/document/d/analysis
   pi_id: scopatz
   product_url: https://docs.google.com/document/d/manuscript
-  status: started
+  status: finished
   supplementary_info_urls:
     - https://google.com
     - https://nytimes.com

@@ -1,5 +1,4 @@
-**Added:**
- * GUI for the helpers
+**Added:** None
 
 **Changed:** None
 

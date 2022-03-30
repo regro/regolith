@@ -40,6 +40,7 @@ REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 REVIEW_RECOMMENDATIONS = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
 SERVICE_TYPES = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
+OPTIONAL_KEYS_INSTITUTIONS = ["aka", "departments", "schools", "state", "street", "zip"]
 # for status of kickoff, deliverable, milestones, and the projectum
 
 EXEMPLARS = {
@@ -141,6 +142,7 @@ EXEMPLARS = {
         "month": "Jan",
         "pages": "e103",
         "publisher": "PeerJ Inc. San Francisco, USA",
+        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
         "synopsis": "The description of symbolic computing in Python",
         "tags": "pdf",
         "title": "SymPy: Symbolic computing in Python",
@@ -154,7 +156,7 @@ EXEMPLARS = {
                 "Meurer, Aaron",
                 "Anthony Scopatz",
             ],
-            "doi": "10.1021/nn501591g",
+            "doi": "tbd",
             "entrytype": "article",
             "journal": "PeerJ Computer Science",
             "month": "tbd",
@@ -163,6 +165,7 @@ EXEMPLARS = {
             "synopsis": "A pub with month as tbd",
             "tags": "nomonth",
             "title": "SymPy: Symbolic computing in Python",
+            "url": "https://doi.org/10.1021/nn501591g",
             "volume": "4",
             "year": "2017",
         }
@@ -1614,7 +1617,6 @@ EXEMPLARS = {
             "status": "proposed"
         },
         "description": "My first projectum",
-        "end_date": "2020-06-05",
         "grants": "SymPy-1.1",
         "group_members": ["ascopatz"],
         "kickoff": {
@@ -1656,6 +1658,7 @@ EXEMPLARS = {
         ],
         "name": "First Projectum",
         "pi_id": "scopatz",
+        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
         "status": "started",
         "other_urls": ["https://docs.google.com/document/d/analysis"],
         "product_url": "https://docs.google.com/document/d/manuscript",
@@ -1663,7 +1666,10 @@ EXEMPLARS = {
         {
             "_id": "ab_inactive",
             "lead": "abeing",
-            "status": "started",
+            "begin_date": "2020-05-03",
+            "status": "backburner",
+            "grants": "dmref15",
+            "description": "a prum that has various inactive states in milestones and overall",
             "deliverable": {"due_date": "2021-05-03", "status": "paused"},
             "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner"},
             "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged"}]
@@ -4011,6 +4017,12 @@ SCHEMAS = {
                            "that is a log of notes and meeting minutes for the projectum",
             "required": False,
             "type": "string"
+        },
+        "supplementary_info_urls": {
+            "description": "list of urls that are links to repos gdocs, etc. "
+                           "that contain supplementary info such as data or code snippets",
+            "required": False,
+            "type": "list"
         },
         "milestones": {
             "description": "smaller deliverables done by a certain date "

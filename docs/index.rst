@@ -486,7 +486,24 @@ returned than if you don't type :bash:`-v`.  You can try it now:
 
     $ regolith helper l_contacts run -n auth -v
 
+Using the filter capabilities in the helpers
+============================================
 
+Most helpers have a filter  field.  This allows you to filter the relevant collection
+before running the helper functionality.
+
+The logic of filter is the following.  A document will be valid if the value of key contains value for all keys and values using AND logic.
+
+As an example, if we consider filtering in the :bash:`l_milestones` helper we will get the following behavior. :bash:`l_milestones` operates on the :bash:`projecta` collection, so the filter will be applied to this collection.
+If you specify :bash:`--filter lead voe` it will return all documents where :bash:`voe` appears in the value for the :bash:`lead` field (e.g., if there is someone with an id of :bash:`carvoe` and another person with and id of :bash:`voedemort` the filter will return all the documents where either of these people are :bash:`lead`).
+
+If you then select :bash:`current` and :bash:`verbose` the helper will do the normal thing of returning in verbose form the current milestones, but it will do it on the filtered collection.
+
+A slight gotcha is that since filter uses "in" in its logic, if the type of the key value is a string it will find all strings that contain that fragment, as above, but if the type of the key value is a list it will return documents where the specified value is in the list, so :bash:`--filter group_member voe` will return all the documents where :bash:`voe` is listed as a group member, but it won't return any documents where :bash:`carvoe` or :bash:`voedemort` are listed as a group member.
+
+The filter uses AND logic and operates such that :bash:`--filter lead voe grants mygrant21 status finished` will return all prums that are led by :bash:`carvoe` or :bash:`voedemort` that acknowledge the mygrant21 grant and are finished.  Actually, similar behavior can be obtained also by selecting :bash:`--lead voe --stati finished --filter grants mygrant21`
+
+unfortunately the filter function does not currently recurse, so it will only operate on top level key-value pairs where the type of the value is a string or a list or a tuple.
 
 Backing up and protecting your work
 ===================================

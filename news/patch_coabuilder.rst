@@ -7,8 +7,7 @@
 **Removed:** None
 
 **Fixed:**
- * coabuilder now filters dates correctly
- * coabuilder finds institution when the person is a student and his/her most
-   recent appointment item is in education and not employment
+ * fixed typo in postdoc advisee getter
+ * date handling for end-dates of current students/postdocs
 
 **Security:** None

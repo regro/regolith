@@ -1,6 +1,5 @@
 **Added:**
- * progress field in milestones in projecta collection
- * schema for the projecta collection
+ * supplementary_info_urls field to citations and projecta
 
 **Changed:** None
 
