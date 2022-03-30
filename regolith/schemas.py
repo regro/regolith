@@ -40,6 +40,7 @@ REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
 REVIEW_RECOMMENDATIONS = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
 SERVICE_TYPES = ["profession", "university", "school", "department"]
 TODO_STATI = ["started", "finished", "cancelled", "paused"]
+OPTIONAL_KEYS_INSTITUTIONS = ["aka", "departments", "schools", "state", "street", "zip"]
 # for status of kickoff, deliverable, milestones, and the projectum
 
 EXEMPLARS = {
