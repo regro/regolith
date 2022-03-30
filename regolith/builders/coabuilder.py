@@ -63,7 +63,7 @@ def get_advisees_name_inst(coll, advisor, rc):
         pdoc_advisees = [
             {"name": person.get("name", "missing name"), "type": "advisee",
              "advis_type": "postdoc", "interaction_date":
-                get_dates(i).get("end_date", get_dates(i).get("date"))}
+                get_dates(i).get("end_date", get_dates(i).get("date", dt.date.today()))}
             for i in relevant_emes if
             i.get("status") == "postdoc"
         ]
