@@ -1011,29 +1011,30 @@ def dereference_institution(input_record, institutions, verbose=False):
                    "location": input_record.get("location", f"{input_record.get('city','unknown')}, {input_record.get('state','unknown')}"),
                    "city": input_record.get('city','unknown'),
                    "country": input_record.get('country','unknown'),
-                   "state": input_record.get('state','unknown')}
+                   "state": input_record.get('state','unknown'),
+                   "departments": {input_record.get('department', 'unknown'): {'name': input_record.get('department', 'unknown')}}
+                   }
+    if input_record.get('department') and not db_inst.get("departments"):
+        if verbose:
+            print(f"WARNING: no departments in {db_inst.get('_id')}. "
+                  f"{input_record.get('department')} sought")
+        db_inst.update({"departments": {input_record.get('department', 'unknown'): {'name': input_record.get('department', 'unknown')}}})
     if db_inst.get("country") == "USA":
         state_country = db_inst.get("state")
     else:
         state_country = db_inst.get("country")
+    # now update the input record in place with what we have found
     input_record["location"] = db_inst.get("location",
                                            f"{db_inst['city']}, {state_country}")
     input_record["institution"] = db_inst["name"]
     input_record["organization"] = db_inst["name"]
     input_record["city"] = db_inst["city"]
     input_record["country"] = db_inst["country"]
-    if verbose:
-        if input_record.get('department') and not db_inst.get("departments"):
-            print(f"WARNING: no departments in {db_inst.get('_id')}. "
-                  f"{input_record.get('department')} sought")
-    if "departments" in OPTIONAL_KEYS_INSTITUTIONS:
-        OPTIONAL_KEYS_INSTITUTIONS.remove("departments")
-    if "schools" in OPTIONAL_KEYS_INSTITUTIONS:
-        OPTIONAL_KEYS_INSTITUTIONS.remove("schools")
     for optional_key in OPTIONAL_KEYS_INSTITUTIONS:
-        if db_inst.get(optional_key):
-            input_record[optional_key] = db_inst.get(optional_key)
-    if "department" in input_record and db_inst.get("departments"):
+        if optional_key not in ["departments", "schools"]:
+            if db_inst.get(optional_key):
+                input_record[optional_key] = db_inst.get(optional_key)
+    if "department" in input_record:
         for k, v in db_inst.get("departments").items():
             v.update({"_id": k})
         extracted_department = fuzzy_retrieval(
@@ -1041,7 +1042,11 @@ def dereference_institution(input_record, institutions, verbose=False):
             input_record["department"]
         )
         if extracted_department:
-           input_record["department"] = extracted_department.get("name")
+            input_record["department"] = extracted_department.get("name")
+        else:
+            input_record["department"] = input_record.get("department", "")
+    else:
+        input_record["department"] = "unknown"
 
     return
 
