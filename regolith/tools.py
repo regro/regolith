@@ -690,7 +690,7 @@ def filter_presentations(people, presentations, institutions, target,
             inst = {"institution": pres.get("institution"),
                     "department": pres.get("department")}
             dereference_institution(inst, institutions)
-            pres["institution"] = {'name': inst.get("institution"),
+            pres["institution"] = {'name': inst.get("institution",""),
                                    'city': inst.get("city"),
                                    'state': inst.get("state"),
                                    'country': inst.get("country")}
