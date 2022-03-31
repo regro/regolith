@@ -2096,6 +2096,41 @@ expected3 = {'_id': 'jkl',
     "type": "webinar"}
 
 @pytest.mark.parametrize(
+    "input, expected, sysout", [
+        ({"institution": "columbiau"}, {'department': 'unknown', "location": "New York, NY", "city": "New York", "country":"USA", "institution":"Columbia University", "organization":"Columbia University",  "state":"NY"}, ""),
+        ({"institution": "nyu"}, {'department': 'unknown',"location": "New York, NY", "city": "New York", "country":"USA", "institution":"New York University", "organization":"New York University",  "state":"NY", "street": "23rd", "zip": "10001", "aka": "purple"}, ""),
+        ({"institution": "barnardc", "department": "physics"}, {"location": "New York, NY", "city": "New York", "country":"USA", "institution":"Barnard College", "organization":"Barnard College",  "state":"NY", "department": "Department of Physics"}, ""),
+        ({"institution": "columbiau", "department": "physics"}, {"location": "New York, NY", "city": "New York", "country":"USA", "institution":"Columbia University", "organization":"Columbia University",  "state":"NY", "department": "physics"}, "WARNING: no departments in columbiau. physics sought\n"),
+        ({"organization": "3m"}, {'department': 'unknown',"location": "Minneapolis, MN", "city": "Minneapolis", "country":"USA", "institution":"3M", "organization":"3M",  "state":"MN"}, ""),
+        ({"institution": "notindbu"},
+         {"location": "unknown, unknown", "city": "unknown", "country": "unknown",
+          "institution": "notindbu", 'department': 'unknown',
+          "organization": "notindbu", "state": "unknown"}, "WARNING: notindbu not found in institutions\n"),
+        ({"institution": "notindbu", "location": "Near, BY"},
+         {"location": "Near, BY", "city": "unknown", "country": "unknown",
+          "institution": "notindbu", 'department': 'unknown',
+          "organization": "notindbu", "state": "unknown"}, "WARNING: notindbu not found in institutions\n"),
+        ({"institution": "notindbu", "city": "Near", "state": "BY"},
+         {"location": "Near, BY", "city": "Near", "country": "unknown",
+          "institution": "notindbu", 'department': 'unknown',
+          "organization": "notindbu", "state": "BY"}, "WARNING: notindbu not found in institutions\n"),
+        ({"institution": "overseasu"},
+         {"location": "Toronto, Canada", "city": "Toronto",
+          "country": "Canada", 'department': 'unknown',
+          "institution": "Overseas University",
+          "organization": "Overseas University"}, ""),
+        ({"degree": "phd"},
+         {"degree": "phd"}, "WARNING: no institution or organization in entry: {'degree': 'phd'}\n"),
+    ]
+)
+def test_dereference_institution(input, expected, sysout, capsys):
+    dereference_institution(input, INSTITUTIONS, verbose=True)
+    assert expected == input
+    out, err = capsys.readouterr()
+    assert sysout == out
+
+
+@pytest.mark.parametrize(
     "args, kwargs, expected",[
     #this tests no kwargs
     ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
@@ -2139,38 +2174,5 @@ def test_get_tags_invalid():
         get_tags(coll)
         assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
 
-@pytest.mark.parametrize(
-    "input, expected, sysout", [
-        ({"institution": "columbiau"}, {"location": "New York, NY", "city": "New York", "country":"USA", "institution":"Columbia University", "organization":"Columbia University",  "state":"NY"}, ""),
-        ({"institution": "nyu"}, {"location": "New York, NY", "city": "New York", "country":"USA", "institution":"New York University", "organization":"New York University",  "state":"NY", "street": "23rd", "zip": "10001", "aka": "purple"}, ""),
-        ({"institution": "barnardc", "department": "physics"}, {"location": "New York, NY", "city": "New York", "country":"USA", "institution":"Barnard College", "organization":"Barnard College",  "state":"NY", "department": "Department of Physics"}, ""),
-        ({"institution": "columbiau", "department": "physics"}, {"location": "New York, NY", "city": "New York", "country":"USA", "institution":"Columbia University", "organization":"Columbia University",  "state":"NY", "department": "physics"}, "WARNING: no departments in columbiau. physics sought\n"),
-        ({"organization": "3m"}, {"location": "Minneapolis, MN", "city": "Minneapolis", "country":"USA", "institution":"3M", "organization":"3M",  "state":"MN"}, ""),
-        ({"institution": "notindbu"},
-         {"location": "unknown, unknown", "city": "unknown", "country": "unknown",
-          "institution": "notindbu",
-          "organization": "notindbu", "state": "unknown"}, "WARNING: notindbu not found in institutions\n"),
-        ({"institution": "notindbu", "location": "Near, BY"},
-         {"location": "Near, BY", "city": "unknown", "country": "unknown",
-          "institution": "notindbu",
-          "organization": "notindbu", "state": "unknown"}, "WARNING: notindbu not found in institutions\n"),
-        ({"institution": "notindbu", "city": "Near", "state": "BY"},
-         {"location": "Near, BY", "city": "Near", "country": "unknown",
-          "institution": "notindbu",
-          "organization": "notindbu", "state": "BY"}, "WARNING: notindbu not found in institutions\n"),
-        ({"institution": "overseasu"},
-         {"location": "Toronto, Canada", "city": "Toronto",
-          "country": "Canada",
-          "institution": "Overseas University",
-          "organization": "Overseas University"}, ""),
-        ({"degree": "phd"},
-         {"degree": "phd"}, "WARNING: no institution or organization in entry: {'degree': 'phd'}\n"),
-    ]
-)
-def test_dereference_institution(input, expected, sysout, capsys):
-    dereference_institution(input, INSTITUTIONS, verbose=True)
-    assert expected == input
-    out, err = capsys.readouterr()
-    assert sysout == out
 
 
