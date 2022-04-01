@@ -1,0 +1,48 @@
+ascopatz: {}
+sbillinge:
+  todos:
+    - description: read paper
+      due_date: '2020-07-19'
+      begin_date: '2020-06-15'
+      deadline: true
+      duration: 60.0
+      importance: 2
+      status: started
+      assigned_by: scopatz
+      running_index: 1
+      tags:
+        - reading
+        - downtime
+    - description: prepare the presentation
+      due_date: '2020-07-29'
+      begin_date: '2020-06-22'
+      duration: 30.0
+      importance: 0
+      status: started
+      notes:
+        - about 10 minutes
+        - don't forget to upload to the website
+      assigned_by: sbillinge
+      running_index: 2
+      tags:
+        - downtime
+    - description: update the description
+      due_date: 2020-07-06
+      begin_date: 2020-06-06
+      deadline: true
+      duration: 35.0
+      importance: 2
+      status: finished
+      assigned_by: sbillinge
+      notes:
+        - test notes 1
+        - test notes 2
+        - some new notes
+        - notes2
+      tags:
+        - tag1
+        - tag2
+        - newtag1
+        - newtag2
+      running_index: 3
+      end_date: 2020-07-07

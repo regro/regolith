@@ -26,7 +26,12 @@
 <h1><a href="#education-and-employment">Education & Employment</a></h1><br/>
 {%for e in education_and_employment%}
   {%if 'institution' in e%}{# In eduction #}
-    <h2>{{e['institution']}}</h2><h3>{{e['degree']}}</h3>
+    <h2>{{e['institution']}}</h2>
+      {%if 'degree' in e%}
+        <h3>{{e['degree']}}</h3>
+      {%else%}
+        <h3>{{e['position']}}</h3>
+      {%endif%}
   {%elif 'organization' in e%}{# In emplyment #}
     <h2>{{e['organization']}}</h2><h3>{{e['position']}}</h3>
   {%endif%}
@@ -106,7 +111,11 @@
   {{pub.get('journal', '')}}
   {{pub.get('booktitle', '')}}.
   {{pub.get('volume', '')}}
-  {{'p. ' + pub['pages'] if 'pages' in pub else ''}}
+    {%- if pub['pages'] %}
+  {{'p. ' + pub['pages']}}
+    {%- else %}
+  {{''}}
+    {%- endif %}
   {{pub.get('address', '')}}
   {% if 'month' in pub and 'year' in pub %}
     {{pub['month'].capitalize()}} {{pub['year']}}

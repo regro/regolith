@@ -19,7 +19,11 @@
 \usepackage{tocloft}
 \usepackage[backend=bibtex,maxnames=99]{biblatex}
 \usepackage{hyperref}
+\usepackage{times}
+\usepackage{enumitem}
 \usepackage[utf8]{inputenc}
+\usepackage{longtable}
+\setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
 
 %-----------------------------------------------------------
 % Hyperlink setup
@@ -58,6 +62,10 @@
 \setlength{\topskip}{0in}
 \setlength{\voffset}{0.1in}
 
+\newlength{\subitemsoffset}
+\setlength{\subitemsoffset}{-24pt}
+\newlength{\itemsoffset}
+\setlength{\itemsoffset}{-24pt}
 
 %-----------------------------------------------------------
 %Custom commands
@@ -78,7 +86,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
 }
 
 \newcommand{\ressubheading}[4]{
@@ -89,7 +97,23 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-24pt}
+    \vspace{\itemsoffset}
+}
+
+\newcommand{\ressubheadingitemslongtitle}[5]{
+    \begin{center}
+    \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
+        \multicolumn{2}{p{6.5in}}{\textbf{#1}\cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{p{6.5in}}{\textit{#3} \cftdotfill{\cftdotsep} \textit{#4}} \\
+        \vphantom{E}
+    \end{tabular*}
+    \end{center}
+    \vspace{\subitemsoffset}
+    \begin{itemize}\renewcommand{\labelitemi}{}
+        \item\begin{itemize}
+        #5
+        \end{itemize}
+    \end{itemize}
 }
 
 \newcommand{\ressubheadingitems}[5]{
@@ -100,7 +124,7 @@
         \vphantom{E}
     \end{tabular*}
     \end{center}
-    \vspace{-32pt}
+    \vspace{\subitemsoffset}
     \begin{itemize}\renewcommand{\labelitemi}{}
         \item\begin{itemize}
         #5
@@ -159,6 +183,44 @@
 {% endfor %}
 
 
+{% if len(aghs) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Awards \& Honors}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{-2pt}
+\begin{center}
+\begin{longtable}{p{5.75in} l@{\extracolsep{\fill}} r }
+{% for agh in aghs %}
+    {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
+{% endfor %}
+    \vphantom{E}
+\end{longtable}
+\end{center}\vspace*{-16pt}
+{% endif %}
+
+{% if len(projects) > 0 %}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Projects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for proj in projects %}
+{% set me = proj['team'][0] %}
+\ressubheadingitemslongtitle{ {{-proj['name']-}} }
+    { {{-me['position']-}} }
+    { {{-proj['description']-}} }
+    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
+      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
+    {
+      {% for o in proj['other'] %}
+        \resitem{ {{-latex_safe(o)-}} }
+      {% endfor %}
+      {% if proj['website'] and len(proj['website']) > 0 %}
+      \resitem{Website: \url{ {{-latex_safe(proj['website'], url_check=False)-}} } }
+      {% endif %}
+      }
+\vspace{0.5em}
+{% endfor %}
+{% endif %}
+
 {% if len(pi_grants) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Grants as Lead PI}
@@ -166,13 +228,13 @@
 {\Large\underline{Lifetime Total Grant Amount as PI:} \textbf{ \${{"{:,.2f}".format(pi_amount)}} }}
 
 {% for grant in pi_grants %}
-\ressubheadingitems{ {{-grant['title']-}} }
+\ressubheadingitemslongtitle{ {{-grant['title']-}} }
     { \${{-"{:,.2f}".format(grant['amount'])-}} }
     { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
     { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
       {{month_and_year(grant.get('end_month'), grant.get('end_year'))-}} }
     {
-      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
+      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant %}
         \resitem{
           {%- if 'narrative' in grant %}
             \href{ {{-grant['narrative']-}} }{Narrative}.
@@ -198,7 +260,7 @@
 subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 
 {% for grant in coi_grants %}
-\ressubheadingitems{ {{-grant['title']-}} }
+\ressubheadingitemslongtitle{ {{-grant['title']-}} }
     { \${{-"{:,.2f}".format(grant['subaward_amount'])-}} }
     { {{-grant['funder']}} {{grant['program']}} {{latex_safe(grant.get('grant_id', ''))-}} }
     { {{-month_and_year(grant.get('begin_month'), grant.get('begin_year'))}} -
@@ -206,8 +268,8 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     {
       \resitem{Role: {{grant['me']['position']-}} }
       \resitem{Total award: \${{-"{:,.2f}".format(grant['amount'])-}} }
-      \resitem{PI: {{grant['pi']['name']}} at {{grant['pi']['institution']}} }
-      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant or 'call_for_proposals' in grant %}
+      \resitem{PI: {{grant['pi']['name']}} at {{latex_safe(grant['pi']['institution'])}} }
+      {% if 'narrative' in grant or 'benefit_of_collaboration' in grant %}
         \resitem{
           {%- if 'narrative' in grant %}
             \href{ {{-grant['narrative']-}} }{Narrative}.
@@ -223,42 +285,8 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     }
 {% endfor %}
 {% endif %}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Awards \& Honours}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{-2pt}
-\begin{center}\begin{tabular*}{6.6in}{p{6in} c r}
-{% for agh in aghs %}
-    {{-agh['description']-}} \dotfill & \hspace{.1in} & {{-agh['year']-}} \\
-{% endfor %}
-    \vphantom{E}
-\end{tabular*}
-\end{center}\vspace*{-16pt}
-
-
-
-%\clearpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Major Software Projects}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-{% for proj in projects %}
-{% set me = proj['team'][0] %}
-\ressubheadingitems{ {{-proj['_id']-}} }
-    { {{-me['position']-}} }
-    { {{-proj['description']-}} }
-    { {{-month_and_year(me.get('begin_month'), me.get('begin_year'))}} -
-      {{month_and_year(me.get('end_month'), me.get('end_year'))-}} }
-    {
-      {% for o in proj['other'] %}
-        \resitem{ {{-latex_safe(o)-}} }
-      {% endfor %}
-      \resitem{Website: \url{ {{-proj['website']-}} } }
-    }
-\vspace{0.5em}
-{% endfor %}
-
-%\clearpage
+              
+{%if 'membership' in p and len(p['membership']) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Memberships}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -267,8 +295,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     {\em{ {{-month_and_year(m.get('begin_month'), m.get('begin_year'))-}} -
           {{-month_and_year(m.get('end_month'), m.get('end_year'))-}} } }
     { {{-latex_safe(m['position'])-}} }
-{% endfor %}
-
+{% endfor %}{% endif %}
 
 {%if 'skills' in p and len(p['skills']) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

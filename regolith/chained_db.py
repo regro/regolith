@@ -43,6 +43,14 @@ class ChainDB(ChainMap):
                     res.maps.append(result)
         elif all([isinstance(result, list) for result in results]):
             return list(itertools.chain(*results))
+        elif all([isinstance(result, (list, ChainDBSingleton)) for result in results]):
+            for result in results[::-1]:
+                if isinstance(result, ChainDBSingleton):
+                    results.remove(result)
+            if len(results) != 0:
+                return list(itertools.chain(*results))
+            else:
+                raise KeyError("{} is none of the current mappings".format(key))
         else:
             for result in reversed(results):
                 if result is not Singleton:

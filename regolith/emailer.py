@@ -76,7 +76,7 @@ def test_email(rc):
     """Sends a test email from regolith."""
     if rc.to is None:
         raise ValueError("--to must be given to send a test email.")
-    with tempfile.NamedTemporaryFile(suffix=".rst") as f:
+    with tempfile.NamedTemporaryFile(suffix=".rst",delete=False) as f:
         f.write(b"This is *only* a test attachment.\n")
         f.flush()
         message = make_message(
@@ -153,7 +153,7 @@ def class_email(rc):
 
 def list_email(rc):
     """List class emails"""
-    course = rc.client.find_one(rc.db, "courses", {"_id": rc.course_id})
+    course = rc.client.find_one(rc.db, "courses", {"_id": rc.course_ids})
     student_ids = set(course["students"])
     students = rc.client[rc.db]["students"]
     emails = [s["email"] for s in students.values() if s["_id"] in student_ids]

@@ -3,12 +3,9 @@ import os
 import pdb
 import sys
 import traceback
-from itertools import groupby
+import numpy as np
 
-try:
-    import numpy as np
-except ImportError:
-    np = None
+from itertools import groupby
 
 try:
     import scipy.stats as st
@@ -19,13 +16,10 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.tools import all_docs_from_collection
 
 
-def latex_safe(s):
-    return s.replace("&", "\&").replace("$", "\$").replace("#", "\#")
-
 
 class GradeReportBuilder(LatexBuilderBase):
     btype = "grades"
-    needed_dbs = ['grades', 'courses', 'assignments']
+    needed_colls = ['grades', 'courses', 'assignments']
 
 
     def construct_global_ctx(self):
@@ -83,13 +77,15 @@ class GradeReportBuilder(LatexBuilderBase):
 
             student_wavgs = []
             students_kwargs = {}
+            studs = []
             for student_id in course["students"]:
+                studs.append(student_id)
                 student_grade_list = list(
                     filter(
                         (
                             lambda x: (
-                                x["student"] == student_id
-                                and x["course"] == course_id
+                                    x["student"] == student_id
+                                    and x["course"] == course_id
                             )
                         ),
                         self.gtx["grades"],
@@ -118,6 +114,8 @@ class GradeReportBuilder(LatexBuilderBase):
                     student_totals=student_totals,
                     student_wavg=student_wavg,
                 )
+            ordered_studs = sorted(studs, key=lambda x: (
+                students_kwargs[x]['student_wavg']), reverse=True)
             max_wavg = max(student_wavgs)
             curve = 1.0 - max_wavg
             # Make grades
@@ -130,6 +128,13 @@ class GradeReportBuilder(LatexBuilderBase):
                 skw["student_letter_grade_curved"] = find_letter_grade(
                     skw["student_wavg"] + curve, scale
                 )
+            summary = [
+                "{}: {:.2f}, Grade: {}".format(stud, students_kwargs[stud][
+                    'student_wavg'] * 100., students_kwargs[stud][
+                                                   "student_letter_grade_raw"])
+                for stud in ordered_studs]
+            for stud in summary:
+                print(stud)
             show_letter_plot = self.plot_letter_grades(students_kwargs, scale)
             # render PDF
             for student_id in course["students"]:
@@ -215,7 +220,7 @@ class GradeReportBuilder(LatexBuilderBase):
             cat = [category]
             sgtot = catmax = 0
             for sg, asgn in zip(
-                student_grades[category], grouped_assignments[category]
+                    student_grades[category], grouped_assignments[category]
             ):
                 if sg is not None:
                     sgtot += sum(sg["scores"])
@@ -235,7 +240,7 @@ class GradeReportBuilder(LatexBuilderBase):
         return sorted(totals), wtotal
 
     def plot_letter_grades(self, students_kwargs, scale):
-        """Plots the letter grades in a historgram"""
+        """Plots the letter grades in a histogram"""
         try:
             import matplotlib.pyplot as plt
         except ImportError:

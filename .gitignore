@@ -22,6 +22,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.idea
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -69,3 +70,8 @@ docs/collections/people.rst
 docs/collections/projects.rst
 docs/collections/proposals.rst
 docs/collections/students.rst
+
+# Idea
+.idea/
+
+.DS_Store

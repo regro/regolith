@@ -1,9 +1,7 @@
 """Helps deploy what we have built."""
 import os
 import time
-import shutil
 from xonsh.lib import subprocess
-from glob import iglob
 from warnings import warn
 from distutils.dir_util import copy_tree
 

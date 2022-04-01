@@ -1,0 +1,38 @@
+The experiment plan for the beamtime 2020-1-XPD
+begin date:              Feb 14, 2020
+begin time:              8:00 am
+end data:                Feb 17, 2020
+end time:                8:00 am
+total number of samples: 2
+estimated total time:    3.2 hour
+
+Summary
+-------
+  serial id project leader number of samples measurement     devices estimated time (h)
+0         1          kseth                 2       Tramp  cryostream                3.2
+
+Tasks before the beamtime:
+- (Exp. 1) todo something
+
+Experiment 1
+------------
+Objective:
+    temperature ramping PDF of one WO3 film (100, 300K, 10K)
+Samples:
+- WO3 film
+- glass subtrate
+Scanplan:
+- Scanplan(bt, Tramp, 30, 80, 500, 10)
+Preparation:
+- films will be made by kriti
+Shipment:
+- seal and ship to CU
+- carry to the beamline
+Measurement:
+- load samples on the holder
+- scan the holder to locate the samples
+- take room temperature measurement of sample and the subtrate
+- ramp down temperature to 100K
+- ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure
+Scanplan:
+- Scanplan(bt, Tramp, 30, 80, 500, 10)

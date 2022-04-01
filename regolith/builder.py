@@ -12,22 +12,34 @@ from regolith.builders.reimbursementbuilder import ReimbursementBuilder
 from regolith.builders.resumebuilder import ResumeBuilder
 from regolith.builders.cpbuilder import CPBuilder
 from regolith.builders.figurebuilder import FigureBuilder
+from regolith.builders.coabuilder import RecentCollaboratorsBuilder
+from regolith.builders.beamplanbuilder import BeamPlanBuilder
+from regolith.builders.activitylogbuilder import ActivitylogBuilder
+from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
+from regolith.builders.readinglistsbuilder import ReadingListsBuilder
+from regolith.builders.grantreportbuilder import GrantReportBuilder
 
 
 BUILDERS = {
+    "annual-activity": ActivitylogBuilder,
+    "beamplan": BeamPlanBuilder,
+    "current-pending": CPBuilder,
     "cv": CVBuilder,
-    "html": HtmlBuilder,
-    "publist": PubListBuilder,
+    "figure": FigureBuilder,
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,
-    "resume": ResumeBuilder,
-    "current-pending": CPBuilder,
+    "grantreport": GrantReportBuilder,
+    "html": HtmlBuilder,
+    "internalhtml": InternalHtmlBuilder,
     "postdocad": PostdocadBuilder,
-    "review-man": ManRevBuilder,
-    "review-prop": PropRevBuilder,
     "preslist": PresListBuilder,
+    "publist": PubListBuilder,
+    "reading-lists": ReadingListsBuilder,
     "reimb": ReimbursementBuilder,
-    "figure": FigureBuilder,
+    "recent-collabs": RecentCollaboratorsBuilder,
+    "resume": ResumeBuilder,
+    "review-man": ManRevBuilder,
+    "review-prop": PropRevBuilder
 }
 
 

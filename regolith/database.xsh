@@ -1,9 +1,9 @@
 """Helps manage mongodb setup and connections."""
 import os
-from xonsh.lib import subprocess
 from contextlib import contextmanager
 from warnings import warn
 
+from xonsh.lib import subprocess
 from xonsh.lib.os import indir
 
 try:
@@ -13,16 +13,7 @@ except:
 
 from regolith.chained_db import ChainDB
 from regolith.tools import dbdirname
-from regolith.fsclient import FileSystemClient
-from regolith.mongoclient import MongoClient
-
-
-CLIENTS = {
-    'mongo': MongoClient,
-    'mongodb': MongoClient,
-    'fs': FileSystemClient,
-    'filesystem': FileSystemClient,
-    }
+from regolith.client_manager import ClientManager
 
 
 def load_git_database(db, client, rc):
@@ -69,8 +60,16 @@ def load_local_database(db, client, rc):
     client.load_database(db)
 
 
+def load_mongo_database(db, client):
+    """Load a mongo database."""
+    client.load_database(db)
+
+
 def load_database(db, client, rc):
     """Loads a database"""
+    if db['backend'] in ('mongo', 'mongodb'):
+        load_mongo_database(db, client)
+        return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
         load_git_database(db, client, rc)
@@ -89,8 +88,10 @@ def dump_git_database(db, client, rc):
     # dump all of the data
     to_add = client.dump_database(db)
     # update the repo
-    cmd = ['git', 'add'] + to_add
-    subprocess.check_call(cmd, cwd=dbdir)
+    cmd = ['git', 'add', '']
+    for file in to_add:
+        cmd[2] = file
+        subprocess.check_call(cmd, cwd=dbdir)
     cmd = ['git', 'commit', '-m', 'regolith auto-commit']
     try:
         subprocess.check_call(cmd, cwd=dbdir)
@@ -132,6 +133,9 @@ def dump_local_database(db, client, rc):
 
 def dump_database(db, client, rc):
     """Dumps a database"""
+    # do not dump mongo db
+    if db['backend'] in ('mongo', 'mongodb'):
+        return
     url = db['url']
     if url.startswith('git') or url.endswith('.git'):
         dump_git_database(db, client, rc)
@@ -160,7 +164,7 @@ def open_dbs(rc, dbs=None):
     """
     if dbs is None:
         dbs = []
-    client = CLIENTS[rc.backend](rc)
+    client = ClientManager(rc.databases, rc)
     client.open()
     chained_db = {}
     for db in rc.databases:

@@ -4,6 +4,7 @@ import os
 import sys
 from collections import defaultdict
 from copy import deepcopy
+import datetime
 from glob import iglob
 
 import ruamel.yaml
@@ -11,6 +12,27 @@ from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from regolith.tools import dbpathname
+
+import signal
+import logging
+
+
+class DelayedKeyboardInterrupt:
+
+    def __enter__(self):
+        self.signal_received = False
+        self.old_handler = signal.signal(signal.SIGINT, self.handler)
+
+    def handler(self, sig, frame):
+        self.signal_received = (sig, frame)
+        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+
+    def __exit__(self, type, value, traceback):
+        signal.signal(signal.SIGINT, self.old_handler)
+        if self.signal_received:
+            self.old_handler(*self.signal_received)
+
+
 
 YAML_BASE_MAP = {CommentedMap: dict,
                  CommentedSeq: list}
@@ -46,18 +68,26 @@ def load_json(filename):
     return docs
 
 
-def dump_json(filename, docs):
+def date_encoder(obj):
+    if isinstance(obj, (datetime.date, datetime.datetime)):
+        return obj.isoformat()
+
+
+def dump_json(filename, docs, date_handler=None):
     """Dumps a dict of documents into a file."""
     docs = sorted(docs.values(), key=_id_key)
-    lines = [json.dumps(doc, sort_keys=True) for doc in docs]
+    lines = [json.dumps(doc, sort_keys=True, default=date_handler) for doc in docs]
     s = "\n".join(lines)
     with open(filename, "w", encoding="utf-8") as fh:
         fh.write(s)
 
 
-def load_yaml(filename, return_inst=False):
+def load_yaml(filename, return_inst=False, loader=None):
     """Loads a YAML file and returns a dict of its documents."""
-    inst = YAML()
+    if loader is None:
+        inst = YAML()
+    else:
+        inst = loader
     with open(filename, encoding="utf-8") as fh:
         docs = inst.load(fh)
         docs = _rec_re_type(docs)
@@ -69,6 +99,7 @@ def load_yaml(filename, return_inst=False):
 def dump_yaml(filename, docs, inst=None):
     """Dumps a dict of documents into a file."""
     inst = YAML() if inst is None else inst
+    inst.representer.ignore_aliases = lambda *data: True
     inst.indent(mapping=2, sequence=4, offset=2)
     sorted_dict = ruamel.yaml.comments.CommentedMap()
     for k in sorted(docs):
@@ -78,7 +109,8 @@ def dump_yaml(filename, docs, inst=None):
         for kk in sorted(doc.keys()):
             sorted_dict[k][kk] = doc[kk]
     with open(filename, "w", encoding="utf-8") as fh:
-        inst.dump(sorted_dict, stream=fh)
+        with DelayedKeyboardInterrupt():
+            inst.dump(sorted_dict, stream=fh)
 
 
 def json_to_yaml(inp, out):
@@ -87,9 +119,9 @@ def json_to_yaml(inp, out):
     dump_yaml(out, docs)
 
 
-def yaml_to_json(inp, out):
+def yaml_to_json(inp, out, loader=None):
     """Converts a YAML file to a JSON one."""
-    docs = load_yaml(inp)
+    docs = load_yaml(inp, loader=loader)
     dump_json(out, docs)
 
 
@@ -110,9 +142,10 @@ class FileSystemClient:
         return not self.closed
 
     def open(self):
-        self.dbs = defaultdict(lambda: defaultdict(dict))
-        self.chained_db = {}
-        self.closed = False
+        if self.closed:
+            self.dbs = defaultdict(lambda: defaultdict(dict))
+            self.chained_db = {}
+            self.closed = False
 
     def load_json(self, db, dbpath):
         """Loads the JSON part of a database."""
@@ -144,7 +177,7 @@ class FileSystemClient:
             base, ext = os.path.splitext(collfilename)
             self._collexts[base] = ext
             self._collfiletypes[base] = "yaml"
-            print("loading " + f + "...", file=sys.stderr)
+            #print("loading " + f + "...", file=sys.stderr)
             coll, inst = load_yaml(f, return_inst=True)
             dbs[db["name"]][base] = coll
             self._yamlinsts[dbpath, base] = inst
@@ -178,7 +211,7 @@ class FileSystemClient:
         os.makedirs(dbpath, exist_ok=True)
         to_add = []
         for collname, collection in self.dbs[db["name"]].items():
-            print("dumping " + collname + "...", file=sys.stderr)
+            #print("dumping " + collname + "...", file=sys.stderr)
             filetype = self._collfiletypes.get(collname, "yaml")
             if filetype == "json":
                 filename = self.dump_json(collection, collname, dbpath)

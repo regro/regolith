@@ -1,0 +1,10 @@
+Reading List
+
+{{ rlist['title'] }}
+
+{% for paper in rlist['papers'] %}
+[{{ paper['n'] }}] {{ paper['text'] }}:
+    {% if paper.get('reference') -%} {{ paper['reference'] }}
+    {% endif -%}
+    {% if paper.get('label') -%} {{ paper['label'] }}: {{ paper['doi'] }}{% endif %}
+{% endfor %}

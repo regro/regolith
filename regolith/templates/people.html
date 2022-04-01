@@ -3,15 +3,15 @@
 <h1>People</h1>
 {% endblock header %}
 {% block content %}
-{% for p in people if p.get('active', True) and not p.get('collaberator', False) %}
+{%- for p in people if p.get('active', True) and not p.get('collaberator', False) -%}
   <a href="{{root}}/people/{{p['_id']}}.html" class="image-link">
     <img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
   </a>
   <h1><a href="{{root}}/people/{{p['_id']}}.html">{{p['title']}} {{p['name']}}</a></h1>
   <ul>
-    <li><b>Position:</b> {{p['position'].capitalize()}}</li>
+    <li><b>Position:</b> {{p['position'].title()}}</li>
   </ul>
-{% endfor %}
+{%- endfor -%}
 {% endblock content %}
 {% block footer %}
 {% endblock footer %}

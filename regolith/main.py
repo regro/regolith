@@ -1,17 +1,21 @@
 """The main CLI for regolith"""
 from __future__ import print_function
+
 import copy
 import os
-from argparse import ArgumentParser, RawTextHelpFormatter
+from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
 
-from regolith.commands import INGEST_COLL_LU
-from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.database import connect
+
 from regolith import commands
 from regolith import storage
 from regolith.builder import BUILDERS
+from regolith.commands import INGEST_COLL_LU
+from regolith.helper import HELPERS
+from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
+from regolith import __version__
 
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
@@ -30,6 +34,9 @@ CONNECTED_COMMANDS = {
     "email": commands.email,
     "classlist": commands.classlist,
     "validate": commands.validate,
+    "helper": commands.helper,
+    "fs-to-mongo": commands.fs_to_mongo,
+    "mongo-to-fs": commands.mongo_to_fs
 }
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
@@ -40,8 +47,20 @@ def create_parser():
     p = ArgumentParser()
     subp = p.add_subparsers(title="cmd", dest="cmd")
 
+    p.add_argument(
+        "--version",
+        action="store_true"
+    )
+
+    # helper subparser
+    subp.add_parser(
+        "helper",
+        help="runs an available helper target",
+        formatter_class=RawTextHelpFormatter,
+    )
+
     # rc subparser
-    rcp = subp.add_parser("rc", help="prints run control")
+    subp.add_parser("rc", help="prints run control")
 
     # add subparser
     addp = subp.add_parser(
@@ -62,14 +81,14 @@ def create_parser():
     ingp.add_argument(
         "filename",
         help="file to ingest. Currently valid formats are: \n{}"
-        "".format([k for k in INGEST_COLL_LU]),
+             "".format([k for k in INGEST_COLL_LU]),
     )
     ingp.add_argument(
         "--coll",
         dest="coll",
         default=None,
         help="collection name, if this is not given it is infered from the "
-        "file type or file name.",
+             "file type or file name.",
     )
 
     # store subparser
@@ -95,7 +114,7 @@ def create_parser():
     appp = subp.add_parser(
         "app",
         help="starts up a flask app for inspecting and "
-        "modifying regolith data.",
+             "modifying regolith data.",
     )
     appp.add_argument(
         "--debug",
@@ -135,7 +154,7 @@ def create_parser():
         "--no-pdf",
         dest="pdf",
         help="don't produce PDFs during the build "
-        "(for builds which produce PDFs)",
+             "(for builds which produce PDFs)",
         action="store_false",
         default=True,
     )
@@ -143,14 +162,14 @@ def create_parser():
         "--from",
         dest="from_date",
         help="date in form YYYY-MM-DD.  Items will only be built"
-        " if their date or end_date is equal or after this date",
+             " if their date or end_date is equal or after this date",
         default=None,
     )
     bldp.add_argument(
         "--to",
         dest="to_date",
         help="date in form YYYY-MM-DD.  Items will only be built"
-        " if their date or begin_date is equal or before this date",
+             " if their date or begin_date is equal or before this date",
         default=None,
     )
     bldp.add_argument(
@@ -225,7 +244,7 @@ def create_parser():
         dest="format",
         default=None,
         help="file / school format to read information from. Current values are "
-        '"json" and "usc". Determined from extension if not available.',
+             '"json" and "usc". Determined from extension if not available.',
     )
     clp.add_argument(
         "-d",
@@ -249,6 +268,34 @@ def create_parser():
     )
     ytj.add_argument("files", nargs="+", help="file names to convert")
 
+    # mongo-to-fs subparser
+    mtf = subp.add_parser(
+        "mongo-to-fs",
+        help="Backup database from mongodb to filesystem as json. The database will be imported to the destination "
+             "specified by the 'database':'dst_url' key. For this to work, ensure that the database is included in the "
+             "dst_url, and that local is set to true."
+    )
+
+    mtf.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
+                                    "default, the mongoexport attempts to connect to a MongoDB instance running "
+                                    "on the localhost on port number 27017.",
+                     dest="host",
+                     default=None)
+
+    # fs-to-mongo subparser
+    ftm = subp.add_parser(
+        "fs-to-mongo",
+        help="Import database from filesystem to mongodb. By default, the database will be import to the local "
+             "mongodb. The database can also be imported to the destination specified by the 'database':'dst_url' key."
+             " For this to work, ensure that the database is included in the dst_url, and that local is set to true."
+    )
+
+    ftm.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
+                                    "default, the mongoimport attempts to connect to a MongoDB instance running "
+                                    "on the localhost on port number 27017.",
+                     dest="host",
+                     default=None)
+
     # Validator
     val = subp.add_parser("validate", help="Validates db")
     val.add_argument(
@@ -261,9 +308,33 @@ def create_parser():
 
 
 def main(args=None):
-    rc = DEFAULT_RC
+    rc = copy.copy(DEFAULT_RC)
     parser = create_parser()
-    ns = parser.parse_args(args)
+    args0 = Namespace()
+    args1, rest = parser.parse_known_args(args, namespace=args0)
+    if args1.version:
+        print(__version__)
+        return rc
+    if args1.cmd == 'helper':
+        p = ArgumentParser(prog='regolith helper')
+        p.add_argument(
+            "helper_target",
+            help="helper target to run. Currently valid targets are: \n{}".format(
+                [k for k in HELPERS]
+            ),
+        )
+        if len(rest) == 0:
+            p.print_help()
+        args2, rest2 = p.parse_known_args(rest, namespace=args0)
+        # it is not apparent from this but the following line calls the suparser in
+        #   in the helper module to get the rest of the args.
+        HELPERS[args2.helper_target][1](p)
+        if len(rest2) == 0:
+            p.print_help()
+        args3, rest3 = p.parse_known_args(rest, namespace=args0)
+        ns = args3
+    else:
+        ns = args1
     if ns.cmd in NEED_RC:
         if os.path.exists(rc.user_config):
             rc._update(load_rcfile(rc.user_config))
@@ -283,8 +354,11 @@ def main(args=None):
         dbs = None
         if rc.cmd == 'build':
             dbs = commands.build_db_check(rc)
+        elif rc.cmd == 'helper':
+            dbs = commands.helper_db_check(rc)
         with connect(rc, dbs=dbs) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)
+    return rc
 
 
 if __name__ == "__main__":

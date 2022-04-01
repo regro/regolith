@@ -8,7 +8,7 @@ Shell commands for regolith
 .. code-block:: bash
 
 	usage: regolith [-h]
-	                {rc,add,ingest,store,app,grade,build,deploy,email,classlist,json-to-yaml,yaml-to-json,validate}
+	                {rc,add,ingest,store,app,grade,build,helper,deploy,email,classlist,json-to-yaml,yaml-to-json,validate}
 	                ...
 
 	optional arguments:
@@ -26,12 +26,21 @@ Shell commands for regolith
 	    grade               starts up a flask app for adding grades to the
 	                        database.
 	    build               builds various available targets
+        helper              runs an available helper target
 	    deploy              deploys what was built by regolith
 	    email               automates emailing
 	    classlist           updates classlist information from file
 	    json-to-yaml        Converts files from JSON to YAML
-	    yaml-to-json        Converts files from YAML to JSON
-	    validate            Validates db
+        yaml-to-json        Converts files from YAML to JSON
+        fs-to-mongo         Import database from filesystem to mongodb. By
+                            default, the database will be import to the local
+                            mongodb. The database can also be imported to the
+                            destination specified by the 'database':'dst_url' key.
+                            For this to work, ensure that the username, password,
+                            and database are included in the dst_url, and that
+                            local is set to true.
+        validate            Validates db
+
 
 
 
@@ -41,6 +50,7 @@ Shell commands for regolith
     add
     app
     build
+    helper
     classlist
     deploy
     email

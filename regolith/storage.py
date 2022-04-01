@@ -1,6 +1,8 @@
 """Tools for document storgage."""
 import os
 import shutil
+from warnings import warn
+
 from xonsh.lib import subprocess
 from contextlib import contextmanager
 
@@ -148,8 +150,14 @@ class StorageClient(object):
             The path, if the file is not in the store None
         """
         ret = os.path.join(self.path, file_name)
+        temp = (self.path + file_name).find(self.path, 1, -1)
         if os.path.exists(ret):
             return os.path.join(self.path, file_name)
+        elif temp != -1:
+            if os.name == "posix":
+                return os.getcwd() + '/' + file_name
+            else:
+                return os.getcwd() + '\\' + file_name
         else:
             return None
 

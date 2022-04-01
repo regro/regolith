@@ -1,22 +1,16 @@
 """Builder for Current and Pending Reports."""
-import datetime
-import time
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import month_to_int
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_grants,
-    fuzzy_retrieval,
 )
 
 
 class ManRevBuilder(LatexBuilderBase):
     """Build a manuscript review from database entries"""
     btype = "review-man"
-    needed_dbs = ['refereeReports']
+    needed_colls = ['refereeReports']
 
     def construct_global_ctx(self):
         """Constructs the global context"""

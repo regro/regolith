@@ -1,0 +1,28 @@
+african_swallows:
+  date: '2019-12-01'
+  papers:
+    - doi: 10.1107/97809553602060000935
+      text: Very basic, but brief, intro to african swallows
+  title: A step-by-step pathway towards african swallow understanding.
+getting_started_with_pdf:
+  day: 15
+  month: 12
+  papers:
+    - doi: 10.1107/97809553602060000935
+      text: Very basic, but brief, intro to powder diffraction in general
+    - doi: 10.1039/9781847558237-00464
+      text: Lightest weight overview of PDF analysis around.  Good starting point
+    - url: http://www.diffpy.org
+      text: Download and install PDFgui software and run through the step by step
+        tutorial under the help tab
+  purpose: Beginning reading about PDF
+  title: A step-by-step pathway towards PDF understanding.  It is recommended to read
+    the papers in the order they are listed here.
+  year: 2019
+test_the_lister:
+  date: 2021-04-01
+  papers:
+    - doi: 10.1021/nn501591g
+      text: The description of symbolic computing in Python
+  purpose: Test the lister
+  title: A list to test the lister

@@ -104,7 +104,7 @@ def test_exactness_setting_multi2():
     assert isinstance(z["a"]["m"], list)
     assert isinstance(z["a"].maps[0], dict)
     assert g is z["a"].maps[1]["mm"]
-    assert z["a"]["mm"] is g
+    assert z["a"]["mm"] == g
     assert z["a"]["m"] == [1, 2, 3, 4]
 
 
@@ -121,7 +121,7 @@ def test_exactness_setting_multi_novel():
     assert isinstance(z["a"]["m"], list)
     assert isinstance(z["a"].maps[0], dict)
     assert g is z["a"].maps[0]["mm"]
-    assert g is z["a"]["mm"]
+    assert g == z["a"]["mm"]
 
 
 def test_dicts_in_lists():

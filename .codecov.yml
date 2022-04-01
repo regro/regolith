@@ -26,6 +26,7 @@ coverage:
       tests:
         target: 97.9%
         paths: '*/tests/.*'
+        if_not_found: success
 
 flags:
   tests:

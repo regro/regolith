@@ -1,17 +1,21 @@
 """Implementation of commands for command line."""
-import os
-from pprint import pprint
-import re
 import json
+import os
+import re
 import sys
+from pprint import pprint
 
-from regolith.tools import string_types
 from regolith.builder import builder, BUILDERS
-from regolith.emailer import emailer as email
 from regolith.deploy import deploy as dploy
+from regolith.emailer import emailer
+from regolith.helper import HELPERS, helpr
+from regolith.runcontrol import RunControl
+from regolith.tools import string_types
 
-RE_AND = re.compile("\s+and\s+")
-RE_SPACE = re.compile("\s+")
+email = emailer
+
+RE_AND = re.compile(r"\s+and\s+")
+RE_SPACE = re.compile(r"\s+")
 
 INGEST_COLL_LU = {".bib": "citations"}
 
@@ -111,12 +115,25 @@ def build_db_check(rc):
     dbs = set()
     for t in rc.build_targets:
         bldr = BUILDERS[t]
-        needed_dbs = getattr(bldr, 'needed_dbs', None)
+        needed_colls = getattr(bldr, 'needed_colls', None)
         # If the requested builder doesn't state DB deps then it requires
         # all dbs!
-        if not needed_dbs:
+        if not needed_colls:
             return None
-        dbs.update(needed_dbs)
+        dbs.update(needed_colls)
+    return dbs
+
+
+def helper_db_check(rc):
+    """Checks which DBs a builder needs"""
+    dbs = set()
+    bldr = HELPERS[rc.helper_target][0]
+    needed_colls = getattr(bldr, 'needed_colls', None)
+    # If the requested builder doesn't state DB deps then it requires
+    # all dbs!
+    if not needed_colls:
+        return None
+    dbs.update(needed_colls)
     return dbs
 
 
@@ -125,6 +142,12 @@ def build(rc):
     for t in rc.build_targets:
         bldr = builder(t, rc)
         bldr.build()
+
+
+def helper(rc):
+    """Runs the helper targets"""
+    hlpr = helpr(rc.helper_target, rc)
+    hlpr.hlp()
 
 
 def deploy(rc):
@@ -160,6 +183,38 @@ def yaml_to_json(rc):
         base, ext = os.path.splitext(inp)
         out = base + ".json"
         fsclient.yaml_to_json(inp, out)
+
+
+def fs_to_mongo(rc: RunControl) -> None:
+    """Convert database collection from filesystem to mongo db.
+
+    Parameters
+    ----------
+    rc : RunControl
+        The RunControl. The mongo client will be created according to 'mongodbpath' in it. The databases will
+        be loaded according to the 'databases' in it.
+    """
+    from regolith.mongoclient import MongoClient
+    client = MongoClient(rc)
+    dbs = getattr(rc, 'databases')
+    for db in dbs:
+        client.import_database(db)
+    return
+
+
+def mongo_to_fs(rc: RunControl) -> None:
+    """Convert database collection from filesystem to mongo db.
+
+    Parameters
+    ----------
+    rc : RunControl
+        The RunControl. The mongo client will be created according to 'mongodbpath' in it. The databases will
+        be loaded according to the 'databases' in it.
+    """
+    dbs = getattr(rc, 'databases')
+    for db in dbs:
+        rc.client.export_database(db)
+    return
 
 
 def validate(rc):

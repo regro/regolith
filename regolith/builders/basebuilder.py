@@ -124,9 +124,6 @@ class LatexBuilderBase(BuilderBase):
     def pdf(self, base):
         """Compiles latex files to PDF"""
         if self.rc.pdf:
-            self.run(["latex"] + LATEX_OPTS + [base + ".tex"])
-            self.run(["bibtex"] + [base + ".aux"])
-            self.run(["latex"] + LATEX_OPTS + [base + ".tex"])
             if os.name == 'nt':
                 self.run(["pdflatex"] + LATEX_OPTS + [base + ".tex"])
             else:
