@@ -51,19 +51,6 @@ class GrantReportBuilder(LatexBuilderBase):
         """Render latex template"""
         rc = self.rc
 
-        # Convert Date Strings to Datetime Objects
-        if not rc.from_date:
-            raise ValueError ("ERROR: need begin for the report period."
-                              "Please rerun specifying --from and --to in YYYY-MM-DD format.")
-        else:
-            rp_start_date = date_parser.parse(rc.from_date).date()
-        if not rc.to_date:
-            rp_end_date = date.today()
-        else:
-            rp_end_date = date_parser.parse(rc.to_date).date()
-        report_dates = {'begin_date': rp_start_date,
-                        'end_date': rp_end_date}
-
         # NSF Grant _id
         if not rc.grants:
             raise RuntimeError(
@@ -75,6 +62,24 @@ class GrantReportBuilder(LatexBuilderBase):
                 "Error: more than one grant specified. Please rerun with"
                 "only a single grant.")
         grant_id = rc.grants[0]
+        grant = [grant for grant in self.gtx["grants"] if grant.get("_id") == grant_id][0]
+        grant_dates = get_dates(grant)
+        print(grant_dates)
+
+        # Convert Date Strings to Datetime Objects
+        if not rc.from_date:
+            rp_start_date = grant_dates.get('begin_date')
+        else:
+            rp_start_date = date_parser.parse(rc.from_date).date()
+        if not rc.to_date:
+            rp_end_date = date.today()
+        else:
+            rp_end_date = date_parser.parse(rc.to_date).date()
+        report_dates = {'begin_date': rp_start_date,
+                        'end_date': rp_end_date}
+        print(f"INFO: generating report for grant {grant_id} for the period"
+              f"from {rp_start_date} to {rp_end_date})")
+
 
         # Get prum associated to grant and active during reporting period
         #        institutions_coll = [inst for inst in self.gtx["institutions"]]
