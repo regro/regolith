@@ -26,7 +26,7 @@
 <h1><a href="#who">Who are we?</a></h1><br/>
 {% for p in people %}
   <a href="{{root}}/people/{{p['_id']}}.html" class="image-link">
-    <img src="{{p.get('avatar')}}" style="width:100px;height:100px;"/>
+    <img src="{{p.get('avatar')}}" style="width:100px"/>
   </a>
   <h3><a href="{{root}}/people/{{p['_id']}}.html">{{p['title']}} {{p['name']}}</a></h3>
   <ul>
