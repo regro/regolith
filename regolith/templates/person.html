@@ -4,7 +4,7 @@
 {% endblock header %}
 {% block content %}
 <h1>{{p['position'].capitalize()}}</h1>
-<img src="{{p.get('avatar')}}" style="width:200px;height:200px;"/>
+<img src="{{p.get('avatar')}}" style="width:200px"/>
 <p>{{p.get('bio', '').replace('\n\n', '</p><p>')}}</p>
 
 
