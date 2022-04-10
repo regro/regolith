@@ -62,6 +62,7 @@ helper_map = [
       "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
       "--title", "On the roundness of the Earth", "--status", "in-prep",
       "--notes", "this is a sample added presentation",
+      "--presentation-url", "http://drive.google.com/SEV356DV",
       "--no_cal"],
      "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\n"),
     (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],

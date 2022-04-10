@@ -1545,6 +1545,7 @@ EXEMPLARS = {
                 "We hope the weather will be sunny",
                 "if the weather is nice we will go to the " "beach",
             ],
+            "presentation_url": "http://github.com/blob/my_talk.pdf",
             "project": "18sob_clustermining",
             "status": "accepted",
             "title": "Graphitic Dephenestration",
@@ -3852,6 +3853,11 @@ SCHEMAS = {
             "description": "any reminder or memory aid about anything",
             "required": False,
             "anyof_type": ["list", "string"],
+        },
+        "presentation_url": {
+            "description": "the url to the presentation on Google slides, GitHub or wherever",
+            "required": False,
+            "type": "string",
         },
         "project": {
             "description": "project or list of projects that this "

@@ -55,6 +55,7 @@
   notes:
     - We hope the weather will be sunny
     - if the weather is nice we will go to the beach
+  presentation_url: http://github.com/blob/my_talk.pdf
   project: 18sob_clustermining
   status: accepted
   title: Graphitic Dephenestration
@@ -71,6 +72,7 @@
   meeting_name: flat earth
   notes:
     - this is a sample added presentation
+  presentation_url: http://drive.google.com/SEV356DV
   project:
     - all
   status: in-prep
