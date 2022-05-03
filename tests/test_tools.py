@@ -34,7 +34,7 @@ from regolith.tools import (
     get_formatted_crossref_reference,
     compound_dict,
     compound_list, filter_employment_for_advisees,
-    get_tags, dereference_institution
+    get_tags, dereference_institution, filter_patents
 )
 
 PEOPLE_COLL = [
@@ -2153,6 +2153,52 @@ def test_filter_presentations(args, kwargs, expected):
     actual = filter_presentations(*args, **kwargs)
     assert actual == expected
 
+patent1 = [{"_id": "patent1", "events": [
+           {"type": "provisional_filing", "description": "the first provisional", "date": "2009-06-03", "number":"13/800,009"},
+           {"type": "abandonment", "description": "the abandonment",
+            "day": 3, "month": 6, "year": 2019},
+           ],
+           "inventors":["sbillinge","A. Friend"],
+           "status":"abandoned",
+           "title": "A system or method to change the world",
+            "type": "patent"
+           }]
+@pytest.mark.parametrize(
+    "coll, target, since, before, expected", [
+        (patent1,
+         "sbillinge",
+         "2000-01-01",
+         "2022-01-01",
+        patent1),
+        (patent1,
+         "sbillinge",
+         "2010-01-01",
+         "2022-01-01",
+         patent1),
+        (patent1,
+         "sbillinge",
+         "2020-01-01",
+         "2022-01-01",
+         None),
+        (patent1,
+         "Simon Billinge",
+         "2000-01-01",
+         "2022-01-01",
+         patent1),
+        (patent1,
+         "ascopatz",
+         "2000-01-01",
+         "2022-01-01",
+         None),
+        (patent1,
+         "sbillinge",
+         "2000-01-01",
+         "2002-01-01",
+         None),
+    ]
+)
+def test_filter_patents(coll, target, since, expected):
+    actual = filter_patents(coll, PEOPLE_COLL, target, since=since, before=before)
 
 @pytest.mark.parametrize(
     "coll, expected", [

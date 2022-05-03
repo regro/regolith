@@ -408,61 +408,62 @@ def filter_facilities(people, begin_period, type, verbose=False):
     return facilities
 
 
-def filter_patents(patentscoll, people, target, since=None, before=None):
+def filter_patents(patentscoll, peoplecoll, target, since=None):
+    '''
+    get a target person's patents and their events
+
+    Parameters
+    ----------
+    patentscoll collection (list of dicts)
+      the collection of patents
+    peoplecoll collection
+      the collection of people for dereferencing
+    target string
+      the target person id or name or alias
+    since
+      the date from which the patent events should be returned
+
+    Returns
+    -------
+    the patents collection (list of dicts)
+
+    '''
     patents = []
     allowed_statuses = ["active", "pending"]
-    for i in patentscoll:
-        if i.get("status") in allowed_statuses and i.get("type") in "patent":
+    for patent in patentscoll:
+        if patent.get("status") in allowed_statuses and patent.get("type") in "patent":
             inventors = [
                 fuzzy_retrieval(
-                    people,
+                    peoplecoll,
                     ["aka", "name", "_id"],
                     inv,
                     case_sensitive=False,
                 )
-                for inv in i['inventors']
+                for inv in patent['inventors']
+
             ]
             person = fuzzy_retrieval(
-                people,
+                peoplecoll,
                 ["aka", "name", "_id"],
                 target,
                 case_sensitive=False,
             )
             if person in inventors:
-                if i.get('end_year'):
-                    end_year = i.get('end_year')
-                else:
-                    end_year = date.today().year
-                end_date = date(end_year,
-                                i.get("end_month", 12),
-                                i.get("end_day", 28))
                 if since:
-                    if end_date >= since:
-                        if not i.get('month'):
-                            month = i.get("begin_month", 0)
-                            i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
-                        else:
-                            i['month'] = SHORT_MONTH_NAMES[
-                                month_to_int(i['month'])]
-
-                        events = [event for event in i["events"] if
-                                  date(event["year"], event["month"],
-                                       event.get("day", 28)) > since]
-                        events = sorted(events,
-                                        key=lambda event: date(
-                                            event["year"],
-                                            event["month"],
-                                            event.get("day", 28)))
-                        i["events"] = events
-                        patents.append(i)
-                else:
-                    events = [event for event in i["events"]]
+                    events = [event for event in patent["events"] if
+                              get_dates(event).get('date',
+                                               'end_date') > since]
                     events = sorted(events,
-                                    key=lambda event: date(event["year"],
-                                                           event["month"],
-                                                           28))
-                    i["events"] = events
-                    patents.append(i)
+                                    key=lambda event: get_dates(event).get('date', 'end_date'
+                                                                    ))
+                    patent["events"] = events
+                    patents.append(patent)
+                else:
+                    events = [event for event in patent["events"]]
+                    events = sorted(events,
+                                    key=lambda event: get_dates(event).get('date', 'end_date'))
+                    patent["events"] = events
+                    patents.append(patent)
     return patents
 
 
