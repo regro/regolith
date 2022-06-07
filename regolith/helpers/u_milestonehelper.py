@@ -224,6 +224,13 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 if rc.finish:
                     rc.status = "finished"
                     doc.update({'end_date': now})
+                    notes = doc.get("notes", [])
+                    for i in range(len(notes)): 
+                        note = notes[i]
+                        parenthesis_index = note.find('()')
+                        if parenthesis_index != -1:
+                            notes[i] = note[:parenthesis_index+1] + 'x' + note[parenthesis_index+1:]
+                    doc["notes"] = notes                 
                     if identifier == 'deliverable':
                         name = 'deliverable'
                     else:
