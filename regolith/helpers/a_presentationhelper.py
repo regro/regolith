@@ -91,6 +91,10 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
+    subpi.add_argument("--expense_db",
+                       help="The database where the expense collection will be updated. "
+                            " Defaults to first database in the regolithrc.json file.",
+                       )
     subpi.add_argument("--id",
                        help="Override the default id created from the date, "
                             "speaker and place by specifying an id here",
@@ -118,6 +122,8 @@ class PresentationAdderHelper(DbHelperBase):
         rc.coll = f"{TARGET_COLL}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
+        if not rc.expense_db:
+            rc.expense_db = rc.databases[0]["name"]
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
         )
@@ -218,7 +224,7 @@ class PresentationAdderHelper(DbHelperBase):
             rc.where = "tbd"
             rc.status = "unsubmitted"
             edoc = expense_constructor(key, begin_date, end_date, rc)
-            rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
-            print(f"{key} has been added in {EXPENSES_COLL}")
+            rc.client.insert_one(rc.expense_db, EXPENSES_COLL, edoc)
+            print(f"{key} has been added in {EXPENSES_COLL} in database {rc.expense_db}")
 
         return
