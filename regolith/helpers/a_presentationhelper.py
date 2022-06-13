@@ -100,8 +100,8 @@ def subparser(subpi):
     subpi.add_argument("--no_cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
-    subpi.add_argument("--gitlab", 
-                       help=f"add presentation to gitlab repo", 
+    subpi.add_argument("--create_talk_repo",
+                       help=f"add presentation to gitlab repo under talks",
                        action="store_true")
     return subpi
 
@@ -151,33 +151,6 @@ class PresentationAdderHelper(DbHelperBase):
                     wait_bool = add_to_google_calendar(event)
                     jump += 1
 
-        # if gitlab box is checked, creates gitlab repo in talks group
-
-        if rc.gitlab:
-            headers = {
-                # TODO : store this in environment variable somehow
-                'PRIVATE-TOKEN': '<api_authentication_key>'
-            }
-
-            # namespace_id = 35 always because talks group id is 35
-            # name derived by combining last 2 digits of the begin_date year, the begin_date month, first 2
-            # letters of person, underscore, place
-
-            # TODO : assuming begin_date is in correct format and follows yyyy-mm-dd
-            params = {
-                'name': rc.begin_date.strip()[2:4] + rc.begin_date.strip()[5:7] + rc.person.strip()[0:2]
-                        + '_' + rc.place.strip(),
-                'namespace_id': '35',
-                'initialize_with_readme': 'false'
-            }
-
-            try:
-                response = requests.post(
-                    'https://gitlab.thebillingegroup.com/api/v4/projects/', headers=headers, json=params
-                )
-            except requests.exceptions.RequestException:
-                print("ERROR: Issue with GitLab API call")
-
         # dates
         # TODO : add date format check?
         begin_date = date_parser.parse(rc.begin_date).date()
@@ -205,7 +178,6 @@ class PresentationAdderHelper(DbHelperBase):
 
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
-        print(pdocl)
         if len(pdocl) > 0:
             raise RuntimeError(
                 "This entry appears to already exist in the collection")
@@ -255,6 +227,33 @@ class PresentationAdderHelper(DbHelperBase):
             edoc = expense_constructor(key, begin_date, end_date, rc)
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
+
+        # if gitlab box is checked, creates gitlab repo in talks group
+
+        if rc.create_talk_repo:
+            headers = {
+                # TODO : store this in environment variable somehow
+                'PRIVATE-TOKEN': '<api_authentication_key>'
+            }
+
+            # namespace_id = 35 always because talks group id is 35
+            # name derived by combining last 2 digits of the begin_date year, the begin_date month, first 2
+            # letters of person, underscore, place
+
+            params = {
+                'name': key,
+                'namespace_id': '35',
+                'initialize_with_readme': 'false'
+            }
+
+            try:
+                response = requests.post(
+                    'https://gitlab.thebillingegroup.com/api/v4/projects/', headers=headers, json=params
+                )
+                print(f"repo {key} has been created in talks: https://gitlab.thebillingegroup.com/talks/{key}")
+            except requests.exceptions.RequestException:
+                print("ERROR: Issue with GitLab API call")
         return
-    
+
+
             
