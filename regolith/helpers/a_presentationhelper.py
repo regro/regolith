@@ -66,7 +66,8 @@ def subparser(subpi):
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="note or notes to be inserted as a list into the notes field, "
                             "separate notes with spaces.  Place inside quotes if the note "
-                            "itself contains spaces."
+                            "itself contains spaces.",
+                       default= []
                        )
     subpi.add_argument("-s", "--status",
                        choices=PRESENTATION_STATI,
