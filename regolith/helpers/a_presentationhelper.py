@@ -67,14 +67,14 @@ def subparser(subpi):
                        help="note or notes to be inserted as a list into the notes field, "
                             "separate notes with spaces.  Place inside quotes if the note "
                             "itself contains spaces.",
-                       default=[]
+                       default=None
                        )
     subpi.add_argument("-s", "--status",
                        choices=PRESENTATION_STATI,
                        help=f"status, from {PRESENTATION_STATI}, default is accepted",
                        default="accepted"
                        )
-    subpi.add_argument("-y", "--type", 
+    subpi.add_argument("-y", "--type",
                        choices=PRESENTATION_TYPES,
                        help=f"types, from {PRESENTATION_TYPES}. Default is invited",
                        default="invited"
@@ -100,7 +100,6 @@ def subparser(subpi):
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
     return subpi
-
 
 
 class PresentationAdderHelper(DbHelperBase):
@@ -132,11 +131,11 @@ class PresentationAdderHelper(DbHelperBase):
         rc = self.rc
         if not rc.no_cal:
             event = {
-                        'summary': rc.name,
-                        'location': rc.place,
-                        'start': {'date': rc.begin_date},
-                        'end': {'date': rc.end_date}
-                    }
+                'summary': rc.name,
+                'location': rc.place,
+                'start': {'date': rc.begin_date},
+                'end': {'date': rc.end_date}
+            }
             cal_update_bool = add_to_google_calendar(event)
             if not cal_update_bool:
                 google_cal_auth_flow()
@@ -178,7 +177,6 @@ class PresentationAdderHelper(DbHelperBase):
         else:
             pdoc = {}
 
-
         if not rc.authors:
             authors = [rc.person]
         else:
@@ -190,7 +188,7 @@ class PresentationAdderHelper(DbHelperBase):
                      'begin_date': begin_date,
                      'end_date': end_date,
                      })
-        if rc.notes:
+        if rc.notes is not None:
             pdoc.update({"notes": rc.notes})
         if rc.presentation_url:
             pdoc.update({"presentation_url": rc.presentation_url})
@@ -199,10 +197,10 @@ class PresentationAdderHelper(DbHelperBase):
             pdoc.update({"webinar": True})
         if rc.type in ['seminar', 'colloquium']:
             pdoc.update({"institution": rc.place,
-                        "department": rc.name})
+                         "department": rc.name})
         else:
             pdoc.update({"location": rc.place,
-                        "meeting_name": rc.name})
+                         "meeting_name": rc.name})
         pdoc.update({"project": ['all'],
                      "status": rc.status,
                      "title": rc.title,
