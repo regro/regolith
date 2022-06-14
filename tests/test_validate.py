@@ -3,6 +3,9 @@ import sys
 from io import StringIO
 
 import pytest
+
+from subprocess import CalledProcessError
+
 from xonsh.lib import subprocess
 
 from regolith.main import main
@@ -60,6 +63,6 @@ def test_validate_bad(make_bad_db):
     os.chdir(repo)
     try:
         subprocess.check_output(["regolith", "validate"])
-    except subprocess.CalledProcessError as e:
+    except CalledProcessError as e:
         assert "Errors found in " in e.output
         assert "NO ERRORS IN DBS" not in e.output
