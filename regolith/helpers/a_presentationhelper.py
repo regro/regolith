@@ -5,6 +5,9 @@ import time
 import dateutil.parser as date_parser
 import threading
 
+import requests
+
+from pprint import pprint
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -98,6 +101,9 @@ def subparser(subpi):
     subpi.add_argument("--no_cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
+    subpi.add_argument("-r", "--talks_repo",
+                       help=f"Add presentation to talks repo in GitLab",
+                       action="store_true")
     return subpi
 
 
@@ -144,7 +150,18 @@ class PresentationAdderHelper(DbHelperBase):
                     time.sleep(1)
                     wait_bool = add_to_google_calendar(event)
                     jump += 1
-
+        if rc.talks_repo:
+            key = _id_key()
+            API_URL = "https://api.github.com"
+            repo_key = '{"repo_name": "Talks"}'
+            headers = {
+                "Authorization": "token" + key,
+                "Accept": "application/vnd.github.v3+json"
+            }
+            try:
+                r = requests.post(API_URL+"/user/repos", data=repo_key, headers=headers)
+            except requests.exceptions.RequestException as error:
+                print("Error.")
         # dates
         begin_date = date_parser.parse(rc.begin_date).date()
         end_date = date_parser.parse(rc.end_date).date()
