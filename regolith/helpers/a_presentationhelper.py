@@ -7,7 +7,7 @@ import threading
 
 import requests
 
-from pprint import pprint
+
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -151,15 +151,14 @@ class PresentationAdderHelper(DbHelperBase):
                     wait_bool = add_to_google_calendar(event)
                     jump += 1
         if rc.talks_repo:
-            key = _id_key()
-            API_URL = "https://api.github.com"
-            repo_key = '{"repo_name": "Talks"}'
+            key = _id_key
+            URL = "https://gitlab.thebillingegroup.com/projects"
+            data = {'repo_name': key}
             headers = {
-                "Authorization": "token" + key,
-                "Accept": "application/vnd.github.v3+json"
+                "Authorization": key,
             }
             try:
-                r = requests.post(API_URL+"/user/repos", data=repo_key, headers=headers)
+                r = requests.post(URL, data=data, headers=headers)
             except requests.exceptions.RequestException as error:
                 print("Error.")
         # dates
