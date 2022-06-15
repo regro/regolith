@@ -6,6 +6,8 @@ import pathlib
 import platform
 import re
 import sys
+import json
+import requests
 from copy import copy
 from copy import deepcopy
 from datetime import datetime, date
@@ -2101,6 +2103,40 @@ def google_cal_auth_flow():
     with open(tokenfile, 'w') as token:
         token.write(creds.to_json())
     # Save the credentials for the next run
+
+def add_to_gitlab(name):
+    """Takes a newly created event, and adds it to the user's google calendar
+
+    Parameters:
+        name - the name/key of the event
+
+    Returns:
+        None
+    """
+
+    tokendir = os.path.expanduser("~/.config/regolith/tokens/gitlab_api")
+    os.makedirs(tokendir, exist_ok=True)
+    tokenfile = os.path.join(tokendir, 'token.json')
+    data = {}
+    # print(tokenfile)
+    if os.path.exists(tokenfile):
+        # if it exists, grab the personal access token
+        with open(tokenfile) as fp:
+            data = json.load(fp)
+
+    private_token = data.get('headers').get('PRIVATE-TOKEN')
+    if private_token:
+        data['params']['name'] = name
+        try:
+            response = requests.post(data['url'], headers=data['headers'], params=data['params'])
+            with open(tokenfile, 'w') as f:
+                json.dump(data, f)
+            if response.status_code in {200, 201}:
+                print(f"repo {name} has been created in talks: https://gitlab.thebillingegroup.com/talks/{name}")
+        except requests.exceptions.RequestException:
+            print("ERROR: Issue with GitLab API call")
+    else:
+        print("ERROR: Missing private access token (PRIVATE-TOKEN) in headers of token.json file for GitLab")
 
 def get_tags(coll):
     '''

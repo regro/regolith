@@ -5,8 +5,6 @@ import time
 import dateutil.parser as date_parser
 import threading
 
-import requests 
-
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -15,7 +13,8 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     add_to_google_calendar,
-    google_cal_auth_flow
+    google_cal_auth_flow,
+    add_to_gitlab
 )
 from gooey import GooeyParser
 
@@ -100,8 +99,8 @@ def subparser(subpi):
     subpi.add_argument("--no_cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
-    subpi.add_argument("--create_talk_repo",
-                       help=f"add presentation to gitlab repo under talks",
+    subpi.add_argument("-r", "--no_talk_repo",
+                       help=f"Do not add the presentation to gitlab repo under talks",
                        action="store_true")
     return subpi
 
@@ -228,32 +227,7 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
-        # if gitlab box is checked, creates gitlab repo in talks group
-
-        if rc.create_talk_repo:
-            headers = {
-                # TODO : store this in environment variable somehow
-                'PRIVATE-TOKEN': '<api_authentication_key>'
-            }
-
-            # namespace_id = 35 always because talks group id is 35
-            # name derived by combining last 2 digits of the begin_date year, the begin_date month, first 2
-            # letters of person, underscore, place
-
-            params = {
-                'name': key,
-                'namespace_id': '35',
-                'initialize_with_readme': 'false'
-            }
-
-            try:
-                response = requests.post(
-                    'https://gitlab.thebillingegroup.com/api/v4/projects/', headers=headers, json=params
-                )
-                print(f"repo {key} has been created in talks: https://gitlab.thebillingegroup.com/talks/{key}")
-            except requests.exceptions.RequestException:
-                print("ERROR: Issue with GitLab API call")
+        # creates gitlab repo under talks by default (when box is not checked)
+        if not rc.no_talk_repo:
+            add_to_gitlab(key)
         return
-
-
-            
