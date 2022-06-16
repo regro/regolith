@@ -2120,32 +2120,32 @@ def create_talk_repo(name, rc):
     data = {}
 
     if rc.talk_repo:
+        if not rc.talk_repo[0]['params'] or not rc.talk_repo[0]['params']['namespace_id'] or not rc.talk_repo[0]['url']:
+            print("The request URL info is not valid (url or parameters may not be defined).")
+
         token = rc.gitlab_private_token
-        repo_url = rc.talk_repo[0]['url']
-        param = rc.talk_repo[0]['params']
+        with open(regorcfile) as fp:
+            data = json.load(fp)
         if token:
-            with open(regorcfile) as fp:
-                data = json.load(fp)
+            repo_url = rc.talk_repo[0]['url']
             data['talk_repo'][0]['params']['name'] = name
             try:
-                response = requests.post(repo_url, params=param, headers={'PRIVATE-TOKEN': '{}'.format(token)})
-                print(f"status_code: {response.status_code}")
-                with open(regorcfile, 'w') as fp:
-                    json.dump(data, fp)
+                response = requests.post(repo_url, params=data['talk_repo'][0]['params'], headers={'PRIVATE-TOKEN': '{}'.format(token)})
+                # with open(regorcfile, 'w') as fp:
+                #     json.dump(data, fp)
             except requests.exceptions.RequestException:
-                print("ERROR: Issue with GitLab API call. Check that your private token is valid."
-                      "\nTo create a private token, refer to these instructions: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html")
+                print("Issue with GitLab API call. Check that your private token is valid.")
             finally:
                 if response.status_code in [200, 201]:
-                    print(f"repo {name} has been created in talks: {repo_url}{name}")
+                    print(f"repo {name} has been created in talks")
                 else:
-                    print("ERROR: Issue with GitLab API call. Check that your private token is valid.")
+                    print("Issue with GitLab API call. Check that your private token is valid.")
         else:
-            print("Put your gitlab private token in user.json (in ~/.config/regolith)"
+            print("Put your gitlab private token in user.json (found in ~/.config/regolith)"
                   "as the value for \"gitlab_private_token\". \nTo create a private "
                   "token, refer to these instructions: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html")
     else:
-        print("talk_repo")
+        print("The request URL info was not found. Put valid request URL info in regolithrc.json (found in ~/dbs/rg-db-group/local).")
 
 def get_tags(coll):
     '''
