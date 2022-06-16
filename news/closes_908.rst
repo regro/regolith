@@ -1,6 +1,6 @@
 **Added:**
- * create_talk_repo box to presentation in presentations
- * functionality to presentation adder to create a gitlab repo in talks 
+ * no_talk_repo box added to presentation helper
+ * functionality to automatically create talk repo in gitlab for presentation
 
 **Changed:** None
 
