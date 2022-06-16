@@ -155,7 +155,8 @@ class PresentationAdderHelper(DbHelperBase):
             URL = "https://gitlab.thebillingegroup.com/projects"
             data = {'repo_name': key}
             headers = {
-                "Authorization": key,
+                "Authorization": "PRIVATE-TOKEN: <access_token>"
+                                 "https://gitlab.thebillingegroup.com/projects/api/v4/",
             }
             try:
                 r = requests.post(URL, data=data, headers=headers)
