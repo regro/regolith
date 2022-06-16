@@ -14,7 +14,7 @@ from regolith.tools import (
     get_pi_id,
     add_to_google_calendar,
     google_cal_auth_flow,
-    add_to_gitlab
+    create_talk_repo
 )
 from gooey import GooeyParser
 
@@ -96,10 +96,10 @@ def subparser(subpi):
                        help="Override the default id created from the date, "
                             "speaker and place by specifying an id here",
                        )
-    subpi.add_argument("--no_cal",
+    subpi.add_argument("--no-cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
-    subpi.add_argument("-r", "--no_talk_repo",
+    subpi.add_argument("-r", "--no-talk-repo",
                        help=f"Do not add the presentation to gitlab repo under talks",
                        action="store_true")
     return subpi
@@ -227,7 +227,6 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
-        # creates gitlab repo under talks by default (when box is not checked)
         if not rc.no_talk_repo:
-            add_to_gitlab(key)
+            create_talk_repo(key, rc)
         return

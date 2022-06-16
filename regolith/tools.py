@@ -18,6 +18,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from pathlib import Path
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
@@ -2104,39 +2105,47 @@ def google_cal_auth_flow():
         token.write(creds.to_json())
     # Save the credentials for the next run
 
-def add_to_gitlab(name):
-    """Takes a newly created event, and adds it to the user's google calendar
+def create_talk_repo(name, rc):
+    """Takes in the presentation name and creates a repo
 
     Parameters:
         name - the name/key of the event
+        rc - run control object
 
     Returns:
         None
     """
-
-    tokendir = os.path.expanduser("~/.config/regolith/tokens/gitlab_api")
-    os.makedirs(tokendir, exist_ok=True)
-    tokenfile = os.path.join(tokendir, 'token.json')
+    regorcdir = Path('~/dbs/rg-db-group/local')
+    regorcfile = regorcdir.expanduser().joinpath('regolithrc.json')
     data = {}
-    # print(tokenfile)
-    if os.path.exists(tokenfile):
-        # if it exists, grab the personal access token
-        with open(tokenfile) as fp:
-            data = json.load(fp)
 
-    private_token = data.get('headers').get('PRIVATE-TOKEN')
-    if private_token:
-        data['params']['name'] = name
-        try:
-            response = requests.post(data['url'], headers=data['headers'], params=data['params'])
-            with open(tokenfile, 'w') as f:
-                json.dump(data, f)
-            if response.status_code in {200, 201}:
-                print(f"repo {name} has been created in talks: https://gitlab.thebillingegroup.com/talks/{name}")
-        except requests.exceptions.RequestException:
-            print("ERROR: Issue with GitLab API call")
+    if rc.talk_repo:
+        token = rc.gitlab_private_token
+        repo_url = rc.talk_repo[0]['url']
+        param = rc.talk_repo[0]['params']
+        if token:
+            with open(regorcfile) as fp:
+                data = json.load(fp)
+            data['talk_repo'][0]['params']['name'] = name
+            try:
+                response = requests.post(repo_url, params=param, headers={'PRIVATE-TOKEN': '{}'.format(token)})
+                print(f"status_code: {response.status_code}")
+                with open(regorcfile, 'w') as fp:
+                    json.dump(data, fp)
+            except requests.exceptions.RequestException:
+                print("ERROR: Issue with GitLab API call. Check that your private token is valid."
+                      "\nTo create a private token, refer to these instructions: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html")
+            finally:
+                if response.status_code in [200, 201]:
+                    print(f"repo {name} has been created in talks: {repo_url}{name}")
+                else:
+                    print("ERROR: Issue with GitLab API call. Check that your private token is valid.")
+        else:
+            print("Put your gitlab private token in user.json (in ~/.config/regolith)"
+                  "as the value for \"gitlab_private_token\". \nTo create a private "
+                  "token, refer to these instructions: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html")
     else:
-        print("ERROR: Missing private access token (PRIVATE-TOKEN) in headers of token.json file for GitLab")
+        print("talk_repo")
 
 def get_tags(coll):
     '''
