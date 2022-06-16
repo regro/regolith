@@ -195,9 +195,8 @@ class PresentationAdderHelper(DbHelperBase):
                      'authors': authors,
                      'begin_date': begin_date,
                      'end_date': end_date,
+                     'notes': rc.notes,
                      })
-        if rc.notes:
-            pdoc.update({"notes": rc.notes})
         if rc.presentation_url:
             pdoc.update({"presentation_url": rc.presentation_url})
         if rc.webinar:
