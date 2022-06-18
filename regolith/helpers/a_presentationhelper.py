@@ -91,9 +91,9 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
-    subpi.add_argument("--expense_db",
+    subpi.add_argument("--expense-db",
                        help="The database where the expense collection will be updated. "
-                            " Defaults to first database in the regolithrc.json file.",
+                            "Defaults to first database in the regolithrc.json file.",
                        )
     subpi.add_argument("--id",
                        help="Override the default id created from the date, "
