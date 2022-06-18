@@ -2122,7 +2122,6 @@ def create_repo(name, rc):
     if rc.repos:
         url_info = rc.repos[0]['talk_repo']
         if url_info:
-            # since this validity is specific to talk_repo (i.e. gitlab's api), change based on new target requirements
             if not url_info[0]['params'] or not url_info[0]['params']['namespace_id'] or not url_info[0]['url']:
                 print(f"The request URL info is not valid (url or parameters may not be defined). {setup_message}")
         else: 
