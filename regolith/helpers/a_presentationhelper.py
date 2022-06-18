@@ -14,7 +14,7 @@ from regolith.tools import (
     get_pi_id,
     add_to_google_calendar,
     google_cal_auth_flow,
-    create_talk_repo
+    create_repo
 )
 from gooey import GooeyParser
 
@@ -227,6 +227,7 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
+        rc.repos[0]['talk_repo'][0]['params']['name'] = key
         if not rc.no_talk_repo:
-            create_talk_repo(key, rc)
+            create_repo(key, rc)
         return

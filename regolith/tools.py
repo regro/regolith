@@ -2105,47 +2105,49 @@ def google_cal_auth_flow():
         token.write(creds.to_json())
     # Save the credentials for the next run
 
-def create_talk_repo(name, rc):
-    """Takes in the presentation name and creates a repo
+def create_repo(name, rc):
+    """Takes in the name and creates a repo if the repo information is specified in regolithrc.json
 
     Parameters:
-        name - the name/key of the event
+        name - string
+            the name that will be used for the repository. e.g, the key of the presentation/projectum
         rc - run control object
 
     Returns:
         None
     """
-    regorcdir = Path('~/dbs/rg-db-group/local')
-    regorcfile = regorcdir.expanduser().joinpath('regolithrc.json')
-    data = {}
-
-    if rc.talk_repo:
-        if not rc.talk_repo[0]['params'] or not rc.talk_repo[0]['params']['namespace_id'] or not rc.talk_repo[0]['url']:
-            print("The request URL info is not valid (url or parameters may not be defined).")
-
+    setup_message = ("If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                     "please add repository information in regolithrc.json. See regolith documentation "
+                     "for details.")
+    if rc.repos:
+        url_info = rc.repos[0]['talk_repo']
+        if url_info:
+            # since this validity is specific to talk_repo (i.e. gitlab's api), change based on new target requirements
+            if not url_info[0]['params'] or not url_info[0]['params']['namespace_id'] or not url_info[0]['url']:
+                print(f"The request URL info is not valid (url or parameters may not be defined). {setup_message}")
+        else: 
+            print(setup_message)
         token = rc.gitlab_private_token
-        with open(regorcfile) as fp:
-            data = json.load(fp)
         if token:
-            repo_url = rc.talk_repo[0]['url']
-            data['talk_repo'][0]['params']['name'] = name
+            repo_url = url_info[0]['url']
+            param = url_info[0]['params']
             try:
-                response = requests.post(repo_url, params=data['talk_repo'][0]['params'], headers={'PRIVATE-TOKEN': '{}'.format(token)})
-                # with open(regorcfile, 'w') as fp:
-                #     json.dump(data, fp)
-            except requests.exceptions.RequestException:
-                print("Issue with GitLab API call. Check that your private token is valid.")
-            finally:
+                response = requests.post(repo_url, params=param, headers={'PRIVATE-TOKEN': '{}'.format(token)})
+                response.raise_for_status()
                 if response.status_code in [200, 201]:
                     print(f"repo {name} has been created in talks")
-                else:
-                    print("Issue with GitLab API call. Check that your private token is valid.")
+            except requests.exceptions.HTTPError:
+                print(f"Issue with the API call (status code: {response.status_code}). "
+                      f"Check that your private token and repository information are valid.")
+            except requests.exceptions.RequestException:
+                print(f"Issue with the API call (status code: {response.status_code}). "
+                      f"Check that your private token and repository information are valid.")
         else:
-            print("Put your gitlab private token in user.json (found in ~/.config/regolith)"
-                  "as the value for \"gitlab_private_token\". \nTo create a private "
-                  "token, refer to these instructions: https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html")
+            print("If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                  "please add your private authentication token in user.json. See regolith documentation "
+                  "for details.")
     else:
-        print("The request URL info was not found. Put valid request URL info in regolithrc.json (found in ~/dbs/rg-db-group/local).")
+        print(setup_message)
 
 def get_tags(coll):
     '''
