@@ -66,7 +66,8 @@ def subparser(subpi):
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="note or notes to be inserted as a list into the notes field, "
                             "separate notes with spaces.  Place inside quotes if the note "
-                            "itself contains spaces."
+                            "itself contains spaces.",
+                       default=[]
                        )
     subpi.add_argument("-s", "--status",
                        choices=PRESENTATION_STATI,
@@ -194,9 +195,8 @@ class PresentationAdderHelper(DbHelperBase):
                      'authors': authors,
                      'begin_date': begin_date,
                      'end_date': end_date,
+                     'notes': rc.notes,
                      })
-        if rc.notes:
-            pdoc.update({"notes": rc.notes})
         if rc.presentation_url:
             pdoc.update({"presentation_url": rc.presentation_url})
         if rc.webinar:

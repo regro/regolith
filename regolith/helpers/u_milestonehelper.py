@@ -224,6 +224,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 if rc.finish:
                     rc.status = "finished"
                     doc.update({'end_date': now})
+                    notes = doc.get("notes", [])
+                    notes_with_closed_items = [note.replace('()', '(x)', 1) for note in notes]
+                    doc["notes"] = notes_with_closed_items              
                     if identifier == 'deliverable':
                         name = 'deliverable'
                     else:
