@@ -2133,3 +2133,29 @@ def get_tags(coll):
     all_tags = list(set(all_tags))
     all_tags.sort()
     return all_tags
+
+
+def add_strings(list1, list2):
+    """add lists by interleaving the elements
+
+    given [a,b,c] and [d,e,f] returns [a,d,b,e,c,f]
+
+    Parameters
+    ----------
+    list1 list
+      the first list
+    list2 list
+      the second list
+
+    Returns
+    -------
+    the interleaved list
+
+    """
+    interleaved = []
+    list2.reverse()
+    for element in list1:
+        interleaved.append(element)
+        from2 = list2.pop()
+        interleaved.append(from2)
+    return interleaved

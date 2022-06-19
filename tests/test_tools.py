@@ -34,7 +34,7 @@ from regolith.tools import (
     get_formatted_crossref_reference,
     compound_dict,
     compound_list, filter_employment_for_advisees,
-    get_tags, dereference_institution
+    get_tags, dereference_institution, add_strings
 )
 
 PEOPLE_COLL = [
@@ -2174,5 +2174,17 @@ def test_get_tags_invalid():
         get_tags(coll)
         assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
 
-
+@pytest.mark.parametrize(
+    "inputs, expected", [
+        ([['a', 'b', 'c'], ['d', 'e', 'f']], ['a', 'd', 'b', 'e', 'c', 'f']),
+        ([['a', 'b', 'c'], ['d', 'e']], ['a', 'd', 'b', 'e', 'c']),#testing something
+        ([['a', 'b'], ['d', 'e', 'f']], ['a', 'd', 'b', 'e', 'f']),
+        ([[], ['d', 'e', 'f']], ['d', 'e', 'f']),
+        ([['a', 'b', 'c'], []], ['a', 'b', 'c']),
+        (['abc', ['d', 'e', 'f']], []),
+    ]
+)
+def test_add_strings(inputs, expected):y
+    actual = add_strings(inputs[0], inputs[1])
+    assert expected == actual
 
