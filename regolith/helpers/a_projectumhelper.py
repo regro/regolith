@@ -5,6 +5,7 @@
 """
 import datetime as dt
 import dateutil.parser as date_parser
+import oauth2client as oauth2client
 from dateutil.relativedelta import relativedelta
 
 from regolith.helpers.basehelper import DbHelperBase
@@ -14,6 +15,9 @@ from regolith.tools import (
     get_pi_id,
 )
 from gooey import GooeyParser
+from apiclient import discovery
+from httplib2 import Http
+from oauth2client import file
 
 TARGET_COLL = "projecta"
 
@@ -366,3 +370,26 @@ class ProjectumAdderHelper(DbHelperBase):
             "status": "finished"
         }})
         return pdoc
+
+    # create Google Doc page for prum in Google Drive 'bg-projects'
+    def gdoc_generator(self):
+        # To use prum name for generated document name
+        rc = self.rc
+
+        # Authenticate user
+        store = oauth2client.file.Storage('credentials.json')
+        credentials = store.get()
+        http = credentials.authorize(Http())
+        drive = discovery.build('drive', 'v3', http=http)
+
+        # Use Gdoc API to generate blank document in 'bg-projects'
+        folder_id = '12yfN_X0k9NiLDt9pe14JhLyqULxM2-vK'
+        file_metadata = {
+            'name': rc.name,
+            'mimeType': 'application/vnd.google-apps.document',
+            'parents': [folder_id]
+        }
+        file = drive_service.files().create(body=file_metadata,
+                                            fields='id').execute()
+        print("New Google Docs page created for " + rc.name + " prum in 'bg-projects'.")
+
