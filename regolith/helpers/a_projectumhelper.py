@@ -6,6 +6,8 @@
 import datetime as dt
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
+import oauth2client as oauth2client
+import requests
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -14,6 +16,9 @@ from regolith.tools import (
     get_pi_id,
 )
 from gooey import GooeyParser
+from apiclient import discovery
+from httplib2 import Http
+from oauth2client import file
 
 TARGET_COLL = "projecta"
 
@@ -122,7 +127,7 @@ class ProjectumAdderHelper(DbHelperBase):
             'name': rc.name,
             'pi_id': rc.pi_id,
             'lead': rc.lead,
-            'notes': rc.notes,
+            'notes': rc.notes + "\nGoogle Doc: " + docs_address + "\n GitLab Project: ",
         })
         if rc.lead == "tbd":
             pdoc.update({
@@ -366,3 +371,30 @@ class ProjectumAdderHelper(DbHelperBase):
             "status": "finished"
         }})
         return pdoc
+
+    # create Google Doc page for prum in Google Drive 'bg-projects'
+    def gdoc_generator(self):
+        # To use prum name for generated document name
+        rc = self.rc
+
+        # Authenticate user
+        store = oauth2client.file.Storage('credentials.json')
+        credentials = store.get()
+        http = credentials.authorize(Http())
+        drive = discovery.build('drive', 'v3', http=http)
+
+        # Use Gdoc API to generate blank document in 'bg-projects'
+        folder_id = '12yfN_X0k9NiLDt9pe14JhLyqULxM2-vK'
+        file_metadata = {
+            'name': rc.name,
+            'mimeType': 'application/vnd.google-apps.document',
+            'parents': [folder_id]
+        }
+        file = drive_service.files().create(body=file_metadata,
+                                            fields='id').execute()
+        print("New Google Docs page created for " + rc.name + " prum in 'bg-projects'.")
+
+        # Store projects and docs addresses in prum item
+    general_docs_url = "https://docs.google.com/document/d/"
+    doc_id = oauth2client.file.get('id')
+    docs_address = requests.get(general_docs_url + doc_id)
