@@ -34,7 +34,8 @@ from regolith.tools import (
     get_formatted_crossref_reference,
     compound_dict,
     compound_list, filter_employment_for_advisees,
-    get_tags, dereference_institution
+    get_tags, dereference_institution,
+    validate_repo, validate_token, create_repo
 )
 
 PEOPLE_COLL = [
@@ -2173,6 +2174,70 @@ def test_get_tags_invalid():
     with pytest.raises(TypeError) as e_info:
         get_tags(coll)
         assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
+
+@pytest.mark.parametrize(
+    "inputs, expected", [
+        # everything is defined, return 1
+        ([{"repos": {"talk_repo": {"params": {"namespace_id": "35","initialize_with_readme": "false", "name": "repo name"},
+                         "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"},"prum_repo": {}}}], [1]),
+        # repos is not defined, return 0
+        ([{"repos": {}}], [0]),
+        # talk_repo is not defined, return 0
+        ([{"repos": {"talk_repo": {}, "prum_repo": {}}}], [0]),
+        # parameters are not defined
+        ([{"repos": {"talk_repo": {"params": {}, "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"},"prum_repo": {}}}], [0]),
+        # url is not defined
+        ([{"repos": {"talk_repo": {"params": {"namespace_id": "35","initialize_with_readme": "false", "name": "repo name"},"url": ""},"prum_repo": {}}}], [0]),
+        # namespace_id is not defined
+        ([{"repos": {"talk_repo": {"params": {"namespace_id": "", "initialize_with_readme": "false", "name": "repo name"},
+                         "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}, "prum_repo": {}}}], [0]),
+        # name is not defined
+        ([{"repos": {"talk_repo": {"params": {"namespace_id": "", "initialize_with_readme": "false", "name": ""},
+                         "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}, "prum_repo": {}}}], [0]),
+    ]
+)
+def test_validate_repo(inputs, expected):
+    from regolith.runcontrol import DEFAULT_RC, load_rcfile
+    import copy
+    # import sys
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(inputs[0])
+    # with open('dictrc.json', 'w') as f:
+    #     sys.stdout = f
+    #     print(rc.__dict__)
+    actual = validate_repo('talk_repo', rc)
+    assert actual == expected[0]
+
+@pytest.mark.parametrize(
+    "inputs, expected", [
+        # token is defined, return 1
+        ([{"gitlab_private_token": "<private-token>"}], [1]),
+        # token is not defined, return 0
+        ([{"gitlab_private_token": ""}], [0]),
+    ]
+)
+def test_validate_token(inputs, expected):
+    from regolith.runcontrol import DEFAULT_RC, load_rcfile
+    import copy
+    # import sys
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(inputs[0])
+    # with open('dictrc.json', 'w') as f:
+    #     sys.stdout = f
+    #     print(rc.__dict__)
+    actual = validate_token('gitlab_private_token', rc)
+    assert actual == expected[0]
+
+# not finished
+def test_create_repo():
+    from regolith.runcontrol import DEFAULT_RC
+    import unittest
+    from unittest import mock
+    rc = copy.copy(DEFAULT_RC)
+    actual = create_repo('test_repo', 'talk_repo', 'gitlab_private_token', rc)
+
+
+
 
 
 

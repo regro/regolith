@@ -2105,48 +2105,135 @@ def google_cal_auth_flow():
         token.write(creds.to_json())
     # Save the credentials for the next run
 
-def create_repo(name, rc):
-    """Takes in the name and creates a repo if the repo information is specified in regolithrc.json
+
+def validate_repo(target_repo, rc):
+    """checks if repo information is valid in rc.repos (i.e. that
+    (parameter requirements might change based on the platform/request e.g. GitHub/GitLab required info might vary)
+
+    does not check for whether they exist in rc (error raised automatically as KeyError or AttributeError)
+
+    Parameters:
+        target_repo - string
+            request info for target location defined in rc (e.g. 'talk_repo' or 'prum_repo')
+            setup in regolithrc.json
+        rc - run control object
+
+    Returns:
+        1 if repo information is valid and 0 if not
+    """
+    if rc.repos:
+        target_repo = rc.repos[target_repo]
+        if target_repo:
+            if target_repo['params']:
+                if not target_repo['params']['namespace_id'] or not target_repo['params']['name']:
+                    # print("setup message - params may not be defined, might lack required info")
+                    return 0
+            else:
+                # print("setup message - params may not be defined")
+                return 0
+            if target_repo['url']:
+                return 1
+            else:
+                # print("setup message - url may not be defined")
+                return 0
+        else:
+            # print(f"setup message - {repo_info} is not defined in rc ")
+            return 0
+    else:
+        # print("setup message - repos is not defined")
+        return 0
+
+def validate_token(token, rc):
+    """Checks if API authentication token is defined in rc
+    does not check for whether token exists in rc (error raised automatically with Attribute error)
+
+    Parameters:
+        token - string
+            the personal access token defined in rc (e.g. 'gitlab_private_token')
+            setup in user.json
+        rc - run control object
+
+    Returns:
+        1 if token is valid and 0 if not
+    """
+    if rc.__getattr__(token):
+        return 1
+    else:
+        return 0
+
+# not finished
+def create_repo(name, target_repo, token, rc):
+    """ Creates a repo if repo information and token is defined in rc
 
     Parameters:
         name - string
-            the name that will be used for the repository. e.g, the key of the presentation/projectum
+            name of the repo being created
+        target_repo - string
+            key in rc for target repo information
+        token - string
+            key in rc for token
+        rc - run control object
+
+    Returns:
+        (f"repo {name} has been created in talks") if successful
+        Warning/setup messages if unsuccessful
+    """
+
+
+def create_repo_old(name, repo_info, rc):
+    """
+    Creates a repo if the repo information is specified at repo_info in regolithrc.json.
+
+    Parameters:
+        name - string
+
+        repo_info - json? list object
+
         rc - run control object
 
     Returns:
         None
     """
-    setup_message = ("If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                     "please add repository information in regolithrc.json. See regolith documentation "
-                     "for details.")
+    # checks if rc.repos is defined, if not, sends setup (INFO) message
     if rc.repos:
-        url_info = rc.repos[0]['talk_repo']
-        if url_info:
-            if not url_info[0]['params'] or not url_info[0]['params']['namespace_id'] or not url_info[0]['url']:
-                print(f"The request URL info is not valid (url or parameters may not be defined). {setup_message}")
-        else: 
-            print(setup_message)
-        token = rc.gitlab_private_token
-        if token:
-            repo_url = url_info[0]['url']
-            param = url_info[0]['params']
-            try:
-                response = requests.post(repo_url, params=param, headers={'PRIVATE-TOKEN': '{}'.format(token)})
-                response.raise_for_status()
-                if response.status_code in [200, 201]:
-                    print(f"repo {name} has been created in talks")
-            except requests.exceptions.HTTPError:
-                print(f"Issue with the API call (status code: {response.status_code}). "
-                      f"Check that your private token and repository information are valid.")
-            except requests.exceptions.RequestException:
-                print(f"Issue with the API call (status code: {response.status_code}). "
-                      f"Check that your private token and repository information are valid.")
+        # checks if the repository info is defined in rc.repos, if not, sends setup (INFO) message
+        # if defined, check for token
+        if repo_info:
+            # checks if parameters, namespace id, or url are not defined, if not sends setup (INFO) message
+            if not repo_info['params'] or not repo_info['params']['namespace_id']:
+                print("WARNING: The request URL info is not valid (parameters may not be defined). "
+                      "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                      "please add repository information in regolithrc.json. See regolith documentation "
+                      "for details.")
+            elif not repo_info['url']:
+                print("WARNING: The request URL info is not valid (request url not found). "
+                      "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                      "please add repository information in regolithrc.json. See regolith documentation "
+                      "for details.")
+            else:
+                token = rc.gitlab_private_token
+                # if token exists, then try making the request
+                if token:
+                    try:
+                        response = requests.post(repo_info['url'], params=repo_info['params'], headers={'PRIVATE-TOKEN': '{}'.format(token)})
+                        response.raise_for_status()
+                        print(f"repo {name} has been created in talks")
+                    except requests.exceptions.HTTPError:
+                        raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
+                                        f"due to an issue with the API call (status code: {response.status_code}). "
+                                        f"Check that your private token and repository information are valid in "
+                                        f"regolithrc.json.")
+                    except requests.exceptions.RequestException as e:
+                        raise SystemExit(e)
+
         else:
-            print("If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                  "please add your private authentication token in user.json. See regolith documentation "
+            print("INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                  "please add repository information in regolithrc.json. See regolith documentation "
                   "for details.")
     else:
-        print(setup_message)
+        print("INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
+              "please add repository information in regolithrc.json. See regolith documentation "
+              "for details.")
 
 def get_tags(coll):
     '''
