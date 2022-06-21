@@ -64,7 +64,7 @@ helper_map = [
       "--notes", "this is a sample added presentation",
       "--presentation-url", "http://drive.google.com/SEV356DV",
       "--no_cal"],
-     "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\n"),
+     "2006as_mars has been added in presentations\n2006as_mars has been added in expenses in database test\n"),
     (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
