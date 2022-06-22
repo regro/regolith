@@ -143,7 +143,7 @@ class PresentationAdderHelper(DbHelperBase):
             # If the database is not known, exit with descriptive error message
             if not db_known:
                  raise RuntimeError(
-                    "WARNING: The expense database provided does not exist. "
+                    f"WARNING: The expense database provided, {rc.expense_db}, does not exist. "
                     "Please rerun specifying a known private database. "
                     "(Consider checking your spelling against the known databases listed in regolithrc.json.)"
                 )
@@ -155,11 +155,12 @@ class PresentationAdderHelper(DbHelperBase):
                     "or, at your own risk, use the --force option to add the presentation expense data to a public database"
                 )
         
-        # if no expense database is specified, set it as the first private database listed in rc. 
+        # if no expense database is specified (but there is still expense data associatied with the presentation,
+        # i.e., the --no-expense flag was not passed), set it as the first private database listed in rc. 
         # If no private database is found/known, exit with a warning message. If, however, the 
         # --force option was passed, the expense database is set to be the first entry under databases
         # in regolithrc.json file, even if that database is public. 
-        if not rc.expense_db:
+        if (not rc.expense_db) and (not rc.no_expense):
             if rc.force:
                 rc.expense_db = rc.databases[0]["name"] # defaults to first entry under databases in regolithrc.json file
                 if rc.databases[0]["public"]:
