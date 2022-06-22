@@ -103,6 +103,9 @@ def subparser(subpi):
     subpi.add_argument("--no_cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
+    subpi.add_argument("--force",
+                       help=f"force adding presentation expense data to a public database, by default the first entry under 'databases` in regolithrc.json. DANGER: This could reveal sensitive information to the public.",
+                       action="store_true")
     return subpi
 
 
@@ -123,8 +126,59 @@ class PresentationAdderHelper(DbHelperBase):
         rc.coll = f"{TARGET_COLL}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
+
+        # if an expense database is specified using the --expense-db option,
+        if rc.expense_db:
+
+            # check that it's known / find it in rc.databases. Store its index number so we can access its other keys inside rc.databases
+            index = 0
+            db_known = False
+            while index < len(rc.databases):
+                if rc.databases[index]["name"] == rc.expense_db:
+                    db_known = True
+                    break
+                index += 1
+            expense_db_index = index
+
+            # If the database is not known, exit with descriptive error message
+            if not db_known:
+                 raise RuntimeError(
+                    "WARNING: The expense database provided does not exist. "
+                    "Please rerun specifying a known private database, "
+                )
+
+            # if the specified expense database is public and the --force option wasn't passed, exit with a warning message
+            if (rc.databases[expense_db_index]["public"] == True) and (not rc.force):
+                raise RuntimeError(
+                    "WARNING: The expense database provided is not private. Please rerun specifying a known private database, "
+                    "or, at your own risk, use the --force option to add the presentation expense data to a public database"
+                )
+        
+        # if no expense database is specified, set it as the first private database listed in rc. 
+        # If no private database is found/known, exit with a warning message. If, however, the 
+        # --force option was passed, the expense database is set to be the first entry under databases
+        # in regolithrc.json file, even if that database is public. 
         if not rc.expense_db:
-            rc.expense_db = rc.databases[0]["name"]
+            if rc.force:
+                rc.expense_db = rc.databases[0]["name"] # defaults to first entry under databases in regolithrc.json file
+                if rc.databases[0]["public"]
+                    print(f"{key} has been added in {EXPENSES_COLL} in database {rc.expense_db}")
+            else:
+                for db in rc.databases:
+                    # if the db is private, set it and break out of the for loop
+                    if db["public"] != True:
+                        rc.expense_db = db["name"]
+                        break
+                    # else, continues to next database in the dictionary
+
+                # If we still have no value for the rc.expense_db, it means we didn't find a private database after exhaustively iterating through the known databases
+                # So we fail with warning "no default private db to enter expense data into"
+                if not rc.expense_db:
+                    raise RuntimeError(
+                    "WARNING: there is no known private db to enter expense data into. Please rerun after adding a private database to your regolithrc.json file"
+                    "or, at your own risk, use the --force option to add the presentation expense data to a public database"
+                )
+
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
         )
