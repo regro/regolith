@@ -6,7 +6,6 @@ import pathlib
 import platform
 import re
 import sys
-import json
 import requests
 from copy import copy
 from copy import deepcopy
@@ -19,6 +18,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from pathlib import Path
+from urllib.parse import urlparse
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
@@ -2105,80 +2105,120 @@ def google_cal_auth_flow():
         token.write(creds.to_json())
     # Save the credentials for the next run
 
-
-def validate_repo(target_repo, rc):
-    """checks if repo information is valid in rc.repos (i.e. that
+def repo_info_complete(target_repo, rc):
+    """checks if repo information is defined and valid in rc.repos (i.e. that
     (parameter requirements might change based on the platform/request e.g. GitHub/GitLab required info might vary)
-
-    does not check for whether they exist in rc (error raised automatically as KeyError or AttributeError)
 
     Parameters:
         target_repo - string
-            request info for target location defined in rc (e.g. 'talk_repo' or 'prum_repo')
-            setup in regolithrc.json
+            the request info for target location defined in rc (e.g. 'repo1' or 'talk_repo')
+            (set up in regolithrc.json)
         rc - run control object
 
     Returns:
-        1 if repo information is valid and 0 if not
+        True if all repo information is valid and False if not
     """
-    if rc.repos:
-        target_repo = rc.repos[target_repo]
-        if target_repo:
-            if target_repo['params']:
-                if not target_repo['params']['namespace_id'] or not target_repo['params']['name']:
-                    # print("setup message - params may not be defined, might lack required info")
-                    return 0
+    if 'repos' in rc:
+        if rc.repos:
+            if target_repo in rc.repos:
+                if rc.repos[target_repo]:
+                    if 'params' in rc.repos[target_repo]:
+                        if rc.repos[target_repo]['params']:
+                            if 'namespace_id' in rc.repos[target_repo]['params'] and 'name' in rc.repos[target_repo]['params']:
+                                if rc.repos[target_repo]['params']['namespace_id'] and rc.repos[target_repo]['params']['name']:
+                                    if type(int(rc.repos[target_repo]['params']['namespace_id'])) != int or type(rc.repos[target_repo]['params']['name']) != str:
+                                        return False
+                                else:
+                                    return False
+                            else:
+                                return False
+                        else:
+                            return False
+                    else:
+                        return False
+                    if 'url' in rc.repos[target_repo]:
+                        if rc.repos[target_repo]['url']:
+                            url = urlparse(rc.repos[target_repo]['url'])
+                            if url[:3]:
+                                return True
+                        else:
+                            return False
+                    else:
+                        return False
+                else:
+                    return False
             else:
-                # print("setup message - params may not be defined")
-                return 0
-            if target_repo['url']:
-                return 1
-            else:
-                # print("setup message - url may not be defined")
-                return 0
+                return False
         else:
-            # print(f"setup message - {repo_info} is not defined in rc ")
-            return 0
+            return False
     else:
-        # print("setup message - repos is not defined")
-        return 0
+        return False
 
-def validate_token(token, rc):
-    """Checks if API authentication token is defined in rc
-    does not check for whether token exists in rc (error raised automatically with Attribute error)
+
+def token_info_complete(token_info, rc):
+    """Checks if API authentication token is defined and valid in rc
 
     Parameters:
-        token - string
-            the personal access token defined in rc (e.g. 'gitlab_private_token')
-            setup in user.json
+        token_info - string
+            the personal access token defined in rc (e.g. 'priv_token' or 'gitlab_private_token')
+            (set up in user.json)
         rc - run control object
 
     Returns:
-        1 if token is valid and 0 if not
+        The token if the token exists and False if not
     """
-    if rc.__getattr__(token):
-        return 1
-    else:
-        return 0
 
-# not finished
-def create_repo(name, target_repo, token, rc):
+    if token_info in rc:
+        if rc.__getattr__(token_info):
+            return rc.__getattr__(token_info)
+        else:
+            return False
+    else:
+        return False
+
+def create_repo(name, target_repo, token_info, rc):
     """ Creates a repo if repo information and token is defined in rc
 
     Parameters:
         name - string
-            name of the repo being created
+            the name of the repo being created (e.g. 'test repo')
         target_repo - string
-            key in rc for target repo information
-        token - string
-            key in rc for token
+            the key in rc for target repo information (e.g. 'repo1')
+        token_info - string
+            the key in rc for token (e.g. 'priv_token')
         rc - run control object
 
     Returns:
-        (f"repo {name} has been created in talks") if successful
-        Warning/setup messages if unsuccessful
+        Success message (repo target_repo has been created in talks) if repo is successfully created in target_repo
+        Warning/setup messages if unsuccessful (or if repo info or token are not valid)
     """
-
+    repo_info_valid = repo_info_complete(target_repo, rc)
+    token_valid = token_info_complete(token_info, rc)
+    if repo_info_valid and token_valid:
+        try:
+            response = requests.post(rc.repos[target_repo]['url'], params=rc.repos[target_repo]['params'], headers={'PRIVATE-TOKEN': '{}'.format(token_valid)})
+            response.raise_for_status()
+            return f"repo {name} has been created in talks"
+        except requests.exceptions.HTTPError:
+            raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
+                            f"due to an issue with the API call (status code: {response.status_code}). "
+                            f"Check that your private token and repository information are valid in "
+                            f"regolithrc.json.")
+        except requests.exceptions.RequestException as e:
+            raise SystemExit(e)
+    elif not repo_info_valid:
+        print("WARNING: The request URL info is not valid (parameters may not be defined). "
+              "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+              "please add repository information in regolithrc.json. See regolith documentation "
+              "for details.")
+    elif not token_valid:
+        print("WARNING: The authentication token may not be defined. If you would like regolith to "
+              "automatically create a repository in GitHub/GitLab, please add your private authentication "
+              "token in user.json. See regolith documentation for details.")
+    else:
+        print("If you would like regolith to automatically create a repository in GitHub/GitLab, "
+              "please add your repository information and private authentication token in reolgithrc.json"
+              "and user.json respectively. See regolith documentation for details.")
 
 def create_repo_old(name, repo_info, rc):
     """

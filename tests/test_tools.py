@@ -4,6 +4,10 @@ import habanero
 import pytest
 import datetime as dt
 
+import copy
+from unittest import mock
+from regolith.runcontrol import DEFAULT_RC
+
 from regolith.tools import (
     filter_publications,
     filter_presentations,
@@ -35,7 +39,7 @@ from regolith.tools import (
     compound_dict,
     compound_list, filter_employment_for_advisees,
     get_tags, dereference_institution,
-    validate_repo, validate_token, create_repo
+    repo_info_complete, token_info_complete, create_repo
 )
 
 PEOPLE_COLL = [
@@ -2176,66 +2180,93 @@ def test_get_tags_invalid():
         assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
 
 @pytest.mark.parametrize(
-    "inputs, expected", [
-        # everything is defined, return 1
-        ([{"repos": {"talk_repo": {"params": {"namespace_id": "35","initialize_with_readme": "false", "name": "repo name"},
-                         "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"},"prum_repo": {}}}], [1]),
-        # repos is not defined, return 0
-        ([{"repos": {}}], [0]),
-        # talk_repo is not defined, return 0
-        ([{"repos": {"talk_repo": {}, "prum_repo": {}}}], [0]),
-        # parameters are not defined
-        ([{"repos": {"talk_repo": {"params": {}, "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"},"prum_repo": {}}}], [0]),
-        # url is not defined
-        ([{"repos": {"talk_repo": {"params": {"namespace_id": "35","initialize_with_readme": "false", "name": "repo name"},"url": ""},"prum_repo": {}}}], [0]),
-        # namespace_id is not defined
-        ([{"repos": {"talk_repo": {"params": {"namespace_id": "", "initialize_with_readme": "false", "name": "repo name"},
-                         "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}, "prum_repo": {}}}], [0]),
-        # name is not defined
-        ([{"repos": {"talk_repo": {"params": {"namespace_id": "", "initialize_with_readme": "false", "name": ""},
-                         "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}, "prum_repo": {}}}], [0]),
+    "repo_information, expected", [
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "35",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}}
+         }, True),
+        ({}, False),
+        ({"repos": {}}, False),
+        ({"repos": {
+            "repo1": {}, }
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {},
+                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "35",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"}}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "35",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+                "url": ""}}
+         }, False)
     ]
 )
-def test_validate_repo(inputs, expected):
-    from regolith.runcontrol import DEFAULT_RC, load_rcfile
-    import copy
-    # import sys
+def test_repo_info_complete(repo_information, expected):
     rc = copy.copy(DEFAULT_RC)
-    rc._update(inputs[0])
-    # with open('dictrc.json', 'w') as f:
-    #     sys.stdout = f
-    #     print(rc.__dict__)
-    actual = validate_repo('talk_repo', rc)
-    assert actual == expected[0]
+    rc._update(repo_information)
+    actual = repo_info_complete('repo1', rc)
+    assert actual == expected
+
 
 @pytest.mark.parametrize(
-    "inputs, expected", [
-        # token is defined, return 1
-        ([{"gitlab_private_token": "<private-token>"}], [1]),
-        # token is not defined, return 0
-        ([{"gitlab_private_token": ""}], [0]),
+    "tokens, expected", [
+        ({"gitlab_private_token": "<private-token>"}, "<private-token>"),
+        ({"gitlab_private_token": ""}, False),
+        ({}, False)
     ]
 )
-def test_validate_token(inputs, expected):
-    from regolith.runcontrol import DEFAULT_RC, load_rcfile
-    import copy
-    # import sys
+def test_token_info_complete(tokens, expected):
     rc = copy.copy(DEFAULT_RC)
-    rc._update(inputs[0])
-    # with open('dictrc.json', 'w') as f:
-    #     sys.stdout = f
-    #     print(rc.__dict__)
-    actual = validate_token('gitlab_private_token', rc)
-    assert actual == expected[0]
+    rc._update(tokens)
+    actual = token_info_complete('gitlab_private_token', rc)
+    assert actual == expected
 
-# not finished
-def test_create_repo():
-    from regolith.runcontrol import DEFAULT_RC
-    import unittest
-    from unittest import mock
+@mock.patch("requests.post")
+def test_create_repo(mock_requests_post):
+    mock_requests_post.return_value = mock.Mock(**{"status_code": 201})
     rc = copy.copy(DEFAULT_RC)
-    actual = create_repo('test_repo', 'talk_repo', 'gitlab_private_token', rc)
-
+    repo_token_information = {
+        "repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "35",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"
+                },
+                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"
+            }
+        },
+        "priv_token": "<private-token>"
+    }
+    rc._update(repo_token_information)
+    assert create_repo('test repo', 'repo1', 'priv_token', rc) == "repo test repo has been created in talks"
 
 
 
