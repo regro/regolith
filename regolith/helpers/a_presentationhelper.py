@@ -144,7 +144,8 @@ class PresentationAdderHelper(DbHelperBase):
             if not db_known:
                  raise RuntimeError(
                     "WARNING: The expense database provided does not exist. "
-                    "Please rerun specifying a known private database."
+                    "Please rerun specifying a known private database. "
+                    "(Consider checking your spelling against the known databases listed in regolithrc.json.)"
                 )
 
             # if the specified expense database is public and the --force option wasn't passed, exit with a warning message
