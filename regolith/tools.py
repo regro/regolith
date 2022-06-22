@@ -2139,8 +2139,10 @@ def repo_info_complete(target_repo, rc):
                     if 'url' in rc.repos[target_repo]:
                         if rc.repos[target_repo]['url']:
                             url = urlparse(rc.repos[target_repo]['url'])
-                            if url[:3]:
+                            if url.scheme and url.netloc and url.path:
                                 return True
+                            else:
+                                return False
                         else:
                             return False
                     else:

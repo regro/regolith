@@ -2225,6 +2225,14 @@ def test_get_tags_invalid():
                     "initialize_with_readme": "false",
                     "name": "repo name"},
                 "url": ""}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "35",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+                "url": "https://example.com"}}
          }, False)
     ]
 )
