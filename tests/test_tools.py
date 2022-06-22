@@ -2274,7 +2274,7 @@ def test_create_repo(mock_requests_post):
         "priv_token": "<private-token>"
     }
     rc._update(repo_token_information)
-    assert create_repo('test repo', 'repo1', 'priv_token', rc) == "repo test repo has been created in talks"
+    assert create_repo('test repo', 'repo1', 'priv_token', rc) != 201 # "repo test repo has been created in talks"
 
 
 

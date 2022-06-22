@@ -2127,14 +2127,39 @@ def repo_info_complete(target_repo, rc):
                             if 'namespace_id' in rc.repos[target_repo]['params'] and 'name' in rc.repos[target_repo]['params']:
                                 if rc.repos[target_repo]['params']['namespace_id'] and rc.repos[target_repo]['params']['name']:
                                     if type(int(rc.repos[target_repo]['params']['namespace_id'])) != int or type(rc.repos[target_repo]['params']['name']) != str:
+                                        print(
+                                            "WARNING: The request parameters may not be defined. "
+                                            "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                                            "please add repository information in regolithrc.json. See regolith documentation "
+                                            "for details.")
                                         return False
                                 else:
+                                    print(
+                                        "WARNING: The request parameters may not be defined. "
+                                        "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                                        "please add repository information in regolithrc.json. See regolith documentation "
+                                        "for details.")
                                     return False
                             else:
+                                print(
+                                    "WARNING: The request parameters may not be defined. "
+                                    "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                                    "please add repository information in regolithrc.json. See regolith documentation "
+                                    "for details.")
                                 return False
                         else:
+                            print(
+                                "WARNING: The request parameters may not be defined. "
+                                "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                                "please add repository information in regolithrc.json. See regolith documentation "
+                                "for details.")
                             return False
                     else:
+                        print(
+                            "WARNING: The request parameters may not be defined. "
+                            "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                            "please add repository information in regolithrc.json. See regolith documentation "
+                            "for details.")
                         return False
                     if 'url' in rc.repos[target_repo]:
                         if rc.repos[target_repo]['url']:
@@ -2142,18 +2167,45 @@ def repo_info_complete(target_repo, rc):
                             if url.scheme and url.netloc and url.path:
                                 return True
                             else:
+                                print(
+                                    "WARNING: The request url may not be valid. "
+                                    "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                                    "please add repository information in regolithrc.json. See regolith documentation "
+                                    "for details.")
                                 return False
                         else:
+                            print(
+                                "WARNING: The request url may not be defined. "
+                                "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                                "please add repository information in regolithrc.json. See regolith documentation "
+                                "for details.")
                             return False
                     else:
+                        print(
+                            "WARNING: The request url may not be defined. "
+                            "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                            "please add repository information in regolithrc.json. See regolith documentation "
+                            "for details.")
                         return False
                 else:
+                    print("If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                          "please add your repository information and private authentication token in reolgithrc.json"
+                          "and user.json respectively. See regolith documentation for details.")
                     return False
             else:
+                print("If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                      "please add your repository information and private authentication token in reolgithrc.json"
+                      "and user.json respectively. See regolith documentation for details.")
                 return False
         else:
+            print("If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                  "please add your repository information and private authentication token in reolgithrc.json"
+                  "and user.json respectively. See regolith documentation for details.")
             return False
     else:
+        print("If you would like regolith to automatically create a repository in GitHub/GitLab, "
+              "please add your repository information and private authentication token in reolgithrc.json"
+              "and user.json respectively. See regolith documentation for details.")
         return False
 
 
@@ -2174,8 +2226,14 @@ def token_info_complete(token_info, rc):
         if rc.__getattr__(token_info):
             return rc.__getattr__(token_info)
         else:
+            print("WARNING: The authentication token may not be defined. If you would like regolith to "
+                  "automatically create a repository in GitHub/GitLab, please add your private authentication "
+                  "token in user.json. See regolith documentation for details.")
             return False
     else:
+        print("WARNING: The authentication token may not be defined. If you would like regolith to "
+              "automatically create a repository in GitHub/GitLab, please add your private authentication "
+              "token in user.json. See regolith documentation for details.")
         return False
 
 def create_repo(name, target_repo, token_info, rc):
@@ -2194,11 +2252,11 @@ def create_repo(name, target_repo, token_info, rc):
         Success message (repo target_repo has been created in talks) if repo is successfully created in target_repo
         Warning/setup messages if unsuccessful (or if repo info or token are not valid)
     """
-    repo_info_valid = repo_info_complete(target_repo, rc)
-    token_valid = token_info_complete(token_info, rc)
-    if repo_info_valid and token_valid:
+    repo_info_exists = repo_info_complete(target_repo, rc)
+    token_exists = token_info_complete(token_info, rc)
+    if repo_info_exists and token_exists:
         try:
-            response = requests.post(rc.repos[target_repo]['url'], params=rc.repos[target_repo]['params'], headers={'PRIVATE-TOKEN': '{}'.format(token_valid)})
+            response = requests.post(rc.repos[target_repo]['url'], params=rc.repos[target_repo]['params'], headers={'PRIVATE-TOKEN': '{}'.format(token_exists)})
             response.raise_for_status()
             return f"repo {name} has been created in talks"
         except requests.exceptions.HTTPError:
@@ -2208,74 +2266,8 @@ def create_repo(name, target_repo, token_info, rc):
                             f"regolithrc.json.")
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
-    elif not repo_info_valid:
-        print("WARNING: The request URL info is not valid (parameters may not be defined). "
-              "If you would like regolith to automatically create a repository in GitHub/GitLab, "
-              "please add repository information in regolithrc.json. See regolith documentation "
-              "for details.")
-    elif not token_valid:
-        print("WARNING: The authentication token may not be defined. If you would like regolith to "
-              "automatically create a repository in GitHub/GitLab, please add your private authentication "
-              "token in user.json. See regolith documentation for details.")
     else:
-        print("If you would like regolith to automatically create a repository in GitHub/GitLab, "
-              "please add your repository information and private authentication token in reolgithrc.json"
-              "and user.json respectively. See regolith documentation for details.")
-
-def create_repo_old(name, repo_info, rc):
-    """
-    Creates a repo if the repo information is specified at repo_info in regolithrc.json.
-
-    Parameters:
-        name - string
-
-        repo_info - json? list object
-
-        rc - run control object
-
-    Returns:
-        None
-    """
-    # checks if rc.repos is defined, if not, sends setup (INFO) message
-    if rc.repos:
-        # checks if the repository info is defined in rc.repos, if not, sends setup (INFO) message
-        # if defined, check for token
-        if repo_info:
-            # checks if parameters, namespace id, or url are not defined, if not sends setup (INFO) message
-            if not repo_info['params'] or not repo_info['params']['namespace_id']:
-                print("WARNING: The request URL info is not valid (parameters may not be defined). "
-                      "If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                      "please add repository information in regolithrc.json. See regolith documentation "
-                      "for details.")
-            elif not repo_info['url']:
-                print("WARNING: The request URL info is not valid (request url not found). "
-                      "If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                      "please add repository information in regolithrc.json. See regolith documentation "
-                      "for details.")
-            else:
-                token = rc.gitlab_private_token
-                # if token exists, then try making the request
-                if token:
-                    try:
-                        response = requests.post(repo_info['url'], params=repo_info['params'], headers={'PRIVATE-TOKEN': '{}'.format(token)})
-                        response.raise_for_status()
-                        print(f"repo {name} has been created in talks")
-                    except requests.exceptions.HTTPError:
-                        raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
-                                        f"due to an issue with the API call (status code: {response.status_code}). "
-                                        f"Check that your private token and repository information are valid in "
-                                        f"regolithrc.json.")
-                    except requests.exceptions.RequestException as e:
-                        raise SystemExit(e)
-
-        else:
-            print("INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                  "please add repository information in regolithrc.json. See regolith documentation "
-                  "for details.")
-    else:
-        print("INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
-              "please add repository information in regolithrc.json. See regolith documentation "
-              "for details.")
+        return
 
 def get_tags(coll):
     '''

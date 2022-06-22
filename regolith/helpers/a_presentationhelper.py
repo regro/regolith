@@ -227,7 +227,7 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
-        rc.repos[0]['talk_repo'][0]['params']['name'] = key
+        rc.repos['talk_repo']['params']['name'] = key
         if not rc.no_talk_repo:
-            create_repo(key, rc)
+            create_repo(key, 'talk_repo', 'gitlab_private_token', rc)
         return
