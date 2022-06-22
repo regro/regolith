@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 import copy
 
+
 from regolith.main import main
 
 dash = "-"
@@ -64,7 +65,23 @@ helper_map = [
       "--notes", "this is a sample added presentation",
       "--presentation-url", "http://drive.google.com/SEV356DV",
       "--no_cal"],
-     "2006as_mars has been added in presentations\n2006as_mars has been added in expenses in database test\n"),
+     pytest.raises(RuntimeError)),
+    (["helper", "a_presentation", "Testing bad expense db", "test", "2020-08-29", "2020-08-29",
+      "--type", "contributed_oral", "--person", "nasker", "--grants", "mmmmmmm",
+      "--authors", "sbillinge", "nasker", "--abstract", "the earth is square as seen from mercury",
+      "--title", "testing unknown expenseDB specification", "--status", "in-prep", "--expense-db", "test2",
+      "--notes", "this is a test added presentation to test specifying an unknown expense database",
+      "--presentation-url", "http://drive.google.com/placeholder/broken-link",
+      "--no_cal"],
+     pytest.raises(RuntimeError)),
+    (["helper", "a_presentation", "testing_no_expense flag", "test", "2020-07-26", "2020-07-26",
+      "--type", "contributed_oral", "--person", "nasker", "--grants", "nnnnnn",
+      "--authors", "sbillinge", "nasker", "--abstract", "the earth is round as seen from mars",
+      "--title", "testing no-expense flag", "--status", "in-prep",
+      "--notes", "this is a sample added presentation without expense data",
+      "--presentation-url", "http://drive.google.com/SEV356lll",
+      "--no_cal", "--no-expense"],
+     "2007na_test has been added in presentations\n"),
     (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
