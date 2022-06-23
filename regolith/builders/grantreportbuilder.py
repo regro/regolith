@@ -158,11 +158,7 @@ class GrantReportBuilder(LatexBuilderBase):
             print(publ)
             if doi and doi != 'tbd':
                 publ = get_formatted_crossref_reference(doi)
-            try:
-                names = [HumanName(author).full_name for author in publ.get("author")]
-            except:
-                print(publ)
-            publ['author'] = names
+
         # Participants/Organizations
         participants = []
         for person in self.gtx["people"]:
