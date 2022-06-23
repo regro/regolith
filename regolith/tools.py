@@ -20,8 +20,9 @@ from google.oauth2.credentials import Credentials
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
-from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, PRESENTATION_STATI
-from requests import HTTPError
+from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, \
+    PRESENTATION_STATI#, OPTIONAL_KEYS_INSTITUTIONS
+from requests.exceptions import HTTPError, ConnectionError
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -1933,6 +1934,12 @@ def get_formatted_crossref_reference(doi):
     try:
         article = cr.works(ids=doi)
     except HTTPError:
+        print(f"WARNING: not able to find reference {doi} in Crossref")
+        return None, None
+    except ConnectionError:
+        print(f"WARNING: not able to connect to internet.  To obtain "
+              f"publication information rerun when you have an internet "
+              f"connection")
         return None, None
 
     authorlist = [

@@ -51,7 +51,6 @@ class GrantReportBuilder(LatexBuilderBase):
         """Render latex template"""
         rc = self.rc
 
-        # NSF Grant _id
         if not rc.grants:
             raise RuntimeError(
                 "Error: no grant specified. Please rerun specifying a grant")
@@ -62,19 +61,23 @@ class GrantReportBuilder(LatexBuilderBase):
                 "Error: more than one grant specified. Please rerun with"
                 "only a single grant.")
         grant_id = rc.grants[0]
-        grant = [grant for grant in self.gtx["grants"] if grant.get("_id") == grant_id][0]
+        grant = fuzzy_retrieval(self.gtx['grants'], ['_id', "alias", "name"], grant_id)
         grant_dates = get_dates(grant)
-        print(grant_dates)
 
         # Convert Date Strings to Datetime Objects
-        if not rc.from_date:
-            rp_start_date = grant_dates.get('begin_date')
-        else:
+        if rc.from_date:
             rp_start_date = date_parser.parse(rc.from_date).date()
-        if not rc.to_date:
-            rp_end_date = date.today()
         else:
+            rp_start_date = grant_dates.get("begin_date")
+            print(f"INFO: no begin-date specified.  running report from the beginning "
+                  f"of the grant period ({rp_start_date})")
+        if rc.to_date:
             rp_end_date = date_parser.parse(rc.to_date).date()
+        else:
+            rp_end_date = min([date.today(), grant_dates.get("end_date")])
+            print("INFO: no end-date specified for the reporting period.  Running "
+                  "report up to the earlier of the end of the grant, or today "
+                  f"({rp_end_date}).")
         report_dates = {'begin_date': rp_start_date,
                         'end_date': rp_end_date}
         print(f"INFO: generating report for grant {grant_id} for the period"
@@ -153,12 +156,11 @@ class GrantReportBuilder(LatexBuilderBase):
         #                                          before=rp_end_date)
         publications = [publ for publ in self.gtx["citations"] if
                         grant_id in publ.get("grant", "")]
-        for publ in publications:
-            doi = publ.get('doi')
-            print(publ)
-            if doi and doi != 'tbd':
-                publ = get_formatted_crossref_reference(doi)
 
+        for publ in publications:
+            formatted_authors = [HumanName(name).full_name
+                                 for name in publ.get("authors",[])]
+            publ["authors"] = formatted_authors
         # Participants/Organizations
         participants = []
         for person in self.gtx["people"]:
