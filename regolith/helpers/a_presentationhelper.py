@@ -129,7 +129,6 @@ class PresentationAdderHelper(DbHelperBase):
 
         # if an expense database is specified using the --expense-db option,
         if rc.expense_db:
-
             # check that it's known / find it in rc.databases. Store its index number so we can access its other keys inside rc.databases
             index = 0
             db_known = False
@@ -143,18 +142,20 @@ class PresentationAdderHelper(DbHelperBase):
             # If the database is not known, exit with descriptive error message
             if not db_known:
                  raise RuntimeError(
-                    f"WARNING: The expense database provided, {rc.expense_db}, does not exist. "
-                    "Please rerun specifying a known private database. "
-                    "(Consider checking your spelling against the known databases listed in regolithrc.json.)"
+                    f"ERROR: You specified database {rc.expense_db} for the expenses collection, "
+                    "but that database was not found in your regolithrc.json file. "
+                    "Please check the spelling when you ran the program and that the database is "
+                    "correctly specified in regolithrc.json."
                 )
-
             # if the specified expense database is public and the --force option wasn't passed, exit with a warning message
             if (rc.databases[expense_db_index]["public"] == True) and (not rc.force):
                 raise RuntimeError(
-                    "WARNING: The expense database provided is not private. Please rerun specifying a known private database, "
-                    "or, at your own risk, use the --force option to add the presentation expense data to a public database"
+                    "ERROR: The expense database you specified for the expenses collection, "
+                    f"{rc.expense_db}, is not private. Please rerun specifying a PRIVATE database "
+                    "listed in your regolithrc.json file, or, at your own risk, use the --force "
+                    "option to add the presentation expense data to a public database."
                 )
-        
+
         # if no expense database is specified (but there is still expense data associatied with the presentation,
         # i.e., the --no-expense flag was not passed), set it as the first private database listed in rc. 
         # If no private database is found/known, exit with a warning message. If, however, the 
@@ -166,20 +167,20 @@ class PresentationAdderHelper(DbHelperBase):
                 if rc.databases[0]["public"]:
                     print(f"{key} has been added in {EXPENSES_COLL} in database {rc.expense_db}")
             else:
-                for db in rc.databases:
-                    # if the db is private, set it and break out of the for loop
-                    if db["public"] != True:
-                        rc.expense_db = db["name"]
-                        break
-                    # else, continues to next database in the dictionary
+                private_dbs = [db for db in rc.databases if db["public"] != True]
+                rc.expense_db = private_dbs[0]["name"] # defaults to first private database present in regolith.json
+
+                # "Because no database for the presentation expenses was specified, the helper defaulted to the first private one listed in your regolithrc.json file, {rc.expense_db}"
 
                 # If we still have no value for the rc.expense_db, it means we didn't find a private database after exhaustively iterating through the known databases
                 # So we fail with warning "no default private db to enter expense data into"
                 if not rc.expense_db:
                     raise RuntimeError(
-                    "WARNING: there is no known private db to enter expense data into. Please rerun after adding a private database to your regolithrc.json file"
-                    "or, at your own risk, use the --force option to add the presentation expense data to a public database"
-                )
+                        "ERROR: There is no private database listed in your regolithrc.json file "
+                        "to enter expense data into. Please rerun after adding a private database "
+                        "to your regolithrc.json file, or, at your own risk, use the --force option "
+                        "to add the presentation expense data to a public database."
+                    )
 
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
