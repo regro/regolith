@@ -4010,6 +4010,11 @@ SCHEMAS = {
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATI},
+                "type": {"description": f"type of kickoff deliverable. In general will be 'meeting'"
+                                        f"Allowed values are {', '.join(MILESTONE_TYPES)}",
+                         "required": False,
+                         "type": "string",
+                         "eallowed": MILESTONE_TYPES},
             }
         },
         "lead": {
