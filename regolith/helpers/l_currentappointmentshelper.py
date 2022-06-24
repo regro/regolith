@@ -60,7 +60,6 @@ class CurrentAppointmentsListerHelper(SoutHelperBase):
                 if v[0] <= ondate.month <= v[1]:
                     since = date(ondate.year, v[0], 1)
                     last_day = calendar.monthrange(ondate.year, v[1])[1]
-                    print(v[1], ondate.year, last_day)
                     before = date(ondate.year, v[1],
                                   last_day)
 
