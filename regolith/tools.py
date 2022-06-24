@@ -22,7 +22,7 @@ from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
 from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, \
     PRESENTATION_STATI, OPTIONAL_KEYS_INSTITUTIONS
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, ConnectionError
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -1961,17 +1961,25 @@ def get_formatted_crossref_reference(doi):
     try:
         article = cr.works(ids=doi)
     except HTTPError:
+        print(f"WARNING: not able to find reference {doi} in Crossref")
+        return None, None
+    except ConnectionError:
+        print(f"WARNING: not able to connect to internet.  To obtain "
+              f"publication information rerun when you have an internet "
+              f"connection")
         return None, None
 
     authorlist = [
-        "{} {}".format(a['given'].strip(), a['family'].strip())
+        f"{a['given'].strip()} {a['family'].strip()}"
         for a in article.get('message').get('author')]
     try:
         journal = \
             article.get('message').get('short-container-title')[0]
     except IndexError:
-        journal = article.get('message').get('container-title')[
-            0]
+        try:
+            journal = article.get('message').get('container-title')[0]
+        except IndexError:
+            journal = ""
     if article.get('message').get('volume'):
         if len(authorlist) > 1:
             authorlist[-1] = "and {}".format(authorlist[-1])
