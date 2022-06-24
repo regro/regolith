@@ -21,7 +21,7 @@ from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
 from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, \
-    PRESENTATION_STATI#, OPTIONAL_KEYS_INSTITUTIONS
+    PRESENTATION_STATI, OPTIONAL_KEYS_INSTITUTIONS
 from requests.exceptions import HTTPError, ConnectionError
 
 try:
