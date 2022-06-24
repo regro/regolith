@@ -7,7 +7,6 @@
 **Removed:** None
 
 **Fixed:**
- * fixed typo in postdoc advisee getter
- * date handling for end-dates of current students/postdocs
+ * broken error message for missing institution in dereference_institution function
 
 **Security:** None

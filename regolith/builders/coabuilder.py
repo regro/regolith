@@ -15,74 +15,68 @@ from dateutil.relativedelta import relativedelta
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import is_after, month_to_int
+from regolith.dates import is_after, month_to_int, get_dates
 from regolith.sorters import position_key
 from regolith.tools import all_docs_from_collection, filter_publications, \
     fuzzy_retrieval
 
 NUM_COAUTHOR_MONTHS = 48
-NUM_POSTDOC_MONTHS = 60
+NUM_POSTDOC_MONTHS = None
 
 
 def get_advisors_name_inst(advisee, rc):
     """Get the advisee's advisor. Yield (last name, first name, institution name)."""
-    my_eme = advisee.get("employment", []) + advisee.get("education", [])
-    relevant_emes = [i for i in my_eme if "advisor" in i]
+
     phd_advisors = [
-        (i.get("advisor"), "phd")
-        for i in relevant_emes
-        if 'phd' or "dphil" in i.get("degree", "").lower()
+        {"name": i.get("advisor", "missing name"), "type": "advisor", "advis_type": "phd",
+         "interaction_date": get_dates(i).get("end_date",
+                                              get_dates(i).get("begin_date"))}
+        for i in advisee.get("education", [])
+        if 'phd' in i.get("degree", "").lower()
+        or 'dphil' in i.get("degree", "").lower()
     ]
     pdoc_advisors = [
-        (i.get("advisor"), "postdoc")
-        for i in relevant_emes if "organization" in i
+        {"name": i.get("advisor", "missing name"), "type": "advisor", "advis_type": "postdoc",
+         "interaction_date": get_dates(i).get("end_date",
+                                              get_dates(i).get("begin_date"))}
+        for i in advisee.get("employment", []) if i.get("status") == "postdoc"
     ]
     advisors = phd_advisors + pdoc_advisors
-    for advisor in advisors:
-        adv = fuzzy_retrieval(
-            all_docs_from_collection(rc.client, "contacts"),
-            ['aka', 'name', '_id'], advisor[0],
-            case_sensitive=False
-        )
-        if adv:
-            advsior_name = HumanName(adv.get("name"))
-            inst = fuzzy_retrieval(
-                all_docs_from_collection(rc.client, "institutions"),
-                ['aka', 'name', '_id'], adv.get("institution"),
-                case_sensitive=False
-            )
-            if inst:
-                yield advsior_name.last, advsior_name.first, inst.get("name", "")
-            else:
-                print("WARNING: {} not in institutions".format(adv.get("institution")))
-                yield advsior_name.last, advsior_name.first, adv.get("institution")
-
+    return retrieve_names_and_insts(rc, advisors)
 
 def get_advisees_name_inst(coll, advisor, rc):
     """Get advisor's advisees. Yield (last name, first name, institutions)"""
     advisor_names = advisor.get('aka', []) + [advisor.get('name'), advisor.get('_id')]
+    advisees = []
     for person in coll:
-        edus = person.get("education", [])
-        for edu in edus:
-            if 'advisor' in edu and edu['advisor'] in advisor_names:
+        my_eme = person.get("employment", []) + person.get("education", [])
+        relevant_emes = [i for i in my_eme if
+                         i.get("advisor", "") in advisor_names]
+        phd_advisees = [
+            {"name": person.get("name", "missing name"), "type": "advisee", "interaction_date":
+                get_dates(i).get("end_date", get_dates(i).get("date", dt.date.today())),
+             "advis_type": "phd"}
+            for i in relevant_emes
+            if 'phd' in i.get("degree", "").lower()
+            or 'dphil' in i.get("degree", "").lower()
+        ]
+        pdoc_advisees = [
+            {"name": person.get("name", "missing name"), "type": "advisee",
+             "advis_type": "postdoc", "interaction_date":
+                get_dates(i).get("end_date", get_dates(i).get("date", dt.date.today()))}
+            for i in relevant_emes if
+            i.get("status") == "postdoc"
+        ]
+        if rc.postdoc_since_date:
+            pdoc_advisees = [i for i in pdoc_advisees
+                             if rc.postdoc_since_date < i.get("interaction_date")
+                             ]
+        advisees.extend(phd_advisees)
+        advisees.extend(pdoc_advisees)
+    return retrieve_names_and_insts(rc, advisees)
 
-                person_name = HumanName(person.get("name"))
-                inst_name = edu.get("institution")
-                inst = fuzzy_retrieval(
-                    all_docs_from_collection(rc.client, "institutions"),
-                    ['aka', 'name', '_id'], inst_name,
-                    case_sensitive=False)
-                first_name = " ".join([person_name.first,  person_name.middle])
-                if inst is None:
-                    print("WARNING: {} not in institutions".format(
-                        inst_name))
-                    yield person_name.last, first_name, inst_name
-                else:
-                    yield person_name.last, first_name, inst.get('name', "")
-                break
 
-
-def filter_since_date(pubs, since_date):
+def filter_since_date(pubs, rc):
     """Filter the publications after the since_date."""
     for pub in pubs:
         if isinstance(pub.get("year"), str):
@@ -93,17 +87,25 @@ def filter_since_date(pubs, since_date):
             print("WARNING: {} is missing month".format(
                 pub["_id"]))
             pub["month"] = "dec"
-        if is_after(pub, since_date):
+        if is_after(pub, rc.pub_since_date):
             yield pub
 
 
-def get_since_date(rc):
+def get_since_dates(rc):
     """Get the since_date from command."""
-    if isinstance(rc, str):
-        since_date = dt.datetime.strptime(rc, '%Y-%m-%d').date() - relativedelta(months=NUM_COAUTHOR_MONTHS)
+    if isinstance(rc.date, str):
+        rc.pub_since_date = dt.datetime.strptime(rc, '%Y-%m-%d').date() - relativedelta(months=NUM_COAUTHOR_MONTHS)
     else:
-        since_date = dt.date.today() - relativedelta(months=NUM_COAUTHOR_MONTHS)
-    return since_date
+        rc.pub_since_date = rc.date - relativedelta(months=NUM_COAUTHOR_MONTHS)
+    if NUM_POSTDOC_MONTHS:
+        if isinstance(rc, str):
+            rc.postdoc_since_date = dt.datetime.strptime(rc.date, '%Y-%m-%d').date() - relativedelta(months=NUM_POSTDOC_MONTHS)
+        else:
+            rc.pub_since_date = rc.date - relativedelta(
+                months=NUM_COAUTHOR_MONTHS)
+    else:
+        rc.postdoc_since_date = None
+    return
 
 
 def get_coauthors_from_pubs(rc, pubs, not_person):
@@ -114,34 +116,61 @@ def get_coauthors_from_pubs(rc, pubs, not_person):
         pub_date = dt.date(int(pub.get("year")), month_to_int(pub.get("month")),1)
         my_collabs.extend(
             [
-                (collabs, pub_date) for collabs in
+                {"name": collabs, "interaction_date": pub_date, "type": "co-author"} for collabs in
                 (names for names in pub.get('author', []))
             ]
         )
-    my_collabs.sort(key=lambda x: x[1], reverse=True)
+    my_collabs.sort(key=lambda x: x["interaction_date"], reverse=True)
+    coauthors = retrieve_names_and_insts(rc, my_collabs, not_person_akas)
+    return coauthors
+
+
+def retrieve_names_and_insts(rc, collabs, not_person_akas=[]):
     collab_buffer, my_collab_set = [], []
-    for collab in my_collabs:
+    for collab in collabs:
         person = fuzzy_retrieval(all_docs_from_collection(
             rc.client, "people"),
             ["name", "aka", "_id"],
-            collab[0], case_sensitive=False)
+            collab["name"], case_sensitive=False)
         if not person:
             person = fuzzy_retrieval(all_docs_from_collection(
                 rc.client, "contacts"),
                 ["name", "aka", "_id"],
-                collab[0], case_sensitive=False)
+                collab["name"], case_sensitive=False)
             if not person:
-                person = {'_id': collab[0]}
-        person_id = person['_id']
-        if person_id not in collab_buffer and collab[0] not in not_person_akas:
+                if collab['name'] == "missing name":
+                    print(f"WARNING: a {collab.get('advis_type')} appointment "
+                          f"was found for the target {collab.get('type')} but "
+                          f"no name was specified. Please add an 'advisor' field "
+                          f"for that education/employment entry in the database.")
+                else:
+                    print(f"WARNING: {collab['name']} not found in contacts or people.")
+                person = {'_id': collab["name"], "name": collab["name"], "type": collab.get("type")}
+        if person.get("name", ""):
+            collab["name"] = HumanName(person.get("name", ""))
+        else:
+            print("missing_person", person)
+        collab["_id"] = person.get('_id')
+        pinst = get_recent_org(person)
+        inst = fuzzy_retrieval(all_docs_from_collection(
+            rc.client, "institutions"), ["name", "aka", "_id"],
+            pinst, case_sensitive=False)
+        if inst:
+            collab["institution"] = inst["name"]
+        else:
+            collab["institution"] = pinst
+            print(f"WARNING: {pinst} for {person.get('_id')} missing from institutions")
+        if collab["_id"] not in collab_buffer and collab["name"] not in not_person_akas:
             my_collab_set.append(collab)
-            collab_buffer.append(person_id)
+            collab_buffer.append(collab["_id"])
     return my_collab_set
 
 
 def get_recent_org(person_info):
     """Get the person's most recent organization."""
-    if "employment" in person_info:
+    if "institution" in person_info:
+        organization = person_info.get("institution")
+    elif "employment" in person_info:
         employment = person_info.get("employment", []) + person_info.get("education", [])
         if len(employment) == 0:
             return ""
@@ -171,7 +200,7 @@ def query_people_and_institutions(rc, names):
             if not person_found:
                 print(
                     "WARNING: {} not found in contacts or people. Check aka".format(
-                        person_name).encode('utf-8'))
+                        person_name[0]).encode('utf-8'))
             else:
                 people.append(person_found['name'])
                 inst = fuzzy_retrieval(all_docs_from_collection(
@@ -202,7 +231,7 @@ def query_people_and_institutions(rc, names):
 
 
 def get_inst_name(person, rc):
-    """Get the name of instituion of the person's lastest employment."""
+    """Get the name of instituion of the person's latest employment."""
     if 'employment' in person:
         org = get_recent_org(person)
         person_inst_abbr = org
@@ -233,16 +262,16 @@ def get_person_pubs(coll, person):
     return pubs
 
 
-def make_person_3tups(person, rc):
+def make_person_4tups(person, rc):
     if 'name' not in person:
         print("Warning")
     name = HumanName(person['name'])
     inst = get_inst_name(person, rc)
     first_names = " ".join([name.first, name.middle])
-    return [(name.last, first_names, inst)]
+    return [(name.last, first_names, inst, "pi")]
 
 
-def format_last_first_instutition_names(rc, ppl_names, excluded_inst_name=None):
+def format_last_first_institution_names(rc, ppl_names, excluded_inst_name=None):
     """Get the last name, first name and institution name."""
     ppl = []
     for ppl_tup in ppl_names:
@@ -336,10 +365,10 @@ def get_person(person_id, rc):
         person_id,
         case_sensitive=False
     )
-    if person_found:
-        return person_found
-    print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
-    return None
+    if not person_found:
+        print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
+        person_found = {"name": person_id}
+    return person_found
 
 
 def find_coeditors(person, rc):
@@ -361,7 +390,7 @@ def find_coeditors(person, rc):
         coeditor = get_person(coeditor_id, rc)
         coeditor_name = HumanName(coeditor.get('name'),"")
         inst_name = get_inst_name(coeditor, rc)
-        coeditor_inst_journals.add((coeditor_name.last, coeditor_name.first, inst_name, journal))
+        coeditor_inst_journals.add((coeditor_name.last, coeditor_name.first, inst_name, journal, "co-editor"))
     return coeditor_inst_journals
 
 
@@ -380,6 +409,12 @@ class RecentCollaboratorsBuilder(BuilderBase):
             os.path.dirname(os.path.dirname(__file__)), "templates", "coa_template_doe.xlsx"
         )
         self.cmds = ["excel"]
+        try:
+            rc.verbose
+        except AttributeError:
+            rc.verbose = False
+
+
 
     def construct_global_ctx(self):
         """Construct the global ctx including database and methods."""
@@ -401,7 +436,7 @@ class RecentCollaboratorsBuilder(BuilderBase):
         gtx["citations"] = all_docs_from_collection(rc.client, "citations")
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
-    def query_ppl(self, target, **filters):
+    def query_ppl(self, target):
         """Query the data base for the target's collaborators' information."""
         rc = self.rc
         gtx = self.gtx
@@ -410,89 +445,141 @@ class RecentCollaboratorsBuilder(BuilderBase):
                                  case_sensitive=False)
         if not person:
             raise RuntimeError("Person {} not found in people.".format(target).encode('utf-8'))
+
         pubs = get_person_pubs(gtx["citations"], person)
-        if 'since_date' in filters:
-            since_date = filters.get('since_date')
-            pubs = filter_since_date(pubs, since_date)
+        pubs = filter_since_date(pubs, rc)
         try:
             if rc.verbose:
                 for pub in pubs:
                     print(f"{pub.get('title')}, ({pub.get('year')})")
         except AttributeError:
             pass
-        my_collabs_dated = get_coauthors_from_pubs(rc, pubs, person)
-        people, institutions, latest_active = query_people_and_institutions(rc, my_collabs_dated)
-        ppl_names = set(zip(people, institutions, latest_active))
-        collab_3tups = set(format_last_first_instutition_names(rc, ppl_names))
-        sort_collabs = sorted(list(collab_3tups),key=lambda x: (x[4],x[0]))
-        collab_3tups = set(sort_collabs)
-        advisors_3tups = set(get_advisors_name_inst(person, rc))
-        advisees_3tups = set(get_advisees_name_inst(gtx["people"], person, rc))
-        ppl_3tups = sorted(list(collab_3tups | advisors_3tups | advisees_3tups))
-        person_3tups = make_person_3tups(person, rc)
-        coeditors_info = find_coeditors(person, rc)
-        ppl_tab1 = format_to_nsf(person_3tups, '')
-        ppl_tab3 = format_to_nsf(advisors_3tups, 'G:') + format_to_nsf(advisees_3tups, 'T:')
-        ppl_tab4 = format_to_nsf(collab_3tups, 'A:')
-        ppl_tab5 = format_to_nsf(coeditors_info, 'E:')
+        my_collabs = get_coauthors_from_pubs(rc, pubs, person)
+        advisors = get_advisors_name_inst(person, rc)
+        advisees = get_advisees_name_inst(all_docs_from_collection(rc.client, "people"),
+                                          person, rc)
+        collabs = []
+        adviseors = advisors + advisees
+        for collab in my_collabs:
+            col_bool = True
+            for advis in adviseors:
+                if collab.get("name").last == advis.get("name").last \
+                        and collab.get("name").first == advis.get("name").first:
+                    col_bool = False
+                    if advis.get("interaction_date"):
+                        if collab.get("interaction_date", dt.date.today()) > advis.get("interaction_date", dt.date.today()):
+                            advis.update({"interaction_date": collab.get("interaction_date")})
+                    try:
+                        if collab.get("interaction_date") > advis.get("interaction_date"):
+                            advis.update({"interaction_date": collab.get("interaction_date")})
+                    except TypeError:
+                        print(f"ERROR: incorrect dates for an education/employment in {collab.get('name')}")
+                        print(f"collab date: {collab.get('interaction_date')}, advisee date: {advis.get('interaction_date')}")
+                        raise
+            if col_bool == True:
+                collabs.append(collab)
+        collabs.extend(advisees)
+        collabs.extend(advisors)
+        collabs.sort(key=lambda d: d['name'].last)
+        if rc.verbose:
+            output = [f"{my_collab.get('name').last}, "
+                   f"{my_collab.get('name').first}, "
+                   f"{my_collab.get('institution')}, "
+                   f"{my_collab.get('interaction_date')}, "
+                   f"{my_collab.get('advis_type', '')}, "
+                   f"{my_collab.get('type')}\n" for my_collab in collabs]
+            print(*output)
+        person["name"] = HumanName(person.get("name"))
         results = {
             'person_info': person,
-            'ppl_tab1': ppl_tab1,
-            'ppl_tab3': ppl_tab3,
-            'ppl_tab4': ppl_tab4,
-            'ppl_tab5': ppl_tab5,
-            'ppl_3tups': ppl_3tups
+            'collabs': collabs
         }
         return results
 
     @staticmethod
-    def fill_in_tab(ws, ppl_tups, start_row, template_cell_style=None, cols='ABCDE'):
+    def fill_in_tab(ws, ppl, start_row, template_cell_style=None, cols='ABCDE'):
         """Add the information in person, institution pairs into the table 4 in nsf table."""
-        more_rows = len(ppl_tups) - 1
+        nsf_mappings = {"co-author": "A:", "collaborator": "C:", "phd_advisor": "G:",
+                        "phd_advisee": "T:", "co-editor": "E:"}
+        more_rows = len(ppl) - 1
         if more_rows > 0:
             ws.insert_rows(start_row, amount=more_rows)
-        for row, tup in enumerate(ppl_tups, start=start_row):
-            cells = [ws['{}{}'.format(col, row)] for col in cols]
+        for row, person in enumerate(ppl, start=start_row):
+            cells = [ws[f"{col}{row}"] for col in cols]
             if template_cell_style is not None:
                 apply_cell_style(*cells, style=template_cell_style)
-            for ind, value in enumerate(tup):
-                cells[ind].value = value
+                ws[f"A{row}"].value = nsf_mappings.get(person.get("type"))
+                ws[f"B{row}"].value = f"{person.get('name').last}, " \
+                                f"{person.get('name').first}"
+                ws[f"C{row}"].value = person.get('institution')
+                if isinstance(person.get("interaction_date"), dt.date):
+                    ws[f"E{row}"].value = person.get('interaction_date', dt.date.today()).strftime("%m/%d/%Y")
         return
 
-    def render_template1(self, person_info, ppl_tab1, ppl_tab3, ppl_tab4, ppl_tab5, **kwargs):
+    def render_template1(self, person_info, collabs, **kwargs):
         """Render the nsf template."""
         template = self.template
         wb = openpyxl.load_workbook(template)
         ws = wb.worksheets[0]
+        nsf_collabs = copy(collabs)
+        advis, coauths, coeditors = [], [], []
+        pi_row_number = 17
+        ws[f"B{pi_row_number}"].value = f"{person_info.get('name').last}, " \
+                              f"{person_info.get('name').first}"
+        ws[f"C{pi_row_number}"].value = person_info.get('institution')
+        ws[f"D{pi_row_number}"].value = person_info.get('interaction_date',
+                                         dt.date.today()).strftime("%m/%d/%Y")
+
+        for collab in nsf_collabs:
+            if collab.get("type") == "advisor" and collab.get('advis_type') == "phd":
+                collab.update({"type": "phd_advisor"})
+                advis.append(collab)
+            if collab.get("type") == "advisee" and collab.get('advis_type') == "phd":
+                collab.update({"type": "phd_advisee"})
+                advis.append(collab)
+            if collab.get("type") == "co-author":
+                coauths.append(collab)
+            if collab.get("type") == "co-editor":
+                coeditors.append(collab)
         style = copy_cell_style(ws['A17'])
-        self.fill_in_tab(
-            ws, ppl_tab5, start_row=44, template_cell_style=style
-        )
-        self.fill_in_tab(
-            ws, ppl_tab4, start_row=37, template_cell_style=style
-        )
-        self.fill_in_tab(
-            ws, ppl_tab3, start_row=30, template_cell_style=style
-        )
-        self.fill_in_tab(
-            ws, ppl_tab1, start_row=17, template_cell_style=style
-        )
+
+        if coauths:
+            self.fill_in_tab(
+                ws, coauths, start_row=52, template_cell_style=style
+            )
+        if advis:
+            self.fill_in_tab(
+                ws, advis, start_row=38, template_cell_style=style
+            )
+        # if person_info:
+        #     self.fill_in_tab(
+        #         ws, [person_info], start_row=17, template_cell_style=style
+        #     )
+        if coeditors:
+            self.fill_in_tab(
+                ws, coeditors, start_row=120, template_cell_style=style
+            )
         wb.save(os.path.join(self.bldir, "{}_nsf.xlsx".format(person_info["_id"])))
         return locals()
 
-    def render_template2(self, person_info, ppl_3tups, **kwargs):
+    def render_template2(self, person_info, collabs, **kwargs):
         """Render the doe template."""
 
         template2 = self.template2
-        ppl_3tups = list(set(ppl_3tups))
-        ppl_3tups.sort(key=lambda x: x[0])
-        num_rows = len(ppl_3tups)
+        num_rows = len(collabs)
         wb = openpyxl.load_workbook(template2)
         ws = wb.worksheets[0]
         for row in range(num_rows):
-            ws["A{}".format(row + 8)].value = ppl_3tups[row][0]
-            ws["B{}".format(row + 8)].value = ppl_3tups[row][1]
-            ws["C{}".format((row + 8))].value = ppl_3tups[row][2]
+            ws["A{}".format(row + 8)].value = person_info["name"].last
+            ws["B{}".format(row + 8)].value = person_info["name"].first
+            ws["C{}".format(row + 8)].value = collabs[row]["name"].last
+            ws["D{}".format(row + 8)].value = collabs[row]["name"].first
+            ws["F{}".format((row + 8))].value = collabs[row]["institution"]
+            ws["G{}".format((row + 8))].value = collabs[row]["type"]
+            if isinstance(collabs[row]["interaction_date"], dt.date):
+                ws["H{}".format((row + 8))].value = collabs[row]["interaction_date"].year
+        ws["C3"].value = person_info["name"].full_name
+        ws["C4"].value = person_info.get("email", "")
         wb.save(os.path.join(self.bldir, "{}_doe.xlsx".format(person_info["_id"])))
         return locals()
 
@@ -503,9 +590,13 @@ class RecentCollaboratorsBuilder(BuilderBase):
             sys.exit("please rerun specifying --people PERSON")
         if isinstance(rc.people, str):
             rc.people = [rc.people]
-        since_date = get_since_date(rc)
-        print(f"filtering coauthors for papers since {since_date}")
-        target = rc.people[0]
-        query_results = self.query_ppl(target, since_date=since_date)
-        self.render_template1(**query_results)
-        self.render_template2(**query_results)
+        if not hasattr(rc, 'date'):
+            rc.date = dt.date.today()
+        get_since_dates(rc)
+        rc.post_doc_window_months = NUM_POSTDOC_MONTHS
+        print(f"filtering coauthors for papers since {rc.pub_since_date}")
+        for target in rc.people:
+            query_results = self.query_ppl(target)
+            self.render_template1(**query_results)
+            self.render_template2(**query_results)
+

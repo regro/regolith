@@ -118,10 +118,11 @@ class ProjectumAdderHelper(DbHelperBase):
         pdoc.update({
             'begin_date': now,
             'log_url': '',
+            'supplementary_info_urls': [],
             'name': rc.name,
             'pi_id': rc.pi_id,
             'lead': rc.lead,
-            'notes': rc.notes
+            'notes': rc.notes,
         })
         if rc.lead == "tbd":
             pdoc.update({
@@ -219,9 +220,14 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Create slides", "Create a 'slides' folder in the paper repo or a Google slides deck for a series of talk slides. Iterate the slide skeleton with PI to convergence. (For a beamer template: https://gitlab.thebillingegroup.com/talks/beamerTalkTemplate)."),
             ("Create a highlight slide", "Create a 'highlight' folder in the paper repo. Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it in the 'highlight' folder. Iterate with PI to convergence (highlight templates and examples can be found in https://gitlab.thebillingegroup.com/papers/highlights)"),
             ("Create public-summary", "Create a public summary in a text file. Place it in the 'highlight' folder. Iterate with PI to convergence. (The kudos template and example can be found at https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y/edit?usp=sharing)."),
+            ("Add links to urls with supplementary info in the prum", "Add url links to raw or analyzed data and code that was used in the data analysis, and anything else, in gitlab or elsewhere into the 'supplementary_info_urls' field in the prum")
         ]
 
         submission_checklist = [
+            ("Add paper to citations collection in regolith database",  "If it will be submitted to a preprint server such as arxiv, put it in the citations collection in a public database, if the paper is not on a preprint server put the entry in the citations collection on a non-public (e.g., group) database Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct. Any questions, ask PI."),
+            ("Create public facing supplementary information as needed",  "Ask first before making things public, but any code or data that we want to publish as supplementary info should be put in a place where it can be made public or at least available to referees (e.g., in a repo on GitHub)."),
+            ("Make sure the public facing SI info has the right license", "check with the PI for the best license to put on this, but it will likely be some kind of creative commons license"),
+            ("Put url links to all open shared SI data repositorities into the 'supplementary_info_urls' field in the entry for this paper in the citations collection.", "the url links in supplementary_info_urls in the projecta collection are to internal data- and code- stores so future group members can find things.  The fields in the citations collection should be public facing urls"),
             ("Check the author list", "Check the author list. Last chance to check for missing authors. Does each author agree to submit to the specific journal? Make sure all authors have approved submission."),
             ("Check publisher accounts", "Check that all of the authors have accounts for the publisher you are submitting to (if possible) and that they have their ORCID IDs associated with their accounts (ie. for ACS, authors need to link their Paragon accounts with their ORCID IDs)."),
             ("Check institution", "Is author's name, institution correct? Last chance to avoid embarrassing typos."),
@@ -233,23 +239,23 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Check numbers in the table", "Check all the numbers in the tables for errors."),
             ("Check any question marks", "Check all the question marks in the text. Is there any 'FIG.???' or unrecognized character?"),
             ("Check figure references", "Check references to the all figures and tables. Does reference to Figure 4 refer to the right figure for example."),
-            ("Check references", "Go through the references and find all the errors. Correct errors in the bibliographic database (citations.yml, or the Zotero collection, for example), not just in the local bib file. Did all the journal names compile correctly? Are they all consistently in abbreviated form (or full form if that is the style, though that is rare). Volume, year and page numbers appear for all references? Hard to find errors in these numbers, but when you do, definitely correct the database!"),
+            ("Check references", "Go through the references and find all the errors. Correct errors in the bibliographic database (citations.yml, or the Zotero collection, for example), not in the local bib file. Did all the journal names compile correctly? Are they all consistently in abbreviated form (or full form if that is the style, though that is rare). Volume, year and page numbers appear for all references? Hard to find errors in these numbers, but when you do, definitely correct the database!"),
             ("Check reference style", "Is reference's style in accordance with journal's requirement?"),
             ("Check journal submission requirements", "Check the journal submission requirements for cover letters, table of contents pictures, list of referees, etc.."),
             ("Check arxiv", "Check with PI; will the paper be submitted to arXiv?"),
             ("Get approval", "Get final approval from all authors for the final version of the manuscript, cover letter, referees list, etc., submission to arXiv if appropriate."),
+            ("Check open access", "Check with coauthors if the paper should be submitted open access.  Do not guess on this one as there may be financial consequences"),
             ("Check cover letter", "In the cover letter, does it contain editor-in-chief's name and institution (usually at the top left of the letter) ? Is the content of letter concise and eye-catching? Are (three) suggested reviewers' information in the letter?"),
-            ("Insert bbl", "If it is LaTeX, insert the .bbl file into the main tex file and comment out the \\thebibliography and \\bibliographystyle lines."),
+            ("Do a trial submission", "Go through the online submission process finding out all the questions that you will be asked, but don't actually press submit, and then check with the PI about the right answers"),
             ("Commit and push", "Commit all the changes to your local repo, then push the changes to gitlab."),
+            ("Create a PR of the updated citations entry", "Create a PR to merge to the billingeGroup repository and work to get it merged"),
             ("Submit to journal", "Go ahead and make the submission, usually online."),
             ("Push a tag", "If during the submission process you need to make any changes, do it in your local repo and make another commit and push. When the submission is finalized, tag the repo that points to THIS VERSION IS THE SUBMITTED VERSION. create the submission tag.  If the current version of your local repo is the submitted version, type, e.g., `git tag -l` to list previous tags (try and keep the tag name formatting consistent) `git tag -a 20180525PRLsubmitted -m <initial submission to PRL>` `git push origin <tag_name>`."),
             ("Modify tag if needed", "If you forgot to tag and made some changes to the repo and  need to point the tag to an earlier version, or want to view all the different tags, or do some other complicated thing, more info about tagging git repos is here: https://git-scm.com/book/en/v2/Git-Basics-Tagging"),
             ("Submit to arxiv if needed", "Submit to arxiv if appropriate."),
             ("Push an arxiv tag", "Make a new tag of the version submitted to arXiv with the name arXivSubmitted20170610."),
-            ("Get arxiv reference", "Wait a day to get the full arXiv reference."),
-            ("If submitted to arxiv, enter in citations collection in rg-db-public", "If submit to arxiv, create an entry of the paper in citations.yml at rg-db-public billingeGroup public github repository.  Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct. Fill in the arXiv citation information in citations.yml in the bibliography reference. Any questions, ask PI. Create a PR to merge to the billingeGroup repository."),
-            ("If not submitted to arxiv, enter in citations collection in rg-db-group", "If not submit to arxiv, create an entry of the paper in citations.yml at rg-db-group billingeGroup private github repository.  Check, double check, and triple check that the tag for the grant is correct and the tags for the facilities are correct.  Any questions, ask PI. Create a PR to merge to the billingeGroup repository."),
             ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace `lyang` with your own name ID in the group) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually. The complied tex and pdf files are located in the `_build` folder. If any problem about installing regolith and databases, please refer to [rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases)."),
+            ("Get arxiv reference", "Wait a day to get the full arXiv reference."),
             ("Email coauthors", "Send an email to coauthors letting them know the arXiv citation information."),
             ("Ask PI if anything unfinished", "Ask PI about any items unfinished."),
             ("Email PI", "Email PI if finish the above."),
@@ -294,6 +300,7 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Email coauthors", "Send an email to your coauthors that this was successfully resubmitted."),
             ("Revisit talk slides", "Revisit the set of talk slides that summarize the result in a few slides if they need to be updated. Iterate with PI to convergence."),
             ("Revisit the highlight slide", "Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it in the 'highlight' folder. Iterate with PI to convergence (highlight templates and examples can be found in http://gitlab.thebillingegroup.com/highlights/highlightTemplate)"),
+            ("Check the url links to all open shared SI data repositorities in the 'supplementary_info_urls' field in the entry for this paper in the citations collection.", "make sure they work and the data are accessible."),
             ("Create web news", "Create a web news story for thebillingegroup.com site. Place it in the 'highlight' folder. Iterate with PI to convergence"),
             ("Revisit kudos", "Revisit the Kudos summary if it needs to be updated. Iterate with PI to convergence."),
             ("Ask PI if anything unfinished", "Ask PI about any items unfinished."),
@@ -309,6 +316,7 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Check the facility in the db entry", "facility{} is every beamline that was used for data collection. Again, use the standard abbreviations at the top of the file. Use two levels of granularity for each, so X17A would be: 'nsls, x17a', if X17A and X7B were used it would be 'nsls, x17a, x7b' and so on."),
             ("Check the nb in the db entry", "nb is some other tags, also listed at the top of the file. 'art' for a regular article and 'hilite' if it is one of our top top papers are the most common."),
             ("Check the tags in the db entry", "tags should reflect the content so we can automatically build reading lists by subject.  Most papers are PDF papers, so no need to say pdf, be more targeted."),
+            ("Add the url link to the SI at the journal to the 'supplementary_info_urls' field in the entry for this paper in the citations collection.", "Don't necessarily remove the others if they are still open and public.  It is also ok to put URLs to our data repositories as part of the SI in the paper"),
             ("Check db errors", "In your rg-db-public/local directory, run `regolith build publist --people lyang` (replace lyang with your name) to make sure that you publist is building properly. Make sure that the publication appears correctly with no errors and fix anything. If there are problems with the latex building, run the commands with --no-pdf, which yields the latex source but doesn't build it, then build the latex manually."),
             ("Add/update to Zotero", "Add or update the published reference to the billinge-group-bib folder in our group Zotero account"),
             ("Finalize the highlight slide", "Make a highlight of your work and put it in gitlab/highlights (if not done already during the accepted paper checklist). Look in there for standards to work from. This is an important activity. Now you have done your great work, this is how you can advertise it to others. Top papers we send these highlights to the funding agencies.  Iterate the highlight with PI till it is converged."),

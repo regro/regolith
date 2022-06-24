@@ -52,7 +52,7 @@ def subparser(subpi):
                        help="the person presenting the presentation, used for presentation name,"
                             " defaults to name in user.config",
                        )
-    subpi.add_argument("-u", "--authors", nargs="+",
+    subpi.add_argument("--authors", nargs="+",
                        help="specify the authors of this presentation, "
                             "defaults to person submitting the presentation",
                        )
@@ -60,10 +60,14 @@ def subparser(subpi):
                        help="grant, or grants (separated by spaces), that support this presentation. Defaults to tbd",
                        default="tbd"
                        )
+    subpi.add_argument("-u", "--presentation-url",
+                       help="the url to the presentation, whether it is on Google Drive, GitHub or wherever",
+                       )
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="note or notes to be inserted as a list into the notes field, "
                             "separate notes with spaces.  Place inside quotes if the note "
-                            "itself contains spaces."
+                            "itself contains spaces.",
+                       default=[]
                        )
     subpi.add_argument("-s", "--status",
                        choices=PRESENTATION_STATI,
@@ -185,9 +189,10 @@ class PresentationAdderHelper(DbHelperBase):
                      'authors': authors,
                      'begin_date': begin_date,
                      'end_date': end_date,
+                     'notes': rc.notes,
                      })
-        if rc.notes:
-            pdoc.update({"notes": rc.notes})
+        if rc.presentation_url:
+            pdoc.update({"presentation_url": rc.presentation_url})
         if rc.webinar:
             rc.no_expense = True
             pdoc.update({"webinar": True})

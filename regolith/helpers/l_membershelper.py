@@ -99,31 +99,36 @@ class MembersListerHelper(SoutHelperBase):
                 else:
                     people.append(person)
 
-        for i in people:
-            not_current_positions = [emp for emp in i.get('employment') if
+        cleaned_people = []
+        for person in people:
+            not_current_positions = [emp for emp in person.get('employment') if
                                      not is_current(emp)]
             not_current_positions.sort(key=lambda x: get_dates(x)["end_date"])
-            current_positions = [emp for emp in i.get('employment') if
+            current_positions = [emp for emp in person.get('employment') if
                                  is_current(emp)]
             current_positions.sort(
                 key=lambda x: get_dates(x)["begin_date"])
             positions = not_current_positions + current_positions
             position_keys = [position_key(position) for position in positions if position.get("group","") == group_id]
-            i["position_key"] = max(position_keys)[0]
-        people.sort(key=lambda k: k['position_key'], reverse=True)
+            if position_keys:
+                person["position_key"] = max(position_keys)[0]
+                cleaned_people.append(person)
+            else:
+                print(f"Person {person['name']} has no positions in group {group_id}")
+        cleaned_people.sort(key=lambda k: k['position_key'], reverse=True)
         position_names = {1:"Undergrads", 2.5: "Masters Students", 2: "Visiting Students",
                           3: "Graduate Students", 4: "Post Docs", 5: "Visitors",
                           8: "Assistant Scientists", 9: "Associate Scientists",
                           10: "Scientists", 11: "PI"}
         accounting = 12
-        for i in people:
-            if i.get('position_key') < accounting:
-                accounting = i.get('position_key')
+        for person in cleaned_people:
+            if person.get('position_key') < accounting:
+                accounting = person.get('position_key')
                 print(f"    -- {position_names.get(accounting,position_names.get(5))} --")
             if rc.verbose:
-                print("{}, {}".format(i.get('name'), i.get('position')))
-                print("    email: {} | group_id: {}".format(i.get('email'), i.get('_id')))
-                print("    github_id: {} | orcid: {}".format(i.get('github_id'), i.get('orcid_id')))
+                print("{}, {}".format(person.get('name'), person.get('position')))
+                print("    email: {} | group_id: {}".format(person.get('email'), person.get('_id')))
+                print("    github_id: {} | orcid: {}".format(person.get('github_id'), person.get('orcid_id')))
                 for position in positions:
                     if is_current(position):
                         inst = fuzzy_retrieval(gtx["institutions"], ["aka", "name", "_id"],
@@ -134,9 +139,9 @@ class MembersListerHelper(SoutHelperBase):
                             print(f"WARNING: {position.get('organization')} not in institutions collection")
                         print("    current organization: {}".format(instname))
                         print("    current position: {}".format(position.get('full_position', position.get('position').title())))
-                    if not i.get('active'):
+                    if not person.get('active'):
                         if position.get('group') == "bg":
                             print("    billinge group position: {}".format(position.get('position')))
             else:
-                print("{}".format(i.get('name')))
+                print("{}".format(person.get('name')))
         return

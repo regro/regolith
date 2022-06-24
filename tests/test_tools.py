@@ -1,3 +1,5 @@
+from copy import copy
+
 import habanero
 import pytest
 import datetime as dt
@@ -32,7 +34,7 @@ from regolith.tools import (
     get_formatted_crossref_reference,
     compound_dict,
     compound_list, filter_employment_for_advisees,
-    get_tags
+    get_tags, dereference_institution
 )
 
 PEOPLE_COLL = [
@@ -2032,7 +2034,12 @@ PRESENTATIONS = [presentation1, presentation2, presentation3]
 
 institution1 = {"_id":"columbiau", "city":"New York", "country":"USA", "name":"Columbia University", "state":"NY"}
 institution2 = {"_id":"rutgersu", "city":"New Brunswick", "country":"USA", "name":"Rutgers University", "state":"NJ"}
-INSTITUTIONS = [institution1, institution2]
+institution3 = {"_id":"barnardc", "city":"New York", "country":"USA", "name":"Barnard College", "state":"NY", "departments": {"physics": {"name": "Department of Physics", "aka": "Phys"}}}
+institution4 = {"_id":"nyu", "city":"New York", "country":"USA", "name":"New York University", "state":"NY", "street": "23rd", "zip": "10001", "aka": "purple"}
+institution_overseas = {"_id":"overseasu", "city":"Toronto", "country":"Canada", "name":"Overseas University"}
+organization1 = {"_id":"3m", "city":"Minneapolis", "country":"USA", "name":"3M", "state":"MN"}
+INSTITUTIONS = [institution1, institution2, institution3, institution4, institution_overseas, organization1]
+
 
 expected1 = {"_id": "abc",
     "authors": "tony stark",
@@ -2089,6 +2096,41 @@ expected3 = {'_id': 'jkl',
     "type": "webinar"}
 
 @pytest.mark.parametrize(
+    "input, expected, sysout", [
+        ({"institution": "columbiau"}, {'department': 'unknown', "location": "New York, NY", "city": "New York", "country":"USA", "institution":"Columbia University", "organization":"Columbia University",  "state":"NY"}, ""),
+        ({"institution": "nyu"}, {'department': 'unknown',"location": "New York, NY", "city": "New York", "country":"USA", "institution":"New York University", "organization":"New York University",  "state":"NY", "street": "23rd", "zip": "10001", "aka": "purple"}, ""),
+        ({"institution": "barnardc", "department": "physics"}, {"location": "New York, NY", "city": "New York", "country":"USA", "institution":"Barnard College", "organization":"Barnard College",  "state":"NY", "department": "Department of Physics"}, ""),
+        ({"institution": "columbiau", "department": "physics"}, {"location": "New York, NY", "city": "New York", "country":"USA", "institution":"Columbia University", "organization":"Columbia University",  "state":"NY", "department": "physics"}, "WARNING: no departments in columbiau. physics sought\n"),
+        ({"organization": "3m"}, {'department': 'unknown',"location": "Minneapolis, MN", "city": "Minneapolis", "country":"USA", "institution":"3M", "organization":"3M",  "state":"MN"}, ""),
+        ({"institution": "notindbu"},
+         {"location": "unknown, unknown", "city": "unknown", "country": "unknown",
+          "institution": "notindbu", 'department': 'unknown',
+          "organization": "notindbu", "state": "unknown"}, "WARNING: notindbu not found in institutions\n"),
+        ({"institution": "notindbu", "location": "Near, BY"},
+         {"location": "Near, BY", "city": "unknown", "country": "unknown",
+          "institution": "notindbu", 'department': 'unknown',
+          "organization": "notindbu", "state": "unknown"}, "WARNING: notindbu not found in institutions\n"),
+        ({"institution": "notindbu", "city": "Near", "state": "BY"},
+         {"location": "Near, BY", "city": "Near", "country": "unknown",
+          "institution": "notindbu", 'department': 'unknown',
+          "organization": "notindbu", "state": "BY"}, "WARNING: notindbu not found in institutions\n"),
+        ({"institution": "overseasu"},
+         {"location": "Toronto, Canada", "city": "Toronto",
+          "country": "Canada", 'department': 'unknown',
+          "institution": "Overseas University",
+          "organization": "Overseas University"}, ""),
+        ({"degree": "phd"},
+         {"degree": "phd"}, "WARNING: no institution or organization in entry: {'degree': 'phd'}\n"),
+    ]
+)
+def test_dereference_institution(input, expected, sysout, capsys):
+    dereference_institution(input, INSTITUTIONS, verbose=True)
+    assert expected == input
+    out, err = capsys.readouterr()
+    assert sysout == out
+
+
+@pytest.mark.parametrize(
     "args, kwargs, expected",[
     #this tests no kwargs
     ([PEOPLE, PRESENTATIONS, INSTITUTIONS, "tstark"],
@@ -2131,4 +2173,6 @@ def test_get_tags_invalid():
     with pytest.raises(TypeError) as e_info:
         get_tags(coll)
         assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
+
+
 

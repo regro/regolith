@@ -1,4 +1,6 @@
-**Added:** None
+**Added:**
+
+* Add the command "regolith --version" to print the version number.
 
 **Changed:** None
 

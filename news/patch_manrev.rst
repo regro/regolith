@@ -7,7 +7,6 @@
 **Removed:** None
 
 **Fixed:**
- * fixed typo in postdoc advisee getter
- * date handling for end-dates of current students/postdocs
+ * manuscript review new correctly prints freewrite field
 
 **Security:** None

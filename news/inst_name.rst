@@ -7,7 +7,6 @@
 **Removed:** None
 
 **Fixed:**
- * fixed typo in postdoc advisee getter
- * date handling for end-dates of current students/postdocs
+ * dereference_institutions will always return a department now
 
 **Security:** None

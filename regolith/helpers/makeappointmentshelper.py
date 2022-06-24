@@ -86,18 +86,18 @@ def subparser(subpi):
 
 
 def plotter(datearray, student=None, pd=None, ss=None, title=None):
-    fig,ax = plt.subplots()
+    fig, ax = plt.subplots()
     sta = numpy.array(student)/30.5
     pda = numpy.array(pd)/30.5
     ssa = numpy.array(ss)/30.5
     if student:
-        ax.plot_date(datearray, sta, ls='-', marker="", label="student months")
+        ax.plot_date(datearray, sta, fmt=",-", label="student months")
     if pd:
-        ax.plot_date(datearray, pda, ls='-', marker="", label="postdoc months")
+        ax.plot_date(datearray, pda, fmt=",-", label="postdoc months")
     if ss:
-        ax.plot_date(datearray, ssa, ls='-', marker="", label="ss months")
+        ax.plot_date(datearray, ssa, fmt=",-", label="ss months")
     if student and pd:
-        ax.plot_date(datearray, sta+pda, ls='-', marker="", label="student+postdoc days")
+        ax.plot_date(datearray, sta+pda, fmt=",-", label="student+postdoc days")
     ax.set_xlabel('date')
     ax.set_ylabel('budget months remaining')
     ax.set_title(title)
