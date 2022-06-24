@@ -128,48 +128,46 @@ class PresentationAdderHelper(DbHelperBase):
         if not rc.database:
             rc.database = rc.databases[0]["name"]
 
-        if rc.expense_db:       
-            expense_dbs = [db for db in rc.databases if db["name"] == rc.expense_db] # look up name in rc.databases   
-            try:
-                expense_db = expense_dbs[0] # lookup successful
-            except IndexError:
-                expense_db = None # lookup returned no match
-
-            if expense_db is None:
-                raise RuntimeError(
-                    f"ERROR: You specified database {rc.expense_db} for the expenses collection, "
-                    "but that database was not found in your regolithrc.json file. "
-                    "Please check the spelling when you ran the program and that the database is "
-                    "correctly specified in regolithrc.json."
-                )
-            if (expense_db["public"] == True) and (not rc.force):
-                raise RuntimeError(
-                    "ERROR: The expense database you specified for the expenses collection, "
-                    f"{rc.expense_db}, is not private. Please rerun specifying a PRIVATE database "
-                    "listed in your regolithrc.json file, or, at your own risk, use the --force "
-                    "option to add the presentation expense data to a public database."
-                )
-        elif not rc.no_expense: # if no expense database is specified, but there's still presentation expense data, i.e., the --no-expense flag was not passed
-            if rc.force:
-                rc.expense_db = rc.databases[0]["name"] # defaults to first entry under databases in regolithrc.json file
-                if rc.databases[0]["public"]:
-                    warn(f"Expense data has been added to a public database: {rc.expense_db} \n"
-                    "Because you did not specify --no-expense, the adder assumes your presentation has "
-                    "associated expenses. But you passed the --force option without specifying an expense database to "
-                    "use (with the --expense-db option). As a result, the helper defaulted to adding the expenses to the "
-                    f"expenses collection in the first database listed in your regolithrc.json file,  {rc.expense_db}, "
-                    "which is PUBLIC. You may be revealing sensitive information.")
-            else:
-                private_dbs = [db for db in rc.databases if db["public"] != True] # look up private dbs in regolithrc.json
+        if not rc.no_expense:
+            if rc.expense_db:       
+                matches = [db for db in rc.databases if db["name"] == rc.expense_db]  
                 try:
-                    rc.expense_db = private_dbs[0]["name"] # default to first private db found
-                except IndexError:                         # lookup returned no match -- no private dbs listed
+                    expense_db_data = matches[0]
+                except IndexError:
                     raise RuntimeError(
-                        "ERROR: There is no private database listed in your regolithrc.json file "
-                        "to enter expense data into. Please rerun after adding a private database "
-                        "to your regolithrc.json file, or, at your own risk, use the --force option "
-                        "to add the presentation expense data to a public database."
+                        f"ERROR: You specified database {rc.expense_db} for the expenses collection, "
+                        "but that database was not found in your regolithrc.json file. "
+                        "Please check the spelling when you ran the program and that the database is "
+                        "correctly specified in regolithrc.json."
                     )
+                if (expense_db_data["public"] == True) and (not rc.force):
+                    raise RuntimeError(
+                        "ERROR: The expense database you specified for the expenses collection, "
+                        f"{rc.expense_db}, is not private. Please rerun specifying a PRIVATE database "
+                        "listed in your regolithrc.json file, or, at your own risk, use the --force "
+                        "option to add the presentation expense data to a public database."
+                    )
+            else:
+                if rc.force:
+                    rc.expense_db = rc.databases[0]["name"]
+                    if rc.databases[0]["public"]:
+                        warn(f"Expense data has been added to a public database: {rc.expense_db} \n"
+                        "Because you did not specify --no-expense, the adder assumes your presentation has "
+                        "associated expenses. But you passed the --force option without specifying an expense database to "
+                        "use (with the --expense-db option). As a result, the helper defaulted to adding the expenses to the "
+                        f"expenses collection in the first database listed in your regolithrc.json file,  {rc.expense_db}, "
+                        "which is PUBLIC. You may be revealing sensitive information.")
+                else:
+                    private_dbs = [db for db in rc.databases if db["public"] != True]
+                    try:
+                        rc.expense_db = private_dbs[0]["name"]
+                    except IndexError:                         
+                        raise RuntimeError(
+                            "ERROR: There is no private database listed in your regolithrc.json file "
+                            "to enter expense data into. Please rerun after adding a private database "
+                            "to your regolithrc.json file, or, at your own risk, use the --force option "
+                            "to add the presentation expense data to a public database."
+                        )
 
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
