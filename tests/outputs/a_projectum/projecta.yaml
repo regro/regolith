@@ -9,6 +9,7 @@ ab_inactive:
     due_date: '2021-05-03'
     name: Kickoff
     status: backburner
+    type: meeting
   lead: abeing
   milestones:
     - due_date: '2021-05-03'
