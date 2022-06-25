@@ -50,9 +50,12 @@ def subparser(subpi):
                        help="proposed due date for the deliverable",
                        **date_kwargs
                        )
-    subpi.add_argument("--checklist", action='store_true',
+    subpi.add_argument("--publ-checklist", action='store_true',
                        help="Use this to turn the prum into a paper submission"
                             "checklist."
+                       )
+    subpi.add_argument("--beamtime-checklist", action='store_true',
+                       help="Use this to turn the prum into a beamtime checklist"
                        )
     # Do not delete --database arg
     subpi.add_argument("--database",
@@ -203,9 +206,12 @@ class ProjectumAdderHelper(DbHelperBase):
                    }
         pdoc.update({"milestones": [secondm]})
 
-        if rc.checklist:
-            pdoc = self.insert_checklists(pdoc, now)
+        if rc.publ_checklist:
+            pdoc = self.insert_publ_checklists(pdoc, now)
 
+
+        if rc.publ_checklist:
+            pdoc = self.insert_beamline_checklists(pdoc, now)
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 
@@ -213,7 +219,10 @@ class ProjectumAdderHelper(DbHelperBase):
 
         return
 
-    def insert_checklists(self, pdoc, now):
+    def insert_beamline_checklists(self, pdoc, now):
+        """Create beamline checklist, one item as one milestone."""
+
+    def insert_publ_checklists(self, pdoc, now):
         """Create manuscript checklist, one item as one milestone."""
         presubmission_checklist = [
             ("Create slide figures", "Create Inkscape graphics (Inkscape is preferrable over ppt) for the slides and place in a ``figures`` directory in the slides directory. These may then be used either in beamer or ppt. Iterate with PI to convergence. (to get started with Inkscape download and install it, then run the program and navigate to Help-->Tutorials.  The first two ('Basic' and 'Shapes') should probably be enough for someone to get basic functionality.)."),
