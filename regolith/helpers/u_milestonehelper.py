@@ -134,7 +134,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
         all_milestones = [deliverable]
         if kickoff:
             kickoff['identifier'] = 'kickoff'
-            kickoff['type'] = 'meeting'
+            if not kickoff.get('type'):
+                kickoff['type'] = 'meeting'
             all_milestones = [deliverable, kickoff]
         for item in milestones:
             item['identifier'] = 'milestones'
