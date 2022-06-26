@@ -43,7 +43,7 @@ def subparser(subpi):
                        type=str)
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help="Increases the verbosity of the output.")
-    subpi.add_argument("-u", "--due_date",
+    subpi.add_argument("-u", "--due-date",
                        help="New due date of the milestone. "
                             "Required for a new milestone.",
                        **date_kwargs)

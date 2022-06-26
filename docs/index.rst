@@ -226,10 +226,10 @@ and you should see something like
       -t TAGS [TAGS ...], --tags TAGS [TAGS ...]
                             Filter tasks by tags. Items are returned if they
                             contain any of the tags listed
-      -a ASSIGNED_TO, --assigned_to ASSIGNED_TO
+      -a ASSIGNED_TO, --assigned-to ASSIGNED_TO
                             Filter tasks that are assigned to this user id.
                             Default id is saved in user.json.
-      -b [ASSIGNED_BY], --assigned_by [ASSIGNED_BY]
+      -b [ASSIGNED_BY], --assigned-by [ASSIGNED_BY]
                             Filter tasks that are assigned to other members by
                             this user id. Default id is saved in user.json.
       --date DATE           Enter a date such that the helper can calculate how

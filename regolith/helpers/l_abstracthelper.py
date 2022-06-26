@@ -30,7 +30,7 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "-l",
-        "--loc_inst",
+        "--loc-inst",
         help='location of presentation, either a fragment of an institution, '
              'country, city, state, or university. If an institution is entered,'
              'the search will be for seminars or colloquiums, otherwise the '
