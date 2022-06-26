@@ -96,7 +96,7 @@ def subparser(subpi):
                        help="Override the default id created from the date, "
                             "speaker and place by specifying an id here",
                        )
-    subpi.add_argument("--no_cal",
+    subpi.add_argument("--no-cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
     return subpi

@@ -29,7 +29,7 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         listbox_kwargs['widget'] = 'Listbox'
 
-    subpi.add_argument('--helper_help', action="store_true",
+    subpi.add_argument('--helper-help', action="store_true",
                         help=f'This helper will list all ACTIVE milestones by default. To '
                              f'be active the projectum itself must be active and the '
                              f'milestone within the prum also active.  Active milestones '
@@ -55,7 +55,7 @@ def subparser(subpi):
                        help="Same behavior as default.  Here for consistency")
     subpi.add_argument("--finished", action="store_true",
                        help=f"Lists all finished milestones, i.e., status is in {*PROJECTUM_FINISHED_STATI,}")
-    subpi.add_argument("--by_prum", action="store_true",
+    subpi.add_argument("--by-prum", action="store_true",
                        help=f"Valid milestones are listed in time-order but grouped by prum")
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help='increase verbosity of output')

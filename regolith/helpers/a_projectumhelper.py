@@ -37,7 +37,7 @@ def subparser(subpi):
                             "'aeinstein efermi'.  Builders will get the full names "
                             "from the contacts collection"
                        )
-    subpi.add_argument("-m", "--group_members", nargs="+",
+    subpi.add_argument("-m", "--group-members", nargs="+",
                        help="list of group member ids, e.g., 'astudent acolleague'. "
                             "Builders will get full names from people collection."
                             "Do not add the lead or the group"
@@ -46,7 +46,7 @@ def subparser(subpi):
     subpi.add_argument("-g", "--grants", nargs="+",
                        help="grant or (occasionally) list of grants that support this work"
                        )
-    subpi.add_argument("-u", "--due_date",
+    subpi.add_argument("-u", "--due-date",
                        help="proposed due date for the deliverable",
                        **date_kwargs
                        )

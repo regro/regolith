@@ -53,9 +53,9 @@ def subparser(subpi):
     subpi.add_argument("-o", "--outstandingreview",
                        help="List outstanding reviews",
                        action="store_true")
-    subpi.add_argument("-a", "--assigned_to",
+    subpi.add_argument("-a", "--assigned-to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
-    subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
+    subpi.add_argument("-b", "--assigned-by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.",

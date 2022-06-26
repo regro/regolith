@@ -53,11 +53,11 @@ def subparser(subpi):
                        help=" Change the description of the to_do task. If the description has more than one "
                             "word, please enclose it in quotation marks."
                        )
-    subpi.add_argument("-u", "--due_date",
+    subpi.add_argument("-u", "--due-date",
                        help="Change the due date of the task.",
                        **date_kwargs
                        )
-    subpi.add_argument("-e", "--estimated_duration",
+    subpi.add_argument("-e", "--estimated-duration",
                        help="Change the estimated duration the task will take in minutes. ",
                        type=float,
                        **deci_kwargs
@@ -79,17 +79,17 @@ def subparser(subpi):
                                                         "in quotation marks.",
                        **notes_kwargs)
     subpi.add_argument("-t", "--tags", nargs="+", help="The new tags to add for this task.")
-    subpi.add_argument("--begin_date",
+    subpi.add_argument("--begin-date",
                        help="Change the begin date of the task.",
                        **date_kwargs
                        )
-    subpi.add_argument("--end_date",
+    subpi.add_argument("--end-date",
                        help="Change the end date of the task.",
                        **date_kwargs
                        )
-    subpi.add_argument("-a", "--assigned_to",
+    subpi.add_argument("-a", "--assigned-to",
                        help="Filter tasks that are assigned to this user id. Default id is saved in user.json. ")
-    subpi.add_argument("-b", "--assigned_by", nargs='?', const="default_id",
+    subpi.add_argument("-b", "--assigned-by", nargs='?', const="default_id",
                        help="Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. ")
     subpi.add_argument("--date",
                        help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.",
