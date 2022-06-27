@@ -4,6 +4,7 @@ import time
 
 import dateutil.parser as date_parser
 import threading
+from warnings import warn
 
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
@@ -92,6 +93,15 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
+    subpi.add_argument("--expense-db",
+                       help="The database where the expense collection will be updated. "
+                            "Defaults to first database in the regolithrc.json file.",
+                       )
+    subpi.add_argument("--force",
+                       help="force adding presentation expense data to a public database, "
+                       "by default the first entry under 'databases` in regolithrc.json. "
+                       "DANGER: This could reveal sensitive information to the public.",
+                       action="store_true")
     subpi.add_argument("--id",
                        help="Override the default id created from the date, "
                             "speaker and place by specifying an id here",
@@ -119,6 +129,39 @@ class PresentationAdderHelper(DbHelperBase):
         rc.coll = f"{TARGET_COLL}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
+        
+        if rc.no_expense:
+            if rc.expense_db: # User Story B
+                raise RuntimeError(
+                    "ERROR: You specified an expense database with the --expense-db option, but also "
+                    "passed --no-expense. Do you want to create an expense? Please reformulate your "
+                    "helper command and rerun. "
+                    )
+            # User Story A implicit - no need to set expense_db variable
+        else:
+            if not rc.expense_db: # User Story C 
+                first_db = rc.databases[0]
+                if first_db["public"] == True:
+                    if rc.force:
+                        rc.expense_db = first_db["name"]
+                    else:
+                        raise RuntimeError(
+                                "ERROR: You did NOT specify an expense database to enter expense data "
+                                "assoicated with this presentation. The helper defaults to entering "
+                                "expenses into first database listed in your regolithrc.json file, "
+                                f"{first_db["name"]}, but it is PUBLIC and would reveal potentially "
+                                "sensitive information. Rerun by specifying the target database with "
+                                "--expense-db EXPENSE_DB, or (at your own risk) pass the --force flag."
+                                )
+                else:
+                    rc.expense_db = first_db["name"]
+                    warn("WARNING: No expense database was provided to input the expense data "
+                        "associated with this presentaiton."
+                        f"Defaulted to using {rc.expense_db} "
+                        "(which is the first db listed in regolithrc.json, and is not public)"
+                        )
+            # User Story D implicit - expense_db variable set to specified value
+
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
         )
