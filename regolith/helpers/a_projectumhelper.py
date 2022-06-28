@@ -6,8 +6,9 @@
 import datetime as dt
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
-import oauth2client as oauth2client
 import requests
+import os.path
+import json
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -16,9 +17,12 @@ from regolith.tools import (
     get_pi_id,
 )
 from gooey import GooeyParser
-from apiclient import discovery
-from httplib2 import Http
-from oauth2client import file
+from google_auth_oauthlib.flow import Flow
+from google.auth.transport.requests import Request
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2.credentials import Credentials
 
 TARGET_COLL = "projecta"
 
@@ -70,6 +74,7 @@ def subparser(subpi):
                             "today's date.",
                        **date_kwargs
                        )
+
     return subpi
 
 
@@ -374,27 +379,55 @@ class ProjectumAdderHelper(DbHelperBase):
 
     # create Google Doc page for prum in Google Drive 'bg-projects'
     def gdoc_generator(self):
-        # To use prum name for generated document name
-        rc = self.rc
-
+        """Create Google Doc for new projectum in 'Prums folder in 'bg-projects' Google Drive."""
         # Authenticate user
-        store = oauth2client.file.Storage('credentials.json')
-        credentials = store.get()
-        http = credentials.authorize(Http())
-        drive = discovery.build('drive', 'v3', http=http)
+        SCOPES = ['https://www.googleapis.com/auth/drive']
+        creds = None
+        if os.path.exists('token.json'):
+            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+            # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                        'C:/Users/jayla/Documents/test1/credentials2.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open('token.json', 'w') as token:
+                token.write(creds.to_json())
+        try:
+            # create gmail api client
+            service = build('docs', 'v1', credentials=creds)
+            # create blank Google Doc
+            title = 'Test 1'
+            body = {
+                'title': title}
+            doc = service.documents() \
+                .create(body=body).execute()
+            doc_id = doc.get('documentId')
+            print(f'Created document with title: {title}.')
+            # move generated Doc to 'bg-projects'
+            service = build('drive', 'v3', credentials=creds)
+            folder_id = "13N28fxVCY7dI_u6EPDQHDq905AxNKUR1"
+            file = service.files().get(fileId=doc_id, fields='parents').execute()
+            previous_parents = ",".join(file.get('parents'))
+            file = service.files().update(fileId=doc_id, addParents=folder_id,
+                                          removeParents=previous_parents,
+                                          fields='id, parents').execute()
+            print(f'File: "{doc.get("title")}" has been moved to "bg-projects".')
+            # move generated Doc from 'bg-projects' root folder to 'Prum' folder
+            service = build('drive', 'v3', credentials=creds)
+            folder_id = "12yfN_X0k9NiLDt9pe14JhLyqULxM2-vK"
+            file = service.files().get(fileId=doc_id, fields='parents').execute()
+            previous_parents = ",".join(file.get('parents'))
+            file = service.files().update(fileId=doc_id, addParents=folder_id,
+                                          removeParents=previous_parents,
+                                          fields='id, parents').execute()
+            print(f'File: "{doc.get("title")}" has been moved to "Prum" folder in "bg-projects".')
 
-        # Use Gdoc API to generate blank document in 'bg-projects'
-        folder_id = '12yfN_X0k9NiLDt9pe14JhLyqULxM2-vK'
-        file_metadata = {
-            'name': rc.name,
-            'mimeType': 'application/vnd.google-apps.document',
-            'parents': [folder_id]
-        }
-        file = drive_service.files().create(body=file_metadata,
-                                            fields='id').execute()
-        print("New Google Docs page created for " + rc.name + " prum in 'bg-projects'.")
-
+        except HttpError as error:
+            print(F'An error occurred: {error}')
+            file = None
         # Store projects and docs addresses in prum item
-    general_docs_url = "https://docs.google.com/document/d/"
-    doc_id = oauth2client.file.get('id')
-    docs_address = requests.get(general_docs_url + doc_id)
+        pdoc.update({'supplementary_info_urls': f"https://docs.google.com/document/d/{doc_id}"})
