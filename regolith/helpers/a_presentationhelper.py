@@ -261,7 +261,7 @@ class PresentationAdderHelper(DbHelperBase):
             rc.where = "tbd"
             rc.status = "unsubmitted"
             edoc = expense_constructor(key, begin_date, end_date, rc)
-            rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
-            print(f"{key} has been added in {EXPENSES_COLL}")
+            rc.client.insert_one(rc.expense_db, EXPENSES_COLL, edoc)
+            print(f"{key} has been added in {EXPENSES_COLL} in database {rc.expense_db}")
 
         return
