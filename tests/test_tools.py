@@ -2239,6 +2239,7 @@ def test_get_tags_invalid():
 def test_repo_info_complete(repo_information, expected):
     rc = copy.copy(DEFAULT_RC)
     rc._update(repo_information)
+    print(rc.__dict__)
     actual = repo_info_complete('repo1', rc)
     assert actual == expected
 

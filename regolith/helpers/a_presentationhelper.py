@@ -100,7 +100,7 @@ def subparser(subpi):
     subpi.add_argument("--no-cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
-    subpi.add_argument("-r", "--no-talk-repo",
+    subpi.add_argument("-r", "--no-repo",
                        help=f"Do not add the presentation to gitlab repo under talks",
                        action="store_true")
     return subpi
@@ -228,6 +228,6 @@ class PresentationAdderHelper(DbHelperBase):
             print(f"{key} has been added in {EXPENSES_COLL}")
 
         rc.repos['talk_repo']['params']['name'] = key
-        if not rc.no_talk_repo:
+        if not rc.no_repo:
             create_repo(key, 'talk_repo', 'gitlab_private_token', rc)
         return
