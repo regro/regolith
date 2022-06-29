@@ -16,13 +16,13 @@ def subparser(subpi):
         "coll",
         help='Collection that the lister is going to list from.')
     subpi.add_argument(
-        "-f","--kv_filter",
+        "-f","--kv-filter",
         nargs="+",
         help="Search the given collection by key-value pairs. "
              "e.g. 'regolith helper lister -f name simon' will "
              "return the id of all the people who's name contains simon.")
     subpi.add_argument(
-        "-r",  "--return_fields",
+        "-r",  "--return-fields",
         nargs="+",
         help="Specify from which keys to print values. "
              "e.g. 'regolith helper lister people -r name status title' "

@@ -39,23 +39,23 @@ helper_map = [
       "Tess Guebre", "--status", "downloaded", "--title", "A flat world theory"],
      "A. Einstein proposal has been added/updated in proposal reviews\n"),
     (["helper", "a_manurev", "Einstein", "2020-09-15", "Nature", "On the Quantum Theory of Radiation",
-      "--requester", "Niels Bohr", "--reviewer", "zcliu", "--status", "submitted", "--submitted_date", "2019-01-01"],
+      "--requester", "Niels Bohr", "--reviewer", "zcliu", "--status", "submitted", "--submitted-date", "2019-01-01"],
      "Einstein manuscript has been added/updated in manuscript reviews\n"),
     (["helper", "a_grppub_readlist", "test the lister", "pdf",
       "--title", "A list to test the lister", "--purpose", "Test the lister", "--date", "2021-04-01"],
      "List of all tags in citations collection:\n['nomonth', 'pdf']\ntest_the_lister has been added/updated in reading_lists\n"),
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
-      "--group_members", "ascopatz", "--grants", "SymPy-1.1", "--due_date", "2021-01-01", '--notes', 'new note'],
+      "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
      "ly_newprojectum has been added in projecta\n"),
     (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
-      "--begin_date", "2020-09-15", "--end_date", "2022-02-14", "--duration", "16.89",
+      "--begin-date", "2020-09-15", "--end-date", "2022-02-14", "--duration", "16.89",
       "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "--currency", "Bitcoin",
-      "--other_agencies", "Flatland", "--notes", "this is a sample added proposal", "--date", "2020-08-01"],
+      "--other-agencies", "Flatland", "--notes", "this is a sample added proposal", "--date", "2020-08-01"],
      "20_anewproposal has been added in proposals\n"),
     (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount", "159.18",
       "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
-      "--where", "bank", "--begin_date", "2020-06-20", "--end_date", "2020-06-25"],
+      "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
      "2006as_timbuktoo has been added in expenses\n"),
     (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
       "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
@@ -137,7 +137,7 @@ helper_map = [
     (["helper", "l_milestones", "--verbose", "--current"],
      "2021-08-03: lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: e.g., beginning grad in chemistry\n2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project planning meeting\n    log url: \n    Purpose: to act as an example milestone.\n    Audience: lyang, scopatz, ascopatz\n    Notes:\n      - () get a clear picture of the deliverable and what needs to be done to get there\n      - () make milestones which should also be deliverables (e.g., presentation, meeting, etc.) that accomplish all the steps to get to the deliverable\n      - () think if good due dates for everything and shoot for hitting them.  Either work back from a deadline for the deliverable, or work forward to guide you to a reasonable deadline for the prum deliverable.\n      - () using u_milestones in helper_gui, or otherwise, get them entered into the prum\n      - () schedule a meeting with the PI to go over them and converge them\n2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
-    (["helper", "l_milestones", "--verbose", "--current", "--by_prum"],
+    (["helper", "l_milestones", "--verbose", "--current", "--by-prum"],
      f"{dash * 50}\n2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: e.g., beginning grad in chemistry\n2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Project planning meeting\n    log url: \n    Purpose: to act as an example milestone.\n    Audience: lyang, scopatz, ascopatz\n    Notes:\n      - () get a clear picture of the deliverable and what needs to be done to get there\n      - () make milestones which should also be deliverables (e.g., presentation, meeting, etc.) that accomplish all the steps to get to the deliverable\n      - () think if good due dates for everything and shoot for hitting them.  Either work back from a deadline for the deliverable, or work forward to guide you to a reasonable deadline for the prum deliverable.\n      - () using u_milestones in helper_gui, or otherwise, get them entered into the prum\n      - () schedule a meeting with the PI to go over them and converge them\n2020-05-06: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n{dash * 50}\n2021-08-03: lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n{dash * 50}\n2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
      ),
     (["helper", "l_milestones", "--verbose", "--all"],
@@ -278,13 +278,13 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "--title", "graphitic", "--loc_inst", "upton"],
+    (["helper", "l_abstract", "--title", "graphitic", "--loc-inst", "upton"],
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "--loc_inst", "upton"],
+    (["helper", "l_abstract", "--loc-inst", "upton"],
      "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
@@ -294,7 +294,7 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "--loc_inst", "upton", "--year", "2018"],
+    (["helper", "l_abstract", "--loc-inst", "upton", "--year", "2018"],
      "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
@@ -332,7 +332,7 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "--loc_inst", "upton", "--year", "2018"],
+    (["helper", "l_abstract", "--loc-inst", "upton", "--year", "2018"],
      "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
@@ -342,7 +342,7 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "--author", "scopatz", "--loc_inst", "upton"],
+    (["helper", "l_abstract", "--author", "scopatz", "--loc-inst", "upton"],
      "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n"
      "\nAnthony Scopatz\n"
@@ -352,20 +352,20 @@ helper_map = [
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "--author", "scopatz", "--year", "2018", "--loc_inst", "upton", "--title", "graphitic"],
+    (["helper", "l_abstract", "--author", "scopatz", "--year", "2018", "--loc-inst", "upton", "--title", "graphitic"],
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
-    (["helper", "l_abstract", "--loc_inst", "columbiau"],
+    (["helper", "l_abstract", "--loc-inst", "columbiau"],
      "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"
      "Abstract: We made the case for local structure\n"
      ),
     (["helper", "u_milestone", "sb_firstprojectum", "--index", "4,5",
-      "--status", "converged", "--due_date", "2020-06-01", "--notes", "do this",
+      "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this",
       "do that", "--type", "meeting"],
      "sb_firstprojectum has been updated in projecta\n"
      ),
@@ -454,7 +454,7 @@ helper_map = [
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
      ),
-    (["helper", "l_todo", "--assigned_to", "ascopatz", "--date", "2020-05-01"],
+    (["helper", "l_todo", "--assigned-to", "ascopatz", "--date", "2020-05-01"],
      "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
@@ -477,7 +477,7 @@ helper_map = [
      "------------------------------\n"
      ),
     (["helper", "l_todo", "--short", "65",
-      "--date", "2020-07-13", "--assigned_by", "scopatz", "--assigned_to",
+      "--date", "2020-07-13", "--assigned-by", "scopatz", "--assigned-to",
       "sbillinge"],
      "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
@@ -493,8 +493,8 @@ helper_map = [
      "------------------------------\n"
      ),
     (["helper", "l_todo", "--tags", "downtime", "--date", "2020-07-13",
-      "--assigned_by",
-      "sbillinge", "--assigned_to", "sbillinge"],
+      "--assigned-by",
+      "sbillinge", "--assigned-to", "sbillinge"],
      "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
@@ -509,10 +509,10 @@ helper_map = [
      "Deadlines:\n"
      "------------------------------\n"
      ),
-    (["helper", "l_todo", "--assigned_to", "wrong_id"],
+    (["helper", "l_todo", "--assigned-to", "wrong_id"],
      "The id you entered can't be found in todos.yml.\n"
      ),
-    (["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned_to", "sbillinge", "--short"],
+    (["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned-to", "sbillinge", "--short"],
      "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
@@ -535,9 +535,9 @@ helper_map = [
      "Proposal by Einstein for nsf (Tess Guebre)is due on 2020-04-08\n"
      ),
     (
-        ["helper", "a_todo", "test a_todo", "6", "50", "--assigned_to",
+        ["helper", "a_todo", "test a_todo", "6", "50", "--assigned-to",
          "sbillinge",
-         "--assigned_by", "sbillinge", "--begin_date", "2020-07-06",
+         "--assigned-by", "sbillinge", "--begin-date", "2020-07-06",
          "--importance",
          "2", "--deadline", "--notes", "test notes 1", "test notes 2", "--tags",
          "tag1",
@@ -545,11 +545,11 @@ helper_map = [
          "--date", "2020-07-10"],
         "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
-    (["helper", "f_todo", "--index", "3", "--assigned_to", "sbillinge",
-      "--end_date", "2020-07-20", "--date", "2020-07-13"],
+    (["helper", "f_todo", "--index", "3", "--assigned-to", "sbillinge",
+      "--end-date", "2020-07-20", "--date", "2020-07-13"],
      "The task \"(3) test a_todo\" in test for sbillinge has been marked as finished.\n"
      ),
-    (["helper", "f_todo", "--assigned_to", "sbillinge", "--date",
+    (["helper", "f_todo", "--assigned-to", "sbillinge", "--date",
       "2020-07-13"],
      "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
      "Please choose from one of the following to update:\n"
@@ -571,15 +571,15 @@ helper_map = [
     (["helper", "f_todo", "--index", "99100"],
      "WARNING: indices >= 9900 are used for milestones which should be finished using u_milestone and not f_todo\n"
      ),
-    (["helper", "u_todo", "--index", "3", "--assigned_to", "sbillinge",
-      "--description", "update the description", "--due_date", "2020-07-06",
-      "--estimated_duration", "35", "--importance", "2", "--status", "finished",
+    (["helper", "u_todo", "--index", "3", "--assigned-to", "sbillinge",
+      "--description", "update the description", "--due-date", "2020-07-06",
+      "--estimated-duration", "35", "--importance", "2", "--status", "finished",
       "--notes", "some new notes", "notes2", "--tags", "newtag1", "newtag2",
-      "--begin_date", "2020-06-06", "--deadline", "t",
-      "--end_date", "2020-07-07", "--date", "2020-07-13"],
+      "--begin-date", "2020-06-06", "--deadline", "t",
+      "--end-date", "2020-07-07", "--date", "2020-07-13"],
      "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
      ),
-    (["helper", "u_todo", "--assigned_to", "sbillinge", "--stati", "started",
+    (["helper", "u_todo", "--assigned-to", "sbillinge", "--stati", "started",
       "finished", "--filter", "description", "the", "--date",
       "2020-07-13"],
      "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
@@ -621,10 +621,10 @@ helper_map = [
      ),
     (["helper", "lister", "people"],
      "Results of your search:\nabeing    \nsbillinge    \nscopatz\n"),
-    (["helper", "lister", "people", "--kv_filter", "name", "simon"],
+    (["helper", "lister", "people", "--kv-filter", "name", "simon"],
      "Results of your search:\n"
      "sbillinge\n"),
-    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--return_fields", "name", "position"],
+    (["helper", "lister", "people", "--kv-filter", "name", "simon", "--return-fields", "name", "position"],
      "Results of your search:\nsbillinge    name: Simon J. L. Billinge    position: professor\n"),
     (["helper", "lister", "people", "--keys"],
      "Available keys:\n"
@@ -635,7 +635,7 @@ helper_map = [
      "'membership', 'miscellaneous', 'name', 'office', 'orcid_id', 'position', "
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
      "'title']\n"),
-    (["helper", "lister", "people", "--kv_filter", "name", "simon", "--keys"],
+    (["helper", "lister", "people", "--kv-filter", "name", "simon", "--keys"],
      "Results of your search:\nsbillinge\n"
      "Available keys:\n"
      "['_id', 'active', 'activities', 'aka', 'appointments', 'avatar', 'bio', 'bios', "
@@ -646,14 +646,14 @@ helper_map = [
      "'publicity', 'research_focus_areas', 'service', 'skills', 'teaching', "
      "'title']\n"
      ),
-    (["helper", "lister", "people", "--kv_filter", "name", "simon", "position", "singer"],
+    (["helper", "lister", "people", "--kv-filter", "name", "simon", "position", "singer"],
      "There are no results that match your search.\n"
      ),
     (["helper", "u_institution", "columbiau",
       "--aka", "ucolumbia", "Columbia University in the City of New York",
-      "--dept_id", "mathematics", "--dept_name", "Department of Mathematics",
-      "--dept_aka", "dept. of mathematics", "math department",
-      "--school_id", "cc", "--school_name", "Columbia College", "--school_aka", "CC",
+      "--dept-id", "mathematics", "--dept-name", "Department of Mathematics",
+      "--dept-aka", "dept. of mathematics", "math department",
+      "--school-id", "cc", "--school-name", "Columbia College", "--school-aka", "CC",
       "--date", "2020-01-01"],
      "columbiau has been updated/added in institutions\n"
      ),

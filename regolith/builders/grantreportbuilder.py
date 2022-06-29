@@ -51,20 +51,6 @@ class GrantReportBuilder(LatexBuilderBase):
         """Render latex template"""
         rc = self.rc
 
-        # Convert Date Strings to Datetime Objects
-        if not rc.from_date:
-            raise ValueError ("ERROR: need begin for the report period."
-                              "Please rerun specifying --from and --to in YYYY-MM-DD format.")
-        else:
-            rp_start_date = date_parser.parse(rc.from_date).date()
-        if not rc.to_date:
-            rp_end_date = date.today()
-        else:
-            rp_end_date = date_parser.parse(rc.to_date).date()
-        report_dates = {'begin_date': rp_start_date,
-                        'end_date': rp_end_date}
-
-        # NSF Grant _id
         if not rc.grants:
             raise RuntimeError(
                 "Error: no grant specified. Please rerun specifying a grant")
@@ -75,6 +61,28 @@ class GrantReportBuilder(LatexBuilderBase):
                 "Error: more than one grant specified. Please rerun with"
                 "only a single grant.")
         grant_id = rc.grants[0]
+        grant = fuzzy_retrieval(self.gtx['grants'], ['_id', "alias", "name"], grant_id)
+        grant_dates = get_dates(grant)
+
+        # Convert Date Strings to Datetime Objects
+        if rc.from_date:
+            rp_start_date = date_parser.parse(rc.from_date).date()
+        else:
+            rp_start_date = grant_dates.get("begin_date")
+            print(f"INFO: no begin-date specified.  running report from the beginning "
+                  f"of the grant period ({rp_start_date})")
+        if rc.to_date:
+            rp_end_date = date_parser.parse(rc.to_date).date()
+        else:
+            rp_end_date = min([date.today(), grant_dates.get("end_date")])
+            print("INFO: no end-date specified for the reporting period.  Running "
+                  "report up to the earlier of the end of the grant, or today "
+                  f"({rp_end_date}).")
+        report_dates = {'begin_date': rp_start_date,
+                        'end_date': rp_end_date}
+        print(f"INFO: generating report for grant {grant_id} for the period"
+              f"from {rp_start_date} to {rp_end_date})")
+
 
         # Get prum associated to grant and active during reporting period
         #        institutions_coll = [inst for inst in self.gtx["institutions"]]
@@ -148,12 +156,11 @@ class GrantReportBuilder(LatexBuilderBase):
         #                                          before=rp_end_date)
         publications = [publ for publ in self.gtx["citations"] if
                         grant_id in publ.get("grant", "")]
+
         for publ in publications:
-            doi = publ.get('doi')
-            if doi and doi != 'tbd':
-                publ = get_formatted_crossref_reference(doi)
-            names = [HumanName(author).full_name for author in publ.get("author")]
-            publ['author'] = names
+            formatted_authors = [HumanName(name).full_name
+                                 for name in publ.get("authors",[])]
+            publ["authors"] = formatted_authors
         # Participants/Organizations
         participants = []
         for person in self.gtx["people"]:
@@ -194,7 +201,7 @@ class GrantReportBuilder(LatexBuilderBase):
                             if not collaborators.get(id)]
         missing_contacts = list(set(missing_contacts))
         for person_id in missing_contacts:
-            print(f"WARNING contact {person_id} not found in contacts collection")
+            print(f"WARNING: contact {person_id} not found in contacts collection")
 
         # Impacts
         begin_date_str = rp_start_date.isoformat()

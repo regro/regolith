@@ -171,12 +171,12 @@ def subparser(subpi):
                                         "expense.",
                        **amount_gooey_kwargs
                        )
-    subpi.add_argument("-d", "--begin_date",
+    subpi.add_argument("-d", "--begin-date",
                        help="Input begin date for this expense. "
                             "Defaults to today's date",
                        **date_gooey_kwargs
                        )
-    subpi.add_argument("-e,", "--end_date",
+    subpi.add_argument("-e,", "--end-date",
                        help="Input end date for this expense. "
                             "Defaults to today's date",
                        **date_gooey_kwargs
