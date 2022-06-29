@@ -269,7 +269,9 @@ EXEMPLARS = {
                     "purpose": "test",
                     "unsegregated_expense": 10,
                     "segregated_expense": 0,
-                    "prepaid_expense": 10.3
+                    "prepaid_expense": 10.3,
+                    "currency": "USD",
+                    "notes": ["this is just a test"]
                 }
             ],
             "payee": "sbillinge",
@@ -2524,7 +2526,7 @@ SCHEMAS = {
                     },
                     "currency": {
                         "description": "The currency the payment was made in",
-                        "type": "float",
+                        "type": "string",
                         "required": False,
                     },
                     "prepaid_expense": {

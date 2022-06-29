@@ -3,6 +3,7 @@ import json
 import os
 import re
 import sys
+from copy import copy
 from pprint import pprint
 
 from regolith.builder import builder, BUILDERS
@@ -235,10 +236,11 @@ def validate(rc):
                 if errored_print is False:
                     errored_print = True
                     any_errors = True
-                    print("Errors found in {}".format(name))
-                    print("=" * len("Errors found in {}".format(name)))
-                print("ERROR in {}:".format(doc_id))
+                    print(f"Errors found in {name}")
+                    print("=" * len(f"Errors found in {name}"))
+                print(f"ERROR in {doc_id}:")
                 pprint(v[1])
+                cap = copy(v[1])
                 for vv in v[1]:
                     pprint(doc.get(vv))
                 print("-" * 15)
@@ -246,4 +248,7 @@ def validate(rc):
     if not any_errors:
         print("\nNO ERRORS IN DBS\n" + "=" * 15)
     else:
-        sys.exit("Validation failed on some records")
+        # uncomment when debugging scheme errors
+        #
+        # sys.exit(f"Validation failed on some records\n {cap}")
+        sys.exit(f"Validation failed on some records")
