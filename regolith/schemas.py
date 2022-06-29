@@ -269,7 +269,9 @@ EXEMPLARS = {
                     "purpose": "test",
                     "unsegregated_expense": 10,
                     "segregated_expense": 0,
-                    "prepaid_expense": 10.3
+                    "prepaid_expense": 10.3,
+                    "currency": "USD",
+                    "notes": ["this is just a test"]
                 }
             ],
             "payee": "sbillinge",
@@ -2515,20 +2517,26 @@ SCHEMAS = {
                     "unsegregated_expense": {
                         "description": "The allowed expenses",
                         "type": "float",
+                        "required": True,
                     },
                     "segregated_expense": {
                         "description": "The unallowed expenses",
                         "type": "float",
+                        "required": False,
                     },
-                    "original_currency": {
+                    "currency": {
                         "description": "The currency the payment was made in",
-                        "type": "float",
+                        "type": "string",
+                        "required": False,
                     },
                     "prepaid_expense": {
                        "description": "The amount of prepaid expense in USD",
                        "required": False,
                        "type": "float"
                       },
+                    "notes": {"description": "notes about the expense",
+                              "required": False,
+                              "anyof_type": ["list", "string"]}
                 },
             },
         },
@@ -4121,7 +4129,6 @@ SCHEMAS = {
         "notes": {"description": "notes about the projectum",
                   "required": False,
                   "type": "list"},
-
     },
     "projects": {
         "_description": {
