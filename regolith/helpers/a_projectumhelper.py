@@ -132,7 +132,7 @@ class ProjectumAdderHelper(DbHelperBase):
             'name': rc.name,
             'pi_id': rc.pi_id,
             'lead': rc.lead,
-            'notes': rc.notes + "\nGoogle Doc: " + docs_address + "\n GitLab Project: ",
+            'notes': rc.notes
         })
         if rc.lead == "tbd":
             pdoc.update({
