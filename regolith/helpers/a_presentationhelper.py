@@ -1,5 +1,6 @@
 """Helper for adding a presentation to the presentation collection.
 """
+from sys import stderr
 import time
 
 import dateutil.parser as date_parser
@@ -145,12 +146,12 @@ class PresentationAdderHelper(DbHelperBase):
                     if rc.force:
                         rc.expense_db = first_db["name"]
                     else:
-                        rc.expense_db = first_db["name"]
+                        pub_db_name = first_db["name"]
                         raise RuntimeError(
                                 "ERROR: You did NOT specify an expense database to enter expense data "
                                 "assoicated with this presentation. The helper defaults to entering "
                                 "expenses into first database listed in your regolithrc.json file, "
-                                f"{rc.expense_db}, but it is PUBLIC and would reveal potentially "
+                                f"{pub_db_name}, but it is PUBLIC and would reveal potentially "
                                 "sensitive information. Rerun by specifying the target database with "
                                 "--expense-db EXPENSE_DB, or (at your own risk) pass the --force flag."
                                 )
