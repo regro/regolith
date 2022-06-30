@@ -49,6 +49,8 @@ class ResumeBuilder(LatexBuilderBase):
                 pubs, pid=p["_id"], person_dir=self.bldir
             )
             emp = p.get("employment", [])
+            emp = [em for em in emp
+                    if not em.get("not-in-cv", False)]
             for e in emp:
                 e['position'] = e.get('position_full',
                                       e.get('position').title())
