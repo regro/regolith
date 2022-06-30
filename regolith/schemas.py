@@ -1056,7 +1056,7 @@ EXEMPLARS = {
                 "organization": "Google",
                 "other": [],
                 "position": "janitor",
-                "not-in-cv": True
+                "not_in_cv": True
             },
         ],
         "funding": [

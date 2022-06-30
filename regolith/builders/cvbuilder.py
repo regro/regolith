@@ -48,10 +48,11 @@ class CVBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         rc = self.rc
+        gtx = self.gtx
         if rc.people:
-            people = [fuzzy_retrieval(self.gtx["people"], ["aka", "_id", "name"], rc.people[0])]
+            people = [fuzzy_retrieval(gtx["people"], ["aka", "_id", "name"], rc.people[0])]
         else:
-            people = self.getx["people"]
+            people = gtx["people"]
 
         for p in people:
             # so we don't modify the dbs when de-referencing
@@ -67,12 +68,10 @@ class CVBuilder(LatexBuilderBase):
                 pubs, pid=p["_id"], person_dir=self.bldir
             )
             emps = p.get("employment", [])
-            print("before:", emps)
             emps = [em for em in emps
                     if not em.get("not_in_cv", False)]
-            print("after:", emps)
             for e in emps:
-                e['position'] = e.get('position_full'.title(), e.get('position').title())
+                e['position'] = e.get('position_full', e.get('position').title())
             emps.sort(key=ene_date_key, reverse=True)
             edu = p.get("education", [])
             edu.sort(key=ene_date_key, reverse=True)

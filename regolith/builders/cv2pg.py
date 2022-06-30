@@ -1,49 +1,45 @@
-"""Builder for Resumes."""
-
+"""Builder for CVs."""
 from regolith.builders.basebuilder import LatexBuilderBase
+from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
     all_docs_from_collection,
-    month_and_year,
     filter_publications,
     filter_projects,
     filter_grants,
     awards_grants_honors,
-    latex_safe,
     make_bibtex_file,
-    merge_collections_superior, fuzzy_retrieval,
+    fuzzy_retrieval,
+    dereference_institution,
 )
 
 
-class ResumeBuilder(LatexBuilderBase):
-    """Build resume from database entries"""
+class CVBuilder(LatexBuilderBase):
+    """Build CV from database entries"""
 
-    btype = "resume"
-    needed_colls = ['institutions', 'people', 'grants', 'citations', 'projects', 'proposals']
+    btype = "cv"
+    needed_dbs = ['institutions', 'people']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx["month_and_year"] = month_and_year
-        gtx["latex_safe"] = latex_safe
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
             key=position_key,
             reverse=True,
+        )
+        gtx["institutions"] = sorted(
+            all_docs_from_collection(rc.client, "institutions"), key=_id_key
         )
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def latex(self):
         """Render latex template"""
         rc = self.rc
-        if rc.people:
-            people = [fuzzy_retrieval(self.gtx["people"], ["aka", "_id", "name"], rc.people[0])]
-        else:
-            people = self.gtx["people"]
-
-        for p in people:
+        for p in self.gtx["people"]:
+            # so we don't modify the dbs when de-referencing
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
                 all_docs_from_collection(rc.client, "citations"),
@@ -66,15 +62,17 @@ class ResumeBuilder(LatexBuilderBase):
                 all_docs_from_collection(rc.client, "projects"), names
             )
             grants = list(all_docs_from_collection(rc.client, "grants"))
-            proposals = list(all_docs_from_collection(rc.client, "proposals"))
-            grants = merge_collections_superior(proposals, grants, "proposal_id")
             pi_grants, pi_amount, _ = filter_grants(grants, names, pi=True)
             coi_grants, coi_amount, coi_sub_amount = filter_grants(
                 grants, names, pi=False
             )
-            aghs = awards_grants_honors(p, "honors")
+            aghs = awards_grants_honors(p)
+            # TODO: pull this out so we can use it everywhere
+            for ee in [emp, edu]:
+                for e in ee:
+                    dereference_institution(e, self.gtx["institutions"])
             self.render(
-                "resume.tex",
+                "cv.tex",
                 p["_id"] + ".tex",
                 p=p,
                 title=p.get("name", ""),
