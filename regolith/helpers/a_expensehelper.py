@@ -70,49 +70,65 @@ def expense_constructor(key, begin_date, end_date, rc):
                 'date': begin_date,
                 'purpose': 'registration',
                 'unsegregated_expense': 0,
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             },
             {
                 'date': begin_date,
                 'purpose': 'home to airport',
                 'unsegregated_expense': 0,
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             },
             {
                 'date': begin_date,
                 'purpose': 'flights',
                 'unsegregated_expense': 0,
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             },
             {
                 'date': begin_date,
                 'purpose': 'airport to hotel',
                 'unsegregated_expense': 0,
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             },
             {
                 'date': begin_date,
                 'purpose': 'hotel',
                 'unsegregated_expense': 0,
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             },
             {
                 'date': begin_date,
                 'purpose': 'hotel to airport',
                 'unsegregated_expense': 0,
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             },
             {
                 'date': begin_date,
                 'purpose': 'airport to home',
                 'unsegregated_expense': 0,
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             },
             {
                 'date': begin_date,
                 'purpose': 'meals',
                 'unsegregated_expense': 0,
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             }
         ]
         })
@@ -122,7 +138,9 @@ def expense_constructor(key, begin_date, end_date, rc):
                 'date': begin_date,
                 'purpose': rc.purpose,
                 'unsegregated_expense': float(rc.amount),
-                'segregated_expense': 0
+                'segregated_expense': 0,
+                'currency': 'USD',
+                'notes': [""]
             }]
         })
     pdoc.update({'notes': rc.notes,

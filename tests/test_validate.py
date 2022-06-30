@@ -26,7 +26,7 @@ def test_validate_python_single_col(make_db):
     os.chdir(repo)
     backup = sys.stdout
     sys.stdout = StringIO()
-    main(["validate", "--collection", "projecta"])
+    main(["validate", "--collection", "expenses"])
     out = sys.stdout.getvalue()
     sys.stdout.close()
     sys.stdout = backup
