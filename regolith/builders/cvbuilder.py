@@ -16,7 +16,7 @@ from regolith.tools import (
     filter_employment_for_advisees,
     dereference_institution,
     merge_collections_superior,
-    filter_presentations, remove_duplicate_docs,
+    filter_presentations, remove_duplicate_docs, fuzzy_retrieval,
 )
 
 
@@ -48,7 +48,13 @@ class CVBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         rc = self.rc
-        for p in self.gtx["people"]:
+        gtx = self.gtx
+        if rc.people:
+            people = [fuzzy_retrieval(gtx["people"], ["aka", "_id", "name"], rc.people[0])]
+        else:
+            people = gtx["people"]
+
+        for p in people:
             # so we don't modify the dbs when de-referencing
             names = frozenset(p.get("aka", []) + [p["name"]] + [p["_id"]])
             begin_period = date(1650, 1, 1)
@@ -61,11 +67,12 @@ class CVBuilder(LatexBuilderBase):
             bibfile = make_bibtex_file(
                 pubs, pid=p["_id"], person_dir=self.bldir
             )
-            emp = p.get("employment", [])
-
-            for e in emp:
+            emps = p.get("employment", [])
+            emps = [em for em in emps
+                    if not em.get("not_in_cv", False)]
+            for e in emps:
                 e['position'] = e.get('position_full', e.get('position').title())
-            emp.sort(key=ene_date_key, reverse=True)
+            emps.sort(key=ene_date_key, reverse=True)
             edu = p.get("education", [])
             edu.sort(key=ene_date_key, reverse=True)
             teach = p.get("teaching", [])
@@ -96,7 +103,7 @@ class CVBuilder(LatexBuilderBase):
             aghs = awards_grants_honors(p, "honors")
             service = awards_grants_honors(p, "service", funding=False)
             # TODO: pull this out so we can use it everywhere
-            for ee in [emp, edu]:
+            for ee in [emps, edu]:
                 for e in ee:
                     dereference_institution(e, self.gtx["institutions"])
 
@@ -148,7 +155,7 @@ class CVBuilder(LatexBuilderBase):
                 names=names,
                 bibfile=bibfile,
                 education=edu,
-                employment=emp,
+                employment=emps,
                 presentations=presentations,
                 sentencecase=sentencecase,
                 monthstyle=month_fullnames,
