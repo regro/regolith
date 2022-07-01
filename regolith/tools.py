@@ -2139,7 +2139,11 @@ def get_tags(coll):
 
 # create Google Doc page for prum in Google Drive 'bg-projects'
 def gdoc_generator(rc):
-    """Create Google Doc for new projectum in 'generated_projecta_docs' folder in 'bg-projects' Google Drive."""
+    """ Create Google Doc (in folder) in 'bg-projects' Google Drive.
+        Folder can be specified by creating new key:value pair in
+        credentials2.json with ['folder_id2'] as key and folder id
+        as value. Default places doc in 'bg-projects' root folder.
+    """
     # Authenticate user
     SCOPES = ['https://www.googleapis.com/auth/drive']
     creds = None
@@ -2150,8 +2154,12 @@ def gdoc_generator(rc):
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
+            tokendir = os.path.expanduser("~/.config/regolith/tokens/google_docs_api")
+            os.makedirs(tokendir, exist_ok=True)
+            tokenfile = os.path.join(tokendir, 'token.json')
+            curr = pathlib.Path(__file__).parent.resolve()
             flow = InstalledAppFlow.from_client_secrets_file(
-                'C:/Users/jayla/Documents/test1/credentials2.json', SCOPES)
+                os.path.join(curr, 'credentials2.json'), SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.json', 'w') as token:
@@ -2182,15 +2190,16 @@ def gdoc_generator(rc):
         # move generated Doc from 'bg-projects' root folder to 'Prum' folder
         service = build('drive', 'v3', credentials=creds)
         # access folder information from credentials2.json
-        with open('credentials2.json', 'r') as f:
-            data = json.load(f)
-            folder_id = data["folder_id2"]
-        file = service.files().get(fileId=doc_id, fields='parents').execute()
-        previous_parents = ",".join(file.get('parents'))
-        file = service.files().update(fileId=doc_id, addParents=folder_id,
-                                      removeParents=previous_parents,
-                                      fields='id, parents').execute()
-        print(f'File: "{doc.get("title")}" has been moved to "generated_projecta_docs" folder in "bg-projects".')
+        if "folder_id2" in data:
+            with open('credentials2.json', 'r') as f:
+                data = json.load(f)
+                folder_id = data["folder_id2"]
+            file = service.files().get(fileId=doc_id, fields='parents').execute()
+            previous_parents = ",".join(file.get('parents'))
+            file = service.files().update(fileId=doc_id, addParents=folder_id,
+                                          removeParents=previous_parents,
+                                          fields='id, parents').execute()
+            print(f'File: "{doc.get("title")}" has been moved to folder id: {drive_id} in "bg-projects".')
 
     except HttpError as error:
         print(F'WARNING: An error occurred: {error}. '
