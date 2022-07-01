@@ -6,6 +6,7 @@ import pathlib
 import platform
 import re
 import sys
+import json
 from copy import copy
 from copy import deepcopy
 from datetime import datetime, date
@@ -16,6 +17,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from googleapiclient.errors import HttpError
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
@@ -2141,3 +2143,72 @@ def get_tags(coll):
     all_tags = list(set(all_tags))
     all_tags.sort()
     return all_tags
+# create Google Doc page for prum in Google Drive 'bg-projects'
+def gdoc_generator(rc):
+    """ Create Google Doc (in folder) in 'bg-projects' Google Drive.
+        Folder can be specified by creating new key:value pair in
+        credentials2.json with ['folder_id2'] as key and folder id
+        as value. Default places doc in 'bg-projects' root folder.
+    """
+    # Authenticate user
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+    creds = None
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            tokendir = os.path.expanduser("~/.config/regolith/tokens/google_docs_api")
+            os.makedirs(tokendir, exist_ok=True)
+            tokenfile = os.path.join(tokendir, 'token.json')
+            curr = pathlib.Path(__file__).parent.resolve()
+            flow = InstalledAppFlow.from_client_secrets_file(
+                os.path.join(curr, 'credentials2.json'), SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+    try:
+        # create gmail api client
+        service = build('docs', 'v1', credentials=creds)
+        # create blank Google Doc
+        title = rc.name
+        body = {
+            'title': title}
+        doc = service.documents() \
+            .create(body=body).execute()
+        doc_id = doc.get('documentId')
+        print(f'Created document with title: "{title}".')
+        # move generated Doc to 'bg-projects'
+        service = build('drive', 'v3', credentials=creds)
+        # access folder information from credentials2.json
+        with open("credentials2.json") as f:
+            data = json.load(f)
+            drive_id = data['folder_id1']
+        file = service.files().get(fileId=doc_id, fields='parents').execute()
+        previous_parents = ",".join(file.get('parents'))
+        file = service.files().update(fileId=doc_id, addParents=drive_id,
+                                      removeParents=previous_parents,
+                                      fields='id, parents').execute()
+        print(f'File: "{doc.get("title")}" has been moved to "bg-projects".')
+        # move generated Doc from 'bg-projects' root folder to 'Prum' folder
+        service = build('drive', 'v3', credentials=creds)
+        # access folder information from credentials2.json
+        if "folder_id2" in data:
+            with open('credentials2.json', 'r') as f:
+                data = json.load(f)
+                folder_id = data["folder_id2"]
+            file = service.files().get(fileId=doc_id, fields='parents').execute()
+            previous_parents = ",".join(file.get('parents'))
+            file = service.files().update(fileId=doc_id, addParents=folder_id,
+                                          removeParents=previous_parents,
+                                          fields='id, parents').execute()
+            print(f'File: "{doc.get("title")}" has been moved to folder id: {drive_id} in "bg-projects".')
+
+    except HttpError as error:
+        print(F'WARNING: An error occurred: {error}. '
+              F'Please verify that you have access to the '
+              F'Drive by checking your Google account.')
+        file = None
