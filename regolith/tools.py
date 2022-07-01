@@ -1,7 +1,8 @@
 """Misc. regolith tools.
 """
 import email.utils
-import os
+import json
+import os.path
 import pathlib
 import platform
 import re
@@ -16,6 +17,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from googleapiclient.errors import HttpError
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
@@ -2136,7 +2138,7 @@ def get_tags(coll):
 
 
 # create Google Doc page for prum in Google Drive 'bg-projects'
-def gdoc_generator():
+def gdoc_generator(rc):
     """Create Google Doc for new projectum in 'generated_projecta_docs' folder in 'bg-projects' Google Drive."""
     # Authenticate user
     SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -2158,7 +2160,7 @@ def gdoc_generator():
         # create gmail api client
         service = build('docs', 'v1', credentials=creds)
         # create blank Google Doc
-        title = "Test 11"
+        title = rc.name
         body = {
             'title': title}
         doc = service.documents() \
