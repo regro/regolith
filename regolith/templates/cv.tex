@@ -161,7 +161,7 @@
     { {{-month_and_year(e.get('begin_month'), e.get('begin_year'))}} -
       {{month_and_year(e.get('end_month'), e.get('end_year'))-}} }
     { {% for o in e.get('other', ()) %}
-        \resitem{ {{-latex_safe(o)-}} }
+        \resitem{ {{- o -}} }
      {% endfor%}
      {% if 'gpa' in e %}
         \resitem{GPA: {{e['gpa']-}} }
@@ -383,6 +383,18 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Publications}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    {% if hindex %}
+\textbf{ h-index:}
+    \begin{itemize}[label=$-$]
+            \item   h = {{ str(hindex['h']) }}
+(since = {{hindex['since']}}, total citations = {{ hindex["citations"]-}} )\\
+h-last five years = {{ str(hindex['h_last_five']) }}
+(since = {{ hindex['year']-5 }}, total citations = {{ hindex["citations_last_five"]-}} )\\
+pulled: {{ hindex["month"] }}/{{ hindex["day"] }}/{{ hindex["year"] }}\\
+Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"])) }}\\
+    \end{itemize}{% endif %}
+
+    \vskip 12pt
 \begin{enumerate}
 {% for pub in pubs %}
     \item \fullcite{ {{-pub['_id']-}} }
@@ -409,13 +421,19 @@ sentencecase(pres['title']))-}} },
 {\it {{ latex_safe(pres['meeting_name'])-}} },
 {\it {{ latex_safe(pres['location'])-}} },
 {%-endif %}
+{%-if pres['webinar'] in ['true', true]%}
+{\it (Webinar),}
+{%-endif -%}
 { {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
-{{-pres['begin_day']-}}%
-{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']%}
-$^\mathrm{ {{ pres['begin_day_suffix']}} }$
-{%-else %}
---{{ pres['end_day']-}}
-$^\mathrm{ {{ pres['end_day_suffix']-}} }$
+{{-pres['begin_day']-}}
+{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']-%}
+$^\mathrm{ {{-pres['begin_day_suffix']-}} }$
+{%-elif pres['end_month'] != pres['begin_month']-%}
+--{{-pres['end_month']-}} {{-pres['end_day']-}}
+$^\mathrm{ {{-pres['end_day_suffix']-}} }$
+{%-else-%}
+--{{-pres['end_day']-}}
+$^\mathrm{ {{-pres['end_day_suffix']-}} }$
 {%-endif %}
 ( {{-pres['begin_year']-}} ).
 {% endfor %}
