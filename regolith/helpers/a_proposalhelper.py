@@ -38,19 +38,19 @@ def subparser(subpi):
                        )
     subpi.add_argument("title", help="Actual title of the proposal"
                        )
-    subpi.add_argument("--begin_date", help="The begin date for the proposed grant ",
+    subpi.add_argument("--begin-date", help="The begin date for the proposed grant ",
                        **date_kwargs
                        )
     subpi.add_argument("--duration", help="The duration for the proposed grant in months. "
                                           "Please enter either an end date or a duration. ",
                        **int_kwargs
                        )
-    subpi.add_argument("--end_date", help="The end date for the proposed grant."
+    subpi.add_argument("--end-date", help="The end date for the proposed grant."
                                           " Please enter either an "
                                           "end date or a duration",
                        **date_kwargs
                        )
-    subpi.add_argument("--due_date", help="The due date for the proposal",
+    subpi.add_argument("--due-date", help="The due date for the proposal",
                        **date_kwargs
                        )
     subpi.add_argument("-a", "--authors", nargs="+",
@@ -60,7 +60,7 @@ def subparser(subpi):
                        help="Check if the proposal should not appear in the "
                             "current and pending support form"
                        )
-    subpi.add_argument("--other_agencies", help="Other agencies to which the proposal has been "
+    subpi.add_argument("--other-agencies", help="Other agencies to which the proposal has been "
                                                 "submitted. Defaults to None", default='None'
                        )
     subpi.add_argument("-i", "--institution",
@@ -71,13 +71,13 @@ def subparser(subpi):
                        help="ID of principal investigator. Defaults to "
                             "group pi id in regolithrc.json"
                        )
-    subpi.add_argument("--months_academic", help="Number of working months in the academic year "
+    subpi.add_argument("--months-academic", help="Number of working months in the academic year "
                                                  "to be stated on the current and pending form. "
                                                  "Defaults to 0",
                        default=0,
                        **int_kwargs
                        )
-    subpi.add_argument("--months_summer", help="Number of working months in the summer to be "
+    subpi.add_argument("--months-summer", help="Number of working months in the summer to be "
                                                "stated on the current and pending form. "
                                                "Defaults to 0",
                        default=0,

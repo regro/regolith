@@ -28,9 +28,9 @@ def daterange(date1, date2):
 def subparser(subpi):
     subpi.add_argument("grant",
                        help="grant id for the grant you want to find appointments")
-    subpi.add_argument("-b", "--begin_date",
+    subpi.add_argument("-b", "--begin-date",
                        help="attestation period begins on this date, format YYYY-MM-DD")
-    subpi.add_argument("-e", "--end_date",
+    subpi.add_argument("-e", "--end-date",
                        help="attestation period ends on this date")
     subpi.add_argument("--no-plot", action="store_true",
                        help="suppress the plotting")

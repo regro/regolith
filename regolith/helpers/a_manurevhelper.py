@@ -38,7 +38,7 @@ def subparser(subpi):
                        help=f"Manuscript status",
                        default='accepted'
                        )
-    subpi.add_argument("-d", "--submitted_date", help="Submitted date. Defaults "
+    subpi.add_argument("-d", "--submitted-date", help="Submitted date. Defaults "
                                                       "to tbd",
                        **date_kwargs
                        )

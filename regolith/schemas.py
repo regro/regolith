@@ -1672,7 +1672,7 @@ EXEMPLARS = {
             "grants": "dmref15",
             "description": "a prum that has various inactive states in milestones and overall",
             "deliverable": {"due_date": "2021-05-03", "status": "paused"},
-            "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner"},
+            "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner", "type": "meeting"},
             "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged"}]
     },
         {
@@ -4010,6 +4010,11 @@ SCHEMAS = {
                            "required": False,
                            "type": "string",
                            "eallowed": PROJECTUM_STATI},
+                "type": {"description": f"type of kickoff deliverable. In general will be 'meeting'"
+                                        f"Allowed values are {', '.join(MILESTONE_TYPES)}",
+                         "required": False,
+                         "type": "string",
+                         "eallowed": MILESTONE_TYPES},
             }
         },
         "lead": {

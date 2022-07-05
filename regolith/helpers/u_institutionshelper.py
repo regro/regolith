@@ -42,20 +42,20 @@ def subparser(subpi):
                        nargs='+',
                        help="List of all the different names this "
                             "institution is known by.")
-    subpi.add_argument("--dept_id",
+    subpi.add_argument("--dept-id",
                        help="dept_id, e.g. physics.")
-    subpi.add_argument("--dept_name",
+    subpi.add_argument("--dept-name",
                        help="Department canonical name, e.g., Department of Physics. "
-                            "Required if --dept_id supplied and it is a new department")
-    subpi.add_argument("--dept_aka",
+                            "Required if --dept-id supplied and it is a new department")
+    subpi.add_argument("--dept-aka",
                        nargs='+',
                        help="Department aliases, e.g., Physics Dept.")
-    subpi.add_argument("--school_id",
+    subpi.add_argument("--school-id",
                        help="id for the school, e.g., SEAS.")
-    subpi.add_argument("--school_name",
+    subpi.add_argument("--school-name",
                        help="Full canonical name, e.g., School of Engineering and Applied Science. "
-                            "Required if --school_id supplied and it is a new school")
-    subpi.add_argument("--school_aka",
+                            "Required if --school-id supplied and it is a new school")
+    subpi.add_argument("--school-aka",
                        nargs='+',
                        help="School aliases.")
     # Do not delete --database arg

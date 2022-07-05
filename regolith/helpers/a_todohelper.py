@@ -53,11 +53,11 @@ def subparser(subpi):
     subpi.add_argument("-n", "--notes", nargs="+",
                        help="Additional notes for this task. Each note should be enclosed "
                             "in quotation marks and different notes separated by spaces")
-    subpi.add_argument("-a", "--assigned_to",
+    subpi.add_argument("-a", "--assigned-to",
                        help="ID of the group member to whom the task is assigned. Default is the id saved in user.json. ")
-    subpi.add_argument("-b", "--assigned_by",
+    subpi.add_argument("-b", "--assigned-by",
                        help="ID of the member that is assigning the task. Default is the id saved in user.json. ")
-    subpi.add_argument("--begin_date",
+    subpi.add_argument("--begin-date",
                        help="Begin date of the task. Default is today.",
                        **date_kwargs
                        )
