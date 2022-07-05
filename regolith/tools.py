@@ -2203,8 +2203,8 @@ def token_info_complete(token_info, rc):
         The token if the token exists and False if not
     """
     message_token_not_defined = ("WARNING: The authentication token may not be defined. If you would like regolith to "
-                                 "automatically create a repository in GitHub/GitLab, please add your private authentication "
-                                 "token in user.json. See regolith documentation for details.")
+                                 "automatically create a repository in GitHub/GitLab, please add your private "
+                                 "authentication token in user.json. See regolith documentation for details.")
     if token_info in rc:
         if rc.__getattr__(token_info):
             return rc.__getattr__(token_info)
@@ -2243,8 +2243,9 @@ def create_repo(name, target_repo, token_info, rc):
         except requests.exceptions.HTTPError:
             raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
                             f"due to an issue with the API call (status code: {response.status_code}). "
-                            f"Check that your private token and repository information are valid in "
-                            f"regolithrc.json.")
+                            f"If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                            f"please add repository information in regolithrc.json. See regolith documentation "
+                            f"for details.")
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
     else:
