@@ -100,8 +100,8 @@ def subparser(subpi):
     subpi.add_argument("--no-cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
-    subpi.add_argument("-r", "--no-repo",
-                       help=f"Do not add the presentation to gitlab repo under talks",
+    subpi.add_argument("--no-repo",
+                       help=f"Do not create a GitHub/Lab repo for the presentation",
                        action="store_true")
     return subpi
 
@@ -219,9 +219,9 @@ class PresentationAdderHelper(DbHelperBase):
 
         if not rc.no_expense:
             rc.business = False
-            rc.payee = authors[0]
+            rc.payee = rc.default_user_id
             rc.purpose = f"give {rc.type} presentation at {rc.name}, {rc.place}"
-            rc.where = "tbd"
+            rc.where = 'tbd'
             rc.status = "unsubmitted"
             edoc = expense_constructor(key, begin_date, end_date, rc)
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)

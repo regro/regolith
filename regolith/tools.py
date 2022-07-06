@@ -2122,13 +2122,15 @@ def google_cal_auth_flow():
     # Save the credentials for the next run
 
 
-def repo_info_complete(target_repo, rc):
+def repo_info_complete(target_repo_name, repos):
     """checks if repo information is defined and valid in rc
 
     Parameters:
         target_repo - string
-            the request info for target location defined in rc (e.g. 'repo1' or 'talk_repo')
-        rc - run control object
+            the name of the repo sought (e.g. 'repo1' or 'talk_repo')
+        repos - list
+            the list of repos.  A repo must have a name, a url and a params 
+            kwarg.
 
     Returns:
         True if all repo information is valid and False if not
@@ -2141,61 +2143,27 @@ def repo_info_complete(target_repo, rc):
                                "If you would like regolith to automatically create a repository in GitHub/GitLab, "
                                "please add repository information in regolithrc.json. See regolith documentation "
                                "for details.")
-    setup_message = ("If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                     "please add your repository information and private authentication token in reolgithrc.json"
-                     "and user.json respectively. See regolith documentation for details.")
-    if 'repos' in rc:
-        if rc.repos:
-            if target_repo in rc.repos:
-                if rc.repos[target_repo]:
-                    if 'params' in rc.repos[target_repo]:
-                        if rc.repos[target_repo]['params']:
-                            if 'namespace_id' in rc.repos[target_repo]['params'] and 'name' in rc.repos[target_repo][
-                                    'params']:
-                                if rc.repos[target_repo]['params']['namespace_id'] and rc.repos[target_repo]['params'][
-                                        'name']:
-                                    if not rc.repos[target_repo]['params']['namespace_id'].isdigit() or type(
-                                            rc.repos[target_repo]['params']['name']) != str:
-                                        print(message_params_not_defined)
-                                        return False
-                                else:
-                                    print(message_params_not_defined)
-                                    return False
-                            else:
-                                print(message_params_not_defined)
-                                return False
-                        else:
-                            print(message_params_not_defined)
-                            return False
-                    else:
-                        print(message_params_not_defined)
-                        return False
-                    if 'url' in rc.repos[target_repo]:
-                        if rc.repos[target_repo]['url']:
-                            url = urlparse(rc.repos[target_repo]['url'])
-                            if url.scheme and url.netloc and url.path:
-                                return True
-                            else:
-                                print(message_url_not_defined)
-                                return False
-                        else:
-                            print(message_url_not_defined)
-                            return False
-                    else:
-                        print(message_url_not_defined)
-                        return False
-                else:
-                    print()
-                    return False
-            else:
-                print(setup_message)
-                return False
-        else:
-            print(setup_message)
-            return False
-    else:
+    setup_message = ("INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                     "please add your repository information in reolgithrc.json and "
+                     "your private authentication token in "
+                     "user.json respectively. See regolith documentation for details.")
+    
+    target_repo = [repo for repo in repos if repo.get("name", "") == target_repo_name]
+    if len(target_repo) == 0:
         print(setup_message)
         return False
+    if len(target_repo) > 1:
+        print(f"more than on repo found in regolithrc.json with the name {target_repo_name}")
+        return False
+    target_repo = target_repo[0]
+    if not target_repo.get("params"):
+        print(message_params_not_defined)
+        return False
+    if not target_repo.get("url"):
+        print(message_url_not_defined)
+        return False
+    else:
+        return True
 
 
 def token_info_complete(token_info, rc):

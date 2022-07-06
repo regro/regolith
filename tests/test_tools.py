@@ -2181,67 +2181,49 @@ def test_get_tags_invalid():
 
 @pytest.mark.parametrize(
     "repo_information, expected", [
-        ({"repos": {
-            "repo1": {
+        ([{"name": "repo1",
                 "params": {
                     "namespace_id": "35",
                     "initialize_with_readme": "false",
                     "name": "repo name"},
-                "url": "https://example.com/url/example"}}
-         }, True),
+                "url": "https://example.com/url/example"
+                }], True),
         ({}, False),
-        ({"repos": {}}, False),
-        ({"repos": {
-            "repo1": {}, }
-         }, False),
-        ({"repos": {
-            "repo1": {
-                "url": "https://example.com/url/example"}}
-         }, False),
-        ({"repos": {
-            "repo1": {
-                "params": {}
-                }}
-         }, False),
-        ({"repos": {
-            "repo1": {
+        ([], False),
+        ([{"name": "repo1"},
+            {"name": "repo1"}
+        ], False),
+        ([
+            {"name": "repo1"},
+        ], False),
+        ([
+            {"name": "repo1",
+             "url": "https://example.com/url/example"}], False),
+        ([{"name": "repo1",
+              "params": {}
+                }], False),
+        ([{"name": "repo1",
                 "params": {
                     "namespace_id": "",
                     "initialize_with_readme": "false",
                     "name": ""},
-                "url": "https://example.com/url/example"}}
-         }, False),
-        ({"repos": {
-            "repo1": {
-                "params": {
-                    "namespace_id": "ID",
-                    "initialize_with_readme": "false",
-                    "name": "repo name"},
-                "url": "https://example.com/url/example"}}
-         }, False),
-        ({"repos": {
-            "repo1": {
+                "url": "https://example.com/url/example"}], True),
+        ([{"name": "repo1",
                 "params": {
                     "namespace_id": "1",
                     "initialize_with_readme": "false",
                     "name": "repo name"},
-                "url": ""}}
-         }, False),
-        ({"repos": {
-            "repo1": {
+                "url": ""}], False),
+        ([{"name": "repo1",
                 "params": {
                     "namespace_id": "1",
                     "initialize_with_readme": "false",
                     "name": "repo name"},
-                "url": "https://example.com"}}
-         }, False)
+                "url": "https://example.com"}], False)
     ]
 )
 def test_repo_info_complete(repo_information, expected):
-    rc = copy.copy(DEFAULT_RC)
-    rc._update(repo_information)
-    print(rc.__dict__)
-    actual = repo_info_complete('repo1', rc)
+    actual = repo_info_complete('repo1', repo_information)
     assert actual == expected
 
 

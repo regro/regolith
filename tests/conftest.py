@@ -53,6 +53,15 @@ def make_db():
                         "backend": "filesystem"
                     }
                 ],
+                "repos": [
+                    {"name": "repo1",
+                     "params": {
+                         "namespace_id": "35",
+                         "initialize_with_readme": "false",
+                         "name": "repo name"},
+                     "url": "https://example.com/url/example"
+                     }
+                ],
                 "stores": [
                     {
                         "name": "store",
