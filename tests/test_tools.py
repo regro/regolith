@@ -2187,7 +2187,7 @@ def test_get_tags_invalid():
                     "namespace_id": "35",
                     "initialize_with_readme": "false",
                     "name": "repo name"},
-                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}}
+                "url": "https://example.com/url/example"}}
          }, True),
         ({}, False),
         ({"repos": {}}, False),
@@ -2196,32 +2196,33 @@ def test_get_tags_invalid():
          }, False),
         ({"repos": {
             "repo1": {
-                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}}
+                "url": "https://example.com/url/example"}}
          }, False),
         ({"repos": {
             "repo1": {
-                "params": {},
-                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}}
+                "params": {}
+                }}
          }, False),
         ({"repos": {
             "repo1": {
                 "params": {
                     "namespace_id": "",
                     "initialize_with_readme": "false",
-                    "name": "repo name"},
-                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"}}
+                    "name": ""},
+                "url": "https://example.com/url/example"}}
          }, False),
         ({"repos": {
             "repo1": {
                 "params": {
-                    "namespace_id": "35",
+                    "namespace_id": "ID",
                     "initialize_with_readme": "false",
-                    "name": "repo name"}}}
+                    "name": "repo name"},
+                "url": "https://example.com/url/example"}}
          }, False),
         ({"repos": {
             "repo1": {
                 "params": {
-                    "namespace_id": "35",
+                    "namespace_id": "1",
                     "initialize_with_readme": "false",
                     "name": "repo name"},
                 "url": ""}}
@@ -2229,7 +2230,7 @@ def test_get_tags_invalid():
         ({"repos": {
             "repo1": {
                 "params": {
-                    "namespace_id": "35",
+                    "namespace_id": "1",
                     "initialize_with_readme": "false",
                     "name": "repo name"},
                 "url": "https://example.com"}}

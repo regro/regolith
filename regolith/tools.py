@@ -17,7 +17,6 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-from pathlib import Path
 from urllib.parse import urlparse
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
@@ -2155,7 +2154,7 @@ def repo_info_complete(target_repo, rc):
                                     'params']:
                                 if rc.repos[target_repo]['params']['namespace_id'] and rc.repos[target_repo]['params'][
                                         'name']:
-                                    if type(int(rc.repos[target_repo]['params']['namespace_id'])) != int or type(
+                                    if not rc.repos[target_repo]['params']['namespace_id'].isdigit() or type(
                                             rc.repos[target_repo]['params']['name']) != str:
                                         print(message_params_not_defined)
                                         return False
