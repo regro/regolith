@@ -1208,7 +1208,7 @@ EXEMPLARS = {
                     "other": [
                         "Adviser: Erich A. Schneider",
                         "Dissertation: Essential Physics for Fuel Cycle "
-                        "Modeling & Analysis",
+                        "Modeling \& Analysis",
                     ],
                 },
             ],
