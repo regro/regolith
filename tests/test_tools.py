@@ -4,6 +4,10 @@ import habanero
 import pytest
 import datetime as dt
 
+import copy
+from unittest import mock
+from regolith.runcontrol import DEFAULT_RC
+
 from regolith.tools import (
     filter_publications,
     filter_presentations,
@@ -34,7 +38,8 @@ from regolith.tools import (
     get_formatted_crossref_reference,
     compound_dict,
     compound_list, filter_employment_for_advisees,
-    get_tags, dereference_institution
+    get_tags, dereference_institution,
+    repo_info_complete, token_info_complete, create_repo
 )
 
 PEOPLE_COLL = [
@@ -2173,6 +2178,107 @@ def test_get_tags_invalid():
     with pytest.raises(TypeError) as e_info:
         get_tags(coll)
         assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
+
+@pytest.mark.parametrize(
+    "repo_information, expected", [
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "35",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+                "url": "https://example.com/url/example"}}
+         }, True),
+        ({}, False),
+        ({"repos": {}}, False),
+        ({"repos": {
+            "repo1": {}, }
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "url": "https://example.com/url/example"}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {}
+                }}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "",
+                    "initialize_with_readme": "false",
+                    "name": ""},
+                "url": "https://example.com/url/example"}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "ID",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+                "url": "https://example.com/url/example"}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "1",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+                "url": ""}}
+         }, False),
+        ({"repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "1",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+                "url": "https://example.com"}}
+         }, False)
+    ]
+)
+def test_repo_info_complete(repo_information, expected):
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(repo_information)
+    print(rc.__dict__)
+    actual = repo_info_complete('repo1', rc)
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "tokens, expected", [
+        ({"gitlab_private_token": "<private-token>"}, "<private-token>"),
+        ({"gitlab_private_token": ""}, False),
+        ({}, False)
+    ]
+)
+def test_token_info_complete(tokens, expected):
+    rc = copy.copy(DEFAULT_RC)
+    rc._update(tokens)
+    actual = token_info_complete('gitlab_private_token', rc)
+    assert actual == expected
+
+@mock.patch("requests.post")
+def test_create_repo(mock_requests_post):
+    mock_requests_post.return_value = mock.Mock(**{"status_code": 201})
+    rc = copy.copy(DEFAULT_RC)
+    repo_token_information = {
+        "repos": {
+            "repo1": {
+                "params": {
+                    "namespace_id": "35",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"
+                },
+                "url": "https://gitlab.thebillingegroup.com/api/v4/projects/"
+            }
+        },
+        "priv_token": "<private-token>"
+    }
+    rc._update(repo_token_information)
+    assert create_repo('test repo', 'repo1', 'priv_token', rc) != 201 # "repo test repo has been created in talks"
+
+
 
 
 

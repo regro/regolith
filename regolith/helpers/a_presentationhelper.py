@@ -13,7 +13,8 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     add_to_google_calendar,
-    google_cal_auth_flow
+    google_cal_auth_flow,
+    create_repo
 )
 from gooey import GooeyParser
 
@@ -99,6 +100,9 @@ def subparser(subpi):
     subpi.add_argument("--no-cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
+    subpi.add_argument("-r", "--no-repo",
+                       help=f"Do not add the presentation to gitlab repo under talks",
+                       action="store_true")
     return subpi
 
 
@@ -130,6 +134,7 @@ class PresentationAdderHelper(DbHelperBase):
     def db_updater(self):
         gtx = self.gtx
         rc = self.rc
+
         if not rc.no_cal:
             event = {
                         'summary': rc.name,
@@ -147,6 +152,7 @@ class PresentationAdderHelper(DbHelperBase):
                     jump += 1
 
         # dates
+        # TODO : add date format check?
         begin_date = date_parser.parse(rc.begin_date).date()
         end_date = date_parser.parse(rc.end_date).date()
 
@@ -221,4 +227,7 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
+        rc.repos['talk_repo']['params']['name'] = key
+        if not rc.no_repo:
+            create_repo(key, 'talk_repo', 'gitlab_private_token', rc)
         return
