@@ -43,7 +43,7 @@ def make_db():
     with open("regolithrc.json", "w") as f:
         json.dump(
             {
-                "default_user_id": "scopatz",
+                "default_user_id": "sbillinge",
                 "groupname": "ERGS",
                 "databases": [
                     {
