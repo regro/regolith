@@ -2122,18 +2122,19 @@ def google_cal_auth_flow():
     # Save the credentials for the next run
 
 
-def repo_info_complete(target_repo_name, repos):
+def get_target_repo_info(target_repo_id, repos):
     """checks if repo information is defined and valid in rc
 
     Parameters:
-        target_repo - string
-            the name of the repo sought (e.g. 'repo1' or 'talk_repo')
-        repos - list
-            the list of repos.  A repo must have a name, a url and a params 
+      target_repo_id - string
+        the id of the doc with the target repo information
+      repos - list
+        the list of repos.  A repo must have a name, a url and a params 
             kwarg.
 
     Returns:
-        True if all repo information is valid and False if not
+        The target repo document, or False if it is not present or properly 
+        formulatedinformation
     """
     message_params_not_defined = ("WARNING: The request parameters may not be defined. "
                                   "If you would like regolith to automatically create a repository in GitHub/GitLab, "
@@ -2148,12 +2149,12 @@ def repo_info_complete(target_repo_name, repos):
                      "your private authentication token in "
                      "user.json respectively. See regolith documentation for details.")
     
-    target_repo = [repo for repo in repos if repo.get("name", "") == target_repo_name]
+    target_repo = [repo for repo in repos if repo.get("_id", "") == target_repo_id]
     if len(target_repo) == 0:
         print(setup_message)
         return False
     if len(target_repo) > 1:
-        print(f"more than on repo found in regolithrc.json with the name {target_repo_name}")
+        print(f"more than on repo found in regolithrc.json with the name {target_repo_id}")
         return False
     target_repo = target_repo[0]
     if not target_repo.get("params"):
@@ -2163,15 +2164,19 @@ def repo_info_complete(target_repo_name, repos):
         print(message_url_not_defined)
         return False
     else:
-        return True
+        url = urlparse(target_repo.get('url'))
+        if url.scheme and url.netloc and url.path:
+            return target_repo
+        else:
+            print(message_url_not_defined)
+            return False
 
-
-def token_info_complete(token_info, rc):
+def get_target_token(target_token_name, tokens):
     """Checks if API authentication token is defined and valid in rc
 
     Parameters:
-        token_info - string
-            the personal access token defined in rc (e.g. 'priv_token' or 'gitlab_private_token')
+        target_token_name - string
+            the name of the personal access token (defined in rc)
         rc - run control object
 
     Returns:
@@ -2180,41 +2185,45 @@ def token_info_complete(token_info, rc):
     message_token_not_defined = ("WARNING: The authentication token may not be defined. If you would like regolith to "
                                  "automatically create a repository in GitHub/GitLab, please add your private "
                                  "authentication token in user.json. See regolith documentation for details.")
-    if token_info in rc:
-        if rc.__getattr__(token_info):
-            return rc.__getattr__(token_info)
-        else:
-            print(message_token_not_defined)
-            return False
-    else:
+    
+    target_token = [token for token in tokens if token.get("_id") == target_token_name]
+    if len(target_token) == 0:
         print(message_token_not_defined)
-        return False
+        return None
+    if len(target_token) > 1:
+        print(f"more than on token found in regolithrc.json with the name {target_token_name}")
+        return None
+    if target_token[0].get("token", ""):
+        return target_token[0].get("token")
 
 
-def create_repo(name, target_repo, token_info, rc):
-    """ Creates a repo if repo information and token is defined in rc
+def create_repo(destination_id, token_info_id, rc):
+    """ Creates a repo at the target distination 
+    
+    tries to fail gracefully if repo information and token is not defined
 
     Parameters:
-        name - string
-            the name of the repo being created (e.g. 'test repo')
-        target_repo - string
-            the key in rc for target repo information (e.g. 'repo1')
-        token_info - string
-            the key in rc for token (e.g. 'priv_token')
+        destination_id - string
+            the id of the target repo information document
+        token_info_id - string
+            the id for the token info document (e.g. 'priv_token')
         rc - run control object
+          the run control object that should contain rc.repos and rc.tokens docs
 
     Returns:
         Success message (repo target_repo has been created in talks) if repo is successfully created in target_repo
         Warning/setup messages if unsuccessful (or if repo info or token are not valid)
     """
-    repo_info_exists = repo_info_complete(target_repo, rc)
-    token_exists = token_info_complete(token_info, rc)
-    if repo_info_exists and token_exists:
+
+    repo_info = get_target_repo_info(destination_id, rc.repos)
+    token = get_target_token(token_info_id, rc.tokens)
+    if repo_info and token:
         try:
-            response = requests.post(rc.repos[target_repo]['url'], params=rc.repos[target_repo]['params'],
-                                     headers={'PRIVATE-TOKEN': '{}'.format(token_exists)})
+            response = requests.post(repo_info['url'], params=repo_info['params'],
+                                     headers={'PRIVATE-TOKEN': token})
             response.raise_for_status()
-            return f"repo {name} has been created in talks"
+            return f"repo {repo_info.get('params', {}).get('name', 'unknown')} " \
+                   f"has been created at {repo_info.get('url')}"
         except requests.exceptions.HTTPError:
             raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
                             f"due to an issue with the API call (status code: {response.status_code}). "
