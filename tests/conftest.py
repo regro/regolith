@@ -59,7 +59,7 @@ def make_db():
                     {"_id": "talk_repo",
                      "params": {
                          "namespace_id": "35",
-                         "initialize_with_readme": "false",
+                         "initialize_with_readme": "true",
                          "name": "repo name"},
                      "url": "https://example.com/url/example"
                      }

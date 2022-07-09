@@ -864,7 +864,7 @@ helper_map_requests = [
 def test_helper_python(hmr, make_db, db_src, make_mongodb, capsys, **kwargs):
     testfile = Path(__file__)
 
-    kwargs['mock'].post('https://example.com/url/example?namespace_id=35&initialize_with_readme=false&name=2006as_mars')
+    kwargs['mock'].post('https://example.com/url/example?namespace_id=35&initialize_with_readme=true&name=2006as_mars')
 
     if db_src == "fs":
         repo = Path(make_db)
