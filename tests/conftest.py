@@ -3,7 +3,8 @@ All rights reserved."""
 import json
 import os
 import tempfile
-from copy import deepcopy
+from copy import deepcopy, copy
+from unittest import mock
 
 import pytest
 from pymongo import MongoClient
@@ -42,6 +43,7 @@ def make_db():
     with open("regolithrc.json", "w") as f:
         json.dump(
             {
+                "default_user_id": "sbillinge",
                 "groupname": "ERGS",
                 "databases": [
                     {
@@ -53,12 +55,27 @@ def make_db():
                         "backend": "filesystem"
                     }
                 ],
+                "repos": [
+                    {"_id": "talk_repo",
+                     "params": {
+                         "namespace_id": "35",
+                         "initialize_with_readme": "false",
+                         "name": "repo name"},
+                     "url": "https://example.com/url/example"
+                     }
+                ],
                 "stores": [
                     {
                         "name": "store",
                         "url": repo,
                         "path": repo,
                         "public": True,
+                    }
+                ],
+                "tokens": [
+                    {
+                        "_id": "gitlab_private_token",
+                        "token": "<private_token>"
                     }
                 ],
             },
@@ -481,3 +498,4 @@ def exemplars_to_mongo(mongo_db_name, collection_list=None):
             print('Duplicate key error, check exemplars for duplicates if tests fail')
         except mongo_errors.BulkWriteError:
             print('Duplicate key error, check exemplars for duplicates if tests fail')
+

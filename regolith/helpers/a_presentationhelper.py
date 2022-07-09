@@ -13,7 +13,8 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     add_to_google_calendar,
-    google_cal_auth_flow
+    google_cal_auth_flow,
+    create_repo
 )
 from gooey import GooeyParser
 
@@ -99,6 +100,9 @@ def subparser(subpi):
     subpi.add_argument("--no-cal",
                        help=f"Do not add the presentation to google calendar",
                        action="store_true")
+    subpi.add_argument("--no-repo",
+                       help=f"Do not create a GitHub/Lab repo for the presentation",
+                       action="store_true")
     return subpi
 
 
@@ -130,6 +134,7 @@ class PresentationAdderHelper(DbHelperBase):
     def db_updater(self):
         gtx = self.gtx
         rc = self.rc
+
         if not rc.no_cal:
             event = {
                         'summary': rc.name,
@@ -147,6 +152,7 @@ class PresentationAdderHelper(DbHelperBase):
                     jump += 1
 
         # dates
+        # TODO : add date format check?
         begin_date = date_parser.parse(rc.begin_date).date()
         end_date = date_parser.parse(rc.end_date).date()
 
@@ -213,12 +219,18 @@ class PresentationAdderHelper(DbHelperBase):
 
         if not rc.no_expense:
             rc.business = False
-            rc.payee = authors[0]
+            rc.payee = rc.default_user_id
             rc.purpose = f"give {rc.type} presentation at {rc.name}, {rc.place}"
-            rc.where = "tbd"
+            rc.where = 'tbd'
             rc.status = "unsubmitted"
             edoc = expense_constructor(key, begin_date, end_date, rc)
             rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL}")
 
+        if not rc.no_repo:
+            for repo in rc.repos: 
+                if repo.get("_id") == 'talk_repo':
+                    repo["params"].update({'name': key})
+            msg = create_repo('talk_repo', 'gitlab_private_token', rc)
+            print(msg)
         return
