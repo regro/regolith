@@ -2136,14 +2136,6 @@ def get_target_repo_info(target_repo_id, repos):
         The target repo document, or False if it is not present or properly 
         formulatedinformation
     """
-    message_params_not_defined = ("WARNING: The request parameters may not be defined. "
-                                  "If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                                  "please add repository information in regolithrc.json. See regolith documentation "
-                                  "for details.")
-    message_url_not_defined = ("WARNING: The request url may not be valid. "
-                               "If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                               "please add repository information in regolithrc.json. See regolith documentation "
-                               "for details.")
     setup_message = ("INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
                      "please add your repository information in reolgithrc.json and "
                      "your private authentication token in "
@@ -2157,6 +2149,15 @@ def get_target_repo_info(target_repo_id, repos):
         print(f"more than on repo found in regolithrc.json with the name {target_repo_id}")
         return False
     target_repo = target_repo[0]
+    message_params_not_defined = (f"WARNING: The request parameters may not be defined. "
+                                  f"Info we have: {target_repo}"
+                                  f"If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                                  f"please add repository information in regolithrc.json. See regolith documentation "
+                                  f"for details.")
+    message_url_not_defined = ("WARNING: The request url may not be valid. "
+                               "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                               "please add repository information in regolithrc.json. See regolith documentation "
+                               "for details.")
     if not target_repo.get("params"):
         print(message_params_not_defined)
         return False
@@ -2186,7 +2187,7 @@ def get_target_token(target_token_id, tokens):
     Returns:
         The token if the token exists and False if not
     """
-    message_token_not_defined = ("WARNING: Cannot find an authentication token.  It may not be corectly defined. If you would like regolith to "
+    message_token_not_defined = ("WARNING: Cannot find an authentication token.  It may not be correctly defined. If you would like regolith to "
                                  "automatically create a repository in GitHub/GitLab, please add your private "
                                  "authentication token in user.json. See regolith documentation for details.")
     
