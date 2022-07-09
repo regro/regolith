@@ -231,6 +231,9 @@ class PresentationAdderHelper(DbHelperBase):
             for repo in rc.repos: 
                 if repo.get("_id") == 'talk_repo':
                     repo['params'].update({'name': key})
+                    if not repo['params'].get("initialize_with_readme"):
+                        repo['params']["initialize_with_readme"] = True
+                    repo['params'].update({'name': key})
             msg = create_repo('talk_repo', 'gitlab_private_token', rc)
             print(msg)
         return
