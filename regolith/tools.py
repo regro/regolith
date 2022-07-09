@@ -2148,7 +2148,7 @@ def get_target_repo_info(target_repo_id, repos):
                      "please add your repository information in reolgithrc.json and "
                      "your private authentication token in "
                      "user.json respectively. See regolith documentation for details.")
-    
+
     target_repo = [repo for repo in repos if repo.get("_id", "") == target_repo_id]
     if len(target_repo) == 0:
         print(setup_message)
@@ -2160,38 +2160,42 @@ def get_target_repo_info(target_repo_id, repos):
     if not target_repo.get("params"):
         print(message_params_not_defined)
         return False
+    if not target_repo.get("params").get("name"):
+        print(message_params_not_defined)
+        return False
     if not target_repo.get("url"):
         print(message_url_not_defined)
         return False
     else:
         url = urlparse(target_repo.get('url'))
         if url.scheme and url.netloc and url.path:
+            target_repo['params'].update({"name": target_repo.get("params").get("name").strip().replace(" ", "_")})
             return target_repo
         else:
             print(message_url_not_defined)
             return False
 
-def get_target_token(target_token_name, tokens):
+def get_target_token(target_token_id, tokens):
     """Checks if API authentication token is defined and valid in rc
 
     Parameters:
-        target_token_name - string
+        target_token_id - string
             the name of the personal access token (defined in rc)
         rc - run control object
 
     Returns:
         The token if the token exists and False if not
     """
-    message_token_not_defined = ("WARNING: The authentication token may not be defined. If you would like regolith to "
+    message_token_not_defined = ("WARNING: Cannot find an authentication token.  It may not be corectly defined. If you would like regolith to "
                                  "automatically create a repository in GitHub/GitLab, please add your private "
                                  "authentication token in user.json. See regolith documentation for details.")
     
-    target_token = [token for token in tokens if token.get("_id") == target_token_name]
+    target_token = [token for token in tokens if token.get("_id") == target_token_id]
     if len(target_token) == 0:
         print(message_token_not_defined)
         return None
     if len(target_token) > 1:
-        print(f"more than on token found in regolithrc.json with the name {target_token_name}")
+        print(f"more than one token found in regolithrc.json with the name {target_token_id}")
         return None
     if target_token[0].get("token", ""):
         return target_token[0].get("token")
@@ -2222,7 +2226,7 @@ def create_repo(destination_id, token_info_id, rc):
             response = requests.post(repo_info['url'], params=repo_info['params'],
                                      headers={'PRIVATE-TOKEN': token})
             response.raise_for_status()
-            return f"repo {repo_info.get('params', {}).get('name', 'unknown')} " \
+            return f"repo {repo_info.get('params').get('name', 'unknown')} " \
                    f"has been created at {repo_info.get('url')}"
         except requests.exceptions.HTTPError:
             raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
@@ -2233,7 +2237,7 @@ def create_repo(destination_id, token_info_id, rc):
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
     else:
-        return
+        return 
 
 
 def get_tags(coll):

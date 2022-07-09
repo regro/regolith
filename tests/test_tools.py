@@ -7,6 +7,9 @@ import datetime as dt
 import copy
 import requests
 from unittest import mock
+
+import requests_mock
+
 from regolith.runcontrol import DEFAULT_RC
 
 from regolith.tools import (
@@ -2182,53 +2185,73 @@ def test_get_tags_invalid():
 
 @pytest.mark.parametrize(
     "repo_information, expected", [
-        ([{"_id": "repo1","params": {"namespace_id": "35", 
+        # good input
+        ([{"_id": "repo1",
+           "params": {"namespace_id": "35",
+                      "initialize_with_readme": "false",
+                      "name": "repo name "},
+            "url": "https://example.com/url/example",
+                }],
+         {"_id": "repo1",
+          "params": {"namespace_id": "35",
                                       "initialize_with_readme": "false",
-                                      "name": "repo name"},
-                "url": "https://example.com/url/example"
-                }], {"_id": "repo1","params": {"namespace_id": "35", 
-                                      "initialize_with_readme": "false",
-                                      "name": "repo name"},
-                "url": "https://example.com/url/example"
+                                    "name": "repo_name"
+                                      },
+          "url": "https://example.com/url/example"
                 }),
         ({}, False),
         ([], False),
+        # multiple docs with same _id
         ([{"_id": "repo1"},
-            {"name": "repo1"}
+          {"_id": "repo1"}
         ], False),
-        ([
-            {"_id": "repo1"},
+        # well formulated doc, but wrong id
+        ([{"_id": "wrong_id",
+           "params": {"namespace_id": "35",
+                                      "initialize_with_readme": "false",
+                                        "name": "repo name "},
+            "url": "https://example.com/url/example",
+                }],
+         False),
+        # no params section
+        ([{"_id": "repo1",
+           "url": "https://example.com/url/example"
+           },
         ], False),
+        # params section, but empty
         ([{"_id": "repo1",
-             "url": "https://example.com/url/example"}], False),
+           "params": {},
+           "url": "https://example.com/url/example"
+           }], False),
+        # name but name empty
         ([{"_id": "repo1",
-              "params": {}
-                }], False),
-        ([{"_id": "repo1",
-                "params": {
-                    "namespace_id": "",
+            "params": {"namespace_id": "",
                     "initialize_with_readme": "false",
-                    "name": ""},
-                "url": "https://example.com/url/example"}],
-         {"_id": "repo1",
-          "params": {
-              "namespace_id": "",
-              "initialize_with_readme": "false",
-              "name": ""},
-          "url": "https://example.com/url/example"}
-         ),
-        ([{"_id": "repo1",
-                "params": {
+                       "name":""},
+            "url": "https://example.com/url/example",
+            }
+        ], False),
+        #url but url empty
+        ([{ "_id": "repo1",
+            "params": {
                     "namespace_id": "1",
                     "initialize_with_readme": "false",
                     "name": "repo name"},
-                "url": ""}], False),
-        ([{"_id": "repo1",
-                "params": {
+            "url": ""}], False),
+        #url but url not complete
+        ([{ "_id": "repo1",
+            "params": {
                     "namespace_id": "1",
                     "initialize_with_readme": "false",
-                    "name": "repo name"},
-                "url": "https://example.com"}], False)
+                  "name": "repo name"},
+            "url": "https://example.com"}], False),
+        #url but url invalid
+        ([{"_id": "repo1",
+           "params": {
+               "name": "some name",
+               "namespace_id": "1",
+                "initialize_with_readme": "false"},
+            "url": "random junk"}], False),
     ]
 )
 def test_get_target_repo_info(repo_information, expected):
@@ -2252,25 +2275,27 @@ def test_get_target_token(tokens, expected):
     actual = get_target_token('gitlab_private_token', tokens)
     assert actual == expected
 
-@mock.patch("requests.post")
-def test_create_repo(mock_requests_post):
-    mock_requests_post.return_value = mock.Mock(**{"status_code": 201})
+# @mock.patch("requests.post")
+@requests_mock.Mocker(kw='mock')
+def test_create_repo(**kwargs):
+    kwargs['mock'].post('https://example.com/url/example', status_code=201)
+    # mock_requests_post.return_value = mock.Mock(**{"status_code": 201})
     rc = copy.copy(DEFAULT_RC)
     repo_token_information = {
         "repos": [
-            {"_id": "repo1",
+            {"_id": "talk_repo",
                 "params": {
                     "namespace_id": "35",
                     "initialize_with_readme": "false",
-                    "name": "repo name"
+                    "name": "2206_my_talk"
                 },
                 "url": "https://example.com/url/example"
             }],
-        "tokens": [{"priv_token": "<private-token>"}]
+        "tokens": [{"_id": "gitlab_private_token", "token": "<private-token>"}]
     }
     rc._update(repo_token_information)
-    actual = create_repo('repo1', 'priv_token', rc)
-    assert actual != 201 # "repo test repo has been created in talks"
+    actual = create_repo('talk_repo', 'gitlab_private_token', rc)
+    assert actual == "repo 2206_my_talk has been created at https://example.com/url/example"
 
 
 
