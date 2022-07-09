@@ -230,7 +230,7 @@ class PresentationAdderHelper(DbHelperBase):
         if not rc.no_repo:
             for repo in rc.repos: 
                 if repo.get("_id") == 'talk_repo':
-                    repo["params"].update({'name': key})
+                    repo['params'].update({'name': key})
             msg = create_repo('talk_repo', 'gitlab_private_token', rc)
             print(msg)
         return
