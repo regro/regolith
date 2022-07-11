@@ -486,6 +486,49 @@ returned than if you don't type :bash:`-v`.  You can try it now:
 
     $ regolith helper l_contacts run -n auth -v
 
+Setting up repository information for API requests
+==================================================
+
+Some helpers have features that make API requests. For example, a_presentation helper has a functionality that creates a
+repository in a designated GitLab/GitHub repository. In order to use these features, the target repository
+information needs to be defined in your docs.
+
+The designated repository information should be defined in regolithrc.json in the directory in which you are
+running the helper. This includes a distinct ID for the target repository, the required parameters
+(e.g. namespace ID, repo name, etc.) and the request url, which should be stored as collections. Note that
+multiple target repositories can be defined.
+
+For example, to use the aforementioned feature in a_presentation helper, define the repository parameters under
+"talk_repo". See below for an example:
+
+.. code-block::
+
+    [
+        {
+            "_id": "talk_repo",
+            "params": {
+                "namespace_id": "00",
+                "initialize_with_readme": "True",
+                "name": "repo name"},
+            "url": "https://example.com/url/example",
+        },
+        [...]
+    ]
+
+Your private API request token should be defined in your user.json, which can be found in your ~/.config directory.
+Similarly, define a distinct ID for each private token. For example, using our previous example, to create a repo
+in GitLab, define your authentication token as shown below:
+
+.. code-block::
+
+    [
+        {
+            "_id": "gitlab_private_token",
+            "token": "<private-token>"
+        },
+        [...]
+    ]
+
 Using the filter capabilities in the helpers
 ============================================
 
