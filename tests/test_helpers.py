@@ -861,7 +861,7 @@ helper_map_requests = [
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hmr", helper_map_requests)
 @requests_mock.Mocker(kw='mock')
-def test_helper_python(hmr, make_db, db_src, make_mongodb, capsys, **kwargs):
+def test_helper_python_mock(hmr, make_db, db_src, make_mongodb, capsys, **kwargs):
     testfile = Path(__file__)
 
     kwargs['mock'].post('https://example.com/url/example?namespace_id=35&initialize_with_readme=true&name=2006as_mars')

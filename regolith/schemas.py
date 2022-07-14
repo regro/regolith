@@ -4084,10 +4084,10 @@ SCHEMAS = {
                                                                    "in group local storage db",
                                                     "required": False,
                                                     "type": "string"},
-                                         "slides_url": {"description": "url to slides describing the development, "
+                                         "slide_urls": {"description": "url to slides describing the development, "
                                                                        "e.g., Google slides url",
                                                         "required": False,
-                                                        "type": "string"}
+                                                        "type": "list"}
                                      }
                                  }
                                  },
