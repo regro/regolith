@@ -23,16 +23,23 @@ ly_newprojectum:
   deliverable:
     due_date: 2021-01-01
     audience:
-      - e.g., beginning grad in chemistry
+      - Who will use the software or read the paper? Your target audience. e.g., beginning
+        grad in chemistry
     success_def: audience is happy
     scope:
-      - list of UCs that are supported or some other scope description if it software
-      - sketch of science story if it is paper
+      - If this is a software release, list any use-cases that are in scope. These
+        may be located in the Gdoc associated with the prum.  Otherwise include some
+        other kind of scope description of what is in and what is not
+      - 'If this is a science paper summarize: '
+      - the scientific question that is being answered
+      - any hypotheses that will be tested to answer it
+      - the approach that will be taken
     platform: description of how and where the audience will access the deliverable.  The
-      journal where it will be submitted if it is a paper
+      journal where it will be submitted if it is a paper. Whether it is a web-app,
+      or which operating systems will be supported, for software
     roll_out:
       - steps that the audience will take to access and interact with the deliverable
-      - not needed for paper submissions
+      - leave as empty list for paper submissions
     status: proposed
   description: more work
   grants:
@@ -47,29 +54,67 @@ ly_newprojectum:
       - group_members
     name: Kick off meeting
     objective: introduce project to the lead
-    status: proposed
+    status: converged
   lead: lyang
   log_url: ''
   milestones:
     - due_date: 2020-05-20
-      name: Project planning meeting
-      objective: to act as an example milestone.
+      name: Example milestone
+      objective: This acts as an example milestone. It shows how to construct your
+        milestones.  It should be deleted before depositing the prum.
       audience:
+        - update the audience as required, but it is often lead, pi and group_members
+          (see below). these resolve to their values defined elsewhere.  If putting
+          in people's names use their ids where possible and they will be looked for
+          in the people and contacts collections.
         - lead
         - pi
         - group_members
       status: proposed
       notes:
         - () get a clear picture of the deliverable and what needs to be done to get
-          there
-        - () make milestones which should also be deliverables (e.g., presentation,
-          meeting, etc.) that accomplish all the steps to get to the deliverable
-        - () think if good due dates for everything and shoot for hitting them.  Either
-          work back from a deadline for the deliverable, or work forward to guide
-          you to a reasonable deadline for the prum deliverable.
+          there.  Have discussions with group members to develop ideas.  Propose them
+          even if you are not sure, you will get feedback. This is the process.
+        - () edit the template 'deliverable' to reflect that.
+        - () chart out milestones at a high level first working back from the deliverable.  'To
+          deliver that (deliverable) I have to do this, this and this, and to deliver
+          it by then I have to do these things by these dates.'
+        - "() then write the detailed milestones, turning each one into a deliverable\
+          \ that is captured in the type field.  Allowed values for milestone types\
+          \ are: ('mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin',\
+          \ 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision',\
+          \ 'demo', 'skel').  If you are tempted to use 'other' think more about the\
+          \ milestone objective, you probably haven't defined it well enough in your\
+          \ head."
+        - () Think carefully about the deliverable date.  Can you hit it?  If not,
+          change it so you can hit it.  You may have to adjust your final deliverable
+          date but discuss this with the team, because scope could also be reduced
+          rather than pushing off final deliverable.  When you are comfortable with
+          the due date, and it has been reviewed, make the appoint on the calendar,
+          for example, if it is a meeting or presentation, send schedule it now.
+        - () within each milestone, make a todo list (this is a todo-list) in the
+          notes field.  A todo is a note prepended by () (no space in the middle).  These
+          are the smaller tasks you will have to do to complete the milestone.  When
+          you complete them turn () in to (x).
+        - () Iterate all these with your team/advisor maybe in a Google doc or on
+          Slack to make sure you are on the right track.  To converge this shoot for
+          multiple round-trips per day.
         - () using u_milestones in helper_gui, or otherwise, get them entered into
-          the prum
-        - () schedule a meeting with the PI to go over them and converge them
+          the prum and the prum deposited.
+        - () by the time the edited prum is submitted, set all the statuses to converged
+          or started, and delete this example milestone.
+        - () later, when you finish a milestone use u_milestones or editing in the
+          yaml file set status to finished and add an end_date, and fill in the progress
+          section. This should be brief but just links to a brief text description
+          of the outcome that would be suitable for a grant annual report, and any
+          url links to presentations or related docs.  Link to specific files of relevance
+          to this milestone not general docs and repos.
+      progress:
+        text: brief summary here when the milestone finishes that could be copy-pasted
+          into a grant report, for example.
+        slide_urls:
+          - <replace with urls to any slides or docs describing the outcome. The presentation
+            if it is a presentation>
       type: meeting
   name: New projectum
   notes:
