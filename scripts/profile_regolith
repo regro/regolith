@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+import cProfile
+
+from regolith.main import main
+
+cProfile.run("main()", sort="cumtime")
