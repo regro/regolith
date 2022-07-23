@@ -486,6 +486,80 @@ returned than if you don't type :bash:`-v`.  You can try it now:
 
     $ regolith helper l_contacts run -n auth -v
 
+Setting up Gitlab repository information for API requests
+=========================================================
+
+Some helpers have features that make API requests to GitLab. For example, the a_presentation helper has a functionality that
+creates a repository in a designated GitLab repository. In order to use these features, the target repository
+information needs to be defined in your docs.
+
+Setting up Destination Repo Information
+---------------------------------------
+
+The designated repository information should be defined in :code:`regolithrc.json` in the directory in which you are
+running the helper. Create a distinct ID for each target repository ("``_id``"), and include the required
+parameters and request url as collections. Note that multiple target repositories can be defined, given that
+they have unique IDs.
+
+For example, to use the aforementioned feature in a_presentation helper, you should define the repository parameters with
+the ID, ``"talk_repo"``. See below for an example:
+
+.. code-block:: json
+
+    [
+        {
+            "_id": "talk_repo",
+            "params": {
+                "namespace_id": "00",
+                "initialize_with_readme": "True" },
+            "url": "https://gitlab.example.com/api/v4/projects/"
+        },
+        {
+            "_id": "example_repo",
+            [...]
+        }
+    ]
+
+The namespace ID is the repository's group ID which can be found on the target repository's main page.
+The url should be in the format above, including the path. Change the example url's domain according to your
+target directory's url.
+
+For more information on the required request info, or to see a list of additional attributes
+that can also be defined in the request (e.g. ``initialize_with_readme``, ``description``, etc.),
+check out the `GitLab docs <https://docs.gitlab.com/ee/api/projects.html#create-project>`_.
+(Note that additional attributes should be defined under ``params``, as shown above)
+
+Setting up your Private Access Token
+------------------------------------
+
+Your personal/private API request token should be defined in :code:`user.json`, which can be found in your
+~/.config directory. Similarly, define a distinct ID for each private token. For example, to create a repo
+in GitLab, you should define your authentication token with the ID, ``"gitlab_private_token"``:
+
+.. code-block:: json
+
+    [
+        {
+            "_id": "gitlab_private_token",
+            "token": "<private-token>"
+        },
+        {
+            "_id": "example_token",
+            [...]
+        }
+    ]
+
+To learn more about creating a personal access token, refer to the
+`Gitlab docs <https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#personal-access-tokens>`_.
+Note that your personal access token should have the ``api`` scope enabled in order to make a successful request.
+
+To change the target directory, you can change the parameters (or IDs) in the function
+:code:`create_repo(destination_id, token_info_id, rc)` in `a_presentationhelper.py` to
+the IDs of your desired repo info and corresponding token.
+
+Setting up GitHub repository information for API requests
+=========================================================
+
 Using the filter capabilities in the helpers
 ============================================
 
