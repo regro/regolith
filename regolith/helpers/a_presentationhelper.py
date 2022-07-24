@@ -136,37 +136,38 @@ class PresentationAdderHelper(DbHelperBase):
             rc.database = rc.databases[0]["name"]
         
         if rc.no_expense:
-            if rc.expense_db: # User Story B
+            if rc.expense_db:
                 raise RuntimeError(
                     "ERROR: You specified an expense database with the --expense-db option, but also "
                     "passed --no-expense. Do you want to create an expense? Please reformulate your "
                     "helper command and rerun. "
                     )
-            # User Story A implicit - no need to set expense_db variable
         else:
-            if not rc.expense_db: # User Story C 
-                first_db = rc.databases[0]
-                if first_db["public"] == True:
-                    if rc.force:
-                        rc.expense_db = first_db["name"]
-                    else:
-                        pub_db_name = first_db["name"]
-                        raise RuntimeError(
-                                "ERROR: You did NOT specify an expense database to enter expense data "
-                                "assoicated with this presentation. The helper defaults to entering "
-                                "expenses into first database listed in your regolithrc.json file, "
-                                f"{pub_db_name}, but it is PUBLIC and would reveal potentially "
-                                "sensitive information. Rerun by specifying the target database with "
-                                "--expense-db EXPENSE_DB, or (at your own risk) pass the --force flag."
-                                )
-                else:
-                    rc.expense_db = first_db["name"]
-                    warn("WARNING: No expense database was provided to input the expense data "
-                        "associated with this presentaiton."
-                        f"Defaulted to using {rc.expense_db} "
-                        "(which is the first db listed in regolithrc.json, and is not public)"
-                        )
-            # User Story D implicit - expense_db variable set to specified value
+            rc.expense_db = rc.expense_db if rc.expense_db
+
+            if not rc.expense_db and not rc.databases[0].get("public"):
+                warn("WARNING: No expense database was provided to input the expense data "
+                    "associated with this presentation. Defaulted to using the first DB "
+                    "listed in your regolithrc.json, as this DB is non-public.")
+                rc.expense_db = rc.databases[0]['name'] 
+
+            rc.expense_db = rc.databases[0]['name'] if not rc.expense_db and rc.databases[0].get("public") and rc.force
+
+            if not rc.expense_db and rc.databases[0].get("public") and not rc.force:
+                raise RuntimeError(
+                    "ERROR: You failed to specify an expense database for the expense data "
+                    "associated with this presentation. The helper defaults to entering "
+                    "expenses into first database listed in your regolithrc.json file, "
+                    "but it set to PUBLIC and would reveal potentially sensitive information. "
+                    "Rerun by specifying the target database with --expense-db EXPENSE_DB, or "
+                    "(at your own risk) pass the --force flag."
+                    )
+
+            if rc.expense_db not in [database.get('name') for database in rc.databases]:
+                raise RuntimeError(
+                    f"ERROR: The expense database specified, {rc.expense_db}, is not listed "
+                    "in your regolithrc.json file."
+                    )
 
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
