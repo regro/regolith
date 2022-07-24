@@ -61,7 +61,9 @@ def make_db():
                          "namespace_id": "35",
                          "initialize_with_readme": "true",
                          "name": "repo name"},
-                     "url": "https://example.com/url/example"
+                     "url": "https://example.com",
+                     "api_route": "/url/example",
+                     "namespace_name": "talks"
                      }
                 ],
                 "stores": [

@@ -489,45 +489,46 @@ returned than if you don't type :bash:`-v`.  You can try it now:
 Setting up Gitlab repository information for API requests
 =========================================================
 
-Some helpers have features that make API requests to GitLab. For example, the a_presentation helper has a functionality that
-creates a repository in a designated GitLab repository. In order to use these features, the target repository
-information needs to be defined in your docs.
+Some helpers have features that make API requests to GitLab (or GitHub). For example, the a_presentation helper has a functionality that
+creates a repository in a designated GitLab group. In order to use these features, the target repository
+information needs to be defined in your configuration files (:code:`regolithrc.json`, :code:`user.json`).
 
 Setting up Destination Repo Information
 ---------------------------------------
 
 The designated repository information should be defined in :code:`regolithrc.json` in the directory in which you are
-running the helper. Create a distinct ID for each target repository ("``_id``"), and include the required
-parameters and request url as collections. Note that multiple target repositories can be defined, given that
-they have unique IDs.
+running the helper. Create a collection of repository targets designated as :code:`repos` (see below for an example).
+according to the following pattern.  We will use as an example an entry that will
+allow :code:`a_presentation` to successfully create a repository in a group called `talks`
+on a GitLab instance.
 
-For example, to use the aforementioned feature in a_presentation helper, you should define the repository parameters with
-the ID, ``"talk_repo"``. See below for an example:
+:code:`a_presentation` looks for a rep with the entry :code:`_id` with value ``"talk_repo"``.
 
 .. code-block:: json
 
-    [
-        {
-            "_id": "talk_repo",
-            "params": {
-                "namespace_id": "00",
-                "initialize_with_readme": "True" },
-            "url": "https://gitlab.example.com/api/v4/projects/"
+"repos":[
+        {"_id": "talk_repo",     # a_presentation looks for the entry with this ID
+         "params": {"namespace_id": "35",             # These params are handed to the API post request.
+                    "initialize_with_readme": "True"  # "name" is also needed but a_presentation generates that automatially
+                    },
+         "url": "https://gitlab.example.com",  # The URL of the main GitLab/GitHub instance
+         "api_route": "/api/v4/projects/",     # This is the route to the REST-API.  The value
+                                               #   shown here is correct for GitLab at the time of writing
+         "namespace_name": "talks"      # the name of group/org which corresponds to the namespace_id above.
         },
         {
-            "_id": "example_repo",
+            "_id": "another_example_repo",
             [...]
         }
     ]
 
 The namespace ID is the repository's group ID which can be found on the target repository's main page.
-The url should be in the format above, including the path. Change the example url's domain according to your
-target directory's url.
+The :code:`url` and :code:`api_route` should be in the format above, including the dashes.
 
 For more information on the required request info, or to see a list of additional attributes
 that can also be defined in the request (e.g. ``initialize_with_readme``, ``description``, etc.),
-check out the `GitLab docs <https://docs.gitlab.com/ee/api/projects.html#create-project>`_.
-(Note that additional attributes should be defined under ``params``, as shown above)
+see GitHub or GitLab API documentation, e.g., for GitLab the `GitLab docs <https://docs.gitlab.com/ee/api/projects.html#create-project>`_.
+(Note that additional attributes can be defined under ``params``, where needed.)
 
 Setting up your Private Access Token
 ------------------------------------
