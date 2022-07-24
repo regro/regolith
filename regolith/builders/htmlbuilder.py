@@ -100,7 +100,12 @@ class HtmlBuilder(BuilderBase):
             bibfile = make_bibtex_file(
                 pubs, pid=p["_id"], person_dir=peeps_dir
             )
-            ene = p.get("employment", []) + p.get("education", [])
+            emps = p.get("employment", [])
+            emps = [em for em in emps
+                    if not em.get("not_in_cv", False)]
+            for e in emps:
+                e['position'] = e.get('position_full', e.get('position').title())
+            ene = emps + p.get("education", [])
             ene.sort(key=ene_date_key, reverse=True)
             for e in ene:
                 dereference_institution(e,

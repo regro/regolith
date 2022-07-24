@@ -3,6 +3,9 @@ from pathlib import Path
 import pytest
 import copy
 
+import requests_mock
+import requests
+
 from regolith.main import main
 
 dash = "-"
@@ -872,6 +875,59 @@ def test_helper_python_loose(hm, make_db, capsys):
     out, err = capsys.readouterr()
     assert hm[1] in out
 
+helper_map_requests = [
+ (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount",
+   "159.18",
+   "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
+   "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
+  "2006as_timbuktoo has been added in expenses\n"),
+ (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
+   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
+   "--authors", "sbillinge", "ashaaban", "--abstract",
+   "the earth is round as seen from mars",
+   "--title", "On the roundness of the Earth", "--status", "in-prep",
+   "--notes", "this is a sample added presentation",
+   "--presentation-url", "http://drive.google.com/SEV356DV",
+   "--no-cal"],
+  "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\nrepo 2006as_mars has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006as_mars.git\nor (SSH):\ngit clone git@example.com:talks/2006as_mars.git\n"
+  )
+]
+@pytest.mark.parametrize("db_src", db_srcs)
+@pytest.mark.parametrize("hmr", helper_map_requests)
+@requests_mock.Mocker(kw='mock')
+def test_helper_python(hmr, make_db, db_src, make_mongodb, capsys, **kwargs):
+    testfile = Path(__file__)
+
+    kwargs['mock'].post('https://example.com/url/example?namespace_id=35&initialize_with_readme=true&name=2006as_mars')
+
+    if db_src == "fs":
+        repo = Path(make_db)
+    elif db_src == "mongo":
+        if make_mongodb is False:
+            pytest.skip("Mongoclient failed to start")
+        else:
+            repo = Path(make_mongodb)
+    os.chdir(repo)
+
+    main(args=hmr[0])
+    out, err = capsys.readouterr()
+    assert hmr[1] == out
+
+    expecteddir = testfile.parent / "outputs" / hmr[0][1]
+
+    if expecteddir.is_dir():
+        if db_src == "fs":
+            test_dir = repo / "db"
+            assert_outputs(test_dir, expecteddir)
+        elif db_src == "mongo":
+            from regolith.database import connect
+            from regolith.runcontrol import DEFAULT_RC, load_rcfile
+            os.chdir(repo)
+            rc = copy.copy(DEFAULT_RC)
+            rc._update(load_rcfile("regolithrc.json"))
+            with connect(rc) as client:
+                mongo_database = client[rc.databases[0]['name']]
+                assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
 
 def assert_mongo_vs_yaml_outputs(expecteddir, mongo_database):
     from regolith.mongoclient import load_mongo_col

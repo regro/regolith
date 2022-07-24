@@ -11,7 +11,7 @@ from regolith.tools import (
     awards_grants_honors,
     latex_safe,
     make_bibtex_file,
-    merge_collections_superior,
+    merge_collections_superior, fuzzy_retrieval,
 )
 
 
@@ -38,7 +38,12 @@ class ResumeBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         rc = self.rc
-        for p in self.gtx["people"]:
+        if rc.people:
+            people = [fuzzy_retrieval(self.gtx["people"], ["aka", "_id", "name"], rc.people[0])]
+        else:
+            people = self.gtx["people"]
+
+        for p in people:
             names = frozenset(p.get("aka", []) + [p["name"]])
             pubs = filter_publications(
                 all_docs_from_collection(rc.client, "citations"),
@@ -49,6 +54,8 @@ class ResumeBuilder(LatexBuilderBase):
                 pubs, pid=p["_id"], person_dir=self.bldir
             )
             emp = p.get("employment", [])
+            emp = [em for em in emp
+                    if not em.get("not_in_cv", False)]
             for e in emp:
                 e['position'] = e.get('position_full',
                                       e.get('position').title())

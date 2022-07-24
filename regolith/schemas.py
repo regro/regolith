@@ -1049,6 +1049,15 @@ EXEMPLARS = {
                 "position_full": "Research Scientist, Postdoctoral Scholar",
                 "status": "pi"
             },
+            {
+                "begin_date": "2000-01-01",
+                "end_date": "2001-12-31",
+                "location": "Chicago, IL",
+                "organization": "Google",
+                "other": [],
+                "position": "janitor",
+                "not_in_cv": True
+            },
         ],
         "funding": [
             {
@@ -3361,8 +3370,9 @@ SCHEMAS = {
                         "type": "string",
                         "description": "this employment is/was in"
                                        "a group in groups coll",
-                    },
+                            },
                     "location": {"required": False, "type": "string"},
+                    "not_in_cv": {"required": False, "type": "boolean", "description": "set to true if you want to suppress this entry in all cv's and resumes"},
                     "organization": {"required": True, "type": "string"},
                     "other": {"required": False, "type": "list"},
                     "permanent": {"required": False, "type": "boolean",
