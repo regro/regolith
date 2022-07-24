@@ -855,7 +855,7 @@ helper_map_requests = [
    "--notes", "this is a sample added presentation",
    "--presentation-url", "http://drive.google.com/SEV356DV",
    "--no-cal"],
-  "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\nrepo 2006as_mars has been created at https://example.com/url/example\n"
+  "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\nrepo 2006as_mars has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006as_mars.git\nor (SSH):\ngit clone git@example.com:talks/2006as_mars.git\n"
   )
 ]
 @pytest.mark.parametrize("db_src", db_srcs)
