@@ -1,9 +1,8 @@
 **Added:**
- * profile_regolith for a profiling version of the regolith command to be used for developer debugging and the creation of function call logs
- * profile_helper_gui for a profiling version of the helper_gui command to be used for developer debugging and the creation of function call logs
+ * scripts (profile_regolith and profile_helper_gui) that run regolith and helper_gui with the python cProfiler. Used for debugging and code development.
+
 
 **Changed:**
- * setup.py to install profiling commands to a new conda environment during regolith installation
 
 **Deprecated:** None
 
