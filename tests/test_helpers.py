@@ -65,14 +65,14 @@ helper_map = [
      ## (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
      ## that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
      # Test Case A: Expect a new entry in outputs/presentations/presentations.yaml
-    (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
-      "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
-      "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
-      "--title", "On the roundness of the Earth", "--status", "in-prep",
-      "--notes", "this is a sample added presentation",
-      "--presentation-url", "http://drive.google.com/SEV356DV",
-      "--no-cal", "--no-expense"], 
-     "2006as_mars has been added in presentations\n"),
+    # (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
+    #   "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
+    #   "--title", "On the roundness of the Earth", "--status", "in-prep",
+    #   "--notes", "this is a sample added presentation",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--no-expense"], 
+    #  "2006as_mars has been added in presentations\n"),
     # Test Case B: user arguments contradict, raises error
     # (["helper", "a_presentation", "Test Case B", "Test B", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
@@ -92,14 +92,14 @@ helper_map = [
     #   "--no-cal"],
     #  pytest.raises(RuntimeError)),
     # Test Case C.2: user wants an expense added, and passed --force without specifying an expense db, and default is public
-    # (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case C.2", "--status", "in-prep",
-    #   "--notes", "This is to test Case C.2, where user wants an expense added, and passed --force without specifying an expense db, and default is public",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--force"], #Expect a new presentation and new expense in db 'test'
-    #    "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
+    (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
+      "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+      "--authors", "sbillinge", "nasker", "--abstract", "testing",
+      "--title", "Testing Case C.2", "--status", "in-prep",
+      "--notes", "This is to test Case C.2, where user wants an expense added, and passed --force without specifying an expense db, and default is public",
+      "--presentation-url", "http://drive.google.com/SEV356DV",
+      "--no-cal", "--force"], # Expect a new presentation and new expense in db 'test'
+       "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
     # Test Case D: user wants an expense added, and specified an expense db
     # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
