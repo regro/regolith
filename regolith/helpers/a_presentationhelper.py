@@ -96,13 +96,16 @@ def subparser(subpi):
                             "first database in the regolithrc.json file.",
                        )
     subpi.add_argument("--expense-db",
-                       help="The database where the expense collection will be updated. "
-                            "Defaults to first database in the regolithrc.json file.",
+                       help="The database where the expense collection will be updated "
+                            "with the presentation-related expense data. "
+                            "Without a specification, by default the helper attempts to "
+                            "use the first database in the regolithrc.json file *but "
+                            "will only do so if that database is non-public*.",
                        )
     subpi.add_argument("--force",
-                       help="force adding presentation expense data to a public database, "
-                       "by default the first entry under 'databases` in regolithrc.json. "
-                       "DANGER: This could reveal sensitive information to the public.",
+                       help="Force adding presentation expense data to the first DB listed in "
+                       "'databases' in the regolithrc.json file, *even if that database is "
+                       "public*. DANGER: This could reveal sensitive information to the public.",
                        action="store_true")
     subpi.add_argument("--id",
                        help="Override the default id created from the date, "
