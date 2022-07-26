@@ -99,7 +99,7 @@ helper_map = [
       "--notes", "This is to test Case C.2, where user wants an expense added, and passed --force without specifying an expense db, and default is public",
       "--presentation-url", "http://drive.google.com/SEV356DV",
       "--no-cal", "--force"], # Expect a new presentation and new expense in db 'test'
-       "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
+       "2006na_test_c.2 has been added in presentations\n2006na_test_c.2 has been added in expenses in database test\n"),
     # Test Case D: user wants an expense added, and specified an expense db
     # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",

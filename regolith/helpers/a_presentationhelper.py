@@ -146,7 +146,7 @@ class PresentationAdderHelper(DbHelperBase):
                     "helper command and rerun. "
                     )
         else:
-            rc.expense_db = rc.expense_db if rc.expense_db
+            rc.expense_db = rc.expense_db if rc.expense_db else None
 
             if not rc.expense_db and not rc.databases[0].get("public"):
                 warn("WARNING: No expense database was provided to input the expense data "
@@ -154,7 +154,7 @@ class PresentationAdderHelper(DbHelperBase):
                     "listed in your regolithrc.json, as this DB is non-public.")
                 rc.expense_db = rc.databases[0]['name'] 
 
-            rc.expense_db = rc.databases[0]['name'] if not rc.expense_db and rc.databases[0].get("public") and rc.force
+            rc.expense_db = rc.databases[0]['name'] if not rc.expense_db and rc.databases[0].get("public") and rc.force else rc.expense_db
 
             if not rc.expense_db and rc.databases[0].get("public") and not rc.force:
                 raise RuntimeError(
