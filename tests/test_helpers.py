@@ -60,14 +60,55 @@ helper_map = [
       "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
       "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
      "2006as_timbuktoo has been added in expenses\n"),
-    (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
-      "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
-      "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
-      "--title", "On the roundness of the Earth", "--status", "in-prep",
-      "--notes", "this is a sample added presentation",
+     ## The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
+     ## because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
+     ## (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
+     ## that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
+     # Test Case A: Expect a new entry in outputs/presentations/presentations.yaml
+    # (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
+    #   "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
+    #   "--title", "On the roundness of the Earth", "--status", "in-prep",
+    #   "--notes", "this is a sample added presentation",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--no-expense"], 
+    #  "2006as_mars has been added in presentations\n"),
+    # Test Case B: user arguments contradict, raises error
+    # (["helper", "a_presentation", "Test Case B", "Test B", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case B", "--status", "in-prep",
+    #   "--notes", "This is to test Case B, where user contradicts themselves by passing both --no-expense and --expense_db",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--no-expense", "--expense-db testB"],
+    #  pytest.raises(RuntimeError)),
+    # Test Case C.1: user wants an expense added, but did not specify an expense db, and default is public
+    # (["helper", "a_presentation", "Test Case C.1", "Test C.1", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case C.1", "--status", "in-prep",
+    #   "--notes", "This is to test Case C.1, where user wants an expense added, but did not specify an expense db, and the first db in the regolithrc.json file is public, so the program errors.",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal"],
+    #  pytest.raises(RuntimeError)),
+    # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db, and default is public
+    (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
+      "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+      "--authors", "sbillinge", "nasker", "--abstract", "testing",
+      "--title", "Testing Case C.2", "--status", "in-prep",
+      "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
       "--presentation-url", "http://drive.google.com/SEV356DV",
-      "--no-cal", "--no-repo"],
-     "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\nrepo 2006as_mars has been created in talks"),
+      "--no-cal", "--force"], # Expect a new presentation and new expense in db 'test'
+       "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
+    # Test Case D: user wants an expense added, and specified an expense db
+    # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case D", "--status", "in-prep",
+    #   "--notes", "This is to test Case D, where user wants an expense added, and specified an expense-db",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--expense-db private-test"], # Expect a new presentation and new expense in db 'private-test'
+    #    "2006na_testd has been added in presentations\n2006na_testd has been added in expenses in database private-test\n"),
     (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
@@ -767,9 +808,6 @@ helper_map = [
      "   Requested: 10, Reimbursed: 100, Date: 2019-09-15, Grants: SymPy-1.1\n"
      "\nSubmitted expenses:\n"
      "\nUnsubmitted expenses:\n"
-     " - 200626 - give contributed_oral presentation at flat earth, Mars 2020-06-26 to 2020-06-26,\n"
-     "   Expenses: unseg=0.00, Seg=0.00, Total=0.00, Where: tbd\n"
-     "   Grants: mrsec14\n"
      "\nFuture expenses:\n"
      "\nThese expenses have invalid statuses:\n"
      "test3\n"
@@ -847,16 +885,14 @@ helper_map_requests = [
    "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
    "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
   "2006as_timbuktoo has been added in expenses\n"),
- (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
-   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
-   "--authors", "sbillinge", "ashaaban", "--abstract",
-   "the earth is round as seen from mars",
-   "--title", "On the roundness of the Earth", "--status", "in-prep",
-   "--notes", "this is a sample added presentation",
-   "--presentation-url", "http://drive.google.com/SEV356DV",
-   "--no-cal"],
-  "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\nrepo 2006as_mars has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006as_mars.git\nor (SSH):\ngit clone git@example.com:talks/2006as_mars.git\n"
-  )
+ (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
+ "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+ "--authors", "sbillinge", "nasker", "--abstract", "testing",
+ "--title", "Testing Case C.2", "--status", "in-prep",
+ "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
+ "--presentation-url", "http://drive.google.com/SEV356DV",
+ "--no-cal", "--force"], # Expect a new presentation and new expense in db 'test'
+ "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\nrepo 2006na_testc.2 has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006na_testc.2.git\nor (SSH):\ngit clone git@example.com:talks/2006na_testc.2.git\n")
 ]
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hmr", helper_map_requests)
@@ -864,7 +900,7 @@ helper_map_requests = [
 def test_helper_python(hmr, make_db, db_src, make_mongodb, capsys, **kwargs):
     testfile = Path(__file__)
 
-    kwargs['mock'].post('https://example.com/url/example?namespace_id=35&initialize_with_readme=true&name=2006as_mars')
+    kwargs['mock'].post('https://example.com/url/example?namespace_id=35&initialize_with_readme=true&name=2006na_testc.2')
 
     if db_src == "fs":
         repo = Path(make_db)
