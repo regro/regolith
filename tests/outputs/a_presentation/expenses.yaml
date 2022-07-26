@@ -74,6 +74,82 @@
       submission_date: tbd
       where: bank
   status: unsubmitted
+2006na_testc.2:
+  begin_date: 2020-06-26
+  end_date: 2020-06-26
+  expense_type: travel
+  grant_percentages:
+    - 100.0
+  grants:
+    - testing
+  itemized_expenses:
+    - date: 2020-06-26
+      purpose: registration
+      unsegregated_expense: 0
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: home to airport
+      unsegregated_expense: 0
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: flights
+      unsegregated_expense: 0
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: airport to hotel
+      unsegregated_expense: 0
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: hotel
+      unsegregated_expense: 0
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: hotel to airport
+      unsegregated_expense: 0
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: airport to home
+      unsegregated_expense: 0
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+    - date: 2020-06-26
+      purpose: meals
+      unsegregated_expense: 0
+      segregated_expense: 0
+      currency: USD
+      notes:
+        - ''
+  notes:
+    - This is to test Case C.2 where user wants an expense added and passed the force
+      option without specifying an expense db when default is public
+  overall_purpose: give contributed_oral presentation at Test Case C.2, Test C.2
+  payee: sbillinge
+  reimbursements:
+    - amount: 0
+      date: tbd
+      submission_date: tbd
+      where: tbd
+  status: unsubmitted
 test:
   begin_date: '2018-01-01'
   end_date: '2018-01-10'

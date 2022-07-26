@@ -91,15 +91,15 @@ helper_map = [
     #   "--presentation-url", "http://drive.google.com/SEV356DV",
     #   "--no-cal"],
     #  pytest.raises(RuntimeError)),
-    # Test Case C.2: user wants an expense added, and passed --force without specifying an expense db, and default is public
+    # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db, and default is public
     (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
       "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
       "--authors", "sbillinge", "nasker", "--abstract", "testing",
       "--title", "Testing Case C.2", "--status", "in-prep",
-      "--notes", "This is to test Case C.2, where user wants an expense added, and passed --force without specifying an expense db, and default is public",
+      "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
       "--presentation-url", "http://drive.google.com/SEV356DV",
       "--no-cal", "--force"], # Expect a new presentation and new expense in db 'test'
-       "2006na_test_c.2 has been added in presentations\n2006na_test_c.2 has been added in expenses in database test\n"),
+       "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
     # Test Case D: user wants an expense added, and specified an expense db
     # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
@@ -889,10 +889,10 @@ helper_map_requests = [
  "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
  "--authors", "sbillinge", "nasker", "--abstract", "testing",
  "--title", "Testing Case C.2", "--status", "in-prep",
- "--notes", "This is to test Case C.2, where user wants an expense added, and passed --force without specifying an expense db, and default is public",
+ "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
  "--presentation-url", "http://drive.google.com/SEV356DV",
  "--no-cal", "--force"], # Expect a new presentation and new expense in db 'test'
- "2006na_test_c.2 has been added in presentations\n2006na_test_c.2 has been added in expenses in database test\n")
+ "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\nrepo 2006na_testc.2 has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006na_testc.2.git\nor (SSH):\ngit clone git@example.com:talks/2006na_testc.2.git\n")
 ]
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hmr", helper_map_requests)
@@ -900,7 +900,7 @@ helper_map_requests = [
 def test_helper_python(hmr, make_db, db_src, make_mongodb, capsys, **kwargs):
     testfile = Path(__file__)
 
-    kwargs['mock'].post('https://example.com/url/example?namespace_id=35&initialize_with_readme=true&name=2006as_mars')
+    kwargs['mock'].post('https://example.com/url/example?namespace_id=35&initialize_with_readme=true&name=2006na_testc.2')
 
     if db_src == "fs":
         repo = Path(make_db)
