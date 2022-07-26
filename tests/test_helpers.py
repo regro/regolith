@@ -885,16 +885,14 @@ helper_map_requests = [
    "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
    "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
   "2006as_timbuktoo has been added in expenses\n"),
- (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
-   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
-   "--authors", "sbillinge", "ashaaban", "--abstract",
-   "the earth is round as seen from mars",
-   "--title", "On the roundness of the Earth", "--status", "in-prep",
-   "--notes", "this is a sample added presentation",
-   "--presentation-url", "http://drive.google.com/SEV356DV",
-   "--no-cal"],
-  "2006as_mars has been added in presentations\n2006as_mars has been added in expenses\nrepo 2006as_mars has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006as_mars.git\nor (SSH):\ngit clone git@example.com:talks/2006as_mars.git\n"
-  )
+ (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
+ "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+ "--authors", "sbillinge", "nasker", "--abstract", "testing",
+ "--title", "Testing Case C.2", "--status", "in-prep",
+ "--notes", "This is to test Case C.2, where user wants an expense added, and passed --force without specifying an expense db, and default is public",
+ "--presentation-url", "http://drive.google.com/SEV356DV",
+ "--no-cal", "--force"], # Expect a new presentation and new expense in db 'test'
+ "2006na_test_c.2 has been added in presentations\n2006na_test_c.2 has been added in expenses in database test\n")
 ]
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hmr", helper_map_requests)
