@@ -6,6 +6,7 @@ import pathlib
 import platform
 import re
 import sys
+import requests
 from copy import copy
 from copy import deepcopy
 from datetime import datetime, date
@@ -16,6 +17,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from urllib.parse import urlparse
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, \
@@ -366,6 +368,7 @@ def filter_service(p, begin_period, type):
                 myservice.append(i)
     return myservice
 
+
 def filter_committees(person, begin_period, type):
     mycommittees = []
     for committee in person.get("committees", []):
@@ -377,6 +380,7 @@ def filter_committees(person, begin_period, type):
             if end_date >= begin_period:
                 mycommittees.append(committee)
     return mycommittees
+
 
 def filter_facilities(people, begin_period, type, verbose=False):
     facilities = []
@@ -690,7 +694,7 @@ def filter_presentations(people, presentations, institutions, target,
             inst = {"institution": pres.get("institution"),
                     "department": pres.get("department")}
             dereference_institution(inst, institutions)
-            pres["institution"] = {'name': inst.get("institution",""),
+            pres["institution"] = {'name': inst.get("institution", ""),
                                    'city': inst.get("city"),
                                    'state': inst.get("state"),
                                    'country': inst.get("country")}
@@ -836,9 +840,9 @@ def latex_safe(s, url_check=True, wrapper="url"):
             return url
     return (
         s.replace("&", r"\&")
-            .replace("$", r"\$")
-            .replace("#", r"\#")
-            .replace("_", r"\_")
+        .replace("$", r"\$")
+        .replace("#", r"\#")
+        .replace("_", r"\_")
     )
 
 
@@ -1006,19 +1010,23 @@ def dereference_institution(input_record, institutions, verbose=False):
             return
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if not db_inst:
-        print(f"WARNING: {input_record.get('institution', input_record.get('organization', 'unknown'))} not found in institutions")
+        print(
+            f"WARNING: {input_record.get('institution', input_record.get('organization', 'unknown'))} not found in institutions")
         db_inst = {"name": input_record.get("institution", input_record.get("organization", "unknown")),
-                   "location": input_record.get("location", f"{input_record.get('city','unknown')}, {input_record.get('state','unknown')}"),
-                   "city": input_record.get('city','unknown'),
-                   "country": input_record.get('country','unknown'),
-                   "state": input_record.get('state','unknown'),
-                   "departments": {input_record.get('department', 'unknown'): {'name': input_record.get('department', 'unknown')}}
+                   "location": input_record.get("location",
+                                                f"{input_record.get('city', 'unknown')}, {input_record.get('state', 'unknown')}"),
+                   "city": input_record.get('city', 'unknown'),
+                   "country": input_record.get('country', 'unknown'),
+                   "state": input_record.get('state', 'unknown'),
+                   "departments": {
+                       input_record.get('department', 'unknown'): {'name': input_record.get('department', 'unknown')}}
                    }
     if input_record.get('department') and not db_inst.get("departments"):
         if verbose:
             print(f"WARNING: no departments in {db_inst.get('_id')}. "
                   f"{input_record.get('department')} sought")
-        db_inst.update({"departments": {input_record.get('department', 'unknown'): {'name': input_record.get('department', 'unknown')}}})
+        db_inst.update({"departments": {
+            input_record.get('department', 'unknown'): {'name': input_record.get('department', 'unknown')}}})
     if db_inst.get("country") == "USA":
         state_country = db_inst.get("state")
     else:
@@ -1125,7 +1133,7 @@ def merge_collections_superior(a, b, target_id):
     not linked.
     """
     intersect = merge_collections_intersect(a, b, target_id)
-    b=list(b)
+    b = list(b)
     for j in intersect:
         for i in b:
             if i.get("_id") == j.get("_id"):
@@ -1733,7 +1741,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
                                                     list) else filter_value
     if (bool(filter_key) ^ bool(filter_value)) or (
             filter_key and filter_value and len(filter_key) != len(
-            filter_value)):
+        filter_value)):
         raise RuntimeError(
             "number of filter keys and filter values do not match")
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date,
@@ -2011,7 +2019,8 @@ def get_formatted_crossref_reference(doi):
 
     return ref, ref_date
 
-def remove_duplicate_docs(coll,key):
+
+def remove_duplicate_docs(coll, key):
     '''
     find all docs where the target key has the same value and remove duplicates
 
@@ -2055,6 +2064,7 @@ def validate_doc(collection_name, doc, rc):
         error_message += "\n"
     return v[0], error_message
 
+
 def add_to_google_calendar(event):
     """Takes a newly created event, and adds it to the user's google calendar
 
@@ -2094,6 +2104,7 @@ def add_to_google_calendar(event):
     print('Event created: %s' % (event.get('htmlLink')))
     return 1
 
+
 def google_cal_auth_flow():
     """First time authentication, this function opens a window to request user consent to use google calendar API,
      and then returns a token"""
@@ -2109,6 +2120,131 @@ def google_cal_auth_flow():
     with open(tokenfile, 'w') as token:
         token.write(creds.to_json())
     # Save the credentials for the next run
+
+
+def get_target_repo_info(target_repo_id, repos):
+    """checks if repo information is defined and valid in rc
+
+    Parameters:
+      target_repo_id - string
+        the id of the doc with the target repo information
+      repos - list
+        the list of repos.  A repo must have a name, a url and a params 
+            kwarg.
+
+    Returns:
+        The target repo document, or False if it is not present or properly 
+        formulatedinformation
+    """
+    setup_message = ("INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                     "please add your repository information in reolgithrc.json and "
+                     "your private authentication token in "
+                     "user.json respectively. See regolith documentation for details.")
+
+    target_repo = [repo for repo in repos if repo.get("_id", "") == target_repo_id]
+    if len(target_repo) == 0:
+        print(setup_message)
+        return False
+    if len(target_repo) > 1:
+        print(f"more than on repo found in regolithrc.json with the name {target_repo_id}")
+        return False
+    target_repo = target_repo[0]
+    message_params_not_defined = (f"WARNING: The request parameters may not be defined. "
+                                  f"Info we have: {target_repo}"
+                                  f"If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                                  f"please add repository information in regolithrc.json. See regolith documentation "
+                                  f"for details.")
+    message_url_not_defined = ("WARNING: The request url may not be valid. "
+                               "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                               "please add repository information in regolithrc.json. See regolith documentation "
+                               "for details.")
+    if not target_repo.get("params"):
+        print(message_params_not_defined)
+        return False
+    if not target_repo.get("params").get("name"):
+        print(message_params_not_defined)
+        return False
+    if not target_repo.get("url"):
+        print(message_url_not_defined)
+        return False
+    else:
+        built_url = f"{target_repo.get('url')}{target_repo.get('api_route')}"
+        url = urlparse(built_url)
+        if url.scheme and url.netloc and url.path:
+            target_repo['params'].update({"name": target_repo.get("params").get("name").strip().replace(" ", "_")})
+            target_repo['built_url'] = built_url
+            return target_repo
+        else:
+            print(message_url_not_defined)
+            return False
+
+def get_target_token(target_token_id, tokens):
+    """Checks if API authentication token is defined and valid in rc
+
+    Parameters:
+        target_token_id - string
+            the name of the personal access token (defined in rc)
+        rc - run control object
+
+    Returns:
+        The token if the token exists and False if not
+    """
+    message_token_not_defined = ("WARNING: Cannot find an authentication token.  It may not be correctly defined. If you would like regolith to "
+                                 "automatically create a repository in GitHub/GitLab, please add your private "
+                                 "authentication token in user.json. See regolith documentation for details.")
+    
+    target_token = [token for token in tokens if token.get("_id") == target_token_id]
+    if len(target_token) == 0:
+        print(message_token_not_defined)
+        return None
+    if len(target_token) > 1:
+        print(f"more than one token found in regolithrc.json with the name {target_token_id}")
+        return None
+    if target_token[0].get("token", ""):
+        return target_token[0].get("token")
+
+
+def create_repo(destination_id, token_info_id, rc):
+    """ Creates a repo at the target distination 
+    
+    tries to fail gracefully if repo information and token is not defined
+
+    Parameters:
+        destination_id - string
+            the id of the target repo information document
+        token_info_id - string
+            the id for the token info document (e.g. 'priv_token')
+        rc - run control object
+          the run control object that should contain rc.repos and rc.tokens docs
+
+    Returns:
+        Success message (repo target_repo has been created in talks) if repo is successfully created in target_repo
+        Warning/setup messages if unsuccessful (or if repo info or token are not valid)
+    """
+
+    repo_info = get_target_repo_info(destination_id, rc.repos)
+    token = get_target_token(token_info_id, rc.tokens)
+    if repo_info and token:
+        try:
+            response = requests.post(repo_info.get('built_url'), params=repo_info['params'],
+                                     headers={'PRIVATE-TOKEN': token})
+            response.raise_for_status()
+            clone_text = f"{repo_info.get('url').replace('https://', '')}:{repo_info.get('namespace_name','<group/org name>')}/{repo_info['params'].get('name')}.git"
+            return f"repo {repo_info.get('params').get('name', 'unknown')} " \
+                   f"has been created at {repo_info.get('url')}.\nClone this " \
+                   f"to your local using (HTTPS):\ngit clone https://{clone_text}\n" \
+                   f"or (SSH):\ngit clone git@{clone_text}"
+        except requests.exceptions.HTTPError:
+            raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
+                            f"due to an issue with the API call (status code: {response.status_code}). "
+                            f"If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                            f"please add repository information in regolithrc.json. See regolith documentation "
+                            f"for details.")
+        except requests.exceptions.RequestException as e:
+            raise SystemExit(e)
+    else:
+        return 
+
 
 def get_tags(coll):
     '''

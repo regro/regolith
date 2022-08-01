@@ -486,6 +486,81 @@ returned than if you don't type :bash:`-v`.  You can try it now:
 
     $ regolith helper l_contacts run -n auth -v
 
+Setting up Gitlab repository information for API requests
+=========================================================
+
+Some helpers have features that make API requests to GitLab (or GitHub). For example, the a_presentation helper has a functionality that
+creates a repository in a designated GitLab group. In order to use these features, the target repository
+information needs to be defined in your configuration files (:code:`regolithrc.json`, :code:`user.json`).
+
+Setting up Destination Repo Information
+---------------------------------------
+
+The designated repository information should be defined in :code:`regolithrc.json` in the directory in which you are
+running the helper. Create a collection of repository targets designated as :code:`repos` (see below for an example).
+according to the following pattern.  We will use as an example an entry that will
+allow :code:`a_presentation` to successfully create a repository in a group called `talks`
+on a GitLab instance.
+
+:code:`a_presentation` looks for a rep with the entry :code:`_id` with value ``"talk_repo"``.
+
+.. code-block:: json
+
+"repos":[
+        {"_id": "talk_repo",     # a_presentation looks for the entry with this ID
+         "params": {"namespace_id": "35",             # These params are handed to the API post request.
+                    "initialize_with_readme": "True"  # "name" is also needed but a_presentation generates that automatially
+                    },
+         "url": "https://gitlab.example.com",  # The URL of the main GitLab/GitHub instance
+         "api_route": "/api/v4/projects/",     # This is the route to the REST-API.  The value
+                                               #   shown here is correct for GitLab at the time of writing
+         "namespace_name": "talks"      # the name of group/org which corresponds to the namespace_id above.
+        },
+        {
+            "_id": "another_example_repo",
+            [...]
+        }
+    ]
+
+The namespace ID is the repository's group ID which can be found on the target repository's main page.
+The :code:`url` and :code:`api_route` should be in the format above, including the dashes.
+
+For more information on the required request info, or to see a list of additional attributes
+that can also be defined in the request (e.g. ``initialize_with_readme``, ``description``, etc.),
+see GitHub or GitLab API documentation, e.g., for GitLab the `GitLab docs <https://docs.gitlab.com/ee/api/projects.html#create-project>`_.
+(Note that additional attributes can be defined under ``params``, where needed.)
+
+Setting up your Private Access Token
+------------------------------------
+
+Your personal/private API request token should be defined in :code:`user.json`, which can be found in your
+~/.config directory. Similarly, define a distinct ID for each private token. For example, to create a repo
+in GitLab, you should define your authentication token with the ID, ``"gitlab_private_token"``:
+
+.. code-block:: json
+
+    [
+        {
+            "_id": "gitlab_private_token",
+            "token": "<private-token>"
+        },
+        {
+            "_id": "example_token",
+            [...]
+        }
+    ]
+
+To learn more about creating a personal access token, refer to the
+`Gitlab docs <https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#personal-access-tokens>`_.
+Note that your personal access token should have the ``api`` scope enabled in order to make a successful request.
+
+To change the target directory, you can change the parameters (or IDs) in the function
+:code:`create_repo(destination_id, token_info_id, rc)` in `a_presentationhelper.py` to
+the IDs of your desired repo info and corresponding token.
+
+Setting up GitHub repository information for API requests
+=========================================================
+
 Using the filter capabilities in the helpers
 ============================================
 

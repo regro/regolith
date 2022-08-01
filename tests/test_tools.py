@@ -4,6 +4,14 @@ import habanero
 import pytest
 import datetime as dt
 
+import copy
+import requests
+from unittest import mock
+
+import requests_mock
+
+from regolith.runcontrol import DEFAULT_RC
+
 from regolith.tools import (
     filter_publications,
     filter_presentations,
@@ -34,7 +42,8 @@ from regolith.tools import (
     get_formatted_crossref_reference,
     compound_dict,
     compound_list, filter_employment_for_advisees,
-    get_tags, dereference_institution
+    get_tags, dereference_institution,
+    get_target_repo_info, get_target_token, create_repo
 )
 
 PEOPLE_COLL = [
@@ -2173,6 +2182,129 @@ def test_get_tags_invalid():
     with pytest.raises(TypeError) as e_info:
         get_tags(coll)
         assert e_info == 'ERROR: valid tags are comma or space separated strings of tag names'
+
+@pytest.mark.parametrize(
+    "repo_information, expected", [
+        # good input
+        ([{"_id": "repo1",
+           "params": {"namespace_id": "35",
+                      "initialize_with_readme": "false",
+                      "name": "repo name "},
+            "url": "https://example.com",
+        "api_route": "/url/example",
+           "namespace_name": "talks"
+                }],
+         {"_id": "repo1",
+          'built_url': 'https://example.com/url/example',
+          "params": {"namespace_id": "35",
+                                      "initialize_with_readme": "false",
+                                    "name": "repo_name"
+                                      },
+          "url": "https://example.com",
+        "api_route": "/url/example",
+           "namespace_name": "talks"
+                }),
+        ({}, False),
+        ([], False),
+        # multiple docs with same _id
+        ([{"_id": "repo1"},
+          {"_id": "repo1"}
+        ], False),
+        # well formulated doc, but wrong id
+        ([{"_id": "wrong_id",
+           "params": {"namespace_id": "35",
+                                      "initialize_with_readme": "false",
+                                        "name": "repo name "},
+            "url": "https://example.com/url/example",
+                }],
+         False),
+        # no params section
+        ([{"_id": "repo1",
+           "url": "https://example.com/url/example"
+           },
+        ], False),
+        # params section, but empty
+        ([{"_id": "repo1",
+           "params": {},
+           "url": "https://example.com/url/example"
+           }], False),
+        # name but name empty
+        ([{"_id": "repo1",
+            "params": {"namespace_id": "",
+                    "initialize_with_readme": "false",
+                       "name":""},
+            "url": "https://example.com/url/example",
+            }
+        ], False),
+        #url but url empty
+        ([{ "_id": "repo1",
+            "params": {
+                    "namespace_id": "1",
+                    "initialize_with_readme": "false",
+                    "name": "repo name"},
+            "url": ""}], False),
+        #url but url not complete
+        ([{ "_id": "repo1",
+            "params": {
+                    "namespace_id": "1",
+                    "initialize_with_readme": "false",
+                  "name": "repo name"},
+            "url": "https://example.com"}], False),
+        #url but url invalid
+        ([{"_id": "repo1",
+           "params": {
+               "name": "some name",
+               "namespace_id": "1",
+                "initialize_with_readme": "false"},
+            "url": "random junk"}], False),
+    ]
+)
+def test_get_target_repo_info(repo_information, expected):
+    actual = get_target_repo_info('repo1', repo_information)
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "tokens, expected", [
+        ([{"_id": "gitlab_private_token", "token": "<private-token>"}], "<private-token>"),
+        ([{"_id": "wrong_name", "token": "<private-token>"}], None),
+        ([{"_id": "gitlab_private_token", "token": "<private-token>"},
+          {"_id": "gitlab_private_token", "token": "<private-token>"}], None),
+        ([{"_id": "gitlab_private_token", "token": ""}], None),
+        ([{"_id": "gitlab_private_token"}], None),
+        ([{"_id": "<private-token>"}], None),
+        ({}, None)
+    ]
+)
+def test_get_target_token(tokens, expected):
+    actual = get_target_token('gitlab_private_token', tokens)
+    assert actual == expected
+
+# @mock.patch("requests.post")
+@requests_mock.Mocker(kw='mock')
+def test_create_repo(**kwargs):
+    kwargs['mock'].post('https://example.com/url/example', status_code=201)
+    # mock_requests_post.return_value = mock.Mock(**{"status_code": 201})
+    rc = copy.copy(DEFAULT_RC)
+    repo_token_information = {
+        "repos": [
+            {"_id": "talk_repo",
+                "params": {
+                    "namespace_id": "35",
+                    "initialize_with_readme": "false",
+                    "name": "2206_my_talk"
+                },
+                "url": "https://example.com",
+                "api_route": "/url/example",
+                "namesapce_name": "talks"
+            }],
+        "tokens": [{"_id": "gitlab_private_token", "token": "<private-token>"}]
+    }
+    rc._update(repo_token_information)
+    actual = create_repo('talk_repo', 'gitlab_private_token', rc)
+    assert actual == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor (SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
+
+
 
 
 
