@@ -19,6 +19,7 @@ EXPENSES_TYPES = ["travel", "business"]
 FACILITIES_TYPES = ["teaching", "research", "shared", "other", "teaching_wish",
                    "research_wish"]
 GRANT_STATI = ["pending", "declined", "accepted", "in-prep"]
+GRANT_ROLES = ["pi", "copi"]
 MILESTONE_TYPES = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin", "purchase",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 POSITION_STATI = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
@@ -457,12 +458,12 @@ EXEMPLARS = {
                 {
                     "institution": "Columbia University",
                     "name": "qdu",
-                    "position": "co-pi",
+                    "position": "copi",
                 },
                 {
                     "institution": "Columbia University",
                     "name": "dhsu",
-                    "position": "co-pi",
+                    "position": "copi",
                 },
                 {
                     "institution": "Columbia University",
@@ -512,7 +513,7 @@ EXEMPLARS = {
               },
              {"institution": "University of Pedagogy",
               "name": "Pedagogue Jr.",
-              "position": "co-pi"
+              "position": "copi"
               },
          ],
          "title": "The answer to life, the universe, and everything",
@@ -540,7 +541,7 @@ EXEMPLARS = {
               },
              {"institution": "Ministry of Magic",
               "name": "Chief Wizard",
-              "position": "co-pi"
+              "position": "copi"
               },
          ],
          "title": "Support for teaching assistants",
@@ -1907,12 +1908,12 @@ EXEMPLARS = {
                 {
                     "institution": "Columbia University",
                     "name": "qdu",
-                    "position": "co-pi",
+                    "position": "copi",
                 },
                 {
                     "institution": "Columbia University",
                     "name": "dhsu",
-                    "position": "co-pi",
+                    "position": "copi",
                 },
                 {
                     "institution": "Columbia University",
@@ -2797,7 +2798,7 @@ SCHEMAS = {
                     "cv": {"required": False, "type": "string"},
                     "institution": {"required": True, "type": "string"},
                     "name": {"required": True, "type": "string"},
-                    "position": {"required": True, "type": "string"},
+                    "position": {"required": True, "type": "string", "eallowed": GRANT_ROLES},
                     "subaward_amount": {
                         "required": False,
                         "type": ("integer", "float"),

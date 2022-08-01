@@ -267,8 +267,8 @@ class MongoClient:
         print("mongod pid: {0}".format(self.proc.pid), file=sys.stderr)
 
     def is_alive(self):
-        """Returns whether or not the client is alive and availabe to
-        send/recieve data.
+        """Returns whether or not the client is alive and available to
+        send/receive data.
         """
         if self.client is None:
             return False

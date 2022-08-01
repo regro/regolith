@@ -2190,14 +2190,19 @@ def test_get_tags_invalid():
            "params": {"namespace_id": "35",
                       "initialize_with_readme": "false",
                       "name": "repo name "},
-            "url": "https://example.com/url/example",
+            "url": "https://example.com",
+        "api_route": "/url/example",
+           "namespace_name": "talks"
                 }],
          {"_id": "repo1",
+          'built_url': 'https://example.com/url/example',
           "params": {"namespace_id": "35",
                                       "initialize_with_readme": "false",
                                     "name": "repo_name"
                                       },
-          "url": "https://example.com/url/example"
+          "url": "https://example.com",
+        "api_route": "/url/example",
+           "namespace_name": "talks"
                 }),
         ({}, False),
         ([], False),
@@ -2289,13 +2294,15 @@ def test_create_repo(**kwargs):
                     "initialize_with_readme": "false",
                     "name": "2206_my_talk"
                 },
-                "url": "https://example.com/url/example"
+                "url": "https://example.com",
+                "api_route": "/url/example",
+                "namesapce_name": "talks"
             }],
         "tokens": [{"_id": "gitlab_private_token", "token": "<private-token>"}]
     }
     rc._update(repo_token_information)
     actual = create_repo('talk_repo', 'gitlab_private_token', rc)
-    assert actual == "repo 2206_my_talk has been created at https://example.com/url/example"
+    assert actual == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor (SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
 
 
 

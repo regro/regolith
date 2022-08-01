@@ -1,6 +1,6 @@
 **Added:**
-
-* <news item>
+* the option to specify a different database for the expense and presentation 
+  items when running a_presentation.
 
 **Changed:**
 

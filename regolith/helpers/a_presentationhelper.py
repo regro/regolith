@@ -1,9 +1,11 @@
 """Helper for adding a presentation to the presentation collection.
 """
+from sys import stderr
 import time
 
 import dateutil.parser as date_parser
 import threading
+from warnings import warn
 
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
@@ -93,6 +95,18 @@ def subparser(subpi):
                        help="The database that will be updated.  Defaults to "
                             "first database in the regolithrc.json file.",
                        )
+    subpi.add_argument("--expense-db",
+                       help="The database where the expense collection will be updated "
+                            "with the presentation-related expense data. "
+                            "Without a specification, by default the helper attempts to "
+                            "use the first database in the regolithrc.json file *but "
+                            "will only do so if that database is non-public*.",
+                       )
+    subpi.add_argument("--force",
+                       help="Force adding presentation expense data to the first DB listed in "
+                       "'databases' in the regolithrc.json file, *even if that database is "
+                       "public*. DANGER: This could reveal sensitive information to the public.",
+                       action="store_true")
     subpi.add_argument("--id",
                        help="Override the default id created from the date, "
                             "speaker and place by specifying an id here",
@@ -123,6 +137,41 @@ class PresentationAdderHelper(DbHelperBase):
         rc.coll = f"{TARGET_COLL}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
+        
+        if rc.no_expense:
+            if rc.expense_db:
+                raise RuntimeError(
+                    "ERROR: You specified an expense database with the --expense-db option, but also "
+                    "passed --no-expense. Do you want to create an expense? Please reformulate your "
+                    "helper command and rerun. "
+                    )
+        else:
+            rc.expense_db = rc.expense_db if rc.expense_db else None
+
+            if not rc.expense_db and not rc.databases[0].get("public"):
+                warn("WARNING: No expense database was provided to input the expense data "
+                    "associated with this presentation. Defaulted to using the first DB "
+                    "listed in your regolithrc.json, as this DB is non-public.")
+                rc.expense_db = rc.databases[0]['name'] 
+
+            rc.expense_db = rc.databases[0]['name'] if not rc.expense_db and rc.databases[0].get("public") and rc.force else rc.expense_db
+
+            if not rc.expense_db and rc.databases[0].get("public") and not rc.force:
+                raise RuntimeError(
+                    "ERROR: You failed to specify an expense database for the expense data "
+                    "associated with this presentation. The helper defaults to entering "
+                    "expenses into first database listed in your regolithrc.json file, "
+                    "but it set to PUBLIC and would reveal potentially sensitive information. "
+                    "Rerun by specifying the target database with --expense-db EXPENSE_DB, or "
+                    "(at your own risk) pass the --force flag."
+                    )
+
+            if rc.expense_db not in [database.get('name') for database in rc.databases]:
+                raise RuntimeError(
+                    f"ERROR: The expense database specified, {rc.expense_db}, is not listed "
+                    "in your regolithrc.json file."
+                    )
+
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
         )
@@ -224,8 +273,8 @@ class PresentationAdderHelper(DbHelperBase):
             rc.where = 'tbd'
             rc.status = "unsubmitted"
             edoc = expense_constructor(key, begin_date, end_date, rc)
-            rc.client.insert_one(rc.database, EXPENSES_COLL, edoc)
-            print(f"{key} has been added in {EXPENSES_COLL}")
+            rc.client.insert_one(rc.expense_db, EXPENSES_COLL, edoc)
+            print(f"{key} has been added in {EXPENSES_COLL} in database {rc.expense_db}")
 
         if not rc.no_repo:
             if not hasattr(rc, 'repos'):

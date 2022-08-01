@@ -2168,9 +2168,11 @@ def get_target_repo_info(target_repo_id, repos):
         print(message_url_not_defined)
         return False
     else:
-        url = urlparse(target_repo.get('url'))
+        built_url = f"{target_repo.get('url')}{target_repo.get('api_route')}"
+        url = urlparse(built_url)
         if url.scheme and url.netloc and url.path:
             target_repo['params'].update({"name": target_repo.get("params").get("name").strip().replace(" ", "_")})
+            target_repo['built_url'] = built_url
             return target_repo
         else:
             print(message_url_not_defined)
@@ -2224,11 +2226,14 @@ def create_repo(destination_id, token_info_id, rc):
     token = get_target_token(token_info_id, rc.tokens)
     if repo_info and token:
         try:
-            response = requests.post(repo_info['url'], params=repo_info['params'],
+            response = requests.post(repo_info.get('built_url'), params=repo_info['params'],
                                      headers={'PRIVATE-TOKEN': token})
             response.raise_for_status()
+            clone_text = f"{repo_info.get('url').replace('https://', '')}:{repo_info.get('namespace_name','<group/org name>')}/{repo_info['params'].get('name')}.git"
             return f"repo {repo_info.get('params').get('name', 'unknown')} " \
-                   f"has been created at {repo_info.get('url')}"
+                   f"has been created at {repo_info.get('url')}.\nClone this " \
+                   f"to your local using (HTTPS):\ngit clone https://{clone_text}\n" \
+                   f"or (SSH):\ngit clone git@{clone_text}"
         except requests.exceptions.HTTPError:
             raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
                             f"due to an issue with the API call (status code: {response.status_code}). "
