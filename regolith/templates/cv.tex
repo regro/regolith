@@ -391,7 +391,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
 h-last five years = {{ str(hindex['h_last_five']) }}
 (since = {{ hindex['year']-5 }}, total citations = {{ hindex["citations_last_five"]-}} )\\
 pulled: {{ hindex["month"] }}/{{ hindex["day"] }}/{{ hindex["year"] }}\\
-Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"])) }}\\
+Google Scholar profile URL:{{ latex_safe_url(latex_safe(p["google_scholar_url"])) }}\\
     \end{itemize}{% endif %}
 
     \vskip 12pt
