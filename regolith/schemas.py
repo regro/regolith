@@ -14,7 +14,7 @@ APPOINTMENTS_TYPES = ["gra", "ss", "pd", "ug"]
 APPOINTMENTS_STATI = ["proposed", "appointed", "finalized"]
 COMMITTEES_TYPES = ["phdoral", "phddefense", "phdproposal", "promotion"]
 COMMITTEES_LEVELS = ["department", "school", "university", "external"]
-EXPENSES_STATI = ["unsubmitted", "submitted", "reimbursed"]
+EXPENSES_STATI = ["unsubmitted", "submitted", "reimbursed", "declined"]
 EXPENSES_TYPES = ["travel", "business"]
 FACILITIES_TYPES = ["teaching", "research", "shared", "other", "teaching_wish",
                    "research_wish"]
@@ -23,7 +23,7 @@ GRANT_ROLES = ["pi", "copi"]
 MILESTONE_TYPES = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin", "purchase",
                   "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
 POSITION_STATI = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
-                   "postdoc", "visitor-supported", "visitor-unsupported"]
+                   "postdoc", "visitor-supported", "visitor-unsupported", "research-associate"]
 PRESENTATION_TYPES = ["award", "colloquium", "contributed_oral", "invited", "keynote",
                      "plenary", "poster", "seminar", "tutorial", "other"]
 PRESENTATION_STATI = ["in-prep", "submitted", "accepted", "declined",
