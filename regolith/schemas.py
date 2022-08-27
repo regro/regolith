@@ -1653,13 +1653,12 @@ EXEMPLARS = {
             'audience': ['lead', 'pi', 'group_members'],
             'status': 'proposed',
             'type': 'meeting',
-            'progress': [{
+            'progress': {
                 'text': 'The samples have been synthesized and places in the sample cupboard. '
                         'They turned out well and are blue as expected',
-                'figure': 'token that dereferences a figure or image in group local storage db',
-                'slides_url': 'url to slides describing the development, e.g. Google slides url'
+                'figure': ['token that dereferences a figure or image in group local storage db'],
+                'slides_urls': ['url to slides describing the development, e.g. Google slides url']
             }
-            ]
         },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
@@ -4074,23 +4073,20 @@ SCHEMAS = {
                               "type": "list"},
                     "progress": {"description": "update on the milestone",
                                  "required": False,
-                                 "type": "list",
+                                 "type": "dict",
                                  "schema": {
-                                     "type": "dict",
-                                     "schema": {
-                                         "text": {"description": "text description of progress and observations",
-                                                  "required": False,
-                                                  "type": "string"},
-                                         "figure": {"description": "token that dereferences a figure or image "
-                                                                   "in group local storage db",
+                                     "text": {"description": "text description of progress and observations",
+                                              "required": False,
+                                              "type": "string"},
+                                     "figure": {"description": "token that dereferences a figure or image "
+                                                               "in group local storage db",
+                                                "required": False,
+                                                "type": "list"},
+                                     "slides_urls": {"description": "urls to slides describing the development, "
+                                                                   "e.g., Google slides url",
                                                     "required": False,
-                                                    "type": "string"},
-                                         "slides_url": {"description": "url to slides describing the development, "
-                                                                       "e.g., Google slides url",
-                                                        "required": False,
-                                                        "type": "string"}
+                                                    "type": "list"}
                                      }
-                                 }
                                  },
                     "objective": {"description": "explains goal of the milestone",
                                   "required": False,
