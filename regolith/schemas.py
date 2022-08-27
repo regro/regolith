@@ -1657,7 +1657,7 @@ EXEMPLARS = {
                 'text': 'The samples have been synthesized and places in the sample cupboard. '
                         'They turned out well and are blue as expected',
                 'figure': ['token that dereferences a figure or image in group local storage db'],
-                'slides_url': ['url to slides describing the development, e.g. Google slides url']
+                'slides_urls': ['url to slides describing the development, e.g. Google slides url']
             }
         },
             {'due_date': '2020-05-27',
@@ -4082,7 +4082,7 @@ SCHEMAS = {
                                                                "in group local storage db",
                                                 "required": False,
                                                 "type": "list"},
-                                     "slides_url": {"description": "urls to slides describing the development, "
+                                     "slides_urls": {"description": "urls to slides describing the development, "
                                                                    "e.g., Google slides url",
                                                     "required": False,
                                                     "type": "list"}

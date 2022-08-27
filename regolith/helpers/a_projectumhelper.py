@@ -199,6 +199,23 @@ class ProjectumAdderHelper(DbHelperBase):
                              "get them entered into the prum",
                              "() schedule a meeting with the PI to go over them "
                              "and converge them"],
+                   'progress': {'text': 'write text here capturing how the milestone '
+                                        'is progressing, but at the least when the milestone '
+                                        'closes.  The goal of this is that it will be '
+                                        'printed as a progress report for a grant '
+                                        'so write it as if it will be read by an external '
+                                        'person. It doesnt have to describe the whole prum '
+                                        'but clearly show the progress that has been made. '
+                                        'It can be multiple paragraphs or a short statement'
+                                        'depending on the situation',
+                                'slides_url': ["<replace with a URL to, for example, "
+                                               "a Gslides slide deck "
+                                               "with useful figures in it, or a Gdoc "
+                                               "with more complicated info like tables"
+                                               "or something.  This is for the PI to "
+                                               "be able to find quality content to augment "
+                                               "the report>","<replace with another URL if"
+                                                             "more than one is needed>"]},
                    'type': 'meeting'
                    }
         pdoc.update({"milestones": [secondm]})
