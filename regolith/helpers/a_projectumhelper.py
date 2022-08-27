@@ -256,9 +256,15 @@ class ProjectumAdderHelper(DbHelperBase):
                              "presentations or related docs.  Link to specific "
                              "files of relevance to this milestone not general docs and repos."
                    ],
-                   "progress": {'text': "brief summary here when the milestone "
-                                        "finishes that could be copy-pasted into a "
-                                        "grant report, for example.",
+                   'progress': {'text': 'write text here capturing how the milestone '
+                                        'is progressing, but at the least when the milestone '
+                                        'closes.  The goal of this is that it will be '
+                                        'printed as a progress report for a grant '
+                                        'so write it as if it will be read by an external '
+                                        'person. It doesnt have to describe the whole prum '
+                                        'but clearly show the progress that has been made. '
+                                        'It can be multiple paragraphs or a short statement'
+                                        'depending on the situation',
                                 'slide_urls': ["<replace with urls to any "
                                                "slides or docs describing the "
                                                "outcome. The presentation if it "

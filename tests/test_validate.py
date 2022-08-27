@@ -22,16 +22,20 @@ def test_validate_python(make_db):
 
 
 def test_validate_python_single_col(make_db):
+    '''
+    to see output from a failed test, comment out the code that rediriects stdout
+    to out and replace the assert with 'assert false'. Change it back afterwards
+    '''
     repo = make_db
     os.chdir(repo)
     backup = sys.stdout
     sys.stdout = StringIO()
-    main(["validate", "--collection", "expenses"])
+    main(["validate", "--collection", "projecta"])
     out = sys.stdout.getvalue()
     sys.stdout.close()
     sys.stdout = backup
     assert "NO ERRORS IN DBS" in out
-
+    # assert false
 
 def test_validate_bad_python(make_bad_db):
     repo = make_bad_db
