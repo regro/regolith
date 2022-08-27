@@ -1659,7 +1659,6 @@ EXEMPLARS = {
                 'figure': ['token that dereferences a figure or image in group local storage db'],
                 'slides_urls': ['url to slides describing the development, e.g. Google slides url']
             }
-            ]
         },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
