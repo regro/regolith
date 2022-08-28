@@ -229,9 +229,9 @@ sb_firstprojectum:
         text: The samples have been synthesized and places in the sample cupboard.
           They turned out well and are blue as expected
         figure:
-         - token that dereferences a figure or image in group local storage db
-        slides_url:
-         - url to slides describing the development, e.g. Google slides url
+          - token that dereferences a figure or image in group local storage db
+        slides_urls:
+          - url to slides describing the development, e.g. Google slides url
       end_date: 2020-07-01
     - due_date: 2020-06-01
       name: planning meeting
