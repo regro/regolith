@@ -259,7 +259,7 @@ class ProjectumAdderHelper(DbHelperBase):
                    "progress": {'text': "brief summary here when the milestone "
                                         "finishes that could be copy-pasted into a "
                                         "grant report, for example.",
-                                'slide_urls': ["<replace with urls to any "
+                                'slides_urls': ["<replace with urls to any "
                                                "slides or docs describing the "
                                                "outcome. The presentation if it "
                                                "is a presentation>"]

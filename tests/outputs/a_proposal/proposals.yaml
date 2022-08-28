@@ -100,10 +100,10 @@ dmref15:
   team:
     - institution: Columbia University
       name: qdu
-      position: co-pi
+      position: copi
     - institution: Columbia University
       name: dhsu
-      position: co-pi
+      position: copi
     - institution: Columbia University
       name: sbillinge
       position: pi

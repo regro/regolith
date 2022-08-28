@@ -1653,13 +1653,12 @@ EXEMPLARS = {
             'audience': ['lead', 'pi', 'group_members'],
             'status': 'proposed',
             'type': 'meeting',
-            'progress': [{
+            'progress': {
                 'text': 'The samples have been synthesized and places in the sample cupboard. '
                         'They turned out well and are blue as expected',
-                'figure': 'token that dereferences a figure or image in group local storage db',
-                'slides_url': 'url to slides describing the development, e.g. Google slides url'
+                'figure': ['token that dereferences a figure or image in group local storage db'],
+                'slides_urls': ['url to slides describing the development, e.g. Google slides url']
             }
-            ]
         },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
