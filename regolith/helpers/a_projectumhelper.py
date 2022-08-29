@@ -256,7 +256,7 @@ class ProjectumAdderHelper(DbHelperBase):
                              "presentations or related docs.  Link to specific "
                              "files of relevance to this milestone not general docs and repos."
                    ],
-                   'progress': {'text': 'write text here capturing how the milestone '
+                   "progress": {'text': 'write text here capturing how the milestone '
                                         'is progressing, but at the least when the milestone '
                                         'closes.  The goal of this is that it will be '
                                         'printed as a progress report for a grant '
@@ -265,11 +265,14 @@ class ProjectumAdderHelper(DbHelperBase):
                                         'but clearly show the progress that has been made. '
                                         'It can be multiple paragraphs or a short statement'
                                         'depending on the situation',
-                                'slide_urls': ["<replace with urls to any "
-                                               "slides or docs describing the "
-                                               "outcome. The presentation if it "
-                                               "is a presentation>"]
-                                },
+                                'slides_urls': ["<replace with a URL to, for example, "
+                                               "a Gslides slide deck "
+                                               "with useful figures in it, or a Gdoc "
+                                               "with more complicated info like tables "
+                                               "or something. This is for the PI to "
+                                               "be able to find quality content to augment "
+                                               "the report>","<replace with another URL if "
+                                                             "more than one is needed>"]},
                    'type': 'meeting'
                    }
         pdoc.update({"milestones": [secondm]})

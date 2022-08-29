@@ -2,8 +2,7 @@
 
 **Changed:**
 
-* Template prum now has better addvice for how to fill it in for scientific UCs
-  when made by a_projectum
+* Template prum now has better advice for how to fill it when made by a_projectum
 
 **Deprecated:** None
 
