@@ -265,16 +265,14 @@ class ProjectumAdderHelper(DbHelperBase):
                                         'but clearly show the progress that has been made. '
                                         'It can be multiple paragraphs or a short statement'
                                         'depending on the situation',
-                                'slides_url': ["<replace with a URL to, for example, "
+                                'slides_urls': ["<replace with a URL to, for example, "
                                                "a Gslides slide deck "
                                                "with useful figures in it, or a Gdoc "
-                                               "with more complicated info like tables"
-                                               "or something.  This is for the PI to "
+                                               "with more complicated info like tables "
+                                               "or something. This is for the PI to "
                                                "be able to find quality content to augment "
-                                               "the report>","<replace with another URL if"
+                                               "the report>","<replace with another URL if "
                                                              "more than one is needed>"]},
-                   'type': 'meeting'
-                                },
                    'type': 'meeting'
                    }
         pdoc.update({"milestones": [secondm]})
