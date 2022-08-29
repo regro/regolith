@@ -56,10 +56,11 @@ helper_map = [
       "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "--currency", "Bitcoin",
       "--other-agencies", "Flatland", "--notes", "this is a sample added proposal", "--date", "2020-08-01"],
      "20_anewproposal has been added in proposals\n"),
-    (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount", "159.18",
-      "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
-      "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
-     "2006as_timbuktoo has been added in expenses\n"),
+    # This now tested in the test_helper_python_mock function, below
+    # (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount", "159.18",
+    #   "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
+    #   "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
+    #  "2006as_timbuktoo has been added in expenses\n"),
      ## The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
      ## because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
      ## (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
@@ -92,14 +93,15 @@ helper_map = [
     #   "--no-cal"],
     #  pytest.raises(RuntimeError)),
     # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db, and default is public
-    (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
-      "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-      "--authors", "sbillinge", "nasker", "--abstract", "testing",
-      "--title", "Testing Case C.2", "--status", "in-prep",
-      "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
-      "--presentation-url", "http://drive.google.com/SEV356DV",
-      "--no-cal", "--force"], # Expect a new presentation and new expense in db 'test'
-       "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
+    # This is tested in the test_helper_python_mock function, below
+    # (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case C.2", "--status", "in-prep",
+    #   "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--force", "--no-repo"], # Expect a new presentation and new expense in db 'test'.
+    #    "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
     # Test Case D: user wants an expense added, and specified an expense db
     # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
