@@ -4,6 +4,7 @@ from regolith.tools import all_docs_from_collection
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
 
+TARGET_COLL = "expenses"
 def subparser(subpi):
     subpi.add_argument("payee",
                        help="payee id for the expense")
@@ -13,6 +14,7 @@ class ReimbstatusHelper(SoutHelperBase):
     """Helper for reimbstatus"""
     # btype must be the same as helper target in helper.py
     btype = "reimbstatus"
+    needed_colls = [f'{TARGET_COLL}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -84,12 +86,9 @@ class ReimbstatusHelper(SoutHelperBase):
                                  )
                       )
                 grantstring = ", ".join(i.get('grants'))
-                print("   Requested: {}, "
-                      "Reimbursed: {}, Date: "
-                      "{}, Grants: {}".format(unseg, j.get('amount'),
-                                  reimb_dates.get("date").isoformat(),
-                                  grantstring
-                                  )
+                print(f"   Requested: {unseg}, "
+                      f"Reimbursed: {j.get('amount')}, Date: "
+                      f"{reimb_dates.get('date',dt.date(1900,1,1).isoformat())}, Grants: {grantstring}"
                       )
         print("\nSubmitted expenses:")
         for i in sorted_sub:
