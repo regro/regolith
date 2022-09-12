@@ -38,79 +38,6 @@ helper_map = [
      "\n----------------\nExpenses\n----------------\n"
      "2030-05-01: expenses monthly total = 0\n2030-06-01: expenses monthly total = 0\n2030-07-01: expenses monthly total = 0\n2030-08-01: expenses monthly total = 0\n2030-09-01: expenses monthly total = 0\n2030-10-01: expenses monthly total = 0\n2030-11-01: expenses monthly total = 0\n"
      "Total spend = 0\n"),
-    (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
-      "Tess Guebre", "--status", "downloaded", "--title", "A flat world theory"],
-     "A. Einstein proposal has been added/updated in proposal reviews\n"),
-    (["helper", "a_manurev", "Einstein", "2020-09-15", "Nature", "On the Quantum Theory of Radiation",
-      "--requester", "Niels Bohr", "--reviewer", "zcliu", "--status", "submitted", "--submitted-date", "2019-01-01"],
-     "Einstein manuscript has been added/updated in manuscript reviews\n"),
-    (["helper", "a_grppub_readlist", "test the lister", "pdf",
-      "--title", "A list to test the lister", "--purpose", "Test the lister", "--date", "2021-04-01"],
-     "List of all tags in citations collection:\n['nomonth', 'pdf']\ntest_the_lister has been added/updated in reading_lists\n"),
-    (["helper", "a_projectum", "New projectum", "lyang",
-      "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
-      "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
-     "ly_newprojectum has been added in projecta\n"),
-    (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
-      "--begin-date", "2020-09-15", "--end-date", "2022-02-14", "--duration", "16.89",
-      "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "--currency", "Bitcoin",
-      "--other-agencies", "Flatland", "--notes", "this is a sample added proposal", "--date", "2020-08-01"],
-     "20_anewproposal has been added in proposals\n"),
-    # This now tested in the test_helper_python_mock function, below
-    # (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount", "159.18",
-    #   "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
-    #   "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
-    #  "2006as_timbuktoo has been added in expenses\n"),
-     ## The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
-     ## because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
-     ## (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
-     ## that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
-     # Test Case A: Expect a new entry in outputs/presentations/presentations.yaml
-    # (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
-    #   "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
-    #   "--title", "On the roundness of the Earth", "--status", "in-prep",
-    #   "--notes", "this is a sample added presentation",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--no-expense"], 
-    #  "2006as_mars has been added in presentations\n"),
-    # Test Case B: user arguments contradict, raises error
-    # (["helper", "a_presentation", "Test Case B", "Test B", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case B", "--status", "in-prep",
-    #   "--notes", "This is to test Case B, where user contradicts themselves by passing both --no-expense and --expense_db",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--no-expense", "--expense-db testB"],
-    #  pytest.raises(RuntimeError)),
-    # Test Case C.1: user wants an expense added, but did not specify an expense db, and default is public
-    # (["helper", "a_presentation", "Test Case C.1", "Test C.1", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case C.1", "--status", "in-prep",
-    #   "--notes", "This is to test Case C.1, where user wants an expense added, but did not specify an expense db, and the first db in the regolithrc.json file is public, so the program errors.",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal"],
-    #  pytest.raises(RuntimeError)),
-    # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db, and default is public
-    # This is tested in the test_helper_python_mock function, below
-    # (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case C.2", "--status", "in-prep",
-    #   "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--force", "--no-repo"], # Expect a new presentation and new expense in db 'test'.
-    #    "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
-    # Test Case D: user wants an expense added, and specified an expense db
-    # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case D", "--status", "in-prep",
-    #   "--notes", "This is to test Case D, where user wants an expense added, and specified an expense-db",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--expense-db private-test"], # Expect a new presentation and new expense in db 'private-test'
-    #    "2006na_testd has been added in presentations\n2006na_testd has been added in expenses in database private-test\n"),
     (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
@@ -174,26 +101,16 @@ helper_map = [
     (["helper", "l_milestones", "--verbose"],
      "2021-08-03: lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n"
      "2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n"
-     "2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: Who will use the software or read the paper? Your target audience. e.g., beginning grad in chemistry\n"
      "2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n"
-     "2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Example milestone\n    log url: \n    Purpose: This acts as an example milestone. It shows how to construct your milestones.  It should be deleted before depositing the prum.\n    Audience: update the audience as required, but it is often lead, pi and group_members (see below). these resolve to their values defined elsewhere.  If putting in people's names use their ids where possible and they will be looked for in the people and contacts collections., lyang, scopatz, ascopatz\n    Notes:\n      - () get a clear picture of the deliverable and what needs to be done to get there.  Have discussions with group members to develop ideas.  Propose them even if you are not sure, you will get feedback. This is the process.\n      - () edit the template 'deliverable' to reflect that.\n      - () chart out milestones at a high level first working back from the deliverable.  'To deliver that (deliverable) I have to do this, this and this, and to deliver it by then I have to do these things by these dates.'\n      - () then write the detailed milestones, turning each one into a deliverable that is captured in the type field.  Allowed values for milestone types are: ('mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel').  If you are tempted to use 'other' think more about the milestone objective, you probably haven't defined it well enough in your head.\n      - () Think carefully about the deliverable date.  Can you hit it?  If not, change it so you can hit it.  You may have to adjust your final deliverable date but discuss this with the team, because scope could also be reduced rather than pushing off final deliverable.  When you are comfortable with the due date, and it has been reviewed, make the appoint on the calendar, for example, if it is a meeting or presentation, send schedule it now.\n      - () within each milestone, make a todo list (this is a todo-list) in the notes field.  A todo is a note prepended by () (no space in the middle).  These are the smaller tasks you will have to do to complete the milestone.  When you complete them turn () in to (x).\n      - () Iterate all these with your team/advisor maybe in a Google doc or on Slack to make sure you are on the right track.  To converge this shoot for multiple round-trips per day.\n      - () using u_milestones in helper_gui, or otherwise, get them entered into the prum and the prum deposited.\n      - () by the time the edited prum is submitted, set all the statuses to converged or started, and delete this example milestone.\n      - () later, when you finish a milestone use u_milestones or editing in the yaml file set status to finished and add an end_date, and fill in the progress section. This should be brief but just links to a brief text description of the outcome that would be suitable for a grant annual report, and any url links to presentations or related docs.  Link to specific files of relevance to this milestone not general docs and repos.\n"
      "2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
-     "2020-05-06: lead: lyang, ly_newprojectum, status: converged\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
     (["helper", "l_milestones", "--verbose", "--current"],
      "2021-08-03: lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n"
      "2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n"
-     "2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: Who will use the software or read the paper? Your target audience. e.g., beginning grad in chemistry\n"
      "2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n"
-     "2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Example milestone\n    log url: \n    Purpose: This acts as an example milestone. It shows how to construct your milestones.  It should be deleted before depositing the prum.\n    Audience: update the audience as required, but it is often lead, pi and group_members (see below). these resolve to their values defined elsewhere.  If putting in people's names use their ids where possible and they will be looked for in the people and contacts collections., lyang, scopatz, ascopatz\n    Notes:\n      - () get a clear picture of the deliverable and what needs to be done to get there.  Have discussions with group members to develop ideas.  Propose them even if you are not sure, you will get feedback. This is the process.\n      - () edit the template 'deliverable' to reflect that.\n      - () chart out milestones at a high level first working back from the deliverable.  'To deliver that (deliverable) I have to do this, this and this, and to deliver it by then I have to do these things by these dates.'\n      - () then write the detailed milestones, turning each one into a deliverable that is captured in the type field.  Allowed values for milestone types are: ('mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel').  If you are tempted to use 'other' think more about the milestone objective, you probably haven't defined it well enough in your head.\n      - () Think carefully about the deliverable date.  Can you hit it?  If not, change it so you can hit it.  You may have to adjust your final deliverable date but discuss this with the team, because scope could also be reduced rather than pushing off final deliverable.  When you are comfortable with the due date, and it has been reviewed, make the appoint on the calendar, for example, if it is a meeting or presentation, send schedule it now.\n      - () within each milestone, make a todo list (this is a todo-list) in the notes field.  A todo is a note prepended by () (no space in the middle).  These are the smaller tasks you will have to do to complete the milestone.  When you complete them turn () in to (x).\n      - () Iterate all these with your team/advisor maybe in a Google doc or on Slack to make sure you are on the right track.  To converge this shoot for multiple round-trips per day.\n      - () using u_milestones in helper_gui, or otherwise, get them entered into the prum and the prum deposited.\n      - () by the time the edited prum is submitted, set all the statuses to converged or started, and delete this example milestone.\n      - () later, when you finish a milestone use u_milestones or editing in the yaml file set status to finished and add an end_date, and fill in the progress section. This should be brief but just links to a brief text description of the outcome that would be suitable for a grant annual report, and any url links to presentations or related docs.  Link to specific files of relevance to this milestone not general docs and repos.\n"
      "2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
-     "2020-05-06: lead: lyang, ly_newprojectum, status: converged\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      ),
     (["helper", "l_milestones", "--verbose", "--current", "--by-prum"],
-     f"{dash * 50}\n"
-     f"2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: Who will use the software or read the paper? Your target audience. e.g., beginning grad in chemistry\n"
-     f"2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Example milestone\n    log url: \n    Purpose: This acts as an example milestone. It shows how to construct your milestones.  It should be deleted before depositing the prum.\n    Audience: update the audience as required, but it is often lead, pi and group_members (see below). these resolve to their values defined elsewhere.  If putting in people's names use their ids where possible and they will be looked for in the people and contacts collections., lyang, scopatz, ascopatz\n    Notes:\n      - () get a clear picture of the deliverable and what needs to be done to get there.  Have discussions with group members to develop ideas.  Propose them even if you are not sure, you will get feedback. This is the process.\n      - () edit the template 'deliverable' to reflect that.\n      - () chart out milestones at a high level first working back from the deliverable.  'To deliver that (deliverable) I have to do this, this and this, and to deliver it by then I have to do these things by these dates.'\n      - () then write the detailed milestones, turning each one into a deliverable that is captured in the type field.  Allowed values for milestone types are: ('mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel').  If you are tempted to use 'other' think more about the milestone objective, you probably haven't defined it well enough in your head.\n      - () Think carefully about the deliverable date.  Can you hit it?  If not, change it so you can hit it.  You may have to adjust your final deliverable date but discuss this with the team, because scope could also be reduced rather than pushing off final deliverable.  When you are comfortable with the due date, and it has been reviewed, make the appoint on the calendar, for example, if it is a meeting or presentation, send schedule it now.\n      - () within each milestone, make a todo list (this is a todo-list) in the notes field.  A todo is a note prepended by () (no space in the middle).  These are the smaller tasks you will have to do to complete the milestone.  When you complete them turn () in to (x).\n      - () Iterate all these with your team/advisor maybe in a Google doc or on Slack to make sure you are on the right track.  To converge this shoot for multiple round-trips per day.\n      - () using u_milestones in helper_gui, or otherwise, get them entered into the prum and the prum deposited.\n      - () by the time the edited prum is submitted, set all the statuses to converged or started, and delete this example milestone.\n      - () later, when you finish a milestone use u_milestones or editing in the yaml file set status to finished and add an end_date, and fill in the progress section. This should be brief but just links to a brief text description of the outcome that would be suitable for a grant annual report, and any url links to presentations or related docs.  Link to specific files of relevance to this milestone not general docs and repos.\n"
-     f"2020-05-06: lead: lyang, ly_newprojectum, status: converged\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      f"{dash * 50}\n"
      f"2021-08-03: lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n"
      f"{dash * 50}\n"
@@ -203,11 +120,8 @@ helper_map = [
      ),
     (["helper", "l_milestones", "--verbose", "--all"],
      "2021-08-26: lead: pliu, pl_firstprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n2021-08-26: lead: pliu, pl_secondprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n2021-08-26: lead: pliu, pl_thirdprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n2021-08-03: lead: pliu, pl_firstprojectum, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n2021-08-03: lead: pliu, pl_firstprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n2021-08-03: lead: pliu, pl_secondprojectum, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n2021-08-03: lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n2021-08-03: lead: pliu, pl_thirdprojectum, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n2021-08-03: lead: pliu, pl_thirdprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n2021-05-03: lead: abeing, ab_inactive, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n2021-05-03: lead: abeing, ab_inactive, status: paused\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n2021-05-03: lead: abeing, ab_inactive, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n"
-     "2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: Who will use the software or read the paper? Your target audience. e.g., beginning grad in chemistry\n"
      "2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n"
-     "2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Example milestone\n    log url: \n    Purpose: This acts as an example milestone. It shows how to construct your milestones.  It should be deleted before depositing the prum.\n    Audience: update the audience as required, but it is often lead, pi and group_members (see below). these resolve to their values defined elsewhere.  If putting in people's names use their ids where possible and they will be looked for in the people and contacts collections., lyang, scopatz, ascopatz\n    Notes:\n      - () get a clear picture of the deliverable and what needs to be done to get there.  Have discussions with group members to develop ideas.  Propose them even if you are not sure, you will get feedback. This is the process.\n      - () edit the template 'deliverable' to reflect that.\n      - () chart out milestones at a high level first working back from the deliverable.  'To deliver that (deliverable) I have to do this, this and this, and to deliver it by then I have to do these things by these dates.'\n      - () then write the detailed milestones, turning each one into a deliverable that is captured in the type field.  Allowed values for milestone types are: ('mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel').  If you are tempted to use 'other' think more about the milestone objective, you probably haven't defined it well enough in your head.\n      - () Think carefully about the deliverable date.  Can you hit it?  If not, change it so you can hit it.  You may have to adjust your final deliverable date but discuss this with the team, because scope could also be reduced rather than pushing off final deliverable.  When you are comfortable with the due date, and it has been reviewed, make the appoint on the calendar, for example, if it is a meeting or presentation, send schedule it now.\n      - () within each milestone, make a todo list (this is a todo-list) in the notes field.  A todo is a note prepended by () (no space in the middle).  These are the smaller tasks you will have to do to complete the milestone.  When you complete them turn () in to (x).\n      - () Iterate all these with your team/advisor maybe in a Google doc or on Slack to make sure you are on the right track.  To converge this shoot for multiple round-trips per day.\n      - () using u_milestones in helper_gui, or otherwise, get them entered into the prum and the prum deposited.\n      - () by the time the edited prum is submitted, set all the statuses to converged or started, and delete this example milestone.\n      - () later, when you finish a milestone use u_milestones or editing in the yaml file set status to finished and add an end_date, and fill in the progress section. This should be brief but just links to a brief text description of the outcome that would be suitable for a grant annual report, and any url links to presentations or related docs.  Link to specific files of relevance to this milestone not general docs and repos.\n"
      "2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
-     "2020-05-06: lead: lyang, ly_newprojectum, status: converged\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
      "2020-05-06: lead: ascopatz, sb_firstprojectum, status: finished\n    Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - kickoff note\n"
      ),
     (["helper", "l_milestones", "--verbose", "--person", "aeinstein"],
@@ -221,10 +135,10 @@ helper_map = [
     (["helper", "l_milestones", "--verbose", "--finished"],
      "2021-08-26: lead: pliu, pl_secondprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n2020-05-06: lead: ascopatz, sb_firstprojectum, status: finished\n    Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - kickoff note\n"
      ),
-    (["helper", "l_milestones", "--verbose", "--lead", "lyang"],
-     "2021-01-01: lead: lyang, ly_newprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: \n    Purpose: deliver\n    Audience: Who will use the software or read the paper? Your target audience. e.g., beginning grad in chemistry\n"
-     "2020-05-20: lead: lyang, ly_newprojectum, status: proposed\n    Type: meeting\n    Title: Example milestone\n    log url: \n    Purpose: This acts as an example milestone. It shows how to construct your milestones.  It should be deleted before depositing the prum.\n    Audience: update the audience as required, but it is often lead, pi and group_members (see below). these resolve to their values defined elsewhere.  If putting in people's names use their ids where possible and they will be looked for in the people and contacts collections., lyang, scopatz, ascopatz\n    Notes:\n      - () get a clear picture of the deliverable and what needs to be done to get there.  Have discussions with group members to develop ideas.  Propose them even if you are not sure, you will get feedback. This is the process.\n      - () edit the template 'deliverable' to reflect that.\n      - () chart out milestones at a high level first working back from the deliverable.  'To deliver that (deliverable) I have to do this, this and this, and to deliver it by then I have to do these things by these dates.'\n      - () then write the detailed milestones, turning each one into a deliverable that is captured in the type field.  Allowed values for milestone types are: ('mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel').  If you are tempted to use 'other' think more about the milestone objective, you probably haven't defined it well enough in your head.\n      - () Think carefully about the deliverable date.  Can you hit it?  If not, change it so you can hit it.  You may have to adjust your final deliverable date but discuss this with the team, because scope could also be reduced rather than pushing off final deliverable.  When you are comfortable with the due date, and it has been reviewed, make the appoint on the calendar, for example, if it is a meeting or presentation, send schedule it now.\n      - () within each milestone, make a todo list (this is a todo-list) in the notes field.  A todo is a note prepended by () (no space in the middle).  These are the smaller tasks you will have to do to complete the milestone.  When you complete them turn () in to (x).\n      - () Iterate all these with your team/advisor maybe in a Google doc or on Slack to make sure you are on the right track.  To converge this shoot for multiple round-trips per day.\n      - () using u_milestones in helper_gui, or otherwise, get them entered into the prum and the prum deposited.\n      - () by the time the edited prum is submitted, set all the statuses to converged or started, and delete this example milestone.\n      - () later, when you finish a milestone use u_milestones or editing in the yaml file set status to finished and add an end_date, and fill in the progress section. This should be brief but just links to a brief text description of the outcome that would be suitable for a grant annual report, and any url links to presentations or related docs.  Link to specific files of relevance to this milestone not general docs and repos.\n"
-     "2020-05-06: lead: lyang, ly_newprojectum, status: converged\n    Type: meeting\n    Title: Kick off meeting\n    log url: \n    Purpose: introduce project to the lead\n    Audience: lyang, scopatz, ascopatz\n"
+    (["helper", "l_milestones", "--verbose", "--lead", "ascopatz"],
+     "2021-05-05: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n"
+     "2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n"
+     "2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
      ),
     (["helper", "l_projecta", "--verbose", "--orphan"],
      "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    description: a prum that has various inactive states in milestones and overall\n    team:\n        lead: abeing\n        group_members: None\n        collaborators: None\n"
@@ -233,26 +147,25 @@ helper_map = [
      "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
-     "ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: 2021-01-01, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\nsb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
+     "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n"
      ),
     (["helper", "l_projecta", "--grant", "SymPy-1.1"],
-     "ly_newprojectum (started)\nsb_firstprojectum (started)\n"
+     "sb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--grp_by_lead"],
-     "abeing:\n    ab_inactive (backburner)\nlyang:\n    ly_newprojectum (started)\npliu:\n    pl_firstprojectum (finished)\n    pl_secondprojectum (proposed)\n    pl_thirdprojectum (backburner)\nascopatz:\n    sb_firstprojectum (started)\n"
+     "abeing:\n    ab_inactive (backburner)\npliu:\n    pl_firstprojectum (finished)\n    pl_secondprojectum (proposed)\n    pl_thirdprojectum (backburner)\nascopatz:\n    sb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--all"],
-     "ab_inactive (backburner)\nly_newprojectum (started)\npl_firstprojectum (finished)\npl_secondprojectum (proposed)\npl_thirdprojectum (backburner)\nsb_firstprojectum (started)\n"
+     "ab_inactive (backburner)\npl_firstprojectum (finished)\npl_secondprojectum (proposed)\npl_thirdprojectum (backburner)\nsb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--current"],
-     "ly_newprojectum (started)\npl_secondprojectum (proposed)\nsb_firstprojectum (started)\n"
+     "pl_secondprojectum (proposed)\nsb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"],
      "ascopatz:\n    sb_firstprojectum (started)\n"
      ),
     (["helper", "l_projecta", "--verbose"],
      "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    description: a prum that has various inactive states in milestones and overall\n    team:\n        lead: abeing\n        group_members: None\n        collaborators: None\n"
-     "ly_newprojectum\n    status: started, begin_date: 2020-04-29, due_date: 2021-01-01, grant: SymPy-1.1\n    description: more work\n    team:\n        lead: lyang\n        group_members: ascopatz\n        collaborators: afriend\n"
      "pl_firstprojectum\n    status: finished, begin_date: 2020-07-25, due_date: 2021-08-26, end_date: 2020-07-27, grant: None\n    description: None\n    team:\n        lead: pliu\n        group_members: None\n        collaborators: None\n"
      "pl_secondprojectum\n    status: proposed, begin_date: 2020-07-25, due_date: 2021-08-26, grant: None\n    description: None\n    team:\n        lead: pliu\n        group_members: None\n        collaborators: None\n"
      "pl_thirdprojectum\n    status: backburner, begin_date: 2020-07-25, due_date: 2021-08-26, grant: None\n    description: None\n    team:\n        lead: pliu\n        group_members: None\n        collaborators: None\n"
@@ -435,6 +348,114 @@ helper_map = [
      "Anthony Scopatz\n\n"
      "Abstract: We made the case for local structure\n"
      ),
+    (["helper", "l_todo", "--assigned-to", "ascopatz", "--date", "2020-05-01"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(9900) milestone: deliverable (sb_firstprojectum) (369|2|3600||scopatz)\n"
+     "     - deliverable note\n"
+     "(9902) milestone: planning meeting (sb_firstprojectum) (26|2|3600||scopatz)\n"
+     "(9901) milestone: Project lead presentation (sb_firstprojectum) (19|2|3600||scopatz)\n"
+     "     - do background reading\n"
+     "     - understand math\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     ),
+    (["helper", "l_todo", "--short", "65",
+      "--date", "2020-07-13", "--assigned-by", "scopatz", "--assigned-to",
+      "sbillinge"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     ),
+    (["helper", "l_todo", "--tags", "downtime", "--date", "2020-07-13",
+      "--assigned-by",
+      "sbillinge", "--assigned-to", "sbillinge"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     ),
+    (["helper", "l_todo", "--assigned-to", "wrong_id"],
+     "The id you entered can't be found in todos.yml.\n"
+     ),
+    (["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned-to", "sbillinge", "--short"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(2) prepare the presentation (-255|0|30.0|downtime|sbillinge)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Outstanding Reviews:\n"
+     "------------------------------\n"
+     "accepted:\n"
+     "Manuscript by Wingit in Nature is due on 2021-04-11\n"
+     ),
+    (["helper", "l_currentappointments", "-d", "2021-08-10"],
+     "scopatz future_grant n/a 1.0 2020-09-01 2021-08-31\n"),
+    (["helper", "l_currentappointments", "-d", "2020-06-01"],
+     "scopatz abc42 abc42 0.8 2020-06-01 2020-08-31\n"),
+    (["helper", "l_currentappointments", "-d", "2020-01-01", "-s"],
+     "scopatz sym sym 1.0 2020-01-01 2020-05-15\n"),
+    (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
+    (["helper", "l_reimbstatus", "scopatz"],
+     "Reimbursed expenses:\n"
+     "\n"
+     "Submitted expenses:\n"
+     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
+     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: tbd\n"
+     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
+     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: 2019-09-05\n"
+     "   Grants: dmref15, SymPy-1.1\n"
+     "this expense was used to get the work done\n"
+     "\nUnsubmitted expenses:\n"
+     "\nFuture expenses:\n"
+     ),
+    (["helper", "l_reimbstatus", "sbillinge"],
+     "Reimbursed expenses:\n"
+     " - 190110 - testing 2019-01-01 to 2019-01-10,\n"
+     "   Requested: 10, Reimbursed: 100, Date: 2019-09-15, Grants: SymPy-1.1\n"
+     "\nSubmitted expenses:\n"
+     "\nUnsubmitted expenses:\n"
+     "\nFuture expenses:\n"
+     "\nThese expenses have invalid statuses:\n"
+     "test3\n"
+     ),
+    (["helper", "a_projectum", "New projectum", "lyang",
+      "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
+      "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
+     "ly_newprojectum has been added in projecta\n"),
     (["helper", "u_milestone", "sb_firstprojectum", "--index", "4,5",
       "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this",
       "do that", "--type", "meeting"],
@@ -524,86 +545,6 @@ helper_map = [
      "update the list item 'list-index', e.g., 'regolith helper eins -i 2'. For "
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
-     ),
-    (["helper", "l_todo", "--assigned-to", "ascopatz", "--date", "2020-05-01"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(9900) milestone: deliverable (sb_firstprojectum) (31|2|3600||scopatz)\n"
-     "     - deliverable note\n"
-     "     - do this\n"
-     "     - do that\n"
-     "(9902) milestone: planning meeting (sb_firstprojectum) (31|2|3600||scopatz)\n"
-     "     - do this\n"
-     "     - do that\n"
-     "(9901) milestone: Project lead presentation (sb_firstprojectum) (19|2|3600||scopatz)\n"
-     "     - do background reading\n"
-     "     - understand math\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     ),
-    (["helper", "l_todo", "--short", "65",
-      "--date", "2020-07-13", "--assigned-by", "scopatz", "--assigned-to",
-      "sbillinge"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     ),
-    (["helper", "l_todo", "--tags", "downtime", "--date", "2020-07-13",
-      "--assigned-by",
-      "sbillinge", "--assigned-to", "sbillinge"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
-     "     - about 10 minutes\n"
-     "     - don't forget to upload to the website\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     ),
-    (["helper", "l_todo", "--assigned-to", "wrong_id"],
-     "The id you entered can't be found in todos.yml.\n"
-     ),
-    (["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned-to", "sbillinge", "--short"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(2) prepare the presentation (-255|0|30.0|downtime|sbillinge)\n"
-     "     - about 10 minutes\n"
-     "     - don't forget to upload to the website\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     "------------------------------\n"
-     "Outstanding Reviews:\n"
-     "------------------------------\n"
-     "accepted:\n"
-     "Manuscript by Wingit in Nature is due on 2021-04-11\n"
-     "downloaded:\n"
-     "Proposal by Einstein for nsf (Tess Guebre)is due on 2020-04-08\n"
      ),
     (
         ["helper", "a_todo", "test a_todo", "6", "50", "--assigned-to",
@@ -809,36 +750,85 @@ helper_map = [
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      ),
-    (["helper", "l_currentappointments", "-d", "2021-08-10"],
-     "scopatz future_grant n/a 1.0 2020-09-01 2021-08-31\n"),
-    (["helper", "l_currentappointments", "-d", "2020-06-01"],
-     "scopatz abc42 abc42 0.8 2020-06-01 2020-08-31\n"),
-    (["helper", "l_currentappointments", "-d", "2020-01-01", "-s"],
-     "scopatz sym sym 1.0 2020-01-01 2020-05-15\n"),
-    (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
-    (["helper", "l_reimbstatus", "scopatz"],
-     "Reimbursed expenses:\n"
-     "\n"
-     "Submitted expenses:\n"
-     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
-     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: tbd\n"
-     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
-     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: 2019-09-05\n"
-     "   Grants: dmref15, SymPy-1.1\n"
-     "this expense was used to get the work done\n"
-     "\nUnsubmitted expenses:\n"
-     "\nFuture expenses:\n"
+    (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
+      "Tess Guebre", "--status", "downloaded", "--title",
+      "A flat world theory"],
+     "A. Einstein proposal has been added/updated in proposal reviews\n"
      ),
-    (["helper", "l_reimbstatus", "sbillinge"],
-     "Reimbursed expenses:\n"
-     " - 190110 - testing 2019-01-01 to 2019-01-10,\n"
-     "   Requested: 10, Reimbursed: 100, Date: 2019-09-15, Grants: SymPy-1.1\n"
-     "\nSubmitted expenses:\n"
-     "\nUnsubmitted expenses:\n"
-     "\nFuture expenses:\n"
-     "\nThese expenses have invalid statuses:\n"
-     "test3\n"
-     )
+    (["helper", "a_manurev", "Einstein", "2020-09-15", "Nature",
+      "On the Quantum Theory of Radiation",
+      "--requester", "Niels Bohr", "--reviewer", "zcliu", "--status", "submitted",
+      "--submitted-date", "2019-01-01"],
+     "Einstein manuscript has been added/updated in manuscript reviews\n"
+     ),
+    (["helper", "a_grppub_readlist", "test the lister", "pdf",
+      "--title", "A list to test the lister", "--purpose", "Test the lister",
+      "--date", "2021-04-01"],
+     "List of all tags in citations collection:\n['nomonth', 'pdf']\ntest_the_lister has been added/updated in reading_lists\n"
+     ),
+    (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
+      "--begin-date", "2020-09-15", "--end-date", "2022-02-14", "--duration",
+      "16.89",
+      "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach",
+      "--currency", "Bitcoin",
+      "--other-agencies", "Flatland", "--notes", "this is a sample added proposal",
+      "--date", "2020-08-01"],
+     "20_anewproposal has been added in proposals\n"),
+    # This now tested in the test_helper_python_mock function, below
+    # (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount", "159.18",
+    #   "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
+    #   "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
+    #  "2006as_timbuktoo has been added in expenses\n"),
+    ## The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
+    ## because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
+    ## (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
+    ## that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
+    # Test Case A: Expect a new entry in outputs/presentations/presentations.yaml
+    # (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
+    #   "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
+    #   "--title", "On the roundness of the Earth", "--status", "in-prep",
+    #   "--notes", "this is a sample added presentation",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--no-expense"],
+    #  "2006as_mars has been added in presentations\n"),
+    # Test Case B: user arguments contradict, raises error
+    # (["helper", "a_presentation", "Test Case B", "Test B", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case B", "--status", "in-prep",
+    #   "--notes", "This is to test Case B, where user contradicts themselves by passing both --no-expense and --expense_db",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--no-expense", "--expense-db testB"],
+    #  pytest.raises(RuntimeError)),
+    # Test Case C.1: user wants an expense added, but did not specify an expense db, and default is public
+    # (["helper", "a_presentation", "Test Case C.1", "Test C.1", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case C.1", "--status", "in-prep",
+    #   "--notes", "This is to test Case C.1, where user wants an expense added, but did not specify an expense db, and the first db in the regolithrc.json file is public, so the program errors.",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal"],
+    #  pytest.raises(RuntimeError)),
+    # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db, and default is public
+    # This is tested in the test_helper_python_mock function, below
+    # (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case C.2", "--status", "in-prep",
+    #   "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--force", "--no-repo"], # Expect a new presentation and new expense in db 'test'.
+    #    "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
+    # Test Case D: user wants an expense added, and specified an expense db
+    # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case D", "--status", "in-prep",
+    #   "--notes", "This is to test Case D, where user wants an expense added, and specified an expense-db",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--expense-db private-test"], # Expect a new presentation and new expense in db 'private-test'
+    #    "2006na_testd has been added in presentations\n2006na_testd has been added in expenses in database private-test\n"),
 ]
 
 db_srcs = [
