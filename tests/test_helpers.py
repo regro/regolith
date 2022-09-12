@@ -38,79 +38,10 @@ helper_map = [
      "\n----------------\nExpenses\n----------------\n"
      "2030-05-01: expenses monthly total = 0\n2030-06-01: expenses monthly total = 0\n2030-07-01: expenses monthly total = 0\n2030-08-01: expenses monthly total = 0\n2030-09-01: expenses monthly total = 0\n2030-10-01: expenses monthly total = 0\n2030-11-01: expenses monthly total = 0\n"
      "Total spend = 0\n"),
-    (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
-      "Tess Guebre", "--status", "downloaded", "--title", "A flat world theory"],
-     "A. Einstein proposal has been added/updated in proposal reviews\n"),
-    (["helper", "a_manurev", "Einstein", "2020-09-15", "Nature", "On the Quantum Theory of Radiation",
-      "--requester", "Niels Bohr", "--reviewer", "zcliu", "--status", "submitted", "--submitted-date", "2019-01-01"],
-     "Einstein manuscript has been added/updated in manuscript reviews\n"),
-    (["helper", "a_grppub_readlist", "test the lister", "pdf",
-      "--title", "A list to test the lister", "--purpose", "Test the lister", "--date", "2021-04-01"],
-     "List of all tags in citations collection:\n['nomonth', 'pdf']\ntest_the_lister has been added/updated in reading_lists\n"),
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
      "ly_newprojectum has been added in projecta\n"),
-    (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
-      "--begin-date", "2020-09-15", "--end-date", "2022-02-14", "--duration", "16.89",
-      "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach", "--currency", "Bitcoin",
-      "--other-agencies", "Flatland", "--notes", "this is a sample added proposal", "--date", "2020-08-01"],
-     "20_anewproposal has been added in proposals\n"),
-    # This now tested in the test_helper_python_mock function, below
-    # (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount", "159.18",
-    #   "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
-    #   "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
-    #  "2006as_timbuktoo has been added in expenses\n"),
-     ## The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
-     ## because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
-     ## (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
-     ## that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
-     # Test Case A: Expect a new entry in outputs/presentations/presentations.yaml
-    # (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
-    #   "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
-    #   "--title", "On the roundness of the Earth", "--status", "in-prep",
-    #   "--notes", "this is a sample added presentation",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--no-expense"], 
-    #  "2006as_mars has been added in presentations\n"),
-    # Test Case B: user arguments contradict, raises error
-    # (["helper", "a_presentation", "Test Case B", "Test B", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case B", "--status", "in-prep",
-    #   "--notes", "This is to test Case B, where user contradicts themselves by passing both --no-expense and --expense_db",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--no-expense", "--expense-db testB"],
-    #  pytest.raises(RuntimeError)),
-    # Test Case C.1: user wants an expense added, but did not specify an expense db, and default is public
-    # (["helper", "a_presentation", "Test Case C.1", "Test C.1", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case C.1", "--status", "in-prep",
-    #   "--notes", "This is to test Case C.1, where user wants an expense added, but did not specify an expense db, and the first db in the regolithrc.json file is public, so the program errors.",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal"],
-    #  pytest.raises(RuntimeError)),
-    # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db, and default is public
-    # This is tested in the test_helper_python_mock function, below
-    # (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case C.2", "--status", "in-prep",
-    #   "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--force", "--no-repo"], # Expect a new presentation and new expense in db 'test'.
-    #    "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
-    # Test Case D: user wants an expense added, and specified an expense db
-    # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
-    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
-    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
-    #   "--title", "Testing Case D", "--status", "in-prep",
-    #   "--notes", "This is to test Case D, where user wants an expense added, and specified an expense-db",
-    #   "--presentation-url", "http://drive.google.com/SEV356DV",
-    #   "--no-cal", "--expense-db private-test"], # Expect a new presentation and new expense in db 'private-test'
-    #    "2006na_testd has been added in presentations\n2006na_testd has been added in expenses in database private-test\n"),
     (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
@@ -602,8 +533,6 @@ helper_map = [
      "------------------------------\n"
      "accepted:\n"
      "Manuscript by Wingit in Nature is due on 2021-04-11\n"
-     "downloaded:\n"
-     "Proposal by Einstein for nsf (Tess Guebre)is due on 2020-04-08\n"
      ),
     (
         ["helper", "a_todo", "test a_todo", "6", "50", "--assigned-to",
@@ -838,7 +767,86 @@ helper_map = [
      "\nFuture expenses:\n"
      "\nThese expenses have invalid statuses:\n"
      "test3\n"
-     )
+     ),
+    (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
+      "Tess Guebre", "--status", "downloaded", "--title",
+      "A flat world theory"],
+     "A. Einstein proposal has been added/updated in proposal reviews\n"
+     ),
+    (["helper", "a_manurev", "Einstein", "2020-09-15", "Nature",
+      "On the Quantum Theory of Radiation",
+      "--requester", "Niels Bohr", "--reviewer", "zcliu", "--status", "submitted",
+      "--submitted-date", "2019-01-01"],
+     "Einstein manuscript has been added/updated in manuscript reviews\n"
+     ),
+    (["helper", "a_grppub_readlist", "test the lister", "pdf",
+      "--title", "A list to test the lister", "--purpose", "Test the lister",
+      "--date", "2021-04-01"],
+     "List of all tags in citations collection:\n['nomonth', 'pdf']\ntest_the_lister has been added/updated in reading_lists\n"
+     ),
+    (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
+      "--begin-date", "2020-09-15", "--end-date", "2022-02-14", "--duration",
+      "16.89",
+      "--authors", "Kurt Godel", "MC Escher", "Johann Sebastian Bach",
+      "--currency", "Bitcoin",
+      "--other-agencies", "Flatland", "--notes", "this is a sample added proposal",
+      "--date", "2020-08-01"],
+     "20_anewproposal has been added in proposals\n"),
+    # This now tested in the test_helper_python_mock function, below
+    # (["helper", "a_expense", "timbuktoo", "travel to timbuktoo", "--amount", "159.18",
+    #   "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
+    #   "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
+    #  "2006as_timbuktoo has been added in expenses\n"),
+    ## The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
+    ## because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
+    ## (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
+    ## that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
+    # Test Case A: Expect a new entry in outputs/presentations/presentations.yaml
+    # (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
+    #   "--authors", "sbillinge", "ashaaban", "--abstract", "the earth is round as seen from mars",
+    #   "--title", "On the roundness of the Earth", "--status", "in-prep",
+    #   "--notes", "this is a sample added presentation",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--no-expense"],
+    #  "2006as_mars has been added in presentations\n"),
+    # Test Case B: user arguments contradict, raises error
+    # (["helper", "a_presentation", "Test Case B", "Test B", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case B", "--status", "in-prep",
+    #   "--notes", "This is to test Case B, where user contradicts themselves by passing both --no-expense and --expense_db",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--no-expense", "--expense-db testB"],
+    #  pytest.raises(RuntimeError)),
+    # Test Case C.1: user wants an expense added, but did not specify an expense db, and default is public
+    # (["helper", "a_presentation", "Test Case C.1", "Test C.1", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case C.1", "--status", "in-prep",
+    #   "--notes", "This is to test Case C.1, where user wants an expense added, but did not specify an expense db, and the first db in the regolithrc.json file is public, so the program errors.",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal"],
+    #  pytest.raises(RuntimeError)),
+    # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db, and default is public
+    # This is tested in the test_helper_python_mock function, below
+    # (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case C.2", "--status", "in-prep",
+    #   "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--force", "--no-repo"], # Expect a new presentation and new expense in db 'test'.
+    #    "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
+    # Test Case D: user wants an expense added, and specified an expense db
+    # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
+    #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
+    #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
+    #   "--title", "Testing Case D", "--status", "in-prep",
+    #   "--notes", "This is to test Case D, where user wants an expense added, and specified an expense-db",
+    #   "--presentation-url", "http://drive.google.com/SEV356DV",
+    #   "--no-cal", "--expense-db private-test"], # Expect a new presentation and new expense in db 'private-test'
+    #    "2006na_testd has been added in presentations\n2006na_testd has been added in expenses in database private-test\n"),
 ]
 
 db_srcs = [
