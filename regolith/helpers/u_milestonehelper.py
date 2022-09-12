@@ -13,7 +13,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval
 from regolith.dates import get_due_date
 from regolith.schemas import PROJECTUM_ACTIVE_STATI, \
-    MILESTONE_TYPES, PROJECTUM_STATI
+    MILESTONE_TYPES, PROJECTUM_STATI, SCHEMAS
 
 
 TARGET_COLL = "projecta"
@@ -43,33 +43,20 @@ def subparser(subpi):
                        type=str)
     subpi.add_argument("-v", "--verbose", action="store_true",
                        help="Increases the verbosity of the output.")
-    subpi.add_argument("-u", "--due-date",
-                       help="New due date of the milestone. "
-                            "Required for a new milestone.",
-                       **date_kwargs)
-    subpi.add_argument("-n", "--name",
-                       help="Name of the milestone. "
-                            "Required for a new milestone.")
-    subpi.add_argument("-o", "--objective",
-                       help="Objective of the milestone. "
-                            "Required for a new milestone.")
-    subpi.add_argument("-s", "--status",
-                       help="Status of the milestone/deliverable: "
-                            f"{*PROJECTUM_STATI,}. "
-                            "Defaults to proposed for a new milestone.")
-    subpi.add_argument("-t", "--type",
-                       help="Type of the milestone: "
-                            f"{*MILESTONE_TYPES,} "
-                            "Defaults to meeting for a new milestone.")
-    subpi.add_argument("-a", "--audience",
-                       nargs='+',
-                       help="Audience of the milestone. "
-                            "Defaults to ['lead', 'pi', 'group_members'] for a new milestone.",
-                       )
-    subpi.add_argument("--notes",
-                       nargs='+',
-                       help="Any notes you want to add to the milestone."
-                       )
+
+    milestone_keys = [key for key in
+                      SCHEMAS.get('projecta').get('milestones').get(
+                          'schema').get('schema')]
+    milestone_helps = milestone_keys
+    milestone_helps = [help[1].get('description') for help in
+                      SCHEMAS.get('projecta').get('milestones').get(
+                          'schema').get('schema').items()]
+
+    for key, help in zip(milestone_keys, milestone_helps):
+        subpi.add_argument(f"--{key}",
+                           help=f"{help}"
+                           )
+
     subpi.add_argument("-f", "--finish", action="store_true",
                        help="Finish milestone. "
                        )
