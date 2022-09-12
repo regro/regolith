@@ -366,6 +366,110 @@ helper_map = [
      "Anthony Scopatz\n\n"
      "Abstract: We made the case for local structure\n"
      ),
+    (["helper", "l_todo", "--assigned-to", "ascopatz", "--date", "2020-05-01"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(9900) milestone: deliverable (sb_firstprojectum) (369|2|3600||scopatz)\n"
+     "     - deliverable note\n"
+     "(9902) milestone: planning meeting (sb_firstprojectum) (26|2|3600||scopatz)\n"
+     "(9901) milestone: Project lead presentation (sb_firstprojectum) (19|2|3600||scopatz)\n"
+     "     - do background reading\n"
+     "     - understand math\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     ),
+    (["helper", "l_todo", "--short", "65",
+      "--date", "2020-07-13", "--assigned-by", "scopatz", "--assigned-to",
+      "sbillinge"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     ),
+    (["helper", "l_todo", "--tags", "downtime", "--date", "2020-07-13",
+      "--assigned-by",
+      "sbillinge", "--assigned-to", "sbillinge"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     ),
+    (["helper", "l_todo", "--assigned-to", "wrong_id"],
+     "The id you entered can't be found in todos.yml.\n"
+     ),
+    (["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned-to", "sbillinge", "--short"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(2) prepare the presentation (-255|0|30.0|downtime|sbillinge)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     "------------------------------\n"
+     "Outstanding Reviews:\n"
+     "------------------------------\n"
+     "accepted:\n"
+     "Manuscript by Wingit in Nature is due on 2021-04-11\n"
+     ),
+    (["helper", "l_currentappointments", "-d", "2021-08-10"],
+     "scopatz future_grant n/a 1.0 2020-09-01 2021-08-31\n"),
+    (["helper", "l_currentappointments", "-d", "2020-06-01"],
+     "scopatz abc42 abc42 0.8 2020-06-01 2020-08-31\n"),
+    (["helper", "l_currentappointments", "-d", "2020-01-01", "-s"],
+     "scopatz sym sym 1.0 2020-01-01 2020-05-15\n"),
+    (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
+    (["helper", "l_reimbstatus", "scopatz"],
+     "Reimbursed expenses:\n"
+     "\n"
+     "Submitted expenses:\n"
+     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
+     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: tbd\n"
+     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
+     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: 2019-09-05\n"
+     "   Grants: dmref15, SymPy-1.1\n"
+     "this expense was used to get the work done\n"
+     "\nUnsubmitted expenses:\n"
+     "\nFuture expenses:\n"
+     ),
+    (["helper", "l_reimbstatus", "sbillinge"],
+     "Reimbursed expenses:\n"
+     " - 190110 - testing 2019-01-01 to 2019-01-10,\n"
+     "   Requested: 10, Reimbursed: 100, Date: 2019-09-15, Grants: SymPy-1.1\n"
+     "\nSubmitted expenses:\n"
+     "\nUnsubmitted expenses:\n"
+     "\nFuture expenses:\n"
+     "\nThese expenses have invalid statuses:\n"
+     "test3\n"
+     ),
     (["helper", "u_milestone", "sb_firstprojectum", "--index", "4,5",
       "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this",
       "do that", "--type", "meeting"],
@@ -455,84 +559,6 @@ helper_map = [
      "update the list item 'list-index', e.g., 'regolith helper eins -i 2'. For "
      "new contacts --name (-n) and --institution (-o) are required:\n"
      "1. Maria as a new contact\n"
-     ),
-    (["helper", "l_todo", "--assigned-to", "ascopatz", "--date", "2020-05-01"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(9900) milestone: deliverable (sb_firstprojectum) (31|2|3600||scopatz)\n"
-     "     - deliverable note\n"
-     "     - do this\n"
-     "     - do that\n"
-     "(9902) milestone: planning meeting (sb_firstprojectum) (31|2|3600||scopatz)\n"
-     "     - do this\n"
-     "     - do that\n"
-     "(9901) milestone: Project lead presentation (sb_firstprojectum) (19|2|3600||scopatz)\n"
-     "     - do background reading\n"
-     "     - understand math\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     ),
-    (["helper", "l_todo", "--short", "65",
-      "--date", "2020-07-13", "--assigned-by", "scopatz", "--assigned-to",
-      "sbillinge"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     ),
-    (["helper", "l_todo", "--tags", "downtime", "--date", "2020-07-13",
-      "--assigned-by",
-      "sbillinge", "--assigned-to", "sbillinge"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
-     "     - about 10 minutes\n"
-     "     - don't forget to upload to the website\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     ),
-    (["helper", "l_todo", "--assigned-to", "wrong_id"],
-     "The id you entered can't be found in todos.yml.\n"
-     ),
-    (["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned-to", "sbillinge", "--short"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(2) prepare the presentation (-255|0|30.0|downtime|sbillinge)\n"
-     "     - about 10 minutes\n"
-     "     - don't forget to upload to the website\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     "------------------------------\n"
-     "Outstanding Reviews:\n"
-     "------------------------------\n"
-     "accepted:\n"
-     "Manuscript by Wingit in Nature is due on 2021-04-11\n"
      ),
     (
         ["helper", "a_todo", "test a_todo", "6", "50", "--assigned-to",
@@ -737,36 +763,6 @@ helper_map = [
      "overspent grants:\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
-     ),
-    (["helper", "l_currentappointments", "-d", "2021-08-10"],
-     "scopatz future_grant n/a 1.0 2020-09-01 2021-08-31\n"),
-    (["helper", "l_currentappointments", "-d", "2020-06-01"],
-     "scopatz abc42 abc42 0.8 2020-06-01 2020-08-31\n"),
-    (["helper", "l_currentappointments", "-d", "2020-01-01", "-s"],
-     "scopatz sym sym 1.0 2020-01-01 2020-05-15\n"),
-    (["helper", "v_meetings", "--test"], "Meeting validator helper\n"),
-    (["helper", "l_reimbstatus", "scopatz"],
-     "Reimbursed expenses:\n"
-     "\n"
-     "Submitted expenses:\n"
-     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
-     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: tbd\n"
-     " - 180110 - testing the databallectionsse 2018-01-01 to 2018-01-10,\n"
-     "   Expenses: unseg=550.00, Seg=0.00, Total=550.00, Where: Columbia, When: 2019-09-05\n"
-     "   Grants: dmref15, SymPy-1.1\n"
-     "this expense was used to get the work done\n"
-     "\nUnsubmitted expenses:\n"
-     "\nFuture expenses:\n"
-     ),
-    (["helper", "l_reimbstatus", "sbillinge"],
-     "Reimbursed expenses:\n"
-     " - 190110 - testing 2019-01-01 to 2019-01-10,\n"
-     "   Requested: 10, Reimbursed: 100, Date: 2019-09-15, Grants: SymPy-1.1\n"
-     "\nSubmitted expenses:\n"
-     "\nUnsubmitted expenses:\n"
-     "\nFuture expenses:\n"
-     "\nThese expenses have invalid statuses:\n"
-     "test3\n"
      ),
     (["helper", "a_proprev", "A. Einstein", "nsf", "2020-04-08", "-q",
       "Tess Guebre", "--status", "downloaded", "--title",
