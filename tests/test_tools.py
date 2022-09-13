@@ -3,11 +3,11 @@ from copy import copy
 import habanero
 import pytest
 import datetime as dt
+import uuid
 
 import copy
 import requests
 from unittest import mock
-
 import requests_mock
 
 from regolith.runcontrol import DEFAULT_RC
@@ -43,7 +43,8 @@ from regolith.tools import (
     compound_dict,
     compound_list, filter_employment_for_advisees,
     get_tags, dereference_institution,
-    get_target_repo_info, get_target_token, create_repo
+    get_target_repo_info, get_target_token, create_repo,
+    get_uuid
 )
 
 PEOPLE_COLL = [
@@ -2304,7 +2305,12 @@ def test_create_repo(**kwargs):
     actual = create_repo('talk_repo', 'gitlab_private_token', rc)
     assert actual == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor (SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
 
-
-
+# @mock.patch('uuid.uuid4', return_value="test-uid")
+@pytest.fixture
+def test_get_uuid(mocker):
+    mocker.patch('uuid.uuid4', return_value="test-uuid")
+    expected = "test-uuid"
+    actual = get_uuid()
+    assert expected == actual
 
 

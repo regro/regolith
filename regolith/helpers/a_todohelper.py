@@ -9,7 +9,7 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
+    get_pi_id, get_uuid
 )
 from gooey import GooeyParser
 
@@ -147,6 +147,7 @@ class TodoAdderHelper(DbHelperBase):
             rc.deadline = False
         todolist.append({
             'description': rc.description,
+            'uuid': get_uuid(),
             'due_date': due_date,
             'begin_date': begin_date,
             'deadline': rc.deadline,

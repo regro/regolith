@@ -7,6 +7,7 @@ import platform
 import re
 import sys
 import requests
+import uuid
 from copy import copy
 from copy import deepcopy
 from datetime import datetime, date
@@ -2277,3 +2278,9 @@ def get_tags(coll):
     all_tags = list(set(all_tags))
     all_tags.sort()
     return all_tags
+
+def get_uuid():
+    '''
+    returns a uuid.uuid4 string
+    '''
+    return str(uuid.uuid4())

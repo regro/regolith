@@ -2,9 +2,11 @@ import os
 from pathlib import Path
 import pytest
 import copy
+import uuid
 
 import requests_mock
 import requests
+from pytest_mock import mocker
 
 from regolith.main import main
 
@@ -452,6 +454,39 @@ helper_map = [
      "\nThese expenses have invalid statuses:\n"
      "test3\n"
      ),
+    # these updaters are really listers because they list the current state
+    (["helper", "u_todo", "--assigned-to", "sbillinge", "--stati", "started",
+      "finished", "--filter", "description", "the", "--date",
+      "2020-07-13"],
+     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+     "Please choose from one of the following to update:\n"
+     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
+     "--------------------------------------------------------------------------------\n"
+     "started:\n"
+     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
+     "     - about 10 minutes\n"
+     "     - don't forget to upload to the website\n"
+     "finished:\n"
+     "(3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
+     "     - test notes 1\n"
+     "     - test notes 2\n"
+     "     - some new notes\n"
+     "     - notes2\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-06(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
+     "     - test notes 1\n"
+     "     - test notes 2\n"
+     "     - some new notes\n"
+     "     - notes2\n"
+     "------------------------------\n"
+     "Deadlines:\n"
+     "------------------------------\n"
+     ),
+    (["helper", "u_todo", "--index", "99100"],
+     "WARNING: indices >= 9900 are used for milestones which should be updated using u_milestone and not u_todo\n"
+     ),
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
@@ -590,38 +625,6 @@ helper_map = [
       "--begin-date", "2020-06-06", "--deadline", "t",
       "--end-date", "2020-07-07", "--date", "2020-07-13"],
      "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
-     ),
-    (["helper", "u_todo", "--assigned-to", "sbillinge", "--stati", "started",
-      "finished", "--filter", "description", "the", "--date",
-      "2020-07-13"],
-     "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
-     "Please choose from one of the following to update:\n"
-     "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
-     "--------------------------------------------------------------------------------\n"
-     "started:\n"
-     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
-     "     - about 10 minutes\n"
-     "     - don't forget to upload to the website\n"
-     "finished:\n"
-     "(3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
-     "     - test notes 1\n"
-     "     - test notes 2\n"
-     "     - some new notes\n"
-     "     - notes2\n"
-     "------------------------------\n"
-     "Tasks (decreasing priority going up)\n"
-     "------------------------------\n"
-     "2020-07-06(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
-     "     - test notes 1\n"
-     "     - test notes 2\n"
-     "     - some new notes\n"
-     "     - notes2\n"
-     "------------------------------\n"
-     "Deadlines:\n"
-     "------------------------------\n"
-     ),
-    (["helper", "u_todo", "--index", "99100"],
-     "WARNING: indices >= 9900 are used for milestones which should be updated using u_milestone and not u_todo\n"
      ),
     (["helper", "f_prum", "sb_firstprojectum", "--end-date", "2020-07-01"],
      "sb_firstprojectum status has been updated to finished\n"
@@ -844,7 +847,8 @@ db_srcs = [
 
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hm", helper_map)
-def test_helper_python(hm, make_db, db_src, make_mongodb, capsys):
+def test_helper_python(hm, make_db, db_src, make_mongodb, capsys, mocker):
+    mocker.patch('uuid.uuid4', return_value="test-uuid")
     testfile = Path(__file__)
 
     if db_src == "fs":

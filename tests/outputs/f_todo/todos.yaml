@@ -2,6 +2,7 @@ ascopatz: {}
 sbillinge:
   todos:
     - description: read paper
+      uuid: saefadf-wdaagea2
       due_date: '2020-07-19'
       begin_date: '2020-06-15'
       deadline: true
@@ -27,6 +28,7 @@ sbillinge:
       tags:
         - downtime
     - description: test a_todo
+      uuid: test-uuid
       due_date: 2020-07-16
       begin_date: 2020-07-06
       deadline: true
