@@ -2059,7 +2059,7 @@ EXEMPLARS = {
         {"_id": "sbillinge",
         "todos": [
             {"description": "read paper",
-             "uuid": "saefadf-wdaagea2",
+             "uuid": "1saefadf-wdaagea2",
              "due_date": "2020-07-19",
              "begin_date": "2020-06-15",
              "deadline": True,
@@ -2071,6 +2071,7 @@ EXEMPLARS = {
              "tags": ["reading", "downtime"]
              },
             {"description": "prepare the presentation",
+             "uuid": "2saefadf-wdaagea3",
              "due_date": "2020-07-29",
              "begin_date": "2020-06-22",
              "duration": 30.0,
