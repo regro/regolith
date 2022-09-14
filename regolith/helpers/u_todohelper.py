@@ -16,7 +16,8 @@ from regolith.tools import (
     get_pi_id,
     document_by_value,
     print_task,
-    key_value_pair_filter
+    key_value_pair_filter,
+    get_uuid
 )
 from gooey import GooeyParser
 
@@ -196,6 +197,8 @@ class TodoUpdaterHelper(DbHelperBase):
                     if todo.get('assigned_by') != rc.assigned_by:
                         print(todo.get('assigned_by'))
                         todolist.remove(todo)
+                    if not todo.get('uuid'):
+                        todo['uuid'] = get_uuid()
             if rc.filter:
                 todolist = key_value_pair_filter(todolist, rc.filter)
             if rc.stati == ["started"]:
@@ -206,6 +209,19 @@ class TodoUpdaterHelper(DbHelperBase):
             print("-" * 80)
             print_task(todolist, stati=rc.stati)
         else:
+            db_name = "rg-db-private-mongo"
+            person_update = rc.client.find_one(db_name, rc.coll, filterid)
+            if person_update:
+                todolist_update = person_update.get("todos", [])
+            for todo in todolist_update:
+                if not todo.get("uuid"):
+                    todo["uuid"] = get_uuid()
+            print(todolist_update)
+            rc.client.update_one(db_name, rc.coll, {'_id': rc.assigned_to},
+                                 {"todos": todolist_update}, upsert=True)
+            return
+
+
             match_todo = [i for i in todolist if i.get("running_index") == rc.index]
             if len(match_todo) == 0:
                 raise RuntimeError("Please enter a valid index.")
@@ -257,6 +273,7 @@ class TodoUpdaterHelper(DbHelperBase):
                     todo["begin_date"] = date_parser.parse(rc.begin_date).date()
                 if rc.end_date:
                     todo["end_date"] = date_parser.parse(rc.end_date).date()
+            
 
                 for i in range(0, len(rc.databases)):
                     db_name = rc.databases[i]["name"]

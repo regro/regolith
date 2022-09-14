@@ -274,6 +274,8 @@ class FileSystemClient:
         """Updates one document."""
         coll = self.dbs[dbname][collname]
         doc = self.find_one(dbname, collname, filter)
+        print(doc)
         newdoc = dict(filter if doc is None else doc)
         newdoc.update(update)
+        print(newdoc)
         coll[newdoc["_id"]] = newdoc
