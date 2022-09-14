@@ -1927,7 +1927,7 @@ def print_task(task_list, stati, index=True):
                 task["preamble"] = ""
             if task.get('status') == status:
                 print(
-                    f"{task.get('preamble')}{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')})")
+                    f"{task.get('preamble')}{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid',[])[:6]})")
                 if task.get('notes'):
                     for note in task.get('notes'):
                         print(f"     - {note}")
@@ -1939,7 +1939,7 @@ def print_task(task_list, stati, index=True):
     deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
     for task in deadline_list:
         print(
-            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')})")
+            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid')[:6]})")
         if task.get('notes'):
             for note in task.get('notes'):
                 print(f"     - {note}")

@@ -4804,7 +4804,7 @@ SCHEMAS = {
                 "schema": {
                     "uuid": {"description": "a universally unique id for the "
                                             "task so it can be referenced elsewhere",
-                             "required": False,
+                             "required": True,
                              "type": "string"},
                     "assigned_by": {
                         "description": "ID of the member that assigns the task",
