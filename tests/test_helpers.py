@@ -2,9 +2,11 @@ import os
 from pathlib import Path
 import pytest
 import copy
+import uuid
 
 import requests_mock
 import requests
+from pytest_mock import mocker
 
 from regolith.main import main
 
@@ -353,10 +355,10 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(9900) milestone: deliverable (sb_firstprojectum) (369|2|3600||scopatz)\n"
+     "(9900) milestone: deliverable (sb_firstprojectum) (369|2|3600||scopatz|[])\n"
      "     - deliverable note\n"
-     "(9902) milestone: planning meeting (sb_firstprojectum) (26|2|3600||scopatz)\n"
-     "(9901) milestone: Project lead presentation (sb_firstprojectum) (19|2|3600||scopatz)\n"
+     "(9902) milestone: planning meeting (sb_firstprojectum) (26|2|3600||scopatz|[])\n"
+     "(9901) milestone: Project lead presentation (sb_firstprojectum) (19|2|3600||scopatz|[])\n"
      "     - do background reading\n"
      "     - understand math\n"
      "------------------------------\n"
@@ -373,11 +375,11 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "(1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
      "Tasks (decreasing priority going up)\n"
      "------------------------------\n"
-     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
      "Deadlines:\n"
      "------------------------------\n"
@@ -389,7 +391,7 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
+     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
      "------------------------------\n"
@@ -407,7 +409,7 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(2) prepare the presentation (-255|0|30.0|downtime|sbillinge)\n"
+     "(2) prepare the presentation (-255|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
      "------------------------------\n"
@@ -452,6 +454,7 @@ helper_map = [
      "\nThese expenses have invalid statuses:\n"
      "test3\n"
      ),
+    # these updaters are really listers because they list the current state
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
@@ -568,14 +571,14 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
+     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "(1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "(1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
      "Tasks (decreasing priority going up)\n"
      "------------------------------\n"
-     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz)\n"
+     "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
      "Deadlines:\n"
      "------------------------------\n"
@@ -599,11 +602,11 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge)\n"
+     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
      "finished:\n"
-     "(3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
+     "(3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
      "     - test notes 1\n"
      "     - test notes 2\n"
      "     - some new notes\n"
@@ -611,7 +614,7 @@ helper_map = [
      "------------------------------\n"
      "Tasks (decreasing priority going up)\n"
      "------------------------------\n"
-     "2020-07-06(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge)\n"
+     "2020-07-06(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
      "     - test notes 1\n"
      "     - test notes 2\n"
      "     - some new notes\n"
@@ -844,7 +847,8 @@ db_srcs = [
 
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hm", helper_map)
-def test_helper_python(hm, make_db, db_src, make_mongodb, capsys):
+def test_helper_python(hm, make_db, db_src, make_mongodb, capsys, mocker):
+    mocker.patch('uuid.uuid4', return_value="test-uuid")
     testfile = Path(__file__)
 
     if db_src == "fs":

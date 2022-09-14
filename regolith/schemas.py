@@ -1648,6 +1648,7 @@ EXEMPLARS = {
             'due_date': '2020-05-20',
             'name': 'Project lead presentation',
             'notes': ["do background reading", "understand math"],
+            'tasks': ["saefadf-wdaagea2"],
             'objective': 'lead presents background reading and '
                          'initial project plan',
             'audience': ['lead', 'pi', 'group_members'],
@@ -2058,6 +2059,7 @@ EXEMPLARS = {
         {"_id": "sbillinge",
         "todos": [
             {"description": "read paper",
+             "uuid": "1saefadf-wdaagea2",
              "due_date": "2020-07-19",
              "begin_date": "2020-06-15",
              "deadline": True,
@@ -2069,6 +2071,7 @@ EXEMPLARS = {
              "tags": ["reading", "downtime"]
              },
             {"description": "prepare the presentation",
+             "uuid": "2saefadf-wdaagea3",
              "due_date": "2020-07-29",
              "begin_date": "2020-06-22",
              "duration": 30.0,
@@ -4071,6 +4074,9 @@ SCHEMAS = {
                                              "small, non-deliverable to-dos to reach the milestone",
                               "required": False,
                               "type": "list"},
+                    "tasks": {"description": "list of todo uuids to complete the milestone ",
+                              "required": False,
+                              "type": "list"},
                     "progress": {"description": "update on the milestone",
                                  "required": False,
                                  "type": "dict",
@@ -4797,6 +4803,10 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
+                    "uuid": {"description": "a universally unique id for the "
+                                            "task so it can be referenced elsewhere",
+                             "required": True,
+                             "type": "string"},
                     "assigned_by": {
                         "description": "ID of the member that assigns the task",
                         "required": False,
