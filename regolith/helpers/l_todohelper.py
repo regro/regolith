@@ -71,7 +71,7 @@ class TodoListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_colls = [f'{TARGET_COLL}', 'projecta', 'refereeReports', 'proposalReviews']
+    needed_colls = [f'{TARGET_COLL}', 'refereeReports', 'proposalReviews']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -120,34 +120,6 @@ class TodoListerHelper(SoutHelperBase):
         if rc.stati == ["started"]:
             rc.stati = PROJECTUM_ACTIVE_STATI
         running_index = 0
-        for projectum in self.gtx["projecta"]:
-            if projectum.get('lead') != rc.assigned_to:
-                continue
-            if "checklist" in projectum.get('deliverable').get('scope'):
-                continue
-            projectum["deliverable"].update({"name": "deliverable"})
-            gather_miles = [projectum["deliverable"]]
-            if projectum.get("kickoff"):
-                projectum['kickoff'].update({"type": "meeting"})
-                gather_miles = [projectum["kickoff"], projectum["deliverable"]]
-            gather_miles.extend(projectum["milestones"])
-            for ms in gather_miles:
-                if projectum["status"] in PROJECTUM_ACTIVE_STATI:
-                    if ms.get('status') in PROJECTUM_ACTIVE_STATI:
-                        due_date = get_due_date(ms)
-                        ms.update({
-                            'status': "started",
-                            'id': projectum.get('_id'),
-                            'due_date': due_date,
-                            'assigned_by': projectum.get('pi_id'),
-                            'importance': 2,
-                            'duration': 3600,
-                            'running_index': 9900 + running_index
-                        })
-                        running_index += 1
-                        ms.update({
-                                      'description': f'milestone: {ms.get("name")} ({ms.get("id")})'})
-                        gather_todos.append(ms)
         if rc.filter:
             gather_todos = key_value_pair_filter(gather_todos, rc.filter)
         if rc.short:
