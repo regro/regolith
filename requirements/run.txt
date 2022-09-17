@@ -3,7 +3,7 @@ docutils
 python-dateutil
 jinja2
 cerberus
-xonsh
+xonsh>=0.13
 rever
 openpyxl
 nameparser
