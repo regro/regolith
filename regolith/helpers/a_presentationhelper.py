@@ -1,5 +1,6 @@
 """Helper for adding a presentation to the presentation collection.
 """
+import urllib
 from sys import stderr
 import time
 
@@ -286,7 +287,7 @@ class PresentationAdderHelper(DbHelperBase):
                     repo['params'].update({'name': key})
                     if not repo['params'].get("initialize_with_readme"):
                         repo['params']["initialize_with_readme"] = True
-                    repo['params'].update({'name': key})
+                    repo['params'].update({'name': key.replace('/', '').replace(',', '')})
             msg = create_repo('talk_repo', 'gitlab_private_token', rc)
             print(msg)
         return
