@@ -32,6 +32,9 @@ def subparser(subpi):
                        help="attestation period begins on this date, format YYYY-MM-DD")
     subpi.add_argument("-e", "--end-date",
                        help="attestation period ends on this date")
+    subpi.add_argument("--effort-reporting", action="store_true",
+                       help="List loadings by grant per month per person across "
+                            "all grants.")
     subpi.add_argument("--no-plot", action="store_true",
                        help="suppress the plotting")
     return subpi
@@ -103,120 +106,123 @@ class AttestationsHelper(DbHelperBase):
         months = (end_date - begin_date).days / 30.42
 
         appts, begin, end = [], datetime(3070, 1, 1).date(), datetime(1970, 1, 1).date()
-        for person in people:
-            person_appts = person.get('appointments', None)
-            if person_appts:
-                for _id, p_appt in person_appts.items():
-                    grantid = p_appt.get('grant')
-                    if grantid == grant_id:
-                        loading = p_appt.get('loading')
-                        bd = get_dates(p_appt).get("begin_date")
-                        begin = min(begin, bd)
-                        ed = get_dates(p_appt).get("end_date")
-                        end = max(end, ed)
-                        months_on_grant = (ed - bd).days / 30.4 * loading
-                        appt = (person['_id'], bd, ed, loading, months_on_grant)
-                        appts.append(appt)
-        appts.sort(key=lambda x: (x[0], x[1]))
-        folks = []
-        for app in appts:
-            if app[1] < end_date:
-                if app[2] >= begin_date:
-                    print("{0}, from {1} to {2}, loading {3}. Total months: "
-                          "{4:6.2f}".format(app[0], app[1].strftime("%Y-%m-%d"),
-                                            app[2].strftime("%Y-%m-%d"), app[3], app[4]))
-            folks.append(app[0])
-        folks = list(set(folks))
-        plots = []
-        people_loadings = []
-        loadingc = np.zeros(len(plot_date_list))
-        for folk in folks:
-            fig, ax = plt.subplots()
-            loadinga = np.zeros(len(plot_date_list))
+        if rc.effort_reporting:
+            pass
+        else:
+            for person in people:
+                person_appts = person.get('appointments', None)
+                if person_appts:
+                    for _id, p_appt in person_appts.items():
+                        grantid = p_appt.get('grant')
+                        if grantid == grant_id:
+                            loading = p_appt.get('loading')
+                            bd = get_dates(p_appt).get("begin_date")
+                            begin = min(begin, bd)
+                            ed = get_dates(p_appt).get("end_date")
+                            end = max(end, ed)
+                            months_on_grant = (ed - bd).days / 30.4 * loading
+                            appt = (person['_id'], bd, ed, loading, months_on_grant)
+                            appts.append(appt)
+            appts.sort(key=lambda x: (x[0], x[1]))
+            folks = []
             for app in appts:
-                if app[0] == folk:
-                    loadingl = []
-                    for day in plot_date_list:
-                        if app[1] <= day <= app[2]:
-                            loadingl.append(app[3])
-                        else:
-                            loadingl.append(0)
-                    loadinga = loadinga + np.array(loadingl)
-            loadingc = loadingc + loadinga
+                if app[1] < end_date:
+                    if app[2] >= begin_date:
+                        print("{0}, from {1} to {2}, loading {3}. Total months: "
+                              "{4:6.2f}".format(app[0], app[1].strftime("%Y-%m-%d"),
+                                                app[2].strftime("%Y-%m-%d"), app[3], app[4]))
+                folks.append(app[0])
+            folks = list(set(folks))
+            plots = []
+            people_loadings = []
+            loadingc = np.zeros(len(plot_date_list))
+            for folk in folks:
+                fig, ax = plt.subplots()
+                loadinga = np.zeros(len(plot_date_list))
+                for app in appts:
+                    if app[0] == folk:
+                        loadingl = []
+                        for day in plot_date_list:
+                            if app[1] <= day <= app[2]:
+                                loadingl.append(app[3])
+                            else:
+                                loadingl.append(0)
+                        loadinga = loadinga + np.array(loadingl)
+                loadingc = loadingc + loadinga
 
-            months, loadingm, accum, days = [plot_date_list[0]], [], 0, 0
-            for day, load in zip(plot_date_list, loadinga):
-                if day.day == 1 and days != 0:
-                    months.append(day)
-                    loadingm.append(accum * MONTH_COST / days)
-                    accum, days = 0, 0
-                accum = accum + load
-                days += 1
-            months.pop()
+                months, loadingm, accum, days = [plot_date_list[0]], [], 0, 0
+                for day, load in zip(plot_date_list, loadinga):
+                    if day.day == 1 and days != 0:
+                        months.append(day)
+                        loadingm.append(accum * MONTH_COST / days)
+                        accum, days = 0, 0
+                    accum = accum + load
+                    days += 1
+                months.pop()
 
-            people_loadings.append((folk, loadinga, loadingm))
+                people_loadings.append((folk, loadinga, loadingm))
+                if not rc.no_plot:
+                    ax.plot_date(plot_date_list, loadinga, ls='-', marker="", label=folk)
+                    ax.set_xlabel('date')
+                    ax.set_ylabel(f"loading for student {app[0]}")
+                    ax.legend(loc='best')
+                    fig.autofmt_xdate()
+                    plots.append(fig)
+
             if not rc.no_plot:
-                ax.plot_date(plot_date_list, loadinga, ls='-', marker="", label=folk)
-                ax.set_xlabel('date')
-                ax.set_ylabel(f"loading for student {app[0]}")
-                ax.legend(loc='best')
-                fig.autofmt_xdate()
-                plots.append(fig)
+                fig, ax = plt.subplots()
+                ax.plot_date(plot_date_list, loadingc, ls='-', marker="")
 
-        if not rc.no_plot:
-            fig, ax = plt.subplots()
-            ax.plot_date(plot_date_list, loadingc, ls='-', marker="")
+            print(f"\n-----------\nLoadings by month\n------------")
+            index = 0
+            for month in months:
+                print(f"{month.isoformat()}:")
+                for person in people_loadings:
+                    if person[2][index] > 0:
+                        print(f"    {person[0]}\tloading: {round(person[2][index], 2)}")
+                index += 1
 
-        print(f"\n-----------\nLoadings by month\n------------")
-        index = 0
-        for month in months:
-            print(f"{month.isoformat()}:")
-            for person in people_loadings:
-                if person[2][index] > 0:
-                    print(f"    {person[0]}\tloading: {round(person[2][index], 2)}")
-            index += 1
+            print(f"\n----------------\nExpenses\n----------------")
+            expenses_on_grant = [expense for expense in expenses if
+                                 grant_id in expense.get('grants')]
 
-        print(f"\n----------------\nExpenses\n----------------")
-        expenses_on_grant = [expense for expense in expenses if
-                             grant_id in expense.get('grants')]
+            if len(expenses_on_grant) > 1:
+                expenses_on_grant.sort(key=lambda x: get_dates(x).get('end_date'))
+            for expense in expenses_on_grant:
+                # print(expense.get('overall_purpose'))
+                for reimb in expense.get('reimbursements'):
+                    if reimb.get('amount') == 0:
+                        amt = 0
+                        for exp_item in expense.get('itemized_expenses', []):
+                            amt += exp_item.get('unsegregated_expense')
+                            amt += exp_item.get('prepaid_expense', 0)
+                        reimb['amount'] = amt
 
-        if len(expenses_on_grant) > 1:
-            expenses_on_grant.sort(key=lambda x: get_dates(x).get('end_date'))
-        for expense in expenses_on_grant:
-            # print(expense.get('overall_purpose'))
-            for reimb in expense.get('reimbursements'):
-                if reimb.get('amount') == 0:
-                    amt = 0
-                    for exp_item in expense.get('itemized_expenses', []):
-                        amt += exp_item.get('unsegregated_expense')
-                        amt += exp_item.get('prepaid_expense', 0)
-                    reimb['amount'] = amt
+            total_spend, month_spend, all_reimb_dates, all_reimb_amts = 0, 0, [], []
+            for e in expenses_on_grant:
+                reimb_amts = [round(i.get('amount'), 2) for i in e.get('reimbursements', [{}])]
+                reimb_dates = [get_dates(i).get('date', get_dates(e).get('end_date')) for i in
+                               e.get('reimbursements', [{}])]
+                all_reimb_dates.extend(reimb_dates)
+                all_reimb_amts.extend(reimb_amts)
+                total_spend += sum(reimb_amts)
 
-        total_spend, month_spend, all_reimb_dates, all_reimb_amts = 0, 0, [], []
-        for e in expenses_on_grant:
-            reimb_amts = [round(i.get('amount'), 2) for i in e.get('reimbursements', [{}])]
-            reimb_dates = [get_dates(i).get('date', get_dates(e).get('end_date')) for i in
-                           e.get('reimbursements', [{}])]
-            all_reimb_dates.extend(reimb_dates)
-            all_reimb_amts.extend(reimb_amts)
-            total_spend += sum(reimb_amts)
-
-            for reim_date, amt in zip(reimb_dates, reimb_amts):
+                for reim_date, amt in zip(reimb_dates, reimb_amts):
+                    print(
+                        f"{reim_date} (reimb date), {get_dates(e).get('end_date')} (expense date): amount: "
+                        f"{amt}, ")
                 print(
-                    f"{reim_date} (reimb date), {get_dates(e).get('end_date')} (expense date): amount: "
-                    f"{amt}, ")
-            print(
-                f"  payee: {e.get('payee')} "
-                f"purpose: {e.get('overall_purpose')[:60]}")
-        for month in months:
-            if month >= begin_date:
-                month_spend = 0
-                for amt, dte in zip(all_reimb_amts, all_reimb_dates):
-                    if month.year == dte.year and month.month == dte.month:
-                        month_spend += amt
-                print(f"{month}: expenses monthly total = {month_spend}")
+                    f"  payee: {e.get('payee')} "
+                    f"purpose: {e.get('overall_purpose')[:60]}")
+            for month in months:
+                if month >= begin_date:
+                    month_spend = 0
+                    for amt, dte in zip(all_reimb_amts, all_reimb_dates):
+                        if month.year == dte.year and month.month == dte.month:
+                            month_spend += amt
+                    print(f"{month}: expenses monthly total = {month_spend}")
 
-        print(f"Total spend = {round(total_spend, 2)}")
-        for plot in plots:
-            plt.show()
+            print(f"Total spend = {round(total_spend, 2)}")
+            for plot in plots:
+                plt.show()
 
