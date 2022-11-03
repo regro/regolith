@@ -2284,3 +2284,34 @@ def get_uuid():
     returns a uuid.uuid4 string
     '''
     return str(uuid.uuid4())
+
+def get_appointments(person, appointments, target_grant=None):
+    '''
+    get appointments from a person from the people collection
+
+    Parameters
+    ----------
+    person: dict
+      The person from whom to harvest appointments from
+    appointments: list of tuples
+      The list of appointments.  Each tuple contains (person_id, begin-date,
+      end-date, loading (a number between 0 and 1), and weighted duration
+      (i.e., actual duration in months * loading) in units of months
+    target_grant: str
+      optional.  id of grant for which you want to search for appointments.
+      If not specified it will return appointments for that person in that
+      date range for all/any grants
+
+    Returns
+    -------
+    updated appointments list
+
+    '''
+    for appt_id, appt in person.get('appointments').items():
+        if target_grant is None or appt.get('grant', 'no_grant') == target_grant:
+            bd = get_dates(appt).get("begin_date")
+            ed = get_dates(appt).get("end_date")
+            weighted_duration = (ed - bd).days / 30.4 * appt.get('loading')
+            appointments.append((person.get('_id'), bd, ed, appt.get('loading'),
+                         round(weighted_duration, 1)))
+    return appointments
