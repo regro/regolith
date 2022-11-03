@@ -2323,7 +2323,7 @@ tga = [
                        }
       },
      [],  'good_grant', [('good_person', dt.date(2022, 6, 1),
-                         dt.date(2022, 6, 30), 0.5, 0.5)]
+                         dt.date(2022, 6, 30), 0.5, 0.48)]
     ),
     ({'_id': 'good_person',
       'appointments': {
@@ -2335,7 +2335,7 @@ tga = [
           }
       },
      [], None, [('good_person', dt.date(2022, 6, 1),
-                         dt.date(2022, 6, 30), 0.5, 0.5)]
+                         dt.date(2022, 6, 30), 0.5, 0.48)]
      ),
     ({'_id': 'good_person',
       'appointments': {

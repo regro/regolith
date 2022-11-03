@@ -12,12 +12,12 @@ from regolith.main import main
 
 dash = "-"
 helper_map = [
-    (["helper", "attestations", "dmref15", "-b", "2019-09-01", "-e", "2019-11-01", "--no-plot"],
+    (["helper", "attestations", "2019-09-01", "--grant", "dmref15", "--end-date", "2019-11-01", "--no-plot"],
      "Instructions/Notes:\n"
      "  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"
      "  Grad salaries are about $3400 per month\n"
      "Collecting Appointments for grant dmref15:\n"
-     "scopatz, from 2019-09-01 to 2019-10-31, loading 0.75. Total months:   1.48\n"
+     "scopatz, from 2019-09-01 to 2019-10-31, loading 0.75. Total months: 1.48\n"
      "\n-----------\nLoadings by month\n------------\n"
      "2019-09-01:\n"
      "    scopatz\tloading: 2550.0\n"
