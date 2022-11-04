@@ -22,12 +22,14 @@ def daterange(date1, date2):
     return [date1 + timedelta(n) for n in range(int((date2 - date1).days) + 1)]
 
 def subparser(subpi):
-    subpi.add_argument("begin_date",
-                       help="attestation period begins on this date, format YYYY-MM-DD")
     subpi.add_argument("-g", "--grant",
                        help="grant id for the grant you want to find appointments.")
+    subpi.add_argument("-b", "begin_date",
+                       help="effort reporting period begins on this date, format YYYY-MM-DD. "
+                            "Attestations run from the beginning to the end of the grant.")
     subpi.add_argument("-e", "--end-date",
-                       help="attestation period ends on this date")
+                       help="effort reporting period ends on this date. "
+                            "Attestations run from the beginning to the end of the grant.")
     subpi.add_argument("--effort-reporting", action="store_true",
                        help="List loadings by grant per month per person across "
                             "all grants.")
@@ -40,7 +42,7 @@ class AttestationsHelper(DbHelperBase):
     """Helper for attestations"""
     # btype must be the same as helper target in helper.py
     btype = "attestation"
-    needed_colls = ['people', 'grants', 'proposals', 'expenses']
+    needed_colls = ['people', 'expenses']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -57,12 +59,6 @@ class AttestationsHelper(DbHelperBase):
         gtx["expenses"] = sorted(
             all_docs_from_collection(rc.client, "expenses"), key=_id_key
         )
-        gtx["grants"] = sorted(
-            all_docs_from_collection(rc.client, "grants"), key=_id_key
-        )
-        gtx["proposals"] = sorted(
-            all_docs_from_collection(rc.client, "proposals"), key=_id_key
-        )
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -72,24 +68,32 @@ class AttestationsHelper(DbHelperBase):
         rc = self.rc
         expenses = self.gtx['expenses']
         people = self.gtx['people']
-        grants = merge_collections_superior(self.gtx["proposals"], self.gtx['grants'], "proposal_id")
-        if rc.grant:
+        if not rc.grant and not rc.effort_reporting:
+            raise ValueError('Grant needed for Attestation.  Please rerun specifying '
+                             '--grant GRANT_ALIAS or specify --effort-reporting if you '
+                             'want an effort report.')
+        if rc.effort_reporting and not rc.begin_date:
+            raise ValueError('Begin date needed for effort reporting.  Please rerun specifying '
+                             '--begin-date YYYY-MM-DD (and preferrably --end-date YYYY-MM-DD) '
+                             'or remove --effort-reporting if you '
+                             'want an attestation report for a grant')
+        if rc.effort_reporting and rc.begin_date:
+            raise ValueError('Ignoring the value specified for --grant as '
+                             '--effort reporting was specified which is over'
+                             'all grants.')
+        if rc.effort_reporting:
+            begin_date = date_parser.parse(rc.begin_date).date()
+            if rc.end_date:
+                end_date = date_parser.parse(rc.end_date).date()
+            else:
+                end_date = date.today()
+        else:
             print(f"Instructions/Notes:\n"
                   f"  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"
                   f"  Grad salaries are about ${MONTH_COST} per month"
                   )
             print(f"Collecting Appointments for grant {rc.grant}:")
-            # grant = fuzzy_retrieval(
-            #     grants,
-            #     ["name", "_id", "alias"],
-            #     rc.grant)
-        begin_date = date_parser.parse(rc.begin_date).date()
-        if rc.grant:
-            grant_id = rc.grant
-        if rc.end_date:
-            end_date = date_parser.parse(rc.end_date).date()
-        else:
-            end_date = date.today()
+
         plot_date_list = daterange(begin_date, end_date)
 
         appts = []
@@ -100,7 +104,7 @@ class AttestationsHelper(DbHelperBase):
         else:
             for person in people:
                 if person.get('appointments'):
-                    appts = get_appointments(person, appts, grant_id)
+                    appts = get_appointments(person, appts, rc.graant)
         appts = [app for app in appts if app[1] < end_date and app[2] >= begin_date]
         appts.sort(key=lambda x: (x[0], x[1]))
         folks = [app[0] for app in appts]
@@ -162,10 +166,10 @@ class AttestationsHelper(DbHelperBase):
                     else:
                         row = f"{row}, 0.0"
                 print(row)
-
         else:
             print(f"\n-----------\nLoadings by month\n------------")
             index = 0
+
             for month in months:
                 print(f"{month.isoformat()}:")
                 for person in people_loadings:
@@ -175,12 +179,11 @@ class AttestationsHelper(DbHelperBase):
                 index += 1
             print(f"\n----------------\nExpenses\n----------------")
             expenses_on_grant = [expense for expense in expenses if
-                                 grant_id in expense.get('grants')]
+                                 rc.grant in expense.get('grants')]
 
             if len(expenses_on_grant) > 1:
                 expenses_on_grant.sort(key=lambda x: get_dates(x).get('end_date'))
             for expense in expenses_on_grant:
-                # print(expense.get('overall_purpose'))
                 for reimb in expense.get('reimbursements'):
                     if reimb.get('amount') == 0:
                         amt = 0
