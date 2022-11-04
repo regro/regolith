@@ -12,27 +12,49 @@ from regolith.main import main
 
 dash = "-"
 helper_map = [
-    (["helper", "attestations", "2019-09-01", "--grant", "dmref15", "--end-date", "2019-11-01", "--no-plot"],
+    (["helper", "attestations", "--grant", "dmref15", "--no-plot", "--verbose"],
      "Instructions/Notes:\n"
      "  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"
      "  Grad salaries are about $3400 per month\n"
      "Collecting Appointments for grant dmref15:\n"
-     "scopatz, from 2019-09-01 to 2019-10-31, loading 0.75. Total months: 1.48\n"
+     "scopatz, from 2019-02-01 to 2019-03-31, loading 0.75. Total months: 1.43\n"
      "\n-----------\nLoadings by month\n------------\n"
-     "2019-09-01:\n"
+     "2018-05-01:\n"
+     "2018-06-01:\n"
+     "2018-07-01:\n"
+     "2018-08-01:\n"
+     "2018-09-01:\n"
+     "2018-10-01:\n"
+     "2018-11-01:\n"
+     "2018-12-01:\n"
+     "2019-01-01:\n"
+     "2019-02-01:\n"     
      "    scopatz\tloading: 2550.0\n"
-     "2019-10-01:\n"
+     "2019-03-01:\n"
      "    scopatz\tloading: 2550.0\n"
+     "2019-04-01:\n"
+     "2019-05-01:\n"     
      "\n----------------\nExpenses\n----------------\n"
-     "2018-01-10 (reimb date), 2018-01-10 (expense date): amount: 500, \n"
-     "2019-09-15 (reimb date), 2018-01-10 (expense date): amount: 1000, \n"
-     "  payee: scopatz purpose: testing the databallectionsse\n"
-     "2019-09-01: expenses monthly total = 1000\n"
-     "2019-10-01: expenses monthly total = 0\n"
+     '2018-01-10 (reimb date), 2018-01-10 (expense date): amount: 500, \n'
+     '2019-02-15 (reimb date), 2018-01-10 (expense date): amount: 1000, \n'
+     '  payee: scopatz purpose: testing the databallectionsse\n'
+     '2018-05-01: expenses monthly total = 0\n'
+     '2018-06-01: expenses monthly total = 0\n'
+     '2018-07-01: expenses monthly total = 0\n'
+     '2018-08-01: expenses monthly total = 0\n'
+     '2018-09-01: expenses monthly total = 0\n'
+     '2018-10-01: expenses monthly total = 0\n'
+     '2018-11-01: expenses monthly total = 0\n'
+     '2018-12-01: expenses monthly total = 0\n'
+     '2019-01-01: expenses monthly total = 0\n'
+     "2019-02-01: expenses monthly total = 1000\n"
+     '2019-03-01: expenses monthly total = 0\n'
+     '2019-04-01: expenses monthly total = 0\n'
+     '2019-05-01: expenses monthly total = 0\n'
      "Total spend = 1500\n"),
-    (["helper", "attestations", "2019-08-01", "--end-date", "2019-11-30", "--effort-reporting", "--no-plot"],
-     ",, 2019-08-01, 2019-09-01, 2019-10-01, 2019-11-01\n"
-     "scopatz, dmref15, 0.0, 75.0, 75.0, 0.0\n"
+    (["helper", "attestations", "--begin-date", "2019-01-01", "--end-date", "2019-05-30", "--effort-reporting", "--no-plot"],
+     ",, 2019-01-01, 2019-02-01, 2019-03-01, 2019-04-01, 2019-05-01\n"
+     "scopatz, dmref15, 0.0, 75.0, 75.0, 0.0, 0.0\n"
     ),
     (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
@@ -670,78 +692,78 @@ helper_map = [
      "1. col as a new institution.\n"
      "2. columbiau      Columbia University.\n"),
     (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31"],
-     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+     "WARNING: appointment gap for scopatz from 2019-02-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
-     "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-05-02 until 2019-09-01\n"
      "    person: scopatz, appointment: s20, grant: sym,\n"
      "            from 2020-01-01 until 2020-05-15\n"
      "appointments on depleted grants:\n"
+     "    person: scopatz, appointment: f19, grant: dmref15,\n"
+     "            from 2019-02-07 until 2019-03-31\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
      "            from 2020-07-15 until 2020-08-31\n"
      "    person: scopatz, appointment: ss21, grant: future_grant,\n"
      "            from 2020-09-06 until 2021-08-31\n"
      "underspent grants:\n"
      "    dmref15: end: 2019-05-01\n"
-     "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
-     "      required ss+gra burn: -3.5\n"
+     "      projected underspend: 54.55 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: -3.41\n"
      "    sym: end: 2030-12-31\n"
      "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
      "      required ss+gra burn: 0.06\n"
-     "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
+     "cumulative underspend = 62.55 months, cumulative months to support = 0\n"
      "overspent grants:\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "plotting mode is on\n"
      ),
     (["helper", "makeappointments", "run", "--no-gui", "--projection-from-date", "2020-08-31", "-v"],
-     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+     "WARNING: appointment gap for scopatz from 2019-02-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
-     "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-05-02 until 2019-09-01\n"
      "    person: scopatz, appointment: s20, grant: sym,\n"
      "            from 2020-01-01 until 2020-05-15\n"
      "appointments on depleted grants:\n"
+     "    person: scopatz, appointment: f19, grant: dmref15,\n"
+     "            from 2019-02-07 until 2019-03-31\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
      "            from 2020-07-15 until 2020-08-31\n"
      "    person: scopatz, appointment: ss21, grant: future_grant,\n"
      "            from 2020-09-06 until 2021-08-31\n"
      "underspent grants:\n"
      "    dmref15: end: 2019-05-01\n"
-     "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
-     "      required ss+gra burn: -3.5\n"
+     "      projected underspend: 54.55 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: -3.41\n"
      "    sym: end: 2030-12-31\n"
      "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
      "      required ss+gra burn: 0.06\n"
-     "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
+     "cumulative underspend = 62.55 months, cumulative months to support = 0\n"
      "overspent grants:\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
      "plotting mode is on\n"
      ),
     (["helper", "makeappointments", "run", "--no-plot", "--projection-from-date", "2020-08-31"],
-     "WARNING: appointment gap for scopatz from 2019-09-01 to 2019-12-31\n"
+     "WARNING: appointment gap for scopatz from 2019-02-01 to 2019-12-31\n"
      "WARNING: appointment gap for scopatz from 2020-05-16 to 2020-08-31\n"
      "appointments on outdated grants:\n"
-     "    person: scopatz, appointment: f19, grant: dmref15,\n"
-     "            from 2019-05-02 until 2019-09-01\n"
      "    person: scopatz, appointment: s20, grant: sym,\n"
      "            from 2020-01-01 until 2020-05-15\n"
      "appointments on depleted grants:\n"
+     "    person: scopatz, appointment: f19, grant: dmref15,\n"
+     "            from 2019-02-07 until 2019-03-31\n"
      "    person: scopatz, appointment: ss20, grant: abc42,\n"
      "            from 2020-07-15 until 2020-08-31\n"
      "    person: scopatz, appointment: ss21, grant: future_grant,\n"
      "            from 2020-09-06 until 2021-08-31\n"
      "underspent grants:\n"
      "    dmref15: end: 2019-05-01\n"
-     "      projected underspend: 56.0 months, balance as of 2020-08-31: 0\n"
-     "      required ss+gra burn: -3.5\n"
+     "      projected underspend: 54.55 months, balance as of 2020-08-31: 0\n"
+     "      required ss+gra burn: -3.41\n"
      "    sym: end: 2030-12-31\n"
      "      projected underspend: 8.0 months, balance as of 2020-08-31: 0\n"
      "      required ss+gra burn: 0.06\n"
-     "cumulative underspend = 64.0 months, cumulative months to support = 0\n"
+     "cumulative underspend = 62.55 months, cumulative months to support = 0\n"
      "overspent grants:\n"
      "    end: 2020-12-31, grant: abc42, overspend amount: -1.41 months\n"
      "    end: 2026-08-30, grant: future_grant, overspend amount: -11.97 months\n"
