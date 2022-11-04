@@ -2313,5 +2313,5 @@ def get_appointments(person, appointments, target_grant=None):
             ed = get_dates(appt).get("end_date")
             weighted_duration = (ed - bd).days / 30.4 * appt.get('loading')
             appointments.append((person.get('_id'), bd, ed, appt.get('loading'),
-                         round(weighted_duration, 2)))
+                         round(weighted_duration, 2), appt.get('grant')))
     return appointments

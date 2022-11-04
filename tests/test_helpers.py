@@ -30,16 +30,10 @@ helper_map = [
      "2019-09-01: expenses monthly total = 1000\n"
      "2019-10-01: expenses monthly total = 0\n"
      "Total spend = 1500\n"),
-    (["helper", "attestations", "sym", "--no-plot"],
-     "Instructions/Notes:\n"
-     "  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"
-     "  Grad salaries are about $3400 per month\n"
-     "Collecting Appointments for grant sym:\n"
-     "\n-----------\nLoadings by month\n------------\n"
-     "2030-05-01:\n2030-06-01:\n2030-07-01:\n2030-08-01:\n2030-09-01:\n2030-10-01:\n2030-11-01:\n"
-     "\n----------------\nExpenses\n----------------\n"
-     "2030-05-01: expenses monthly total = 0\n2030-06-01: expenses monthly total = 0\n2030-07-01: expenses monthly total = 0\n2030-08-01: expenses monthly total = 0\n2030-09-01: expenses monthly total = 0\n2030-10-01: expenses monthly total = 0\n2030-11-01: expenses monthly total = 0\n"
-     "Total spend = 0\n"),
+    (["helper", "attestations", "2019-08-01", "--end-date", "2019-11-30", "--effort-reporting", "--no-plot"],
+     ",, 2019-08-01, 2019-09-01, 2019-10-01, 2019-11-01\n"
+     "scopatz, dmref15, 0.0, 75.0, 75.0, 0.0\n"
+    ),
     (["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
      "\nProgress report for ascopatz, generated 2022-01-09\n"
      "*************************[Orphan Projecta]*************************\n"
