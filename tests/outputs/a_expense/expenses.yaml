@@ -165,7 +165,7 @@ test:
       submission_date: tbd
       where: Columbia
     - amount: 1000
-      date: '2019-09-15'
+      date: '2019-02-15'
       submission_date: '2019-09-05'
       where: Columbia
   status: submitted
