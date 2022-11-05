@@ -1,6 +1,7 @@
 **Added:**
 
 * get_appointments() function
+* effort reporting report shows each person's loadings by grant by month over a fixed period
 
 **Changed:**
 
@@ -16,7 +17,7 @@
 
 **Fixed:**
 
-* <news item>
+* monthly loadings now handles edge cases better
 
 **Security:**
 
