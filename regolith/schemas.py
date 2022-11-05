@@ -245,7 +245,7 @@ EXEMPLARS = {
                 },
                 {
                 "amount": 1000,
-                "date": "2019-09-15",
+                "date": "2019-02-15",
                 "submission_date": "2019-09-05",
                 "where": "Columbia"
                 }
@@ -854,10 +854,10 @@ EXEMPLARS = {
         "appointments": {
             "f19": {
                 "begin_year": 2019,
-                "begin_month": 9,
+                "begin_month": 2,
                 "begin_day": 1,
                 "end_year": 2019,
-                "end_month": 10,
+                "end_month": 3,
                 "end_day": 31,
                 "grant": "dmref15",
                 "type": "pd",

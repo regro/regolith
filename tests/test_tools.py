@@ -44,7 +44,8 @@ from regolith.tools import (
     compound_list, filter_employment_for_advisees,
     get_tags, dereference_institution,
     get_target_repo_info, get_target_token, create_repo,
-    get_uuid
+    get_uuid,
+    get_appointments
 )
 
 PEOPLE_COLL = [
@@ -2313,4 +2314,43 @@ def test_get_uuid(mocker):
     actual = get_uuid()
     assert expected == actual
 
-
+tga = [
+    ({'_id': 'good_person',
+      'appointments': {'appt_id_1': {'begin_date': '2022-06-01', 'end_date': '2022-06-30',
+                        'grant': 'good_grant', 'loading': 0.5, 'status': 'submitted',
+                        'type': 'gra', 'notes': ''
+                                     }
+                       }
+      },
+     [],  'good_grant', [('good_person', dt.date(2022, 6, 1),
+                         dt.date(2022, 6, 30), 0.5, 0.48, 'good_grant')]
+    ),
+    ({'_id': 'good_person',
+      'appointments': {
+          'appt_id_1': {'begin_date': '2022-06-01', 'end_date': '2022-06-30',
+                        'grant': 'good_grant', 'loading': 0.5,
+                        'status': 'submitted',
+                        'type': 'gra', 'notes': ''
+                        }
+          }
+      },
+     [], None, [('good_person', dt.date(2022, 6, 1),
+                         dt.date(2022, 6, 30), 0.5, 0.48, 'good_grant')]
+     ),
+    ({'_id': 'good_person',
+      'appointments': {
+          'appt_id_1': {'begin_date': '2022-06-01', 'end_date': '2022-06-30',
+                        'grant': 'good_grant', 'loading': 0.5,
+                        'status': 'submitted',
+                        'type': 'gra', 'notes': ''
+                        }
+          }
+      },
+     [], 'bad_grant', []
+     )
+]
+@pytest.mark.parametrize("tga", tga)
+def test_get_appointments(tga):
+    expected = tga[3]
+    actual = get_appointments(tga[0], tga[1], tga[2])
+    assert expected == actual
