@@ -331,7 +331,7 @@ EXEMPLARS = {
     },
     "formalletters": [{
         "_id": "first_letter",
-        "date": "2022-06-28",
+        "date": "2022-06-05",
         "to": {"name": "Julie Doe",
                     "title": "lc",
                     "unit": "USM"},
@@ -342,7 +342,9 @@ EXEMPLARS = {
         "subject": "this letter is about this",
         "refs": ["ref 1", "ref 2"],
         "encls": ["encl 1", "encl 2"],
-        "paras": ["para 1", "para 2", "para 3"]
+        "paras": ["first paragraph made long enough to make sure the wrapping "
+                  "gives the desired result and that it looks nice all around.",
+                  "para 2", "para 3"]
     }],
     "grants": [
         {

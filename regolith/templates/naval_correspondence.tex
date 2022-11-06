@@ -38,7 +38,7 @@ Encl: & {{ contents['encls'][0] }} \\
 
 \end{tabular}
 
-{% for para in contents['content'] %}
+{% for para in contents['paras'] %}
 {{ loop.index }}.\ \  {{ para }}\par
 {% endfor %}
 
