@@ -329,6 +329,21 @@ EXEMPLARS = {
         "course": "EMCH-758-2017-S",
         "scores": [1, 1.6, 3],
     },
+    "formalletters": [{
+        "_id": "first_letter",
+        "date": "2022-06-28",
+        "to": {"name": "Julie Doe",
+                    "title": "lc",
+                    "unit": "USM"},
+        "copy_to": ["copied-person1", "copied-person2"],
+        "from": {"name": "John Doy",
+                    "title": "Sir",
+                    "unit": "Royalty"},
+        "subject": "this letter is about this",
+        "refs": ["ref 1", "ref 2"],
+        "encls": ["encl 1", "encl 2"],
+        "paras": ["para 1", "para 2", "para 3"]
+    }],
     "grants": [
         {
             "_id": "SymPy-1.1",

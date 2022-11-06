@@ -1,6 +1,7 @@
 """Generic builder."""
 
 from regolith.builders.cvbuilder import CVBuilder
+from regolith.builders.formalletterbuilder import FormalLetterBuilder
 from regolith.builders.htmlbuilder import HtmlBuilder
 from regolith.builders.postdocadbuilder import PostdocadBuilder
 from regolith.builders.preslistbuilder import PresListBuilder
@@ -26,6 +27,7 @@ BUILDERS = {
     "current-pending": CPBuilder,
     "cv": CVBuilder,
     "figure": FigureBuilder,
+    "formalletter": FormalLetterBuilder,
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,
     "grantreport": GrantReportBuilder,
