@@ -53,7 +53,7 @@ class FormalLetterBuilder(LatexBuilderBase):
         if self.rc.from_date:
             from_date = date_parser.parse(self.rc.from_date).date()
             filestub = filestub + "_from{}".format(from_date)
-            qualifiers = qualifiers + "in the period from {}".format(from_date)
+            qualifiers = qualifiers + f"in the period from {from_date}"
             if self.rc.to_date:
                 to_date = date_parser.parse(self.rc.to_date).date()
                 filestub = filestub + "_to{}".format(to_date)
@@ -64,7 +64,10 @@ class FormalLetterBuilder(LatexBuilderBase):
             from_date, to_date = None, None
 
         for letter in self.gtx["formalletters"]:
-            letter_date = date_parser.parse(letter.get('date')).date()
+            if letter.get('date') is type(datetime.date):
+                letter_date = letter.get('date')
+            else:
+                letter_date = date_parser.parse(letter.get('date')).date()
             letter['date'] = letter_date.strftime("%m/%e/%y").strip('0').replace(' ','')
             outfile_name_stub = f"{letter.get('_id')}"
             to = letter.get('to')
@@ -80,9 +83,9 @@ class FormalLetterBuilder(LatexBuilderBase):
             # if it wasn't entered in the DB like that...this ensures that it appears
             # this way in the final letter.
             letter["subject"] = letter["subject"].upper().strip('.')
-            letter["encls"] = [f"({string.ascii_lowercase[i]}) {enc.strip('.').capitalize()}" for i, enc in
+            letter["encls"] = [f"({string.ascii_lowercase[i]}) {enc[:1].upper()+enc[1:].strip('.')}" for i, enc in
                                enumerate(letter["encls"])]
-            letter["refs"] = [f"({string.ascii_lowercase[i]}) {ref.strip('.').capitalize()}" for i, ref in
+            letter["refs"] = [f"({string.ascii_lowercase[i]}) {ref[:1].upper()+ref[1:].strip('.')}" for i, ref in
                                enumerate(letter["refs"])]
             # ensure that all paras end in a (single) period
             letter['paras'] = [f"{para.strip('.').capitalize()}." for para in letter.get('paras', '')]
