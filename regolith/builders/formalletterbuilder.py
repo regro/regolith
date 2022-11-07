@@ -70,11 +70,11 @@ class FormalLetterBuilder(LatexBuilderBase):
             to = letter.get('to')
             if to.get('title') in RANKS_AND_ROLES.keys():
                 to['title'] = RANKS_AND_ROLES.get(to.get('title'))
-            nc_to = f"{to.get('title')} {to.get('name')} {to.get('unit')}"
+            nc_to = f"{to.get('title')} {to.get('name')} {to.get('postfix')}"
             fr = letter.get('from')
             if fr.get('title') in RANKS_AND_ROLES.keys():
                 fr['title'] = RANKS_AND_ROLES.get(fr.get('title'))
-            nc_fr = f"{fr.get('title')} {fr.get('name')} {fr.get('unit')}"
+            nc_fr = f"{fr.get('title')} {fr.get('name')} {fr.get('postfix')}"
             print(nc_fr)
             # The subject has to be upper case and have no trailing period, but what
             # if it wasn't entered in the DB like that...this ensures that it appears
