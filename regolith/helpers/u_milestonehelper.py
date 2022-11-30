@@ -26,6 +26,9 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         date_kwargs['widget'] = 'DateChooser'
 
+    subpi.add_argument("lead",
+                       help="Specify the project lead of the prum "
+                            "by id, e.g., sbillinge")
     subpi.add_argument("projectum_id", help="The id of the projectum.  If you just "
                                             "specify this the program will return a "
                                             "numbered list of milestones to select for "
