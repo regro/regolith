@@ -1,7 +1,5 @@
-ruamel.yaml
 mock
 pytest
-bibtexparser
 coverage
 codecov
 requests-mock
