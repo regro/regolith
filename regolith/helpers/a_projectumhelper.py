@@ -11,7 +11,7 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
+    get_pi_id, get_uuid,
 )
 from regolith.schemas import MILESTONE_TYPES
 
@@ -254,7 +254,7 @@ class ProjectumAdderHelper(DbHelperBase):
                              "of the outcome that would be suitable for a grant "
                              "annual report, and any url links to "
                              "presentations or related docs.  Link to specific "
-                             "files of relevance to this milestone not general docs and repos."
+                             "files of relevance to this milestone not general docs and repos.",
                    ],
                    "progress": {'text': 'write text here capturing how the milestone '
                                         'is progressing, but at the least when the milestone '
@@ -273,8 +273,9 @@ class ProjectumAdderHelper(DbHelperBase):
                                                "be able to find quality content to augment "
                                                "the report>","<replace with another URL if "
                                                              "more than one is needed>"]},
-                   'type': 'meeting'
-                   }
+                   'type': 'meeting',
+                   'uuid': get_uuid()
+        }
         pdoc.update({"milestones": [secondm]})
 
         if rc.checklist:

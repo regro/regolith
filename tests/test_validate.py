@@ -30,12 +30,12 @@ def test_validate_python_single_col(make_db):
     os.chdir(repo)
     ## to see what is failing, comment out the rows that capture and restore the
     ## sys.stdout.
-    backup = sys.stdout
-    sys.stdout = StringIO()
-    main(["validate", "--collection", "formalletters"])
-    out = sys.stdout.getvalue()
-    sys.stdout.close()
-    sys.stdout = backup
+    # backup = sys.stdout
+    # sys.stdout = StringIO()
+    main(["validate", "--collection", "projecta"])
+    # out = sys.stdout.getvalue()
+    # sys.stdout.close()
+    # sys.stdout = backup
     assert "NO ERRORS IN DBS" in out
     # assert False
 
