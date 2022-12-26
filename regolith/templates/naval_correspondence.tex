@@ -1,0 +1,48 @@
+%! Author = simon
+%! Date = 4/14/2020
+
+% the jinja2 template is just latex, as you can see, but it can
+% fill in information coming from the variables sent by the
+% navy_letter program.  These are a big dictionary called
+% contents and a few other small things, like to and from.
+% We can write simple code in here to do the rendering, so
+% if we have a list of entries, it can be any length and we just
+% wrap it in a for loop.  You can see the syntax below to get
+% the idea.
+\documentclass[letter,12pt]{letter}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage[margin=1.0in]{geometry}
+
+\begin{document}
+
+\hfill {{contents['date']}}
+\begin{tabular}{p{0.5in}p{6in}}
+To: & {{ to }} \\
+From: & {{ fr }} \\[12pt]
+Subj: & {{ contents['subject'] }} \\[12pt]
+Ref: & {{ contents['refs'][0] }} \\
+{% if contents['refs'] | length > 1 %}
+{% for ref in contents['refs'][1:] %}
+      & {{ ref }} \\
+{% endfor -%}
+{% endif -%}
+[12pt]
+Encl: & {{ contents['encls'][0] }} \\
+{% if contents['encls'] | length > 1 %}
+{% for encl in contents['encls'][1:] %}
+      & {{ encl }} \\
+{% endfor -%}
+{% endif -%}
+[12pt]
+
+\end{tabular}
+
+{% for para in contents['paras'] %}
+{{ loop.index }}.\ \  {{ para }}\par
+{% endfor %}
+
+
+
+
+\end{document}

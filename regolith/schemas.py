@@ -245,7 +245,7 @@ EXEMPLARS = {
                 },
                 {
                 "amount": 1000,
-                "date": "2019-09-15",
+                "date": "2019-02-15",
                 "submission_date": "2019-09-05",
                 "where": "Columbia"
                 }
@@ -329,6 +329,23 @@ EXEMPLARS = {
         "course": "EMCH-758-2017-S",
         "scores": [1, 1.6, 3],
     },
+    "formalletters": [{
+        "_id": "first_letter",
+        "date": "2022-06-05",
+        "to": {"name": "Julie Doe",
+                    "title": "lc",
+                    "postfix": "USM"},
+        "copy_to": ["copied-person1", "copied-person2"],
+        "from": {"name": "John Doy",
+                    "title": "Sir",
+                    "postfix": "Royalty"},
+        "subject": "this letter is about this",
+        "refs": ["ref 1", "ref 2"],
+        "encls": ["encl 1", "encl 2"],
+        "paras": ["first paragraph made long enough to make sure the wrapping "
+                  "gives the desired result and that it looks nice all around.",
+                  "para 2", "para 3"]
+    }],
     "grants": [
         {
             "_id": "SymPy-1.1",
@@ -854,10 +871,10 @@ EXEMPLARS = {
         "appointments": {
             "f19": {
                 "begin_year": 2019,
-                "begin_month": 9,
+                "begin_month": 2,
                 "begin_day": 1,
                 "end_year": 2019,
-                "end_month": 10,
+                "end_month": 3,
                 "end_day": 31,
                 "grant": "dmref15",
                 "type": "pd",
@@ -2651,6 +2668,91 @@ SCHEMAS = {
         "student": {"description": "student id", "required": True,
                     "type": "string"},
     },
+    "formalletters": {
+        "_description": {
+            "description": "Letters with a formal formatting, subject, recipients, "
+                           "enclosures, etc."
+        },
+        "_id": {
+            "description": "short representation, such as id_of_the_letter",
+            "required": True,
+            "type": ("string", "integer", "float"),
+        },
+        "date": {
+            "description": "Letter date.  ISO format YYYY-MM-DD",
+            "required": True,
+            "anyof_type": ["string", "date"],
+        },
+        "from": {
+            "description": "The from field",
+            "schema": {
+                    'name': {"description": 'The name of the sender',
+                               "type": "string",
+                               "required": True,
+                               },
+                    'title': {"description": 'The title of the person, Sir,'
+                                             'Mr., Major. Ranks can be shortened'
+                                             'to codes.',
+                             "type": "string",
+                             "required": False,
+                             },
+                    'postfix': {"description": 'The post-fix, PhD, (Admiral, retired), whatever',
+                              "type": "string",
+                              "required": False,
+                              },
+                }
+        },
+        "to": {
+            "description": "The to field",
+            "schema": {
+                'name': {"description": 'The name of the recipient',
+                         "type": "string",
+                         "required": True,
+                         },
+                'title': {"description": 'The title of the person, Sir,'
+                                         'Mr., Major. Ranks can be shortened'
+                                         'to codes.',
+                          "type": "string",
+                          "required": False,
+                          },
+                'postfix': {
+                    "description": 'The post-fix, PhD, (Admiral, retired), whatever',
+                    "type": "string",
+                    "required": False,
+                    },
+            }
+        },
+        "copy_to": {
+                "description": "List of people who will receive a copy",
+                "required": False,
+                "type": ["list"],
+            },
+        "subject": {
+            "description": "The subject of the letter",
+            "required": False,
+            "type": ("string"),
+        },
+        "copy_to": {
+            "description": "List of people who will receive a copy",
+            "required": False,
+            "type": ["list"],
+        },
+        "refs": {
+            "description": "List of references",
+            "required": False,
+            "type": ["list"],
+        },
+        "encls": {
+            "description": "List of enclosures",
+            "required": False,
+            "type": ["list"],
+        },
+        "paras": {
+            "description": "content of the letter in the form of a List of paragraphs",
+            "required": True,
+            "type": ["list"],
+        }
+        },
     "grants": {
         "_description": {
             "description": "This collection represents grants that have been "

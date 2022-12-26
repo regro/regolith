@@ -16,6 +16,7 @@ builder_map = [
     "beamplan",
     "current-pending",
     "figure",
+    "formalletter",
     "html",
     "internalhtml",
     "preslist",
