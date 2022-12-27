@@ -2,6 +2,8 @@
     It can update the status, type, and due date of a projectum.
     It can add a new milestone to the projecta collection.
 """
+import sys
+
 from copy import deepcopy
 from itertools import chain
 import datetime as dt
@@ -10,7 +12,8 @@ from gooey import GooeyParser
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from regolith.tools import all_docs_from_collection, fragment_retrieval, \
+    get_uuid
 from regolith.dates import get_due_date
 from regolith.schemas import PROJECTUM_ACTIVE_STATI, \
     MILESTONE_TYPES, PROJECTUM_STATI
@@ -95,6 +98,12 @@ class MilestoneUpdaterHelper(DbHelperBase):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
+        self.rc.databases = [{"name": "billingegroup-group",
+                       "url": "..",
+                       "public": False,
+                       "path": "../rg-db-group/db",
+                       "backend": "fs",
+                       "local": True}]
         rc = self.rc
         rc.coll = f"{TARGET_COLL}"
         if not rc.database:
@@ -114,156 +123,183 @@ class MilestoneUpdaterHelper(DbHelperBase):
             now = date_parser.parse(rc.date).date()
         else:
             now = dt.date.today()
-        filterid = {'_id': key}
-        target_prum = rc.client.find_one(rc.database, rc.coll, filterid)
-        if not target_prum:
-            pra = fragment_retrieval(self.gtx["projecta"], ["_id"],
-                                     rc.projectum_id)
-            if len(pra) == 0:
-                raise RuntimeError(
-                    "Please input a valid projectum id or a valid fragment of a projectum id")
-            print("Projecta not found. Projecta with similar names: ")
-            for i in range(len(pra)):
-                print(f"{pra[i].get('_id')}")
-            print("Please rerun the helper specifying the complete ID.")
-            return
-        milestones = deepcopy(target_prum.get('milestones'))
-        deliverable = deepcopy(target_prum.get('deliverable'))
-        kickoff = deepcopy(target_prum.get('kickoff'))
-        deliverable['identifier'] = 'deliverable'
-        all_milestones = [deliverable]
-        if kickoff:
-            kickoff['identifier'] = 'kickoff'
-            if not kickoff.get('type'):
-                kickoff['type'] = 'meeting'
-            all_milestones = [deliverable, kickoff]
-        for item in milestones:
-            item['identifier'] = 'milestones'
-        all_milestones.extend(milestones)
-        for i in all_milestones:
-            i['due_date'] = get_due_date(i)
-        all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
-        index_list = list(range(2, (len(all_milestones) + 2)))
-        if not rc.index:
-            deliverable['name'] = 'deliverable'
-            print("Please choose from one of the following to update/add:")
-            print("1. new milestone")
-            for i, j in zip(index_list, all_milestones):
-                if rc.current:
-                    if j.get("status") not in PROJECTUM_ACTIVE_STATI:
-                        continue
-                print(
-                    f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
-                    f"    status: {j.get('status')}")
-                if rc.verbose:
-                    if j.get("audience"):
-                        print(f"     audience: {j.get('audience')}")
-                    if j.get("objective"):
-                        print(f"     objective: {j.get('objective')}")
-                    if j.get("type"):
-                        print(f"     type: {j.get('type')}")
-                    if j.get('notes'):
-                        print(f"     notes:")
-                        for note in j.get('notes', []):
-                            print(f"       - {note}")
-                if j.get('identifier') == 'deliverable':
-                    del j['name']
-            return
-        rc.index = rc.index.replace(" ", "")
-        if "-" in rc.index:
-            idx_parsed = [i for i in range(int(rc.index.split('-')[0]),
-                                           int(rc.index.split('-')[1]) + 1)]
-        elif "," in rc.index:
-            idx_parsed = [int(i) for i in rc.index.split(',')]
-        else:
-            idx_parsed = [int(rc.index)]
-        new_mil = []
-        for idx in idx_parsed:
-            pdoc = {}
-            if idx == 1:
-                mil = {}
-                if not rc.due_date or not rc.name or not rc.objective:
-                    raise RuntimeError(
-                        "name, objective, and due date are required for a new milestone")
-                mil.update({'due_date': rc.due_date})
-                mil['due_date'] = get_due_date(mil)
-                mil.update({'objective': rc.objective, 'name': rc.name})
-                if rc.audience:
-                    mil.update({'audience': rc.audience})
-                else:
-                    mil.update({'audience': ['lead', 'pi', 'group_members']})
-                if rc.type:
-                    mil.update({'type': rc.type})
-                else:
-                    mil.update({'type': 'meeting'})
-                if rc.status:
-                    mil.update({'status': rc.status})
-                else:
-                    mil.update({'status': 'proposed'})
-                if rc.notes:
-                    mil.update({'notes': rc.notes})
-                mil.update({'identifier': "milestones"})
-                new_mil.append(mil)
-                pdoc = {'milestones': mil}
-            if idx > 1:
-                doc = deepcopy(all_milestones[idx - 2])
-                identifier = doc['identifier']
-                if not doc.get(
-                        'type') and not rc.type and identifier == 'milestones':
-                    raise RuntimeError(
-                        "ERROR: This milestone does not have a type set and this is required. "
-                        "Please rerun your command adding '--type' "
-                        f"and typing a type from this list: {MILESTONE_TYPES}")
-                if rc.type:
-                    if rc.type in MILESTONE_TYPES:
-                        doc.update({'type': rc.type})
-                    else:
-                        raise ValueError(
-                            "ERROR: The type you have specified is not recognized. "
-                            "Please rerun your command adding '--type' "
-                            f"and giving a type from this list: {MILESTONE_TYPES}")
-                if rc.finish:
-                    rc.status = "finished"
-                    doc.update({'end_date': now})
-                    notes = doc.get("notes", [])
-                    notes_with_closed_items = [note.replace('()', '(x)', 1) for note in notes]
-                    doc["notes"] = notes_with_closed_items              
-                    if identifier == 'deliverable':
-                        name = 'deliverable'
-                    else:
-                        name = doc['name']
-                    print(
-                        "The milestone {} has been marked as finished in prum {}".format(
-                            name, key))
-                if rc.status:
-                    doc.update({'status': rc.status})
-                if rc.audience:
-                    doc.update({'audience': rc.audience})
-                if rc.due_date:
-                    doc.update({'due_date': rc.due_date})
-                doc['due_date'] = get_due_date(doc)
-                if rc.objective:
-                    doc.update({'objective': rc.objective})
-                if rc.notes:
-                    notes = doc.get("notes", [])
-                    notes.extend(rc.notes)
-                    doc["notes"] = notes
-                if identifier == 'milestones':
-                    if rc.name:
-                        doc.update({'name': rc.name})
-                    new_mil.append(doc)
-                else:
-                    del doc['identifier']
-                    pdoc.update({identifier: doc})
-        new_all = deepcopy(all_milestones)
-        for i, j in zip(index_list, new_all):
-            if j['identifier'] == 'milestones' and i not in idx_parsed:
-                new_mil.append(j)
-        for mile in new_mil:
-            del mile['identifier']
-        new_mil.sort(key=lambda x: x['due_date'], reverse=False)
-        pdoc.update({'milestones': new_mil})
-        rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
-        print("{} has been updated in projecta".format(key))
+        prums = [prum for prum in self.gtx["projecta"]]
+        nmiles = 0
+        for prum in prums:
+            print(prum['_id'])
+            for milestone in prum.get('milestones'):
+                nmiles += 1
+                milestone.update({"uuid": get_uuid()})
+                print(f"    {milestone['uuid']}")
+            rc.client.update_one(rc.database, rc.coll, {'_id': prum['_id']}, {'milestones': prum.get('milestones')})
 
+        print(f"number of prums = {len(prums)}")
+        print(f"number of milestones = {nmiles}")
+
+        print(rc.database, rc.coll)
+        for prum in prums:
+            print(prum['_id'])
+
+        # pdoc.update({'milestones': new_mil})
+        # rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
         return
+
+        # sys.exit()
+        #
+        #
+        #
+        #
+        #
+        # filterid = {'_id': key}
+        # target_prum = rc.client.find_one(rc.database, rc.coll, filterid)
+        # if not target_prum:
+        #     pra = fragment_retrieval(self.gtx["projecta"], ["_id"],
+        #                              rc.projectum_id)
+        #     if len(pra) == 0:
+        #         raise RuntimeError(
+        #             "Please input a valid projectum id or a valid fragment of a projectum id")
+        #     print("Projecta not found. Projecta with similar names: ")
+        #     for i in range(len(pra)):
+        #         print(f"{pra[i].get('_id')}")
+        #     print("Please rerun the helper specifying the complete ID.")
+        #     return
+        # milestones = deepcopy(target_prum.get('milestones'))
+        # deliverable = deepcopy(target_prum.get('deliverable'))
+        # kickoff = deepcopy(target_prum.get('kickoff'))
+        # deliverable['identifier'] = 'deliverable'
+        # all_milestones = [deliverable]
+        # if kickoff:
+        #     kickoff['identifier'] = 'kickoff'
+        #     if not kickoff.get('type'):
+        #         kickoff['type'] = 'meeting'
+        #     all_milestones = [deliverable, kickoff]
+        # for item in milestones:
+        #     item['identifier'] = 'milestones'
+        # all_milestones.extend(milestones)
+        # for i in all_milestones:
+        #     i['due_date'] = get_due_date(i)
+        # all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
+        # index_list = list(range(2, (len(all_milestones) + 2)))
+        # if not rc.index:
+        #     deliverable['name'] = 'deliverable'
+        #     print("Please choose from one of the following to update/add:")
+        #     print("1. new milestone")
+        #     for i, j in zip(index_list, all_milestones):
+        #         if rc.current:
+        #             if j.get("status") not in PROJECTUM_ACTIVE_STATI:
+        #                 continue
+        #         print(
+        #             f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
+        #             f"    status: {j.get('status')}")
+        #         if rc.verbose:
+        #             if j.get("audience"):
+        #                 print(f"     audience: {j.get('audience')}")
+        #             if j.get("objective"):
+        #                 print(f"     objective: {j.get('objective')}")
+        #             if j.get("type"):
+        #                 print(f"     type: {j.get('type')}")
+        #             if j.get('notes'):
+        #                 print(f"     notes:")
+        #                 for note in j.get('notes', []):
+        #                     print(f"       - {note}")
+        #         if j.get('identifier') == 'deliverable':
+        #             del j['name']
+        #     return
+        # rc.index = rc.index.replace(" ", "")
+        # if "-" in rc.index:
+        #     idx_parsed = [i for i in range(int(rc.index.split('-')[0]),
+        #                                    int(rc.index.split('-')[1]) + 1)]
+        # elif "," in rc.index:
+        #     idx_parsed = [int(i) for i in rc.index.split(',')]
+        # else:
+        #     idx_parsed = [int(rc.index)]
+        # new_mil = []
+        # for idx in idx_parsed:
+        #     pdoc = {}
+        #     if idx == 1:
+        #         mil = {}
+        #         if not rc.due_date or not rc.name or not rc.objective:
+        #             raise RuntimeError(
+        #                 "name, objective, and due date are required for a new milestone")
+        #         mil.update({'due_date': rc.due_date})
+        #         mil['due_date'] = get_due_date(mil)
+        #         mil.update({'objective': rc.objective, 'name': rc.name})
+        #         if rc.audience:
+        #             mil.update({'audience': rc.audience})
+        #         else:
+        #             mil.update({'audience': ['lead', 'pi', 'group_members']})
+        #         if rc.type:
+        #             mil.update({'type': rc.type})
+        #         else:
+        #             mil.update({'type': 'meeting'})
+        #         if rc.status:
+        #             mil.update({'status': rc.status})
+        #         else:
+        #             mil.update({'status': 'proposed'})
+        #         if rc.notes:
+        #             mil.update({'notes': rc.notes})
+        #         mil.update({'identifier': "milestones"})
+        #         new_mil.append(mil)
+        #         pdoc = {'milestones': mil}
+        #     if idx > 1:
+        #         doc = deepcopy(all_milestones[idx - 2])
+        #         identifier = doc['identifier']
+        #         if not doc.get(
+        #                 'type') and not rc.type and identifier == 'milestones':
+        #             raise RuntimeError(
+        #                 "ERROR: This milestone does not have a type set and this is required. "
+        #                 "Please rerun your command adding '--type' "
+        #                 f"and typing a type from this list: {MILESTONE_TYPES}")
+        #         if rc.type:
+        #             if rc.type in MILESTONE_TYPES:
+        #                 doc.update({'type': rc.type})
+        #             else:
+        #                 raise ValueError(
+        #                     "ERROR: The type you have specified is not recognized. "
+        #                     "Please rerun your command adding '--type' "
+        #                     f"and giving a type from this list: {MILESTONE_TYPES}")
+        #         if rc.finish:
+        #             rc.status = "finished"
+        #             doc.update({'end_date': now})
+        #             notes = doc.get("notes", [])
+        #             notes_with_closed_items = [note.replace('()', '(x)', 1) for note in notes]
+        #             doc["notes"] = notes_with_closed_items
+        #             if identifier == 'deliverable':
+        #                 name = 'deliverable'
+        #             else:
+        #                 name = doc['name']
+        #             print(
+        #                 "The milestone {} has been marked as finished in prum {}".format(
+        #                     name, key))
+        #         if rc.status:
+        #             doc.update({'status': rc.status})
+        #         if rc.audience:
+        #             doc.update({'audience': rc.audience})
+        #         if rc.due_date:
+        #             doc.update({'due_date': rc.due_date})
+        #         doc['due_date'] = get_due_date(doc)
+        #         if rc.objective:
+        #             doc.update({'objective': rc.objective})
+        #         if rc.notes:
+        #             notes = doc.get("notes", [])
+        #             notes.extend(rc.notes)
+        #             doc["notes"] = notes
+        #         if identifier == 'milestones':
+        #             if rc.name:
+        #                 doc.update({'name': rc.name})
+        #             new_mil.append(doc)
+        #         else:
+        #             del doc['identifier']
+        #             pdoc.update({identifier: doc})
+        # new_all = deepcopy(all_milestones)
+        # for i, j in zip(index_list, new_all):
+        #     if j['identifier'] == 'milestones' and i not in idx_parsed:
+        #         new_mil.append(j)
+        # for mile in new_mil:
+        #     del mile['identifier']
+        # new_mil.sort(key=lambda x: x['due_date'], reverse=False)
+        # pdoc.update({'milestones': new_mil})
+        # rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
+        # print("{} has been updated in projecta".format(key))
+        #
+        # return
