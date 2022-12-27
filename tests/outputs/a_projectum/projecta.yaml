@@ -15,6 +15,7 @@ ab_inactive:
     - due_date: '2021-05-03'
       name: Milestone
       status: converged
+      uuid: milestone_uuid_inactive
   status: backburner
 ly_newprojectum:
   begin_date: 2020-04-29
@@ -122,6 +123,7 @@ ly_newprojectum:
             This is for the PI to be able to find quality content to augment the report>
           - <replace with another URL if more than one is needed>
       type: meeting
+      uuid: test-uuid
   name: New projectum
   notes:
     - new note
@@ -143,6 +145,7 @@ pl_firstprojectum:
     - due_date: '2021-08-03'
       name: Milestone
       status: converged
+      uuid: milestone_uuid_pl1
   status: finished
 pl_secondprojectum:
   begin_date: '2020-07-25'
@@ -158,6 +161,7 @@ pl_secondprojectum:
     - due_date: '2021-08-03'
       name: Milestone
       status: converged
+      uuid: milestone_uuid_pl2
   status: proposed
 pl_thirdprojectum:
   begin_date: '2020-07-25'
@@ -173,6 +177,7 @@ pl_thirdprojectum:
     - due_date: '2021-08-03'
       name: Milestone
       status: converged
+      uuid: milestone_uuid_pl3
   status: backburner
 sb_firstprojectum:
   begin_date: '2020-04-28'
@@ -221,7 +226,7 @@ sb_firstprojectum:
         - do background reading
         - understand math
       tasks:
-        - saefadf-wdaagea2
+        - 1saefadf-wdaagea2
       objective: lead presents background reading and initial project plan
       audience:
         - lead
@@ -236,6 +241,7 @@ sb_firstprojectum:
           - token that dereferences a figure or image in group local storage db
         slides_urls:
           - url to slides describing the development, e.g. Google slides url
+      uuid: milestone_uuid_sb1
     - due_date: '2020-05-27'
       name: planning meeting
       objective: develop a detailed plan with dates
@@ -245,6 +251,7 @@ sb_firstprojectum:
         - group_members
       status: proposed
       type: mergedpr
+      uuid: milestone_uuid_sb1_2
   name: First Projectum
   other_urls:
     - https://docs.google.com/document/d/analysis

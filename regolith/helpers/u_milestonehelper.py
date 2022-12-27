@@ -10,7 +10,8 @@ from gooey import GooeyParser
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from regolith.tools import all_docs_from_collection, fragment_retrieval, \
+    get_uuid
 from regolith.dates import get_due_date
 from regolith.schemas import PROJECTUM_ACTIVE_STATI, \
     MILESTONE_TYPES, PROJECTUM_STATI
@@ -187,7 +188,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         "name, objective, and due date are required for a new milestone")
                 mil.update({'due_date': rc.due_date})
                 mil['due_date'] = get_due_date(mil)
-                mil.update({'objective': rc.objective, 'name': rc.name})
+                mil.update({'objective': rc.objective, 'name': rc.name, 'uuid': get_uuid()})
                 if rc.audience:
                     mil.update({'audience': rc.audience})
                 else:

@@ -32,7 +32,7 @@ def test_validate_python_single_col(make_db):
     ## sys.stdout.
     backup = sys.stdout
     sys.stdout = StringIO()
-    main(["validate", "--collection", "formalletters"])
+    main(["validate", "--collection", "projecta"])
     out = sys.stdout.getvalue()
     sys.stdout.close()
     sys.stdout = backup

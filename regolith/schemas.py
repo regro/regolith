@@ -1665,7 +1665,7 @@ EXEMPLARS = {
             'due_date': '2020-05-20',
             'name': 'Project lead presentation',
             'notes': ["do background reading", "understand math"],
-            'tasks': ["saefadf-wdaagea2"],
+            'tasks': ["1saefadf-wdaagea2"],
             'objective': 'lead presents background reading and '
                          'initial project plan',
             'audience': ['lead', 'pi', 'group_members'],
@@ -1676,7 +1676,8 @@ EXEMPLARS = {
                         'They turned out well and are blue as expected',
                 'figure': ['token that dereferences a figure or image in group local storage db'],
                 'slides_urls': ['url to slides describing the development, e.g. Google slides url']
-            }
+            },
+            'uuid': 'milestone_uuid_sb1'
         },
             {'due_date': '2020-05-27',
              'name': 'planning meeting',
@@ -1684,6 +1685,7 @@ EXEMPLARS = {
              'audience': ['lead', 'pi', 'group_members'],
              'status': 'proposed',
              'type': 'mergedpr',
+             'uuid': 'milestone_uuid_sb1_2'
              }
         ],
         "name": "First Projectum",
@@ -1702,7 +1704,7 @@ EXEMPLARS = {
             "description": "a prum that has various inactive states in milestones and overall",
             "deliverable": {"due_date": "2021-05-03", "status": "paused"},
             "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner", "type": "meeting"},
-            "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged"}]
+            "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged", "uuid": "milestone_uuid_inactive"}]
     },
         {
             "_id": "pl_firstprojectum",
@@ -1712,7 +1714,7 @@ EXEMPLARS = {
             "end_date": "2020-07-27",
             "deliverable": {"due_date": "2021-08-26", "status": "finished"},
             "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
-            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged", "uuid": "milestone_uuid_pl1"}]
         },
         {
             "_id": "pl_secondprojectum",
@@ -1721,7 +1723,7 @@ EXEMPLARS = {
             "begin_date": "2020-07-25",
             "deliverable": {"due_date": "2021-08-26", "status": "finished"},
             "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
-            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged", "uuid": "milestone_uuid_pl2"}]
         },
         {
             "_id": "pl_thirdprojectum",
@@ -1730,7 +1732,7 @@ EXEMPLARS = {
             "begin_date": "2020-07-25",
             "deliverable": {"due_date": "2021-08-26", "status": "finished"},
             "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
-            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged"}]
+            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged", "uuid": "milestone_uuid_pl3"}]
         }
         ],
     "projects": {
@@ -4166,6 +4168,10 @@ SCHEMAS = {
             "schema": {
                 "type": "dict",
                 "schema": {
+                    "uuid": {"description": "a universally unique id for the "
+                                            "task so it can be referenced elsewhere",
+                             "required": True,
+                             "type": "string"},
                     "due_date": {"description": "due date of milestone, yyyy-mm-dd",
                                  "required": False,
                                  "anyof_type": ["date", "string"]},
