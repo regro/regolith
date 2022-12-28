@@ -158,6 +158,12 @@ helper_map = [
      "2020-05-27: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n"
      "2020-05-20: lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
      ),
+    (["helper", "l_milestones", "--lead", "pliu"],
+     "2021-08-03 (milest): lead: pliu, pl_secondprojectum, Milestone, status: converged\n"
+     ),
+    (["helper", "l_milestones", "--lead", "pliu", "--verbose"],
+     "2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
+    ),
     (["helper", "l_projecta", "--verbose", "--orphan"],
      "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    description: a prum that has various inactive states in milestones and overall\n    team:\n        lead: abeing\n        group_members: None\n        collaborators: None\n"
      ),
