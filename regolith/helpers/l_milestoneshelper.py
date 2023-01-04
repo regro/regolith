@@ -172,6 +172,10 @@ class MilestonesListerHelper(SoutHelperBase):
 
             for ms in milestones:
                 due_date = get_due_date(ms)
+                if ms.get('uuid'):
+                    uuid_short = ms.get('uuid')
+                else:
+                    uuid_short = "      "
                 ms.update({
                     'lead': projectum.get('lead'),
                     'group_members': projectum.get('group_members'),
@@ -179,7 +183,8 @@ class MilestonesListerHelper(SoutHelperBase):
                     'id': projectum.get('_id'),
                     'due_date': due_date,
                     'log_url': projectum.get('log_url'),
-                    'pi': projectum.get('pi_id')
+                    'pi': projectum.get('pi_id'),
+                    'uuid_short': uuid_short[0:6]
                 })
             milestones.sort(key=lambda x: x['due_date'], reverse=True)
             all_milestones.extend(milestones)
@@ -196,8 +201,12 @@ class MilestonesListerHelper(SoutHelperBase):
                     print("-"*50)
                     prum = ms.get("id")
             if rc.verbose:
-                print(
-                    f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
+                if ms.get('uuid_short') == "      ":
+                    print(
+                        f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
+                else:
+                    print(
+                        f"{ms.get('due_date')} ({(ms.get('uuid_short'))}): lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
                 print(f"    Type: {ms.get('type', '')}")
                 print(f"    Title: {ms.get('name')}")
                 print(f"    log url: {ms.get('log_url')}")
@@ -215,8 +224,14 @@ class MilestonesListerHelper(SoutHelperBase):
                     print(f"    Notes:")
                     for note in ms.get("notes"):
                         print(f"      - {note}")
+                if ms.get("uuid"):
+                    print(f"    uuid: {ms.get('uuid')}")
             else:
-                print(
-                    f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")
+                if ms.get('uuid_short') == "      ":
+                    print(
+                        f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")
+                else:
+                    print(
+                        f"{ms.get('due_date')} ({(ms.get('uuid_short'))}): lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}, uuid: {ms.get('uuid')}")
 
         return
