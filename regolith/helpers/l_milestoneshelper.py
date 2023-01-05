@@ -160,10 +160,12 @@ class MilestonesListerHelper(SoutHelperBase):
             rc.stati = PROJECTUM_STATI
         for projectum in collection:
             projectum["deliverable"].update({"name": "deliverable",
-                                             "objective": "deliver"})
+                                             "objective": "deliver",
+                                             "uuid": projectum.get('_id')})
             milestones = [projectum["deliverable"]]
             if projectum.get("kickoff"):
-                projectum["kickoff"].update({"type": "meeting"})
+                projectum["kickoff"].update({"type": "meeting",
+                                             "uuid": f"ko{projectum.get('_id')}"})
                 milestones = [projectum["kickoff"], projectum["deliverable"]]
             milestones.extend(projectum["milestones"])
             milestones = [ms for ms in milestones if
@@ -197,7 +199,7 @@ class MilestonesListerHelper(SoutHelperBase):
                     prum = ms.get("id")
             if rc.verbose:
                 print(
-                    f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
+                    f"{ms.get('due_date')} ({(ms.get('uuid')[:6])}): lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}")
                 print(f"    Type: {ms.get('type', '')}")
                 print(f"    Title: {ms.get('name')}")
                 print(f"    log url: {ms.get('log_url')}")
@@ -215,8 +217,9 @@ class MilestonesListerHelper(SoutHelperBase):
                     print(f"    Notes:")
                     for note in ms.get("notes"):
                         print(f"      - {note}")
+                print(f"    uuid: {ms.get('uuid')}")
             else:
                 print(
-                    f"{ms.get('due_date')}: lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")
+                    f"{ms.get('due_date')} ({(ms.get('uuid')[:6])}): lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}")
 
         return
