@@ -165,7 +165,7 @@ class MilestonesListerHelper(SoutHelperBase):
             milestones = [projectum["deliverable"]]
             if projectum.get("kickoff"):
                 projectum["kickoff"].update({"type": "meeting",
-                                             "uuid": "ko" + projectum.get('_id')})
+                                             "uuid": f"ko{projectum.get('_id')}"})
                 milestones = [projectum["kickoff"], projectum["deliverable"]]
             milestones.extend(projectum["milestones"])
             milestones = [ms for ms in milestones if
