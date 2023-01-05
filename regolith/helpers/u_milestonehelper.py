@@ -98,10 +98,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
-        self.rc.databases = [{"name": "billingegroup-group",
+        self.rc.databases = [{"name": "billingegroup-private",
                        "url": "..",
                        "public": False,
-                       "path": "../rg-db-group/db",
+                       "path": "../rg-db-private/db",
                        "backend": "fs",
                        "local": True}]
         rc = self.rc
