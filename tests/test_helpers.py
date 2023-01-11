@@ -572,8 +572,10 @@ helper_map = [
          "2", "--deadline", "--notes", "test notes 1", "test notes 2", "--tags",
          "tag1",
          "tag2",
-         "--date", "2020-07-10"],
+         "--date", "2020-07-10",
+         "--milestone-uuid", "milestone_uuid_sb1"],
         "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
+        "sb_firstprojectum has been updated in projecta.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned-to", "sbillinge",
       "--end-date", "2020-07-20", "--date", "2020-07-13"],
