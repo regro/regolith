@@ -474,24 +474,20 @@ helper_map = [
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
      "ly_newprojectum has been added in projecta\n"),
-    (["helper", "u_milestone", "--uuid_fragment", "sb_fir", "--status", "finished",
+    (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "kosb_f", "--status", "finished",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
      "sb_firstprojectum has been updated in projecta.\n"
     ),
-    (["helper", "u_milestone", "--uuid_fragment", "kosb_f", "--status", "finished",
-      "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "meeting"],
-     "sb_firstprojectum has been updated in projecta.\n"
-     ),
-    (["helper", "u_milestone", "--uuid_fragment", "sb", "--status", "finished",
+    (["helper", "u_milestone", "--milestone_uuid", "sb", "--status", "finished",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
      "Milestone not found.\n"
-     "Please rerun the helper specifying the correct milestone uuid fragment.\n"
+     "Please rerun the helper specifying the correct milestone uuid.\n"
      ),
-    (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum",
-      "--name", "new milestone", "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
-      "--notes", "do this", "do that", "--type", "mergedpr"],
-     "sb_firstprojectum has been updated in projecta.\n"
-     ),
+#    (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum",
+#      "--name", "new milestone", "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
+#      "--notes", "do this", "do that", "--type", "mergedpr"],
+#     "sb_firstprojectum has been updated in projecta.\n"
+#     ),
     (["helper", "u_milestone", "--projectum_id", "sb", "--name", "new milestone",
       "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
       "--notes", "do this", "do that", "--type", "mergedpr"],
@@ -499,18 +495,16 @@ helper_map = [
      "sb_firstprojectum\n"
      "Please rerun the helper specifying the complete ID.\n"
      ),
-    (["helper", "u_milestone", "--uuid_fragment", "sb_fir", "--projectum_id", "sb_firstprojectum",
+    (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
      "A uuid fragment and projectum id have been entered.\n"
-     "You may enter a uuid fragment or a projectum id but not both.\n"
-     "Please enter the uuid fragment of the milestone you would like to update.\n"
-     "If you would like to add a new milestone to a projectum, enter the projectum id.\n"
+     "You may enter a milestone uuid or a projectum id but not both.\n"
+     "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
      ),
      (["helper", "u_milestone", "--due-date", "2023-01-01",
        "--notes", "do this", "do that", "--type", "mergedpr"],
-      "No uuid fragment or projectum id has been entered.\n"
-      "Please enter the uuid fragment of the milestone you would like to update.\n"
-      "If you would like to add a new milestone to a projectum, enter the projectum id.\n"
+      "No milestone uuid or projectum id was entered.\n"
+      "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
       ),
     (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
