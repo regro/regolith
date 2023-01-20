@@ -478,7 +478,7 @@ helper_map = [
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
      "sb_firstprojectum has been updated in projecta.\n"
     ),
-    (["helper", "u_milestone", "--milestone_uuid", "sb", "--status", "finished",
+    (["helper", "u_milestone", "--milestone_uuid", "0", "--status", "finished",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
      "Milestone not found.\n"
      "Please rerun the helper specifying the correct milestone uuid.\n"
