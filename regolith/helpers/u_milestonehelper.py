@@ -206,7 +206,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                             id.append(pid)
                 if target_ko:
                     for prum in target_ko:
-                        if prum.get('_id')[0:len(uuid)] == uuid[2:]:
+                        if prum.get('_id')[0:len(uuid)-2] == uuid[2:]:
                             kickoff = prum['kickoff']
                             upd_mil.append(kickoff)
                         if upd_mil:
