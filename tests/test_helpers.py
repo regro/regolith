@@ -473,27 +473,32 @@ helper_map = [
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
-     "ly_newprojectum has been added in projecta\n"),
-    (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "kosb_f", "--status", "finished",
+     "ly_newprojectum has been added in projecta\n"
+     ),
+    (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "--status", "finished",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
      "sb_firstprojectum has been updated in projecta.\n"
     ),
-    (["helper", "u_milestone", "--milestone_uuid", "0", "--status", "finished",
+    (["helper", "u_milestone", "--milestone_uuid", "pl", "--status", "finished",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
-     "Milestone not found.\n"
-     "Please rerun the helper specifying the correct milestone uuid.\n"
+     "Multiple ids match your entry(s).\n"
+     "Rerun the helper and include more characters of each id.\n"
      ),
 #    (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum",
 #      "--name", "new milestone", "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
 #      "--notes", "do this", "do that", "--type", "mergedpr"],
 #     "sb_firstprojectum has been updated in projecta.\n"
 #     ),
-    (["helper", "u_milestone", "--projectum_id", "sb", "--name", "new milestone",
+    (["helper", "u_milestone", "--projectum_id", "pl", "--name", "new milestone",
       "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
       "--notes", "do this", "do that", "--type", "mergedpr"],
      "Projecta not found. Projecta with similar names: \n"
-     "sb_firstprojectum\n"
+     "pl_firstprojectum\n"
+     "pl_secondprojectum\n"
+     "pl_thirdprojectum\n"
      "Please rerun the helper specifying the complete ID.\n"
+     "If your prum id looks correct, check that this id is in the collection "
+     "in the database that regolith is looking in (i.e., {rc.database}).\n"
      ),
     (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
