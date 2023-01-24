@@ -27,23 +27,15 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         date_kwargs['widget'] = 'DateChooser'
 
-    subpi.add_argument("projectum_id", help="The id of the projectum.  If you just "
-                                            "specify this the program will return a "
-                                            "numbered list of milestones to select for "
-                                            "updating. #1 in the list is always used "
-                                            "to add a new milestone.")
-    subpi.add_argument("-c", "--current", action="store_true",
-                       help="only list current (unfinished, unpaused) milestones",
-                       )
-    subpi.add_argument("-i", "--index",
-                       help="Index of the item in the enumerated list to update. "
-                            "To update multiple milestones with the same edits "
-                            "(often used for finishing checklist items), "
-                            "please enter in the "
-                            "format of 2,5,7 or 3-7 for multiple indices.",
-                       type=str)
-    subpi.add_argument("-v", "--verbose", action="store_true",
-                       help="Increases the verbosity of the output.")
+    subpi.add_argument("-i", "--milestone_uuid",
+                       help="The uuid of a milestone. "
+                            "Takes a full or partial uuid. "
+                            "Multiple uuids may be entered.",
+                       nargs='+')
+    subpi.add_argument("-p", "--projectum_id", help="The id of the projectum. If you "
+                                            "opt for this the program will assume "
+                                            "you are adding a new milestone "
+                                            "to the specified projectum.")
     subpi.add_argument("-u", "--due-date",
                        help="New due date of the milestone. "
                             "Required for a new milestone.",
@@ -110,161 +102,167 @@ class MilestoneUpdaterHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        key = rc.projectum_id
         if rc.date:
             now = date_parser.parse(rc.date).date()
         else:
             now = dt.date.today()
-        filterid = {'_id': key}
-        target_prum = rc.client.find_one(rc.database, rc.coll, filterid)
-        if not target_prum:
-            pra = fragment_retrieval(self.gtx["projecta"], ["_id"],
-                                     rc.projectum_id)
-            if len(pra) == 0:
-                raise RuntimeError(
-                    "Please input a valid projectum id or a valid fragment of a projectum id")
-            print("Projecta not found. Projecta with similar names: ")
-            for i in range(len(pra)):
-                print(f"{pra[i].get('_id')}")
-            print("Please rerun the helper specifying the complete ID.")
-            return
-        milestones = deepcopy(target_prum.get('milestones'))
-        deliverable = deepcopy(target_prum.get('deliverable'))
-        kickoff = deepcopy(target_prum.get('kickoff'))
-        deliverable['identifier'] = 'deliverable'
-        all_milestones = [deliverable]
-        if kickoff:
-            kickoff['identifier'] = 'kickoff'
-            if not kickoff.get('type'):
-                kickoff['type'] = 'meeting'
-            all_milestones = [deliverable, kickoff]
-        for item in milestones:
-            item['identifier'] = 'milestones'
-        all_milestones.extend(milestones)
-        for i in all_milestones:
-            i['due_date'] = get_due_date(i)
-        all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
-        index_list = list(range(2, (len(all_milestones) + 2)))
-        if not rc.index:
-            deliverable['name'] = 'deliverable'
-            print("Please choose from one of the following to update/add:")
-            print("1. new milestone")
-            for i, j in zip(index_list, all_milestones):
-                if rc.current:
-                    if j.get("status") not in PROJECTUM_ACTIVE_STATI:
-                        continue
-                print(
-                    f"{i}. {j.get('name')}    due date: {j.get('due_date')}"
-                    f"    status: {j.get('status')}")
-                if rc.verbose:
-                    if j.get("audience"):
-                        print(f"     audience: {j.get('audience')}")
-                    if j.get("objective"):
-                        print(f"     objective: {j.get('objective')}")
-                    if j.get("type"):
-                        print(f"     type: {j.get('type')}")
-                    if j.get('notes'):
-                        print(f"     notes:")
-                        for note in j.get('notes', []):
-                            print(f"       - {note}")
-                if j.get('identifier') == 'deliverable':
-                    del j['name']
-            return
-        rc.index = rc.index.replace(" ", "")
-        if "-" in rc.index:
-            idx_parsed = [i for i in range(int(rc.index.split('-')[0]),
-                                           int(rc.index.split('-')[1]) + 1)]
-        elif "," in rc.index:
-            idx_parsed = [int(i) for i in rc.index.split(',')]
-        else:
-            idx_parsed = [int(rc.index)]
         new_mil = []
-        for idx in idx_parsed:
-            pdoc = {}
-            if idx == 1:
-                mil = {}
-                if not rc.due_date or not rc.name or not rc.objective:
-                    raise RuntimeError(
-                        "name, objective, and due date are required for a new milestone")
-                mil.update({'due_date': rc.due_date})
-                mil['due_date'] = get_due_date(mil)
-                mil.update({'objective': rc.objective, 'name': rc.name, 'uuid': get_uuid()})
-                if rc.audience:
-                    mil.update({'audience': rc.audience})
-                else:
-                    mil.update({'audience': ['lead', 'pi', 'group_members']})
-                if rc.type:
+        pdoc = {}
+        if rc.projectum_id and rc.milestone_uuid:
+            raise RuntimeError("A uuid fragment and projectum id have been entered.\n"
+                                "You may enter a milestone uuid or a projectum id but not both.\n"
+                                "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n")
+        if not rc.projectum_id and not rc.milestone_uuid:
+            raise RuntimeError("No milestone uuid or projectum id was entered.\n"
+                                "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n")
+        if rc.projectum_id:
+            rc.projectum_id = rc.projectum_id.strip()
+            target_prum = rc.client.find_one(rc.database, rc.coll, {'_id': rc.projectum_id})
+            if not target_prum:
+                pra = fragment_retrieval(self.gtx["projecta"], ["_id"],
+                                         rc.projectum_id)
+                print("Projectum not found. Projecta with similar names: ")
+                for i in range(len(pra)):
+                    print(f"{pra[i].get('_id')}")
+                print("Please rerun the helper specifying the complete ID.\n"
+                      "If your prum id looks correct, check that this id is in the collection "
+                      "in the database that regolith is looking in (i.e., {rc.database}).")
+                return
+            milestones = deepcopy(target_prum.get('milestones'))
+            all_milestones = []
+            for item in milestones:
+                item['identifier'] = 'milestones'
+            all_milestones.extend(milestones)
+            for i in all_milestones:
+                i['due_date'] = get_due_date(i)
+            all_milestones.sort(key=lambda x: x['due_date'], reverse=False)
+            index_list = list(range(2, (len(all_milestones) + 2)))
+            mil = {}
+            if not rc.due_date or not rc.name or not rc.objective:
+                raise RuntimeError(
+                    "name, objective, and due date are required for a new milestone")
+            mil.update({'due_date': rc.due_date})
+            mil['due_date'] = get_due_date(mil)
+            mil.update({'objective': rc.objective, 'name': rc.name, 'uuid': get_uuid()})
+            if rc.audience:
+                mil.update({'audience': rc.audience})
+            else:
+                mil.update({'audience': ['lead', 'pi', 'group_members']})
+            if rc.status:
+                mil.update({'status': rc.status})
+            else:
+                mil.update({'status': 'proposed'})
+            if rc.notes:
+                mil.update({'notes': rc.notes})
+            if rc.type:
+                if rc.type in MILESTONE_TYPES:
                     mil.update({'type': rc.type})
                 else:
-                    mil.update({'type': 'meeting'})
-                if rc.status:
-                    mil.update({'status': rc.status})
-                else:
-                    mil.update({'status': 'proposed'})
-                if rc.notes:
-                    mil.update({'notes': rc.notes})
-                mil.update({'identifier': "milestones"})
-                new_mil.append(mil)
-                pdoc = {'milestones': mil}
-            if idx > 1:
-                doc = deepcopy(all_milestones[idx - 2])
-                identifier = doc['identifier']
-                if not doc.get(
-                        'type') and not rc.type and identifier == 'milestones':
-                    raise RuntimeError(
-                        "ERROR: This milestone does not have a type set and this is required. "
+                    raise ValueError(
+                        "ERROR: The type you have specified is not recognized. "
                         "Please rerun your command adding '--type' "
-                        f"and typing a type from this list: {MILESTONE_TYPES}")
-                if rc.type:
-                    if rc.type in MILESTONE_TYPES:
-                        doc.update({'type': rc.type})
-                    else:
-                        raise ValueError(
-                            "ERROR: The type you have specified is not recognized. "
-                            "Please rerun your command adding '--type' "
-                            f"and giving a type from this list: {MILESTONE_TYPES}")
-                if rc.finish:
-                    rc.status = "finished"
-                    doc.update({'end_date': now})
-                    notes = doc.get("notes", [])
-                    notes_with_closed_items = [note.replace('()', '(x)', 1) for note in notes]
-                    doc["notes"] = notes_with_closed_items              
-                    if identifier == 'deliverable':
-                        name = 'deliverable'
-                    else:
-                        name = doc['name']
-                    print(
-                        "The milestone {} has been marked as finished in prum {}".format(
-                            name, key))
-                if rc.status:
-                    doc.update({'status': rc.status})
-                if rc.audience:
-                    doc.update({'audience': rc.audience})
-                if rc.due_date:
-                    doc.update({'due_date': rc.due_date})
-                doc['due_date'] = get_due_date(doc)
-                if rc.objective:
-                    doc.update({'objective': rc.objective})
-                if rc.notes:
-                    notes = doc.get("notes", [])
-                    notes.extend(rc.notes)
-                    doc["notes"] = notes
-                if identifier == 'milestones':
-                    if rc.name:
-                        doc.update({'name': rc.name})
-                    new_mil.append(doc)
+                        f"and giving a type from this list: {MILESTONE_TYPES}")
+            else:
+                mil.update({'type': 'meeting'})
+            mil.update({'identifier': "milestones"})
+            new_mil.append(mil)
+            pdoc = {'milestones': mil}
+            new_all = deepcopy(all_milestones)
+            for i, j in zip(index_list, new_all):
+                if j['identifier'] == 'milestones':
+                    new_mil.append(j)
+            for mile in new_mil:
+                del mile['identifier']
+            new_mil.sort(key=lambda x: x['due_date'], reverse=False)
+            pdoc.update({'milestones': new_mil})
+            rc.client.update_one(rc.database, rc.coll, {'_id': rc.projectum_id}, pdoc)
+            print("{} has been updated in projecta".format(rc.projectum_id))
+        else:
+            for uuid in rc.milestone_uuid:
+                upd_mil = []
+                all_miles = []
+                id = []
+                target_mil = fragment_retrieval(self.gtx["projecta"], ["milestones"], uuid)
+                target_del = fragment_retrieval(self.gtx["projecta"], ["_id"], uuid)
+                target_ko = fragment_retrieval(self.gtx["projecta"], ["_id"], uuid[2:])
+                if target_mil:
+                    for prum in target_mil:
+                        milestones = prum['milestones']
+                        for milestone in milestones:
+                            if milestone.get('uuid')[0:len(uuid)] == uuid:
+                                upd_mil.append(milestone)
+                            else:
+                                all_miles.append(milestone)
+                        if upd_mil:
+                            pid = prum.get('_id')
+                            id.append(pid)
+                if target_del:
+                    for prum in target_del:
+                        if prum.get('_id')[0:len(uuid)] == uuid:
+                            deliverable = prum['deliverable']
+                            upd_mil.append(deliverable)
+                        if upd_mil:
+                            pid = prum.get('_id')
+                            id.append(pid)
+                if target_ko:
+                    for prum in target_ko:
+                        if prum.get('_id')[0:len(uuid)-2] == uuid[2:]:
+                            kickoff = prum['kickoff']
+                            upd_mil.append(kickoff)
+                        if upd_mil:
+                            pid = prum.get('_id')
+                            id.append(pid)
+                if len(upd_mil) == 1:
+                    for dict in upd_mil:
+                        pdoc.update(dict)
+                    for i in all_miles:
+                        i['due_date'] = get_due_date(i)
+                    if rc.finish:
+                        rc.status = "finished"
+                        pdoc.update({'end_date': now})
+                        notes = pdoc.get("notes", [])
+                        notes_with_closed_items = [note.replace('()', '(x)', 1) for note in notes]
+                        pdoc["notes"] = notes_with_closed_items
+                        if target_mil or target_ko:
+                            print("The milestone {} has been marked as finished in prum {}".format(
+                                                        pdoc.get('name'), id[0]))
+                        if target_del:
+                            name = 'deliverable'
+                            print("The milestone {} has been marked as finished in prum {}".format(
+                                                        name, id[0]))
+                    if rc.audience:
+                        pdoc.update({'audience': rc.audience})
+                    if rc.due_date:
+                        pdoc.update({'due_date': rc.due_date})
+                    if rc.name and not target_del:
+                        pdoc.update({'name': rc.name})
+                    if rc.objective and not target_del:
+                        pdoc.update({'objective': rc.objective})
+                    if rc.status:
+                        pdoc.update({'status': rc.status})
+                    if rc.notes:
+                        pdoc.update({'notes': rc.notes})
+                    if rc.type:
+                        if rc.type in MILESTONE_TYPES:
+                            pdoc.update({'type': rc.type})
+                        else:
+                            raise ValueError(
+                                "ERROR: The type you have specified is not recognized. "
+                                "Please rerun your command adding '--type' "
+                                f"and giving a type from this list: {MILESTONE_TYPES}")
+                    doc = {}
+                    pdoc['due_date'] = get_due_date(pdoc)
+                    all_miles.append(pdoc)
+                    all_miles.sort(key=lambda x: x['due_date'], reverse=False)
+                    if target_mil:
+                        doc.update({'milestones': all_miles})
+                    if target_del:
+                        doc.update({'deliverable': pdoc})
+                    if target_ko:
+                        doc.update({'kickoff': pdoc})
+                    rc.client.update_one(rc.database, rc.coll, {'_id': id[0]}, doc)
+                    print("{} has been updated in projecta.".format(id[0]))
                 else:
-                    del doc['identifier']
-                    pdoc.update({identifier: doc})
-        new_all = deepcopy(all_milestones)
-        for i, j in zip(index_list, new_all):
-            if j['identifier'] == 'milestones' and i not in idx_parsed:
-                new_mil.append(j)
-        for mile in new_mil:
-            del mile['identifier']
-        new_mil.sort(key=lambda x: x['due_date'], reverse=False)
-        pdoc.update({'milestones': new_mil})
-        rc.client.update_one(rc.database, rc.coll, filterid, pdoc)
-        print("{} has been updated in projecta".format(key))
-
+                    print("Multiple ids match your entry(s).\n"
+                          "Rerun the helper and include more characters of each id.")
         return

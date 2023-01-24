@@ -473,63 +473,44 @@ helper_map = [
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
-     "ly_newprojectum has been added in projecta\n"),
-    (["helper", "u_milestone", "sb_firstprojectum", "--index", "4,5",
-      "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this",
-      "do that", "--type", "meeting"],
-     "sb_firstprojectum has been updated in projecta\n"
+     "ly_newprojectum has been added in projecta\n"
      ),
-    (["helper", "u_milestone", "sb"],
+    (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "--status", "finished",
+      "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
+     "sb_firstprojectum has been updated in projecta.\n"
+    ),
+    (["helper", "u_milestone", "--milestone_uuid", "pl", "--status", "finished",
+      "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
+     "Multiple ids match your entry(s).\n"
+     "Rerun the helper and include more characters of each id.\n"
+     ),
+#    (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum",
+#      "--name", "new milestone", "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
+#      "--notes", "do this", "do that", "--type", "mergedpr"],
+#     "sb_firstprojectum has been updated in projecta.\n"
+#     ),
+    (["helper", "u_milestone", "--projectum_id", "pl", "--name", "new milestone",
+      "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
+      "--notes", "do this", "do that", "--type", "mergedpr"],
      "Projecta not found. Projecta with similar names: \n"
-     "sb_firstprojectum\n"
+     "pl_firstprojectum\n"
+     "pl_secondprojectum\n"
+     "pl_thirdprojectum\n"
      "Please rerun the helper specifying the complete ID.\n"
+     "If your prum id looks correct, check that this id is in the collection "
+     "in the database that regolith is looking in (i.e., {rc.database}).\n"
      ),
-    (["helper", "u_milestone", "sb_firstprojectum"],
-     "Please choose from one of the following to update/add:\n"
-     "1. new milestone\n"
-     "2. Kick off meeting    due date: 2020-05-06    status: finished\n"
-     "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
-     "4. deliverable    due date: 2020-06-01    status: converged\n"
-     "5. planning meeting    due date: 2020-06-01    status: converged\n"
+    (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum",
+      "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
+     "A uuid fragment and projectum id have been entered.\n"
+     "You may enter a milestone uuid or a projectum id but not both.\n"
+     "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
      ),
-    (["helper", "u_milestone", "sb_firstprojectum", "--verbose"],
-     "Please choose from one of the following to update/add:\n"
-     "1. new milestone\n"
-     "2. Kick off meeting    due date: 2020-05-06    status: finished\n"
-     "     audience: ['lead', 'pi', 'group_members']\n"
-     "     objective: introduce project to the lead\n"
-     "     type: meeting\n"
-     "     notes:\n"
-     "       - kickoff note\n"
-     "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
-     "     audience: ['lead', 'pi', 'group_members']\n"
-     "     objective: lead presents background reading and initial project plan\n"
-     "     type: meeting\n"
-     "     notes:\n"
-     "       - do background reading\n"
-     "       - understand math\n"
-     "4. deliverable    due date: 2020-06-01    status: converged\n"
-     "     audience: ['beginning grad in chemistry']\n"
-     "     type: meeting\n"
-     "     notes:\n"
-     "       - deliverable note\n"
-     "       - do this\n"
-     "       - do that\n"
-     "5. planning meeting    due date: 2020-06-01    status: converged\n"
-     "     audience: ['lead', 'pi', 'group_members']\n"
-     "     objective: develop a detailed plan with dates\n"
-     "     type: meeting\n"
-     "     notes:\n"
-     "       - do this\n"
-     "       - do that\n"
-     ),
-    (["helper", "u_milestone", "sb_firstprojectum", "--current"],
-     "Please choose from one of the following to update/add:\n"
-     "1. new milestone\n"
-     "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
-     "4. deliverable    due date: 2020-06-01    status: converged\n"
-     "5. planning meeting    due date: 2020-06-01    status: converged\n"
-     ),
+     (["helper", "u_milestone", "--due-date", "2023-01-01",
+       "--notes", "do this", "do that", "--type", "mergedpr"],
+      "No milestone uuid or projectum id was entered.\n"
+      "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
+      ),
     (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
      ),
