@@ -32,7 +32,7 @@ def subparser(subpi):
                             "Takes a full or partial uuid. "
                             "Multiple uuids may be entered.",
                        nargs='+')
-    subpi.add_argument("--projectum_id", help="The id of the projectum. If you "
+    subpi.add_argument("-p", "--projectum_id", help="The id of the projectum. If you "
                                             "opt for this the program will assume "
                                             "you are adding a new milestone "
                                             "to the specified projectum.")
@@ -121,7 +121,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             if not target_prum:
                 pra = fragment_retrieval(self.gtx["projecta"], ["_id"],
                                          rc.projectum_id)
-                print("Projecta not found. Projecta with similar names: ")
+                print("Projectum not found. Projecta with similar names: ")
                 for i in range(len(pra)):
                     print(f"{pra[i].get('_id')}")
                 print("Please rerun the helper specifying the complete ID.\n"
