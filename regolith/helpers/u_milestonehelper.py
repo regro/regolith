@@ -126,7 +126,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     print(f"{pra[i].get('_id')}")
                 print("Please rerun the helper specifying the complete ID.\n"
                       "If your prum id looks correct, check that this id is in the collection "
-                      "in the database that regolith is looking in (i.e., {rc.database}).")
+                      "in the database that regolith is looking in (i.e., {rc.database}).\n"
+                      "If this is the case, rerun with --database set to the database where the item is located.")
                 return
             milestones = deepcopy(target_prum.get('milestones'))
             all_milestones = []
@@ -179,13 +180,14 @@ class MilestoneUpdaterHelper(DbHelperBase):
             print("{} has been updated in projecta".format(rc.projectum_id))
         else:
             for uuid in rc.milestone_uuid:
+                pdoc = {}
                 upd_mil = []
                 all_miles = []
                 id = []
                 target_mil = fragment_retrieval(self.gtx["projecta"], ["milestones"], uuid)
                 target_del = fragment_retrieval(self.gtx["projecta"], ["_id"], uuid)
                 target_ko = fragment_retrieval(self.gtx["projecta"], ["_id"], uuid[2:])
-                if target_mil:
+                if target_mil and not target_del and not target_ko:
                     for prum in target_mil:
                         milestones = prum['milestones']
                         for milestone in milestones:
@@ -204,7 +206,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         if upd_mil:
                             pid = prum.get('_id')
                             id.append(pid)
-                if target_ko:
+                if target_ko and uuid[:2] == 'ko':
                     for prum in target_ko:
                         if prum.get('_id')[0:len(uuid)-2] == uuid[2:]:
                             kickoff = prum['kickoff']
@@ -212,7 +214,11 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         if upd_mil:
                             pid = prum.get('_id')
                             id.append(pid)
-                if len(upd_mil) == 1:
+                if len (upd_mil) == 0:
+                    print(f"No ids were found that match your entry ({uuid}).\n"
+                          "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.")
+                    return
+                elif len(upd_mil) == 1:
                     for dict in upd_mil:
                         pdoc.update(dict)
                     for i in all_miles:
@@ -254,15 +260,15 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     pdoc['due_date'] = get_due_date(pdoc)
                     all_miles.append(pdoc)
                     all_miles.sort(key=lambda x: x['due_date'], reverse=False)
-                    if target_mil:
+                    if target_mil and not target_del and not target_ko:
                         doc.update({'milestones': all_miles})
                     if target_del:
                         doc.update({'deliverable': pdoc})
-                    if target_ko:
+                    if target_ko and uuid[:2] == 'ko':
                         doc.update({'kickoff': pdoc})
                     rc.client.update_one(rc.database, rc.coll, {'_id': id[0]}, doc)
-                    print("{} has been updated in projecta.".format(id[0]))
+                    print("The milestone uuid {} in {} has been updated in projecta.".format(uuid, id[0]))
                 else:
-                    print("Multiple ids match your entry(s).\n"
-                          "Rerun the helper and include more characters of each id.")
+                    print(f"Multiple ids match your entry ({uuid}).\n"
+                          "Try entering six or more characters of the uuid and rerun the helper.")
         return

@@ -475,42 +475,34 @@ helper_map = [
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
      "ly_newprojectum has been added in projecta\n"
      ),
-    (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "--status", "finished",
-      "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
-     "sb_firstprojectum has been updated in projecta.\n"
+    (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "sb_firstpro", "kosb_firstpro",
+      "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this", "do that", "--type", "meeting"],
+     "The milestone uuid milestone_uuid_sb1_ in sb_firstprojectum has been updated in projecta.\n"
+     "The milestone uuid sb_firstpro in sb_firstprojectum has been updated in projecta.\n"
+     "The milestone uuid kosb_firstpro in sb_firstprojectum has been updated in projecta.\n"
     ),
+    (["helper", "u_milestone", "--milestone_uuid", "kosb_firtpro",
+      "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this", "do that", "--type", "meeting"],
+     "No ids were found that match your entry (kosb_firtpro).\n"
+     "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n"
+     ),
     (["helper", "u_milestone", "--milestone_uuid", "pl", "--status", "finished",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
-     "Multiple ids match your entry(s).\n"
-     "Rerun the helper and include more characters of each id.\n"
+     "Multiple ids match your entry (pl).\n"
+     "Try entering six or more characters of the uuid and rerun the helper.\n"
      ),
-#    (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum",
-#      "--name", "new milestone", "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
-#      "--notes", "do this", "do that", "--type", "mergedpr"],
-#     "sb_firstprojectum has been updated in projecta.\n"
-#     ),
     (["helper", "u_milestone", "--projectum_id", "pl", "--name", "new milestone",
       "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
       "--notes", "do this", "do that", "--type", "mergedpr"],
-     "Projecta not found. Projecta with similar names: \n"
+     "Projectum not found. Projecta with similar names: \n"
      "pl_firstprojectum\n"
      "pl_secondprojectum\n"
      "pl_thirdprojectum\n"
      "Please rerun the helper specifying the complete ID.\n"
      "If your prum id looks correct, check that this id is in the collection "
      "in the database that regolith is looking in (i.e., {rc.database}).\n"
+     "If this is the case, rerun with --database set to the database where the item is located.\n"
      ),
-    (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum",
-      "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
-     "A uuid fragment and projectum id have been entered.\n"
-     "You may enter a milestone uuid or a projectum id but not both.\n"
-     "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
-     ),
-     (["helper", "u_milestone", "--due-date", "2023-01-01",
-       "--notes", "do this", "do that", "--type", "mergedpr"],
-      "No milestone uuid or projectum id was entered.\n"
-      "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
-      ),
     (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
      ),
@@ -840,6 +832,26 @@ db_srcs = [
 #      ],
 #      "List of all tags in citations collection:\n['nomonth', 'pdf']\nbuilding lists for all tags in the citation collection\nnomonth has been added/updated in reading_lists\npdf has been added/updated in reading_lists\n"),
 #     ]
+
+helper_map_bad = [
+ (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum",
+   "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
+  "A uuid fragment and projectum id have been entered.\n"
+  "You may enter a milestone uuid or a projectum id but not both.\n"
+  "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
+  ),
+ (["helper", "u_milestone", "--due-date", "2023-01-01",
+   "--notes", "do this", "do that", "--type", "mergedpr"],
+  "No milestone uuid or projectum id was entered.\n"
+  "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
+  )]
+@pytest.mark.parametrize("hmb", helper_map_bad)
+def test_helpers_bad(hmb, make_db):
+ repo = Path(make_db)
+ os.chdir(repo)
+ with pytest.raises(RuntimeError) as excinfo:
+  actual =  main(args=hmb[0])
+ assert str(excinfo.value) == hmb[1]
 
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hm", helper_map)
