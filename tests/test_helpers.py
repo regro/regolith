@@ -9,6 +9,7 @@ import requests
 from pytest_mock import mocker
 
 from regolith.main import main
+from regolith.schemas import MILESTONE_TYPES
 
 dash = "-"
 helper_map = [
@@ -867,14 +868,14 @@ helper_map_bad = [
   "The type you have specified is not recognized. \n"
   "Please rerun your command adding '--type' \n"
   "and giving a type from this list:\n"
-  "['mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel']\n",
+  f"{MILESTONE_TYPES}\n",
   ValueError
   ),
  (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "--type", "bad_type"],
   "The type you have specified is not recognized. \n"
   "Please rerun your command adding '--type' \n"
   "and giving a type from this list:\n"
-  "['mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel']\n",
+  f"{MILESTONE_TYPES}\n",
   ValueError),
 ]
 
