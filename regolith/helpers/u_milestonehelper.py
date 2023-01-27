@@ -218,6 +218,18 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 elif len(upd_mil) == 1:
                     for dict in upd_mil:
                         pdoc.update(dict)
+                    if not pdoc.get('type') and not rc.type and not id[0][0:len(uuid)] == uuid:
+                        raise ValueError(
+                            f"Milestone ({uuid}) does not have a type set and this is required.\n"
+                            "Specify '--type' and rerun the helper to update this milestone.\n")
+                    if rc.type:
+                        if rc.type in MILESTONE_TYPES:
+                            pdoc.update({'type': rc.type})
+                        else:
+                            raise ValueError(
+                                "The type you have specified is not recognized. \n"
+                                "Please rerun your command adding '--type' \n"
+                                f"and giving a type from this list:\n{MILESTONE_TYPES}\n")
                     for i in all_miles:
                         i['due_date'] = get_due_date(i)
                     if rc.finish:
@@ -248,18 +260,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         pdoc.update({'status': rc.status})
                     if rc.notes:
                         pdoc.update({'notes': rc.notes})
-                    if not pdoc.get('type') and not rc.type and not id == uuid:
-                        raise ValueError(
-                            f"Milestone ({uuid}) does not have a type set and this is required.\n"
-                            "Specify '--type' and rerun the helper to update this milestone.\n")
-                    if rc.type:
-                        if rc.type in MILESTONE_TYPES:
-                            pdoc.update({'type': rc.type})
-                        else:
-                            raise ValueError(
-                                "The type you have specified is not recognized. \n"
-                                "Please rerun your command adding '--type' \n"
-                                f"and giving a type from this list:\n{MILESTONE_TYPES}\n")
                     doc = {}
                     pdoc['due_date'] = get_due_date(pdoc)
                     all_miles.append(pdoc)
