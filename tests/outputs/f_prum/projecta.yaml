@@ -186,7 +186,9 @@ sb_firstprojectum:
     - pdirac
   deliverable:
     audience:
-      - beginning grad in chemistry
+      - lead
+      - pi
+      - group_members
     due_date: 2020-06-01
     success_def: audience is happy
     scope:
@@ -198,7 +200,6 @@ sb_firstprojectum:
       - steps that the audience will take to access and interact with the deliverable
       - not needed for paper submissions
     notes:
-      - deliverable note
       - do this
       - do that
     status: finished

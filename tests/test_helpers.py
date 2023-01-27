@@ -9,6 +9,7 @@ import requests
 from pytest_mock import mocker
 
 from regolith.main import main
+from regolith.schemas import MILESTONE_TYPES
 
 dash = "-"
 helper_map = [
@@ -473,62 +474,42 @@ helper_map = [
     (["helper", "a_projectum", "New projectum", "lyang",
       "--date", "2020-04-29", "--collaborators", "afriend", "--description", "more work",
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
-     "ly_newprojectum has been added in projecta\n"),
-    (["helper", "u_milestone", "sb_firstprojectum", "--index", "4,5",
-      "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this",
-      "do that", "--type", "meeting"],
-     "sb_firstprojectum has been updated in projecta\n"
+     "ly_newprojectum has been added in projecta\n"
      ),
-    (["helper", "u_milestone", "sb"],
-     "Projecta not found. Projecta with similar names: \n"
-     "sb_firstprojectum\n"
+    (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "sb_firstpro", "--name",
+      "planning meeting", "--objective", "develop a detailed plan with dates","--audience", "lead", "pi", "group_members",
+      "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this", "do that", "--type", "meeting"],
+     "The milestone uuid milestone_uuid_sb1_ in sb_firstprojectum has been updated in projecta.\n"
+     "Ignoring 'name' assignment for deliverable uuid (sb_firstpro)\n"
+     "Ignoring 'objective' assignment for deliverable uuid (sb_firstpro)\n"
+     "The milestone uuid sb_firstpro in sb_firstprojectum has been updated in projecta.\n"
+    ),
+    #(["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_pl2", "pl_secondpro", "kopl_second", "--finish",
+    #  "--type", "meeting"],
+    # "The milestone 'Milestone' has been marked as finished in prum pl_secondprojectum.\n"
+    # "The milestone 'deliverable' has been marked as finished in prum pl_secondprojectum.\n"
+    # "The milestone 'Kickoff' has been marked as finished in prum pl_secondprojectum.\n"
+    # ),
+    (["helper", "u_milestone", "--milestone_uuid", "bad_id"],
+     "No ids were found that match your entry (bad_id).\n"
+     "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n"
+     ),
+    (["helper", "u_milestone", "--milestone_uuid", "pl", "--status", "finished",
+      "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
+     "Multiple ids match your entry (pl).\n"
+     "Try entering six or more characters of the uuid and rerunning the helper.\n"
+     ),
+    (["helper", "u_milestone", "--projectum_id", "pl", "--name", "new milestone",
+      "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
+      "--notes", "do this", "do that", "--type", "mergedpr"],
+     "Projectum not found. Projecta with similar names: \n"
+     "pl_firstprojectum\n"
+     "pl_secondprojectum\n"
+     "pl_thirdprojectum\n"
      "Please rerun the helper specifying the complete ID.\n"
-     ),
-    (["helper", "u_milestone", "sb_firstprojectum"],
-     "Please choose from one of the following to update/add:\n"
-     "1. new milestone\n"
-     "2. Kick off meeting    due date: 2020-05-06    status: finished\n"
-     "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
-     "4. deliverable    due date: 2020-06-01    status: converged\n"
-     "5. planning meeting    due date: 2020-06-01    status: converged\n"
-     ),
-    (["helper", "u_milestone", "sb_firstprojectum", "--verbose"],
-     "Please choose from one of the following to update/add:\n"
-     "1. new milestone\n"
-     "2. Kick off meeting    due date: 2020-05-06    status: finished\n"
-     "     audience: ['lead', 'pi', 'group_members']\n"
-     "     objective: introduce project to the lead\n"
-     "     type: meeting\n"
-     "     notes:\n"
-     "       - kickoff note\n"
-     "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
-     "     audience: ['lead', 'pi', 'group_members']\n"
-     "     objective: lead presents background reading and initial project plan\n"
-     "     type: meeting\n"
-     "     notes:\n"
-     "       - do background reading\n"
-     "       - understand math\n"
-     "4. deliverable    due date: 2020-06-01    status: converged\n"
-     "     audience: ['beginning grad in chemistry']\n"
-     "     type: meeting\n"
-     "     notes:\n"
-     "       - deliverable note\n"
-     "       - do this\n"
-     "       - do that\n"
-     "5. planning meeting    due date: 2020-06-01    status: converged\n"
-     "     audience: ['lead', 'pi', 'group_members']\n"
-     "     objective: develop a detailed plan with dates\n"
-     "     type: meeting\n"
-     "     notes:\n"
-     "       - do this\n"
-     "       - do that\n"
-     ),
-    (["helper", "u_milestone", "sb_firstprojectum", "--current"],
-     "Please choose from one of the following to update/add:\n"
-     "1. new milestone\n"
-     "3. Project lead presentation    due date: 2020-05-20    status: proposed\n"
-     "4. deliverable    due date: 2020-06-01    status: converged\n"
-     "5. planning meeting    due date: 2020-06-01    status: converged\n"
+     "If your prum id looks correct, check that this id is in the collection "
+     "in the database test.\n"
+     "If this is the case, rerun with --database set to the database where the item is located.\n"
      ),
     (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"
@@ -859,6 +840,52 @@ db_srcs = [
 #      ],
 #      "List of all tags in citations collection:\n['nomonth', 'pdf']\nbuilding lists for all tags in the citation collection\nnomonth has been added/updated in reading_lists\npdf has been added/updated in reading_lists\n"),
 #     ]
+
+helper_map_bad = [
+ (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum"],
+  "Detected both a uuid fragment and projectum id.\n"
+  "You may enter either a milestone uuid or a projectum id but not both.\n"
+  "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n",
+  RuntimeError
+  ),
+ (["helper", "u_milestone", "--due-date", "2020-06-01",
+   "--notes", "do this", "do that", "--type", "mergedpr"],
+  "No milestone uuid or projectum id was entered.\n"
+  "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n",
+  RuntimeError
+  ),
+ (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum", "--due_date", "2020-06-01"],
+  "name, objective, and due date are required for a new milestone",
+  RuntimeError
+  ),
+ (["helper", "u_milestone", "--milestone_uuid", "kopl_first", "--due_date", "2020-06-01"],
+  "Milestone (kopl_first) does not have a type set and this is required.\n"
+  "Specify '--type' and rerun the helper to update this milestone.\n",
+  ValueError
+  ),
+ (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum", "-u", "2020-06-01",
+   "-n", "new milestone", "-o", "complete ms", "--type", "bad_type"],
+  "The type you have specified is not recognized. \n"
+  "Please rerun your command adding '--type' \n"
+  "and giving a type from this list:\n"
+  f"{MILESTONE_TYPES}\n",
+  ValueError
+  ),
+ (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "--type", "bad_type"],
+  "The type you have specified is not recognized. \n"
+  "Please rerun your command adding '--type' \n"
+  "and giving a type from this list:\n"
+  f"{MILESTONE_TYPES}\n",
+  ValueError),
+]
+
+@pytest.mark.parametrize("hmb", helper_map_bad)
+def test_helpers_bad(hmb, make_db):
+ repo = Path(make_db)
+ os.chdir(repo)
+ with pytest.raises(hmb[2]) as excinfo:
+  actual =  main(args=hmb[0])
+ assert str(excinfo.value) == hmb[1]
 
 @pytest.mark.parametrize("db_src", db_srcs)
 @pytest.mark.parametrize("hm", helper_map)
