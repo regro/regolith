@@ -109,8 +109,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
         new_mil = []
         pdoc = {}
         if rc.projectum_id and rc.milestone_uuid:
-            raise RuntimeError("A uuid fragment and projectum id have been entered.\n"
-                                "You may enter a milestone uuid or a projectum id but not both.\n"
+            raise RuntimeError("Detected both a uuid fragment and projectum id.\n"
+                                "You may enter either a milestone uuid or a projectum id but not both.\n"
                                 "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n")
         if not rc.projectum_id and not rc.milestone_uuid:
             raise RuntimeError("No milestone uuid or projectum id was entered.\n"
@@ -126,7 +126,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     print(f"{pra[i].get('_id')}")
                 print("Please rerun the helper specifying the complete ID.\n"
                       "If your prum id looks correct, check that this id is in the collection "
-                      "in the database that regolith is looking in (i.e., {rc.database}).\n"
+                      f"in the database {rc.database}.\n"
                       "If this is the case, rerun with --database set to the database where the item is located.")
                 return
             milestones = deepcopy(target_prum.get('milestones'))
@@ -160,9 +160,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     mil.update({'type': rc.type})
                 else:
                     raise ValueError(
-                        "ERROR: The type you have specified is not recognized. "
-                        "Please rerun your command adding '--type' "
-                        f"and giving a type from this list: {MILESTONE_TYPES}")
+                        "The type you have specified is not recognized. \n"
+                        "Please rerun your command adding '--type' \n"
+                        f"and giving a type from this list:\n{MILESTONE_TYPES}\n")
             else:
                 mil.update({'type': 'meeting'})
             mil.update({'identifier': "milestones"})
@@ -177,13 +177,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
             new_mil.sort(key=lambda x: x['due_date'], reverse=False)
             pdoc.update({'milestones': new_mil})
             rc.client.update_one(rc.database, rc.coll, {'_id': rc.projectum_id}, pdoc)
-            print("{} has been updated in projecta".format(rc.projectum_id))
+            print(f"{rc.projectum_id} has been updated in projecta")
         else:
             for uuid in rc.milestone_uuid:
-                pdoc = {}
-                upd_mil = []
-                all_miles = []
-                id = []
+                pdoc, upd_mil, all_miles, id = {},[],[],[]
                 target_mil = fragment_retrieval(self.gtx["projecta"], ["milestones"], uuid)
                 target_del = fragment_retrieval(self.gtx["projecta"], ["_id"], uuid)
                 target_ko = fragment_retrieval(self.gtx["projecta"], ["_id"], uuid[2:])
@@ -226,36 +223,43 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     if rc.finish:
                         rc.status = "finished"
                         pdoc.update({'end_date': now})
-                        notes = pdoc.get("notes", [])
-                        notes_with_closed_items = [note.replace('()', '(x)', 1) for note in notes]
-                        pdoc["notes"] = notes_with_closed_items
-                        if target_mil or target_ko:
-                            print("The milestone {} has been marked as finished in prum {}".format(
-                                                        pdoc.get('name'), id[0]))
-                        if target_del:
+                        if pdoc.get('notes'):
+                            notes = pdoc.get("notes", [])
+                            notes_with_closed_items = [note.replace('()', '(x)', 1) for note in notes]
+                            pdoc["notes"] = notes_with_closed_items
+                        if pdoc.get('name'):
+                            print(f"The milestone '{pdoc.get('name')}' has been marked as finished in prum {id[0]}.")
+                        else:
                             name = 'deliverable'
-                            print("The milestone {} has been marked as finished in prum {}".format(
-                                                        name, id[0]))
+                            print(f"The milestone '{name}' has been marked as finished in prum {id[0]}.")
                     if rc.audience:
                         pdoc.update({'audience': rc.audience})
                     if rc.due_date:
                         pdoc.update({'due_date': rc.due_date})
-                    if rc.name and not target_del:
+                    if rc.name and pdoc.get('name'):
                         pdoc.update({'name': rc.name})
-                    if rc.objective and not target_del:
+                    elif rc.name and not pdoc.get('name'):
+                        print(f"Ignoring 'name' assignment for deliverable uuid ({uuid})")
+                    if rc.objective and pdoc.get('name'):
                         pdoc.update({'objective': rc.objective})
+                    elif rc.objective and not pdoc.get('name'):
+                        print(f"Ignoring 'objective' assignment for deliverable uuid ({uuid})")
                     if rc.status:
                         pdoc.update({'status': rc.status})
                     if rc.notes:
                         pdoc.update({'notes': rc.notes})
+                    if not pdoc.get('type') and not rc.type and not id == uuid:
+                        raise ValueError(
+                            f"Milestone ({uuid}) does not have a type set and this is required.\n"
+                            "Specify '--type' and rerun the helper to update this milestone.\n")
                     if rc.type:
                         if rc.type in MILESTONE_TYPES:
                             pdoc.update({'type': rc.type})
                         else:
                             raise ValueError(
-                                "ERROR: The type you have specified is not recognized. "
-                                "Please rerun your command adding '--type' "
-                                f"and giving a type from this list: {MILESTONE_TYPES}")
+                                "The type you have specified is not recognized. \n"
+                                "Please rerun your command adding '--type' \n"
+                                f"and giving a type from this list:\n{MILESTONE_TYPES}\n")
                     doc = {}
                     pdoc['due_date'] = get_due_date(pdoc)
                     all_miles.append(pdoc)
@@ -267,8 +271,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     if target_ko and uuid[:2] == 'ko':
                         doc.update({'kickoff': pdoc})
                     rc.client.update_one(rc.database, rc.coll, {'_id': id[0]}, doc)
-                    print("The milestone uuid {} in {} has been updated in projecta.".format(uuid, id[0]))
+                    if not rc.finish:
+                        print(f"The milestone uuid {uuid} in {id[0]} has been updated in projecta.")
                 else:
                     print(f"Multiple ids match your entry ({uuid}).\n"
-                          "Try entering six or more characters of the uuid and rerun the helper.")
+                          "Try entering six or more characters of the uuid and rerunning the helper.")
         return

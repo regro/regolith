@@ -186,7 +186,9 @@ sb_firstprojectum:
     - pdirac
   deliverable:
     audience:
-      - beginning grad in chemistry
+      - lead
+      - pi
+      - group_members
     due_date: 2020-06-01
     success_def: audience is happy
     scope:
@@ -208,7 +210,7 @@ sb_firstprojectum:
     - ascopatz
   kickoff:
     date: '2020-05-05'
-    due_date: 2020-06-01
+    due_date: '2020-05-06'
     end_date: '2020-05-07'
     name: Kick off meeting
     objective: introduce project to the lead
@@ -217,10 +219,8 @@ sb_firstprojectum:
       - pi
       - group_members
     notes:
-      - do this
-      - do that
-    status: converged
-    type: meeting
+      - kickoff note
+    status: finished
   lead: ascopatz
   log_url: https://docs.google.com/document/d/1pQMFpuI
   milestones:
