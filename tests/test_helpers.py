@@ -840,52 +840,49 @@ db_srcs = [
 #      "List of all tags in citations collection:\n['nomonth', 'pdf']\nbuilding lists for all tags in the citation collection\nnomonth has been added/updated in reading_lists\npdf has been added/updated in reading_lists\n"),
 #     ]
 
-hm_run_err = [
+helper_map_bad = [
  (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum"],
   "Detected both a uuid fragment and projectum id.\n"
   "You may enter either a milestone uuid or a projectum id but not both.\n"
-  "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
+  "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n",
+  RuntimeError
   ),
  (["helper", "u_milestone", "--due-date", "2020-06-01",
    "--notes", "do this", "do that", "--type", "mergedpr"],
   "No milestone uuid or projectum id was entered.\n"
-  "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
+  "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n",
+  RuntimeError
   ),
  (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum", "--due_date", "2020-06-01"],
-  "name, objective, and due date are required for a new milestone")
-]
-
-@pytest.mark.parametrize("hmb", hm_run_err)
-def test_helpers_bad(hmb, make_db):
- repo = Path(make_db)
- os.chdir(repo)
- with pytest.raises(RuntimeError) as excinfo:
-  actual =  main(args=hmb[0])
- assert str(excinfo.value) == hmb[1]
-
-hm_val_err = [
+  "name, objective, and due date are required for a new milestone",
+  RuntimeError
+  ),
  (["helper", "u_milestone", "--milestone_uuid", "kopl_first", "--due_date", "2020-06-01"],
   "Milestone (kopl_first) does not have a type set and this is required.\n"
-  "Specify '--type' and rerun the helper to update this milestone.\n"
+  "Specify '--type' and rerun the helper to update this milestone.\n",
+  ValueError
   ),
  (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum", "-u", "2020-06-01",
    "-n", "new milestone", "-o", "complete ms", "--type", "bad_type"],
   "The type you have specified is not recognized. \n"
   "Please rerun your command adding '--type' \n"
   "and giving a type from this list:\n"
-  "['mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel']\n"),
+  "['mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel']\n",
+  ValueError
+  ),
  (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "--type", "bad_type"],
   "The type you have specified is not recognized. \n"
   "Please rerun your command adding '--type' \n"
   "and giving a type from this list:\n"
-  "['mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel']\n"),
- ]
+  "['mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin', 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision', 'demo', 'skel']\n",
+  ValueError),
+]
 
-@pytest.mark.parametrize("hmb", hm_val_err)
+@pytest.mark.parametrize("hmb", helper_map_bad)
 def test_helpers_bad(hmb, make_db):
  repo = Path(make_db)
  os.chdir(repo)
- with pytest.raises(ValueError) as excinfo:
+ with pytest.raises(hmb[2]) as excinfo:
   actual =  main(args=hmb[0])
  assert str(excinfo.value) == hmb[1]
 
