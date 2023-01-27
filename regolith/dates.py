@@ -238,7 +238,7 @@ def get_dates(thing, date_field_prefix=None):
     minimal_things = list(set([thing.get(i) for i in datenames])) if date_field_prefix \
         else list(set([thing.get(i) for i in minimal_set]))
     if len(minimal_things) == 1 and not minimal_things[0]:
-        print("WARNING: cannot find any dates")
+        print(f"WARNING: cannot find any dates in {thing.get('_id', '(no id)')}")
         dates = {}
         return dates
     for key, value in thing.items():
@@ -252,7 +252,7 @@ def get_dates(thing, date_field_prefix=None):
                     except ValueError:
                         pass
     if thing.get("end_year") and not thing.get("begin_year"):
-        print('WARNING: end_year specified without begin_year')
+        print(f"WARNING: end_year specified without begin_year {thing.get('_id', '(no id)')}")
     begin_date, end_date, date = None, None, None
     if thing.get("begin_year"):
         if not thing.get("begin_month"):
@@ -271,12 +271,12 @@ def get_dates(thing, date_field_prefix=None):
     if thing.get(datenames[2]):
         if not thing.get(datenames[1]):
             if thing.get("begin_year"):
-                print("WARNING: both year and begin_year specified.  Year info will be used")
+                print(f"WARNING: both year and begin_year specified in {thing.get('_id', '(no id)')}.  Year info will be used")
             begin_date = datetime.date(thing[datenames[2]],1,1)
             end_date = datetime.date(thing[datenames[2]],12,31)
         elif not thing.get(datenames[0]):
             if thing.get("begin_year"):
-                print("WARNING: both year and begin_year specified.  Year info will be used")
+                print(f"WARNING: both year and begin_year specified in {thing.get('_id', '(no id)')}.  Year info will be used")
             begin_date = datetime.date(thing[datenames[2]],month_to_int(thing[datenames[1]]),
                                    1)
             end_date = datetime.date(thing[datenames[2]],
