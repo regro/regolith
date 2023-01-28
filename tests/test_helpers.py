@@ -863,6 +863,13 @@ helper_map_bad = [
   "Specify '--type' and rerun the helper to update this milestone.\n",
   ValueError
   ),
+ (["helper", "u_milestone", "--milestone_uuid", "kopl_first", "--type", "bad_type"],
+  "The type you have specified is not recognized. \n"
+  "Please rerun your command adding '--type' \n"
+  "and giving a type from this list:\n"
+  f"{MILESTONE_TYPES}\n",
+  ValueError
+  ),
  (["helper", "u_milestone", "--projectum_id", "sb_firstprojectum", "-u", "2020-06-01",
    "-n", "new milestone", "-o", "complete ms", "--type", "bad_type"],
   "The type you have specified is not recognized. \n"
