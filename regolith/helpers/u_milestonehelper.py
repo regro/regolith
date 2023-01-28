@@ -218,7 +218,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 elif len(upd_mil) == 1:
                     for dict in upd_mil:
                         pdoc.update(dict)
-                    if not pdoc.get('type') and not rc.type and not id[0][0:len(uuid)] == uuid:
+                    if not pdoc.get('type') and not rc.type and not target_del and not target_ko:
                         raise ValueError(
                             f"Milestone ({uuid}) does not have a type set and this is required.\n"
                             "Specify '--type' and rerun the helper to update this milestone.\n")
