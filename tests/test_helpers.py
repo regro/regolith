@@ -858,8 +858,8 @@ helper_map_bad = [
   "name, objective, and due date are required for a new milestone",
   RuntimeError
   ),
- (["helper", "u_milestone", "--milestone_uuid", "kopl_first", "--due_date", "2020-06-01"],
-  "Milestone (kopl_first) does not have a type set and this is required.\n"
+ (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_pl1", "--due_date", "2020-06-01"],
+  "Milestone (milestone_uuid_pl1) does not have a type set and this is required.\n"
   "Specify '--type' and rerun the helper to update this milestone.\n",
   ValueError
   ),
