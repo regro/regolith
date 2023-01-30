@@ -553,7 +553,9 @@ helper_map = [
          "2", "--deadline", "--notes", "test notes 1", "test notes 2", "--tags",
          "tag1",
          "tag2",
-         "--date", "2020-07-10"],
+         "--date", "2020-07-10",
+         "--milestone_uuid", "milestone_uuid_sb1_2"],
+        "The milestone uuid milestone_uuid_sb1_2 in sb_firstprojectum has been updated in projecta.\n"
         "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned-to", "sbillinge",
@@ -884,6 +886,15 @@ helper_map_bad = [
   "and giving a type from this list:\n"
   f"{MILESTONE_TYPES}\n",
   ValueError),
+ (["helper", "a_todo", "test a_todo", "6", "50",
+   "--milestone_uuid", "bad_id"],
+  "",
+  SystemExit
+  ),
+ (["helper", "a_todo", "test a_todo", "6", "50",
+   "--milestone_uuid", "pl_"],
+  "",
+  SystemExit)
 ]
 
 @pytest.mark.parametrize("hmb", helper_map_bad)

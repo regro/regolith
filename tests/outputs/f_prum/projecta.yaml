@@ -261,6 +261,7 @@ sb_firstprojectum:
       notes:
         - do this
         - do that
+      tasks: test-uuid
       end_date: 2020-07-01
   name: First Projectum
   other_urls:

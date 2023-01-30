@@ -9,11 +9,13 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id, get_uuid
+    get_pi_id, get_uuid, add_todo_id_to_tasks
 )
 from gooey import GooeyParser
+from sys import exit
 
 TARGET_COLL = "todos"
+PROJECTA = "projecta"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 
 
@@ -57,6 +59,9 @@ def subparser(subpi):
                        help="ID of the group member to whom the task is assigned. Default is the id saved in user.json. ")
     subpi.add_argument("-b", "--assigned-by",
                        help="ID of the member that is assigning the task. Default is the id saved in user.json. ")
+    subpi.add_argument("-i", "--milestone_uuid",
+                       help="Add this todo as a milestone task. "
+                            "Takes a full or partial milestone uuid.")
     subpi.add_argument("--begin-date",
                        help="Begin date of the task. Default is today.",
                        **date_kwargs
@@ -77,7 +82,7 @@ class TodoAdderHelper(DbHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = "a_todo"
-    needed_colls = [f'{TARGET_COLL}']
+    needed_colls = [f'{TARGET_COLL}', f'{PROJECTA}']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -88,10 +93,14 @@ class TodoAdderHelper(DbHelperBase):
             rc.pi_id = get_pi_id(rc)
 
         rc.coll = f"{TARGET_COLL}"
+        rc.col2 = f"{PROJECTA}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
+        )
+        gtx[rc.col2] = sorted(
+            all_docs_from_collection(rc.client, rc.col2), key=_id_key
         )
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
@@ -159,6 +168,12 @@ class TodoAdderHelper(DbHelperBase):
             todolist[-1]['notes'] = rc.notes
         if rc.tags:
             todolist[-1]['tags'] = rc.tags
+        if rc.milestone_uuid:
+            success = add_todo_id_to_tasks(self.gtx, rc.client, rc.database, rc.col2, rc.milestone_uuid, todolist[-1]['uuid'])
+            if success:
+                print(success)
+            else:
+                exit()
         indices = [todo.get("running_index", 0) for todo in todolist]
         todolist[-1]['running_index'] = max(indices) + 1
         rc.client.update_one(rc.database, rc.coll, {'_id': rc.assigned_to},

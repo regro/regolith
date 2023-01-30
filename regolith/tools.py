@@ -20,7 +20,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from urllib.parse import urlparse
 
-from regolith.dates import month_to_int, date_to_float, get_dates, is_current
+from regolith.dates import month_to_int, date_to_float, get_dates, is_current, get_due_date
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
 from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, \
@@ -2315,3 +2315,42 @@ def get_appointments(person, appointments, target_grant=None):
             appointments.append((person.get('_id'), bd, ed, appt.get('loading'),
                          round(weighted_duration, 2), appt.get('grant')))
     return appointments
+
+def add_todo_id_to_tasks(gtx, client, db, coll, milestone_id, task_id):
+    pdoc, upd_mil, all_miles, id, success = {}, [], [], [], []
+    target_mil = fragment_retrieval(gtx["projecta"], ["milestones"], milestone_id)
+    if target_mil:
+        for prum in target_mil:
+            milestones = prum['milestones']
+            for milestone in milestones:
+                if milestone.get('uuid')[0:len(milestone_id)] == milestone_id:
+                    upd_mil.append(milestone)
+                else:
+                    all_miles.append(milestone)
+            if upd_mil:
+                pid = prum.get('_id')
+                id.append(pid)
+    if len(upd_mil) == 0:
+        print(f"No ids were found that match your entry ({milestone_id}).\n"
+              "Make sure you have entered the correct milestone uuid or uuid fragment and rerun the helper.")
+        return
+    elif len(upd_mil) == 1:
+        doc = {}
+        for dict in upd_mil:
+            pdoc.update(dict)
+        for i in all_miles:
+            i['due_date'] = get_due_date(i)
+        pdoc.update({'tasks': task_id})
+        pdoc['due_date'] = get_due_date(pdoc)
+        all_miles.append(pdoc)
+        all_miles.sort(key=lambda x: x['due_date'], reverse=False)
+        doc.update({'milestones': all_miles})
+        client.update_one(db, coll, {'_id': id[0]}, doc)
+        success.append(f"The milestone uuid {milestone_id} in {id[0]} has been updated in projecta.")
+    else:
+        print(f"Multiple ids match your entry ({milestone_id}).\n"
+              "Try entering six or more characters of the uuid and rerunning the helper.")
+        return
+
+    return success[0]
+
