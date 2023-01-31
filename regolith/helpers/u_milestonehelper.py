@@ -7,6 +7,7 @@ from itertools import chain
 import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
+from gooey.gui.components.widgets import textfield
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -99,15 +100,13 @@ class MilestoneUpdaterHelper(DbHelperBase):
         gtx["float"] = float
         gtx["str"] = str
         gtx["zip"] = zip
-
     def db_updater(self):
         rc = self.rc
         if rc.date:
             now = date_parser.parse(rc.date).date()
         else:
             now = dt.date.today()
-        new_mil = []
-        pdoc = {}
+        new_mil, pdoc, success, fail = [],{},[],[]
         if rc.projectum_id and rc.milestone_uuid:
             raise RuntimeError("Detected both a uuid fragment and projectum id.\n"
                                 "You may enter either a milestone uuid or a projectum id but not both.\n"
@@ -124,10 +123,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 print("Projectum not found. Projecta with similar names: ")
                 for i in range(len(pra)):
                     print(f"{pra[i].get('_id')}")
-                print("Please rerun the helper specifying the complete ID.\n"
-                      "If your prum id looks correct, check that this id is in the collection "
-                      f"in the database {rc.database}.\n"
-                      "If this is the case, rerun with --database set to the database where the item is located.")
+                print("Please rerun the helper specifying the complete ID.")
+#                      "If your prum id looks correct, check that this id is in the collection "
+#                      f"in the database {rc.database}.\n"
+#                      "If this is the case, rerun with --database set to the database where the item is located.")
                 return
             milestones = deepcopy(target_prum.get('milestones'))
             all_milestones = []
@@ -212,9 +211,8 @@ class MilestoneUpdaterHelper(DbHelperBase):
                             pid = prum.get('_id')
                             id.append(pid)
                 if len (upd_mil) == 0:
-                    print(f"No ids were found that match your entry ({uuid}).\n"
+                    fail.append(f"No ids were found that match your entry ({uuid}).\n"
                           "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.")
-                    return
                 elif len(upd_mil) == 1:
                     for dict in upd_mil:
                         pdoc.update(dict)
@@ -240,10 +238,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
                             notes_with_closed_items = [note.replace('()', '(x)', 1) for note in notes]
                             pdoc["notes"] = notes_with_closed_items
                         if pdoc.get('name'):
-                            print(f"The milestone '{pdoc.get('name')}' has been marked as finished in prum {id[0]}.")
+                            success.append(f"The milestone '{pdoc.get('name')}' has been marked as finished in prum {id[0]}.")
                         else:
                             name = 'deliverable'
-                            print(f"The milestone '{name}' has been marked as finished in prum {id[0]}.")
+                            success.append(f"The milestone '{name}' has been marked as finished in prum {id[0]}.")
                     if rc.audience:
                         pdoc.update({'audience': rc.audience})
                     if rc.due_date:
@@ -272,8 +270,16 @@ class MilestoneUpdaterHelper(DbHelperBase):
                         doc.update({'kickoff': pdoc})
                     rc.client.update_one(rc.database, rc.coll, {'_id': id[0]}, doc)
                     if not rc.finish:
-                        print(f"The milestone uuid {uuid} in {id[0]} has been updated in projecta.")
+                        success.append(f"The milestone uuid {uuid} in {id[0]} has been updated in projecta.")
                 else:
-                    print(f"Multiple ids match your entry ({uuid}).\n"
-                          "Try entering six or more characters of the uuid and rerunning the helper.")
+                    fail.append(f"Multiple ids match your entry ({uuid}).\n"
+                          "Try entering six or more characters of the uuid and rerunning the helper "
+                          f"to update milestone ({uuid}).")
+        if success:
+            for item in success:
+                print(item)
+        if fail:
+            for item in fail:
+                print(item)
+
         return
