@@ -96,7 +96,7 @@ class TodoAdderHelper(DbHelperBase):
         rc.col2 = f"{PROJECTA}"
         if rc.database and rc.database != rc.databases[0]["name"]:
             raise RuntimeError(f"You are searching for todos and milestones in {rc.databases[0]['name']}, but trying to "
-                               f"update the these collections in {rc.database}. Rerun the helper in the local "
+                               f"update these collections in {rc.database}. Rerun the helper in the local "
                                "subdirectory of the database you would like to pull collections from.")
         if not rc.database:
             rc.database = rc.databases[0]["name"]

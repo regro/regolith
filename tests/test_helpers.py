@@ -898,7 +898,7 @@ helper_map_bad = [
 (["helper", "a_todo", "test a_todo", "6", "50",
    "--database", "billingegroup-group", "--milestone_uuid", "pl_" ],
   "You are searching for todos and milestones in test, but trying to "
-   "update the these collections in billingegroup-group. Rerun the helper in the local "
+   "update these collections in billingegroup-group. Rerun the helper in the local "
    "subdirectory of the database you would like to pull collections from.",
   RuntimeError)
 ]
