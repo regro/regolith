@@ -555,7 +555,7 @@ helper_map = [
          "tag2",
          "--date", "2020-07-10",
          "--milestone_uuid", "milestone_uuid_sb1_2"],
-        "The milestone uuid milestone_uuid_sb1_2 in sb_firstprojectum has been updated in projecta.\n"
+        "The milestone uuid (milestone_uuid_sb1_2) in sb_firstprojectum has been updated in projecta.\n"
         "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned-to", "sbillinge",
@@ -894,7 +894,13 @@ helper_map_bad = [
  (["helper", "a_todo", "test a_todo", "6", "50",
    "--milestone_uuid", "pl_"],
   "",
-  SystemExit)
+  SystemExit),
+(["helper", "a_todo", "test a_todo", "6", "50",
+   "--database", "billingegroup-group", "--milestone_uuid", "pl_" ],
+  "You are searching for todos and milestones in test, but trying to "
+   "update the these collections in billingegroup-group. Rerun the helper in the local "
+   "subdirectory of the database you would like to pull collections from.",
+  RuntimeError)
 ]
 
 @pytest.mark.parametrize("hmb", helper_map_bad)

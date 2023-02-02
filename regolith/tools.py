@@ -2317,6 +2317,30 @@ def get_appointments(person, appointments, target_grant=None):
     return appointments
 
 def add_todo_id_to_tasks(gtx, client, db, coll, milestone_id, task_id):
+    '''
+    add task_uuid to milestone tasks
+
+    Parameters
+    --------
+    gtx: dict
+        The global context from which todos and milestones will be queried and updated
+    client: client manager object
+        client database backend
+    db: string
+        database name where the milestone is located
+    coll: string
+        the collection of the db in which the milestone is located
+    milestone_id: string
+        the uuid of the milestone to which the todo uuid will be added
+    task_id: string
+        the uuid of the todo
+
+    Returns
+    -------
+    Returns success message after db is updated. If milestone uuid is not
+    found, returns error message and exits.
+
+    '''
     pdoc, upd_mil, all_miles, id, success = {}, [], [], [], []
     target_mil = fragment_retrieval(gtx["projecta"], ["milestones"], milestone_id)
     if target_mil:
@@ -2330,27 +2354,31 @@ def add_todo_id_to_tasks(gtx, client, db, coll, milestone_id, task_id):
             if upd_mil:
                 pid = prum.get('_id')
                 id.append(pid)
-    if len(upd_mil) == 0:
+    else:
         print(f"No ids were found that match your entry ({milestone_id}).\n"
               "Make sure you have entered the correct milestone uuid or uuid fragment and rerun the helper.")
-        return
-    elif len(upd_mil) == 1:
+        sys.exit()
+    if len(upd_mil) == 1:
         doc = {}
         for dict in upd_mil:
             pdoc.update(dict)
         for i in all_miles:
             i['due_date'] = get_due_date(i)
-        pdoc.update({'tasks': task_id})
         pdoc['due_date'] = get_due_date(pdoc)
+        if pdoc.get('tasks') == None:
+            pdoc.update({'tasks': []})
+        add_task = pdoc.get('tasks')
+        add_task.append(task_id)
+        pdoc.update({'tasks': add_task})
         all_miles.append(pdoc)
         all_miles.sort(key=lambda x: x['due_date'], reverse=False)
         doc.update({'milestones': all_miles})
         client.update_one(db, coll, {'_id': id[0]}, doc)
-        success.append(f"The milestone uuid {milestone_id} in {id[0]} has been updated in projecta.")
+        success.append(f"The milestone uuid ({milestone_id}) in {id[0]} has been updated in projecta.")
     else:
         print(f"Multiple ids match your entry ({milestone_id}).\n"
               "Try entering six or more characters of the uuid and rerunning the helper.")
-        return
+        sys.exit()
 
     return success[0]
 
