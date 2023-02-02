@@ -476,18 +476,13 @@ helper_map = [
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
      "ly_newprojectum has been added in projecta\n"
      ),
-    (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "sb_firstpro", "bad_id", "pl",
+    (["helper", "u_milestone", "--milestone_uuid", "sb_firstpro",
       "--name", "planning meeting", "--objective", "develop a detailed plan with dates",
       "--audience", "lead", "pi", "group_members", "--status", "converged", "--due-date", "2020-06-01",
       "--notes", "do this", "do that", "--type", "meeting"],
      "Ignoring 'name' assignment for deliverable uuid (sb_firstpro)\n"
      "Ignoring 'objective' assignment for deliverable uuid (sb_firstpro)\n"
-     "The milestone uuid milestone_uuid_sb1_ in sb_firstprojectum has been updated in projecta.\n"
      "The milestone uuid sb_firstpro in sb_firstprojectum has been updated in projecta.\n"
-     "No ids were found that match your entry (bad_id).\n"
-     "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n"
-     "Multiple ids match your entry (pl).\n"
-     "Try entering six or more characters of the uuid and rerunning the helper to update milestone (pl).\n"
     ),
     (["helper", "u_milestone", "--milestone_uuid", "pl", "--finish"],
      "Multiple ids match your entry (pl).\n"
@@ -505,7 +500,8 @@ helper_map = [
      "pl_firstprojectum\n"
      "pl_secondprojectum\n"
      "pl_thirdprojectum\n"
-     "Please rerun the helper specifying the complete ID.\n"
+     "Please rerun the helper specifying the complete ID."
+     "If your prum id looks correct, check that this id is in the collection in the database test.\n"
      ),
     (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"

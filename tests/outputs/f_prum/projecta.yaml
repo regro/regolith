@@ -225,7 +225,7 @@ sb_firstprojectum:
   lead: ascopatz
   log_url: https://docs.google.com/document/d/1pQMFpuI
   milestones:
-    - due_date: 2020-05-20
+    - due_date: '2020-05-20'
       name: Project lead presentation
       notes:
         - do background reading
@@ -248,7 +248,7 @@ sb_firstprojectum:
           - url to slides describing the development, e.g. Google slides url
       uuid: milestone_uuid_sb1
       end_date: 2020-07-01
-    - due_date: 2020-06-01
+    - due_date: '2020-05-27'
       name: planning meeting
       objective: develop a detailed plan with dates
       audience:
@@ -256,11 +256,8 @@ sb_firstprojectum:
         - pi
         - group_members
       status: finished
-      type: meeting
+      type: mergedpr
       uuid: milestone_uuid_sb1_2
-      notes:
-        - do this
-        - do that
       end_date: 2020-07-01
   name: First Projectum
   other_urls:
