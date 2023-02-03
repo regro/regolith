@@ -50,6 +50,7 @@ jobs:
           conda config --add channels conda-forge
           conda install --file requirements/run.txt
           conda install --file requirements/test.txt
+          conda install mongodb
           pip install .
 
       - name: run tests
