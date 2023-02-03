@@ -18,7 +18,9 @@ BILLINGE_TEST = False  # special tests for Billinge group, switch it to False be
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
-def test_fs_to_mongo_python(make_db):
+def test_fs_to_mongo_python(make_db, make_mongodb):
+    if make_mongodb is False:
+        pytest.skip("Skipping, Mongoclient failed to start")
     if BILLINGE_TEST:
         repo = str(Path(__file__).parent.parent.parent.joinpath('rg-db-group', 'local'))
     else:
@@ -27,7 +29,9 @@ def test_fs_to_mongo_python(make_db):
     assert cp1.returncode == 0
 
 
-def test_mongo_to_fs_python(make_mongo_to_fs_backup_db):
+def test_mongo_to_fs_python(make_mongo_to_fs_backup_db, make_mongodb):
+    if make_mongodb is False:
+        pytest.skip("Mongoclient failed to start")
     repo = make_mongo_to_fs_backup_db
     os.chdir(repo)
     try:
@@ -55,7 +59,6 @@ def test_fs_to_mongo_python(make_fs_to_mongo_migration_db):
         repo = str(Path(__file__).parent.parent.parent.joinpath('rg-db-group', 'local'))
     else:
         repo = make_fs_to_mongo_migration_db
-        print(repo)
     os.chdir(repo)
     try:
         main(['fs-to-mongo'])
