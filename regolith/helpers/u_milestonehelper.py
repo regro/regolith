@@ -7,7 +7,6 @@ from itertools import chain
 import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
-from gooey.gui.components.widgets import textfield
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
