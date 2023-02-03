@@ -48,6 +48,7 @@ jobs:
         run: |
           conda config --set always_yes yes --set changeps1 no
           conda install --file requirements/run.txt
+          conda install --file requirements/test.txt
           pip install .
 
       - name: run tests
