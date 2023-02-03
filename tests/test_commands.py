@@ -55,6 +55,7 @@ def test_fs_to_mongo_python(make_fs_to_mongo_migration_db):
         repo = str(Path(__file__).parent.parent.parent.joinpath('rg-db-group', 'local'))
     else:
         repo = make_fs_to_mongo_migration_db
+        print(repo)
     os.chdir(repo)
     try:
         main(['fs-to-mongo'])
