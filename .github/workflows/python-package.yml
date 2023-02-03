@@ -46,9 +46,10 @@ jobs:
       - name: install regolith requirements
         shell: bash -l {0}
         run: |
-          conda config --set always_yes yes --set changeps1 no
+          conda config --set always_yes yes --set changeps1 no --channels conda-forge
           conda install --file requirements/run.txt
           conda install --file requirements/test.txt
+          conda install mongodb
           pip install .
 
       - name: run tests
