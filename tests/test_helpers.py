@@ -509,7 +509,7 @@ helper_map = [
      "Please rerun the helper specifying the complete ID.\n"
      "If your prum id looks correct, check that this id is in the collection "
      "in the database test.\n"
-     "If this is the case, rerun with --database set to the database where the item is located.\n"
+     "If this is not the case, rerun with --database set to the database where the item is located.\n"
      ),
     (["helper", "u_logurl", "sb", "--index", "1", "https://docs.google.com/document/d/1pQMFpuI"],
      "sb_firstprojectum has been updated with a log_url of https://docs.google.com/document/d/1pQMFpuI\n"

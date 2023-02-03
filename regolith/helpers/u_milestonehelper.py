@@ -129,11 +129,11 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 print("Projectum not found. Projecta with similar names: ")
                 for i in range(len(pra)):
                     print(f"{pra[i].get('_id')}")
-                print("Please rerun the helper specifying the complete ID.\n"
-                      "If your prum id looks correct, check that this id is in the collection "
+                print(f"Please rerun the helper specifying the complete ID.\n"
+                      f"If your prum id looks correct, check that this id is in the collection "
                       f"in the database {rc.database}.\n"
-                      "If it is in a different database, rerun with --database "
-                      "set to the database where the item is located.")
+                      f"If this is not the case, rerun with --database set to "
+                      f"the database where the item is located.")
                 return
             milestones = deepcopy(target_prum.get('milestones'))
             all_milestones = []
