@@ -19,12 +19,6 @@ def subparser(subpi):
     if isinstance(subpi, GooeyParser):
         date_kwargs['widget'] = 'DateChooser'
 
-    subpi.add_argument("list_name", help="A short but unique name for the list. "
-                                         "If the list already exists it will be updated. "
-                                         "input 'all' here and for the tag argument "
-                                         "to build lists for all the tags found in "
-                                         "the citations collection.",
-                        default=None)
     subpi.add_argument("tags", help="list of tags, separated by spaces, to use "
                                     "to find papers in citations collection that "
                                     "will be added to the list. type 'all' if building"
@@ -77,90 +71,62 @@ class GrpPubReadListAdderHelper(DbHelperBase):
         gtx["str"] = str
         gtx["zip"] = zip
 
-    def build_reading_list(self, update_date):
+    def build_reading_list_from_citation_tag(self, tag, update_date):
         rc = self.rc
-        if rc.list_name == 'all':
-            listname = rc.tags[0].split()
-        else:
-            listname = rc.list_name.split()
-        key = "{}".format("_".join(listname).strip())
-        pdocl = list(filter(lambda doc: doc["_id"] == key, self.gtx[rc.coll]))
-        if len(pdocl) > 0:
-            pdoc = pdocl[0]
-            pdoc["papers"] = []   # rebuild the list from scratch
-        else:
-            pdoc = {}
-            pdoc.update({
+        key = f"{tag.strip()}"
+        rlist_doc = rc.client.find_one(rc.database, rc.coll, {'_id': key})
+        if not rlist_doc:
+            rlist_doc = {
                 "_id": key,
-                'date': update_date,
-                'papers': []
-                    })
-        if rc.purpose and rc.list_name != 'all':
-            pdoc.update({'purpose': rc.purpose})
-        if rc.list_name == 'all':
-            pdoc.update({'title': f"List built for tag {rc.tags[0]} from citations collection"})
-        elif rc.title:
-            pdoc.update({'title': rc.title})
-        try:
-            pdoc['title']
-        except KeyError:
-            raise KeyError("ERROR: a title is required for a new list.  Please rerun specifying -t")
+                'date': update_date
+                    }
+        # rebuild list from scratch always
+        rlist_doc.update({"papers": []})
+        if rc.purpose and rc.tags[0] != 'all':
+            rlist_doc.update({'purpose': rc.purpose})
+        if rc.title and rc.tags[0] != 'all':
+            rlist_doc.update({'title': rc.title})
+        elif not rlist_doc.get("title"):
+            rlist_doc.update({'title': f"List built for tag {key} from citations collection"})
         for cite in self.gtx["citations"]:
-            for tag in rc.tags:
-                if tag in cite.get("tags", ""):
-                    dupe_doi = [paper for paper in pdoc.get("papers", []) if cite.get("doi") == paper.get("doi")]
-                    if len(dupe_doi) == 0:
-                        pprs = pdoc["papers"]
-                        doi = cite.get("doi", '')
-                        url = cite.get("url", '')
-                        year = int(cite.get('year', 0))
-                        if len(doi) > 0 and doi != 'tbd':
-                            pprs.append({"doi": doi,
-                                         "text": cite.get("synopsis",
-                                                          f"no synopsis in {cite.get('_id')}"),
-                                         "year": year
-                                         })
-                        elif len(url) > 0 and url != 'tbd':
-                            pprs.append({"url": url,
-                                         "text": cite.get("synopsis",
-                                                          f"no synopsis in {cite.get('_id')}"),
-                                         "year": year
-                                         })
-                        else:
-                            pprs.append({'doi': 'tbd',
-                                         "text": cite.get("synopsis",
-                                                          f"no synopsis in {cite.get('_id')}"),
-                                         "year": year
-                                         })
-                        pdoc["papers"] = pprs
-        pprs = pdoc["papers"]
-        pprs.sort(key=lambda pper: pper.get('year'),
+            if tag in cite.get("tags", ""):
+                new_paper = {"text": cite.get("synopsis",
+                                              f"no synopsis in citation "
+                                              f"{cite.get('_id')}"),
+                             "year": int(cite.get('year', 0))
+                                                }
+                if cite.get("doi") is not None and cite.get("doi") != 'tbd':
+                    new_paper.update({"doi": cite.get("doi")})
+                elif cite.get("url") is not None and cite.get("url") != 'tbd':
+                    new_paper.update({"url": cite.get("url")})
+                else:
+                    new_paper.update({"doi": 'tbd'})
+                rlist_doc["papers"].append(new_paper)
+        # sort by year then remove year
+        rlist_doc["papers"].sort(key=lambda pper: pper.get('year'),
                   reverse=True)
-        [ppr.pop("year") for ppr in pprs]
-        pdoc["papers"] = pprs
-        return key, pdoc
+        [ppr.pop("year") for ppr in rlist_doc["papers"]]
+        # remove duplicates
+        rlist_doc["papers"] = [dict(t) for t in {tuple(paper.items()) for paper
+                                                 in rlist_doc["papers"]}]
+        return rlist_doc
 
     def db_updater(self):
         rc = self.rc
-        all_tags = get_tags(self.gtx["citations"])
-        print(f"List of all tags in citations collection:\n{all_tags}")
+        if rc.tags[0].strip().lower() == 'all':
+            all_tags = get_tags(self.gtx["citations"])
+        else:
+            all_tags = rc.tags
+        print(f"Making lists for tags:\n{all_tags}")
         if rc.date:
             update_date = date_parser.parse(rc.date).date()
         else:
             update_date = dt.date.today()
 
-        if rc.list_name.strip().lower() == 'all' and rc.tags[0].strip().lower() == 'all':
-            print(f"building lists for all tags in the citation collection")
-            for tag in all_tags:
-                rc.tags = [tag]
-                key, pdoc = self.build_reading_list(update_date)
-                rc.client.insert_one(rc.database, rc.coll, pdoc)
-                print(f"{key} has been added/updated in reading_lists")
-        else:
-            key, pdoc = self.build_reading_list(update_date)
+        for tag in all_tags:
+            pdoc = self.build_reading_list_from_citation_tag(tag, update_date)
             rc.client.insert_one(rc.database, rc.coll, pdoc)
-            print(f"{key} has been added/updated in reading_lists")
-
+            print(f"{tag} has been added/updated in reading_lists")
 
         return
 

@@ -760,10 +760,10 @@ helper_map = [
       "--submitted-date", "2019-01-01"],
      "Einstein manuscript has been added/updated in manuscript reviews\n"
      ),
-    (["helper", "a_grppub_readlist", "test the lister", "pdf",
+    (["helper", "a_grppub_readlist", "pdf",
       "--title", "A list to test the lister", "--purpose", "Test the lister",
       "--date", "2021-04-01"],
-     "List of all tags in citations collection:\n['nomonth', 'pdf']\ntest_the_lister has been added/updated in reading_lists\n"
+     "Making lists for tags:\n['pdf']\npdf has been added/updated in reading_lists\n"
      ),
     (["helper", "a_proposal", "a new proposal", "100.0", "To destroy numbers",
       "--begin-date", "2020-09-15", "--end-date", "2022-02-14", "--duration",
