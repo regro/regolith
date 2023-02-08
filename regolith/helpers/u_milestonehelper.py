@@ -92,6 +92,10 @@ class MilestoneUpdaterHelper(DbHelperBase):
         rc.coll = f"{TARGET_COLL}"
         if not rc.database:
             rc.database = rc.databases[0]["name"]
+        # when we update or add we only want to operate on a single db so
+        # collections from just that one db
+        rc.databases = [database for database in rc.databases
+                        if database.get('name') == rc.database]
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
         )
@@ -101,6 +105,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
         gtx["zip"] = zip
 
     def db_updater(self):
+        failure = False
         rc = self.rc
         if rc.date:
             now = date_parser.parse(rc.date).date()
@@ -124,10 +129,11 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 print("Projectum not found. Projecta with similar names: ")
                 for i in range(len(pra)):
                     print(f"{pra[i].get('_id')}")
-                print("Please rerun the helper specifying the complete ID.\n"
-                      "If your prum id looks correct, check that this id is in the collection "
+                print(f"Please rerun the helper specifying the complete ID.\n"
+                      f"If your prum id looks correct, check that this id is in the collection "
                       f"in the database {rc.database}.\n"
-                      "If this is the case, rerun with --database set to the database where the item is located.")
+                      f"If this is not the case, rerun with --database set to "
+                      f"the database where the item is located.")
                 return
             milestones = deepcopy(target_prum.get('milestones'))
             all_milestones = []
