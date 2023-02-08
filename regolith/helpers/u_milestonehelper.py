@@ -21,7 +21,6 @@ TARGET_COLL = "projecta"
 MILESTONE_TYPES = MILESTONE_TYPES
 PROJECTUM_STATI = PROJECTUM_STATI
 
-
 def subparser(subpi):
     date_kwargs = {}
     if isinstance(subpi, GooeyParser):
@@ -29,7 +28,7 @@ def subparser(subpi):
 
     subpi.add_argument("-i", "--milestone_uuid",
                        help="The uuid of a milestone. "
-                            "Takes a full or partial uuid.",)
+                            "Takes a full or partial uuid.")
     subpi.add_argument("-p", "--projectum_id", help="The id of the projectum. If you "
                                             "opt for this the program will assume "
                                             "you are adding a new milestone "
