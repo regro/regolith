@@ -29,8 +29,7 @@ def subparser(subpi):
 
     subpi.add_argument("-i", "--milestone_uuid",
                        help="The uuid of a milestone. "
-                            "Takes a full or partial uuid. "
-                            "Multiple uuids may be entered.")
+                            "Takes a full or partial uuid. ")
     subpi.add_argument("-p", "--projectum_id", help="The id of the projectum. If you "
                                             "opt for this the program will assume "
                                             "you are adding a new milestone "
