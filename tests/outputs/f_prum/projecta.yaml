@@ -204,6 +204,7 @@ sb_firstprojectum:
       - do that
     status: finished
     type: meeting
+    end_date: 2020-06-01
   description: My first projectum
   end_date: 2020-07-01
   grants: SymPy-1.1

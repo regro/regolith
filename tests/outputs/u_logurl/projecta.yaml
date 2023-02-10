@@ -202,8 +202,9 @@ sb_firstprojectum:
     notes:
       - do this
       - do that
-    status: converged
+    status: finished
     type: meeting
+    end_date: 2020-06-01
   description: My first projectum
   grants: SymPy-1.1
   group_members:

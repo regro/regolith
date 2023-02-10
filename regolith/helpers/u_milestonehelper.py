@@ -29,7 +29,11 @@ def subparser(subpi):
 
     subpi.add_argument("-i", "--milestone_uuid",
                        help="The uuid of a milestone. "
+<<<<<<< HEAD
                             "Takes a full or partial uuid. ")
+=======
+                            "Takes a full or partial uuid.")
+>>>>>>> 76214c70 (added test to test_helpers.py that tests the --finsih arg in u_milestonehelper.py)
     subpi.add_argument("-p", "--projectum_id", help="The id of the projectum. If you "
                                             "opt for this the program will assume "
                                             "you are adding a new milestone "
@@ -103,7 +107,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
         gtx["zip"] = zip
 
     def db_updater(self):
-        failure = False
         rc = self.rc
         if rc.date:
             now = date_parser.parse(rc.date).date()

@@ -476,13 +476,13 @@ helper_map = [
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
      "ly_newprojectum has been added in projecta\n"
      ),
-    (["helper", "u_milestone", "--milestone_uuid", "sb_firstpro",
+    (["helper", "u_milestone", "--milestone_uuid", "sb_firstpro", "--date", "2020-06-01",
       "--name", "planning meeting", "--objective", "develop a detailed plan with dates",
       "--audience", "lead", "pi", "group_members", "--status", "converged", "--due-date", "2020-06-01",
-      "--notes", "do this", "do that", "--type", "meeting"],
+      "--notes", "do this", "do that", "--type", "meeting", "--finish"],
      "Ignoring 'name' assignment for deliverable uuid (sb_firstpro)\n"
      "Ignoring 'objective' assignment for deliverable uuid (sb_firstpro)\n"
-     "The milestone uuid sb_firstpro in sb_firstprojectum has been updated in projecta.\n"
+     "The milestone 'deliverable' has been marked as finished in prum sb_firstprojectum.\n"
     ),
     (["helper", "u_milestone", "--milestone_uuid", "pl", "--finish"],
      "Multiple ids match your entry (pl).\n"
