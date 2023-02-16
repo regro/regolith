@@ -476,28 +476,21 @@ helper_map = [
       "--group-members", "ascopatz", "--grants", "SymPy-1.1", "--due-date", "2021-01-01", '--notes', 'new note'],
      "ly_newprojectum has been added in projecta\n"
      ),
-    (["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_sb1_", "sb_firstpro", "--name",
-      "planning meeting", "--objective", "develop a detailed plan with dates","--audience", "lead", "pi", "group_members",
-      "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this", "do that", "--type", "meeting"],
-     "The milestone uuid milestone_uuid_sb1_ in sb_firstprojectum has been updated in projecta.\n"
-     "Ignoring 'name' assignment for deliverable uuid (sb_firstpro)\n"
-     "Ignoring 'objective' assignment for deliverable uuid (sb_firstpro)\n"
-     "The milestone uuid sb_firstpro in sb_firstprojectum has been updated in projecta.\n"
+    (["helper", "u_milestone", "--milestone_uuid", "kosb_fir", "--name", "Kick off meeting",
+      "--date", "2020-05-07", "--objective", "introduce project to the lead","--audience", "lead", "pi", "group_members",
+      "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this", "do that", "--type", "meeting", "--finish"],
+     "The milestone 'Kick off meeting' has been marked as finished in prum sb_firstprojectum.\n\n"
     ),
-    #(["helper", "u_milestone", "--milestone_uuid", "milestone_uuid_pl2", "pl_secondpro", "kopl_second", "--finish",
-    #  "--type", "meeting"],
-    # "The milestone 'Milestone' has been marked as finished in prum pl_secondprojectum.\n"
-    # "The milestone 'deliverable' has been marked as finished in prum pl_secondprojectum.\n"
-    # "The milestone 'Kickoff' has been marked as finished in prum pl_secondprojectum.\n"
-    # ),
     (["helper", "u_milestone", "--milestone_uuid", "bad_id"],
-     "No ids were found that match your entry (bad_id).\n"
-     "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n"
+     "Failed to update projecta.\n"
+     "No ids were found that match your milestone_uuid entry (bad_id).\n"
+     "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n\n"
      ),
     (["helper", "u_milestone", "--milestone_uuid", "pl", "--status", "finished",
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
-     "Multiple ids match your entry (pl).\n"
-     "Try entering six or more characters of the uuid and rerunning the helper.\n"
+     "Failed to update projecta.\n"
+     "Multiple ids match your milestone_uuid entry (pl).\n"
+     "Try entering six or more characters of the uuid and rerunning the helper.\n\n"
      ),
     (["helper", "u_milestone", "--projectum_id", "pl", "--name", "new milestone",
       "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
