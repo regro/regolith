@@ -74,6 +74,9 @@ LISTER_HELPERS = {
 
 HELPERS = copy(LISTER_HELPERS)
 HELPERS.update(UPDATER_HELPERS)
+# whitelisted updaters allow load of all the databases whilst updating to just
+# one of them.  Otherwise, the updater only connects to the one requsted db.
+UPDATER_WHITELIST = ["a_grppub_readlist"]
 
 def helpr(btype, rc):
     """Returns helper of the appropriate type."""
