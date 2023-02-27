@@ -9,7 +9,7 @@ from pprint import pprint
 from regolith.builder import builder, BUILDERS
 from regolith.deploy import deploy as dploy
 from regolith.emailer import emailer
-from regolith.helper import HELPERS, helpr, UPDATER_HELPERS
+from regolith.helper import HELPERS, helpr, UPDATER_HELPERS, UPDATER_WHITELIST
 from regolith.runcontrol import RunControl
 from regolith.tools import string_types
 
@@ -130,7 +130,7 @@ def helper_db_check(rc):
     # if the helper is an updater, only open the database from rc.database
     rc.updater = False
     for helperkey in UPDATER_HELPERS.keys():
-        if helperkey == rc.helper_target:
+        if helperkey == rc.helper_target and rc.helper_target not in UPDATER_WHITELIST:
             rc.updater = True
     if rc.database is None:
         rc.database = rc.databases[0]["name"]
