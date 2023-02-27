@@ -90,12 +90,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
         gtx = self.gtx
         rc = self.rc
         rc.coll = f"{TARGET_COLL}"
-        if not rc.database:
-            rc.database = rc.databases[0]["name"]
-        # when we update or add we only want to operate on a single db so
-        # collections from just that one db
-        rc.databases = [database for database in rc.databases
-                        if database.get('name') == rc.database]
         gtx[rc.coll] = sorted(
             all_docs_from_collection(rc.client, rc.coll), key=_id_key
         )

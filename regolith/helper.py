@@ -1,4 +1,5 @@
 """Generic builder."""
+from copy import copy
 
 from regolith.helpers import attestationshelper as attestations
 from regolith.helpers import a_manurevhelper as a_manurev
@@ -71,8 +72,8 @@ LISTER_HELPERS = {
        makeappointments.MakeAppointmentsHelper, makeappointments.subparser)
 }
 
-HELPERS = UPDATER_HELPERS
-HELPERS.update(LISTER_HELPERS)
+HELPERS = copy(LISTER_HELPERS)
+HELPERS.update(UPDATER_HELPERS)
 
 def helpr(btype, rc):
     """Returns helper of the appropriate type."""
