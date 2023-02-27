@@ -30,7 +30,9 @@ from regolith.helpers import f_todohelper as f_todo
 from regolith.helpers import u_todohelper as u_todo
 from regolith.helpers import reimbstatushelper as reimbstatus
 
-HELPERS = {
+# Updtaer helpers will update the db and should not load all databases but only
+# the one specified in rc.database for updating.
+UPDATER_HELPERS = {
     "a_expense": (a_expense.ExpenseAdderHelper, a_expense.subparser),
     "a_grppub_readlist": (a_gprl.GrpPubReadListAdderHelper, a_gprl.subparser),
     "a_manurev": (a_manurev.ManuRevAdderHelper, a_manurev.subparser),
@@ -41,9 +43,20 @@ HELPERS = {
     "a_todo": (a_todo.TodoAdderHelper, a_todo.subparser),
     "f_prum": (u_finishprum.FinishprumUpdaterHelper, u_finishprum.subparser),
     "f_todo": (f_todo.TodoFinisherHelper, f_todo.subparser),
+    "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
+    "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
+    "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser),
+    "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
+    "u_todo": (u_todo.TodoUpdaterHelper, u_todo.subparser),
+}
+
+# Lister helpers need to load collections across all the databses to show everything
+LISTER_HELPERS = {
     "l_abstract": (l_abstract.AbstractListerHelper, l_abstract.subparser),
     "l_contacts": (l_contacts.ContactsListerHelper, l_contacts.subparser),
-    "l_currentappointments": (l_currentappointments.CurrentAppointmentsListerHelper, l_currentappointments.subparser),
+    "l_currentappointments": (
+       l_currentappointments.CurrentAppointmentsListerHelper,
+       l_currentappointments.subparser),
     "l_grants": (l_grants.GrantsListerHelper, l_grants.subparser),
     "l_members": (l_members.MembersListerHelper, l_members.subparser),
     "l_milestones": (l_milestone.MilestonesListerHelper, l_milestone.subparser),
@@ -51,17 +64,15 @@ HELPERS = {
     "l_projecta": (l_projecta.ProjectaListerHelper, l_projecta.subparser),
     "l_reimbstatus": (reimbstatus.ReimbstatusHelper, reimbstatus.subparser),
     "l_todo": (l_todo.TodoListerHelper, l_todo.subparser),
-    "u_contact": (u_contact.ContactUpdaterHelper, u_contact.subparser),
-    "u_institution": (u_institutions.InstitutionsUpdaterHelper, u_institutions.subparser),
-    "u_logurl": (u_logurl.LogUrlUpdaterHelper, u_logurl.subparser),
-    "u_milestone": (u_milestone.MilestoneUpdaterHelper, u_milestone.subparser),
-    "u_todo": (u_todo.TodoUpdaterHelper, u_todo.subparser),
     "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
     "attestations": (attestations.AttestationsHelper, attestations.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
-    "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser)
+    "makeappointments": (
+       makeappointments.MakeAppointmentsHelper, makeappointments.subparser)
 }
 
+HELPERS = UPDATER_HELPERS
+HELPERS.update(LISTER_HELPERS)
 
 def helpr(btype, rc):
     """Returns helper of the appropriate type."""
