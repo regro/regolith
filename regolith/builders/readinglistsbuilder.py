@@ -48,6 +48,7 @@ class ReadingListsBuilder(LatexBuilderBase):
             n = 1
             for paper in rlist['papers']:
                 doi = paper.get('doi')
+                paper['text'] = paper['text'].strip('.').strip()
                 if doi == 'tbd' or doi == '':
                     doi = None
                 url = paper.get('url')
