@@ -103,8 +103,7 @@ class GrpPubReadListAdderHelper(DbHelperBase):
                     new_paper.update({"doi": 'tbd'})
                 rlist_doc["papers"].append(new_paper)
         # sort by year then remove year
-        rlist_doc["papers"].sort(key=lambda pper: pper.get('year'),
-                  reverse=True)
+        rlist_doc["papers"].sort(key=lambda pper: pper.get('year'))
         [ppr.pop("year") for ppr in rlist_doc["papers"]]
         # remove duplicates
         rlist_doc["papers"] = [dict(t) for t in {tuple(paper.items()) for paper
