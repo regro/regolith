@@ -38,6 +38,13 @@ def subparser(subpi):
                        help="New due date of the milestone. "
                             "Required for a new milestone.",
                        **date_kwargs)
+    # Do not delete --database arg
+    subpi.add_argument("--database",
+                       help="The database that will be updated.  Defaults to "
+                            "first database in the regolithrc.json file.")
+    subpi.add_argument("-f", "--finish", action="store_true",
+                       help="Finish milestone. "
+                       )
     subpi.add_argument("-n", "--name",
                        help="Name of the milestone. "
                             "Required for a new milestone.")
@@ -61,13 +68,6 @@ def subparser(subpi):
                        nargs='+',
                        help="Any notes you want to add to the milestone."
                        )
-    subpi.add_argument("-f", "--finish", action="store_true",
-                       help="Finish milestone. "
-                       )
-    # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file.")
     subpi.add_argument("--date",
                        help="The date that will be used for testing.",
                        **date_kwargs
@@ -175,7 +175,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             new_mil.sort(key=lambda x: x['due_date'], reverse=False)
             pdoc.update({'milestones': new_mil})
             rc.client.update_one(rc.database, rc.coll, {'_id': rc.projectum_id}, pdoc)
-            print(f"{rc.projectum_id} has been updated in projecta")
+            updated.append(f"{rc.projectum_id} has been updated in projecta")
         else:
             pdoc, upd_mil, all_miles, id = {},[],[],[]
             target_mil = fragment_retrieval(self.gtx["projecta"], ["milestones"], rc.milestone_uuid)
@@ -272,7 +272,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 multiple.append(rc.milestone_uuid)
         if updated:
             for msg in updated:
-                print(f"{msg}\n")
+                print(f"{msg}")
         else:
             print(f"Failed to update projecta.")
         if zero:
