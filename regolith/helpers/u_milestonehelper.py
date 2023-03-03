@@ -280,6 +280,6 @@ class MilestoneUpdaterHelper(DbHelperBase):
                     "Make sure you have entered the correct uuid or uuid fragment and rerun the helper.\n")
         if multiple:
             print(f"Multiple ids match your milestone_uuid entry ({multiple[0]}).\n"
-                  "Try entering six or more characters of the uuid and rerunning the helper.\n")
+                  "Try entering more characters of the uuid and rerun the helper.\n")
         return
 
