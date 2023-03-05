@@ -479,7 +479,7 @@ helper_map = [
     (["helper", "u_milestone", "--milestone_uuid", "kosb_fir", "--name", "Kick off meeting",
       "--date", "2020-05-07", "--objective", "introduce project to the lead","--audience", "lead", "pi", "group_members",
       "--status", "converged", "--due-date", "2020-06-01", "--notes", "do this", "do that", "--type", "meeting", "--finish"],
-     "The milestone 'Kick off meeting' has been marked as finished in prum sb_firstprojectum.\n\n"
+     "The milestone 'Kick off meeting' has been marked as finished in prum sb_firstprojectum.\n"
     ),
     (["helper", "u_milestone", "--milestone_uuid", "bad_id"],
      "Failed to update projecta.\n"
@@ -490,7 +490,7 @@ helper_map = [
       "--due-date", "2023-01-01", "--notes", "do this", "do that", "--type", "mergedpr"],
      "Failed to update projecta.\n"
      "Multiple ids match your milestone_uuid entry (pl).\n"
-     "Try entering six or more characters of the uuid and rerunning the helper.\n\n"
+     "Try entering more characters of the uuid and rerun the helper.\n\n"
      ),
     (["helper", "u_milestone", "--projectum_id", "pl", "--name", "new milestone",
       "--due_date", "2023-01-01", "--objective", "do all the things to complete this milestone",
