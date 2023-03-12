@@ -74,9 +74,9 @@ LISTER_HELPERS = {
 
 HELPERS = copy(LISTER_HELPERS)
 HELPERS.update(UPDATER_HELPERS)
-# whitelisted updaters allow load of all the databases whilst updating to just
-# one of them.  Otherwise, the updater only connects to the one requsted db.
-UPDATER_WHITELIST = ["a_grppub_readlist"]
+# fast_updater updaters only connects to the one requested db, not to all dbs
+# in rc.databases which is the default behavior
+FAST_UPDATER_WHITELIST = ["u_milestone"]
 
 def helpr(btype, rc):
     """Returns helper of the appropriate type."""

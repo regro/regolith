@@ -9,7 +9,7 @@ from pprint import pprint
 from regolith.builder import builder, BUILDERS
 from regolith.deploy import deploy as dploy
 from regolith.emailer import emailer
-from regolith.helper import HELPERS, helpr, UPDATER_HELPERS, UPDATER_WHITELIST
+from regolith.helper import HELPERS, helpr, UPDATER_HELPERS, FAST_UPDATER_WHITELIST
 from regolith.runcontrol import RunControl
 from regolith.tools import string_types
 
@@ -127,14 +127,14 @@ def build_db_check(rc):
 
 def helper_db_check(rc):
     """Checks which DBs a builder needs"""
-    # if the helper is an updater, only open the database from rc.database
-    rc.updater = False
+    # if the helper is an fast_updater, only open the database from rc.database
+    rc.fast_updater = False
     for helperkey in UPDATER_HELPERS.keys():
-        if helperkey == rc.helper_target and rc.helper_target not in UPDATER_WHITELIST:
-            rc.updater = True
+        if helperkey == rc.helper_target and rc.helper_target in FAST_UPDATER_WHITELIST:
+            rc.fast_updater = True
     if rc.database is None:
         rc.database = rc.databases[0]["name"]
-    if rc.updater:
+    if rc.fast_updater:
         rc.databases = [database for database in rc.databases
                         if database.get('name') == rc.database]
 
