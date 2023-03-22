@@ -1330,6 +1330,7 @@ EXEMPLARS = {
                 "day": 24,
                 "month": "Jul",
                 "year": 2019,
+                "date": "2019-07-24",
                 "grant": "bnlldrd18",
                 "url": "http://www.google.com"
             },
@@ -3732,6 +3733,9 @@ SCHEMAS = {
                     "title": {"required": True, "type": "string",
                               "description": "The title of the piece",
                               },
+                    "date": {"description": "the date of the service",
+                                   "required": False,
+                                   "anyof_type": ["string", "date"]},
                     "day": {"required": False, "type": "integer",
                             "description": "The day the piece appeared"
                             },

@@ -76,7 +76,7 @@ HELPERS = copy(LISTER_HELPERS)
 HELPERS.update(UPDATER_HELPERS)
 # fast_updater updaters only connects to the one requested db, not to all dbs
 # in rc.databases which is the default behavior
-FAST_UPDATER_WHITELIST = ["u_milestone"]
+FAST_UPDATER_WHITELIST = ["u_milestone", "f_prum"]
 
 def helpr(btype, rc):
     """Returns helper of the appropriate type."""
