@@ -3753,7 +3753,7 @@ SCHEMAS = {
                     "url": {"required": False, "type": "string",
                             "description": "The URL where the piece may be found"
                             },
-                    "year": {"required": True, "type": "integer",
+                    "year": {"required": False, "type": "integer",
                              "description": "The year the piece appeared"
                              },
                     "grant": {"required": True, "type": "string",
