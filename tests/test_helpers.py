@@ -548,7 +548,7 @@ helper_map = [
          "tag2",
          "--date", "2020-07-10",
          "--milestone_uuid", "milestone_uuid_sb1_2"],
-        "The milestone uuid (milestone_uuid_sb1_2) in sb_firstprojectum has been updated in projecta.\n"
+        "The milestone uuid milestone_uuid_sb1_2 in projectum sb_firstprojectum has been updated in projecta.\n"
         "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
     (["helper", "f_todo", "--index", "3", "--assigned-to", "sbillinge",
@@ -879,21 +879,25 @@ helper_map_bad = [
   "and giving a type from this list:\n"
   f"{MILESTONE_TYPES}\n",
   ValueError),
- (["helper", "a_todo", "test a_todo", "6", "50",
+ (["helper", "a_todo", "test a_todo", "6", "50", "--assigned-to",
+         "sbillinge",
    "--milestone_uuid", "bad_id"],
-  "",
-  SystemExit
+  "No milestone ids were found that match your entry (bad_id).\n"
+  "Make sure you have entered the correct milestone uuid or uuid fragment and rerun the helper.",
+  RuntimeError
   ),
- (["helper", "a_todo", "test a_todo", "6", "50",
-   "--milestone_uuid", "pl_"],
-  "",
-  SystemExit),
-(["helper", "a_todo", "test a_todo", "6", "50",
-   "--database", "billingegroup-group", "--milestone_uuid", "pl_" ],
-  "You are searching for todos and milestones in test, but trying to "
-   "update these collections in billingegroup-group. Rerun the helper in the local "
-   "subdirectory of the database you would like to pull collections from.",
-  RuntimeError)
+ (["helper", "a_todo", "test a_todo", "6", "50", "--assigned-to",
+         "sbillinge",
+   "--milestone_uuid", "one_uuid"],
+  "Multiple milestone ids match your entry (one_uuid).\n"
+  "Try entering more characters of the uuid and rerunning the helper.",
+  RuntimeError),
+ (["helper", "a_todo", "test a_todo", "6", "50", "--assigned-to",
+   "sbillinge",
+   "--milestone_uuid", "_sb1"],
+  "Multiple milestone ids match your entry (_sb1).\n"
+  "Try entering more characters of the uuid and rerunning the helper.",
+  RuntimeError),
 ]
 
 @pytest.mark.parametrize("hmb", helper_map_bad)
