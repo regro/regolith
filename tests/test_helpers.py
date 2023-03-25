@@ -2,11 +2,8 @@ import os
 from pathlib import Path
 import pytest
 import copy
-import uuid
 
 import requests_mock
-import requests
-from pytest_mock import mocker
 
 from regolith.main import main
 from regolith.schemas import MILESTONE_TYPES

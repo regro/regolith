@@ -208,9 +208,6 @@ sb_firstprojectum:
       status: finished
       type: mergedpr
       uuid: milestone_uuid_sb1_2
-      notes:
-        - do this
-        - do that
       tasks:
         - test-uuid
       end_date: 2020-07-01
