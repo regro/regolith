@@ -2099,7 +2099,7 @@ EXEMPLARS = {
              "importance": 2,
              "status": "started",
              "assigned_by": "scopatz",
-             "running_index": 1,
+             "running_index": 3,
              "tags": ["reading", "downtime"]
              },
             {"description": "prepare the presentation",
