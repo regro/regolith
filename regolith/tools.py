@@ -20,7 +20,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from urllib.parse import urlparse
 
-from regolith.dates import month_to_int, date_to_float, get_dates, is_current
+from regolith.dates import month_to_int, date_to_float, get_dates, is_current, get_due_date
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
 from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, \
@@ -2315,3 +2315,4 @@ def get_appointments(person, appointments, target_grant=None):
             appointments.append((person.get('_id'), bd, ed, appt.get('loading'),
                          round(weighted_duration, 2), appt.get('grant')))
     return appointments
+
