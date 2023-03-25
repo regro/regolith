@@ -23,6 +23,7 @@ class ReadingListsBuilder(LatexBuilderBase):
         rc = self.rc
         self.cr = Crossref()
         cr = self.cr
+        rc.verbose = True
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
             key=position_key,
@@ -38,6 +39,7 @@ class ReadingListsBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
+        rc = self.rc
 
         for rlist in self.gtx["reading_lists"]:
             listid = rlist["_id"]
@@ -46,11 +48,19 @@ class ReadingListsBuilder(LatexBuilderBase):
             n = 1
             for paper in rlist['papers']:
                 doi = paper.get('doi')
+                paper['text'] = paper['text'].strip('.').strip()
                 if doi == 'tbd' or doi == '':
                     doi = None
                 url = paper.get('url')
                 if doi:
+                    # if rc.verbose:
+                    #     print(f"getting {doi} for {paper.get('tite')}")
                     ref, ref_date = get_formatted_crossref_reference(doi)
+                    # if rc.verbose:
+                    #     try:
+                    #         print(f"got ref: {ref}")
+                    #     except:
+                    #         print("obtained ref but print error")
                     paper.update({'reference': ref, 'ref_date': ref_date, 'n': n, 'label': 'DOI'})
                     n += 1
                 elif url:

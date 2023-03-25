@@ -60,68 +60,20 @@ ly_newprojectum:
   log_url: ''
   milestones:
     - due_date: 2020-05-20
-      name: Example milestone
-      objective: This acts as an example milestone. It shows how to construct your
-        milestones.  It should be deleted before depositing the prum.
+      name: Kickoff meeting
+      objective: Prum Lead understands the project deliverables and goals
       audience:
-        - update the audience as required, but it is often lead, pi and group_members
-          (see below). these resolve to their values defined elsewhere.  If putting
-          in people's names use their ids where possible and they will be looked for
-          in the people and contacts collections.
         - lead
         - pi
         - group_members
-      status: proposed
+      status: converged
       notes:
-        - () get a clear picture of the deliverable and what needs to be done to get
-          there.  Have discussions with group members to develop ideas.  Propose them
-          even if you are not sure, you will get feedback. This is the process.
-        - () edit the template 'deliverable' to reflect that.
-        - () chart out milestones at a high level first working back from the deliverable.  'To
-          deliver that (deliverable) I have to do this, this and this, and to deliver
-          it by then I have to do these things by these dates.'
-        - "() then write the detailed milestones, turning each one into a deliverable\
-          \ that is captured in the type field.  Allowed values for milestone types\
-          \ are: ('mergedpr', 'meeting', 'other', 'paper', 'release', 'email', 'handin',\
-          \ 'purchase', 'approval', 'presentation', 'report', 'submission', 'decision',\
-          \ 'demo', 'skel').  If you are tempted to use 'other' think more about the\
-          \ milestone objective, you probably haven't defined it well enough in your\
-          \ head."
-        - () Think carefully about the deliverable date.  Can you hit it?  If not,
-          change it so you can hit it.  You may have to adjust your final deliverable
-          date but discuss this with the team, because scope could also be reduced
-          rather than pushing off final deliverable.  When you are comfortable with
-          the due date, and it has been reviewed, make the appoint on the calendar,
-          for example, if it is a meeting or presentation, send schedule it now.
-        - () within each milestone, make a todo list (this is a todo-list) in the
-          notes field.  A todo is a note prepended by () (no space in the middle).  These
-          are the smaller tasks you will have to do to complete the milestone.  When
-          you complete them turn () in to (x).
-        - () Iterate all these with your team/advisor maybe in a Google doc or on
-          Slack to make sure you are on the right track.  To converge this shoot for
-          multiple round-trips per day.
-        - () using u_milestones in helper_gui, or otherwise, get them entered into
-          the prum and the prum deposited.
-        - () by the time the edited prum is submitted, set all the statuses to converged
-          or started, and delete this example milestone.
-        - () later, when you finish a milestone use u_milestones or editing in the
-          yaml file set status to finished and add an end_date, and fill in the progress
-          section. This should be brief but just links to a brief text description
-          of the outcome that would be suitable for a grant annual report, and any
-          url links to presentations or related docs.  Link to specific files of relevance
-          to this milestone not general docs and repos.
+        - () Schedule the meeting
+        - () Have the meeting, take good notes
+        - () Update the prum milestones with plan
       progress:
-        text: write text here capturing how the milestone is progressing, but at the
-          least when the milestone closes.  The goal of this is that it will be printed
-          as a progress report for a grant so write it as if it will be read by an
-          external person. It doesnt have to describe the whole prum but clearly show
-          the progress that has been made. It can be multiple paragraphs or a short
-          statementdepending on the situation
-        slides_urls:
-          - <replace with a URL to, for example, a Gslides slide deck with useful
-            figures in it, or a Gdoc with more complicated info like tables or something.
-            This is for the PI to be able to find quality content to augment the report>
-          - <replace with another URL if more than one is needed>
+        text: ''
+        slides_urls: []
       type: meeting
       uuid: test-uuid
   name: New projectum

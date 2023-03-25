@@ -9,7 +9,7 @@ from pprint import pprint
 from regolith.builder import builder, BUILDERS
 from regolith.deploy import deploy as dploy
 from regolith.emailer import emailer
-from regolith.helper import HELPERS, helpr
+from regolith.helper import HELPERS, helpr, UPDATER_HELPERS, FAST_UPDATER_WHITELIST
 from regolith.runcontrol import RunControl
 from regolith.tools import string_types
 
@@ -127,15 +127,27 @@ def build_db_check(rc):
 
 def helper_db_check(rc):
     """Checks which DBs a builder needs"""
-    dbs = set()
+    # if the helper is an fast_updater, only open the database from rc.database
+    rc.fast_updater = False
+    for helperkey in UPDATER_HELPERS.keys():
+        if helperkey == rc.helper_target and rc.helper_target in FAST_UPDATER_WHITELIST:
+            rc.fast_updater = True
+    if rc.database is None:
+        rc.database = rc.databases[0]["name"]
+    if rc.fast_updater:
+        rc.databases = [database for database in rc.databases
+                        if database.get('name') == rc.database]
+
+    # only open the needed collections
+    colls = set()
     bldr = HELPERS[rc.helper_target][0]
     needed_colls = getattr(bldr, 'needed_colls', None)
     # If the requested builder doesn't state DB deps then it requires
     # all dbs!
     if not needed_colls:
         return None
-    dbs.update(needed_colls)
-    return dbs
+    colls.update(needed_colls)
+    return colls
 
 
 def build(rc):
