@@ -2316,3 +2316,9 @@ def get_appointments(person, appointments, target_grant=None):
                          round(weighted_duration, 2), appt.get('grant')))
     return appointments
 
+def get_task(task_coll, task_id):
+    tasks = [task for task in task_coll if task.get("uuid", "") == task_id]
+    if len(tasks) > 1:
+        print(f"WARNING: there are multiple tasks with id {task_id}. Picking "
+              f"the one with description {tasks[0].get('description')}")
+    return tasks[0]

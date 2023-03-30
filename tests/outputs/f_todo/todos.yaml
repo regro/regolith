@@ -41,3 +41,20 @@ sbillinge:
       running_index: 2
       tags:
         - downtime
+    - description: test a_todo
+      uuid: test-uuid
+      due_date: 2020-07-16
+      begin_date: 2020-07-06
+      deadline: true
+      duration: 50.0
+      importance: 2
+      status: finished
+      assigned_by: sbillinge
+      notes:
+        - test notes 1
+        - test notes 2
+      tags:
+        - tag1
+        - tag2
+      running_index: 4
+      end_date: 2020-07-20

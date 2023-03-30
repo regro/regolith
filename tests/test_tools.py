@@ -15,8 +15,8 @@ from regolith.runcontrol import DEFAULT_RC
 from regolith.tools import (
     filter_publications,
     filter_presentations,
-    fuzzy_retrieval,
     fragment_retrieval,
+    fuzzy_retrieval,
     number_suffix,
     latex_safe,
     update_schemas,
@@ -45,7 +45,8 @@ from regolith.tools import (
     get_tags, dereference_institution,
     get_target_repo_info, get_target_token, create_repo,
     get_uuid,
-    get_appointments
+    get_appointments,
+    get_task
 )
 
 PEOPLE_COLL = [
@@ -2354,3 +2355,91 @@ def test_get_appointments(tga):
     expected = tga[3]
     actual = get_appointments(tga[0], tga[1], tga[2])
     assert expected == actual
+
+tgt = [
+    ([{'uuid': 'task_id',
+       '_id': 'sbillinge',
+       'due_date': dt.date(2022, 6, 30),
+      'begin_date': '2022-05-01',
+      'description': 'what I have to do',
+      'deadline': True,
+      'duration': 60,
+      'importance': 2,
+      'status': 'started',
+      'assigned_by': 'sbillinge',
+      'running_index': 92,
+      'tags': ['reading', 'downtime']},
+      {'uuid': 'another_task_id',
+       '_id': 'sbillinge',
+       'due_date': dt.date(2022, 6, 30),
+      'begin_date': '2022-05-01',
+      'description': 'what else',
+      'deadline': False,
+      'duration': 10,
+      'importance': 3,
+      'status': 'started',
+      'assigned_by': 'sbillinge',
+      'running_index': 94,
+      'tags': []
+       }
+      ],
+       'task_id',
+      {'uuid': 'task_id',
+       '_id': 'sbillinge',
+       'due_date': dt.date(2022, 6, 30),
+      'begin_date': '2022-05-01',
+      'description': 'what I have to do',
+      'deadline': True,
+      'duration': 60,
+      'importance': 2,
+      'status': 'started',
+      'assigned_by': 'sbillinge',
+      'running_index': 92,
+      'tags': ['reading', 'downtime']}
+    ),
+    ([{'uuid': 'task_id',
+       '_id': 'sbillinge',
+       'due_date': dt.date(2022, 6, 30),
+       'begin_date': '2022-05-01',
+       'description': 'what I have to do',
+       'deadline': True,
+       'duration': 60,
+       'importance': 2,
+       'status': 'started',
+       'assigned_by': 'sbillinge',
+       'running_index': 92,
+       'tags': ['reading', 'downtime']},
+      {'uuid': 'task_id',
+       '_id': 'sbillinge',
+       'due_date': dt.date(2022, 6, 30),
+       'begin_date': '2022-05-01',
+       'description': 'what else',
+       'deadline': False,
+       'duration': 10,
+       'importance': 3,
+       'status': 'started',
+       'assigned_by': 'sbillinge',
+       'running_index': 94,
+       'tags': []
+       }
+      ],
+     'task_id',
+     {'uuid': 'task_id',
+      '_id': 'sbillinge',
+      'due_date': dt.date(2022, 6, 30),
+      'begin_date': '2022-05-01',
+      'description': 'what I have to do',
+      'deadline': True,
+      'duration': 60,
+      'importance': 2,
+      'status': 'started',
+      'assigned_by': 'sbillinge',
+      'running_index': 92,
+      'tags': ['reading', 'downtime']}
+     ),
+]
+@pytest.mark.parametrize("tgt", tgt)
+def test_get_task(tgt):
+    actual = get_task(tgt[0], tgt[1])
+    expected = tgt[2]
+    assert actual == expected

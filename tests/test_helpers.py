@@ -116,8 +116,8 @@ helper_map = [
      ),
     (["helper", "l_milestones", "--verbose"],
      "2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
-     "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    Tasks:\n      - (1) read paper (79|2|60.0|reading,downtime|scopatz|1saefa)\n    uuid: sb_firstprojectum\n"
-     "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    Tasks:\n      - (3) added todo (80|2|60.0|reading,downtime|scopatz|test_u)\n    uuid: milestone_uuid_sb1_2\n"
+     "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    Tasks:\n      - (1) read paper (79|2|60.0|1saefa)\n    uuid: sb_firstprojectum\n"
+     "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    Tasks:\n      - (3) added todo (80|2|60.0|test_u)\n    uuid: milestone_uuid_sb1_2\n"
      "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n"
      ),
     (["helper", "l_milestones", "--verbose", "--current"],
@@ -839,6 +839,42 @@ db_srcs = [
 #      "List of all tags in citations collection:\n['nomonth', 'pdf']\nbuilding lists for all tags in the citation collection\nnomonth has been added/updated in reading_lists\npdf has been added/updated in reading_lists\n"),
 #     ]
 
+
+@pytest.mark.parametrize("db_src", db_srcs)
+@pytest.mark.parametrize("hm", helper_map)
+def test_helper_python(hm, make_db, db_src, make_mongodb, capsys, mocker):
+    mocker.patch('uuid.uuid4', return_value="test-uuid")
+    testfile = Path(__file__)
+
+    if db_src == "fs":
+        repo = Path(make_db)
+    elif db_src == "mongo":
+        if make_mongodb is False:
+            pytest.skip("Mongoclient failed to start")
+        else:
+            repo = Path(make_mongodb)
+    os.chdir(repo)
+
+    main(args=hm[0])
+    out, err = capsys.readouterr()
+    assert hm[1] == out
+
+    expecteddir = testfile.parent / "outputs" / hm[0][1]
+
+    if expecteddir.is_dir():
+        if db_src == "fs":
+            test_dir = repo / "db"
+            assert_outputs(test_dir, expecteddir)
+        elif db_src == "mongo":
+            from regolith.database import connect
+            from regolith.runcontrol import DEFAULT_RC, load_rcfile
+            os.chdir(repo)
+            rc = copy.copy(DEFAULT_RC)
+            rc._update(load_rcfile("regolithrc.json"))
+            with connect(rc) as client:
+                mongo_database = client[rc.databases[0]['name']]
+                assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
+
 helper_map_bad = [
  (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum"],
   "Detected both a uuid fragment and projectum id.\n"
@@ -910,42 +946,6 @@ def test_helpers_bad(hmb, make_db):
  with pytest.raises(hmb[2]) as excinfo:
   actual =  main(args=hmb[0])
  assert str(excinfo.value) == hmb[1]
-
-@pytest.mark.parametrize("db_src", db_srcs)
-@pytest.mark.parametrize("hm", helper_map)
-def test_helper_python(hm, make_db, db_src, make_mongodb, capsys, mocker):
-    mocker.patch('uuid.uuid4', return_value="test-uuid")
-    testfile = Path(__file__)
-
-    if db_src == "fs":
-        repo = Path(make_db)
-    elif db_src == "mongo":
-        if make_mongodb is False:
-            pytest.skip("Mongoclient failed to start")
-        else:
-            repo = Path(make_mongodb)
-    os.chdir(repo)
-
-    main(args=hm[0])
-    out, err = capsys.readouterr()
-    assert hm[1] == out
-
-    expecteddir = testfile.parent / "outputs" / hm[0][1]
-
-    if expecteddir.is_dir():
-        if db_src == "fs":
-            test_dir = repo / "db"
-            assert_outputs(test_dir, expecteddir)
-        elif db_src == "mongo":
-            from regolith.database import connect
-            from regolith.runcontrol import DEFAULT_RC, load_rcfile
-            os.chdir(repo)
-            rc = copy.copy(DEFAULT_RC)
-            rc._update(load_rcfile("regolithrc.json"))
-            with connect(rc) as client:
-                mongo_database = client[rc.databases[0]['name']]
-                assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
-
 
 helper_map_loose = [
     (["helper", "l_abstract"],

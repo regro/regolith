@@ -47,7 +47,7 @@ def subparser(subpi):
                        help=f"The importance of the task. "
                             f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the Eisenhower matrix of "
                             f"importance vs. urgency.  An important and urgent task would be 3.",
-                       default=1
+                       default=None
                        )
     subpi.add_argument("-t", "--tags", nargs="+",
                        help="Tags to be associated with this task.  Enter as single words separated by spaces. "
@@ -144,7 +144,12 @@ class TodoAdderHelper(DbHelperBase):
             due_date = date_parser.parse(rc.due_date).date()
         if begin_date > due_date:
             raise ValueError("begin_date can not be after due_date")
-        if rc.importance not in ALLOWED_IMPORTANCE:
+        if rc.importance is None:
+            if rc.milestone_uuid:
+                importance = 2
+            else:
+                importance = 1
+        elif rc.importance not in ALLOWED_IMPORTANCE:
             raise ValueError(
                 f"importance should be chosen from {ALLOWED_IMPORTANCE}")
         else:
