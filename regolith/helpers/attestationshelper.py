@@ -241,7 +241,7 @@ class AttestationsHelper(DbHelperBase):
                     for amt, dte in zip(all_reimb_amts, all_reimb_dates):
                         if month.year == dte.year and month.month == dte.month:
                             month_spend += amt
-                    print(f"{month}: expenses monthly total = {month_spend}")
+                    print(f"{month}: expenses monthly total = {month_spend:.2f}")
 
             print(f"Total spend = {round(total_spend, 2)}")
 
