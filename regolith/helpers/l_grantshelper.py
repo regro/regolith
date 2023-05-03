@@ -94,14 +94,22 @@ class GrantsListerHelper(SoutHelperBase):
             else:
                 grants.append(grant)
 
-        # Sort the grants by end date in reverse chronological order
-        grants.sort(key=lambda k: get_dates(k).get('end_date'), reverse=True)
         if rc.keys:
             results = (collection_str(grants, rc.keys))
             print(results, end="")
             return
         for g in grants:
-            print("{}, awardnr: {}, acctn: {}, {} to {}".format(g.get('alias', ''), g.get('awardnr', ''),
-                                                                g.get('account', ''), get_dates(g).get('begin_date'),
-                                                                get_dates(g).get('end_date')))
+            if g.get('admin') is None:
+                g['admin'] = 'missing'
+            g['admin'] = g.get('admin').casefold()
+        grants.sort(key=lambda x: x['admin'])
+        admins = list(set([g.get('admin') for g in grants]))
+        for admin in admins:
+            print(f"Administered by: {admin}")
+            sub_grants = [grant for grant in grants if grant.get('admin').strip() == admin.strip()]
+            sub_grants.sort(key=lambda k: get_dates(k).get('end_date'), reverse=True)
+            for g in sub_grants:
+                print(f"  {g.get('alias', '').ljust(15)}\t awardnr: {g.get('awardnr', '').ljust(15)}\t "
+                      f"acctn: {g.get('account', 'n/a').ljust(20)}\t {get_dates(g).get('begin_date')} "
+                      f"to {get_dates(g).get('end_date')}")
         return
