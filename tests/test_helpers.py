@@ -36,19 +36,19 @@ helper_map = [
      '2018-01-10 (reimb date), 2018-01-10 (expense date): amount: 500, \n'
      '2019-02-15 (reimb date), 2018-01-10 (expense date): amount: 1000, \n'
      '  payee: scopatz purpose: testing the databallectionsse\n'
-     '2018-05-01: expenses monthly total = 0\n'
-     '2018-06-01: expenses monthly total = 0\n'
-     '2018-07-01: expenses monthly total = 0\n'
-     '2018-08-01: expenses monthly total = 0\n'
-     '2018-09-01: expenses monthly total = 0\n'
-     '2018-10-01: expenses monthly total = 0\n'
-     '2018-11-01: expenses monthly total = 0\n'
-     '2018-12-01: expenses monthly total = 0\n'
-     '2019-01-01: expenses monthly total = 0\n'
-     "2019-02-01: expenses monthly total = 1000\n"
-     '2019-03-01: expenses monthly total = 0\n'
-     '2019-04-01: expenses monthly total = 0\n'
-     '2019-05-01: expenses monthly total = 0\n'
+     '2018-05-01: expenses monthly total = 0.00\n'
+     '2018-06-01: expenses monthly total = 0.00\n'
+     '2018-07-01: expenses monthly total = 0.00\n'
+     '2018-08-01: expenses monthly total = 0.00\n'
+     '2018-09-01: expenses monthly total = 0.00\n'
+     '2018-10-01: expenses monthly total = 0.00\n'
+     '2018-11-01: expenses monthly total = 0.00\n'
+     '2018-12-01: expenses monthly total = 0.00\n'
+     '2019-01-01: expenses monthly total = 0.00\n'
+     "2019-02-01: expenses monthly total = 1000.00\n"
+     '2019-03-01: expenses monthly total = 0.00\n'
+     '2019-04-01: expenses monthly total = 0.00\n'
+     '2019-05-01: expenses monthly total = 0.00\n'
      "Total spend = 1500\n"),
     (["helper", "attestations", "--begin-date", "2019-01-01", "--end-date", "2019-05-30", "--effort-reporting", "--no-plot"],
      ",, 2019-01-01, 2019-02-01, 2019-03-01, 2019-04-01, 2019-05-01\n"
@@ -191,7 +191,8 @@ helper_map = [
      "\nNo projecta finished within the 7 days leading up to 2020-06-02\n"
      ),
     (["helper", "l_grants", "--current", "--date", "2020-05-25"],
-     "sym2.0, awardnr: , acctn: , 2019-06-01 to 2030-12-31\n"
+     "Administered by: missing\n"
+     "  sym2.0         \t awardnr:                \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
      ),
     (["helper", "l_members", "--current", "-v"],
      "    -- Assistant Scientists --\n"
