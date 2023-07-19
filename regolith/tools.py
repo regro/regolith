@@ -1920,7 +1920,7 @@ def print_task(task_list, stati, index=True):
         for task in task_list:
             if index:
                 try:
-                    task["preamble"] = f"({task.get('running_index', 0)}) "
+                    task["preamble"] = f"({task.get('importance')})({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
                 except:
                     task["preamble"] = ""
             else:
@@ -1931,9 +1931,9 @@ def print_task(task_list, stati, index=True):
                 if task.get('notes'):
                     for note in task.get('notes'):
                         print(f"     - {note}")
-    print("-" * 30)
-    print("Tasks (decreasing priority going up)")
-    print("-" * 30)
+    print("-" * 76)
+    print("(importance)(days to due): (Task number) Task (decreasing priority going up)")
+    print("-" * 76)
     deadline_list = [task for task in task_list
                      if task.get('deadline') and task.get("status") in stati]
     deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
