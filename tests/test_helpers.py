@@ -369,9 +369,13 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(2) prepare the presentation (89|0|30.0|downtime|sbillinge|2saefa)\n"
+     "(0)(89 days): (2) prepare the presentation (89|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
+     "(2)(79 days): (1) read paper (79|2|60.0|reading,downtime|scopatz|1saefa)\n"
+     "----------------------------------------------------------------------------\n"
+     "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
+     "----------------------------------------------------------------------------\n"
      "(3) added todo (80|2|60.0|reading,downtime|scopatz|test-u)\n"
      "(1) read paper (79|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
@@ -390,6 +394,10 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
+     "(2)(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
+     "----------------------------------------------------------------------------\n"
+     "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
+     "----------------------------------------------------------------------------\n"
      "(3) added todo (7|2|60.0|reading,downtime|scopatz|test-u)\n"
      "(1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
@@ -563,9 +571,13 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
+     "(0)(16 days): (2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
+     "(2)(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
+     "----------------------------------------------------------------------------\n"
+     "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
+     "----------------------------------------------------------------------------\n"
      "(3) added todo (7|2|60.0|reading,downtime|scopatz|test-u)\n"
      "(1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
@@ -596,15 +608,20 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
+     "(0)(16 days): (2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
      "finished:\n"
+     "(2)(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
      "(4) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
      "     - test notes 1\n"
      "     - test notes 2\n"
      "     - some new notes\n"
      "     - notes2\n"
+     "----------------------------------------------------------------------------\n"
+     "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
+     "----------------------------------------------------------------------------\n"
+     "2020-07-06(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
      "------------------------------\n"
      "Tasks (decreasing priority going up)\n"
      "------------------------------\n"
@@ -839,42 +856,6 @@ db_srcs = [
 #      "List of all tags in citations collection:\n['nomonth', 'pdf']\nbuilding lists for all tags in the citation collection\nnomonth has been added/updated in reading_lists\npdf has been added/updated in reading_lists\n"),
 #     ]
 
-
-@pytest.mark.parametrize("db_src", db_srcs)
-@pytest.mark.parametrize("hm", helper_map)
-def test_helper_python(hm, make_db, db_src, make_mongodb, capsys, mocker):
-    mocker.patch('uuid.uuid4', return_value="test-uuid")
-    testfile = Path(__file__)
-
-    if db_src == "fs":
-        repo = Path(make_db)
-    elif db_src == "mongo":
-        if make_mongodb is False:
-            pytest.skip("Mongoclient failed to start")
-        else:
-            repo = Path(make_mongodb)
-    os.chdir(repo)
-
-    main(args=hm[0])
-    out, err = capsys.readouterr()
-    assert hm[1] == out
-
-    expecteddir = testfile.parent / "outputs" / hm[0][1]
-
-    if expecteddir.is_dir():
-        if db_src == "fs":
-            test_dir = repo / "db"
-            assert_outputs(test_dir, expecteddir)
-        elif db_src == "mongo":
-            from regolith.database import connect
-            from regolith.runcontrol import DEFAULT_RC, load_rcfile
-            os.chdir(repo)
-            rc = copy.copy(DEFAULT_RC)
-            rc._update(load_rcfile("regolithrc.json"))
-            with connect(rc) as client:
-                mongo_database = client[rc.databases[0]['name']]
-                assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
-
 helper_map_bad = [
  (["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum"],
   "Detected both a uuid fragment and projectum id.\n"
@@ -946,6 +927,42 @@ def test_helpers_bad(hmb, make_db):
  with pytest.raises(hmb[2]) as excinfo:
   actual =  main(args=hmb[0])
  assert str(excinfo.value) == hmb[1]
+
+@pytest.mark.parametrize("db_src", db_srcs)
+@pytest.mark.parametrize("hm", helper_map)
+def test_helper_python(hm, make_db, db_src, make_mongodb, capsys, mocker):
+    mocker.patch('uuid.uuid4', return_value="test-uuid")
+    testfile = Path(__file__)
+
+    if db_src == "fs":
+        repo = Path(make_db)
+    elif db_src == "mongo":
+        if make_mongodb is False:
+            pytest.skip("Mongoclient failed to start")
+        else:
+            repo = Path(make_mongodb)
+    os.chdir(repo)
+
+    main(args=hm[0])
+    out, err = capsys.readouterr()
+    assert hm[1] == out
+
+    expecteddir = testfile.parent / "outputs" / hm[0][1]
+
+    if expecteddir.is_dir():
+        if db_src == "fs":
+            test_dir = repo / "db"
+            assert_outputs(test_dir, expecteddir)
+        elif db_src == "mongo":
+            from regolith.database import connect
+            from regolith.runcontrol import DEFAULT_RC, load_rcfile
+            os.chdir(repo)
+            rc = copy.copy(DEFAULT_RC)
+            rc._update(load_rcfile("regolithrc.json"))
+            with connect(rc) as client:
+                mongo_database = client[rc.databases[0]['name']]
+                assert_mongo_vs_yaml_outputs(expecteddir, mongo_database)
+
 
 helper_map_loose = [
     (["helper", "l_abstract"],
