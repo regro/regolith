@@ -65,7 +65,7 @@ class ReadingListsBuilder(LatexBuilderBase):
                 if doi:
                     # if rc.verbose:
                     #     print(f"getting {doi} for {paper.get('tite')}")
-                    # ref, ref_date = get_formatted_crossref_reference(doi)
+                    # ref, ref_date = get_formatted_timecrossref_reference(doi)
                     # if rc.verbose:
                     #     try:
                     #         print(f"got ref: {ref}")
