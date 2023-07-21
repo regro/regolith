@@ -41,16 +41,22 @@ class ReadingListsBuilder(LatexBuilderBase):
         """Render latex template"""
         rc = self.rc
 
+        # build the collection of formatted references so that we only go
+        # and fetch the formatted references once per doi
         dois, formatted_refs = [], {}
         for rlist in self.gtx["reading_lists"]:
             for paper in rlist['papers']:
-                dois.append(paper.get('doi'))
+                dois.append(paper.get('doi', ''))
         dois = list(set(dois))
-        dois.remove('tbd')
-        dois.remove('')
+        for item in ['tbd', '']:
+            if item in dois:
+                dois.remove('tbd')
+                dois.remove('')
         for doi in dois:
-            formatted_refs.update({doi: get_formatted_crossref_reference(doi)})
+            ref_and_date = get_formatted_crossref_reference(doi)
+            formatted_refs.update({doi: ref_and_date})
 
+        # loop through the reading lists to build the files
         for rlist in self.gtx["reading_lists"]:
             listid = rlist["_id"]
             outfile_bib = listid
@@ -63,14 +69,6 @@ class ReadingListsBuilder(LatexBuilderBase):
                     doi = None
                 url = paper.get('url')
                 if doi:
-                    # if rc.verbose:
-                    #     print(f"getting {doi} for {paper.get('tite')}")
-                    # ref, ref_date = get_formatted_timecrossref_reference(doi)
-                    # if rc.verbose:
-                    #     try:
-                    #         print(f"got ref: {ref}")
-                    #     except:
-                    #         print("obtained ref but print error")
                     paper.update({'reference': formatted_refs.get(doi)[0],
                                    'ref_date': formatted_refs.get(doi)[1],
                                    'n': n, 'label': 'DOI'})
