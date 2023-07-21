@@ -1980,7 +1980,7 @@ def get_formatted_crossref_reference(doi):
 
     authorlist = [
         f"{a['given'].strip()} {a['family'].strip()}"
-        for a in article.get('message').get('author')]
+        for a in article.get('message',{}).get('author','')]
     try:
         journal = \
             article.get('message').get('short-container-title')[0]

@@ -26,6 +26,7 @@ builder_map = [
     "grantreport",
     "resume",
     "review-man",
+    # reading-lists    need tests for this
     "reimb"
 ]
 db_srcs = ["mongo", "fs"]
