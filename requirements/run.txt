@@ -12,6 +12,6 @@ pandas
 pymongo
 matplotlib-base
 habanero
-gooey
 google-api-python-client
 google-auth-oauthlib
+gooey>=1.0.8.1
