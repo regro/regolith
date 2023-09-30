@@ -7,7 +7,7 @@ from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    get_formatted_crossref_reference,
+    get_refs_from_dois, format_doi_reference,
 )
 
 class ReadingListsBuilder(LatexBuilderBase):
@@ -52,8 +52,9 @@ class ReadingListsBuilder(LatexBuilderBase):
             if item in dois:
                 dois.remove('tbd')
                 dois.remove('')
-        for doi in dois:
-            ref_and_date = get_formatted_crossref_reference(doi)
+        articles = get_refs_from_dois(dois)
+        for article, doi in zip(articles, dois):
+            ref_and_date = format_doi_reference(article)
             formatted_refs.update({doi: ref_and_date})
 
         # loop through the reading lists to build the files

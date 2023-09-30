@@ -1946,8 +1946,24 @@ def print_task(task_list, stati, index=True):
     print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
     return
 
+def get_refs_from_dois(dois):
+    cr = Crossref()
+    try:
+        article = cr.works(ids=dois)
+    except HTTPError:
+        print(f"WARNING: not able to find reference from {dois} in Crossref")
+        return None, None
+    except ConnectionError:
+        print(f"WARNING: not able to connect to internet.  To obtain "
+              f"publication information rerun when you have an internet "
+              f"connection")
+        return None, None
+    return article
 
-def get_formatted_crossref_reference(doi):
+def get_formatted_crossref_reference():
+    pass
+
+def format_doi_reference(article):
     '''
     given a doi, return the full reference and the date of the reference from Crossref REST-API
 
@@ -1966,17 +1982,6 @@ def get_formatted_crossref_reference(doi):
 
     '''
 
-    cr = Crossref()
-    try:
-        article = cr.works(ids=doi)
-    except HTTPError:
-        print(f"WARNING: not able to find reference {doi} in Crossref")
-        return None, None
-    except ConnectionError:
-        print(f"WARNING: not able to connect to internet.  To obtain "
-              f"publication information rerun when you have an internet "
-              f"connection")
-        return None, None
 
     authorlist = [
         f"{a['given'].strip()} {a['family'].strip()}"
