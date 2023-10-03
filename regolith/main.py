@@ -188,6 +188,14 @@ def create_parser():
              "the build will be for only those people",
         default=None,
     )
+    bldp.add_argument(
+        "--kwargs",
+        nargs='+',
+        dest="kwargs",
+        help="pass a specific command to build a specific task "
+             "if it exists",
+        default=None,
+    )
 
     # deploy subparser
     depp = subp.add_parser(
