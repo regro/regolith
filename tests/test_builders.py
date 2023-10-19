@@ -210,6 +210,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
     expected_base = os.path.join(os.path.dirname(__file__), "outputs")
     for root, dirs, files in os.walk("."):
         for file in files:
+            print(f"Checking file: {file}")
             if file in os.listdir(os.path.join(expected_base, bm, root)):
                 html_tex_bool = False
                 if file.endswith('.html') or file.endswith('.tex'):
