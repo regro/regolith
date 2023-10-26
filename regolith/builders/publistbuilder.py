@@ -44,15 +44,16 @@ class PubListBuilder(LatexBuilderBase):
 
     def latex(self):
         fd = gr = kw = False
+        facilities = None
         filestub, qualifiers = "", ""
         if self.rc.from_date:
             from_date = date_parser.parse(self.rc.from_date).date()
-            filestub = filestub + "_from{}".format(from_date)
-            qualifiers = qualifiers + "in the period from {}".format(from_date)
+            filestub = f"{filestub}_from{from_date}"
+            qualifiers = f"{qualifiers} in the period from {from_date}"
             if self.rc.to_date:
                 to_date = date_parser.parse(self.rc.to_date).date()
-                filestub = filestub + "_to{}".format(to_date)
-                qualifiers = qualifiers + " to {}".format(to_date)
+                filestub = f"{filestub}_to{to_date}"
+                qualifiers = f"{qualifiers} to {to_date}"
             else:
                 to_date = None
         else:
@@ -74,28 +75,15 @@ class PubListBuilder(LatexBuilderBase):
             cat_grants, all_grants = "", ""
             for g in grants:
                 cat_grants = cat_grants + "_" + g
-            filestub = filestub + "{}".format(cat_grants)
-            qualifiers = qualifiers + " from Grant{} {}".format(pl, text_grants)
+            filestub = f"{filestub}{cat_grants}"
+            qualifiers = f"{qualifiers} from Grant{pl} {text_grants}"
         if self.rc.kwargs:
             kw = True
-            kwargs = self.rc.kwargs
-            if isinstance(kwargs, str):
-                key, value = kwargs.split(':', 1)  # Split only at the first colon
-                if key == 'facilities':
-                    facilities = value
-                    filestub = filestub + "_facility_{}".format(facilities)
-                    qualifiers = qualifiers + " from facility {}".format(facilities)
-                elif key == 'doi':
-                    doi = value
-                    filestub = filestub + "_doi_{}".format(doi)
-                    qualifiers = qualifiers + " from facility {}".format(doi)
-                else:
-                    facilities, doi = None, None
-            else:
-                facilities, doi = None, None
-        else:
-            facilities, doi = None, None
-
+            key, value = self.rc.kwargs[0].split(':', 1)
+            if key == "facilities":
+                facilities = value
+                filestub = f"{filestub}_facility_{facilities}"
+                qualifiers = f"{qualifiers} from facility {facilities}"
 
         for p in self.gtx["people"]:
             if p.get("_id") in self.rc.people or self.rc.people == ['all']:
@@ -107,22 +95,20 @@ class PubListBuilder(LatexBuilderBase):
                 names = frozenset(p.get("aka", []) + [p["name"]])
                 citations = list(self.gtx["citations"])
                 grants = self.rc.grants
-                # facilities = self.rc.facilities
-                # doi = self.rc.doi
 
                 pubs_nobold = filter_publications(citations, names, reverse=True, bold=False,
                                                   ackno=False, since=from_date,
                                                   before=to_date, grants=grants,
-                                                  facilities=facilities, doi=doi)
+                                                  facilities=facilities)
                 pubs_ackno = filter_publications(citations, names, reverse=True,
                                                  bold=False, ackno=True,
                                                  since=from_date,
                                                  before=to_date, grants=grants,
-                                                 facilities=facilities, doi=doi)
+                                                 facilities=facilities)
                 pubs = filter_publications(citations, names, reverse=True, ackno=False,
                                            bold=True, since=from_date,
                                            before=to_date, grants=grants,
-                                           facilities=facilities, doi=doi)
+                                           facilities=facilities)
 
                 bibfile = make_bibtex_file(
                     pubs, pid=p["_id"], person_dir=self.bldir

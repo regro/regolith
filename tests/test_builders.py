@@ -111,7 +111,7 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
     elif bm == "publist":
         subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo)
         subprocess.run(["regolith", "build", bm, "--no-pdf",
-                        "--kwargs", "doi:tbd"], check=True, cwd=repo)
+                        "--kwargs", "facility:tbd"], check=True, cwd=repo)
         # subprocess.run(["regolith", "build", bm, "--no-pdf",
         #                 "--from", "2017-01-01", "--to", "2017-12-01", "--kwargs", "doi:tbd"], check=True, cwd=repo)
     else:
@@ -201,9 +201,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
     elif bm == "publist":
         main(["regolith", "build", bm, "--no-pdf"])
         main(["regolith", "build", bm, "--no-pdf",
-                        "--kwargs", "doi:tbh"])
-        main(["regolith", "build", bm, "--no-pdf",
-                        "--from", "2017-01-01", "--to", "2017-12-01", "--kwargs", "doi:tbh"])
+                        "--kwargs", "facility:tbh"])
     else:
         main(["build", bm, "--no-pdf"])
     os.chdir(os.path.join(repo, "_build", bm))

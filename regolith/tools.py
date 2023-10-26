@@ -136,7 +136,7 @@ def get_team_from_grant(grantcol):
 
 def filter_publications(citations, authors, reverse=False, bold=True,
                         since=None, before=None, ackno=False,
-                        grants=None, facilities=None, doi=None):
+                        grants=None, facilities=None):
     """Filter publications by the author(s)/editor(s)
 
     Parameters
@@ -160,10 +160,8 @@ def filter_publications(citations, authors, reverse=False, bold=True,
         The grant or grants to filter over
     facilities: string, optional
         The facilities to filter over
-    doi: string, optional
-        The doi to filter over
     """
-    pubs_by_date, pubs_by_grant, pubs_by_facilities, pubs_by_doi = [], [], [], []
+    pubs_by_date, pubs_by_grant, pubs_by_facilities = [], [], []
     if not isinstance(citations, list):
         citations = list(citations)
     cites = deepcopy(citations)
@@ -215,14 +213,8 @@ def filter_publications(citations, authors, reverse=False, bold=True,
         else:
             pubs_by_facilities.append(pub)
 
-        if doi:
-            if doi == pub.get("doi"):
-                pubs_by_doi.append(pub)
-        else:
-            pubs_by_doi.append(pub)
-
     pubs = [x for x in pubs_by_date if x in pubs_by_grant]
-    pubs = [x for x in pubs if x in pubs_by_facilities and x in pubs_by_doi]
+    pubs = [x for x in pubs if x in pubs_by_facilities]
     pubs.sort(key=doc_date_key_high, reverse=reverse)
     return pubs
 
