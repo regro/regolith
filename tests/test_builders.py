@@ -201,7 +201,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
     elif bm == "publist":
         main(["build", bm, "--no-pdf"])
         main(["build", bm, "--no-pdf",
-                        "--kwargs", "facility:tbh"])
+              "--kwargs", "facility:nslsii"])
     else:
         main(["build", bm, "--no-pdf"])
     os.chdir(os.path.join(repo, "_build", bm))
