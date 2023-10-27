@@ -199,8 +199,8 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
         main(["build", bm, "--no-pdf", "--grant", "SymPy-1.1",
               "--to", "2018-03-31"])
     elif bm == "publist":
-        main(["regolith", "build", bm, "--no-pdf"])
-        main(["regolith", "build", bm, "--no-pdf",
+        main(["build", bm, "--no-pdf"])
+        main(["build", bm, "--no-pdf",
                         "--kwargs", "facility:tbh"])
     else:
         main(["build", bm, "--no-pdf"])
