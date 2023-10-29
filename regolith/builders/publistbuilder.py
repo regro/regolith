@@ -44,7 +44,7 @@ class PubListBuilder(LatexBuilderBase):
 
     def latex(self):
         fd = gr = kw = False
-        facilities = None
+        facility = None
         filestub, qualifiers = "", ""
         if self.rc.from_date:
             from_date = date_parser.parse(self.rc.from_date).date()
@@ -80,10 +80,11 @@ class PubListBuilder(LatexBuilderBase):
         if self.rc.kwargs:
             kw = True
             key, value = self.rc.kwargs[0].split(':', 1)
-            if key == "facilities":
-                facilities = value
-                filestub = f"{filestub}_facility_{facilities}"
-                qualifiers = f"{qualifiers} from facility {facilities}"
+            print(key, value)
+            if key == "facility":
+                facility = value
+                filestub = f"{filestub}_facility_{facility}"
+                qualifiers = f"{qualifiers} from facility {facility}"
 
         for p in self.gtx["people"]:
             if p.get("_id") in self.rc.people or self.rc.people == ['all']:
@@ -91,6 +92,7 @@ class PubListBuilder(LatexBuilderBase):
                 #     if p.get("_id") != self.rc.people[0]:
                 #         continue
                 outfile = p["_id"] + filestub
+                print(outfile)
                 p['qualifiers'] = qualifiers
                 names = frozenset(p.get("aka", []) + [p["name"]])
                 citations = list(self.gtx["citations"])
@@ -99,16 +101,16 @@ class PubListBuilder(LatexBuilderBase):
                 pubs_nobold = filter_publications(citations, names, reverse=True, bold=False,
                                                   ackno=False, since=from_date,
                                                   before=to_date, grants=grants,
-                                                  facilities=facilities)
+                                                  facilities=facility)
                 pubs_ackno = filter_publications(citations, names, reverse=True,
                                                  bold=False, ackno=True,
                                                  since=from_date,
                                                  before=to_date, grants=grants,
-                                                 facilities=facilities)
+                                                 facilities=facility)
                 pubs = filter_publications(citations, names, reverse=True, ackno=False,
                                            bold=True, since=from_date,
                                            before=to_date, grants=grants,
-                                           facilities=facilities)
+                                           facilities=facility)
 
                 bibfile = make_bibtex_file(
                     pubs, pid=p["_id"], person_dir=self.bldir
