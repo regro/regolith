@@ -97,6 +97,22 @@ class PubListBuilder(LatexBuilderBase):
                 names = frozenset(p.get("aka", []) + [p["name"]])
                 citations = list(self.gtx["citations"])
                 grants = self.rc.grants
+                # build the bib files first without filtering for anything so they always contain all the relevant
+                # publications, then
+                pubs_nobold_for_bib = filter_publications(citations, names, reverse=True, bold=False,
+                                                  ackno=False)
+                pubs_ackno_for_bib = filter_publications(citations, names, reverse=True,
+                                                 bold=False, ackno=True)
+                pubs_for_bib = filter_publications(citations, names, reverse=True, ackno=False)
+                bibfile = make_bibtex_file(
+                    pubs_nobold_for_bib, pid=p["_id"], person_dir=self.bldir
+                )
+                bibfile_nobold = make_bibtex_file(
+                    pubs_nobold_for_bib, pid=f"{p['_id']}_nobold", person_dir=self.bldir
+                )
+                bibfile_ackno = make_bibtex_file(
+                    pubs_ackno_for_bib, pid=f"{p['_id']}_ackno", person_dir=self.bldir
+                )
 
                 pubs_nobold = filter_publications(citations, names, reverse=True, bold=False,
                                                   ackno=False, since=from_date,
@@ -112,15 +128,6 @@ class PubListBuilder(LatexBuilderBase):
                                            before=to_date, grants=grants,
                                            facilities=facility)
 
-                bibfile = make_bibtex_file(
-                    pubs, pid=p["_id"], person_dir=self.bldir
-                )
-                bibfile_nobold = make_bibtex_file(
-                    pubs_nobold, pid=f"{p['_id']}_nobold", person_dir=self.bldir
-                )
-                bibfile_ackno = make_bibtex_file(
-                    pubs_ackno, pid=f"{p['_id']}_ackno", person_dir=self.bldir
-                )
                 if not p.get('email'):
                     p['email'] = ""
                 emp = p.get("employment", [{'organization': ""}])
