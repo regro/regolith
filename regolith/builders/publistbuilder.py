@@ -80,7 +80,6 @@ class PubListBuilder(LatexBuilderBase):
         if self.rc.kwargs:
             kw = True
             key, value = self.rc.kwargs[0].split(':', 1)
-            print(key, value)
             if key == "facility":
                 facility = value
                 filestub = f"{filestub}_facility_{facility}"
@@ -92,7 +91,6 @@ class PubListBuilder(LatexBuilderBase):
                 #     if p.get("_id") != self.rc.people[0]:
                 #         continue
                 outfile = p["_id"] + filestub
-                print(outfile)
                 p['qualifiers'] = qualifiers
                 names = frozenset(p.get("aka", []) + [p["name"]])
                 citations = list(self.gtx["citations"])
@@ -105,7 +103,7 @@ class PubListBuilder(LatexBuilderBase):
                                                  bold=False, ackno=True)
                 pubs_for_bib = filter_publications(citations, names, reverse=True, ackno=False)
                 bibfile = make_bibtex_file(
-                    pubs_nobold_for_bib, pid=p["_id"], person_dir=self.bldir
+                    pubs_for_bib, pid=p["_id"], person_dir=self.bldir
                 )
                 bibfile_nobold = make_bibtex_file(
                     pubs_nobold_for_bib, pid=f"{p['_id']}_nobold", person_dir=self.bldir
