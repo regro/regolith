@@ -268,7 +268,7 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
             actual = openpyxl.load_workbook(actual_file)["T&B"]
             actual = [str(actual[b]) for b in xls_check]
         elif bm == "recent-collabs":
-            if 'nsf' in actual_file:
+            if 'nsf' in actual_file.name:
                 sheet = "NSF COA Template"
             else:
                 sheet = "Collaborators"
@@ -287,11 +287,12 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
         else:
             with open(actual_file, "r") as f:
                 actual = f.read()
+
         if bm == "reimb":
             expected = openpyxl.load_workbook(file)["T&B"]
             expected = [str(expected[b]) for b in xls_check]
         elif bm == "recent-collabs":
-            if 'nsf' in file:
+            if 'nsf' in file.name:
                 sheet = "NSF COA Template"
             else:
                 sheet = "Collaborators"
