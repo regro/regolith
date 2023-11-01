@@ -160,6 +160,7 @@ EXEMPLARS = {
             "doi": "tbd",
             "entrytype": "article",
             "journal": "PeerJ Computer Science",
+            "facility": "nslsii, xpd",
             "month": "tbd",
             "pages": "e103",
             "publisher": "PeerJ Inc. San Francisco, USA",

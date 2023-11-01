@@ -73,7 +73,7 @@
 \newcommand{\ressubheadingshort}[3]{
     \begin{center}
     \begin{tabular*}{6.5in}{l@{\extracolsep{\fill}}r}
-        \multicolumn{2}{c}{\text --{#1} \cftdotfill{\cftdotsep} #2} \\
+        \multicolumn{2}{c}{\textbf{#1} \cftdotfill{\cftdotsep} #2} \\
         \textit{#3} & \\
         \vphantom{E}
     \end{tabular*}
@@ -126,7 +126,7 @@
 
 {%if len(pubs) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\resheading{Publication Listing {{ p['qualifiers'] }}}
+\resheading{Publication listing {{- p['qualifiers'] }}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}
 {% for pub in pubs %}

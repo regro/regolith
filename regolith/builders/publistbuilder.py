@@ -43,16 +43,17 @@ class PubListBuilder(LatexBuilderBase):
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def latex(self):
-        fd = gr = False
+        fd = gr = kw = False
+        facility = None
         filestub, qualifiers = "", ""
         if self.rc.from_date:
             from_date = date_parser.parse(self.rc.from_date).date()
-            filestub = filestub + "_from{}".format(from_date)
-            qualifiers = qualifiers + "in the period from {}".format(from_date)
+            filestub = f"{filestub}_from{from_date}"
+            qualifiers = f"{qualifiers} in the period from {from_date}"
             if self.rc.to_date:
                 to_date = date_parser.parse(self.rc.to_date).date()
-                filestub = filestub + "_to{}".format(to_date)
-                qualifiers = qualifiers + " to {}".format(to_date)
+                filestub = f"{filestub}_to{to_date}"
+                qualifiers = f"{qualifiers} to {to_date}"
             else:
                 to_date = None
         else:
@@ -74,8 +75,15 @@ class PubListBuilder(LatexBuilderBase):
             cat_grants, all_grants = "", ""
             for g in grants:
                 cat_grants = cat_grants + "_" + g
-            filestub = filestub + "{}".format(cat_grants)
-            qualifiers = qualifiers + " from Grant{} {}".format(pl, text_grants)
+            filestub = f"{filestub}{cat_grants}"
+            qualifiers = f"{qualifiers} from Grant{pl} {text_grants}"
+        if self.rc.kwargs:
+            kw = True
+            key, value = self.rc.kwargs[0].split(':', 1)
+            if key == "facility":
+                facility = value
+                filestub = f"{filestub}_facility_{facility}"
+                qualifiers = f"{qualifiers} from facility {facility}"
 
         for p in self.gtx["people"]:
             if p.get("_id") in self.rc.people or self.rc.people == ['all']:
@@ -87,27 +95,37 @@ class PubListBuilder(LatexBuilderBase):
                 names = frozenset(p.get("aka", []) + [p["name"]])
                 citations = list(self.gtx["citations"])
                 grants = self.rc.grants
+                # build the bib files first without filtering for anything so they always contain all the relevant
+                # publications, then
+                pubs_nobold_for_bib = filter_publications(citations, names, reverse=True, bold=False,
+                                                  ackno=False)
+                pubs_ackno_for_bib = filter_publications(citations, names, reverse=True,
+                                                 bold=False, ackno=True)
+                pubs_for_bib = filter_publications(citations, names, reverse=True, ackno=False)
+                bibfile = make_bibtex_file(
+                    pubs_for_bib, pid=p["_id"], person_dir=self.bldir
+                )
+                bibfile_nobold = make_bibtex_file(
+                    pubs_nobold_for_bib, pid=f"{p['_id']}_nobold", person_dir=self.bldir
+                )
+                bibfile_ackno = make_bibtex_file(
+                    pubs_ackno_for_bib, pid=f"{p['_id']}_ackno", person_dir=self.bldir
+                )
 
                 pubs_nobold = filter_publications(citations, names, reverse=True, bold=False,
                                                   ackno=False, since=from_date,
-                                                  before=to_date, grants=grants)
+                                                  before=to_date, grants=grants,
+                                                  facilities=facility)
                 pubs_ackno = filter_publications(citations, names, reverse=True,
                                                  bold=False, ackno=True,
                                                  since=from_date,
-                                                 before=to_date, grants=grants)
+                                                 before=to_date, grants=grants,
+                                                 facilities=facility)
                 pubs = filter_publications(citations, names, reverse=True, ackno=False,
                                            bold=True, since=from_date,
-                                           before=to_date, grants=grants)
+                                           before=to_date, grants=grants,
+                                           facilities=facility)
 
-                bibfile = make_bibtex_file(
-                    pubs, pid=p["_id"], person_dir=self.bldir
-                )
-                bibfile_nobold = make_bibtex_file(
-                    pubs_nobold, pid=f"{p['_id']}_nobold", person_dir=self.bldir
-                )
-                bibfile_ackno = make_bibtex_file(
-                    pubs_ackno, pid=f"{p['_id']}_ackno", person_dir=self.bldir
-                )
                 if not p.get('email'):
                     p['email'] = ""
                 emp = p.get("employment", [{'organization': ""}])
