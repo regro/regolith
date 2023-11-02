@@ -112,9 +112,10 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
     elif bm == "publist":
         subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo)
         subprocess.run(["regolith", "build", bm, "--no-pdf",
-                        "--kwargs", "facility:nslsii"], check=True, cwd=repo)
-        # subprocess.run(["regolith", "build", bm, "--no-pdf",
-        #                 , "--kwargs", "doi:tbd"], check=True, cwd=repo)
+                        "--kwargs", "facility:nslsii",
+                        "--from", "2016-01-01",
+                        "--to", "2018-12-01",
+                        "--people", "scopatz"], check=True, cwd=repo)
     else:
         subprocess.run(["regolith", "build", bm, "--no-pdf"], check=True, cwd=repo)
     repo_dir = Path(repo)
