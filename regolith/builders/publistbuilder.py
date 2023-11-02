@@ -16,7 +16,6 @@ from dateutil import parser as date_parser
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
-
 class PubListBuilder(LatexBuilderBase):
     btype = "publist"
     needed_colls = ['citations', 'people']

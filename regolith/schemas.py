@@ -148,7 +148,7 @@ EXEMPLARS = {
         "tags": "pdf",
         "title": "SymPy: Symbolic computing in Python",
         "volume": "4",
-        "year": "2017",
+        "year": "2019",
     },
         {
             "_id": "meurer2016nomonth",
