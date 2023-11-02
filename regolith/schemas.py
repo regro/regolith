@@ -1377,7 +1377,7 @@ EXEMPLARS = {
             "teaching": [
                 {
                     "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "f17-3010",
+                    "courseid": "f16-3010",
                     "description": "This course is an introduction to nuclear " "physics.",
                     "enrollment": 18,
                     "evaluation": {
@@ -1431,7 +1431,7 @@ EXEMPLARS = {
                 },
                 {
                     "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "s17-3010",
+                    "courseid": "s18-3010",
                     "description": "This course is an introduction to nuclear " "physics.",
                     "enrollment": 18,
                     "evaluation": {
@@ -1485,7 +1485,7 @@ EXEMPLARS = {
                 },
                 {
                     "course": 'MSAE-3010: Introduction to Materials Science',
-                    "courseid": "s17-3010",
+                    "courseid": "s19-3010",
                     "description": "This course is an introduction to nuclear " "physics.",
                     "enrollment": 18,
                     "month": "Jan",
@@ -1501,20 +1501,6 @@ EXEMPLARS = {
                     "courseid": "f18-3010",
                     "description": "This course is an introduction to nuclear " "physics.",
                     "enrollment": 18,
-                    "evaluation": {
-                        "response_rate": 58.33,
-                        "amount_learned": 4.57,
-                        "appropriateness_workload": 4.29,
-                        "fairness_grading": 4.57,
-                        "course_overall": 4.43,
-                        "organization": 4.0,
-                        "classroom_delivery": 4.29,
-                        "approachability": 4.86,
-                        "instructor_overall": 4.43,
-                        "comments": [
-                            "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ]},
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",

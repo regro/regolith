@@ -160,7 +160,7 @@ class ActivitylogBuilder(LatexBuilderBase):
         # current and pending
         #########
         pi = fuzzy_retrieval(
-            self.gtx["people"], ["aka", "name"], group["pi_name"]
+            self.gtx["people"], ["_id", "aka", "name"], build_target
         )
         pinames = pi["name"].split()
         piinitialslist = [i[0] for i in pinames]
@@ -477,4 +477,4 @@ class ActivitylogBuilder(LatexBuilderBase):
             licenses=licenses,
             hindex=hindex,
         )
-        self.pdf("billinge-ann-report")
+        self.pdf(f"{pi['_id']}-ann-report.tex")
