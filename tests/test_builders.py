@@ -15,7 +15,7 @@ builder_map = [
     "review-prop",
 #    "annual-activity",
     "beamplan",
-#    "current-pending",
+    "current-pending",
     "figure",
     "formalletter",
 #    "html",

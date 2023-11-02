@@ -1961,8 +1961,14 @@ EXEMPLARS = {
                 "project_scope": ""
             },
             "currency": "USD",
-            "pi": "sbillinge",
-            "status": "submitted",
+            "pi": "Anthony Scopatz",
+            "status": "pending",
+            "team": [
+                {
+                    "institution": "Columbia University",
+                    "name": "scopatz",
+                    "position": "pi",
+                }],
             "title": "SymPy 1.1 Release Support",
         },
         {
