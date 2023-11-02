@@ -342,10 +342,10 @@ class AppraisalBuilder(LatexBuilderBase):
         #########################
         # render
         #########################
-        #            "C:/Users/simon/scratch/billinge-ann-report.tex",
+        #            "C:/Users/simon/scratch/sbillinge-ann-report.tex",
         self.render(
             "columbia_annual_report.tex",
-            "billinge-ann-report.tex",
+            "sbillinge-ann-report.tex",
             pi=pi,
             p=me,
             projects=projs,

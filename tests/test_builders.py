@@ -13,7 +13,7 @@ from regolith.main import main
 builder_map = [
     "cv",
     "review-prop",
-#    "annual-activity",
+    "annual-activity",
     "beamplan",
 #    "current-pending",
     "figure",
