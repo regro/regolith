@@ -1986,7 +1986,8 @@ EXEMPLARS = {
             },
             "currency": "USD",
             "pi": "sbillinge",
-            "status": "submitted",
+            "status": "accepted",
+            "awardnr": "NF-1234",
             "title": "SymPy 1.1 Release Support",
         },
         {

@@ -51,10 +51,10 @@ class CPBuilder(LatexBuilderBase):
         gtx = self.gtx
         rc = self.rc
         for group in self.gtx["groups"]:
-            gtx["grants"] = list(sorted(
+            self.gtx["grants"] = list(sorted(
                 all_docs_from_collection(rc.client, "grants"), key=_id_key
             ))
-            gtx["proposals"] = list(sorted(
+            self.gtx["proposals"] = list(sorted(
                 all_docs_from_collection(rc.client, "proposals"), key=_id_key
             ))
             grp = group["_id"]
@@ -98,10 +98,9 @@ class CPBuilder(LatexBuilderBase):
                     g['subaward_amount'] = sum(amounts)
 
             pending_grants = [
-                g for g in self.gtx["proposals"]
-                if is_pending(g["status"])
+                g for g in grants
+                if is_pending(g.get("status", ""))
             ]
-            print(self.gtx["proposals"])
             for g in pending_grants:
                 for person in g["team"]:
                     rperson = fuzzy_retrieval(
