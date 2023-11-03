@@ -192,7 +192,7 @@ helper_map = [
      ),
     (["helper", "l_grants", "--current", "--date", "2020-05-25"],
      "Administered by: missing\n"
-     "  sym2.0         \t awardnr:                \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
+     "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
      ),
     (["helper", "l_members", "--current", "-v"],
      "    -- Assistant Scientists --\n"
