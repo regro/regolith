@@ -36,8 +36,12 @@ SymPy-1.1:
     project_scope: ''
   currency: USD
   end_date: '2030-12-31'
-  pi: sbillinge
-  status: submitted
+  pi: Anthony Scopatz
+  status: pending
+  team:
+    - institution: Columbia University
+      name: scopatz
+      position: pi
   title: SymPy 1.1 Release Support
 SymPy-2.0:
   amount: 3000.0
@@ -52,7 +56,7 @@ SymPy-2.0:
   currency: USD
   end_date: '2030-12-31'
   pi: sbillinge
-  status: submitted
+  status: accepted
   title: SymPy 1.1 Release Support
 abc42:
   amount: 42000.0

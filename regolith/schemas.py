@@ -352,6 +352,7 @@ EXEMPLARS = {
             "_id": "SymPy-1.1",
             "amount": 3000.0,
             "alias": "sym",
+            "awardnr": "NF-1234",
             "begin_day": 1,
             "begin_month": "May",
             "begin_year": 2030,
@@ -409,6 +410,7 @@ EXEMPLARS = {
             "_id": "SymPy-2.0",
             "amount": 3000.0,
             "alias": "sym2.0",
+            "awardnr": "NF-1234",
             "begin_day": 1,
             "begin_month": 6,
             "begin_year": 2019,
@@ -1947,8 +1949,14 @@ EXEMPLARS = {
                 "project_scope": ""
             },
             "currency": "USD",
-            "pi": "sbillinge",
-            "status": "submitted",
+            "pi": "Anthony Scopatz",
+            "status": "pending",
+            "team": [
+                {
+                    "institution": "Columbia University",
+                    "name": "scopatz",
+                    "position": "pi",
+                }],
             "title": "SymPy 1.1 Release Support",
         },
         {
@@ -1966,7 +1974,7 @@ EXEMPLARS = {
             },
             "currency": "USD",
             "pi": "sbillinge",
-            "status": "submitted",
+            "status": "accepted",
             "title": "SymPy 1.1 Release Support",
         },
         {

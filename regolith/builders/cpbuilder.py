@@ -51,15 +51,15 @@ class CPBuilder(LatexBuilderBase):
         gtx = self.gtx
         rc = self.rc
         for group in self.gtx["groups"]:
-            gtx["grants"] = list(sorted(
+            self.gtx["grants"] = list(sorted(
                 all_docs_from_collection(rc.client, "grants"), key=_id_key
             ))
-            gtx["proposals"] = list(sorted(
+            self.gtx["proposals"] = list(sorted(
                 all_docs_from_collection(rc.client, "proposals"), key=_id_key
             ))
             grp = group["_id"]
             pi = fuzzy_retrieval(
-                self.gtx["people"], ["aka", "name"], group["pi_name"]
+                self.gtx["people"], ["_id", "aka", "name"], group["pi_name"]
             )
             pinames = pi["name"].split()
             piinitialslist = [i[0] for i in pinames]
@@ -74,7 +74,7 @@ class CPBuilder(LatexBuilderBase):
                                                    dt.date(1900, 1, 2))
                 for person in g.get("team", []):
                     rperson = fuzzy_retrieval(
-                        self.gtx["people"], ["aka", "name"], person["name"]
+                        self.gtx["people"], ["_id", "aka", "name"], person["name"]
                     )
                     if rperson:
                         person["name"] = rperson["name"]
@@ -98,8 +98,8 @@ class CPBuilder(LatexBuilderBase):
                     g['subaward_amount'] = sum(amounts)
 
             pending_grants = [
-                g for g in self.gtx["proposals"]
-                if is_pending(g["status"])
+                g for g in grants
+                if is_pending(g.get("status", ""))
             ]
             for g in pending_grants:
                 for person in g["team"]:
