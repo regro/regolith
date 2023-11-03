@@ -25,7 +25,7 @@ from regolith.tools import (
 
 class GrantReportBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
-    btype = "grantreport"
+    btype = "grant-report"
     needed_dbs = ['presentations', 'projecta', 'people', 'grants',
                   'institutions', 'expenses', 'citations', 'contacts']
 

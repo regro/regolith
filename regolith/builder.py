@@ -30,7 +30,7 @@ BUILDERS = {
     "formalletter": FormalLetterBuilder,
     "grade": GradeReportBuilder,
     "grades": GradeReportBuilder,
-    "grantreport": GrantReportBuilder,
+    "grant-report": GrantReportBuilder,
     "html": HtmlBuilder,
     "internalhtml": InternalHtmlBuilder,
     "postdocad": PostdocadBuilder,
