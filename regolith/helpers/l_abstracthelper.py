@@ -1,3 +1,5 @@
+import operator
+
 from regolith.dates import get_dates
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
@@ -126,17 +128,18 @@ class AbstractListerHelper(SoutHelperBase):
                                   for talk in presentations
                                   if all(talk in presentations
                                          for presentations in nonempty_filtered_presentations_by_args)]
-        flat_filtered_presentations = list({talk['_id']: talk for talk in filtered_presentations}.values())
-
+        for talk in filtered_presentations:
+            talk.update({"meeting_date": get_dates(talk).get('date', get_dates(talk).get('end_date', get_dates(talk).get('begin_date')))})
+        filtered_presentations_sorted = sorted(filtered_presentations, key=operator.itemgetter('meeting_date'))
+        flat_filtered_presentations = list({talk['_id']: talk for talk in filtered_presentations_sorted}.values())
         for presentation in flat_filtered_presentations:
             if presentation.get("type") in SEMINAR_TYPES:
                 dereference_institution(presentation, institutions)
                 meeting_info = f"{presentation.get('type').title()} {presentation.get('department')}, {presentation.get('institution')}"
             else:
                 meeting_info = f"{presentation.get('meeting_name')}, {presentation.get('location')}"
-            meeting_date = get_dates(presentation).get('date', get_dates(presentation).get('end_date', get_dates(presentation).get('begin_date'))).isoformat()
             print("---------------------------------------")
-            print(f"{meeting_date} - {meeting_info}")
+            print(f"{presentation.get('meeting_date').isoformat()} - {meeting_info}")
             print("---------------------------------------")
             print(f"Title: {presentation.get('title')}\n")
             author_list = [author
