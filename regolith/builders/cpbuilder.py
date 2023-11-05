@@ -86,12 +86,12 @@ class CPBuilder(LatexBuilderBase):
                 dict(g)
                 for g in grants
                 if is_current(g)
+                   and not is_pending(g.get("status", "None"))
+                   and not is_declined(g.get("status", "None"))
             ]
             current_grants, _, _ = filter_grants(
                 current_grants, {pi["name"]}, pi=False, multi_pi=True
             )
-            current_grants = [g for g in current_grants if
-                              g.get("status") != "declined"]
             for g in current_grants:
                 if g.get('budget'):
                     amounts = [i.get('amount') for i in g.get('budget')]
@@ -99,7 +99,7 @@ class CPBuilder(LatexBuilderBase):
 
             pending_grants = [
                 g for g in grants
-                if is_pending(g.get("status", ""))
+                if is_pending(g.get("status", "None"))
             ]
             for g in pending_grants:
                 for person in g["team"]:
@@ -126,7 +126,11 @@ class CPBuilder(LatexBuilderBase):
                     ),
                 )
             badids = [i["_id"] for i in current_grants if
-                      not i.get('cpp_info').get('cppflag', "")]
+                      not i.get('cpp_info',{}).get('cppflag', "")]
+            # badids_pending = ([i["_id"] for i in pending_grants if
+            #           not i.get('cpp_info',{}).get('cppflag', "")])
+            if badids:
+                print(f"these grants have a problem with ccp_info: {*badids,}")
 
             iter = copy(current_grants)
             for grant in iter:
