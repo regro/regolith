@@ -436,8 +436,8 @@ EXEMPLARS = {
                     "position": "researcher",
                 },
             ],
-            "status": "pending",
-            "title": "SymPy 1.1 Release Support",
+            "status": "accepted",
+            "title": "SymPy 2.0 Release Support",
             "budget": [
                 {"begin_date": "2019-06-01",
                  "end_date": "2024-12-31",

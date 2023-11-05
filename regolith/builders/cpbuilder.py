@@ -92,8 +92,6 @@ class CPBuilder(LatexBuilderBase):
             current_grants, _, _ = filter_grants(
                 current_grants, {pi["name"]}, pi=False, multi_pi=True
             )
-            current_grants = [g for g in current_grants if
-                              g.get("status") != "declined"]
             for g in current_grants:
                 if g.get('budget'):
                     amounts = [i.get('amount') for i in g.get('budget')]
@@ -129,9 +127,8 @@ class CPBuilder(LatexBuilderBase):
                 )
             badids = [i["_id"] for i in current_grants if
                       not i.get('cpp_info',{}).get('cppflag', "")]
-            badids_pending = ([i["_id"] for i in pending_grants if
-                      not i.get('cpp_info',{}).get('cppflag', "")])
-            print(badids_pending)
+            # badids_pending = ([i["_id"] for i in pending_grants if
+            #           not i.get('cpp_info',{}).get('cppflag', "")])
             if badids:
                 print(f"these grants have a problem with ccp_info: {*badids,}")
 
