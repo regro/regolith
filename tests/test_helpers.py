@@ -263,11 +263,15 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--year", "2018", "--author", "afriend"],
      "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
+     "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
     (["helper", "l_abstract", "--year", "2018", "--title", "nanostructure"],
+     "---------------------------------------\n"
+     "2018-05-22 - Colloquium Department of Physics, Columbia University\n"
      "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"
@@ -275,11 +279,15 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--title", "graphitic"],
      "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
+     "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
     (["helper", "l_abstract", "--title", "graphitic", "--loc-inst", "upton"],
+     "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
@@ -287,9 +295,13 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--loc-inst", "upton"],
      "---------------------------------------\n"
+     "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
+     "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
      "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
@@ -297,9 +309,13 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--loc-inst", "upton", "--year", "2018"],
      "---------------------------------------\n"
+     "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
+     "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
      "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
@@ -307,13 +323,19 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--year", "2018"],
      "---------------------------------------\n"
+     "2018-05-22 - Colloquium Department of Physics, Columbia University\n"
+     "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"
      "Abstract: We made the case for local structure\n"
      "---------------------------------------\n"
+     "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
+     "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
      "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
@@ -321,13 +343,19 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--author", "scopatz"],
      "---------------------------------------\n"
+     "2018-05-22 - Colloquium Department of Physics, Columbia University\n"
+     "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"
      "Abstract: We made the case for local structure\n"
      "---------------------------------------\n"
+     "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
+     "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
      "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
@@ -335,9 +363,13 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--loc-inst", "upton", "--year", "2018"],
      "---------------------------------------\n"
+     "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
+     "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
      "Anthony Scopatz\n\n"
      "Abstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
@@ -345,9 +377,13 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--author", "scopatz", "--loc-inst", "upton"],
      "---------------------------------------\n"
+     "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
+     "---------------------------------------\n"
      "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n"
      "\nAnthony Scopatz\n"
      "\nAbstract: We pulled apart graphite with tape\n"
+     "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
      "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
@@ -355,11 +391,15 @@ helper_map = [
      ),
     (["helper", "l_abstract", "--author", "scopatz", "--year", "2018", "--loc-inst", "upton", "--title", "graphitic"],
      "---------------------------------------\n"
+     "2018-05-22 - Meeting to check flexibility on dates, Upton NY\n"
+     "---------------------------------------\n"
      "Title: Graphitic Dephenestration\n\n"
      "Anthony Scopatz, Anthony B Friend\n\n"
      "Abstract: We pulled apart graphite with tape\n"
      ),
     (["helper", "l_abstract", "--loc-inst", "columbiau"],
+     "---------------------------------------\n"
+     "2018-05-22 - Colloquium Department of Physics, Columbia University\n"
      "---------------------------------------\n"
      "Title: Nanostructure challenges and successes from 16th Century warships to 21st Century energy\n\n"
      "Anthony Scopatz\n\n"

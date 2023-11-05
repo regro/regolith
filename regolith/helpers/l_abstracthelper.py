@@ -4,7 +4,7 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    get_person_contact
+    get_person_contact, dereference_institution
 )
 from gooey import GooeyParser
 
@@ -48,7 +48,7 @@ class AbstractListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_colls = [f'{TARGET_COLL}', 'people', 'contacts']
+    needed_colls = [f'{TARGET_COLL}', 'people', 'contacts', 'institutions']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -75,6 +75,7 @@ class AbstractListerHelper(SoutHelperBase):
         rc = self.rc
 
         presentations = self.gtx["presentations"]
+        institutions = self.gtx["institutions"]
         SEMINAR_TYPES = ['seminar', 'colloquium']
         filtered_title, filtered_authors, filtered_years, filtered_inst, filtered_loc = ([] for i in range(5))
 
@@ -128,6 +129,14 @@ class AbstractListerHelper(SoutHelperBase):
         flat_filtered_presentations = list({talk['_id']: talk for talk in filtered_presentations}.values())
 
         for presentation in flat_filtered_presentations:
+            if presentation.get("type") in SEMINAR_TYPES:
+                dereference_institution(presentation, institutions)
+                meeting_info = f"{presentation.get('type').title()} {presentation.get('department')}, {presentation.get('institution')}"
+            else:
+                meeting_info = f"{presentation.get('meeting_name')}, {presentation.get('location')}"
+            meeting_date = get_dates(presentation).get('date', get_dates(presentation).get('end_date', get_dates(presentation).get('begin_date'))).isoformat()
+            print("---------------------------------------")
+            print(f"{meeting_date} - {meeting_info}")
             print("---------------------------------------")
             print(f"Title: {presentation.get('title')}\n")
             author_list = [author
