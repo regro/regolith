@@ -1,10 +1,12 @@
+import operator
+
 from regolith.dates import get_dates
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    get_person_contact
+    get_person_contact, dereference_institution
 )
 from gooey import GooeyParser
 
@@ -48,7 +50,7 @@ class AbstractListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_colls = [f'{TARGET_COLL}', 'people', 'contacts']
+    needed_colls = [f'{TARGET_COLL}', 'people', 'contacts', 'institutions']
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -75,6 +77,7 @@ class AbstractListerHelper(SoutHelperBase):
         rc = self.rc
 
         presentations = self.gtx["presentations"]
+        institutions = self.gtx["institutions"]
         SEMINAR_TYPES = ['seminar', 'colloquium']
         filtered_title, filtered_authors, filtered_years, filtered_inst, filtered_loc = ([] for i in range(5))
 
@@ -125,9 +128,18 @@ class AbstractListerHelper(SoutHelperBase):
                                   for talk in presentations
                                   if all(talk in presentations
                                          for presentations in nonempty_filtered_presentations_by_args)]
-        flat_filtered_presentations = list({talk['_id']: talk for talk in filtered_presentations}.values())
-
+        for talk in filtered_presentations:
+            talk.update({"meeting_date": get_dates(talk).get('date', get_dates(talk).get('end_date', get_dates(talk).get('begin_date')))})
+        filtered_presentations_sorted = sorted(filtered_presentations, key=operator.itemgetter('meeting_date'))
+        flat_filtered_presentations = list({talk['_id']: talk for talk in filtered_presentations_sorted}.values())
         for presentation in flat_filtered_presentations:
+            if presentation.get("type") in SEMINAR_TYPES:
+                dereference_institution(presentation, institutions)
+                meeting_info = f"{presentation.get('type').title()} {presentation.get('department')}, {presentation.get('institution')}"
+            else:
+                meeting_info = f"{presentation.get('meeting_name')}, {presentation.get('location')}"
+            print("\n---------------------------------------")
+            print(f"{presentation.get('meeting_date').isoformat()} - {meeting_info}")
             print("---------------------------------------")
             print(f"Title: {presentation.get('title')}\n")
             author_list = [author
