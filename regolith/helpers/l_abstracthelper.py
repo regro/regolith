@@ -138,7 +138,7 @@ class AbstractListerHelper(SoutHelperBase):
                 meeting_info = f"{presentation.get('type').title()} {presentation.get('department')}, {presentation.get('institution')}"
             else:
                 meeting_info = f"{presentation.get('meeting_name')}, {presentation.get('location')}"
-            print("---------------------------------------")
+            print("\n---------------------------------------")
             print(f"{presentation.get('meeting_date').isoformat()} - {meeting_info}")
             print("---------------------------------------")
             print(f"Title: {presentation.get('title')}\n")
