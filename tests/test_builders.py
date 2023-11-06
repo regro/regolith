@@ -23,8 +23,7 @@ builder_map = [
     "preslist",
     "publist",
     "recent-collabs",
-    "beamplan",
-#    "grantreport",
+    "grant-report",
     "resume",
     "review-man",
     # reading-lists    need tests for this
@@ -106,7 +105,7 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
     elif bm == "annual-activity":
         subprocess.run(["regolith", "build", bm, "--no-pdf", "--people",
                         "sbillinge", "--from", "2017-04-01"], check=True, cwd=repo)
-    elif bm == "grantreport":
+    elif bm == "grant-report":
         main(["build", bm, "--no-pdf", "--grant", "SymPy-1.1",
               "--from", "2017-04-01", "--to", "2018-03-31"])
     elif bm == "publist":
@@ -231,9 +230,9 @@ def test_builder_python(bm, db_src, make_db, make_mongodb,
     elif bm == "annual-activity":
         main(["build", bm, "--no-pdf", "--people",
               "sbillinge", "--from", "2017-04-01"])
-    elif bm == "grantreport":
+    elif bm == "grant-report":
         main(["build", bm, "--no-pdf", "--grant", "SymPy-1.1",
-              "--to", "2018-03-31"])
+              "--from", "2017-04-01", "--to", "2018-03-31"])
     elif bm == "publist":
         main(["build", bm, "--no-pdf"])
         main(["build", bm, "--no-pdf",
