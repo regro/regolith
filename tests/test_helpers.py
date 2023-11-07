@@ -575,6 +575,9 @@ helper_map = [
     (["helper", "f_todo", "--index", "99100"],
      "WARNING: indices >= 9900 are used for milestones which should be finished using u_milestone and not f_todo\n"
      ),
+    (["helper", "f_todo", "--index", "1saefa"],
+     "The task \"(1saefa) test a_todo\" in test for sbillinge has been marked as finished.\n"
+     ),
     (["helper", "u_todo", "--index", "3", "--assigned-to", "sbillinge",
       "--description", "update the description", "--due-date", "2020-07-06",
       "--estimated-duration", "35", "--importance", "2", "--status", "finished",
