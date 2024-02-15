@@ -362,6 +362,11 @@ EXEMPLARS = {
             "end_month": "December",
             "end_year": 2030,
             "funder": "NumFOCUS",
+            "funds_available": [
+                {"quarter": "2020-Q2", "funds_available": 2800.00},
+                {"quarter": "2020-Q3", "funds_available": 2600.00},
+                {"quarter": "2021-Q1", "funds_available": 2100.00}
+            ],
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
                          "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
                          "=sharing",
@@ -2843,6 +2848,18 @@ SCHEMAS = {
             "description": "the agency funding the work",
             "required": True,
             "type": "string",
+        },
+        "funds_available": {
+            "description": "funds available by quarter",
+            "required": False,
+            "schema": {
+                "schema": {
+                    "quarter": {"required": False, "type": "string"},
+                    "funds_available": {"required": False, "type": ("integer", "float")}
+                },
+                "type": "dict",
+            },
+            "type": "list",
         },
         "grant_id": {
             "description": "the identifier for this work",
