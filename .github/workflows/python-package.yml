@@ -43,6 +43,7 @@ jobs:
           conda config --add channels conda-forge
           conda install --file requirements/run.txt
           conda install --file requirements/test.txt
+          pip install -r requirements/pip.txt
           pip install .
 
       - name: run tests
