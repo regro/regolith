@@ -3,18 +3,22 @@
    Projecta are small bite-sized project quanta that typically will result in
    one manuscript.
 """
+import datetime as dt
+import dateutil.parser as date_parser
 
 from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
+from regolith.helpers.l_todohelper import _format_todos
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
     key_value_pair_filter,
-    collection_str
+    collection_str, get_task, print_task
 )
 from regolith.schemas import PROJECTUM_STATI, PROJECTUM_PAUSED_STATI, \
-    PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI, PROJECTUM_ACTIVE_STATI
+    PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI, \
+    PROJECTUM_ACTIVE_STATI, TODO_STATI
 from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
@@ -26,8 +30,11 @@ ROLES = ['pi', 'lead', 'group_members', 'collaborators']
 
 def subparser(subpi):
     listbox_kwargs = {}
+    date_kwargs = {}
     if isinstance(subpi, GooeyParser):
-        listbox_kwargs['widget'] = 'Listbox'
+        listbox_kwargs['widget'] = 'Listbox',
+        date_kwargs['widget'] = 'DateChooser'
+
 
     subpi.add_argument('--helper-help', action="store_true",
                         help=f'This helper will list all ACTIVE milestones by default. To '
@@ -68,6 +75,9 @@ def subparser(subpi):
                        )
     subpi.add_argument("--all", action="store_true",
                        help="Lists all milestones in general")
+    subpi.add_argument("--date",
+                       help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.",
+                       **date_kwargs)
     # The --filter and --keys flags should be in every lister
     subpi.add_argument("-f", "--filter", nargs="+",
                        help="Search this collection by giving key element pairs"
@@ -85,7 +95,7 @@ class MilestonesListerHelper(SoutHelperBase):
     """
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_colls = [f'{TARGET_COLL}']
+    needed_colls = [f'{TARGET_COLL}', "todos"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -115,6 +125,11 @@ class MilestonesListerHelper(SoutHelperBase):
             collection = key_value_pair_filter(self.gtx["projecta"], rc.filter)
         else:
             collection = self.gtx["projecta"]
+        if not rc.date:
+            today = dt.date.today()
+        else:
+            today = date_parser.parse(rc.date).date()
+
 
         if (not rc.lead) and (not rc.verbose) and (not rc.stati) and (
             not rc.current) and (not rc.person) and (not rc.all):
@@ -217,6 +232,11 @@ class MilestonesListerHelper(SoutHelperBase):
                     print(f"    Notes:")
                     for note in ms.get("notes"):
                         print(f"      - {note}")
+                if ms.get("tasks"):
+                    print(f"    Tasks:")
+                    tasks = [_format_todos(get_task(self.gtx['todos'], task_id), today) for task_id in ms.get("tasks")]
+                    tasks.sort(key='due_date')
+                    print_task(tasks, TODO_STATI)
                 print(f"    uuid: {ms.get('uuid')}")
             else:
                 print(

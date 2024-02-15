@@ -14,6 +14,19 @@ sbillinge:
       tags:
         - reading
         - downtime
+    - description: added todo
+      uuid: test-uuid
+      due_date: '2020-07-20'
+      begin_date: '2020-06-15'
+      deadline: true
+      duration: 60.0
+      importance: 2
+      status: started
+      assigned_by: scopatz
+      running_index: 3
+      tags:
+        - reading
+        - downtime
     - description: prepare the presentation
       uuid: 2saefadf-wdaagea3
       due_date: '2020-07-29'
@@ -47,5 +60,5 @@ sbillinge:
         - tag2
         - newtag1
         - newtag2
-      running_index: 3
+      running_index: 4
       end_date: 2020-07-07

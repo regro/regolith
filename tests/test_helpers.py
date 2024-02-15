@@ -116,8 +116,8 @@ helper_map = [
      ),
     (["helper", "l_milestones", "--verbose"],
      "2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
-     "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
-     "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
+     "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    Tasks:\n      - (1) read paper (79|2|60.0|1saefa)\n    uuid: sb_firstprojectum\n"
+     "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    Tasks:\n      - (3) added todo (80|2|60.0|test_u)\n    uuid: milestone_uuid_sb1_2\n"
      "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n"
      ),
     (["helper", "l_milestones", "--verbose", "--current"],
@@ -426,6 +426,12 @@ helper_map = [
      "----------------------------------------------------------------------------\n"
      "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
      "----------------------------------------------------------------------------\n"
+     "(3) added todo (80|2|60.0|reading,downtime|scopatz|test-u)\n"
+     "(1) read paper (79|2|60.0|reading,downtime|scopatz|1saefa)\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-20(80 days): (3) added todo (80|2|60.0|reading,downtime|scopatz|test-u)\n"
      "2020-07-19(79 days): (1) read paper (79|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
      "Deadlines:\n"
@@ -442,6 +448,12 @@ helper_map = [
      "----------------------------------------------------------------------------\n"
      "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
      "----------------------------------------------------------------------------\n"
+     "(3) added todo (7|2|60.0|reading,downtime|scopatz|test-u)\n"
+     "(1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-20(7 days): (3) added todo (7|2|60.0|reading,downtime|scopatz|test-u)\n"
      "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
      "Deadlines:\n"
@@ -454,12 +466,12 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(0)(16 days): (2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
+     "(2) prepare the presentation (16|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "----------------------------------------------------------------------------\n"
-     "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
-     "----------------------------------------------------------------------------\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
      "------------------------------\n"
      "Deadlines:\n"
      "------------------------------\n"
@@ -472,12 +484,12 @@ helper_map = [
      "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
      "--------------------------------------------------------------------------------\n"
      "started:\n"
-     "(0)(-255 days): (2) prepare the presentation (-255|0|30.0|downtime|sbillinge|2saefa)\n"
+     "(2) prepare the presentation (-255|0|30.0|downtime|sbillinge|2saefa)\n"
      "     - about 10 minutes\n"
      "     - don't forget to upload to the website\n"
-     "----------------------------------------------------------------------------\n"
-     "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
-     "----------------------------------------------------------------------------\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
      "------------------------------\n"
      "Deadlines:\n"
      "------------------------------\n"
@@ -598,9 +610,9 @@ helper_map = [
         "The milestone uuid milestone_uuid_sb1_2 in projectum sb_firstprojectum has been updated in projecta.\n"
         "The task \"test a_todo\" for sbillinge has been added in todos collection.\n"
     ),
-    (["helper", "f_todo", "--index", "3", "--assigned-to", "sbillinge",
+    (["helper", "f_todo", "--index", "4", "--assigned-to", "sbillinge",
       "--end-date", "2020-07-20", "--date", "2020-07-13"],
-     "The task \"(3) test a_todo\" in test for sbillinge has been marked as finished.\n"
+     "The task \"(4) test a_todo\" in test for sbillinge has been marked as finished.\n"
      ),
     (["helper", "f_todo", "--assigned-to", "sbillinge", "--date",
       "2020-07-13"],
@@ -616,6 +628,12 @@ helper_map = [
      "----------------------------------------------------------------------------\n"
      "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
      "----------------------------------------------------------------------------\n"
+     "(3) added todo (7|2|60.0|reading,downtime|scopatz|test-u)\n"
+     "(1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-20(7 days): (3) added todo (7|2|60.0|reading,downtime|scopatz|test-u)\n"
      "2020-07-19(6 days): (1) read paper (6|2|60.0|reading,downtime|scopatz|1saefa)\n"
      "------------------------------\n"
      "Deadlines:\n"
@@ -624,13 +642,13 @@ helper_map = [
     (["helper", "f_todo", "--index", "99100"],
      "WARNING: indices >= 9900 are used for milestones which should be finished using u_milestone and not f_todo\n"
      ),
-    (["helper", "u_todo", "--index", "3", "--assigned-to", "sbillinge",
+    (["helper", "u_todo", "--index", "4", "--assigned-to", "sbillinge",
       "--description", "update the description", "--due-date", "2020-07-06",
       "--estimated-duration", "35", "--importance", "2", "--status", "finished",
       "--notes", "some new notes", "notes2", "--tags", "newtag1", "newtag2",
       "--begin-date", "2020-06-06", "--deadline", "t",
       "--end-date", "2020-07-07", "--date", "2020-07-13"],
-     "The task \"(3) test a_todo\" in test for sbillinge has been updated.\n"
+     "The task \"(4) test a_todo\" in test for sbillinge has been updated.\n"
      ),
     (["helper", "u_todo", "--assigned-to", "sbillinge", "--stati", "started",
       "finished", "--filter", "description", "the", "--date",
@@ -645,6 +663,7 @@ helper_map = [
      "     - don't forget to upload to the website\n"
      "finished:\n"
      "(2)(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
+     "(4) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
      "     - test notes 1\n"
      "     - test notes 2\n"
      "     - some new notes\n"
@@ -653,6 +672,10 @@ helper_map = [
      "(importance)(days to due): (Task number) Task (decreasing priority going up)\n"
      "----------------------------------------------------------------------------\n"
      "2020-07-06(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
+     "------------------------------\n"
+     "Tasks (decreasing priority going up)\n"
+     "------------------------------\n"
+     "2020-07-06(-7 days): (4) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
      "     - test notes 1\n"
      "     - test notes 2\n"
      "     - some new notes\n"

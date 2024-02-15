@@ -2098,6 +2098,18 @@ EXEMPLARS = {
              "running_index": 1,
              "tags": ["reading", "downtime"]
              },
+            {"description": "added todo",
+             "uuid": "test-uuid",
+             "due_date": "2020-07-20",
+             "begin_date": "2020-06-15",
+             "deadline": True,
+             "duration": 60.0,
+             "importance": 2,
+             "status": "started",
+             "assigned_by": "scopatz",
+             "running_index": 3,
+             "tags": ["reading", "downtime"]
+             },
             {"description": "prepare the presentation",
              "uuid": "2saefadf-wdaagea3",
              "due_date": "2020-07-29",
