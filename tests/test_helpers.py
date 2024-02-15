@@ -194,6 +194,10 @@ helper_map = [
      "Administered by: apam\n"
      "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
      ),
+    (["helper", "l_grants", "--current", "--date", "2020-05-25", "--reveal-hidden"],
+     "Administered by: apam\n"
+     "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
+     ),
     (["helper", "l_grants", "--current", "--date", "2020-05-25", "--verbose"],
      "Administered by: apam\n"
      "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
