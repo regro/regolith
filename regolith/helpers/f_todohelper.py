@@ -6,6 +6,7 @@ import sys
 
 import dateutil.parser as date_parser
 import math
+import re
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
@@ -30,7 +31,7 @@ def subparser(subpi):
         int_kwargs['widget'] = 'IntegerField'
 
     subpi.add_argument("-i", "--index",
-                       help="Enter the index of a certain task in the enumerated list to mark as finished.",
+                       help="Enter the index or the first 6 characters of a certain task in the enumerated list to mark as finished.",
                        type=int)
     subpi.add_argument("--end-date",
                        help="Add the end date of the task. Default is today.",
@@ -72,11 +73,15 @@ class TodoFinisherHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        if rc.index:
-            if rc.index >= 9900:
-                print("WARNING: indices >= 9900 are used for milestones which "
-                         "should be finished using u_milestone and not f_todo")
-                return
+        # Check if rc.index is an integer and >= 9900
+        if isinstance(rc.index, int) and rc.index >= 9900:
+            print("WARNING: indices >= 9900 are used for milestones which "
+                  "should be finished using u_milestone and not f_todo")
+            return
+        # Check if rc.index is a string, less than 6 characters, and contains both letters and numbers
+        elif isinstance(rc.index, str) and len(rc.index) < 6 and re.search("[A-Za-z].*\d|\d.*[A-Za-z]", rc.index):
+            print("WARNING: String indices less than 6 characters containing both letters and numbers are not allowed")
+            return
         if not rc.assigned_to:
             try:
                 rc.assigned_to = rc.default_user_id
@@ -113,7 +118,10 @@ class TodoFinisherHelper(DbHelperBase):
             print("-" * 80)
             print_task(todolist, stati=['started'])
         else:
-            match_todo = [i for i in todolist if i.get("running_index") == rc.index]
+            if isinstance(rc.index, int):
+                match_todo = [i for i in todolist if i.get("running_index") == rc.index]
+            else:
+                match_todo = [i for i in todolist if i.get("uuid") == rc.index]
             if len(match_todo) == 0:
                 raise RuntimeError("Please enter a valid index.")
             else:
