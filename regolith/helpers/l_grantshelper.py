@@ -28,11 +28,11 @@ def subparser(subpi):
         date_kwargs['widget'] = 'DateChooser'
 
     subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')
+    subpi.add_argument("-v", "--verbose", action="store_true", default=False,
+                       help='if set, additional information will be printed about each grant')
     subpi.add_argument("-r", "--reveal-hidden", action="store_true",
                        help='if set, outputs also hidden grants such as TA, '
                             'matches etc.')
-    subpi.add_argument("-v", "--verbose", action="store_true", default=False,
-                       help='if set, additional information will be printed about each grant')
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
     subpi.add_argument("-k", "--keys", nargs="+", help="Specify what keys to return values from when when running "
                                                        "--filter. If no argument is given the default is just the id.")
@@ -105,7 +105,7 @@ class GrantsListerHelper(SoutHelperBase):
         grants.sort(key=lambda x: x['admin'])
         admins = list(set([g.get('admin') for g in grants]))
         for admin in admins:
-            print(f"Administered by: {admin}")
+            print(f"\nAdministered by: {admin}")
             sub_grants = [grant for grant in grants if grant.get('admin').strip() == admin.strip()]
             sub_grants.sort(key=lambda k: get_dates(k).get('end_date'), reverse=True)
             for g in sub_grants:
@@ -115,9 +115,8 @@ class GrantsListerHelper(SoutHelperBase):
                 if rc.verbose:
                     funds_entries = g.get('funds_available')
                     if funds_entries:
-                        sorted_entries = sorted(funds_entries, key=itemgetter('date'), reverse=True)
-                        print(f"    funds available: ${sorted_entries[0].get('funds_available'):,.0f} on {get_dates(sorted_entries[0]).get('date').isoformat()}")
-                    else:
-                        print(
-                            f"  No entries found for funds_available")
+                        funds_entries.sort(key=lambda k: get_dates(k).get('date', get_dates(k).get("end_date")), reverse=True)
+                        if funds_entries[0].get('funds_available'):
+                            print(f"      funds available: ${funds_entries[0].get('funds_available'):,.0f} on "
+                                  f"{get_dates(funds_entries[0]).get('date').isoformat()}")
         return
