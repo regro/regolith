@@ -350,6 +350,7 @@ EXEMPLARS = {
     "grants": [
         {
             "_id": "SymPy-1.1",
+            "admin": "APAM",
             "amount": 3000.0,
             "alias": "sym",
             "awardnr": "NF-1234",
@@ -363,9 +364,9 @@ EXEMPLARS = {
             "end_year": 2030,
             "funder": "NumFOCUS",
             "funds_available": [
-                {"quarter": "2020-Q2", "funds_available": 2800.00},
-                {"quarter": "2020-Q3", "funds_available": 2600.00},
-                {"quarter": "2021-Q1", "funds_available": 2100.00}
+                {"date": "2020-04-01", "funds_available": 2800.00},
+                {"date": "2021-01-03", "funds_available": 2100.00},
+                {"date": "2020-07-21", "funds_available": 2600.00}
             ],
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
                          "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
@@ -413,6 +414,7 @@ EXEMPLARS = {
         },
         {
             "_id": "SymPy-2.0",
+            "admin": "APAM",
             "amount": 3000.0,
             "alias": "sym2.0",
             "awardnr": "NF-1234",
@@ -425,6 +427,11 @@ EXEMPLARS = {
             "end_month": "December",
             "end_year": 2030,
             "funder": "NumFOCUS",
+            "funds_available": [
+                {"date": "2020-04-01", "funds_available": 2800.00},
+                {"date": "2021-01-03", "funds_available": 2100.00},
+                {"date": "2020-07-21", "funds_available": 2600.00}
+            ],
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
                          "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
                          "=sharing",
@@ -465,6 +472,7 @@ EXEMPLARS = {
             "_id": "dmref15",
             "alias": "dmref15",
             "account": "GG012345",
+            "admin": "DSI",
             "amount": 982785.0,
             "awardnr": "DMR-0785462",
             "funder": "NSF",
@@ -2772,7 +2780,7 @@ SCHEMAS = {
             "type": "string",
         },
         "admin": {
-            "description": "the group administering the grant",
+            "description": "the unit or group administering the grant",
             "type": "string",
             "required": False,
         },
@@ -2850,11 +2858,11 @@ SCHEMAS = {
             "type": "string",
         },
         "funds_available": {
-            "description": "funds available by quarter",
+            "description": "funds available on date",
             "required": False,
             "schema": {
                 "schema": {
-                    "quarter": {"required": False, "type": "string"},
+                    "date": {"required": False,"anyof_type": ["string", "date"]},
                     "funds_available": {"required": False, "type": ("integer", "float")}
                 },
                 "type": "dict",

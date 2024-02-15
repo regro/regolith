@@ -191,8 +191,17 @@ helper_map = [
      "\nNo projecta finished within the 7 days leading up to 2020-06-02\n"
      ),
     (["helper", "l_grants", "--current", "--date", "2020-05-25"],
-     "Administered by: missing\n"
+     "\nAdministered by: apam\n"
      "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
+     ),
+    (["helper", "l_grants", "--current", "--date", "2020-05-25", "--reveal-hidden"],
+     "\nAdministered by: apam\n"
+     "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
+     ),
+    (["helper", "l_grants", "--current", "--date", "2020-05-25", "--verbose"],
+     "\nAdministered by: apam\n"
+     "  sym2.0         \t awardnr: NF-1234        \t acctn: n/a                 \t 2019-06-01 to 2030-12-31\n"
+     "      funds available: $2,100 on 2021-01-03\n"
      ),
     (["helper", "l_members", "--current", "-v"],
      "    -- Assistant Scientists --\n"

@@ -3,8 +3,7 @@
 """
 import datetime as dt
 import dateutil.parser as date_parser
-from dateutil.relativedelta import relativedelta
-import sys
+from operator import itemgetter
 
 from regolith.dates import get_dates, is_current
 from regolith.helpers.basehelper import SoutHelperBase
@@ -12,7 +11,6 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
-    search_collection,
     key_value_pair_filter,
     collection_str,
     merge_collections_superior
@@ -30,7 +28,9 @@ def subparser(subpi):
         date_kwargs['widget'] = 'DateChooser'
 
     subpi.add_argument("-c", "--current", action="store_true", help='outputs only the current grants')
-    subpi.add_argument("-v", "--verbose", action="store_true",
+    subpi.add_argument("-v", "--verbose", action="store_true", default=False,
+                       help='if set, additional information will be printed about each grant')
+    subpi.add_argument("-r", "--reveal-hidden", action="store_true",
                        help='if set, outputs also hidden grants such as TA, '
                             'matches etc.')
     subpi.add_argument("-f", "--filter", nargs="+", help="Search this collection by giving key element pairs")
@@ -88,7 +88,7 @@ class GrantsListerHelper(SoutHelperBase):
         for grant in collection:
             if rc.current and not is_current(grant, now=desired_date):
                 continue
-            if not rc.verbose:
+            if not rc.reveal_hidden:
                 if grant.get("alias") not in BLACKLIST:
                     grants.append(grant)
             else:
@@ -105,11 +105,18 @@ class GrantsListerHelper(SoutHelperBase):
         grants.sort(key=lambda x: x['admin'])
         admins = list(set([g.get('admin') for g in grants]))
         for admin in admins:
-            print(f"Administered by: {admin}")
+            print(f"\nAdministered by: {admin}")
             sub_grants = [grant for grant in grants if grant.get('admin').strip() == admin.strip()]
             sub_grants.sort(key=lambda k: get_dates(k).get('end_date'), reverse=True)
             for g in sub_grants:
                 print(f"  {g.get('alias', '').ljust(15)}\t awardnr: {g.get('awardnr', '').ljust(15)}\t "
                       f"acctn: {g.get('account', 'n/a').ljust(20)}\t {get_dates(g).get('begin_date')} "
                       f"to {get_dates(g).get('end_date')}")
+                if rc.verbose:
+                    funds_entries = g.get('funds_available')
+                    if funds_entries:
+                        funds_entries.sort(key=lambda k: get_dates(k).get('date', get_dates(k).get("end_date")), reverse=True)
+                        if funds_entries[0].get('funds_available'):
+                            print(f"      funds available: ${funds_entries[0].get('funds_available'):,.0f} on "
+                                  f"{get_dates(funds_entries[0]).get('date').isoformat()}")
         return
