@@ -270,13 +270,6 @@ def validate(rc):
         sys.exit(f"Validation failed on some records")
 
 DISCONNECTED_COMMANDS = {
-    "add": add_cmd,
-    "ingest": ingest,
-    "app": app,
-    "grade": grade,
-    "build": build,
-    "email": email,
-    "classlist": classlist,
     "rc": lambda rc: print(rc._pformat()),
     "deploy": deploy,
     "store": storage.main,
@@ -285,6 +278,13 @@ DISCONNECTED_COMMANDS = {
 }
 
 CONNECTED_COMMANDS = {
+    "add": add_cmd,
+    "ingest": ingest,
+    "app": app,
+    "grade": grade,
+    "build": build,
+    "email": email,
+    "classlist": classlist,
     "validate": validate,
     "helper": helper,
     "fs-to-mongo": fs_to_mongo,
