@@ -12,20 +12,10 @@ from regolith.helper import HELPERS
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
+from regolith.commands import CONNECTED_COMMANDS
+
 from gooey import Gooey, GooeyParser
 
-CONNECTED_COMMANDS = {
-    "add": commands.add_cmd,
-    "ingest": commands.ingest,
-    "app": commands.app,
-    "grade": commands.grade,
-    "build": commands.build,
-    "email": commands.email,
-    "classlist": commands.classlist,
-    "validate": commands.validate,
-    "helper": commands.helper,
-    "fs-to-mongo": commands.fs_to_mongo
-}
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}

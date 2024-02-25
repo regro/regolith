@@ -12,6 +12,8 @@ from regolith.emailer import emailer
 from regolith.helper import HELPERS, helpr, UPDATER_HELPERS, FAST_UPDATER_WHITELIST
 from regolith.runcontrol import RunControl
 from regolith.tools import string_types
+from regolith import storage
+
 
 email = emailer
 
@@ -19,6 +21,8 @@ RE_AND = re.compile(r"\s+and\s+")
 RE_SPACE = re.compile(r"\s+")
 
 INGEST_COLL_LU = {".bib": "citations"}
+
+
 
 
 def add_cmd(rc):
@@ -264,3 +268,25 @@ def validate(rc):
         #
         # sys.exit(f"Validation failed on some records\n {cap}")
         sys.exit(f"Validation failed on some records")
+
+DISCONNECTED_COMMANDS = {
+    "add": add_cmd,
+    "ingest": ingest,
+    "app": app,
+    "grade": grade,
+    "build": build,
+    "email": email,
+    "classlist": classlist,
+    "rc": lambda rc: print(rc._pformat()),
+    "deploy": deploy,
+    "store": storage.main,
+    "json-to-yaml": json_to_yaml,
+    "yaml-to-json": yaml_to_json,
+}
+
+CONNECTED_COMMANDS = {
+    "validate": validate,
+    "helper": helper,
+    "fs-to-mongo": fs_to_mongo,
+    "mongo-to-fs": mongo_to_fs
+}

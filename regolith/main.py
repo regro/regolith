@@ -8,7 +8,6 @@ from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
 from regolith.database import connect
 
 from regolith import commands
-from regolith import storage
 from regolith.builder import BUILDERS
 from regolith.commands import INGEST_COLL_LU
 from regolith.helper import HELPERS
@@ -16,28 +15,7 @@ from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
 from regolith import __version__
-
-DISCONNECTED_COMMANDS = {
-    "rc": lambda rc: print(rc._pformat()),
-    "deploy": commands.deploy,
-    "store": storage.main,
-    "json-to-yaml": commands.json_to_yaml,
-    "yaml-to-json": commands.yaml_to_json,
-}
-
-CONNECTED_COMMANDS = {
-    "add": commands.add_cmd,
-    "ingest": commands.ingest,
-    "app": commands.app,
-    "grade": commands.grade,
-    "build": commands.build,
-    "email": commands.email,
-    "classlist": commands.classlist,
-    "validate": commands.validate,
-    "helper": commands.helper,
-    "fs-to-mongo": commands.fs_to_mongo,
-    "mongo-to-fs": commands.mongo_to_fs
-}
+from regolith.commands import DISCONNECTED_COMMANDS, CONNECTED_COMMANDS
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
