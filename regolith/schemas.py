@@ -6,6 +6,7 @@ from cerberus import Validator
 
 from .sorters import POSITION_LEVELS
 
+
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 
 ACTIVITIES_TYPES = ["teaching", "research"]
