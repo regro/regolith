@@ -70,7 +70,7 @@ def main():
         new_sys_executable = new_sys_executable.split(' ')[0]
         sys.executable = new_sys_executable
 
-    skw['scripts'] = skw['scripts'] + ['scripts/helper_gui'] + ['scripts/profile_regolith'] + ['scripts/profile_helper_gui']
+    skw['scripts'] = skw['scripts'] + ['scripts/helper_gui'] + ['scripts/helper_connect'] + ['scripts/profile_regolith'] + ['scripts/profile_helper_gui']
     setup(**skw)
 
 

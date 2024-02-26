@@ -312,7 +312,7 @@ def main(args=None):
         if len(rest) == 0:
             p.print_help()
         args2, rest2 = p.parse_known_args(rest, namespace=args0)
-        # it is not apparent from this but the following line calls the suparser in
+        # it is not apparent from this but the following line calls the subparser in
         #   in the helper module to get the rest of the args.
         HELPERS[args2.helper_target][1](p)
         if len(rest2) == 0:
