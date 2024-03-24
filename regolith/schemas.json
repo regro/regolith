@@ -735,6 +735,22 @@
             "required": false,
             "type": "string"
         },
+        "highlights": {
+            "description": "lists of highlights from the project",
+            "required": false,
+            "type": "list",
+            "schema": {
+                "schema": {
+                    "year": {"required": false, "type": "integer"},
+                    "month": {"required": false, "type": "integer"},
+                    "description": {
+                        "required": false,
+                        "type": "string"
+                    }
+                },
+                "type": "dict"
+            }
+        },
         "institution": {
             "description": "the host institution for the grant",
             "type": "string",
