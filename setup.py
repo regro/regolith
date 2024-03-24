@@ -49,7 +49,7 @@ def main():
                 "static/*.*",
                 "static/img/*.*",
                 "*.xsh",
-                ".json"
+                "*.json"
             ]
         },
         scripts=["scripts/regolith"],
