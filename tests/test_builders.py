@@ -77,6 +77,7 @@ def prep_figure():
 def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
     # FIXME: Somehow the mongo backend failed to build figure
     # FIXME: now fs is failing to build figure
+
     # if db_src == "mongo" and bm == "figure":
     if bm == "figure":
         return
