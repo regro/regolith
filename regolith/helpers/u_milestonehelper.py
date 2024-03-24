@@ -3,7 +3,6 @@
     It can add a new milestone to the projecta collection.
 """
 from copy import deepcopy
-from itertools import chain
 import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
@@ -13,13 +12,12 @@ from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, fragment_retrieval, \
     get_uuid
 from regolith.dates import get_due_date
-from regolith.schemas import PROJECTUM_ACTIVE_STATI, \
-    MILESTONE_TYPES, PROJECTUM_STATI
+from regolith.schemas import alloweds
 
 
 TARGET_COLL = "projecta"
-MILESTONE_TYPES = MILESTONE_TYPES
-PROJECTUM_STATI = PROJECTUM_STATI
+MILESTONE_TYPES = alloweds.get("MILESTONE_TYPES")
+PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 
 
 def subparser(subpi):
@@ -282,4 +280,3 @@ class MilestoneUpdaterHelper(DbHelperBase):
             print(f"Multiple ids match your milestone_uuid entry ({multiple[0]}).\n"
                   "Try entering more characters of the uuid and rerun the helper.\n")
         return
-

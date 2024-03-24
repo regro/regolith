@@ -14,10 +14,12 @@ from regolith.tools import (
     get_pi_id,
     key_value_pair_filter,
 )
-from regolith.schemas import PROJECTUM_STATI, PROJECTUM_ACTIVE_STATI, PROJECTUM_FINISHED_STATI
+from regolith.schemas import alloweds, PROJECTUM_ACTIVE_STATI, PROJECTUM_FINISHED_STATI
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_progress"
+
+PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 
 def subparser(subpi):
     listbox_kwargs = {}
@@ -178,4 +180,3 @@ class ProgressReportHelper(SoutHelperBase):
         self.print_projectum(proposedp)
         print(f"*************************[In Progress Projecta]*************************")
         self.print_projectum(startedp)
-

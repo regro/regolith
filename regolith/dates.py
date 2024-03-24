@@ -268,13 +268,13 @@ def get_dates(thing, date_field_prefix=None):
             thing["end_day"] = last_day(thing["end_year"], thing["end_month"])
         end_date = datetime.date(thing["end_year"],month_to_int(thing["end_month"]),
                                    thing["end_day"])
-    if thing.get(datenames[2]):
-        if not thing.get(datenames[1]):
+    if thing.get(datenames[2]):  # prefix_year
+        if not thing.get(datenames[1]): # prefix_month
             if thing.get("begin_year"):
                 print(f"WARNING: both year and begin_year specified in {thing.get('_id', '(no id)')}.  Year info will be used")
             begin_date = datetime.date(thing[datenames[2]],1,1)
             end_date = datetime.date(thing[datenames[2]],12,31)
-        elif not thing.get(datenames[0]):
+        elif not thing.get(datenames[0]): # prfix_day
             if thing.get("begin_year"):
                 print(f"WARNING: both year and begin_year specified in {thing.get('_id', '(no id)')}.  Year info will be used")
             begin_date = datetime.date(thing[datenames[2]],month_to_int(thing[datenames[1]]),

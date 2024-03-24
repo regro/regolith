@@ -4,6 +4,7 @@ docutils
 python-dateutil
 jinja2
 cerberus
+flatten-dict
 xonsh
 rever
 openpyxl

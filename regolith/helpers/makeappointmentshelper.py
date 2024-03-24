@@ -13,7 +13,7 @@ from dateutil import parser as date_parser
 from datetime import timedelta, date
 
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.schemas import APPOINTMENTS_TYPES
+# from regolith.schemas import APPOINTMENTS_TYPES
 from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,

@@ -5,13 +5,9 @@ import datetime as dt
 import dateutil.parser as date_parser
 import math
 
-from regolith.dates import get_due_date
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
-from regolith.schemas import (
-    TODO_STATI,
-    PROJECTUM_ACTIVE_STATI
-)
+from regolith.schemas import alloweds, PROJECTUM_ACTIVE_STATI
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
@@ -27,6 +23,8 @@ HELPER_TARGET = "l_todo"
 Importance = [3, 2, 1, 0, -1,
               -2]  # eisenhower matrix (important|urgent) tt=3, tf=2, ft=1, ff=0
 STATI = ["accepted", "downloaded", "inprep"]
+
+TODO_STATI = alloweds.get("TODO_STATI")
 
 def subparser(subpi):
     listbox_kwargs = {}

@@ -1,50 +1,166 @@
 """Database schemas, examples, and tools"""
+
 import copy
+import json
+from pathlib import Path
 from warnings import warn
 
 from cerberus import Validator
+from flatten_dict import flatten, unflatten
 
 from .sorters import POSITION_LEVELS
 
 
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
-
-ACTIVITIES_TYPES = ["teaching", "research"]
-AGENCIES = ["nsf", "doe", "other"]
-APPOINTMENTS_TYPES = ["gra", "ss", "pd", "ug"]
-APPOINTMENTS_STATI = ["proposed", "appointed", "finalized"]
-COMMITTEES_TYPES = ["phdoral", "phddefense", "phdproposal", "promotion"]
-COMMITTEES_LEVELS = ["department", "school", "university", "external"]
-EXPENSES_STATI = ["unsubmitted", "submitted", "reimbursed", "declined"]
-EXPENSES_TYPES = ["travel", "business"]
-FACILITIES_TYPES = ["teaching", "research", "shared", "other", "teaching_wish",
-                   "research_wish"]
-GRANT_STATI = ["pending", "declined", "accepted", "in-prep"]
-GRANT_ROLES = ["pi", "copi"]
-MILESTONE_TYPES = ["mergedpr", "meeting", "other", "paper", "release", "email", "handin", "purchase",
-                  "approval", "presentation", "report", "submission", "decision", "demo", "skel"]
-POSITION_STATI = ["pi", "adjunct", "high-school", "undergrad", "ms", "phd",
-                   "postdoc", "visitor-supported", "visitor-unsupported", "research-associate"]
-PRESENTATION_TYPES = ["award", "colloquium", "contributed_oral", "invited", "keynote",
-                     "plenary", "poster", "seminar", "tutorial", "other"]
-PRESENTATION_STATI = ["in-prep", "submitted", "accepted", "declined",
-                       "cancelled", "postponed"]
-PROJECT_TYPES = ["ossoftware", "funded", "outreach"]
 PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
 PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
 PROJECTUM_CANCELLED_STATI = ["cancelled"]
 PROJECTUM_FINISHED_STATI = ["finished"]
-PROJECTUM_STATI = PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
-PROPOSAL_STATI = ["pending", "declined", "accepted", "inprep", "submitted"]
-PUBLICITY_TYPES = ["online", "article"]
-REVIEW_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress",
-                "submitted", "cancelled"]
-REVIEW_RECOMMENDATIONS = ["reject", "asis", "smalledits", "diffjournal", "majoredits"]
-SERVICE_TYPES = ["profession", "university", "school", "department"]
-TODO_STATI = ["started", "finished", "cancelled", "paused"]
-OPTIONAL_KEYS_INSTITUTIONS = ["aka", "departments", "schools", "state", "street", "zip"]
-# for status of kickoff, deliverable, milestones, and the projectum
+PROJECTUM_STATI = list(PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI)
 
+alloweds = {
+    "ACTIVITIES_TYPES": ["teaching", "research"],
+    "AGENCIES": ["nsf", "doe", "other"],
+    "APPOINTMENTS_TYPES": ["gra", "ss", "pd", "ug"],
+    "APPOINTMENTS_STATI": ["proposed", "appointed", "finalized"],
+    "COMMITTEES_TYPES": ["phdoral", "phddefense", "phdproposal", "promotion"],
+    "COMMITTEES_LEVELS": ["department", "school", "university", "external"],
+    "EXPENSES_STATI": ["unsubmitted", "submitted", "reimbursed", "declined"],
+    "EXPENSES_TYPES": ["travel", "business"],
+    "FACILITIES_TYPES": [
+        "teaching",
+        "research",
+        "shared",
+        "other",
+        "teaching_wish",
+        "research_wish",
+    ],
+    "GRANT_STATI": ["pending", "declined", "accepted", "in-prep"],
+    "GRANT_ROLES": ["pi", "copi"],
+    "MILESTONE_TYPES": [
+        "mergedpr",
+        "meeting",
+        "other",
+        "paper",
+        "release",
+        "email",
+        "handin",
+        "purchase",
+        "approval",
+        "presentation",
+        "report",
+        "submission",
+        "decision",
+        "demo",
+        "skel",
+    ],
+    "POSITION_STATI": [
+        "pi",
+        "adjunct",
+        "high-school",
+        "undergrad",
+        "ms",
+        "phd",
+        "postdoc",
+        "visitor-supported",
+        "visitor-unsupported",
+        "research-associate",
+    ],
+    "PRESENTATION_TYPES": [
+        "award",
+        "colloquium",
+        "contributed_oral",
+        "invited",
+        "keynote",
+        "plenary",
+        "poster",
+        "seminar",
+        "tutorial",
+        "other",
+    ],
+    "PRESENTATION_STATI": [
+        "in-prep",
+        "submitted",
+        "accepted",
+        "declined",
+        "cancelled",
+        "postponed",
+    ],
+    "PROJECT_TYPES": ["ossoftware", "funded", "outreach"],
+    "PROJECTUM_ACTIVE_STATI": PROJECTUM_ACTIVE_STATI,
+    "PROJECTUM_PAUSED_STATI": PROJECTUM_PAUSED_STATI,
+    "PROJECTUM_CANCELLED_STATI": PROJECTUM_CANCELLED_STATI,
+    "PROJECTUM_FINISHED_STATI": PROJECTUM_FINISHED_STATI,
+    "PROJECTUM_STATI": PROJECTUM_STATI,
+    "PROPOSAL_STATI": ["pending", "declined", "accepted", "inprep", "submitted"],
+    "PUBLICITY_TYPES": ["online", "article"],
+    "REVIEW_STATI": [
+        "invited",
+        "accepted",
+        "declined",
+        "downloaded",
+        "inprogress",
+        "submitted",
+        "cancelled",
+    ],
+    "REVIEW_RECOMMENDATIONS": [
+        "reject",
+        "asis",
+        "smalledits",
+        "diffjournal",
+        "majoredits"
+    ],
+    "SERVICE_TYPES": ["profession", "university", "school", "department"],
+    "SORTED_POSITION": SORTED_POSITION,
+    "TODO_STATI": ["started", "finished", "cancelled", "paused"],
+    "OPTIONAL_KEYS_INSTITUTIONS": [
+        "aka",
+        "departments",
+        "schools",
+        "state",
+        "street",
+        "zip",
+    ],
+    # for status of kickoff, deliverable, milestones, and the projectum
+}
+
+
+def _update_dict_target(d, filter, new_value):
+    flatd = flatten(d)
+    for filtk, filtv in filter.items():
+        for k, v in flatd.items():
+            if filtk in k:
+                if filtv == v:
+                    flatd.update({k: new_value})
+    unflatd = unflatten(flatd)
+    return unflatd
+
+
+def insert_alloweds(doc, alloweds, key):
+    working_doc = copy.deepcopy(doc)
+    for k, v in alloweds.items():
+        working_doc = _update_dict_target(working_doc, {key: k}, v)
+    return working_doc
+
+
+def load_schemas():
+    here = Path(__file__).parent
+    schema_file = here / "schemas.json"
+    with open(schema_file, "r", encoding="utf-8") as schema_file:
+        raw_schemas = json.load(schema_file)
+    schemas = insert_alloweds(raw_schemas, alloweds, "eallowed")
+    return schemas
+
+
+def load_exemplars():
+    here = Path(__file__).parent
+    exemplars_file = here / "exemplars.json"
+    with open(exemplars_file, "r", encoding="utf-8") as exemplars_file:
+        exemplars = json.load(exemplars_file)
+    return exemplars
+
+
+# EXEMPLARS = load_exemplars()
 EXEMPLARS = {
     "abstracts": {
         "_id": "Mouginot.Model",
@@ -54,12 +170,12 @@ EXEMPLARS = {
         "institution": "University of Wisconsin-Madison",
         "lastname": "Mouginot",
         "references": "[1] B. MOUGINOT, “cyCLASS: CLASS "
-                      "models for Cyclus,”, Figshare, "
-                      "https://dx.doi.org/10.6084/"
-                      "m9.figshare.3468671.v2 (2016).",
+        "models for Cyclus,”, Figshare, "
+        "https://dx.doi.org/10.6084/"
+        "m9.figshare.3468671.v2 (2016).",
         "text": "The CLASS team has developed high "
-                "quality predictors based on pre-trained "
-                "neural network...",
+        "quality predictors based on pre-trained "
+        "neural network...",
         "timestamp": "5/5/2017 13:15:59",
         "title": "Model Performance Analysis",
     },
@@ -71,34 +187,37 @@ EXEMPLARS = {
         "questions": ["1-9", "1-10", "1-12"],
     },
     "beamplan": {
-        '_id': "test",
-        'beamtime': '2020-1-XPD',
-        'begin_date': '2020-01-01',
-        'end_date': '2020-01-02',
-        'devices': ['cryostream'],
-        'exp_plan': ['load samples on the holder',
-                     'scan the holder to locate the samples',
-                     'take room temperature measurement of sample and the subtrate',
-                     'ramp down temperature to 100K',
-                     'ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure'],
-        'holder': 'film holder (1 cm * 1 cm * 1 mm)',
-        'measurement': 'Tramp',
-        'objective': 'temperature ramping PDF of one WO3 film (100, 300K, 10K)',
-        'pipeline': 'usual',
-        'prep_plan': ['films will be made by kriti'],
-        'project': '20ks_wo3',
-        'project_lead': 'kseth',
-        'samples': ['WO3 film', 'glass subtrate'],
-        'scanplan': ['Scanplan(bt, Tramp, 30, 80, 500, 10)'],
-        'ship_plan': ['seal and ship to CU', 'carry to the beamline'],
-        'time': 190,
-        'todo': ["todo something"]},
+        "_id": "test",
+        "beamtime": "2020-1-XPD",
+        "begin_date": "2020-01-01",
+        "end_date": "2020-01-02",
+        "devices": ["cryostream"],
+        "exp_plan": [
+            "load samples on the holder",
+            "scan the holder to locate the samples",
+            "take room temperature measurement of sample and the subtrate",
+            "ramp down temperature to 100K",
+            "ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure",
+        ],
+        "holder": "film holder (1 cm * 1 cm * 1 mm)",
+        "measurement": "Tramp",
+        "objective": "temperature ramping PDF of one WO3 film (100, 300K, 10K)",
+        "pipeline": "usual",
+        "prep_plan": ["films will be made by kriti"],
+        "project": "20ks_wo3",
+        "project_lead": "kseth",
+        "samples": ["WO3 film", "glass subtrate"],
+        "scanplan": ["Scanplan(bt, Tramp, 30, 80, 500, 10)"],
+        "ship_plan": ["seal and ship to CU", "carry to the beamline"],
+        "time": 190,
+        "todo": ["todo something"],
+    },
     "beamtime": {
         "_id": "2020-1-XPD",
         "begin_date": "2020-02-14",
         "begin_time": "8:00 am",
         "end_date": "2020-02-17",
-        "end_time": "8:00 am"
+        "end_time": "8:00 am",
     },
     "blog": {
         "_id": "my-vision",
@@ -110,47 +229,48 @@ EXEMPLARS = {
         "title": "My Vision",
         "year": 2015,
     },
-    "citations": [{
-        "_id": "meurer2016sympy",
-        "author": [
-            "Meurer, Aaron",
-            "Smith, Christopher P",
-            "Paprocki, Mateusz",
-            "{\\v{C}}ert{\\'\\i}k, Ond{\\v{r}}ej",
-            "Rocklin, Matthew",
-            "Kumar, AMiT",
-            "Ivanov, Sergiu",
-            "Moore, Jason K",
-            "Singh, Sartaj",
-            "Rathnayake, Thilina",
-            "Sean Vig",
-            "Brian E Granger",
-            "Richard P Muller",
-            "Francesco Bonazzi",
-            "Harsh Gupta",
-            "Shivam Vats",
-            "Fredrik Johansson",
-            "Fabian Pedregosa",
-            "Matthew J Curry",
-            "Ashutosh Saboo",
-            "Isuru Fernando",
-            "Sumith Kulal",
-            "Robert Cimrman",
-            "Anthony Scopatz",
-        ],
-        "doi": "10.1021/nn501591g",
-        "entrytype": "article",
-        "journal": "PeerJ Computer Science",
-        "month": "Jan",
-        "pages": "e103",
-        "publisher": "PeerJ Inc. San Francisco, USA",
-        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
-        "synopsis": "The description of symbolic computing in Python",
-        "tags": "pdf",
-        "title": "SymPy: Symbolic computing in Python",
-        "volume": "4",
-        "year": "2019",
-    },
+    "citations": [
+        {
+            "_id": "meurer2016sympy",
+            "author": [
+                "Meurer, Aaron",
+                "Smith, Christopher P",
+                "Paprocki, Mateusz",
+                "{\\v{C}}ert{\\'\\i}k, Ond{\\v{r}}ej",
+                "Rocklin, Matthew",
+                "Kumar, AMiT",
+                "Ivanov, Sergiu",
+                "Moore, Jason K",
+                "Singh, Sartaj",
+                "Rathnayake, Thilina",
+                "Sean Vig",
+                "Brian E Granger",
+                "Richard P Muller",
+                "Francesco Bonazzi",
+                "Harsh Gupta",
+                "Shivam Vats",
+                "Fredrik Johansson",
+                "Fabian Pedregosa",
+                "Matthew J Curry",
+                "Ashutosh Saboo",
+                "Isuru Fernando",
+                "Sumith Kulal",
+                "Robert Cimrman",
+                "Anthony Scopatz",
+            ],
+            "doi": "10.1021/nn501591g",
+            "entrytype": "article",
+            "journal": "PeerJ Computer Science",
+            "month": "Jan",
+            "pages": "e103",
+            "publisher": "PeerJ Inc. San Francisco, USA",
+            "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
+            "synopsis": "The description of symbolic computing in Python",
+            "tags": "pdf",
+            "title": "SymPy: Symbolic computing in Python",
+            "volume": "4",
+            "year": "2019",
+        },
         {
             "_id": "meurer2016nomonth",
             "ackno": "we acknowledge useful convos with our friends",
@@ -171,15 +291,11 @@ EXEMPLARS = {
             "url": "https://doi.org/10.1021/nn501591g",
             "volume": "4",
             "year": "2017",
-        }
+        },
     ],
     "contacts": {
         "_id": "afriend",
-        "aka": [
-            "A. B. Friend",
-            "AB Friend",
-            "Tony Friend"
-        ],
+        "aka": ["A. B. Friend", "AB Friend", "Tony Friend"],
         "department": "physics",
         "email": "friend@deed.com",
         "institution": "columbiau",
@@ -233,24 +349,24 @@ EXEMPLARS = {
                     "purpose": "test",
                     "unsegregated_expense": 10 * i,
                     "segregated_expense": 0,
-                    "prepaid_expense": 10.3
+                    "prepaid_expense": 10.3,
                 }
                 for i in range(1, 11)
             ],
             "payee": "scopatz",
             "reimbursements": [
                 {
-                "amount": 500,
-                "date": "tbd",
-                "submission_date": "tbd",
-                "where": "Columbia"
+                    "amount": 500,
+                    "date": "tbd",
+                    "submission_date": "tbd",
+                    "where": "Columbia",
                 },
                 {
-                "amount": 1000,
-                "date": "2019-02-15",
-                "submission_date": "2019-09-05",
-                "where": "Columbia"
-                }
+                    "amount": 1000,
+                    "date": "2019-02-15",
+                    "submission_date": "2019-09-05",
+                    "where": "Columbia",
+                },
             ],
             "project": "Cyclus",
             "overall_purpose": "testing the databallectionsse",
@@ -274,7 +390,7 @@ EXEMPLARS = {
                     "segregated_expense": 0,
                     "prepaid_expense": 10.3,
                     "currency": "USD",
-                    "notes": ["this is just a test"]
+                    "notes": ["this is just a test"],
                 }
             ],
             "payee": "sbillinge",
@@ -283,7 +399,7 @@ EXEMPLARS = {
                     "amount": 100,
                     "date": "2019-09-15",
                     "submission_date": "tbd",
-                    "where": "Columbia"
+                    "where": "Columbia",
                 },
             ],
             "project": "reimbursed expense",
@@ -306,7 +422,7 @@ EXEMPLARS = {
                     "purpose": "test",
                     "unsegregated_expense": 10,
                     "segregated_expense": 0,
-                    "prepaid_expense": 10.3
+                    "prepaid_expense": 10.3,
                 }
             ],
             "payee": "sbillinge",
@@ -315,14 +431,14 @@ EXEMPLARS = {
                     "amount": 100,
                     "date": "2020-09-15",
                     "submission_date": "tbd",
-                    "where": "Columbia"
+                    "where": "Columbia",
                 },
             ],
             "project": "reimbursed expense",
             "overall_purpose": "more testing",
             "notes": "some other note",
             "status": "bad_status",
-        }
+        },
     ],
     "grades": {
         "_id": "Human A. Person-rx-power-hw02-EMCH-758-2017-S",
@@ -331,23 +447,24 @@ EXEMPLARS = {
         "course": "EMCH-758-2017-S",
         "scores": [1, 1.6, 3],
     },
-    "formalletters": [{
-        "_id": "first_letter",
-        "date": "2022-06-05",
-        "to": {"name": "Julie Doe",
-                    "title": "lc",
-                    "postfix": "USM"},
-        "copy_to": ["copied-person1", "copied-person2"],
-        "from": {"name": "John Doy",
-                    "title": "Sir",
-                    "postfix": "Royalty"},
-        "subject": "this letter is about this",
-        "refs": ["ref 1", "ref 2"],
-        "encls": ["encl 1", "encl 2"],
-        "paras": ["first paragraph made long enough to make sure the wrapping "
-                  "gives the desired result and that it looks nice all around.",
-                  "para 2", "para 3"]
-    }],
+    "formalletters": [
+        {
+            "_id": "first_letter",
+            "date": "2022-06-05",
+            "to": {"name": "Julie Doe", "title": "lc", "postfix": "USM"},
+            "copy_to": ["copied-person1", "copied-person2"],
+            "from": {"name": "John Doy", "title": "Sir", "postfix": "Royalty"},
+            "subject": "this letter is about this",
+            "refs": ["ref 1", "ref 2"],
+            "encls": ["encl 1", "encl 2"],
+            "paras": [
+                "first paragraph made long enough to make sure the wrapping "
+                "gives the desired result and that it looks nice all around.",
+                "para 2",
+                "para 3",
+            ],
+        }
+    ],
     "grants": [
         {
             "_id": "SymPy-1.1",
@@ -359,7 +476,7 @@ EXEMPLARS = {
             "begin_month": "May",
             "begin_year": 2030,
             "call_for_proposals": "https://groups.google.com/d/msg"
-                                  "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
+            "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
             "end_day": 31,
             "end_month": "December",
             "end_year": 2030,
@@ -367,11 +484,11 @@ EXEMPLARS = {
             "funds_available": [
                 {"date": "2020-04-01", "funds_available": 2800.00},
                 {"date": "2021-01-03", "funds_available": 2100.00},
-                {"date": "2020-07-21", "funds_available": 2600.00}
+                {"date": "2020-07-21", "funds_available": 2600.00},
             ],
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
-                         "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
-                         "=sharing",
+            "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
+            "=sharing",
             "program": "Small Development Grants",
             "team": [
                 {
@@ -383,35 +500,38 @@ EXEMPLARS = {
                     "institution": "University of South Carolina",
                     "name": "Aaron Meurer",
                     "position": "researcher",
-                    "admin_people": ["A. D. Ministrator"]
+                    "admin_people": ["A. D. Ministrator"],
                 },
             ],
             "status": "pending",
             "title": "SymPy 1.1 Release Support",
             "budget": [
-                {"begin_date": "2030-05-01",
-                 "end_date": "2030-06-30",
-                 "student_months": 0.5,
-                 "postdoc_months": 0.0,
-                 "ss_months": 1.0,
-                 "amount": 1000.0,
-                 },
-                {"begin_date": "2030-07-01",
-                 "end_date": "2030-09-30",
-                 "student_months": 1.5,
-                 "postdoc_months": 0.0,
-                 "ss_months": 2.0,
-                 "amount": 1000.0,
-                 },
-                {"begin_date": "2030-10-01",
-                 "end_date": "2030-12-31",
-                 "student_months": 3.0,
-                 "postdoc_months": 0.0,
-                 "ss_months": 0.0,
-                 "amount": 1000.0,
-                 },
+                {
+                    "begin_date": "2030-05-01",
+                    "end_date": "2030-06-30",
+                    "student_months": 0.5,
+                    "postdoc_months": 0.0,
+                    "ss_months": 1.0,
+                    "amount": 1000.0,
+                },
+                {
+                    "begin_date": "2030-07-01",
+                    "end_date": "2030-09-30",
+                    "student_months": 1.5,
+                    "postdoc_months": 0.0,
+                    "ss_months": 2.0,
+                    "amount": 1000.0,
+                },
+                {
+                    "begin_date": "2030-10-01",
+                    "end_date": "2030-12-31",
+                    "student_months": 3.0,
+                    "postdoc_months": 0.0,
+                    "ss_months": 0.0,
+                    "amount": 1000.0,
+                },
             ],
-            "proposal_id": "SymPy-1.1"
+            "proposal_id": "SymPy-1.1",
         },
         {
             "_id": "SymPy-2.0",
@@ -423,7 +543,7 @@ EXEMPLARS = {
             "begin_month": 6,
             "begin_year": 2019,
             "call_for_proposals": "https://groups.google.com/d/msg"
-                                  "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
+            "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
             "end_day": 31,
             "end_month": "December",
             "end_year": 2030,
@@ -431,11 +551,11 @@ EXEMPLARS = {
             "funds_available": [
                 {"date": "2020-04-01", "funds_available": 2800.00},
                 {"date": "2021-01-03", "funds_available": 2100.00},
-                {"date": "2020-07-21", "funds_available": 2600.00}
+                {"date": "2020-07-21", "funds_available": 2600.00},
             ],
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
-                         "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
-                         "=sharing",
+            "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
+            "=sharing",
             "program": "Small Development Grants",
             "team": [
                 {
@@ -452,20 +572,22 @@ EXEMPLARS = {
             "status": "accepted",
             "title": "SymPy 2.0 Release Support",
             "budget": [
-                {"begin_date": "2019-06-01",
-                 "end_date": "2024-12-31",
-                 "student_months": 12.0,
-                 "postdoc_months": 24.0,
-                 "ss_months": 14.0,
-                 "amount": 1500.0,
-                 },
-                {"begin_date": "2025-01-01",
-                 "end_date": "2030-12-31",
-                 "student_months": 12.0,
-                 "postdoc_months": 24.0,
-                 "ss_months": 0.0,
-                 "amount": 1500.0,
-                 },
+                {
+                    "begin_date": "2019-06-01",
+                    "end_date": "2024-12-31",
+                    "student_months": 12.0,
+                    "postdoc_months": 24.0,
+                    "ss_months": 14.0,
+                    "amount": 1500.0,
+                },
+                {
+                    "begin_date": "2025-01-01",
+                    "end_date": "2030-12-31",
+                    "student_months": 12.0,
+                    "postdoc_months": 24.0,
+                    "ss_months": 0.0,
+                    "amount": 1500.0,
+                },
             ],
             "proposal_id": "SymPy-2.0",
         },
@@ -480,14 +602,14 @@ EXEMPLARS = {
             "grant_id": "DMREF-1534910",
             "institution": "Columbia University",
             "notes": "Designing Materials to Revolutionize and Engineer our "
-                     "Future (DMREF)",
+            "Future (DMREF)",
             "person_months_academic": 0.0,
             "person_months_summer": 0.25,
             "program": "DMREF",
             "scope": "This grant is to develop complex modeling methods for regularizing "
-                     "ill-posed nanostructure inverse problems using data analytic and "
-                     "machine learning based approaches. This does not overlap with any "
-                     "other grant.",
+            "ill-posed nanostructure inverse problems using data analytic and "
+            "machine learning based approaches. This does not overlap with any "
+            "other grant.",
             "team": [
                 {
                     "institution": "Columbia University",
@@ -507,88 +629,99 @@ EXEMPLARS = {
                 },
             ],
             "title": "DMREF: Novel, data validated, nanostructure determination "
-                     "methods for accelerating materials discovery",
+            "methods for accelerating materials discovery",
             "budget": [
-                {"begin_date": "2018-05-01",
-                 "end_date": "2018-09-30",
-                 "student_months": 12.0,
-                 "postdoc_months": 0.0,
-                 "ss_months": 6.0,
-                 "amount": 327595.0,
-                 },
-                {"begin_date": "2018-10-01",
-                 "end_date": "2019-01-30",
-                 "student_months": 8.0,
-                 "postdoc_months": 0.0,
-                 "ss_months": 12.0,
-                 "amount": 327595.0,
-                 },
-                {"begin_date": "2019-02-01",
-                 "end_date": "2019-05-01",
-                 "student_months": 12.0,
-                 "postdoc_months": 0.0,
-                 "ss_months": 6.0,
-                 "amount": 327595.0,
-                 },
+                {
+                    "begin_date": "2018-05-01",
+                    "end_date": "2018-09-30",
+                    "student_months": 12.0,
+                    "postdoc_months": 0.0,
+                    "ss_months": 6.0,
+                    "amount": 327595.0,
+                },
+                {
+                    "begin_date": "2018-10-01",
+                    "end_date": "2019-01-30",
+                    "student_months": 8.0,
+                    "postdoc_months": 0.0,
+                    "ss_months": 12.0,
+                    "amount": 327595.0,
+                },
+                {
+                    "begin_date": "2019-02-01",
+                    "end_date": "2019-05-01",
+                    "student_months": 12.0,
+                    "postdoc_months": 0.0,
+                    "ss_months": 6.0,
+                    "amount": 327595.0,
+                },
             ],
-            "proposal_id": "dmref15"
+            "proposal_id": "dmref15",
         },
-        {"_id": "abc42",
-         "alias": "abc42",
-         "amount": 42000.0,
-         "begin_date": "2020-06-01",
-         "end_date": "2020-12-31",
-         "funder": "Life",
-         "program": "Metaphysical Grants",
-         "team": [
-             {"institution": "University of Pedagogy",
-              "name": "Chief Pedagogue",
-              "position": "pi"
-              },
-             {"institution": "University of Pedagogy",
-              "name": "Pedagogue Jr.",
-              "position": "copi"
-              },
-         ],
-         "title": "The answer to life, the universe, and everything",
-         "budget": [
-             {"begin_date": "2020-06-01",
-              "end_date": "2020-12-31",
-              "student_months": 0.0,
-              "postdoc_months": 0.0,
-              "ss_months": 1.0,
-              "amount": 42000.0,
-              }
-         ],
-         "proposal_id": "abc42",
-         },
-        {"_id": "ta",
-         "amount": 0.0,
-         "begin_date": "2020-06-01",
-         "end_date": "2020-12-31",
-         "funder": "Life",
-         "program": "Underground Grants",
-         "team": [
-             {"institution": "Ministry of Magic",
-              "name": "Chief Witch",
-              "position": "pi"
-              },
-             {"institution": "Ministry of Magic",
-              "name": "Chief Wizard",
-              "position": "copi"
-              },
-         ],
-         "title": "Support for teaching assistants",
-         "budget": [
-             {"begin_date": "2020-06-01",
-              "end_date": "2020-08-30",
-              "student_months": 0.0,
-              "postdoc_months": 0.0,
-              "ss_months": 0.0,
-              "amount": 0.0,
-              }
-         ]
-         },
+        {
+            "_id": "abc42",
+            "alias": "abc42",
+            "amount": 42000.0,
+            "begin_date": "2020-06-01",
+            "end_date": "2020-12-31",
+            "funder": "Life",
+            "program": "Metaphysical Grants",
+            "team": [
+                {
+                    "institution": "University of Pedagogy",
+                    "name": "Chief Pedagogue",
+                    "position": "pi",
+                },
+                {
+                    "institution": "University of Pedagogy",
+                    "name": "Pedagogue Jr.",
+                    "position": "copi",
+                },
+            ],
+            "title": "The answer to life, the universe, and everything",
+            "budget": [
+                {
+                    "begin_date": "2020-06-01",
+                    "end_date": "2020-12-31",
+                    "student_months": 0.0,
+                    "postdoc_months": 0.0,
+                    "ss_months": 1.0,
+                    "amount": 42000.0,
+                }
+            ],
+            "proposal_id": "abc42",
+        },
+        {
+            "_id": "ta",
+            "amount": 0.0,
+            "begin_date": "2020-06-01",
+            "end_date": "2020-12-31",
+            "funder": "Life",
+            "program": "Underground Grants",
+            "team": [
+                {
+                    "institution": "Ministry of Magic",
+                    "name": "Chief Witch",
+                    "position": "pi",
+                },
+                {
+                    "institution": "Ministry of Magic",
+                    "name": "Chief Wizard",
+                    "position": "copi",
+                },
+            ],
+            "title": "Support for teaching assistants",
+            "budget": [
+                {
+                    "begin_date": "2020-06-01",
+                    "end_date": "2020-08-30",
+                    "student_months": 0.0,
+                    "postdoc_months": 0.0,
+                    "ss_months": 0.0,
+                    "amount": 0.0,
+                }
+            ],
+        },
     ],
     "groups": {
         "_id": "ergs",
@@ -613,45 +746,46 @@ EXEMPLARS = {
     """,
         "email": "<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>",
     },
-    "institutions": [{
-        "_id": "columbiau",
-        "aka": ["Columbia University", "Columbia"],
-        "city": "New York",
-        "country": "USA",
-        "day": 30,
-        "departments": {
-            "physics": {
-                "name": "Department of Physics",
-                "aka": ["Dept. of Physics", "Physics"],
+    "institutions": [
+        {
+            "_id": "columbiau",
+            "aka": ["Columbia University", "Columbia"],
+            "city": "New York",
+            "country": "USA",
+            "day": 30,
+            "departments": {
+                "physics": {
+                    "name": "Department of Physics",
+                    "aka": ["Dept. of Physics", "Physics"],
+                },
+                "chemistry": {
+                    "name": "Department of Chemistry",
+                    "aka": ["Chemistry", "Dept. of Chemistry"],
+                },
+                "apam": {
+                    "name": "Department of Applied Physics " "and Applied Mathematics",
+                    "aka": ["APAM"],
+                },
             },
-            "chemistry": {
-                "name": "Department of Chemistry",
-                "aka": ["Chemistry", "Dept. of Chemistry"],
+            "month": "May",
+            "name": "Columbia University",
+            "schools": {
+                "seas": {
+                    "name": "School of Engineering and " "Applied Science",
+                    "aka": [
+                        "SEAS",
+                        "Columbia Engineering",
+                        "Fu Foundation School of Engineering " "and Applied Science",
+                    ],
+                }
             },
-            "apam": {
-                "name": "Department of Applied Physics " "and Applied Mathematics",
-                "aka": ["APAM"],
-            },
+            "state": "NY",
+            "street": "500 W 120th St",
+            "updated": "2020-05-30",
+            "uuid": "avacazdraca345rfsvwre",
+            "year": 2020,
+            "zip": "10027",
         },
-        "month": "May",
-        "name": "Columbia University",
-        "schools": {
-            "seas": {
-                "name": "School of Engineering and " "Applied Science",
-                "aka": [
-                    "SEAS",
-                    "Columbia Engineering",
-                    "Fu Foundation School of Engineering " "and Applied Science",
-                ],
-            }
-        },
-        "state": "NY",
-        "street": "500 W 120th St",
-        "updated": "2020-05-30",
-        "uuid": "avacazdraca345rfsvwre",
-        "year": 2020,
-        "zip": "10027",
-    },
         {
             "_id": "usouthcarolina",
             "aka": ["The University of South Carolina"],
@@ -674,7 +808,7 @@ EXEMPLARS = {
                 "mechanical engineering": {
                     "name": "Department of Mechanical Engineering",
                     "aka": ["Mechanical", "Dept. of Mechanical"],
-                }
+                },
             },
             "month": "May",
             "name": "The University of South Carolina",
@@ -712,10 +846,10 @@ EXEMPLARS = {
             "Salary and compensation will be based on prior work " "experience."
         ],
         "contact": "Please send CV or resume to Prof. Scopatz at "
-                   "scopatzATcec.sc.edu.",
+        "scopatzATcec.sc.edu.",
         "day": 1,
         "description": "<p>We are seeking a dedicated individual to "
-                       "help to aid in ...",
+        "help to aid in ...",
         "month": "July",
         "open": False,
         "positions": ["Scientific Software Developer", "Programmer"],
@@ -723,112 +857,104 @@ EXEMPLARS = {
         "title": "Open Source Scientific Software Maintainer",
         "year": 2015,
     },
-    "meetings": [{
-        "_id": "grp1000-01-01",
-        "actions": [
-            "(Everyone) Update overdue milestones",
-            "(Professor Billinge) Explore, and plan a machine learning project for DSI"
-            "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
-            "(Emil) Set up the slack channel for the DSI project"
-        ],
-        "agenda": ["Review actions", "Fargo is not free on any streaming platforms",
-                   "Review Airtable for deliverables and celebrate",
-                   "Mention diversity action initiative", "Songsheng's journal club presentation",
-                   "(Vivian and Zicheng) Finish rest of crystallography presentation next week",
-                   "Emil's 7th inning Yoga Stretch", "Crystallography talk", "Presentation"],
-        "buddies": [
-            "   Jaylyn C. Umana, "
-            "   Simon J. L. Billinge",
-            "   Long Yang, "
-            "   Emil Kjaer",
-            "   Sani Harouna-Mayer,"
-            "   Akshay Choudhry",
-            "   Vivian Lin, "
-            "   Songsheng Tao",
-            "   Ran Gu, "
-            "   Adiba Ejaz",
-            "   Zach Thatcher, "
-            "   Yevgeny Rakita",
-            "   Zicheng 'Taylor' Liu, "
-            "   Eric Shen ",
-            "   Hung Vuong, "
-            "   Daniela Hikari Yano",
-            "   Ahmed Shaaban, "
-            "   Jiawei Zang",
-            "   Berrak Ozer, "
-            "   Michael Winitch",
-            "   Shomik Ghose",
-        ],
-        "day": 1,
-        "journal_club": {
-            "doi": "10.1107/S2053273319005606",
-            "presenter": "sbillinge",
-            "link": "https://link/to/my/talk.ppt",
-            "title": "what the paper was about and more"
+    "meetings": [
+        {
+            "_id": "grp1000-01-01",
+            "actions": [
+                "(Everyone) Update overdue milestones",
+                "(Professor Billinge) Explore, and plan a machine learning project for DSI"
+                "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
+                "(Emil) Set up the slack channel for the DSI project",
+            ],
+            "agenda": [
+                "Review actions",
+                "Fargo is not free on any streaming platforms",
+                "Review Airtable for deliverables and celebrate",
+                "Mention diversity action initiative",
+                "Songsheng's journal club presentation",
+                "(Vivian and Zicheng) Finish rest of crystallography presentation next week",
+                "Emil's 7th inning Yoga Stretch",
+                "Crystallography talk",
+                "Presentation",
+            ],
+            "buddies": [
+                "   Jaylyn C. Umana, " "   Simon J. L. Billinge",
+                "   Long Yang, " "   Emil Kjaer",
+                "   Sani Harouna-Mayer," "   Akshay Choudhry",
+                "   Vivian Lin, " "   Songsheng Tao",
+                "   Ran Gu, " "   Adiba Ejaz",
+                "   Zach Thatcher, " "   Yevgeny Rakita",
+                "   Zicheng 'Taylor' Liu, " "   Eric Shen ",
+                "   Hung Vuong, " "   Daniela Hikari Yano",
+                "   Ahmed Shaaban, " "   Jiawei Zang",
+                "   Berrak Ozer, " "   Michael Winitch",
+                "   Shomik Ghose",
+            ],
+            "day": 1,
+            "journal_club": {
+                "doi": "10.1107/S2053273319005606",
+                "presenter": "sbillinge",
+                "link": "https://link/to/my/talk.ppt",
+                "title": "what the paper was about and more",
+            },
+            "lead": "sbillinge",
+            "minutes": [
+                "Talked about eyesight and prescription lenses",
+                "Professor Billinge tells everyone a Logician/Mathematician joke",
+                "Mentioned pyjokes, a package in Python that lists bad jokes",
+                "Jaylyn greets everyone",
+                "Reviewed action items from last time",
+                "Talked about fargo, and the merits (or lack thereof) of the Dakotas",
+                "Celebrated finished prums",
+                "Songhsheng holds journal club presentation on Machine Learning techniques",
+                "Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution and other ML topics",
+                "Discussed how we can derive scientific meaning from ML algorithms",
+                "Discussed real space versus reciprocal space",
+                "Finished journal club, had to postpone Akshay's presentation, and the Yoga session to next week",
+            ],
+            "month": 1,
+            "place": "Mudd 1106",
+            "presentation": {
+                "title": "PDF Distance Extraction",
+                "link": "2007ac_grpmtg",
+                "presenter": "sbillinge",
+            },
+            "scribe": "sbillinge",
+            "time": "0",
+            "updated": "2020-07-31 23:27:50.764475",
+            "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
+            "year": 1000,
         },
-        "lead": "sbillinge",
-        "minutes": [
-            "Talked about eyesight and prescription lenses",
-            "Professor Billinge tells everyone a Logician/Mathematician joke",
-            "Mentioned pyjokes, a package in Python that lists bad jokes",
-            "Jaylyn greets everyone",
-            "Reviewed action items from last time",
-            "Talked about fargo, and the merits (or lack thereof) of the Dakotas",
-            "Celebrated finished prums",
-            "Songhsheng holds journal club presentation on Machine Learning techniques",
-            "Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution and other ML topics",
-            "Discussed how we can derive scientific meaning from ML algorithms",
-            "Discussed real space versus reciprocal space",
-            "Finished journal club, had to postpone Akshay's presentation, and the Yoga session to next week",
-        ],
-        "month": 1,
-        "place": "Mudd 1106",
-        "presentation": {
-            "title": "PDF Distance Extraction",
-            "link": "2007ac_grpmtg",
-            "presenter": "sbillinge",
-        },
-        "scribe": "sbillinge",
-        "time": '0',
-        "updated": "2020-07-31 23:27:50.764475",
-        "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
-        "year": 1000
-
-    },
         {
             "_id": "grp2020-07-31",
             "actions": [
                 "(Everyone) Update overdue milestones",
                 "(Professor Billinge) Explore, and plan a machine learning project for DSI"
                 "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
-                "(Emil) Set up the slack channel for the DSI project"
+                "(Emil) Set up the slack channel for the DSI project",
             ],
-            "agenda": ["Review actions", "Fargo is not free on any streaming platforms",
-                       "Review Airtable for deliverables and celebrate",
-                       "Mention diversity action initiative", "Songsheng's journal club presentation",
-                       "(Vivian and Zicheng) Finish rest of crystallography presentation next week",
-                       "Emil's 7th inning Yoga Stretch", "Crystallography talk", "Presentation"],
+            "agenda": [
+                "Review actions",
+                "Fargo is not free on any streaming platforms",
+                "Review Airtable for deliverables and celebrate",
+                "Mention diversity action initiative",
+                "Songsheng's journal club presentation",
+                "(Vivian and Zicheng) Finish rest of crystallography presentation next week",
+                "Emil's 7th inning Yoga Stretch",
+                "Crystallography talk",
+                "Presentation",
+            ],
             "buddies": [
-                "   Jaylyn C. Umana, "
-                "   Simon J. L. Billinge",
-                "   Long Yang, "
-                "   Emil Kjaer",
-                "   Sani Harouna-Mayer,"
-                "   Akshay Choudhry",
-                "   Vivian Lin, "
-                "   Songsheng Tao",
-                "   Ran Gu, "
-                "   Adiba Ejaz",
-                "   Zach Thatcher, "
-                "   Yevgeny Rakita",
-                "   Zicheng 'Taylor' Liu, "
-                "   Eric Shen ",
-                "   Hung Vuong, "
-                "   Daniela Hikari Yano",
-                "   Ahmed Shaaban, "
-                "   Jiawei Zang",
-                "   Berrak Ozer, "
-                "   Michael Winitch",
+                "   Jaylyn C. Umana, " "   Simon J. L. Billinge",
+                "   Long Yang, " "   Emil Kjaer",
+                "   Sani Harouna-Mayer," "   Akshay Choudhry",
+                "   Vivian Lin, " "   Songsheng Tao",
+                "   Ran Gu, " "   Adiba Ejaz",
+                "   Zach Thatcher, " "   Yevgeny Rakita",
+                "   Zicheng 'Taylor' Liu, " "   Eric Shen ",
+                "   Hung Vuong, " "   Daniela Hikari Yano",
+                "   Ahmed Shaaban, " "   Jiawei Zang",
+                "   Berrak Ozer, " "   Michael Winitch",
                 "   Shomik Ghose",
             ],
             "day": 1,
@@ -860,12 +986,11 @@ EXEMPLARS = {
                 "presenter": "not_a_valid_group_id",
             },
             "scribe": "sbillinge",
-            "time": '0',
+            "time": "0",
             "updated": "2020-07-31 23:27:50.764475",
             "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
-            "year": 7000
-
-        }
+            "year": 7000,
+        },
     ],
     "news": {
         "_id": "56b4eb6d421aa921504ef2a9",
@@ -875,364 +1000,391 @@ EXEMPLARS = {
         "month": "February",
         "year": 2016,
     },
-    "people": [{
-        "_id": "scopatz",
-        "aka": [
-            "Scopatz",
-            "Scopatz, A",
-            "Scopatz, A.",
-            "Scopatz, A M",
-            "Anthony Michael Scopatz",
-        ],
-        "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
-        "appointments": {
-            "f19": {
-                "begin_year": 2019,
-                "begin_month": 2,
-                "begin_day": 1,
-                "end_year": 2019,
-                "end_month": 3,
-                "end_day": 31,
-                "grant": "dmref15",
-                "type": "pd",
-                "loading": 0.75,
-                "status": "finalized",
-                "notes": ["forgetmenot"]
-            },
-            "s20": {
-                "begin_date": "2020-01-01",
-                "end_date": "2020-05-15",
-                "grant": "sym",
-                "type": "pd",
-                "loading": 1.0,
-                "status": "finalized",
-                "notes": ["fully appointed", "outdated grant"]
-            },
-            "ss20": {
-                "begin_date": "2020-06-01",
-                "end_date": "2020-08-31",
-                "grant": "abc42",
-                "type": "ss",
-                "loading": 0.8,
-                "status": "proposed",
-                "notes": []
-            },
-            "ss21": {
-                "begin_date": "2020-09-01",
-                "end_date": "2021-08-31",
-                "grant": "future_grant",
-                "type": "ss",
-                "loading": 1.0,
-                "status": "proposed",
-                "notes": []
-            }
-
-        },
-        "bio": "Anthony Scopatz is currently an Assistant Professor",
-        "bios": ["Anthony Scopatz is currently an Assistant Professor but will go on to do great things"],
-        "committees": [{
-            "name": "Heather Stanford",
-            "type": "phdoral",
-            "year": 2020,
-            "month": 3,
-            "day": 1,
-            "level": "department",
-            "unit": "apam"
-        },
-            {"name": "Heather Stanford",
-             "type": "promotion",
-             "year": 2020,
-             "month": 3,
-             "day": 1,
-             "level": "school",
-             "unit": "seas"
-             },
-            {"name": "Heather Stanford",
-             "type": "phddefense",
-             "year": 2020,
-             "month": 3,
-             "day": 1,
-             "notes": "something else to remember about it, not published",
-             "level": "external",
-             "unit": "U Denmark"
-             },
-            {"name": "Heather Stanford",
-             "type": "promotion",
-             "year": 2020,
-             "month": 3,
-             "day": 1,
-             "unit": "columbiau",
-             "level": "university",
-             }],
-        "education": [
-            {
-                "advisor": "scopatz",
-                "begin_year": 2008,
-                "degree": "Ph.D. Mechanical Engineering, "
-                          "Nuclear and Radiation Engineering "
-                          "Program",
-                "end_year": 2011,
-                "group": "ergs",
-                "institution": "The University of Texas at Austin",
-                "department": "apam",
-                "location": "Austin, TX",
-                "other": [
-                    "Adviser: Erich A. Schneider",
-                    "Dissertation: Essential Physics for Fuel Cycle "
-                    "Modeling & Analysis",
-                ],
-            },
-            {
-                "begin_year": 2006,
-                "degree": "M.S.E. Mechanical Engineering, Nuclear and "
-                          "Radiation Engineering Program",
-                "end_year": 2007,
-                "institution": "The University of Texas at Austin",
-                "location": "Austin, TX",
-                "other": [
-                    "Adviser: Erich A. Schneider",
-                    "Thesis: Recyclable Uranium Options under the Global "
-                    "Nuclear Energy Partnership",
-                ],
-            },
-            {
-                "begin_year": 2002,
-                "begin_month": "Sep",
-                "begin_day": 1,
-                "degree": "B.S. Physics",
-                "end_year": 2006,
-                "end_month": 5,
-                "end_day": 20,
-                "institution": "University of California, Santa Barbara",
-                "location": "Santa Barbara, CA",
-                "other": [
-                    "Graduated with a Major in Physics and a Minor in " "Mathematics"
-                ],
-            },
-            {
-                "begin_year": 2008,
-                "degree": "ongoing",
-                "group": "life",
-                "institution": "solar system",
-                "department": "earth",
-                "location": "land, mostly",
-            },
-        ],
-        "email": "scopatz@cec.sc.edu",
-        "employment": [
-            {
-                "advisor": "scopatz",
-                "begin_year": 2015,
-                "coworkers": ["afriend"],
-                "group": "ergs",
-                "status": "ms",
-                "location": "Columbia, SC",
-                "organization": "The University of South Carolina",
-                "other": [
-                    "Cyclus: An agent-based, discrete time nuclear fuel "
-                    "cycle simulator.",
-                    "PyNE: The Nuclear Engineering Toolkit.",
-                    "Website: http://www.ergs.sc.edu/",
-                ],
-                "permanent": True,
-                "position": "assistant professor",
-                "position_full": "Assistant Professor, Mechanical Engineering " "Department",
-            },
-            {
-                "begin_year": 2013,
-                "begin_month": "Jun",
-                "begin_day": 1,
-                "end_year": 2015,
-                "end_month": 3,
-                "end_day": 15,
-                "advisor": "scopatz",
-                "status": "undergrad",
-                "location": "Madison, WI",
-                "organization": "CNERG, The University of " "Wisconsin-Madison",
-                "department": "Physics",
-                "other": [
-                    "Cyclus: An agent-based, discrete time nuclear fuel "
-                    "cycle simulator.",
-                    "PyNE: The Nuclear Engineering Toolkit.",
-                    "Website: https://cnerg.github.io/",
-                ],
-                "position": "associate scientist",
-                "position_full": "Associate Scientist, Engineering Physics " "Department",
-            },
-            {
-                "begin_day": 1,
-                "begin_month": "Nov",
-                "begin_year": 2011,
-                "end_month": "May",
-                "end_year": 2013,
-                "location": "Chicago, IL",
-                "organization": "The FLASH Center, The University of " "Chicago",
-                "other": [
-                    "NIF: Simulation of magnetic field generation from "
-                    "neutral plasmas using FLASH.",
-                    "CosmoB: Simulation of magnetic field generation "
-                    "from neutral plasmas using FLASH.",
-                    "FLASH4: High-energy density physics capabilities "
-                    "and utilities.",
-                    "Simulated Diagnostics: Schlieren, shadowgraphy, "
-                    "Langmuir probes, etc. from FLASH.",
-                    "OpacPlot: HDF5-based equation of state and opacity "
-                    "file format.",
-                    "Website: http://flash.uchicago.edu/site/",
-                ],
-                "position": "post-doctoral scholar",
-                "position_full": "Research Scientist, Postdoctoral Scholar",
-                "status": "pi"
-            },
-            {
-                "begin_date": "2000-01-01",
-                "end_date": "2001-12-31",
-                "location": "Chicago, IL",
-                "organization": "Google",
-                "other": [],
-                "position": "janitor",
-                "not_in_cv": True
-            },
-        ],
-        "funding": [
-            {
-                "name": "Omega Laser User's Group Travel Award",
-                "value": 1100,
-                "year": 2013,
-            },
-            {"name": "NIF User's Group Travel Award", "value": 1150,
-             "year": 2013},
-        ],
-        "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
-        "github_id": "ascopatz",
-        "hindex": [{
-            "h": 25,
-            "h_last_five": 46,
-            "citations": 19837,
-            "citations_last_five": 9419,
-            "origin": "Google Scholar",
-            "since": 1991,
-            "year": 2020,
-            "month": 2,
-            "day": 19
-        }],
-        "home_address": {
-            "street": "123 Wallabe Ln",
-            "city": "The big apple",
-            "state": "plasma",
-            "zip": "007",
-        },
-        "initials": "AMS",
-        "membership": [
-            {
-                "begin_year": 2006,
-                "organization": "American Nuclear Society",
-                "position": "Member",
-            },
-            {
-                "begin_year": 2013,
-                "organization": "Python Software Foundation",
-                "position": "Fellow",
-            },
-        ],
-        "name": "Anthony Scopatz",
-        "orcid_id": "0000-0002-9432-4248",
-        "position": "professor",
-        "research_focus_areas": [
-            {"begin_year": 2010, "description": "software applied to nuclear "
-                                                "engineering and life"}
-        ],
-        "service": [{
-            "name": "International Steering Committee",
-            "role": "chair",
-            "type": "profession",
-            "year": 2020,
-            "month": 3,
-            "notes": ["something"],
-        }, {
-            "name": "National Steering Committee",
-            "type": "profession",
-            "begin_year": 2018,
-            "end_year": 2021,
-            "notes": "something",
-        },
-        ],
-        "skills": [
-            {"category": "Programming Languages", "level": "expert",
-             "name": "Python"},
-            {"category": "Programming Languages", "level": "expert",
-             "name": "Cython"},
-        ],
-        "teaching": [
-            {
-                "course": "EMCH 552: Intro to Nuclear Engineering",
-                "courseid": "EMCH 552",
-                "description": "This course is an introduction to nuclear " "physics.",
-                "enrollment": "tbd",
-                "month": "August",
-                "organization": "University of South Carolina",
-                "position": "professor",
-                "semester": "Spring",
-                "syllabus": "https://drive.google.com/open?id"
-                            "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                "year": 2017,
-            },
-            {
-                "course": "EMCH 558/758: Reactor Power Systems",
-                "courseid": "EMCH 558",
-                "description": "This course covers conventional " "reactors.",
-                "enrollment": 28,
-                "evaluation": {
-                    "response_rate": 66.76,
-                    "amount_learned": 3.5,
-                    "appropriateness_workload": 3.15,
-                    "course_overall": 3.67,
-                    "fairness_grading": 3.54,
-                    "organization": 3.25,
-                    "classroom_delivery": 4,
-                    "approachability": 4.3,
-                    "instructor_overall": 3.5,
-                    "comments": ["super duper", "dandy"]
+    "people": [
+        {
+            "_id": "scopatz",
+            "aka": [
+                "Scopatz",
+                "Scopatz, A",
+                "Scopatz, A.",
+                "Scopatz, A M",
+                "Anthony Michael Scopatz",
+            ],
+            "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
+            "appointments": {
+                "f19": {
+                    "begin_year": 2019,
+                    "begin_month": 2,
+                    "begin_day": 1,
+                    "end_year": 2019,
+                    "end_month": 3,
+                    "end_day": 31,
+                    "grant": "dmref15",
+                    "type": "pd",
+                    "loading": 0.75,
+                    "status": "finalized",
+                    "notes": ["forgetmenot"],
                 },
-                "month": "January",
-                "organization": "University of South Carolina",
-                "position": "professor",
-                "syllabus": "https://docs.google.com/document/d"
-                            "/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8"
-                            "-PxiboYdM/edit?usp=sharing",
-                "year": 2017,
+                "s20": {
+                    "begin_date": "2020-01-01",
+                    "end_date": "2020-05-15",
+                    "grant": "sym",
+                    "type": "pd",
+                    "loading": 1.0,
+                    "status": "finalized",
+                    "notes": ["fully appointed", "outdated grant"],
+                },
+                "ss20": {
+                    "begin_date": "2020-06-01",
+                    "end_date": "2020-08-31",
+                    "grant": "abc42",
+                    "type": "ss",
+                    "loading": 0.8,
+                    "status": "proposed",
+                    "notes": [],
+                },
+                "ss21": {
+                    "begin_date": "2020-09-01",
+                    "end_date": "2021-08-31",
+                    "grant": "future_grant",
+                    "type": "ss",
+                    "loading": 1.0,
+                    "status": "proposed",
+                    "notes": [],
+                },
             },
-        ],
-        "title": "Dr.",
-    },
+            "bio": "Anthony Scopatz is currently an Assistant Professor",
+            "bios": [
+                "Anthony Scopatz is currently an Assistant Professor but will go on to do great things"
+            ],
+            "committees": [
+                {
+                    "name": "Heather Stanford",
+                    "type": "phdoral",
+                    "year": 2020,
+                    "month": 3,
+                    "day": 1,
+                    "level": "department",
+                    "unit": "apam",
+                },
+                {
+                    "name": "Heather Stanford",
+                    "type": "promotion",
+                    "year": 2020,
+                    "month": 3,
+                    "day": 1,
+                    "level": "school",
+                    "unit": "seas",
+                },
+                {
+                    "name": "Heather Stanford",
+                    "type": "phddefense",
+                    "year": 2020,
+                    "month": 3,
+                    "day": 1,
+                    "notes": "something else to remember about it, not published",
+                    "level": "external",
+                    "unit": "U Denmark",
+                },
+                {
+                    "name": "Heather Stanford",
+                    "type": "promotion",
+                    "year": 2020,
+                    "month": 3,
+                    "day": 1,
+                    "unit": "columbiau",
+                    "level": "university",
+                },
+            ],
+            "education": [
+                {
+                    "advisor": "scopatz",
+                    "begin_year": 2008,
+                    "degree": "Ph.D. Mechanical Engineering, "
+                    "Nuclear and Radiation Engineering "
+                    "Program",
+                    "end_year": 2011,
+                    "group": "ergs",
+                    "institution": "The University of Texas at Austin",
+                    "department": "apam",
+                    "location": "Austin, TX",
+                    "other": [
+                        "Adviser: Erich A. Schneider",
+                        "Dissertation: Essential Physics for Fuel Cycle "
+                        "Modeling & Analysis",
+                    ],
+                },
+                {
+                    "begin_year": 2006,
+                    "degree": "M.S.E. Mechanical Engineering, Nuclear and "
+                    "Radiation Engineering Program",
+                    "end_year": 2007,
+                    "institution": "The University of Texas at Austin",
+                    "location": "Austin, TX",
+                    "other": [
+                        "Adviser: Erich A. Schneider",
+                        "Thesis: Recyclable Uranium Options under the Global "
+                        "Nuclear Energy Partnership",
+                    ],
+                },
+                {
+                    "begin_year": 2002,
+                    "begin_month": "Sep",
+                    "begin_day": 1,
+                    "degree": "B.S. Physics",
+                    "end_year": 2006,
+                    "end_month": 5,
+                    "end_day": 20,
+                    "institution": "University of California, Santa Barbara",
+                    "location": "Santa Barbara, CA",
+                    "other": [
+                        "Graduated with a Major in Physics and a Minor in "
+                        "Mathematics"
+                    ],
+                },
+                {
+                    "begin_year": 2008,
+                    "degree": "ongoing",
+                    "group": "life",
+                    "institution": "solar system",
+                    "department": "earth",
+                    "location": "land, mostly",
+                },
+            ],
+            "email": "scopatz@cec.sc.edu",
+            "employment": [
+                {
+                    "advisor": "scopatz",
+                    "begin_year": 2015,
+                    "coworkers": ["afriend"],
+                    "group": "ergs",
+                    "status": "ms",
+                    "location": "Columbia, SC",
+                    "organization": "The University of South Carolina",
+                    "other": [
+                        "Cyclus: An agent-based, discrete time nuclear fuel "
+                        "cycle simulator.",
+                        "PyNE: The Nuclear Engineering Toolkit.",
+                        "Website: http://www.ergs.sc.edu/",
+                    ],
+                    "permanent": True,
+                    "position": "assistant professor",
+                    "position_full": "Assistant Professor, Mechanical Engineering "
+                    "Department",
+                },
+                {
+                    "begin_year": 2013,
+                    "begin_month": "Jun",
+                    "begin_day": 1,
+                    "end_year": 2015,
+                    "end_month": 3,
+                    "end_day": 15,
+                    "advisor": "scopatz",
+                    "status": "undergrad",
+                    "location": "Madison, WI",
+                    "organization": "CNERG, The University of " "Wisconsin-Madison",
+                    "department": "Physics",
+                    "other": [
+                        "Cyclus: An agent-based, discrete time nuclear fuel "
+                        "cycle simulator.",
+                        "PyNE: The Nuclear Engineering Toolkit.",
+                        "Website: https://cnerg.github.io/",
+                    ],
+                    "position": "associate scientist",
+                    "position_full": "Associate Scientist, Engineering Physics "
+                    "Department",
+                },
+                {
+                    "begin_day": 1,
+                    "begin_month": "Nov",
+                    "begin_year": 2011,
+                    "end_month": "May",
+                    "end_year": 2013,
+                    "location": "Chicago, IL",
+                    "organization": "The FLASH Center, The University of " "Chicago",
+                    "other": [
+                        "NIF: Simulation of magnetic field generation from "
+                        "neutral plasmas using FLASH.",
+                        "CosmoB: Simulation of magnetic field generation "
+                        "from neutral plasmas using FLASH.",
+                        "FLASH4: High-energy density physics capabilities "
+                        "and utilities.",
+                        "Simulated Diagnostics: Schlieren, shadowgraphy, "
+                        "Langmuir probes, etc. from FLASH.",
+                        "OpacPlot: HDF5-based equation of state and opacity "
+                        "file format.",
+                        "Website: http://flash.uchicago.edu/site/",
+                    ],
+                    "position": "post-doctoral scholar",
+                    "position_full": "Research Scientist, Postdoctoral Scholar",
+                    "status": "pi",
+                },
+                {
+                    "begin_date": "2000-01-01",
+                    "end_date": "2001-12-31",
+                    "location": "Chicago, IL",
+                    "organization": "Google",
+                    "other": [],
+                    "position": "janitor",
+                    "not_in_cv": True,
+                },
+            ],
+            "funding": [
+                {
+                    "name": "Omega Laser User's Group Travel Award",
+                    "value": 1100,
+                    "year": 2013,
+                },
+                {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
+            ],
+            "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
+            "github_id": "ascopatz",
+            "hindex": [
+                {
+                    "h": 25,
+                    "h_last_five": 46,
+                    "citations": 19837,
+                    "citations_last_five": 9419,
+                    "origin": "Google Scholar",
+                    "since": 1991,
+                    "year": 2020,
+                    "month": 2,
+                    "day": 19,
+                }
+            ],
+            "home_address": {
+                "street": "123 Wallabe Ln",
+                "city": "The big apple",
+                "state": "plasma",
+                "zip": "007",
+            },
+            "initials": "AMS",
+            "membership": [
+                {
+                    "begin_year": 2006,
+                    "organization": "American Nuclear Society",
+                    "position": "Member",
+                },
+                {
+                    "begin_year": 2013,
+                    "organization": "Python Software Foundation",
+                    "position": "Fellow",
+                },
+            ],
+            "name": "Anthony Scopatz",
+            "orcid_id": "0000-0002-9432-4248",
+            "position": "professor",
+            "research_focus_areas": [
+                {
+                    "begin_year": 2010,
+                    "description": "software applied to nuclear "
+                    "engineering and life",
+                }
+            ],
+            "service": [
+                {
+                    "name": "International Steering Committee",
+                    "role": "chair",
+                    "type": "profession",
+                    "year": 2020,
+                    "month": 3,
+                    "notes": ["something"],
+                },
+                {
+                    "name": "National Steering Committee",
+                    "type": "profession",
+                    "begin_year": 2018,
+                    "end_year": 2021,
+                    "notes": "something",
+                },
+            ],
+            "skills": [
+                {
+                    "category": "Programming Languages",
+                    "level": "expert",
+                    "name": "Python",
+                },
+                {
+                    "category": "Programming Languages",
+                    "level": "expert",
+                    "name": "Cython",
+                },
+            ],
+            "teaching": [
+                {
+                    "course": "EMCH 552: Intro to Nuclear Engineering",
+                    "courseid": "EMCH 552",
+                    "description": "This course is an introduction to nuclear "
+                    "physics.",
+                    "enrollment": "tbd",
+                    "month": "August",
+                    "organization": "University of South Carolina",
+                    "position": "professor",
+                    "semester": "Spring",
+                    "syllabus": "https://drive.google.com/open?id"
+                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "year": 2017,
+                },
+                {
+                    "course": "EMCH 558/758: Reactor Power Systems",
+                    "courseid": "EMCH 558",
+                    "description": "This course covers conventional " "reactors.",
+                    "enrollment": 28,
+                    "evaluation": {
+                        "response_rate": 66.76,
+                        "amount_learned": 3.5,
+                        "appropriateness_workload": 3.15,
+                        "course_overall": 3.67,
+                        "fairness_grading": 3.54,
+                        "organization": 3.25,
+                        "classroom_delivery": 4,
+                        "approachability": 4.3,
+                        "instructor_overall": 3.5,
+                        "comments": ["super duper", "dandy"],
+                    },
+                    "month": "January",
+                    "organization": "University of South Carolina",
+                    "position": "professor",
+                    "syllabus": "https://docs.google.com/document/d"
+                    "/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8"
+                    "-PxiboYdM/edit?usp=sharing",
+                    "year": 2017,
+                },
+            ],
+            "title": "Dr.",
+        },
         {
             "_id": "sbillinge",
             "active": True,
-            "activities": [{
-                "type": "teaching",
-                "name": "course development",
-                "year": 2018,
-                "other": "Developed a new course for Materials Science"
-            }],
+            "activities": [
+                {
+                    "type": "teaching",
+                    "name": "course development",
+                    "year": 2018,
+                    "other": "Developed a new course for Materials Science",
+                }
+            ],
             "aka": [
                 "Billinge",
             ],
             "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
             "bio": "Simon teaches and does research",
-            "committees": [{
-                "name": "Same Old",
-                "type": "phddefense",
-                "year": 2018,
-                "unit": "Materials Science",
-                "level": "department",
-                "notes": "something"
-            }],
+            "committees": [
+                {
+                    "name": "Same Old",
+                    "type": "phddefense",
+                    "year": 2018,
+                    "unit": "Materials Science",
+                    "level": "department",
+                    "notes": "something",
+                }
+            ],
             "education": [
                 {
                     "begin_year": 2008,
                     "degree": "Ph.D. Mechanical Engineering, "
-                              "Nuclear and Radiation Engineering "
-                              "Program",
+                    "Nuclear and Radiation Engineering "
+                    "Program",
                     "end_year": 2011,
                     "group": "ergs",
                     "advisor": "scopatz",
@@ -1264,31 +1416,24 @@ EXEMPLARS = {
                     "position": "assistant professor",
                 },
             ],
-            "facilities": [{
-                "type": "other",
-                "name": "Shared {Habanero} compute cluster",
-                "begin_year": 2015
-            },
+            "facilities": [
+                {
+                    "type": "other",
+                    "name": "Shared {Habanero} compute cluster",
+                    "begin_year": 2015,
+                },
                 {
                     "type": "research_wish",
                     "name": "Shared access to wet lab",
-                    "begin_year": 2015
+                    "begin_year": 2015,
                 },
-                {
-                    "type": "teaching",
-                    "name": "Courseworks2",
-                    "begin_year": 2017
-                },
+                {"type": "teaching", "name": "Courseworks2", "begin_year": 2017},
                 {
                     "type": "teaching_wish",
                     "name": "nothing right now",
-                    "begin_year": 2019
+                    "begin_year": 2019,
                 },
-                {
-                    "type": "research",
-                    "name": "I don't have one",
-                    "begin_year": 2008
-                },
+                {"type": "research", "name": "I don't have one", "begin_year": 2008},
             ],
             "funding": [
                 {
@@ -1296,22 +1441,23 @@ EXEMPLARS = {
                     "value": 1100,
                     "year": 2013,
                 },
-                {"name": "NIF User's Group Travel Award", "value": 1150,
-                 "year": 2013},
+                {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
             ],
             "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
             "grp_mtg_active": True,
-            "hindex": [{
-                "h": 65,
-                "h_last_five": 43,
-                "citations": 17890,
-                "citations_last_five": 8817,
-                "origin": "Google Scholar",
-                "since": 1991,
-                "year": 2019,
-                "month": "May",
-                "day": 12,
-            }],
+            "hindex": [
+                {
+                    "h": 65,
+                    "h_last_five": 43,
+                    "citations": 17890,
+                    "citations_last_five": 8817,
+                    "origin": "Google Scholar",
+                    "since": 1991,
+                    "year": 2019,
+                    "month": "May",
+                    "day": 12,
+                }
+            ],
             "office": "1105 Seely W. Mudd Building (inner office)",
             "home_address": {
                 "street": "123 Wallabe Ln",
@@ -1339,43 +1485,47 @@ EXEMPLARS = {
             "name": "Simon J. L. Billinge",
             "orcid_id": "0000-0002-9432-4248",
             "position": "professor",
-            "publicity": [{
-                "type": "online",
-                "publication": "Brookhaven National Laboratory Web Story",
-                "topic": "LDRD Provenance project",
-                "title": "An awesome project and well worth the money",
-                "day": 24,
-                "month": "Jul",
-                "year": 2019,
-                "date": "2019-07-24",
-                "grant": "bnlldrd18",
-                "url": "http://www.google.com"
-            },
+            "publicity": [
+                {
+                    "type": "online",
+                    "publication": "Brookhaven National Laboratory Web Story",
+                    "topic": "LDRD Provenance project",
+                    "title": "An awesome project and well worth the money",
+                    "day": 24,
+                    "month": "Jul",
+                    "year": 2019,
+                    "date": "2019-07-24",
+                    "grant": "bnlldrd18",
+                    "url": "http://www.google.com",
+                },
             ],
             "research_focus_areas": [
-                {"begin_year": 2010, "description": "software applied to materials "
-                                                    "engineering and life"}
+                {
+                    "begin_year": 2010,
+                    "description": "software applied to materials "
+                    "engineering and life",
+                }
             ],
             "service": [
                 {
                     "type": "profession",
                     "name": "Master of Ceremonies and Organizer Brown University "
-                            '"Chemistry: Believe it or Not" public chemistry '
-                            "demonstration",
+                    '"Chemistry: Believe it or Not" public chemistry '
+                    "demonstration",
                     "year": 2017,
-                    "month": "August"
+                    "month": "August",
                 },
                 {
                     "type": "department",
                     "name": "Applied Physics program committee",
                     "begin_date": "2018-01-01",
-                    "end_date": "2018-01-01"
+                    "end_date": "2018-01-01",
                 },
                 {
                     "type": "school",
                     "name": "Ad hoc tenure committee",
                     "date": "2017-06-01",
-                    "notes": "Albert Einstein"
+                    "notes": "Albert Einstein",
                 },
                 {
                     "type": "profession",
@@ -1387,14 +1537,18 @@ EXEMPLARS = {
                 },
             ],
             "skills": [
-                {"category": "Programming Languages", "level": "expert",
-                 "name": "Python"},
+                {
+                    "category": "Programming Languages",
+                    "level": "expert",
+                    "name": "Python",
+                },
             ],
             "teaching": [
                 {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
+                    "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "f16-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
+                    "description": "This course is an introduction to nuclear "
+                    "physics.",
                     "enrollment": 18,
                     "evaluation": {
                         "response_rate": 58.33,
@@ -1409,19 +1563,21 @@ EXEMPLARS = {
                         "comments": [
                             "Great teacher but disorganized",
                             "Wears pink pants.  Why?",
-                        ]},
+                        ],
+                    },
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Fall",
                     "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2016,
                 },
                 {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
+                    "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "f17-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
+                    "description": "This course is an introduction to nuclear "
+                    "physics.",
                     "enrollment": 18,
                     "evaluation": {
                         "response_rate": 58.33,
@@ -1436,19 +1592,21 @@ EXEMPLARS = {
                         "comments": [
                             "Great teacher but disorganized",
                             "Wears pink pants.  Why?",
-                        ]},
+                        ],
+                    },
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Fall",
                     "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2017,
                 },
                 {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
+                    "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "s18-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
+                    "description": "This course is an introduction to nuclear "
+                    "physics.",
                     "enrollment": 18,
                     "evaluation": {
                         "response_rate": 58.33,
@@ -1463,19 +1621,21 @@ EXEMPLARS = {
                         "comments": [
                             "Great teacher but disorganized",
                             "Wears pink pants.  Why?",
-                        ]},
+                        ],
+                    },
                     "month": "Jan",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Spring",
                     "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2018,
                 },
                 {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
+                    "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "s17-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
+                    "description": "This course is an introduction to nuclear "
+                    "physics.",
                     "enrollment": 18,
                     "evaluation": {
                         "response_rate": 58.33,
@@ -1490,77 +1650,106 @@ EXEMPLARS = {
                         "comments": [
                             "Great teacher but disorganized",
                             "Wears pink pants.  Why?",
-                        ]},
+                        ],
+                    },
                     "month": "Jan",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Spring",
                     "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2017,
                 },
                 {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
+                    "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "s19-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
+                    "description": "This course is an introduction to nuclear "
+                    "physics.",
                     "enrollment": 18,
                     "month": "Jan",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Spring",
                     "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2019,
                 },
                 {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
+                    "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "f18-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
+                    "description": "This course is an introduction to nuclear "
+                    "physics.",
                     "enrollment": 18,
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Fall",
                     "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2018,
                 },
                 {
-                    "course": 'MSAE-3010: Introduction to Materials Science',
+                    "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "f19-3010",
-                    "description": "This course is an introduction to nuclear " "physics.",
+                    "description": "This course is an introduction to nuclear "
+                    "physics.",
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Fall",
                     "syllabus": "https://drive.google.com/open?id"
-                                "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2019,
                 },
             ],
             "title": "Dr.",
         },
-        {"_id": "abeing",
-         "active": False,
-         "aka": ["being", "human", "person"],
-         "avatar": "https://xkcd.com/1221/",
-         "bio": "Abstract Being is an exemplar human existence",
-         "education": [
-             {"degree": "bachelors", "institution": "University of Laughs", "begin_year": 2010},
-         ],
-         "employment": [
-             {"group": "bg", "begin_date": "2015-06-01", "end_date": "2015-08-31", "organization": "columbiau",
-              "position": "intern"},
-             {"group": "agroup", "begin_date": "2020-01-01", "end_date": "2030-12-31", "organization": "usouthcarolina",
-              "position": "intern"},
-             {"group": "ergs", "begin_date": "2010-06-01", "end_date": "2012-08-31", "organization": "columbiau",
-              "position": "intern"},
-             {"group": "bg", "begin_date": "2017-06-01", "end_date": "2019-08-31", "organization": "columbiau",
-              "position": "intern"},
-         ],
-         "position": "intern",
-         "name": "Abstract Being",
-         }
+        {
+            "_id": "abeing",
+            "active": False,
+            "aka": ["being", "human", "person"],
+            "avatar": "https://xkcd.com/1221/",
+            "bio": "Abstract Being is an exemplar human existence",
+            "education": [
+                {
+                    "degree": "bachelors",
+                    "institution": "University of Laughs",
+                    "begin_year": 2010,
+                },
+            ],
+            "employment": [
+                {
+                    "group": "bg",
+                    "begin_date": "2015-06-01",
+                    "end_date": "2015-08-31",
+                    "organization": "columbiau",
+                    "position": "intern",
+                },
+                {
+                    "group": "agroup",
+                    "begin_date": "2020-01-01",
+                    "end_date": "2030-12-31",
+                    "organization": "usouthcarolina",
+                    "position": "intern",
+                },
+                {
+                    "group": "ergs",
+                    "begin_date": "2010-06-01",
+                    "end_date": "2012-08-31",
+                    "organization": "columbiau",
+                    "position": "intern",
+                },
+                {
+                    "group": "bg",
+                    "begin_date": "2017-06-01",
+                    "end_date": "2019-08-31",
+                    "organization": "columbiau",
+                    "position": "intern",
+                },
+            ],
+            "position": "intern",
+            "name": "Abstract Being",
+        },
     ],
     "presentations": [
         {
@@ -1606,8 +1795,8 @@ EXEMPLARS = {
             "project": "18sob_clustermining",
             "status": "accepted",
             "title": "ClusterMining: extracting core structures of "
-                     "metallic nanoparticles from the atomic pair "
-                     "distribution function",
+            "metallic nanoparticles from the atomic pair "
+            "distribution function",
             "type": "poster",
         },
         {
@@ -1626,79 +1815,90 @@ EXEMPLARS = {
             "project": "18kj_conservation",
             "status": "accepted",
             "title": "Nanostructure challenges and successes from "
-                     "16th Century warships to 21st Century energy",
+            "16th Century warships to 21st Century energy",
             "type": "colloquium",
             "webinar": True,
         },
     ],
-    "projecta": [{
-        "_id": "sb_firstprojectum",
-        "begin_date": "2020-04-28",
-        "collaborators": ["aeinstein", "pdirac"],
-        "deliverable": {
-            "audience": ["beginning grad in chemistry"],
-            "due_date": "2021-05-05",
-            "success_def": "audience is happy",
-            "scope": ["UCs that are supported or some other scope description "
-                      "if it is software", "sketch of science story if it is paper"
-                      ],
-            "platform": "description of how and where the audience will access "
-                        "the deliverable.  Journal if it is a paper",
-            "roll_out": [
-                "steps that the audience will take to access and interact with "
-                "the deliverable", "not needed for paper submissions"],
-            "notes": ["deliverable note"],
-            "status": "proposed"
-        },
-        "description": "My first projectum",
-        "grants": "SymPy-1.1",
-        "group_members": ["ascopatz"],
-        "kickoff": {
-            "date": "2020-05-05",
-            "due_date": "2020-05-06",
-            "end_date": "2020-05-07",
-            "name": "Kick off meeting",
-            "objective": "introduce project to the lead",
-            "audience": ["lead", "pi", "group_members"],
-            "notes": ["kickoff note"],
-            "status": "finished"
-        },
-        "lead": "ascopatz",
-        "log_url": "https://docs.google.com/document/d/1YC_wtW5Q",
-        "milestones": [{
-            'due_date': '2020-05-20',
-            'name': 'Project lead presentation',
-            'notes': ["do background reading", "understand math"],
-            'tasks': ["1saefadf-wdaagea2"],
-            'objective': 'lead presents background reading and '
-                         'initial project plan',
-            'audience': ['lead', 'pi', 'group_members'],
-            'status': 'proposed',
-            'type': 'meeting',
-            'progress': {
-                'text': 'The samples have been synthesized and places in the sample cupboard. '
-                        'They turned out well and are blue as expected',
-                'figure': ['token that dereferences a figure or image in group local storage db'],
-                'slides_urls': ['url to slides describing the development, e.g. Google slides url']
+    "projecta": [
+        {
+            "_id": "sb_firstprojectum",
+            "begin_date": "2020-04-28",
+            "collaborators": ["aeinstein", "pdirac"],
+            "deliverable": {
+                "audience": ["beginning grad in chemistry"],
+                "due_date": "2021-05-05",
+                "success_def": "audience is happy",
+                "scope": [
+                    "UCs that are supported or some other scope description "
+                    "if it is software",
+                    "sketch of science story if it is paper",
+                ],
+                "platform": "description of how and where the audience will access "
+                "the deliverable.  Journal if it is a paper",
+                "roll_out": [
+                    "steps that the audience will take to access and interact with "
+                    "the deliverable",
+                    "not needed for paper submissions",
+                ],
+                "notes": ["deliverable note"],
+                "status": "proposed",
             },
-            'uuid': 'milestone_uuid_sb1'
+            "description": "My first projectum",
+            "grants": "SymPy-1.1",
+            "group_members": ["ascopatz"],
+            "kickoff": {
+                "date": "2020-05-05",
+                "due_date": "2020-05-06",
+                "end_date": "2020-05-07",
+                "name": "Kick off meeting",
+                "objective": "introduce project to the lead",
+                "audience": ["lead", "pi", "group_members"],
+                "notes": ["kickoff note"],
+                "status": "finished",
+            },
+            "lead": "ascopatz",
+            "log_url": "https://docs.google.com/document/d/1YC_wtW5Q",
+            "milestones": [
+                {
+                    "due_date": "2020-05-20",
+                    "name": "Project lead presentation",
+                    "notes": ["do background reading", "understand math"],
+                    "tasks": ["1saefadf-wdaagea2"],
+                    "objective": "lead presents background reading and "
+                    "initial project plan",
+                    "audience": ["lead", "pi", "group_members"],
+                    "status": "proposed",
+                    "type": "meeting",
+                    "progress": {
+                        "text": "The samples have been synthesized and places in the sample cupboard. "
+                        "They turned out well and are blue as expected",
+                        "figure": [
+                            "token that dereferences a figure or image in group local storage db"
+                        ],
+                        "slides_urls": [
+                            "url to slides describing the development, e.g. Google slides url"
+                        ],
+                    },
+                    "uuid": "milestone_uuid_sb1",
+                },
+                {
+                    "due_date": "2020-05-27",
+                    "name": "planning meeting",
+                    "objective": "develop a detailed plan with dates",
+                    "audience": ["lead", "pi", "group_members"],
+                    "status": "proposed",
+                    "type": "mergedpr",
+                    "uuid": "milestone_uuid_sb1_2",
+                },
+            ],
+            "name": "First Projectum",
+            "pi_id": "scopatz",
+            "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
+            "status": "started",
+            "other_urls": ["https://docs.google.com/document/d/analysis"],
+            "product_url": "https://docs.google.com/document/d/manuscript",
         },
-            {'due_date': '2020-05-27',
-             'name': 'planning meeting',
-             'objective': 'develop a detailed plan with dates',
-             'audience': ['lead', 'pi', 'group_members'],
-             'status': 'proposed',
-             'type': 'mergedpr',
-             'uuid': 'milestone_uuid_sb1_2'
-             }
-        ],
-        "name": "First Projectum",
-        "pi_id": "scopatz",
-        "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
-        "status": "started",
-        "other_urls": ["https://docs.google.com/document/d/analysis"],
-        "product_url": "https://docs.google.com/document/d/manuscript",
-    },
         {
             "_id": "ab_inactive",
             "lead": "abeing",
@@ -1707,9 +1907,21 @@ EXEMPLARS = {
             "grants": "dmref15",
             "description": "a prum that has various inactive states in milestones and overall",
             "deliverable": {"due_date": "2021-05-03", "status": "paused"},
-            "kickoff": {"due_date": "2021-05-03", "name": "Kickoff", "status": "backburner", "type": "meeting"},
-            "milestones": [{"due_date": "2021-05-03", "name": "Milestone", "status": "converged", "uuid": "milestone_uuid_inactive"}]
-    },
+            "kickoff": {
+                "due_date": "2021-05-03",
+                "name": "Kickoff",
+                "status": "backburner",
+                "type": "meeting",
+            },
+            "milestones": [
+                {
+                    "due_date": "2021-05-03",
+                    "name": "Milestone",
+                    "status": "converged",
+                    "uuid": "milestone_uuid_inactive",
+                }
+            ],
+        },
         {
             "_id": "pl_firstprojectum",
             "lead": "pliu",
@@ -1717,8 +1929,19 @@ EXEMPLARS = {
             "begin_date": "2020-07-25",
             "end_date": "2020-07-27",
             "deliverable": {"due_date": "2021-08-26", "status": "finished"},
-            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
-            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged", "uuid": "milestone_uuid_pl1"}]
+            "kickoff": {
+                "due_date": "2021-08-03",
+                "name": "Kickoff",
+                "status": "backburner",
+            },
+            "milestones": [
+                {
+                    "due_date": "2021-08-03",
+                    "name": "Milestone",
+                    "status": "converged",
+                    "uuid": "milestone_uuid_pl1",
+                }
+            ],
         },
         {
             "_id": "pl_secondprojectum",
@@ -1726,8 +1949,19 @@ EXEMPLARS = {
             "status": "proposed",
             "begin_date": "2020-07-25",
             "deliverable": {"due_date": "2021-08-26", "status": "finished"},
-            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
-            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged", "uuid": "milestone_uuid_pl2"}]
+            "kickoff": {
+                "due_date": "2021-08-03",
+                "name": "Kickoff",
+                "status": "backburner",
+            },
+            "milestones": [
+                {
+                    "due_date": "2021-08-03",
+                    "name": "Milestone",
+                    "status": "converged",
+                    "uuid": "milestone_uuid_pl2",
+                }
+            ],
         },
         {
             "_id": "pl_thirdprojectum",
@@ -1735,18 +1969,28 @@ EXEMPLARS = {
             "status": "backburner",
             "begin_date": "2020-07-25",
             "deliverable": {"due_date": "2021-08-26", "status": "finished"},
-            "kickoff": {"due_date": "2021-08-03", "name": "Kickoff", "status": "backburner"},
-            "milestones": [{"due_date": "2021-08-03", "name": "Milestone", "status": "converged", "uuid": "milestone_uuid_pl3"}]
-        }
-        ],
+            "kickoff": {
+                "due_date": "2021-08-03",
+                "name": "Kickoff",
+                "status": "backburner",
+            },
+            "milestones": [
+                {
+                    "due_date": "2021-08-03",
+                    "name": "Milestone",
+                    "status": "converged",
+                    "uuid": "milestone_uuid_pl3",
+                }
+            ],
+        },
+    ],
     "projects": {
         "_id": "Cyclus",
         "name": "Cyclus",
         "description": "Agent-Based Nuclear Fuel Cycle Simulator",
         "group": "ergs",
         "highlights": [
-            {"year": 2020, "month": 5,
-             "description": "high profile pub in Nature"}
+            {"year": 2020, "month": 5, "description": "high profile pub in Nature"}
         ],
         "logo": "http://fuelcycle.org/_static/big_c.png",
         "other": [
@@ -1779,8 +2023,7 @@ EXEMPLARS = {
             "doe_appropriateness_of_approach": [
                 "The proposed approach is highly innovative"
             ],
-            "doe_reasonableness_of_budget": [
-                "They could do it with half the money"],
+            "doe_reasonableness_of_budget": ["They could do it with half the money"],
             "doe_relevance_to_program_mission": ["super relevant"],
             "does_how": [
                 "they will find the cause of Malaria",
@@ -1828,8 +2071,7 @@ EXEMPLARS = {
             ],
             "does_what": "Find a cure for Poverty",
             "due_date": "2020-04-10",
-            "freewrite":
-                "I can put extra things here, such as special instructions from the",
+            "freewrite": "I can put extra things here, such as special instructions from the",
             "goals": [
                 "The goals of the proposal are to put together a team to find a cure"
                 "for Poverty, and then to find it"
@@ -1846,8 +2088,7 @@ EXEMPLARS = {
                 "I don't see any issues with the plan",
                 "it should be very straightforward",
             ],
-            "nsf_pot_to_advance_knowledge": [
-                "This won't advance knowledge at all"],
+            "nsf_pot_to_advance_knowledge": ["This won't advance knowledge at all"],
             "nsf_pot_to_benefit_society": [
                 "Society will benefit by poor people being made unpoor if they want "
                 "to be"
@@ -1876,9 +2117,8 @@ EXEMPLARS = {
             "end_year": 2030,
             "full": {
                 "benefit_of_collaboration": "http://pdf.com"
-                                            "/benefit_of_collaboration",
-                "cv": ["http://pdf.com/scopatz-cv",
-                       "http://pdf.com/flanagan-cv"],
+                "/benefit_of_collaboration",
+                "cv": ["http://pdf.com/scopatz-cv", "http://pdf.com/flanagan-cv"],
                 "narrative": "http://some.com/pdf",
             },
             "submitted_month": "Aug",
@@ -1886,9 +2126,8 @@ EXEMPLARS = {
             "pi": "Anthony Scopatz",
             "pre": {
                 "benefit_of_collaboration": "http://pdf.com"
-                                            "/benefit_of_collaboration",
-                "cv": ["http://pdf.com/scopatz-cv",
-                       "http://pdf.com/flanagan-cv"],
+                "/benefit_of_collaboration",
+                "cv": ["http://pdf.com/scopatz-cv", "http://pdf.com/flanagan-cv"],
                 "day": 2,
                 "month": "Aug",
                 "narrative": "http://some.com/pdf",
@@ -1903,7 +2142,7 @@ EXEMPLARS = {
             "amount": 982785.0,
             "authors": ["qdu", "dhsu", "sbillinge"],
             "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/"
-                                  "nsf14591.htm",
+            "nsf14591.htm",
             "begin_day": 1,
             "begin_month": "May",
             "begin_year": 2018,
@@ -1914,8 +2153,8 @@ EXEMPLARS = {
                 "person_months_academic": 0,
                 "person_months_summer": 1,
                 "project_scope": "lots to do but it doesn't overlap with any "
-                                 "other of my grants",
-                "single_pi": True
+                "other of my grants",
+                "single_pi": True,
             },
             "currency": "USD",
             "submitted_date": "2015-02-02",
@@ -1946,7 +2185,7 @@ EXEMPLARS = {
                 },
             ],
             "title": "DMREF: Novel, data validated, nanostructure determination "
-                     "methods for accelerating materials discovery",
+            "methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure",
         },
         {
@@ -1960,7 +2199,7 @@ EXEMPLARS = {
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
-                "project_scope": ""
+                "project_scope": "",
             },
             "currency": "USD",
             "pi": "Anthony Scopatz",
@@ -1970,7 +2209,8 @@ EXEMPLARS = {
                     "institution": "Columbia University",
                     "name": "scopatz",
                     "position": "pi",
-                }],
+                }
+            ],
             "title": "SymPy 1.1 Release Support",
         },
         {
@@ -1984,7 +2224,7 @@ EXEMPLARS = {
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
-                "project_scope": ""
+                "project_scope": "",
             },
             "currency": "USD",
             "pi": "sbillinge",
@@ -2002,80 +2242,94 @@ EXEMPLARS = {
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
-                "project_scope": ""
+                "project_scope": "",
             },
             "currency": "USD",
             "pi": "sbillinge",
             "status": "submitted",
             "title": "The answer to life, the universe, and everything",
-        }
+        },
     ],
-    "reading_lists": [{
-        "_id": "getting_started_with_pdf",
-        "day": 15,
-        "month": 12,
-        "papers": [{"doi": "10.1107/97809553602060000935",
-                    "text": "Very basic, but brief, intro to powder diffraction in general"},
-                   {"doi": "10.1039/9781847558237-00464",
-                    "text": "Lightest weight overview of PDF analysis around.  Good starting point"
-                    },
-                   {"url": "http://www.diffpy.org",
-                    "text": "Download and install PDFgui software and run through the step by step tutorial under the help tab"}
-                   ],
-        "purpose": "Beginning reading about PDF",
-        "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
-        "year": 2019},
+    "reading_lists": [
+        {
+            "_id": "getting_started_with_pdf",
+            "day": 15,
+            "month": 12,
+            "papers": [
+                {
+                    "doi": "10.1107/97809553602060000935",
+                    "text": "Very basic, but brief, intro to powder diffraction in general",
+                },
+                {
+                    "doi": "10.1039/9781847558237-00464",
+                    "text": "Lightest weight overview of PDF analysis around.  Good starting point",
+                },
+                {
+                    "url": "http://www.diffpy.org",
+                    "text": "Download and install PDFgui software and run through the step by step tutorial under the help tab",
+                },
+            ],
+            "purpose": "Beginning reading about PDF",
+            "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
+            "year": 2019,
+        },
         {
             "_id": "african_swallows",
             "date": "2019-12-01",
-            "papers": [{"doi": "10.1107/97809553602060000935",
-                        "text": "Very basic, but brief, intro to african swallows"},
-                       ],
+            "papers": [
+                {
+                    "doi": "10.1107/97809553602060000935",
+                    "text": "Very basic, but brief, intro to african swallows",
+                },
+            ],
             "title": "A step-by-step pathway towards african swallow understanding.",
-        }],
-    "refereeReports": [{
-        "_id": "1902nature",
-        "claimed_found_what": ["gravity waves"],
-        "claimed_why_important": ["more money for ice cream"],
-        "did_how": ["measured with a ruler"],
-        "did_what": ["found a much cheaper way to measure gravity waves"],
-        "due_date": '2020-04-11',
-        "editor_eyes_only": "to be honest, I don't believe a word of it",
-        "final_assessment": ["The authors should really start over"],
-        "first_author_last_name": "Wingit",
-        "freewrite": "this comment didn't fit anywhere above",
-        "journal": "Nature",
-        "month": "jun",
-        "recommendation": "reject",
-        "requester": "Max Planck",
-        "reviewer": "sbillinge",
-        "status": "submitted",
-        "submitted_date": "2019-01-01",
-        "title": "a ruler approach to measuring gravity waves",
-        "validity_assessment": ["complete rubbish"],
-        "year": 2019},
+        },
+    ],
+    "refereeReports": [
         {
-        "_id": "2002nature",
-        "claimed_found_what": ["more gravity waves"],
-        "claimed_why_important": ["even more money for ice cream"],
-        "did_how": ["measured with a ruler"],
-        "did_what": ["found an even cheaper way to measure gravity waves"],
-        "due_date": '2021-04-11',
-        "editor_eyes_only": "to be honest, I don't believe a word of it",
-        "final_assessment": ["The authors should really start over"],
-        "first_author_last_name": "Wingit",
-        "freewrite": "this comment didn't fit anywhere above",
-        "journal": "Nature",
-        "month": "jun",
-        "recommendation": "reject",
-        "requester": "Max Planck",
-        "reviewer": "sbillinge",
-        "status": "accepted",
-        "submitted_date": "2020-01-01",
-        "title": "an even smaller ruler approach to measuring gravity waves",
-        "validity_assessment": ["complete rubbish"],
-        "year": 2020,
-        }
+            "_id": "1902nature",
+            "claimed_found_what": ["gravity waves"],
+            "claimed_why_important": ["more money for ice cream"],
+            "did_how": ["measured with a ruler"],
+            "did_what": ["found a much cheaper way to measure gravity waves"],
+            "due_date": "2020-04-11",
+            "editor_eyes_only": "to be honest, I don't believe a word of it",
+            "final_assessment": ["The authors should really start over"],
+            "first_author_last_name": "Wingit",
+            "freewrite": "this comment didn't fit anywhere above",
+            "journal": "Nature",
+            "month": "jun",
+            "recommendation": "reject",
+            "requester": "Max Planck",
+            "reviewer": "sbillinge",
+            "status": "submitted",
+            "submitted_date": "2019-01-01",
+            "title": "a ruler approach to measuring gravity waves",
+            "validity_assessment": ["complete rubbish"],
+            "year": 2019,
+        },
+        {
+            "_id": "2002nature",
+            "claimed_found_what": ["more gravity waves"],
+            "claimed_why_important": ["even more money for ice cream"],
+            "did_how": ["measured with a ruler"],
+            "did_what": ["found an even cheaper way to measure gravity waves"],
+            "due_date": "2021-04-11",
+            "editor_eyes_only": "to be honest, I don't believe a word of it",
+            "final_assessment": ["The authors should really start over"],
+            "first_author_last_name": "Wingit",
+            "freewrite": "this comment didn't fit anywhere above",
+            "journal": "Nature",
+            "month": "jun",
+            "recommendation": "reject",
+            "requester": "Max Planck",
+            "reviewer": "sbillinge",
+            "status": "accepted",
+            "submitted_date": "2020-01-01",
+            "title": "an even smaller ruler approach to measuring gravity waves",
+            "validity_assessment": ["complete rubbish"],
+            "year": 2020,
+        },
     ],
     "students": {
         "_id": "Human A. Person",
@@ -2085,2915 +2339,44 @@ EXEMPLARS = {
     },
     "todos": [
         {"_id": "ascopatz"},
-        {"_id": "sbillinge",
-        "todos": [
-            {"description": "read paper",
-             "uuid": "1saefadf-wdaagea2",
-             "due_date": "2020-07-19",
-             "begin_date": "2020-06-15",
-             "deadline": True,
-             "duration": 60.0,
-             "importance": 2,
-             "status": "started",
-             "assigned_by": "scopatz",
-             "running_index": 1,
-             "tags": ["reading", "downtime"]
-             },
-            {"description": "prepare the presentation",
-             "uuid": "2saefadf-wdaagea3",
-             "due_date": "2020-07-29",
-             "begin_date": "2020-06-22",
-             "duration": 30.0,
-             "importance": 0,
-             "status": "started",
-             "notes": ["about 10 minutes",
-                       "don't forget to upload to the website"],
-             "assigned_by": "sbillinge",
-             "running_index": 2,
-             "tags": ["downtime"]
-             }]
-        },
-    ]
-}
-
-SCHEMAS = {
-    "abstracts": {
-        "_description": {
-            "description": "Abstracts for a conference or workshop. This is "
-                           "generally public information"
-        },
-        "_id": {
-            "description": "Unique identifier for submission. This generally "
-                           "includes the author name and part of the title.",
-            "required": True,
-            "type": "string",
-        },
-        "coauthors": {
-            "description": "names of coauthors",
-            "required": False,
-            "type": "string",
-        },
-        "email": {
-            "description": "contact email for the author.",
-            "required": True,
-            "type": "string",
-        },
-        "firstname": {
-            "description": "first name of the author.",
-            "required": True,
-            "type": "string",
-        },
-        "institution": {
-            "description": "name of the institution",
-            "required": True,
-            "type": "string",
-        },
-        "lastname": {
-            "description": "last name of the author.",
-            "required": True,
-            "type": "string",
-        },
-        "references": {
-            "description": "HTML string of reference for the abstract itself",
-            "required": False,
-            "type": "string",
-        },
-        "text": {
-            "description": "HTML string of the abstract.",
-            "required": True,
-            "type": "string",
-        },
-        "timestamp": {
-            "description": "The time when the abstract was submitted.",
-            "required": True,
-            "type": "string",
-        },
-        "title": {
-            "description": "title of the presentation/paper.",
-            "required": True,
-            "type": "string",
-        },
-    },
-    "assignments": {
-        "_description": {
-            "description": "Information about assignments for classes."},
-        "_id": {
-            "description": "A unique id for the assignment, such as "
-                           "HW01-EMCH-558-2016-S",
-            "required": True,
-            "type": "string",
-        },
-        "category": {
-            "description": "such as 'homework' or 'final'",
-            "required": True,
-            "type": "string",
-        },
-        "courses": {
-            "description": "ids of the courses that have this assignment",
-            "required": True,
-            "anyof_type": ["string", "list"],
-        },
-        "file": {
-            "description": "path to assignment file in store",
-            "required": False,
-            "type": "string",
-        },
-        "points": {
-            "description": "list of number of points possible for each "
-                           "question. Length is the number of questions",
-            "required": True,
-            "type": "list",
-            "schema": {"anyof_type": ["integer", "float"]},
-        },
-        "questions": {
-            "description": "titles for the questions on this assignment",
-            "required": False,
-            "type": "list",
-        },
-        "solution": {
-            "description": "path to solution file in store",
-            "required": False,
-            "type": "string",
-        },
-    },
-    "beamplan": {
-        "_id": {
-            "description": "Unique identifier for the experiment plan. It should have a format '{year:2d}{month:2d}{people_id:s}_{plan_name:s}'",
-            "required": True,
-            "type": "string"
-        },
-        "_description": {
-            "description": "Information about the experiment plan for the beamtime."},
-        "project_lead": {
-            "description": "The id for person who put out this plan. It should be inside the people.yml.",
-            "required": True,
-            "type": "string"
-        },
-        "project": {
-            "description": "The id for the project which the plan belongs to. It should be on airtable.",
-            "required": True,
-            "type": "string"
-        },
-        "begin_date": {
-            "description": "The begin date of the beam time.",
-            "required": True,
-            "anyof_type": ["string", "datetime", "date"]
-        },
-        "end_date": {
-            "description": "The end date of the beam time.",
-            "required": True,
-            "anyof_type": ["string", "datetime", "date"]
-        },
-        "beamtime": {
-            "description": "The id for the beamtime. Check the Airtable.",
-            "required": True,
-            "type": "string"
-        },
-        "holder": {
-            "description": "Sample holder used during the measurement, e. g. 3 mm OD tubes holder.",
-            "required": True,
-            "type": "string"
-        },
-        "devices": {
-            "description": "The dictionary of devices used in the measurement e. g. ",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "string"
-            }
-        },
-        "measurement": {
-            "description": "What data to be measured, e. g. PDF, XRD, SAXS. This will determine the setup.",
-            "required": True,
-            "type": "string"
-        },
-        "samples": {
-            "description": "The list of samples to be measured.",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "string"
-            }
-        },
-        "time": {
-            "description": "The total time of executing the exp_plan. Unit: min.",
-            "required": True,
-            "type": "integer"
-        },
-        "objective": {
-            "description": "What to study in the experiments. What goal to achieve.",
-            "required": True,
-            "type": "string"
-        },
-        "prep_plan": {
-            "description": "Steps to prepare the samples. Do NOT need details.",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "string"
-            }
-        },
-        "ship_plan": {
-            "description": "Steps to carry the samples from the producer to the BNL. Do NOT need details.",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "string"
-            }
-        },
-        "exp_plan": {
-            "description": "Steps to carry out the experiments at BNL. Need details",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "string"
-            }
-        },
-        "scanplan": {
-            "description": "The scanplan for the experiment, e. g. tseries, Tramp, ct.",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "string"
-            }
-        },
-        "pipeline": {
-            "description": "The analysis pipeline for the experiment. If no new pipeline is needed, use 'usual'.",
-            "required": True,
-            "type": "string",
-            "default": "usual"
-        },
-        "todo": {
-            "description": "The TODO list before the beamtime.",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "string"
-            }
-        },
-        "notes": {
-            "description": "Notes of the plan, e. g. the preferred time.",
-            "required": False,
-            "anyof_type": [
-                "list",
-                "string"
+        {
+            "_id": "sbillinge",
+            "todos": [
+                {
+                    "description": "read paper",
+                    "uuid": "1saefadf-wdaagea2",
+                    "due_date": "2020-07-19",
+                    "begin_date": "2020-06-15",
+                    "deadline": True,
+                    "duration": 60.0,
+                    "importance": 2,
+                    "status": "started",
+                    "assigned_by": "scopatz",
+                    "running_index": 1,
+                    "tags": ["reading", "downtime"],
+                },
+                {
+                    "description": "prepare the presentation",
+                    "uuid": "2saefadf-wdaagea3",
+                    "due_date": "2020-07-29",
+                    "begin_date": "2020-06-22",
+                    "duration": 30.0,
+                    "importance": 0,
+                    "status": "started",
+                    "notes": [
+                        "about 10 minutes",
+                        "don't forget to upload to the website",
+                    ],
+                    "assigned_by": "sbillinge",
+                    "running_index": 2,
+                    "tags": ["downtime"],
+                },
             ],
-            "schema": {
-                "type": "string"
-            }
-        }
-    },
-    "blog": {
-        "_description": {
-            "description": "This collection represents blog posts written by "
-                           "the members of the research group."
         },
-        "_id": {
-            "description": "short representation, such as this-is-my-title",
-            "required": True,
-            "type": "string",
-        },
-        "author": {
-            "description": "name or AKA of author",
-            "required": True,
-            "type": "string",
-        },
-        "day": {"description": "Publication day", "required": True,
-                "type": "integer"},
-        "month": {
-            "description": "Publication month",
-            "required": True,
-            "anyof_type": ["string", "integer"],
-        },
-        "original": {
-            "description": "URL of original post, if this is a repost",
-            "required": False,
-            "type": "string",
-        },
-        "post": {
-            "description": "actual contents of the post",
-            "required": True,
-            "type": "string",
-        },
-        "title": {
-            "description": "full human readable title",
-            "required": True,
-            "type": "string",
-        },
-        "year": {
-            "description": "Publication year",
-            "required": True,
-            "type": "integer",
-        },
-    },
-    "contacts": {
-        "_description": {"description": "a lighter version of people.  Fewer required fields"
-                                        "for capturing people who are less tightly coupled"
-                         },
-        "_id": {
-            "description": "id of the person, e.g., first letter first name "
-                           "plus last name, but unique",
-            "required": True,
-        },
-        "aka": {
-            "required": False,
-            "type": "list",
-            "description": "other names for the person",
-        },
-        "date": {
-            "description": "date when the entry was created in ISO format",
-            "required": False,
-            "anyof_type": ["string", "date"],
-        },
-        'day': {
-            "description": "day when the entry was created",
-            "required": False,
-            "type": "integer",
-        },
-        "department": {
-            "description": "Department at the institution",
-            "type": "string",
-            "required": False,
-        },
-        "email": {
-            "description": "Contact email for the contact",
-            "type": "string",
-            "required": False,
-        },
-        "institution": {
-            "description": "the institution where they are located.  This is"
-                           "required for building a COI list of coauthors, but"
-                           "not in general.  It can be institute id or anything"
-                           "in the aka or name",
-            "required": False,
-            "type": "string"
-        },
-        'month': {
-            "description": "month when the entry was created",
-            "required": False,
-            "anyof_type": ["string", "integer"],
-        },
-        "name": {
-            "description": "the person's canonical name",
-            "required": True,
-            "type": "string",
-        },
-        "notes": {
-            "description": "notes about the person",
-            "required": False,
-            "anyof_type": ["list", "string"]
-        },
-        "title": {
-            "description": "how the person is addressed",
-            "required": False,
-            "type": "string",
-        },
-        'updated': {
-            "description": "most recently updated",
-            "required": False,
-            "anyof_type": ["string", "datetime", "date"],
-        },
-        'year': {
-            "description": "year when the entry was created",
-            "required": False,
-            "type": "integer",
-        },
-        'uuid': {
-            "description": "universally unique identifier",
-            "required": False,
-            "type": "string",
-        },
-    },
-    "expenses": {
-        "_description": {
-            "description": "This collection records expenses for the "
-                           "group. It should most likely be private"
-        },
-        "_id": {
-            "description": "short representation, such as this-is-my-name",
-            "required": True,
-            "type": "string",
-        },
-        "begin_date": {
-            "description": "begin date in YYYY-MM-DD",
-            "anyof_type": ["string", "date"],
-        },
-        "begin_year": {"description": "The year when the travel/business started",
-                       "required": False,
-                       "type": "integer"},
-        "begin_month": {"description": "The month when the travel/business started",
-                        "required": False,
-                        "anyof_type": ["string", "integer"]},
-        "begin_day": {"description": "The day when the travel/business started",
-                      "required": False,
-                      "type": "integer"},
-        "end_year": {"description": "The year when the travel/business end",
-                     "required": False,
-                     "type": "integer"},
-        "end_month": {"description": "The month when the travel/business end",
-                      "required": False,
-                      "anyof_type": ["string", "integer"]},
-        "end_day": {"description": "The day when the travel/business end",
-                    "required": False,
-                    "type": "integer"},
-        "end_date": {
-            "description": "end date in YYYY-MM-DD",
-            "anyof_type": ["string", "date"],
-
-        },
-        "grant_percentages": {
-            "description": "the percentage of the reimbursement amount to put "
-                           "on each grant. This list must be the same length as"
-                           "the grants list and the percentages placed in the "
-                           "order that the grants appear in that list",
-            "required": False,
-            "type": "list",
-        },
-        "grants": {
-            "description": "the grants in a list, or a string if only one grant",
-            "required": True,
-            "anyof_type": ["string", "list"],
-        },
-        "project": {
-            "description": "project or list of projects that this "
-                           "presentation is associated with.  Should "
-                           "be discoverable in projects collection",
-            "anyof_type": ["string", "list"],
-        },
-        "payee": {
-            "description": "The name or id of the payee filing the expense",
-            "required": True,
-            "type": "string",
-        },
-        "itemized_expenses": {
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "day": {
-                        "description": "Expense day",
-                        "required": False,
-                        "type": "integer",
-                    },
-                    "date": {
-                        "description": "Expense date",
-                        "required": False,
-                        "anyof_type": ["string", "date"],
-                    },
-                    "month": {
-                        "description": "Expense month",
-                        "required": False,
-                        "anyof_type": ["string", "integer"],
-                    },
-                    "year": {
-                        "description": "Expense year",
-                        "required": False,
-                        "type": "integer",
-                    },
-                    "purpose": {
-                        "description": "reason for expense",
-                        "type": "string",
-                        "required": True,
-                    },
-                    "unsegregated_expense": {
-                        "description": "The allowed expenses",
-                        "type": "float",
-                        "required": True,
-                    },
-                    "segregated_expense": {
-                        "description": "The unallowed expenses",
-                        "type": "float",
-                        "required": False,
-                    },
-                    "currency": {
-                        "description": "The currency the payment was made in",
-                        "type": "string",
-                        "required": False,
-                    },
-                    "prepaid_expense": {
-                       "description": "The amount of prepaid expense in USD",
-                       "required": False,
-                       "type": "float"
-                      },
-                    "notes": {"description": "notes about the expense",
-                              "required": False,
-                              "anyof_type": ["list", "string"]}
-                },
-            },
-        },
-        "overall_purpose": {
-            "description": "The reason for the expenses",
-            "type": "string",
-            "required": True,
-        },
-        "notes": {
-            "description": "Description of the expenses. It will not be included in the reimbursement form",
-            "required": False,
-            "anyof_type": ["list", "string"],
-
-        },
-        "status": {
-            "description": "The status of the expense",
-            "eallowed": EXPENSES_STATI,
-            "required": False,
-            "type": "string"
-        },
-        "reimbursements": {
-            "description": "Reimbursements for the expense",
-            "schema": {
-                "schema": {
-                    'amount': {"description": 'amount for reimbursements',
-                               "type": "float",
-                               },
-                    'date': {"description": "date of reimbursement",
-                             "anyof_type": ["string", "date"],
-                             },
-                    'submission_date': {"description": "date of submission",
-                                        "anyof_type": ["string", "date"],
-                                        },
-                    'submission_day': {"description": "day of submission. deprecated but here for "
-                                                      "backwards compatibility",
-                                       "type": "integer",
-                                       },
-                    'submission_month': {"description": "month of submission. deprecated but here for "
-                                                        "backwards compatibility",
-                                         "anyof_type": ["integer", "string"],
-                                         },
-                    'submission_year': {"description": "year of submission. deprecated but here for "
-                                                       "backwards compatibility",
-                                        "type": "integer",
-                                        },
-                    'day': {"description": "day of reimbursement. deprecated but here for "
-                                           "backwards compatibility",
-                            "type": "integer",
-                            },
-                    'month': {"description": "month of reimbursement. deprecated but here for "
-                                             "backwards compatibility",
-                              "anyof_type": ["string", "integer"],
-                              },
-                    'year': {"description": "year of reimbursement. deprecated but here for "
-                                            "backwards compatibility",
-                             "type": "integer",
-                             },
-                    'where': {"description": 'where the reimbursement has been sent',
-                              "type": 'string',
-                              },
-                },
-                "type": "dict"
-            },
-            "type": "list"
-        },
-        "expense_type": {
-            "description": "The type of expense",
-            "eallowed": EXPENSES_TYPES,
-            "required": True,
-        },
-    },
-    "grades": {
-        "_description": {
-            "description": "The grade for a student on an assignment. This "
-                           "information should be private."
-        },
-        "_id": {
-            "description": "unique id, typically the " "student-assignment-course",
-            "required": True,
-            "type": "string",
-        },
-        "assignment": {
-            "description": "assignment id",
-            "required": True,
-            "type": "string",
-        },
-        "course": {"description": "course id", "required": True,
-                   "type": "string"},
-        "filename": {
-            "description": "path to file in store",
-            "required": False,
-            "type": "string",
-        },
-        "scores": {
-            "description": "the number of points earned on each question",
-            "required": True,
-            "type": "list",
-            "schema": {"anyof_type": ["integer", "float"]},
-        },
-        "student": {"description": "student id", "required": True,
-                    "type": "string"},
-    },
-    "formalletters": {
-        "_description": {
-            "description": "Letters with a formal formatting, subject, recipients, "
-                           "enclosures, etc."
-        },
-        "_id": {
-            "description": "short representation, such as id_of_the_letter",
-            "required": True,
-            "type": ("string", "integer", "float"),
-        },
-        "date": {
-            "description": "Letter date.  ISO format YYYY-MM-DD",
-            "required": True,
-            "anyof_type": ["string", "date"],
-        },
-        "from": {
-            "description": "The from field",
-            "schema": {
-                    'name': {"description": 'The name of the sender',
-                               "type": "string",
-                               "required": True,
-                               },
-                    'title': {"description": 'The title of the person, Sir,'
-                                             'Mr., Major. Ranks can be shortened'
-                                             'to codes.',
-                             "type": "string",
-                             "required": False,
-                             },
-                    'postfix': {"description": 'The post-fix, PhD, (Admiral, retired), whatever',
-                              "type": "string",
-                              "required": False,
-                              },
-                }
-        },
-        "to": {
-            "description": "The to field",
-            "schema": {
-                'name': {"description": 'The name of the recipient',
-                         "type": "string",
-                         "required": True,
-                         },
-                'title': {"description": 'The title of the person, Sir,'
-                                         'Mr., Major. Ranks can be shortened'
-                                         'to codes.',
-                          "type": "string",
-                          "required": False,
-                          },
-                'postfix': {
-                    "description": 'The post-fix, PhD, (Admiral, retired), whatever',
-                    "type": "string",
-                    "required": False,
-                    },
-            }
-        },
-        "copy_to": {
-                "description": "List of people who will receive a copy",
-                "required": False,
-                "type": ["list"],
-            },
-        "subject": {
-            "description": "The subject of the letter",
-            "required": False,
-            "type": ("string"),
-        },
-        "copy_to": {
-            "description": "List of people who will receive a copy",
-            "required": False,
-            "type": ["list"],
-        },
-        "refs": {
-            "description": "List of references",
-            "required": False,
-            "type": ["list"],
-        },
-        "encls": {
-            "description": "List of enclosures",
-            "required": False,
-            "type": ["list"],
-        },
-        "paras": {
-            "description": "content of the letter in the form of a List of paragraphs",
-            "required": True,
-            "type": ["list"],
-        }
-        },
-    "grants": {
-        "_description": {
-            "description": "This collection represents grants that have been "
-                           "awarded to the group."
-        },
-        "_id": {
-            "description": "short representation, such as this-is-my-name",
-            "required": True,
-            "type": ("string", "integer", "float"),
-        },
-        "account": {
-            "description": "the account number which holds the funds",
-            "required": False,
-            "type": "string",
-        },
-        "admin": {
-            "description": "the unit or group administering the grant",
-            "type": "string",
-            "required": False,
-        },
-        "alias": {
-            "description": "the alias of the grant",
-            "type": "string",
-            "required": False,
-        },
-        "amount": {
-            "description": "value of award",
-            "required": True,
-            "type": ("integer", "float"),
-        },
-        "awardnr": {
-            "description": "the number of the award from the agency",
-            "type": "string",
-            "required": False,
-        },
-        "begin_date": {
-            "description": "start date of the grant (if string, in format YYYY-MM-DD)",
-            "required": False,
-            "anyof_type": ["string", "date"]
-        },
-        "begin_day": {
-            "description": "start day of the grant",
-            "required": False,
-            "type": "integer",
-        },
-        "begin_month": {
-            "description": "start month of the grant",
-            "required": False,
-            "anyof_type": ["string", "integer"],
-        },
-        "begin_year": {
-            "description": "start year of the grant",
-            "required": False,
-            "type": "integer",
-        },
-        "benefit_of_collaboration": {
-            "description": "",
-            "required": False,
-            "type": "string",
-        },
-        # TODO: maybe this should move to proposals?
-        "call_for_proposals": {"description": "", "required": False,
-                               "type": "string"},
-        "currency": {
-            "description": "typically '$' or 'USD'",
-            "required": False,
-            "type": "string",
-        },
-        "end_date": {
-            "description": "start date of the grant (if string, in format YYYY-MM-DD)",
-            "required": False,
-            "anyof_type": ["string", "date"]
-        },
-        "end_day": {
-            "description": "end day of the grant",
-            "required": False,
-            "type": ("string", "integer"),
-        },
-        "end_month": {
-            "description": "end month of the grant",
-            "required": False,
-            "anyof_type": ["string", "integer"],
-        },
-        "end_year": {
-            "description": "end year of the grant",
-            "required": False,
-            "type": "integer",
-        },
-        "funder": {
-            "description": "the agency funding the work",
-            "required": True,
-            "type": "string",
-        },
-        "funds_available": {
-            "description": "funds available on date",
-            "required": False,
-            "schema": {
-                "schema": {
-                    "date": {"required": False,"anyof_type": ["string", "date"]},
-                    "funds_available": {"required": False, "type": ("integer", "float")}
-                },
-                "type": "dict",
-            },
-            "type": "list",
-        },
-        "grant_id": {
-            "description": "the identifier for this work",
-            "required": False,
-            "type": "string",
-        },
-        "institution": {
-            "description": "the host institution for the grant",
-            "type": "string",
-            "required": False,
-        },
-        "narrative": {"description": "", "required": False, "type": "string"},
-        "notes": {
-            "description": "notes about the grant",
-            "required": False,
-            "type": "string",
-        },
-        "person_months_academic": {
-            "description": "Number of months of funding during the academic" "year",
-            "required": False,
-            "anyof_type": ["integer", "float"],
-        },
-        "person_months_summer": {
-            "description": "Number of months of funding during the summer",
-            "required": False,
-            "anyof_type": ["integer", "float"],
-        },
-        "program": {
-            "description": "the program the work was funded under",
-            "required": False,
-            "type": "string",
-        },
-        # TODO: maybe this should be moved to proposals?
-        "status": {
-            "eallowed": GRANT_STATI,
-            "description": "status of the grant",
-            "required": False,
-            "type": "string",
-        },
-        "scope": {
-            "description": "The scope of the grant, answers the prompt: "
-                           '"Describe Research Including Synergies and '
-                           'Delineation with Respect to this Proposal/Award:"',
-            "required": False,
-            "type": "string",
-        },
-        # TODO: maybe this should be duplicated in proposals?
-        "team": {
-            "description": "information about the team members participating "
-                           "in the grant.",
-            "required": True,
-            "schema": {
-                "schema": {
-                    "admin_people": {"required": False, "type": "list"},
-                    "cv": {"required": False, "type": "string"},
-                    "institution": {"required": True, "type": "string"},
-                    "name": {"required": True, "type": "string"},
-                    "position": {"required": True, "type": "string", "eallowed": GRANT_ROLES},
-                    "subaward_amount": {
-                        "required": False,
-                        "type": ("integer", "float"),
-                    },
-                },
-                "type": "dict",
-            },
-            "type": "list",
-        },
-        "title": {
-            "description": "actual title of proposal / grant",
-            "required": True,
-            "type": "string",
-        },
-        "budget": {
-            "description": "budget periods of grant",
-            "required": False,
-            "schema": {
-                "schema": {
-                    "begin_date": {
-                        "description": "start date of the budget period in format YYYY-MM-DD",
-                        "required": False,
-                        "anyof_type": ["string", "date"],
-                    },
-                    "end_date": {
-                        "description": "end date of the budget period in format YYYY-MM-DD",
-                        "required": False,
-                        "anyof_type": ["string", "date"],
-                    },
-                    "student_months": {
-                        "description": "number of months of funding for student members during the academic year",
-                        "required": False,
-                        "anyof_type": ["float", "integer"]
-                    },
-                    "postdoc_months": {
-                        "description": "number of months of funding for postdoc members during the academic year",
-                        "required": False,
-                        "anyof_type": ["float", "integer"]
-                    },
-                    "ss_months": {
-                        "description": "number of months of funding for the summer",
-                        "required": False,
-                        "anyof_type": ["float", "integer"]
-                    },
-                    "amount": {
-                        "description": "subaward for this budget period",
-                        "required": False,
-                        "anyof_type": ["float", "integer"]
-                    }
-                },
-                "type": "dict",
-            },
-            "type": "list",
-        },
-        "proposal_id": {
-            "description": "initial proposal made for grant",
-            "required": False,
-            "type": "string",
-        }
-    },
-    "groups": {
-        "_description": {
-            "description": "Information about the research group"
-                           "this is generally public information"
-        },
-        "_id": {
-            "description": "Unique identifier for submission. This generally "
-                           "includes the author name and part of the title.",
-            "required": True,
-            "type": "string",
-        },
-        "aka": {
-            "required": True,
-            "type": "list",
-            "description": "other names for the group",
-        },
-        "banner": {
-            "required": False,
-            "type": "string",
-            "description": "name of image file with the group banner",
-        },
-        "pi_name": {
-            "description": "The name of the Principle Investigator",
-            "required": True,
-            "type": "string",
-        },
-        "department": {
-            "description": "Name of host department",
-            "required": True,
-            "type": "string",
-        },
-        "institution": {
-            "description": "Name of the host institution",
-            "required": True,
-            "type": "string",
-        },
-        "name": {
-            "description": "Name of the group",
-            "required": True,
-            "type": "string",
-        },
-        "website": {"description": "URL to group webpage", "type": "string"},
-        "mission_statement": {
-            "description": "Mission statement of the group",
-            "type": "string",
-        },
-        "projects": {
-            "description": "About line for projects",
-            "type": "string",
-            "required": True,
-        },
-        "email": {
-            "description": "Contact email for the group",
-            "type": "string",
-            "required": True,
-        },
-    },
-    "institutions": {
-        "_description": {
-            "description": "This collection will contain all the institutions"
-                           "in the world and their departments and addresses"
-        },
-        "_id": {
-            "description": "unique identifier for the institution.",
-            "required": True,
-            "type": "string",
-        },
-        "aka": {
-            "description": "list of all the different names this "
-                           "the institution is known by",
-            "required": False,
-            "type": "list",
-        },
-        "city": {
-            "description": "the city where the institution is",
-            "required": True,
-            "type": "string",
-        },
-        "country": {
-            "description": "The country where the institution is",
-            "required": True,
-            "type": "string",
-        },
-        "date": {
-            "description": "Expense date",
-            "required": False,
-            "anyof_type": ["string", "date"],
-        },
-        "day": {
-            "description": "the day the entry was created",
-            "required": False,
-            "type": "integer",
-        },
-        "departments": {
-            "description": "all the departments and centers and"
-                           "various units in the institution",
-            "required": False,
-            "type": "dict",
-            # Allow unkown department names, but check their content
-            "valuesrules": {
-                "type": "dict",
-                "schema": {
-                    "name": {
-                        "description": "The canonical name",
-                        "required": True,
-                        "type": "string",
-                    },
-                    "aka": {"required": False, "type": "list"},
-                },
-            },
-        },
-        "month": {
-            "description": "the month the entry was created",
-            "required": False,
-            "anyof_type": ["string", "integer"]
-        },
-        "name": {
-            "description": "the canonical name of the institutions",
-            "required": True,
-            "type": "string",
-        },
-        "schools": {
-            "description": "this is more for universities, but it "
-                           "be used for larger divisions in big "
-                           "organizations",
-            "required": False,
-            "type": "dict",
-            "valuesrules": {
-                "type": "dict",
-                "schema": {
-                    "name": {
-                        "description": "The canonical name",
-                        "required": True,
-                        "type": "string",
-                    },
-                    "aka": {"required": False, "type": "list"},
-                },
-            },
-        },
-        "state": {
-            "description": "the state where the institution is",
-            "required": False,
-            "type": "string",
-        },
-        "street": {
-            "description": "the street where the institution is",
-            "required": False,
-            "type": "string",
-        },
-        "updated": {
-            "description": "a datetime when the entry was updated",
-            "required": False,
-            "anyof_type": ["string", "datetime", "date"]
-        },
-        "uuid": {
-            "description": "a uuid for the entry",
-            "required": False,
-            "type": "string",
-        },
-        "year": {
-            "description": "the year the entry was created",
-            "required": False,
-            "type": "integer",
-        },
-        "zip": {
-            "description": "the zip or postal code of the institution",
-            "required": False,
-            "anyof_type": ["integer", "string"],
-        },
-    },
-    "meetings": {
-        "_id": {
-            "description": "unique identifier for the date of the group meeting",
-            "required": True,
-            "type": "string",
-        },
-        "_description": {
-            "description": "the group meeting."
-        },
-        "actions": {
-            "description": "action items expected from the group members for that particular meeting week",
-            "required": True,
-            "type": "list",
-        },
-        "agenda": {
-            "description": "schedule of the current meeting",
-            "required": True,
-            "type": "list",
-        },
-        "buddies": {
-            "description": "list of pairs of group members that are selected for the buddy round robin",
-            "required": True,
-            "type": "list",
-        },
-        "day": {
-            "description": "day of the group meeting, or the day the entry was edited",
-            "required": False,
-            "type": "integer",
-        },
-        "month": {
-            "description": "month in which the meeting is taking place",
-            "required": True,
-            "anyof_type": ["string", "integer"]
-        },
-        "year": {
-            "description": "year the meeting took place",
-            "required": True,
-            "type": "integer",
-        },
-        "date": {
-            "description": "date of meeting in format YYYY-MM-DD",
-            "required": False,
-            "anyof_type": ["string", "datetime", "date"],
-        },
-        "journal_club": {
-            "description": "Journal club presentation in group meeting",
-            "required": False,
-            "type": "dict",
-            "schema": {
-                 "doi": {
-                  "description": "The doi of the journal club presentation paper.  "
-                                 "tbd if it is not known yet",
-                  "type": "string",
-                  "required": True
-                 },
-                 "link": {
-                  "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
-                  "type": "string",
-                  "required": False
-                 },
-                 "presenter": {
-                  "description": "The _id of the group member presenting, or a "
-                                 "string describing the presenter, e.g., their full name.",
-                  "type": "string",
-                  "required": True
-                 },
-                 "title": {
-                  "description": "The title of the talk.",
-                  "type": "string",
-                  "required": False
-                }
-            }
-        },
-        "lead": {
-            "description": "person who will be leading the meeting of the current week",
-            "required": True,
-            "type": "string",
-        },
-        "minutes": {
-            "description": "meeting notes in a chronological order according to comments made by the group members",
-            "required": True,
-            "type": "list",
-        },
-        "place": {
-            "description": "location where the meeting is taking place on campus",
-            "required": False,
-            "type": "string",
-        },
-        "presentation": {
-            "description": "indicating the title of the presentation along with the link and the presenter ",
-            "required": False,
-            "type": "dict",
-            "schema": {
-                 "title": {
-                  "description": "The title of the presentation.  tbd if it is not known yet",
-                  "type": "string",
-                  "required": True
-                 },
-                 "link": {
-                  "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
-                  "type": "string",
-                  "required": True
-                 },
-                 "presenter": {
-                  "description": "The _id of the group member presenting "
-                                 "or a string describing the person.",
-                  "type": "string",
-                  "required": True
-                 }
-                }
-        },
-        "scribe": {
-            "description": "person who will be taking notes and updating minutes accordingly",
-            "required": True,
-            "type": "string",
-        },
-        "time": {
-            "description": "the time of the meeting"
-                           "If an integer is minutes past midnight, so 13:30 is 810 for"
-                           "example.",
-            "required": False,
-            "anyof_type": ["string", "integer", "datetime"]
-        },
-        "updated": {
-            "description": "The datetime.date object of the most recent update",
-            "required": False,
-            "anyof_type": ["string", "datetime", "date"],
-        },
-        "uuid": {
-            "description": "A uuid for the entry",
-            "required": False,
-            "type": "string",
-        },
-
-    },
-    "people": {
-        "_description": {
-            "description": "This collection describes the members of the "
-                           "research group.  This is normally public data."
-        },
-        "_id": {
-            "description": "unique identifier for the group member",
-            "required": True,
-            "type": "string",
-        },
-        "active": {
-            "description": "If the person is an active member, default True.",
-            "required": False,
-            "type": "boolean",
-        },
-        "aka": {
-            "description": "list of aliases (also-known-as), useful for "
-                           "identifying the group member in citations or "
-                           "elsewhere.",
-            "required": True,
-            "type": ["string", "list"],
-        },
-        "appointments": {
-            "type": "dict",
-            "required": False,
-            "description": "begin and end date, grant loading status and notes about appointments"
-        },
-        "activities": {
-            "type": "list",
-            "required": False,
-            "description": "activities may be teaching or research things",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "day": {
-                        "required": False,
-                        "description": "the day the activity took place",
-                        "type": "integer",
-                    },
-
-                    "type": {
-                        "required": True,
-                        "description": "the type of the acitivity",
-                        "type": "string",
-                        "eallowed": ACTIVITIES_TYPES
-                    },
-                    "month": {
-                        "required": False,
-                        "description": "the month the activity took place",
-                        "anyof_type": ["integer", "string"],
-                    },
-                    "name": {
-                        "required": True,
-                        "description": "brief statement of the activity",
-                        "type": "string",
-                    },
-                    "other": {
-                        "required": False,
-                        "description": "longer statement of the activity",
-                        "type": "string",
-                    },
-                    "year": {
-                        "required": True,
-                        "description": "the year the activity took place",
-                        "type": "integer",
-                    },
-                }
-            }
-        },
-        "avatar": {"description": "URL to avatar", "required": True,
-                   "type": "string"},
-        "bio": {
-            "description": "short biographical text",
-            "required": True,
-            "type": "string",
-        },
-        "bios": {
-            "description": "longer biographical text if needed",
-            "required": False,
-            "anyof_type": ["string", "list"]
-        },
-        "collab": {
-            "description": "If the person is a collaborator, default False.",
-            "required": False,
-            "type": "boolean",
-        },
-        "committees": {
-            "description": "Committees that are served on",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "name": {"required": True, "type": "string",
-                             "description": "name of committee, or person if it "
-                                            "is a phd committee"},
-                    "day": {"required": False, "type": "integer"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
-                              },
-                    "notes": {"required": False,
-                              "description": "extra things you want to record about the thing",
-                              "anyof_type": ["string", "list"],
-                              },
-                    "year": {"required": True, "type": "integer"},
-                    "unit": {"required": False, "type": "string",
-                             "description": "name of department or school etc."},
-                    "type": {"required": False, "type": "string",
-                             "description": "type of committee, department, school, university, external",
-                             "eallowed": COMMITTEES_TYPES},
-                    "level": {
-                        "required": True,
-                        "type": "string",
-                        "description": "department or school or university, or external",
-                        "eallowed": COMMITTEES_LEVELS
-                    },
-                    "group": {
-                        "required": False,
-                        "type": "string",
-                        "description": "this employment is/was in"
-                                       "a group in groups coll",
-                    },
-                },
-            },
-            "type": "list",
-        },
-        "education": {
-            "description": "This contains the educational information for "
-                           "the group member.",
-            "required": True,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "advisor": {"required": False, "type": "string",
-                                "description": "name or id of advisor for this degree"},
-                    "begin_day": {"required": False,
-                                  "type": "integer"},
-                    "begin_month": {"required": False,
-                                    "anyof_type": ["string", "integer"],
-                                    },
-                    "begin_year": {"required": True, "type": "integer"},
-                    "degree": {"required": True, "type": "string"},
-                    "department": {
-                        "required": False,
-                        "type": "string",
-                        "description": "department within" "the institution",
-                    },
-                    "group": {
-                        "required": False,
-                        "type": "string",
-                        "description": "this employment is/was in"
-                                       "a group in groups coll",
-                    },
-                    "end_day": {"required": False,
-                                "type": "integer"},
-                    "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"],
-                                  },
-                    # Could be ongoing with undefined end
-                    "end_year": {"required": False, "type": "integer"},
-                    "gpa": {"required": False, "type": ("float", "string")},
-                    "institution": {"required": True, "type": "string"},
-                    "location": {"required": False, "type": "string"},
-                    "other": {"required": False, "type": "list"},
-                },
-            },
-            "type": "list",
-        },
-        "email": {
-            "description": "email address of the group member",
-            "required": False,
-            "type": "string",
-        },
-        "employment": {
-            "description": "Employment information, similar to educational "
-                           "information.",
-            "required": False,
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "advisor": {"required": False, "type": "string",
-                                "description": "name or id of "
-                                               "advisor/mentor/manager"},
-                    "begin_day": {"required": False, "type": "integer"},
-                    "begin_month": {"required": False,
-                                    "anyof_type": ["string", "integer"],
-                                    },
-                    "begin_year": {"required": False, "type": "integer"},
-                    "begin_date": {"required": False, "anyof_type": ["string", "date", "datetime"],
-                                   "description": "begin date of employment in format YYYY-MM-DD"},
-                    "coworkers": {"required": False, "type": "list",
-                                  "description": "list of coworkers.  If"
-                                                 "position is editor, these are "
-                                                 "assumed to be coeditors in"
-                                                 "conflict of interest builder"},
-                    "department": {"required": False, "type": "string"},
-                    "end_day": {"required": False, "type": "integer"},
-                    "end_month": {"required": False,
-                                  },
-                    "end_year": {"required": False, "type": "integer"},
-                    "end_date": {"required": False, "anyof_type": ["string", "date", "datetime"],
-                                 "description": "end date of employment in format YYYY-MM-DD"},
-                    "group": {
-                        "required": False,
-                        "type": "string",
-                        "description": "this employment is/was in"
-                                       "a group in groups coll",
-                            },
-                    "location": {"required": False, "type": "string"},
-                    "not_in_cv": {"required": False, "type": "boolean", "description": "set to true if you want to suppress this entry in all cv's and resumes"},
-                    "organization": {"required": True, "type": "string"},
-                    "other": {"required": False, "type": "list"},
-                    "permanent": {"required": False, "type": "boolean",
-                                  "description": "true if the position is open " \
-                                                 "ended and has no fixed end-date"},
-                    "position": {"required": True, "type": "string",
-                                 "eallowed": list(SORTED_POSITION)},
-                    "position_full": {
-                        "description": "The full on title of the position.  This will be "
-                                       "typeset if it is here, or if not Position will be "
-                                       "used.  Position will be used for sorting and must "
-                                       "come from a fixed list of positions",
-                        "required": False,
-                        "type": "string",
-                    },
-                    "status": {"required": False, "type": "string", "eallowed": POSITION_STATI,
-                               },
-                },
-            },
-        },
-        "facilities": {
-            "type": "list",
-            "required": False,
-            "description": "facilities may be teaching or research things",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "begin_day": {
-                        "required": False,
-                        "description": "the day facility, or the wish for the "
-                                       "facility, started",
-                        "type": "integer",
-                    },
-                    "end_day": {
-                        "required": False,
-                        "description": "the day facility started",
-                        "type": "integer",
-                    },
-                    "type": {
-                        "required": True,
-                        "description": "the type of the facility. Columbia asks"
-                                       "for wished-for facilities, so there are "
-                                       "teaching-wish and research-wish fields.",
-                        "type": "string",
-                        "eallowed": FACILITIES_TYPES
-                    },
-                    "begin_month": {
-                        "required": False,
-                        "description": "the month the facility (or wish) started",
-                        "anyof_type": ["integer", "string"],
-                    },
-                    "end_month": {
-                        "required": False,
-                        "description": "the month the faclity went away",
-                        "anyof_type": ["integer", "string"],
-                    },
-                    "name": {
-                        "required": True,
-                        "description": "description of the facility",
-                        "type": "string",
-                    },
-                    "notes": {
-                        "required": False,
-                        "description": "anything else you want to jot down",
-                        "anyof_type": ["string", "list"]
-                    },
-                    "begin_year": {
-                        "required": True,
-                        "description": "the year the facility (or wish) started",
-                        "type": "integer",
-                    },
-                    "end_year": {
-                        "required": False,
-                        "description": "the year the facility (or wish) went away",
-                        "type": "integer",
-                    },
-                }
-            }
-        },
-        "funding": {
-            "description": "Funding and scholarship that the group member "
-                           "has individually obtained in the past. "
-                           "**WARNING:** this is not to be confused with the "
-                           "**grants** collection",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "currency": {"required": False, "type": "string"},
-                    "duration": {"required": False, "type": "string"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
-                              },
-                    "name": {"required": True, "type": "string"},
-                    "value": {"required": True, "type": ("float", "integer")},
-                    "year": {"required": True, "type": "integer"},
-                },
-            },
-            "type": "list",
-        },
-        "github_id": {"required": False, "type": "string",
-                      "description": "Your GitHub ID"},
-        "google_scholar_url": {"required": False, "type": "string",
-                               "description": "URL of your Google Scholar "
-                                              "rofile"},
-        "grp_mtg_active": {"required": False, "type": "boolean",
-                           "description": "Whether to schedule tasks at group meeting "
-                                          "or not"},
-        "hindex": {
-            "description": "details of hindex pulled on a certain date",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "h": {"description": "the value of the h index",
-                          "required": True, "type": "integer"},
-                    "h_last_five": {"description": "h index over past 5 years",
-                                    "required": False, "type": "integer"},
-                    "citations": {"description": "total number of citations",
-                                  "required": False, "type": "integer"},
-                    "citations_last_five": {"description": "number of citations"
-                                                           "in the past 5 years",
-                                            "required": False, "type": "integer"},
-                    "origin": {"description": "where the numbers came from",
-                               "required": False, "type": "string"},
-                    "since": {"description": "year of first citation",
-                              "required": False, "type": "integer"},
-                    "year": {"description": "year when the data were pulled",
-                             "required": False, "type": "integer"},
-                    "month": {"description": "month when the data were pulled",
-                              "required": False, "anyof_type": ["string", "integer"]},
-                    "day": {"description": "day when the data were pulled",
-                            "required": False, "type": "integer"},
-                }
-            },
-            "type": "list",
-        },
-        "home_address": {
-            "description": "The person's home address",
-            "type": "dict",
-            "schema": {
-                "street": {"type": "string", "description": "street address"},
-                "city": {"type": "string", "description": "name of home city"},
-                "state": {"type": "string", "description": "name o home state"},
-                "zip": {"type": "string", "description": "zip code"},
-            },
-        },
-        "honors": {
-            "description": "Honors that have been awarded to this " "group member",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "description": {"required": False, "type": "string"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
-                              },
-                    "name": {"required": True, "type": "string"},
-                    "year": {"required": True, "type": "integer"},
-                },
-            },
-            "type": "list",
-        },
-        "initials": {
-            "description": "The canonical initials for this group member",
-            "required": False,
-            "type": "string",
-        },
-        "linkedin_url": {
-            "description": "The URL of this person's LinkedIn account",
-            "required": False,
-            "type": "string",
-        },
-        # TODO: include `link`
-        "membership": {
-            "description": "Professional organizations this member is " "a part of",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "begin_month": {"required": False,
-                                    "anyof_type": ["string", "integer"],
-                                    },
-                    "begin_year": {"required": True, "type": "integer"},
-                    "description": {"required": False, "type": "string"},
-                    "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"],
-                                  },
-                    "end_year": {"required": False, "type": "integer"},
-                    "organization": {"required": True, "type": "string"},
-                    "position": {"required": True, "type": "string"},
-                    "website": {"required": False, "type": "string"},
-                },
-            },
-            "type": "list",
-        },
-        "miscellaneous": {
-            "description": "Place to put weird things needed for special reporta",
-            "required": False,
-            "type": "dict",
-            "schema": {
-                "metrics_for_success": {
-                    "description": "How do I want to be judged",
-                    "required": False,
-                    "type": "list",
-                },
-            },
-        },
-        "name": {
-            "description": "Full, canonical name for the person",
-            "required": True,
-            "type": "string",
-        },
-        "office": {
-            "description": "The person's office",
-            "type": "string",
-            "required": False
-        },
-        "orcid_id": {
-            "description": "The ORCID ID of the person",
-            "required": False,
-            "type": "string",
-        },
-        "position": {
-            "description": "such as professor, graduate student, or scientist",
-            "required": False,
-            "type": "string",
-            "eallowed": list(SORTED_POSITION),
-        },
-        "position_full": {
-            "description": "The full on title of the position.  This will be "
-                           "typeset if it is here, or if not Position will be "
-                           "used.  Position will be used for sorting and must "
-                           "come from a fixed list of positions",
-            "required": False,
-            "type": "string",
-        },
-        "publicity": {
-            "description": "summary of publicity that person has received",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "type": {"required": True, "type": "string",
-                             "eallowed": PUBLICITY_TYPES},
-                    "topic": {"required": False, "type": "string",
-                              "description": "The short sentence of what the "
-                                             "publicity was about",
-                              },
-                    "title": {"required": True, "type": "string",
-                              "description": "The title of the piece",
-                              },
-                    "date": {"description": "the date of the service",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "day": {"required": False, "type": "integer",
-                            "description": "The day the piece appeared"
-                            },
-                    "month": {"required": False, "anyof_type": ["string",
-                                                                "integer"],
-                              "description": "The month the piece appeared"
-                              },
-                    "publication": {"required": False, "type": "string",
-                                    "description": "The place where the "
-                                                   "publicity was placed"
-                                    },
-                    "text": {"required": False, "type": "string",
-                             "description": "The text of the publicity",
-                             },
-                    "url": {"required": False, "type": "string",
-                            "description": "The URL where the piece may be found"
-                            },
-                    "year": {"required": False, "type": "integer",
-                             "description": "The year the piece appeared"
-                             },
-                    "grant": {"required": True, "type": "string",
-                              "description": "The identifier of the grant "
-                                             "associated with the piece"
-                              },
-                },
-            },
-            "type": "list"
-        },
-        "research_focus_areas": {
-            "description": "summary of research projects that are ongoing. Used"
-                           "in Annual appraisal for example",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "begin_year": {"required": False, "type": "integer"},
-                    "end_year": {"required": False, "type": "integer"},
-                    "description": {"required": False, "type": "string"}
-                },
-            },
-            "type": "list"
-        },
-        "research_summary": {
-            "description": "Brief summary of overarching research goals",
-            "required": False,
-            "type": "string",
-        },
-        "service": {
-            "description": "Service that this group member has provided",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "date": {"description": "the date of the service",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "begin_date": {"description": "the begin date",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "end_date": {"description": "the end date",
-                                 "required": False,
-                                 "anyof_type": ["string", "date"]},
-                    "description": {"required": False, "type": "string"},
-                    "duration": {"required": False, "type": "string"},
-                    "month": {"description": "Use month and year if the service"
-                                             "doesn't extend more than one year."
-                                             "Otherwise use begin_year and end_year",
-                              "required": False,
-                              "anyof_type": ["string", "integer"]
-                              },
-                    "name": {"required": True, "type": "string"},
-                    "role": {"required": False, "type": "string",
-                             "description": "the role played in the activity, e.g., co-chair"},
-                    "notes": {"required": False, "anyof_type": ["string", "list"]},
-                    "year": {"required": False, "type": "integer"},
-                    "begin_year": {"required": False, "type": "integer"},
-                    "begin_day": {"required": False, "type": "integer"},
-                    "begin_month": {"description": "Use month and year if the service"
-                                                   "doesn't extend more than one year."
-                                                   "Otherwise use begin_year/month and end_year/month",
-                                    "required": False,
-                                    "anyof_type": ["string", "integer"]
-                                    },
-                    "end_year": {"required": False, "type": "integer"},
-                    "end_month": {"description": "Use month and year if the service"
-                                                 "doesn't extend more than one year."
-                                                 "Otherwise use begin_year and end_year",
-                                  "required": False,
-                                  "anyof_type": ["string", "integer"]
-                                  },
-                    "end_day": {"required": False, "type": "integer"},
-                    "other": {"required": False,
-                              "anyof_type": ["string", "list"]},
-                    "type": {"required": True, "type": "string",
-                             "description": "profession, department, school, university",
-                             "eallowed": SERVICE_TYPES},
-                },
-            },
-            "type": "list",
-        },
-        "skills": {
-            "description": "Skill the group member has",
-            "required": False,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "category": {"required": True, "type": "string"},
-                    "level": {"required": True, "type": "string"},
-                    "name": {"required": True, "type": "string"},
-                },
-            },
-            "type": "list",
-        },
-        "teaching": {
-            "description": "Courses that this group member has taught, if any",
-            "required": False,
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "course": {"required": True, "type": "string"},
-                    "courseid": {"required": True, "type": "string"},
-                    "description": {"required": False, "type": "string"},
-                    "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"]},
-                    "end_year": {"required": False, "type": "integer"},
-                    "enrollment": {"required": False, "anyof_type": ["integer", "string"]},
-                    "evaluation": {
-                        "type": "dict",
-                        "required": False,
-                        "schema": {
-                            "response_rate": {"type": "number", "required": True},
-                            "amount_learned": {"type": "number", "required": True},
-                            "appropriateness_workload": {"type": "number", "required": True},
-                            "course_overall": {"type": "number", "required": True},
-                            "fairness_grading": {"type": "number", "required": True},
-                            "organization": {"type": "number", "required": True},
-                            "classroom_delivery": {"type": "number", "required": True},
-                            "approachability": {"type": "number", "required": True},
-                            "instructor_overall": {"type": "number", "required": True},
-                            "comments": {"type": "list", "required": False,
-                                         "description": "student comments"},
-                        },
-                    },
-                    "materials": {"required": False, "type": "string"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
-                              },
-                    "organization": {"required": True, "type": "string"},
-                    "position": {"required": True, "type": "string"},
-                    "semester": {"required": False, "type": "string"},
-                    "syllabus": {"required": False, "type": "string"},
-                    "video": {"required": False, "type": "string"},
-                    "website": {"required": False, "type": "string"},
-                    "year": {"required": True, "type": "integer"},
-                },
-            },
-        },
-        "title": {
-            "description": "for example, Dr., etc.",
-            "required": False,
-            "type": "string",
-        },
-    },
-    "presentations": {
-        "_description": {
-            "description": "This collection describes presentations that group"
-                           "members make at conferences, symposia, seminars and"
-                           "so on."
-        },
-        "_id": {
-            "description": "unique id for the presentation",
-            "required": True,
-            "type": "string",
-        },
-        "abstract": {
-            "description": "abstract of the presentation",
-            "required": False,
-            "type": "string",
-        },
-        "authors": {
-            "description": "Author list.",
-            "required": True,
-            "anyof_type": ["string", "list"],
-        },
-        "begin_date": {
-            "description": "begin date in YYYY-MM-DD",
-            "anyof_type": ["date", "string"],
-        },
-        "end_date": {
-            "description": "end_date in YYYY-MM-DD",
-            "anyof_type": ["date", "string"],
-        },
-        "begin_year": {
-            "description": "year the conference or trip begins.",
-            "required": False,
-            "type": "integer",
-        },
-        "begin_month": {"required": False,
-                        "anyof_type": ["string", "integer"],
-                        },
-        "begin_day": {"required": False, "type": "integer"},
-        "department": {
-            "description": "department of the institution where the"
-                           "presentation will be made, if "
-                           "applicable.  should be discoverable in "
-                           "institutions.",
-            "required": False,
-            "type": "string",
-        },
-        "end_year": {
-            "description": "year the conference or trip ends",
-            "required": False,
-            "type": "integer",
-        },
-        "end_month": {"required": False,
-                      "anyof_type": ["string", "integer"],
-                      },
-        "end_day": {"required": False, "type": "integer"},
-        "institution": {
-            "description": "institution where the"
-                           "presentation will be made, if "
-                           "applicable.",
-            "required": False,
-            "type": "string",
-        },
-        "meeting_name": {
-            "description": "full name of the conference or "
-                           "meeting.  If it is a departmental "
-                           "seminar or colloquium, write Seminar"
-                           "or Colloquium and fill in department "
-                           "and institution fields",
-            "required": False,
-            "type": "string",
-        },
-        # TODO: conditional validation.  If type=colloq or seminar, required is
-        # institution and department, otherwise location
-        "location": {
-            "description": "city and {state or country} of meeting",
-            "required": False,
-            "type": "string",
-        },
-        "notes": {
-            "description": "any reminder or memory aid about anything",
-            "required": False,
-            "anyof_type": ["list", "string"],
-        },
-        "presentation_url": {
-            "description": "the url to the presentation on Google slides, GitHub or wherever",
-            "required": False,
-            "type": "string",
-        },
-        "project": {
-            "description": "project or list of projects that this "
-                           "presentation is associated with.  Should "
-                           "be discoverable in projects collection",
-            "required": False,
-            "anyof_type": ["string", "list"],
-        },
-        "status": {
-            "description": "Is the application in prep or submitted, "
-                           "was the invitation accepted or declined, was "
-                           "the trip cancelled?",
-            "required": True,
-            "type": "string",
-            "eallowed": PRESENTATION_STATI,
-        },
-        "title": {
-            "description": "title of the presentation",
-            "required": True,
-            "type": "string",
-        },
-        "type": {
-            "description": "type of presentation",
-            "eallowed": PRESENTATION_TYPES,
-            "required": True,
-            "type": "string",
-        },
-        "webinar": {
-            "description": "true if a webinar. Default to False",
-            "required": False,
-            "type": "boolean",
-        },
-    },
-    "projecta": {
-        "_description": {
-            "description": "This collection describes a single deliverable "
-                           "of a larger project."
-        },
-        "_id": {
-            "description": "Unique projectum identifier",
-            "required": True,
-            "type": "string"
-        },
-        "begin_date": {
-            "description": "projectum start date, yyyy-mm-dd",
-            "required": False,
-            "anyof_type": ["string", "date"]
-        },
-        "collaborators": {
-            "description": "list of collaborators ids. These are non-group members. "
-                           "These will be dereferenced from the contacts collection.",
-            "required": False,
-            "type": "list"
-        },
-        "deliverable": {
-            "description": "outline of the deliverable for this projectum",
-            "type": "dict",
-            "required": True,
-            "schema": {
-                "audience": {"description": "the target audience for this deliverable",
-                             "required": False,
-                             "type": "list"},
-                "due_date": {"description": "due date of deliverable, yyyy-mm-dd",
-                             "required": False,
-                             "anyof_type": ["date", "string"]},
-                "success_def": {"description": "definition of a successful deliverable",
-                                "required": False,
-                                "type": "string"},
-                "scope": {"description": "a list of items that define the scope of the deliverable."
-                                         "If this is a software release it might be a list of Use Cases that will be satisfied."
-                                         "If it is a paper it defines what will, and what won't, be described in the paper.",
-                          "required": False,
-                          "type": "list"},
-                "platform": {"description": "description of how and where the audience will access the deliverable."
-                                            "e.g. Journal if it is a paper. For software releases, this may be the "
-                                            "computer operating systems that will be supported, or if it will be a "
-                                            "web service, etc.",
-                             "required": False,
-                             "type": "string"},
-                "roll_out": {"description": "steps that the audience will take to access "
-                                            "and interact with the deliverable, "
-                                            "not needed for paper submissions",
-                             "required": False,
-                             "type": "list"},
-                "notes": {"description": "any notes about the deliverable that we want to keep track of",
-                          "required": False,
-                          "type": "list"},
-                "status": {"description": f"status of the deliverable. "
-                                          f"Allowed values are {', '.join(PROJECTUM_STATI)}",
-                           "required": True,
-                           "type": "string",
-                           "eallowed": PROJECTUM_STATI},
-                "type": {"description": "type of deliverable",
-                         "required": False,
-                         "type": "string"}
-            }
-        },
-        "description": {
-            "description": "explanation of projectum",
-            "required": False,
-            "type": "string"
-        },
-        "end_date": {
-            "description": "projectum end date, yyyy-mm-dd.",
-            "required": False,
-            "anyof_type": ["date", "string"]
-        },
-        "grants": {
-            "description": "grant id funding the project",
-            "required": False,
-            "anyof_type": ["string", "list"]
-        },
-        "group_members": {
-            "description": "list of group member id's working on this project,"
-                           "These will be dereferenced from the people collection.",
-            "required": False,
-            "type": "list"
-        },
-        "kickoff": {
-            "description": "details the projectum kickoff meeting",
-            "required": False,
-            "type": "dict",
-            "schema": {
-                "date": {"description": "kickoff meeting date, yyyy-mm-dd.",
-                         "required": False,
-                         "anyof_type": ["date", "string"]},
-                "due_date": {"description": "kickoff meeting by date, yyyy-mm-dd.",
-                             "required": False,
-                             "anyof_type": ["date", "string"]},
-                "end_date": {"description": "date when the kickoff was done",
-                             "required": False,
-                             "anyof_type": ["date", "string"]},
-                "name": {"description": "name of meeting",
-                         "required": False,
-                         "type": "string"},
-                "objective": {"description": "goal of the meeting",
-                              "required": False,
-                              "type": "string"},
-                "audience": {"description": "list of people attending the meeting."
-                                            "Normally this list is group_members, collaborators, and pi, "
-                                            "or some subset of these. if people are invited who are not already"
-                                            "in these groups their names or id's can be added explicitly to the list",
-                             "required": False,
-                             "type": "list"},
-                "notes": {"description": "any notes about the kickoff",
-                          "required": False,
-                          "type": "list"},
-                "status": {"description": f"status of the kickoff. "
-                                          f"Allowed values are {', '.join(PROJECTUM_STATI)}",
-                           "required": False,
-                           "type": "string",
-                           "eallowed": PROJECTUM_STATI},
-                "type": {"description": f"type of kickoff deliverable. In general will be 'meeting'"
-                                        f"Allowed values are {', '.join(MILESTONE_TYPES)}",
-                         "required": False,
-                         "type": "string",
-                         "eallowed": MILESTONE_TYPES},
-            }
-        },
-        "lead": {
-            "description": "the id of the lead student or person for the projectum. "
-                           "Person details will be dereferenced from the people collection.",
-            "required": True,
-            "type": "string"
-        },
-        "log_url": {
-            "description": "link to an online document (e.g., Google doc) "
-                           "that is a log of notes and meeting minutes for the projectum",
-            "required": False,
-            "type": "string"
-        },
-        "supplementary_info_urls": {
-            "description": "list of urls that are links to repos gdocs, etc. "
-                           "that contain supplementary info such as data or code snippets",
-            "required": False,
-            "type": "list"
-        },
-        "milestones": {
-            "description": "smaller deliverables done by a certain date "
-                           "a series of milestones ends with the projectum deliverable",
-            "required": False,
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "uuid": {"description": "a universally unique id for the "
-                                            "task so it can be referenced elsewhere",
-                             "required": True,
-                             "type": "string"},
-                    "due_date": {"description": "due date of milestone, yyyy-mm-dd",
-                                 "required": False,
-                                 "anyof_type": ["date", "string"]},
-                    "name": {"description": "what is the deliverable of milestone",
-                             "required": False,
-                             "type": "string"},
-                    "notes": {"description": "any notes about the milestone and/or "
-                                             "small, non-deliverable to-dos to reach the milestone",
-                              "required": False,
-                              "type": "list"},
-                    "tasks": {"description": "list of todo uuids to complete the milestone ",
-                              "required": False,
-                              "type": "list"},
-                    "progress": {"description": "update on the milestone",
-                                 "required": False,
-                                 "type": "dict",
-                                 "schema": {
-                                     "text": {"description": "text description of progress and observations",
-                                              "required": False,
-                                              "type": "string"},
-                                     "figure": {"description": "token that dereferences a figure or image "
-                                                               "in group local storage db",
-                                                "required": False,
-                                                "type": "list"},
-                                     "slides_urls": {"description": "urls to slides describing the development, "
-                                                                   "e.g., Google slides url",
-                                                    "required": False,
-                                                    "type": "list"}
-                                     }
-                                 },
-                    "objective": {"description": "explains goal of the milestone",
-                                  "required": False,
-                                  "type": "string"},
-                    "audience": {"description": "list of people attending the meeting."
-                                                "Normally this list is group_members, collaborators, and pi, "
-                                                "or some subset of these. if people are invited who are not already"
-                                                "in these groups their names or id's can be added explicitly to the list",
-                                 "required": False,
-                                 "type": "list"},
-                    "status": {"description": f"status of the milestone. "
-                                              f"Allowed values are {', '.join(PROJECTUM_STATI)}",
-                               "required": False,
-                               "type": "string",
-                               "eallowed": PROJECTUM_STATI},
-                    "type": {"description": f"type of milestone deliverable. "
-                                            f"Allowed values are {', '.join(MILESTONE_TYPES)}",
-                             "required": False,
-                             "type": "string",
-                             "eallowed": MILESTONE_TYPES},
-                    "end_date": {"description": "end date of milestone, yyyy-mm-dd",
-                                 "required": False,
-                                 "anyof_type": ["date", "string"]},
-                    "identifier": {"description": "label of milestone",
-                                   "required": False,
-                                   "type": "string"},
-                }
-            }
-        },
-        "name": {"description": "name of the projectum",
-                 "required": False,
-                 "type": "string"},
-        "pi_id": {"description": "id of the PI",
-                  "required": False,
-                  "type": "string"},
-        "status": {"description": f"status of the projectum. "
-                                  f"Allowed values are {', '.join(PROJECTUM_STATI)}",
-                   "required": True,
-                   "type": "string",
-                   "eallowed": PROJECTUM_STATI},
-        "other_urls": {"description": "link to remote repository. e.g. analysis or data repositories",
-                         "required": False,
-                         "type": "list"},
-        "product_url": {"description": "url for manuscript or code repository",
-                        "required": False,
-                        "type": "string"},
-        "notes": {"description": "notes about the projectum",
-                  "required": False,
-                  "type": "list"},
-    },
-    "projects": {
-        "_description": {
-            "description": "This collection describes the research group "
-                           "projects. This is normally public data."
-        },
-        "_id": {
-            "description": "Unique project identifier.",
-            "required": True,
-            "type": "string",
-        },
-        "active": {
-            "description": "true if the project is active",
-            "required": False,
-            "anyof_type": ["string", "boolean"],
-        },
-        "description": {
-            "description": "brief project description.",
-            "required": True,
-            "type": "string",
-        },
-        "grant": {
-            "description": "Grant id if there is a grant supporting this " "project",
-            "required": False,
-            "type": "string",
-        },
-        "group": {
-            "description": "id for the group in the groups collection whose project this is",
-            "required": False,
-            "type": "string",
-        },
-        "highlights": {
-            "description": "list of things to highlight in a report or website, such as releases for  for software or high profile publications",
-            "required": False,
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "year": {"description": "the year of the highlight",
-                             "required": True,
-                             "type": "integer"},
-                    "month": {"description": "the month of the highlight",
-                              "required": True,
-                              "anyof_type": ["string", "integer"]},
-                    "description": {"description": "the highlight",
-                                    "required": True,
-                                    "type": "string"},
-                }
-            }
-        },
-        "logo": {
-            "description": "URL to the project logo",
-            "required": False,
-            "type": "string",
-        },
-        "name": {
-            "description": "name of the project.",
-            "required": True,
-            "type": "string",
-        },
-        "other": {
-            "description": "other information about the project",
-            "required": False,
-            "type": ["list", "string"],
-        },
-        "repo": {
-            "description": "URL of the source code repo, if available",
-            "required": False,
-            "type": "string",
-        },
-        "team": {
-            "description": "People who are/have been working on this project.",
-            "required": True,
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "begin_month": {"required": False,
-                                    "anyof_type": ["string", "integer"],
-                                    },
-                    "begin_year": {"required": True, "type": "integer"},
-                    "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"],
-                                  },
-                    "end_year": {"required": False, "type": "integer"},
-                    "name": {"required": True, "type": "string"},
-                    "position": {"required": True, "type": "string"},
-                },
-            },
-            "type": "list",
-        },
-        "type": {
-            "description": "The type of project",
-            "required": False,
-            "anyof_type": ["string"],
-            "eallowed": PROJECT_TYPES
-        },
-        "website": {
-            "description": "URL of the website.",
-            "required": False,
-            "type": "string",
-        },
-    },
-    "proposalReviews": {
-        "_description": {
-            "description": "This collection contains reviews of funding proposals"
-        },
-        "_id": {
-            "description": "ID, e.g. 1906_doe_example",
-            "required": True,
-            "type": ("string", "integer", "float"),
-        },
-        "adequacy_of_resources": {
-            "description": "Are the resources of the PI adequate",
-            "required": True,
-            "type": "list",
-        },
-        "agency": {
-            "description": "currently nsf, doe or other",
-            "type": "string",
-            "eallowed": AGENCIES,
-        },
-        "competency_of_team": {
-            "description": "Is the team competent",
-            "required": True,
-            "type": "list",
-        },
-        "doe_appropriateness_of_approach": {
-            "description": "Appropriateness of Research. only used if agency is doe.",
-            "required": False,
-            "type": "list",
-        },
-        "doe_reasonableness_of_budget": {
-            "description": "Reasonableness of budget. only used if agency is doe.",
-            "required": False,
-            "type": "list",
-        },
-        "doe_relevance_to_program_mission": {
-            "description": "Relevance to program mission. only used if agency is doe.",
-            "required": False,
-            "type": "list",
-        },
-        "does_how": {
-            "description": "How will the research be done",
-            "required": True,
-            "type": "list",
-        },
-        "does_what": {
-            "description": "What will the team do",
-            "required": True,
-            "type": "string",
-        },
-        "due_date": {
-            "description": "date the review is due in ISO format",
-            "required": True,
-            "anyof_type": ["string", "date"],
-        },
-        "freewrite": {
-            "description": "Anything and this will appear in the built document"
-                           "right before the summary.  This section often used "
-                           "for extra review criteria for the particular proposal",
-            "required": False,
-            "anyof_type": ["string", "list"]
-        },
-        "goals": {
-            "description": "What are the main goals of the proposed research",
-            "required": True,
-            "type": "list",
-        },
-        "importance": {
-            "description": "The importance of the Research",
-            "required": True,
-            "type": "list",
-        },
-        "institutions": {
-            "description": "The institutions of the authors in the same order",
-            "required": True,
-            "anyof_type": ["string", "list"]
-        },
-        "month": {
-            "description": "The month the review was submitted",
-            "required": True,
-            "anyof_type": ["string", "integer"],
-        },
-        "names": {
-            "description": "The names of the PIs",
-            "required": True,
-            "anyof_type": ["list", "string"],
-        },
-        "nsf_broader_impacts": {
-            "description": "The broader impacts of the research.  Only used if "
-                           "agency is nsf",
-            "required": False,
-            "type": "list",
-        },
-        "nsf_create_original_transformative": {
-            "description": "Answer to the question how the work is creative, "
-                           "original or transformative.  Only used if agency is "
-                           "nsf",
-            "required": False,
-            "type": "list",
-        },
-        "nsf_plan_good": {
-            "description": "Is the plan good? Only used if agency is nsf",
-            "required": False,
-            "type": "list",
-        },
-        "nsf_pot_to_advance_knowledge": {
-            "description": "Answer to the question how the work will advance"
-                           "knowledge.  Only used if agency is nsf",
-            "required": False,
-            "type": "list",
-        },
-        "nsf_pot_to_benefit_society": {
-            "description": "Answer to the question how the work has the potential"
-                           "to benefit society.  Only used if agency is nsf",
-            "required": False,
-            "type": "list",
-        },
-        "requester": {
-            "description": "Name of the program officer who requested the review",
-            "required": True,
-            "type": "string",
-        },
-        "reviewer": {
-            "description": "short name of the reviewer.  Will be used in the "
-                           "filename of the resulting text file",
-            "required": True,
-            "type": "string",
-        },
-        "status": {
-            "description": "the status of the review",
-            "type": "string",
-            "eallowed": REVIEW_STATI,
-        },
-        "summary": {
-            "description": "Summary statement",
-            "required": True,
-            "type": "string",
-        },
-        "title": {
-            "description": "The title of the proposal",
-            "required": True,
-            "type": "string",
-        },
-        "year": {
-            "description": "The year the review was submitted",
-            "required": True,
-            "type": "integer",
-        },
-    },
-    "proposals": {
-        "_description": {
-            "description": "This collection represents proposals that have "
-                           "been submitted by the group."
-        },
-        "_id": {
-            "description": "short representation, such as this-is-my-name",
-            "required": True,
-            "type": ("string", "integer", "float"),
-        },
-        "amount": {
-            "description": "value of award",
-            "required": True,
-            "type": ("integer", "float"),
-        },
-        "authors": {
-            "description": "other investigator names",
-            "required": False,
-            "anyof_type": ["list", "string"],
-        },
-        "begin_date": {
-            "description": "start date of the proposed grant in format YYYY-MM-DD",
-            "required": False,
-            "anyof_type": ["string", "date"]
-        },
-        "begin_day": {
-            "description": "start day of the proposed grant",
-            "required": False,
-            "type": "integer",
-        },
-        "begin_month": {
-            "description": "start month of the proposed grant",
-            "required": False,
-            "anyof_type": ["string", "integer"]
-        },
-        "begin_year": {
-            "description": "start year of the proposed grant",
-            "required": False,
-            "type": "integer",
-        },
-        "call_for_proposals": {
-            "description": "",
-            "required": False,
-            "type": "string",
-        },
-        "cpp_info": {
-            "description": "extra information needed for building current and "
-                           "pending form ",
-            "required": False,
-            "schema": {
-                "cppflag": {"required": False, "type": "boolean"},
-                "other_agencies_submitted": {"required": False,
-                                             "anyof_type": ["string", "boolean"]},
-                "institution": {"required": False, "type": "string",
-                                "description": "place where the proposed grant will be located"},
-                "person_months_academic": {"required": False,
-                                           "anyof_type": ["float", "integer"]},
-                "person_months_summer": {"required": False,
-                                         "anyof_type": ["float", "integer"]},
-                "project_scope": {"required": False, "type": "string"},
-                "single_pi": {"required": False, "type": "boolean",
-                              "description": "set to true if there are no co-pi's"},
-            },
-            "type": "dict",
-        },
-        "currency": {
-            "description": "typically '$' or 'USD'",
-            "required": True,
-            "type": "string",
-        },
-        "due_date": {
-            "description": "day that the proposal is due",
-            "required": False,
-            "anyof_type": ["string", "date"],
-        },
-        "duration": {
-            "description": "number of years",
-            "required": False,
-            "type": ("integer", "float"),
-        },
-        "end_date": {
-            "description": "end date of the proposed grant in format YYYY-MM-DD",
-            "required": False,
-            "anyof_type": ["string", "date"]
-        },
-        "end_day": {
-            "description": "end day of the proposed grant",
-            "required": False,
-            "type": ("string", "integer"),
-        },
-        "end_month": {
-            "description": "end month of the proposed grant",
-            "required": False,
-            "anyof_type": ["string", "integer"]
-        },
-        "end_year": {
-            "description": "end year of the proposed grant",
-            "required": False,
-            "type": "integer",
-        },
-        "funder": {
-            "description": "who will fund the proposal"
-                           "as funder in grants",
-            "required": False,
-            "type": "string",
-        },
-        "full": {
-            "description": "full body of the proposal",
-            "required": False,
-            "type": "dict",
-        },
-        "notes": {
-            "description": "anything you want to note",
-            "required": False,
-            "anyof_type": ["string", "list"],
-        },
-        "pi": {
-            "description": "principal investigator name",
-            "required": True,
-            "type": "string",
-        },
-        "pre": {
-            "description": "Information about the pre-proposal",
-            "required": False,
-            "type": "dict",
-        },
-        "status": {
-            "description": "e.g. 'pending', 'accepted', 'declined'",
-            "required": True,
-            "type": "string",
-            "eallowed": PROPOSAL_STATI,
-        },
-        "submitted_date": {
-            "description": "date that the proposal was submitted",
-            "required": False,
-            "anyof_type": ["string", "date"],
-        },
-        "submitted_day": {
-            "description": "day that the proposal was submitted",
-            "required": False,
-            "type": "integer",
-        },
-        "submitted_month": {
-            "description": "month that the proposal was submitted",
-            "required": False,
-            "anyof_type": ["string", "integer"]
-        },
-        "submitted_year": {
-            "description": "Year that the proposal was submitted",
-            "required": False,
-            "type": "integer",
-        },
-        "team": {
-            "description": "information about the team members participating "
-                           "in the grant.",
-            "required": False,
-            "schema": {
-                "schema": {
-                    "cv": {"required": False, "type": "string"},
-                    "email": {"required": False, "type": "string"},
-                    "institution": {"required": False, "type": "string"},
-                    "name": {"required": False, "type": "string"},
-                    "position": {"required": False, "type": "string"},
-                    "subaward_amount": {
-                        "required": False,
-                        "type": ("integer", "float"),
-                    },
-                },
-                "type": "dict",
-            },
-            "type": "list",
-        },
-        "title": {
-            "description": "actual title of proposal",
-            "required": True,
-            "type": "string",
-        },
-        "title_short": {
-            "description": "short title of proposal",
-            "required": False,
-            "type": "string",
-        },
-    },
-    "reading_lists": {
-        "_description": {
-            "description": "Reading lists consist of doi's or urls of items and "
-                           "a brief synopsis of why they are interesting"
-        },
-        "_id": {
-            "description": "Unique identifier for the reading list.",
-            "required": True,
-            "type": "string"
-        },
-        "date": {"description": "date the list was edited",
-                 "required": False,
-                 "anyof_type": ["date", "string"]},
-        "day": {
-            "description": "The day the list was edited",
-            "required": False,
-            "type": "integer"
-        },
-        "month": {
-            "description": "The month the list was edited",
-            "required": False,
-            "anyof_type": [
-                "integer",
-                "string"
-            ]
-        },
-        "year": {
-            "description": "The day the list was edited",
-            "required": False,
-            "type": "integer"
-        },
-        "papers": {
-            "description": "The list of items that are in the list",
-            "required": True,
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "doi": {
-                        "description": "the doi of the paper.  If it doesn't have one put 'na'",
-                        "required": False,
-                        "type": "string"
-                    },
-                    "text": {
-                        "description": "the description of why the item is important or interesting",
-                        "required": True,
-                        "type": "string"
-                    },
-                    "url": {
-                        "description": "the url of the item if it has one",
-                        "required": False,
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "purpose": {
-            "description": "The purpose or target audience for the list",
-            "required": False,
-            "type": "string"
-        },
-        "title": {
-            "description": "The title of the list",
-            "required": True,
-            "type": "string"
-        }
-    },
-    "refereeReports": {
-        "_description": {
-            "description": "This is a collection of information that will be "
-                           "be used to build a referee report. This should probably be private."
-        },
-        "_id": {"description": "the ID", "required": True, "type": "string"},
-        "claimed_found_what": {
-            "description": "What the authors claim to have found",
-            "required": True,
-            "schema": {"type": "string", "required": True},
-            "type": "list",
-        },
-        "claimed_why_important": {
-            "description": "What importance the authors claim",
-            "required": True,
-            "schema": {"type": "string", "required": True},
-            "type": "list",
-        },
-        "did_how": {
-            "description": "How the study was done",
-            "required": True,
-            "schema": {"type": "string", "required": True},
-            "type": "list",
-        },
-        "did_what": {
-            "description": "What the study was",
-            "required": True,
-            "schema": {"type": "string", "required": True},
-            "type": "list",
-        },
-        "due_date": {
-            "description": "date the review is due in ISO format",
-            "required": True,
-            "anyof_type": ["string", "date"],
-        },
-        "editor_eyes_only": {
-            "description": "Comments you don't want passed to the author",
-            "required": False,
-            "type": "string",
-        },
-        "final_assessment": {
-            "description": "Summary of impressions of the study",
-            "required": True,
-            "schema": {"type": "string", "required": True},
-            "type": "list",
-        },
-        "first_author_last_name": {
-            "description": "Last name of first author will be referred to "
-                           "with et al.",
-            "required": True,
-            "type": "string",
-        },
-        "freewrite": {
-            "description": "Things that you want to add that don't fit into "
-                           "any category above",
-            "required": False,
-            "type": "string",
-        },
-        "institutions": {
-            "description": "the institutions of the pi and co-pis",
-            "required": False,
-            "anyof_type": ["string", "list"]
-        },
-        "journal": {
-            "description": "name of the journal",
-            "required": True,
-            "type": "string",
-        },
-        "month": {
-            "description": "The month the review was requested",
-            "required": False,
-            "anyof_type": [
-                "integer",
-                "string"
-            ]
-        },
-        "recommendation": {
-            "description": "Your publication recommendation",
-            "required": True,
-            "type": "string",
-            "eallowed": REVIEW_RECOMMENDATIONS,
-        },
-        "requester": {
-            "description": "Name of the program officer who requested the review",
-            "required": True,
-            "type": "string",
-        },
-        "reviewer": {
-            "description": "name of person reviewing the paper",
-            "required": True,
-            "type": "string",
-        },
-        "status": {
-            "description": "Where you are with the review",
-            "required": True,
-            "type": "string",
-            "eallowed": REVIEW_STATI,
-        },
-        "submitted_date": {
-            "description": "submitted date in ISO YYYY-MM-DD format.",
-            "required": False,
-            "anyof_type": ["string", "date"],
-        },
-        "title": {
-            "description": "title of the paper under review",
-            "required": True,
-            "type": "string",
-        },
-        "validity_assessment": {
-            "description": "List of impressions of the validity of the claims",
-            "required": True,
-            "schema": {"type": "string", "required": True},
-            "type": "list",
-        },
-        "year": {
-            "description": "year when the review is being done",
-            "required": True,
-            "anyof_type": ["string", "integer"],
-        },
-    },
-    "students": {
-        "_description": {
-            "description": "This is a collection of student names and "
-                           "metadata. This should probably be private."
-        },
-        "_id": {
-            "description": "short representation, such as this-is-my-name",
-            "required": True,
-            "type": "string",
-        },
-        "aka": {
-            "description": "list of aliases",
-            "required": False,
-            "schema": {"type": "string"},
-            "type": ("list", "string"),
-        },
-        "email": {"description": "email address", "required": False,
-                  "type": "string"},
-        "university_id": {
-            "description": "The university identifier for the student",
-            "required": False,
-            "type": "string",
-        },
-    },
-    "todos": {
-        "_description": {
-            "description": "This is a collection of todo items"
-        },
-        "_id": {
-            "description": "the person to whom these todos are applied."
-                           "this should be the id of a person from people",
-            "required": True,
-            "type": "string",
-        },
-        "todos": {
-            "description": "a list of the todo tasks",
-            "required": False,
-            "type": "list",
-            "schema": {
-                "type": "dict",
-                "schema": {
-                    "uuid": {"description": "a universally unique id for the "
-                                            "task so it can be referenced elsewhere",
-                             "required": True,
-                             "type": "string"},
-                    "assigned_by": {
-                        "description": "ID of the member that assigns the task",
-                        "required": False,
-                        "type": "string"},
-                    "begin_date": {"description": "the begin date",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "end_date": {"description": "the end date",
-                                 "required": False,
-                                 "anyof_type": ["string", "date"]},
-                    "deadline": {
-                        "description": "true if the due date is a hard deadline",
-                        "required": False,
-                        "type": "boolean"},
-                    "description": {
-                        "description": "the description of the to-do task",
-                        "required": True,
-                        "type": "string"},
-                    "due_date": {"description": "the due date",
-                                 "required": False,
-                                 "anyof_type": ["string", "date"]},
-                    "duration": {
-                        "description": "the size of the task/ the estimated duration it will take to finish the task. Unit: miniutes.",
-                        "required": False,
-                        "type": "float"},
-                    "importance": {
-                        "description": "the importance, from 0 to 3",
-                        "required": False,
-                        "type": "integer"},
-                    "status": {
-                        "description": "the status: started/finished/cancelled",
-                        "required": True,
-                        "type": "string",
-                        "eallowed": TODO_STATI
-                    },
-                    "notes": {"description": "additional notes for this task",
-                              "required": False,
-                              "type": "list",
-                              "schema": {"type": "string"}
-                              },
-                    "running_index": {
-                        "description": "Index of a certain task used to update that task in the enumerated todo list.",
-                        "required": False,
-                        "type": "integer"},
-                    "tags": {
-                        "description": "user-defined tags that can be used to "
-                                       "filter tasks",
-                        "required": False,
-                        "type": "list"},
-                }
-            }
-        },
-    },
+    ],
 }
+
+SCHEMAS = load_schemas()
 
 for s in SCHEMAS:
     SCHEMAS[s]["files"] = {

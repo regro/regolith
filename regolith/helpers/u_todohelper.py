@@ -10,7 +10,7 @@ import math
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.schemas import (TODO_STATI, PROJECTUM_ACTIVE_STATI)
+from regolith.schemas import alloweds, PROJECTUM_ACTIVE_STATI
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
@@ -23,6 +23,7 @@ from gooey import GooeyParser
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
 
+TODO_STATI = alloweds.get("TODO_STATI")
 def subparser(subpi):
     deci_kwargs = {}
     notes_kwargs = {}
