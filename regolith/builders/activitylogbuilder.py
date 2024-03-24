@@ -397,7 +397,7 @@ class ActivitylogBuilder(LatexBuilderBase):
         )
         #remove unpublished papers
         # unpubs = [pub for pub in pubs if len(pub.get("doi") == 0)]
-        pubed = [pub for pub in pubs if len(pub.get("doi")) > 0]
+        pubed = [pub for pub in pubs if len(pub.get("doi","")) > 0]
         non_arts = [pub for pub in pubs if pub.get("entrytype") != "article"]
         pubs = pubed + non_arts
         bibfile = make_bibtex_file(
