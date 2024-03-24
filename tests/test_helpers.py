@@ -6,7 +6,9 @@ import copy
 import requests_mock
 
 from regolith.main import main
-from regolith.schemas import MILESTONE_TYPES
+from regolith.schemas import alloweds
+
+MILESTONE_TYPES = alloweds.get("MILESTONE_TYPES")
 
 dash = "-"
 helper_map = [
