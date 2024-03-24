@@ -55,8 +55,7 @@
         },
     },
     "assignments": {
-        "_description": {
-            "description": "Information about assignments for classes."},
+        "_description": {"description": "Information about assignments for classes."},
         "_id": {
             "description": "A unique id for the assignment, such as HW01-EMCH-558-2016-S",
             "required": True,
@@ -98,128 +97,110 @@
         "_id": {
             "description": "Unique identifier for the experiment plan. It should have a format '{year:2d}{month:2d}{people_id:s}_{plan_name:s}'",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "_description": {
-            "description": "Information about the experiment plan for the beamtime."},
+            "description": "Information about the experiment plan for the beamtime."
+        },
         "project_lead": {
             "description": "The id for person who put out this plan. It should be inside the people.yml.",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "project": {
             "description": "The id for the project which the plan belongs to. It should be on airtable.",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "begin_date": {
             "description": "The begin date of the beam time.",
             "required": True,
-            "anyof_type": ["string", "datetime", "date"]
+            "anyof_type": ["string", "datetime", "date"],
         },
         "end_date": {
             "description": "The end date of the beam time.",
             "required": True,
-            "anyof_type": ["string", "datetime", "date"]
+            "anyof_type": ["string", "datetime", "date"],
         },
         "beamtime": {
             "description": "The id for the beamtime. Check the Airtable.",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "holder": {
             "description": "Sample holder used during the measurement, e. g. 3 mm OD tubes holder.",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "devices": {
             "description": "The dictionary of devices used in the measurement e. g. ",
             "required": True,
             "type": "list",
-            "schema": {
-                "type": "string"
-            }
+            "schema": {"type": "string"},
         },
         "measurement": {
             "description": "What data to be measured, e. g. PDF, XRD, SAXS. This will determine the setup.",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "samples": {
             "description": "The list of samples to be measured.",
             "required": True,
             "type": "list",
-            "schema": {
-                "type": "string"
-            }
+            "schema": {"type": "string"},
         },
         "time": {
             "description": "The total time of executing the exp_plan. Unit: min.",
             "required": True,
-            "type": "integer"
+            "type": "integer",
         },
         "objective": {
             "description": "What to study in the experiments. What goal to achieve.",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "prep_plan": {
             "description": "Steps to prepare the samples. Do NOT need details.",
             "required": True,
             "type": "list",
-            "schema": {
-                "type": "string"
-            }
+            "schema": {"type": "string"},
         },
         "ship_plan": {
             "description": "Steps to carry the samples from the producer to the BNL. Do NOT need details.",
             "required": True,
             "type": "list",
-            "schema": {
-                "type": "string"
-            }
+            "schema": {"type": "string"},
         },
         "exp_plan": {
             "description": "Steps to carry out the experiments at BNL. Need details",
             "required": True,
             "type": "list",
-            "schema": {
-                "type": "string"
-            }
+            "schema": {"type": "string"},
         },
         "scanplan": {
             "description": "The scanplan for the experiment, e. g. tseries, Tramp, ct.",
             "required": True,
             "type": "list",
-            "schema": {
-                "type": "string"
-            }
+            "schema": {"type": "string"},
         },
         "pipeline": {
             "description": "The analysis pipeline for the experiment. If no new pipeline is needed, use 'usual'.",
             "required": True,
             "type": "string",
-            "default": "usual"
+            "default": "usual",
         },
         "todo": {
             "description": "The TODO list before the beamtime.",
             "required": True,
             "type": "list",
-            "schema": {
-                "type": "string"
-            }
+            "schema": {"type": "string"},
         },
         "notes": {
             "description": "Notes of the plan, e. g. the preferred time.",
             "required": False,
-            "anyof_type": [
-                "list",
-                "string"
-            ],
-            "schema": {
-                "type": "string"
-            }
-        }
+            "anyof_type": ["list", "string"],
+            "schema": {"type": "string"},
+        },
     },
     "blog": {
         "_description": {
@@ -235,8 +216,7 @@
             "required": True,
             "type": "string",
         },
-        "day": {"description": "Publication day", "required": True,
-                "type": "integer"},
+        "day": {"description": "Publication day", "required": True, "type": "integer"},
         "month": {
             "description": "Publication month",
             "required": True,
@@ -264,8 +244,9 @@
         },
     },
     "contacts": {
-        "_description": {"description": "a lighter version of people.  Fewer required fields for capturing people who are less tightly coupled"
-                         },
+        "_description": {
+            "description": "a lighter version of people.  Fewer required fields for capturing people who are less tightly coupled"
+        },
         "_id": {
             "description": "id of the person, e.g., first letter first name plus last name, but unique",
             "required": True,
@@ -280,7 +261,7 @@
             "required": False,
             "anyof_type": ["string", "date"],
         },
-        'day': {
+        "day": {
             "description": "day when the entry was created",
             "required": False,
             "type": "integer",
@@ -298,9 +279,9 @@
         "institution": {
             "description": "the institution where they are located.  This isrequired for building a COI list of coauthors, butnot in general.  It can be institute id or anythingin the aka or name",
             "required": False,
-            "type": "string"
+            "type": "string",
         },
-        'month': {
+        "month": {
             "description": "month when the entry was created",
             "required": False,
             "anyof_type": ["string", "integer"],
@@ -313,24 +294,24 @@
         "notes": {
             "description": "notes about the person",
             "required": False,
-            "anyof_type": ["list", "string"]
+            "anyof_type": ["list", "string"],
         },
         "title": {
             "description": "how the person is addressed",
             "required": False,
             "type": "string",
         },
-        'updated': {
+        "updated": {
             "description": "most recently updated",
             "required": False,
             "anyof_type": ["string", "datetime", "date"],
         },
-        'year': {
+        "year": {
             "description": "year when the entry was created",
             "required": False,
             "type": "integer",
         },
-        'uuid': {
+        "uuid": {
             "description": "universally unique identifier",
             "required": False,
             "type": "string",
@@ -349,28 +330,39 @@
             "description": "begin date in YYYY-MM-DD",
             "anyof_type": ["string", "date"],
         },
-        "begin_year": {"description": "The year when the travel/business started",
-                       "required": False,
-                       "type": "integer"},
-        "begin_month": {"description": "The month when the travel/business started",
-                        "required": False,
-                        "anyof_type": ["string", "integer"]},
-        "begin_day": {"description": "The day when the travel/business started",
-                      "required": False,
-                      "type": "integer"},
-        "end_year": {"description": "The year when the travel/business end",
-                     "required": False,
-                     "type": "integer"},
-        "end_month": {"description": "The month when the travel/business end",
-                      "required": False,
-                      "anyof_type": ["string", "integer"]},
-        "end_day": {"description": "The day when the travel/business end",
-                    "required": False,
-                    "type": "integer"},
+        "begin_year": {
+            "description": "The year when the travel/business started",
+            "required": False,
+            "type": "integer",
+        },
+        "begin_month": {
+            "description": "The month when the travel/business started",
+            "required": False,
+            "anyof_type": ["string", "integer"],
+        },
+        "begin_day": {
+            "description": "The day when the travel/business started",
+            "required": False,
+            "type": "integer",
+        },
+        "end_year": {
+            "description": "The year when the travel/business end",
+            "required": False,
+            "type": "integer",
+        },
+        "end_month": {
+            "description": "The month when the travel/business end",
+            "required": False,
+            "anyof_type": ["string", "integer"],
+        },
+        "end_day": {
+            "description": "The day when the travel/business end",
+            "required": False,
+            "type": "integer",
+        },
         "end_date": {
             "description": "end date in YYYY-MM-DD",
             "anyof_type": ["string", "date"],
-
         },
         "grant_percentages": {
             "description": "the percentage of the reimbursement amount to put on each grant. This list must be the same length asthe grants list and the percentages placed in the order that the grants appear in that list",
@@ -437,13 +429,15 @@
                         "required": False,
                     },
                     "prepaid_expense": {
-                       "description": "The amount of prepaid expense in USD",
-                       "required": False,
-                       "type": "float"
-                      },
-                    "notes": {"description": "notes about the expense",
-                              "required": False,
-                              "anyof_type": ["list", "string"]}
+                        "description": "The amount of prepaid expense in USD",
+                        "required": False,
+                        "type": "float",
+                    },
+                    "notes": {
+                        "description": "notes about the expense",
+                        "required": False,
+                        "anyof_type": ["list", "string"],
+                    },
                 },
             },
         },
@@ -456,52 +450,61 @@
             "description": "Description of the expenses. It will not be included in the reimbursement form",
             "required": False,
             "anyof_type": ["list", "string"],
-
         },
         "status": {
             "description": "The status of the expense",
             "eallowed": EXPENSES_STATI,
             "required": False,
-            "type": "string"
+            "type": "string",
         },
         "reimbursements": {
             "description": "Reimbursements for the expense",
             "schema": {
                 "schema": {
-                    'amount': {"description": 'amount for reimbursements',
-                               "type": "float",
-                               },
-                    'date': {"description": "date of reimbursement",
-                             "anyof_type": ["string", "date"],
-                             },
-                    'submission_date': {"description": "date of submission",
-                                        "anyof_type": ["string", "date"],
-                                        },
-                    'submission_day': {"description": "day of submission. deprecated but here for backwards compatibility",
-                                       "type": "integer",
-                                       },
-                    'submission_month': {"description": "month of submission. deprecated but here for backwards compatibility",
-                                         "anyof_type": ["integer", "string"],
-                                         },
-                    'submission_year': {"description": "year of submission. deprecated but here for backwards compatibility",
-                                        "type": "integer",
-                                        },
-                    'day': {"description": "day of reimbursement. deprecated but here for backwards compatibility",
-                            "type": "integer",
-                            },
-                    'month': {"description": "month of reimbursement. deprecated but here for backwards compatibility",
-                              "anyof_type": ["string", "integer"],
-                              },
-                    'year': {"description": "year of reimbursement. deprecated but here for backwards compatibility",
-                             "type": "integer",
-                             },
-                    'where': {"description": 'where the reimbursement has been sent',
-                              "type": 'string',
-                              },
+                    "amount": {
+                        "description": "amount for reimbursements",
+                        "type": "float",
+                    },
+                    "date": {
+                        "description": "date of reimbursement",
+                        "anyof_type": ["string", "date"],
+                    },
+                    "submission_date": {
+                        "description": "date of submission",
+                        "anyof_type": ["string", "date"],
+                    },
+                    "submission_day": {
+                        "description": "day of submission. deprecated but here for backwards compatibility",
+                        "type": "integer",
+                    },
+                    "submission_month": {
+                        "description": "month of submission. deprecated but here for backwards compatibility",
+                        "anyof_type": ["integer", "string"],
+                    },
+                    "submission_year": {
+                        "description": "year of submission. deprecated but here for backwards compatibility",
+                        "type": "integer",
+                    },
+                    "day": {
+                        "description": "day of reimbursement. deprecated but here for backwards compatibility",
+                        "type": "integer",
+                    },
+                    "month": {
+                        "description": "month of reimbursement. deprecated but here for backwards compatibility",
+                        "anyof_type": ["string", "integer"],
+                    },
+                    "year": {
+                        "description": "year of reimbursement. deprecated but here for backwards compatibility",
+                        "type": "integer",
+                    },
+                    "where": {
+                        "description": "where the reimbursement has been sent",
+                        "type": "string",
+                    },
                 },
-                "type": "dict"
+                "type": "dict",
             },
-            "type": "list"
+            "type": "list",
         },
         "expense_type": {
             "description": "The type of expense",
@@ -523,8 +526,7 @@
             "required": True,
             "type": "string",
         },
-        "course": {"description": "course id", "required": True,
-                   "type": "string"},
+        "course": {"description": "course id", "required": True, "type": "string"},
         "filename": {
             "description": "path to file in store",
             "required": False,
@@ -536,8 +538,7 @@
             "type": "list",
             "schema": {"anyof_type": ["integer", "float"]},
         },
-        "student": {"description": "student id", "required": True,
-                    "type": "string"},
+        "student": {"description": "student id", "required": True, "type": "string"},
     },
     "formalletters": {
         "_description": {
@@ -556,43 +557,48 @@
         "from": {
             "description": "The from field",
             "schema": {
-                    'name': {"description": 'The name of the sender',
-                               "type": "string",
-                               "required": True,
-                               },
-                    'title': {"description": "The title of the person, Sir, Mr., Major. Ranks can be shortened to codes.",
-                             "type": "string",
-                             "required": False,
-                             },
-                    'postfix': {"description": 'The post-fix, PhD, (Admiral, retired), whatever',
-                              "type": "string",
-                              "required": False,
-                              },
-                }
+                "name": {
+                    "description": "The name of the sender",
+                    "type": "string",
+                    "required": True,
+                },
+                "title": {
+                    "description": "The title of the person, Sir, Mr., Major. Ranks can be shortened to codes.",
+                    "type": "string",
+                    "required": False,
+                },
+                "postfix": {
+                    "description": "The post-fix, PhD, (Admiral, retired), whatever",
+                    "type": "string",
+                    "required": False,
+                },
+            },
         },
         "to": {
             "description": "The to field",
             "schema": {
-                'name': {"description": 'The name of the recipient',
-                         "type": "string",
-                         "required": True,
-                         },
-                'title': {"description": "The title of the person, Sir, Mr., Major. Ranks can be shortened to codes.",
-                          "type": "string",
-                          "required": False,
-                          },
-                'postfix': {
-                    "description": 'The post-fix, PhD, (Admiral, retired), whatever',
+                "name": {
+                    "description": "The name of the recipient",
+                    "type": "string",
+                    "required": True,
+                },
+                "title": {
+                    "description": "The title of the person, Sir, Mr., Major. Ranks can be shortened to codes.",
                     "type": "string",
                     "required": False,
-                    },
-            }
+                },
+                "postfix": {
+                    "description": "The post-fix, PhD, (Admiral, retired), whatever",
+                    "type": "string",
+                    "required": False,
+                },
+            },
         },
         "copy_to": {
-                "description": "List of people who will receive a copy",
-                "required": False,
-                "type": ["list"],
-            },
+            "description": "List of people who will receive a copy",
+            "required": False,
+            "type": ["list"],
+        },
         "subject": {
             "description": "The subject of the letter",
             "required": False,
@@ -617,8 +623,8 @@
             "description": "content of the letter in the form of a List of paragraphs",
             "required": True,
             "type": ["list"],
-        }
         },
+    },
     "grants": {
         "_description": {
             "description": "This collection represents grants that have been awarded to the group."
@@ -656,7 +662,7 @@
         "begin_date": {
             "description": "start date of the grant (if string, in format YYYY-MM-DD)",
             "required": False,
-            "anyof_type": ["string", "date"]
+            "anyof_type": ["string", "date"],
         },
         "begin_day": {
             "description": "start day of the grant",
@@ -678,8 +684,7 @@
             "required": False,
             "type": "string",
         },
-        "call_for_proposals": {"description": "", "required": False,
-                               "type": "string"},
+        "call_for_proposals": {"description": "", "required": False, "type": "string"},
         "currency": {
             "description": "typically '$' or 'USD'",
             "required": False,
@@ -688,7 +693,7 @@
         "end_date": {
             "description": "start date of the grant (if string, in format YYYY-MM-DD)",
             "required": False,
-            "anyof_type": ["string", "date"]
+            "anyof_type": ["string", "date"],
         },
         "end_day": {
             "description": "end day of the grant",
@@ -715,8 +720,11 @@
             "required": False,
             "schema": {
                 "schema": {
-                    "date": {"required": False,"anyof_type": ["string", "date"]},
-                    "funds_available": {"required": False, "type": ["integer", "float"]}
+                    "date": {"required": False, "anyof_type": ["string", "date"]},
+                    "funds_available": {
+                        "required": False,
+                        "type": ["integer", "float"],
+                    },
                 },
                 "type": "dict",
             },
@@ -773,7 +781,11 @@
                     "cv": {"required": False, "type": "string"},
                     "institution": {"required": True, "type": "string"},
                     "name": {"required": True, "type": "string"},
-                    "position": {"required": True, "type": "string", "eallowed": GRANT_ROLES},
+                    "position": {
+                        "required": True,
+                        "type": "string",
+                        "eallowed": GRANT_ROLES,
+                    },
                     "subaward_amount": {
                         "required": False,
                         "type": ["integer", "float"],
@@ -806,23 +818,23 @@
                     "student_months": {
                         "description": "number of months of funding for student members during the academic year",
                         "required": False,
-                        "anyof_type": ["float", "integer"]
+                        "anyof_type": ["float", "integer"],
                     },
                     "postdoc_months": {
                         "description": "number of months of funding for postdoc members during the academic year",
                         "required": False,
-                        "anyof_type": ["float", "integer"]
+                        "anyof_type": ["float", "integer"],
                     },
                     "ss_months": {
                         "description": "number of months of funding for the summer",
                         "required": False,
-                        "anyof_type": ["float", "integer"]
+                        "anyof_type": ["float", "integer"],
                     },
                     "amount": {
                         "description": "subaward for this budget period",
                         "required": False,
-                        "anyof_type": ["float", "integer"]
-                    }
+                        "anyof_type": ["float", "integer"],
+                    },
                 },
                 "type": "dict",
             },
@@ -832,7 +844,7 @@
             "description": "initial proposal made for grant",
             "required": False,
             "type": "string",
-        }
+        },
     },
     "groups": {
         "_description": {
@@ -942,7 +954,7 @@
         "month": {
             "description": "the month the entry was created",
             "required": False,
-            "anyof_type": ["string", "integer"]
+            "anyof_type": ["string", "integer"],
         },
         "name": {
             "description": "the canonical name of the institutions",
@@ -978,7 +990,7 @@
         "updated": {
             "description": "a datetime when the entry was updated",
             "required": False,
-            "anyof_type": ["string", "datetime", "date"]
+            "anyof_type": ["string", "datetime", "date"],
         },
         "uuid": {
             "description": "a uuid for the entry",
@@ -1002,9 +1014,7 @@
             "required": True,
             "type": "string",
         },
-        "_description": {
-            "description": "the group meeting."
-        },
+        "_description": {"description": "the group meeting."},
         "actions": {
             "description": "action items expected from the group members for that particular meeting week",
             "required": True,
@@ -1028,7 +1038,7 @@
         "month": {
             "description": "month in which the meeting is taking place",
             "required": True,
-            "anyof_type": ["string", "integer"]
+            "anyof_type": ["string", "integer"],
         },
         "year": {
             "description": "year the meeting took place",
@@ -1045,27 +1055,27 @@
             "required": False,
             "type": "dict",
             "schema": {
-                 "doi": {
-                  "description": "The doi of the journal club presentation paper.  tbd if it is not known yet",
-                  "type": "string",
-                  "required": True
-                 },
-                 "link": {
-                  "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
-                  "type": "string",
-                  "required": False
-                 },
-                 "presenter": {
-                  "description": "The _id of the group member presenting, or a string describing the presenter, e.g., their full name.",
-                  "type": "string",
-                  "required": True
-                 },
-                 "title": {
-                  "description": "The title of the talk.",
-                  "type": "string",
-                  "required": False
-                }
-            }
+                "doi": {
+                    "description": "The doi of the journal club presentation paper.  tbd if it is not known yet",
+                    "type": "string",
+                    "required": True,
+                },
+                "link": {
+                    "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
+                    "type": "string",
+                    "required": False,
+                },
+                "presenter": {
+                    "description": "The _id of the group member presenting, or a string describing the presenter, e.g., their full name.",
+                    "type": "string",
+                    "required": True,
+                },
+                "title": {
+                    "description": "The title of the talk.",
+                    "type": "string",
+                    "required": False,
+                },
+            },
         },
         "lead": {
             "description": "person who will be leading the meeting of the current week",
@@ -1087,22 +1097,22 @@
             "required": False,
             "type": "dict",
             "schema": {
-                 "title": {
-                  "description": "The title of the presentation.  tbd if it is not known yet",
-                  "type": "string",
-                  "required": True
-                 },
-                 "link": {
-                  "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
-                  "type": "string",
-                  "required": True
-                 },
-                 "presenter": {
-                  "description": "The _id of the group member presenting or a string describing the person.",
-                  "type": "string",
-                  "required": True
-                 }
-                }
+                "title": {
+                    "description": "The title of the presentation.  tbd if it is not known yet",
+                    "type": "string",
+                    "required": True,
+                },
+                "link": {
+                    "description": "the url to the repo, google slide location, or other web location where the presentation can be found",
+                    "type": "string",
+                    "required": True,
+                },
+                "presenter": {
+                    "description": "The _id of the group member presenting or a string describing the person.",
+                    "type": "string",
+                    "required": True,
+                },
+            },
         },
         "scribe": {
             "description": "person who will be taking notes and updating minutes accordingly",
@@ -1112,7 +1122,7 @@
         "time": {
             "description": "the time of the meetingIf an integer is minutes past midnight, so 13:30 is 810 forexample.",
             "required": False,
-            "anyof_type": ["string", "integer", "datetime"]
+            "anyof_type": ["string", "integer", "datetime"],
         },
         "updated": {
             "description": "The datetime.date object of the most recent update",
@@ -1124,7 +1134,6 @@
             "required": False,
             "type": "string",
         },
-
     },
     "people": {
         "_description": {
@@ -1148,7 +1157,7 @@
         "appointments": {
             "type": "dict",
             "required": False,
-            "description": "begin and end date, grant loading status and notes about appointments"
+            "description": "begin and end date, grant loading status and notes about appointments",
         },
         "activities": {
             "type": "list",
@@ -1162,12 +1171,11 @@
                         "description": "the day the activity took place",
                         "type": "integer",
                     },
-
                     "type": {
                         "required": True,
                         "description": "the type of the acitivity",
                         "type": "string",
-                        "eallowed": ACTIVITIES_TYPES
+                        "eallowed": ACTIVITIES_TYPES,
                     },
                     "month": {
                         "required": False,
@@ -1189,11 +1197,10 @@
                         "description": "the year the activity took place",
                         "type": "integer",
                     },
-                }
-            }
+                },
+            },
         },
-        "avatar": {"description": "URL to avatar", "required": True,
-                   "type": "string"},
+        "avatar": {"description": "URL to avatar", "required": True, "type": "string"},
         "bio": {
             "description": "short biographical text",
             "required": True,
@@ -1202,7 +1209,7 @@
         "bios": {
             "description": "longer biographical text if needed",
             "required": False,
-            "anyof_type": ["string", "list"]
+            "anyof_type": ["string", "list"],
         },
         "collab": {
             "description": "If the person is a collaborator, default False.",
@@ -1215,27 +1222,38 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "name": {"required": True, "type": "string",
-                             "description": "name of committee, or person if it is a phd committee"},
+                    "name": {
+                        "required": True,
+                        "type": "string",
+                        "description": "name of committee, or person if it is a phd committee",
+                    },
                     "day": {"required": False, "type": "integer"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
-                              },
-                    "notes": {"required": False,
-                              "description": "extra things you want to record about the thing",
-                              "anyof_type": ["string", "list"],
-                              },
+                    "month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
+                    "notes": {
+                        "required": False,
+                        "description": "extra things you want to record about the thing",
+                        "anyof_type": ["string", "list"],
+                    },
                     "year": {"required": True, "type": "integer"},
-                    "unit": {"required": False, "type": "string",
-                             "description": "name of department or school etc."},
-                    "type": {"required": False, "type": "string",
-                             "description": "type of committee, department, school, university, external",
-                             "eallowed": COMMITTEES_TYPES},
+                    "unit": {
+                        "required": False,
+                        "type": "string",
+                        "description": "name of department or school etc.",
+                    },
+                    "type": {
+                        "required": False,
+                        "type": "string",
+                        "description": "type of committee, department, school, university, external",
+                        "eallowed": COMMITTEES_TYPES,
+                    },
                     "level": {
                         "required": True,
                         "type": "string",
                         "description": "department or school or university, or external",
-                        "eallowed": COMMITTEES_LEVELS
+                        "eallowed": COMMITTEES_LEVELS,
                     },
                     "group": {
                         "required": False,
@@ -1252,13 +1270,16 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "advisor": {"required": False, "type": "string",
-                                "description": "name or id of advisor for this degree"},
-                    "begin_day": {"required": False,
-                                  "type": "integer"},
-                    "begin_month": {"required": False,
-                                    "anyof_type": ["string", "integer"],
-                                    },
+                    "advisor": {
+                        "required": False,
+                        "type": "string",
+                        "description": "name or id of advisor for this degree",
+                    },
+                    "begin_day": {"required": False, "type": "integer"},
+                    "begin_month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "begin_year": {"required": True, "type": "integer"},
                     "degree": {"required": True, "type": "string"},
                     "department": {
@@ -1271,11 +1292,11 @@
                         "type": "string",
                         "description": "this employment is/was ina group in groups coll",
                     },
-                    "end_day": {"required": False,
-                                "type": "integer"},
-                    "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"],
-                                  },
+                    "end_day": {"required": False, "type": "integer"},
+                    "end_month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "end_year": {"required": False, "type": "integer"},
                     "gpa": {"required": False, "type": ["float", "string"]},
                     "institution": {"required": True, "type": "string"},
@@ -1297,44 +1318,71 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "advisor": {"required": False, "type": "string",
-                                "description": "name or id of advisor/mentor/manager"},
+                    "advisor": {
+                        "required": False,
+                        "type": "string",
+                        "description": "name or id of advisor/mentor/manager",
+                    },
                     "begin_day": {"required": False, "type": "integer"},
-                    "begin_month": {"required": False,
-                                    "anyof_type": ["string", "integer"],
-                                    },
+                    "begin_month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "begin_year": {"required": False, "type": "integer"},
-                    "begin_date": {"required": False, "anyof_type": ["string", "date", "datetime"],
-                                   "description": "begin date of employment in format YYYY-MM-DD"},
-                    "coworkers": {"required": False, "type": "list",
-                                  "description": "list of coworkers.  If position is editor, these are assumed to be coeditors inconflict of interest builder"},
+                    "begin_date": {
+                        "required": False,
+                        "anyof_type": ["string", "date", "datetime"],
+                        "description": "begin date of employment in format YYYY-MM-DD",
+                    },
+                    "coworkers": {
+                        "required": False,
+                        "type": "list",
+                        "description": "list of coworkers.  If position is editor, these are assumed to be coeditors inconflict of interest builder",
+                    },
                     "department": {"required": False, "type": "string"},
                     "end_day": {"required": False, "type": "integer"},
-                    "end_month": {"required": False,
-                                  },
+                    "end_month": {
+                        "required": False,
+                    },
                     "end_year": {"required": False, "type": "integer"},
-                    "end_date": {"required": False, "anyof_type": ["string", "date", "datetime"],
-                                 "description": "end date of employment in format YYYY-MM-DD"},
+                    "end_date": {
+                        "required": False,
+                        "anyof_type": ["string", "date", "datetime"],
+                        "description": "end date of employment in format YYYY-MM-DD",
+                    },
                     "group": {
                         "required": False,
                         "type": "string",
                         "description": "this employment is/was ina group in groups coll",
-                            },
+                    },
                     "location": {"required": False, "type": "string"},
-                    "not_in_cv": {"required": False, "type": "boolean", "description": "set to true if you want to suppress this entry in all cv's and resumes"},
+                    "not_in_cv": {
+                        "required": False,
+                        "type": "boolean",
+                        "description": "set to true if you want to suppress this entry in all cv's and resumes",
+                    },
                     "organization": {"required": True, "type": "string"},
                     "other": {"required": False, "type": "list"},
-                    "permanent": {"required": False, "type": "boolean",
-                                  "description": "true if the position is open ended and has no fixed end-date"},
-                    "position": {"required": True, "type": "string",
-                                 "eallowed": list(SORTED_POSITION)},
+                    "permanent": {
+                        "required": False,
+                        "type": "boolean",
+                        "description": "true if the position is open ended and has no fixed end-date",
+                    },
+                    "position": {
+                        "required": True,
+                        "type": "string",
+                        "eallowed": list(SORTED_POSITION),
+                    },
                     "position_full": {
                         "description": "The full on title of the position.  This will be typeset if it is here, or if not Position will be used.  Position will be used for sorting and must come from a fixed list of positions",
                         "required": False,
                         "type": "string",
                     },
-                    "status": {"required": False, "type": "string", "eallowed": POSITION_STATI,
-                               },
+                    "status": {
+                        "required": False,
+                        "type": "string",
+                        "eallowed": POSITION_STATI,
+                    },
                 },
             },
         },
@@ -1359,7 +1407,7 @@
                         "required": True,
                         "description": "the type of the facility. Columbia asksfor wished-for facilities, so there are teaching-wish and research-wish fields.",
                         "type": "string",
-                        "eallowed": FACILITIES_TYPES
+                        "eallowed": FACILITIES_TYPES,
                     },
                     "begin_month": {
                         "required": False,
@@ -1379,7 +1427,7 @@
                     "notes": {
                         "required": False,
                         "description": "anything else you want to jot down",
-                        "anyof_type": ["string", "list"]
+                        "anyof_type": ["string", "list"],
                     },
                     "begin_year": {
                         "required": True,
@@ -1391,8 +1439,8 @@
                         "description": "the year the facility (or wish) went away",
                         "type": "integer",
                     },
-                }
-            }
+                },
+            },
         },
         "funding": {
             "description": "Funding and scholarship that the group member has individually obtained in the past. **WARNING:** this is not to be confused with the **grants** collection",
@@ -1402,9 +1450,10 @@
                 "schema": {
                     "currency": {"required": False, "type": "string"},
                     "duration": {"required": False, "type": "string"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
-                              },
+                    "month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "name": {"required": True, "type": "string"},
                     "value": {"required": True, "type": ["float", "integer"]},
                     "year": {"required": True, "type": "integer"},
@@ -1412,37 +1461,73 @@
             },
             "type": "list",
         },
-        "github_id": {"required": False, "type": "string",
-                      "description": "Your GitHub ID"},
-        "google_scholar_url": {"required": False, "type": "string",
-                               "description": "URL of your Google Scholar profile"},
-        "grp_mtg_active": {"required": False, "type": "boolean",
-                           "description": "Whether to schedule tasks at group meeting or not"},
+        "github_id": {
+            "required": False,
+            "type": "string",
+            "description": "Your GitHub ID",
+        },
+        "google_scholar_url": {
+            "required": False,
+            "type": "string",
+            "description": "URL of your Google Scholar profile",
+        },
+        "grp_mtg_active": {
+            "required": False,
+            "type": "boolean",
+            "description": "Whether to schedule tasks at group meeting or not",
+        },
         "hindex": {
             "description": "details of hindex pulled on a certain date",
             "required": False,
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "h": {"description": "the value of the h index",
-                          "required": True, "type": "integer"},
-                    "h_last_five": {"description": "h index over past 5 years",
-                                    "required": False, "type": "integer"},
-                    "citations": {"description": "total number of citations",
-                                  "required": False, "type": "integer"},
-                    "citations_last_five": {"description": "number of citations in the past 5 years",
-                                            "required": False, "type": "integer"},
-                    "origin": {"description": "where the numbers came from",
-                               "required": False, "type": "string"},
-                    "since": {"description": "year of first citation",
-                              "required": False, "type": "integer"},
-                    "year": {"description": "year when the data were pulled",
-                             "required": False, "type": "integer"},
-                    "month": {"description": "month when the data were pulled",
-                              "required": False, "anyof_type": ["string", "integer"]},
-                    "day": {"description": "day when the data were pulled",
-                            "required": False, "type": "integer"},
-                }
+                    "h": {
+                        "description": "the value of the h index",
+                        "required": True,
+                        "type": "integer",
+                    },
+                    "h_last_five": {
+                        "description": "h index over past 5 years",
+                        "required": False,
+                        "type": "integer",
+                    },
+                    "citations": {
+                        "description": "total number of citations",
+                        "required": False,
+                        "type": "integer",
+                    },
+                    "citations_last_five": {
+                        "description": "number of citations in the past 5 years",
+                        "required": False,
+                        "type": "integer",
+                    },
+                    "origin": {
+                        "description": "where the numbers came from",
+                        "required": False,
+                        "type": "string",
+                    },
+                    "since": {
+                        "description": "year of first citation",
+                        "required": False,
+                        "type": "integer",
+                    },
+                    "year": {
+                        "description": "year when the data were pulled",
+                        "required": False,
+                        "type": "integer",
+                    },
+                    "month": {
+                        "description": "month when the data were pulled",
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
+                    "day": {
+                        "description": "day when the data were pulled",
+                        "required": False,
+                        "type": "integer",
+                    },
+                },
             },
             "type": "list",
         },
@@ -1463,9 +1548,10 @@
                 "type": "dict",
                 "schema": {
                     "description": {"required": False, "type": "string"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
-                              },
+                    "month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "name": {"required": True, "type": "string"},
                     "year": {"required": True, "type": "integer"},
                 },
@@ -1488,14 +1574,16 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "begin_month": {"required": False,
-                                    "anyof_type": ["string", "integer"],
-                                    },
+                    "begin_month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "begin_year": {"required": True, "type": "integer"},
                     "description": {"required": False, "type": "string"},
-                    "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"],
-                                  },
+                    "end_month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "end_year": {"required": False, "type": "integer"},
                     "organization": {"required": True, "type": "string"},
                     "position": {"required": True, "type": "string"},
@@ -1524,7 +1612,7 @@
         "office": {
             "description": "The person's office",
             "type": "string",
-            "required": False
+            "required": False,
         },
         "orcid_id": {
             "description": "The ORCID ID of the person",
@@ -1548,42 +1636,64 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "type": {"required": True, "type": "string",
-                             "eallowed": PUBLICITY_TYPES},
-                    "topic": {"required": False, "type": "string",
-                              "description": "The short sentence of what the publicity was about",
-                              },
-                    "title": {"required": True, "type": "string",
-                              "description": "The title of the piece",
-                              },
-                    "date": {"description": "the date of the service",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "day": {"required": False, "type": "integer",
-                            "description": "The day the piece appeared"
-                            },
-                    "month": {"required": False, "anyof_type": ["string",
-                                                                "integer"],
-                              "description": "The month the piece appeared"
-                              },
-                    "publication": {"required": False, "type": "string",
-                                    "description": "The place where the publicity was placed"
-                                    },
-                    "text": {"required": False, "type": "string",
-                             "description": "The text of the publicity",
-                             },
-                    "url": {"required": False, "type": "string",
-                            "description": "The URL where the piece may be found"
-                            },
-                    "year": {"required": False, "type": "integer",
-                             "description": "The year the piece appeared"
-                             },
-                    "grant": {"required": True, "type": "string",
-                              "description": "The identifier of the grant associated with the piece"
-                              },
+                    "type": {
+                        "required": True,
+                        "type": "string",
+                        "eallowed": PUBLICITY_TYPES,
+                    },
+                    "topic": {
+                        "required": False,
+                        "type": "string",
+                        "description": "The short sentence of what the publicity was about",
+                    },
+                    "title": {
+                        "required": True,
+                        "type": "string",
+                        "description": "The title of the piece",
+                    },
+                    "date": {
+                        "description": "the date of the service",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+                    },
+                    "day": {
+                        "required": False,
+                        "type": "integer",
+                        "description": "The day the piece appeared",
+                    },
+                    "month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                        "description": "The month the piece appeared",
+                    },
+                    "publication": {
+                        "required": False,
+                        "type": "string",
+                        "description": "The place where the publicity was placed",
+                    },
+                    "text": {
+                        "required": False,
+                        "type": "string",
+                        "description": "The text of the publicity",
+                    },
+                    "url": {
+                        "required": False,
+                        "type": "string",
+                        "description": "The URL where the piece may be found",
+                    },
+                    "year": {
+                        "required": False,
+                        "type": "integer",
+                        "description": "The year the piece appeared",
+                    },
+                    "grant": {
+                        "required": True,
+                        "type": "string",
+                        "description": "The identifier of the grant associated with the piece",
+                    },
                 },
             },
-            "type": "list"
+            "type": "list",
         },
         "research_focus_areas": {
             "description": "summary of research projects that are ongoing. Usedin Annual appraisal for example",
@@ -1593,10 +1703,10 @@
                 "schema": {
                     "begin_year": {"required": False, "type": "integer"},
                     "end_year": {"required": False, "type": "integer"},
-                    "description": {"required": False, "type": "string"}
+                    "description": {"required": False, "type": "string"},
                 },
             },
-            "type": "list"
+            "type": "list",
         },
         "research_summary": {
             "description": "Brief summary of overarching research goals",
@@ -1609,43 +1719,57 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "date": {"description": "the date of the service",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "begin_date": {"description": "the begin date",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "end_date": {"description": "the end date",
-                                 "required": False,
-                                 "anyof_type": ["string", "date"]},
+                    "date": {
+                        "description": "the date of the service",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+                    },
+                    "begin_date": {
+                        "description": "the begin date",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+                    },
+                    "end_date": {
+                        "description": "the end date",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+                    },
                     "description": {"required": False, "type": "string"},
                     "duration": {"required": False, "type": "string"},
-                    "month": {"description": "Use month and year if the servicedoesn't extend more than one year.Otherwise use begin_year and end_year",
-                              "required": False,
-                              "anyof_type": ["string", "integer"]
-                              },
+                    "month": {
+                        "description": "Use month and year if the servicedoesn't extend more than one year.Otherwise use begin_year and end_year",
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "name": {"required": True, "type": "string"},
-                    "role": {"required": False, "type": "string",
-                             "description": "the role played in the activity, e.g., co-chair"},
+                    "role": {
+                        "required": False,
+                        "type": "string",
+                        "description": "the role played in the activity, e.g., co-chair",
+                    },
                     "notes": {"required": False, "anyof_type": ["string", "list"]},
                     "year": {"required": False, "type": "integer"},
                     "begin_year": {"required": False, "type": "integer"},
                     "begin_day": {"required": False, "type": "integer"},
-                    "begin_month": {"description": "Use month and year if the servicedoesn't extend more than one year.Otherwise use begin_year/month and end_year/month",
-                                    "required": False,
-                                    "anyof_type": ["string", "integer"]
-                                    },
+                    "begin_month": {
+                        "description": "Use month and year if the servicedoesn't extend more than one year.Otherwise use begin_year/month and end_year/month",
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "end_year": {"required": False, "type": "integer"},
-                    "end_month": {"description": "Use month and year if the servicedoesn't extend more than one year.Otherwise use begin_year and end_year",
-                                  "required": False,
-                                  "anyof_type": ["string", "integer"]
-                                  },
+                    "end_month": {
+                        "description": "Use month and year if the servicedoesn't extend more than one year.Otherwise use begin_year and end_year",
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "end_day": {"required": False, "type": "integer"},
-                    "other": {"required": False,
-                              "anyof_type": ["string", "list"]},
-                    "type": {"required": True, "type": "string",
-                             "description": "profession, department, school, university",
-                             "eallowed": SERVICE_TYPES},
+                    "other": {"required": False, "anyof_type": ["string", "list"]},
+                    "type": {
+                        "required": True,
+                        "type": "string",
+                        "description": "profession, department, school, university",
+                        "eallowed": SERVICE_TYPES,
+                    },
                 },
             },
             "type": "list",
@@ -1673,31 +1797,43 @@
                     "course": {"required": True, "type": "string"},
                     "courseid": {"required": True, "type": "string"},
                     "description": {"required": False, "type": "string"},
-                    "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"]},
+                    "end_month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "end_year": {"required": False, "type": "integer"},
-                    "enrollment": {"required": False, "anyof_type": ["integer", "string"]},
+                    "enrollment": {
+                        "required": False,
+                        "anyof_type": ["integer", "string"],
+                    },
                     "evaluation": {
                         "type": "dict",
                         "required": False,
                         "schema": {
                             "response_rate": {"type": "number", "required": True},
                             "amount_learned": {"type": "number", "required": True},
-                            "appropriateness_workload": {"type": "number", "required": True},
+                            "appropriateness_workload": {
+                                "type": "number",
+                                "required": True,
+                            },
                             "course_overall": {"type": "number", "required": True},
                             "fairness_grading": {"type": "number", "required": True},
                             "organization": {"type": "number", "required": True},
                             "classroom_delivery": {"type": "number", "required": True},
                             "approachability": {"type": "number", "required": True},
                             "instructor_overall": {"type": "number", "required": True},
-                            "comments": {"type": "list", "required": False,
-                                         "description": "student comments"},
+                            "comments": {
+                                "type": "list",
+                                "required": False,
+                                "description": "student comments",
+                            },
                         },
                     },
                     "materials": {"required": False, "type": "string"},
-                    "month": {"required": False,
-                              "anyof_type": ["string", "integer"],
-                              },
+                    "month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "organization": {"required": True, "type": "string"},
                     "position": {"required": True, "type": "string"},
                     "semester": {"required": False, "type": "string"},
@@ -1746,9 +1882,10 @@
             "required": False,
             "type": "integer",
         },
-        "begin_month": {"required": False,
-                        "anyof_type": ["string", "integer"],
-                        },
+        "begin_month": {
+            "required": False,
+            "anyof_type": ["string", "integer"],
+        },
         "begin_day": {"required": False, "type": "integer"},
         "department": {
             "description": "department of the institution where thepresentation will be made, if applicable.  should be discoverable in institutions.",
@@ -1760,9 +1897,10 @@
             "required": False,
             "type": "integer",
         },
-        "end_month": {"required": False,
-                      "anyof_type": ["string", "integer"],
-                      },
+        "end_month": {
+            "required": False,
+            "anyof_type": ["string", "integer"],
+        },
         "end_day": {"required": False, "type": "integer"},
         "institution": {
             "description": "institution where thepresentation will be made, if applicable.",
@@ -1824,123 +1962,159 @@
         "_id": {
             "description": "Unique projectum identifier",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "begin_date": {
             "description": "projectum start date, yyyy-mm-dd",
             "required": False,
-            "anyof_type": ["string", "date"]
+            "anyof_type": ["string", "date"],
         },
         "collaborators": {
             "description": "list of collaborators ids. These are non-group members. These will be dereferenced from the contacts collection.",
             "required": False,
-            "type": "list"
+            "type": "list",
         },
         "deliverable": {
             "description": "outline of the deliverable for this projectum",
             "type": "dict",
             "required": True,
             "schema": {
-                "audience": {"description": "the target audience for this deliverable",
-                             "required": False,
-                             "type": "list"},
-                "due_date": {"description": "due date of deliverable, yyyy-mm-dd",
-                             "required": False,
-                             "anyof_type": ["date", "string"]},
-                "success_def": {"description": "definition of a successful deliverable",
-                                "required": False,
-                                "type": "string"},
-                "scope": {"description": "a list of items that define the scope of the deliverable.If this is a software release it might be a list of Use Cases that will be satisfied.If it is a paper it defines what will, and what won't, be described in the paper.",
-                          "required": False,
-                          "type": "list"},
-                "platform": {"description": "description of how and where the audience will access the deliverable.e.g. Journal if it is a paper. For software releases, this may be the computer operating systems that will be supported, or if it will be a web service, etc.",
-                             "required": False,
-                             "type": "string"},
-                "roll_out": {"description": "steps that the audience will take to access and interact with the deliverable, not needed for paper submissions",
-                             "required": False,
-                             "type": "list"},
-                "notes": {"description": "any notes about the deliverable that we want to keep track of",
-                          "required": False,
-                          "type": "list"},
-                "status": {"description": "status of the deliverable. Allowed values are {', '.join(PROJECTUM_STATI)}",
-                           "required": True,
-                           "type": "string",
-                           "eallowed": PROJECTUM_STATI},
-                "type": {"description": "type of deliverable",
-                         "required": False,
-                         "type": "string"}
-            }
+                "audience": {
+                    "description": "the target audience for this deliverable",
+                    "required": False,
+                    "type": "list",
+                },
+                "due_date": {
+                    "description": "due date of deliverable, yyyy-mm-dd",
+                    "required": False,
+                    "anyof_type": ["date", "string"],
+                },
+                "success_def": {
+                    "description": "definition of a successful deliverable",
+                    "required": False,
+                    "type": "string",
+                },
+                "scope": {
+                    "description": "a list of items that define the scope of the deliverable.If this is a software release it might be a list of Use Cases that will be satisfied.If it is a paper it defines what will, and what won't, be described in the paper.",
+                    "required": False,
+                    "type": "list",
+                },
+                "platform": {
+                    "description": "description of how and where the audience will access the deliverable.e.g. Journal if it is a paper. For software releases, this may be the computer operating systems that will be supported, or if it will be a web service, etc.",
+                    "required": False,
+                    "type": "string",
+                },
+                "roll_out": {
+                    "description": "steps that the audience will take to access and interact with the deliverable, not needed for paper submissions",
+                    "required": False,
+                    "type": "list",
+                },
+                "notes": {
+                    "description": "any notes about the deliverable that we want to keep track of",
+                    "required": False,
+                    "type": "list",
+                },
+                "status": {
+                    "description": "status of the deliverable. Allowed values are {', '.join(PROJECTUM_STATI)}",
+                    "required": True,
+                    "type": "string",
+                    "eallowed": PROJECTUM_STATI,
+                },
+                "type": {
+                    "description": "type of deliverable",
+                    "required": False,
+                    "type": "string",
+                },
+            },
         },
         "description": {
             "description": "explanation of projectum",
             "required": False,
-            "type": "string"
+            "type": "string",
         },
         "end_date": {
             "description": "projectum end date, yyyy-mm-dd.",
             "required": False,
-            "anyof_type": ["date", "string"]
+            "anyof_type": ["date", "string"],
         },
         "grants": {
             "description": "grant id funding the project",
             "required": False,
-            "anyof_type": ["string", "list"]
+            "anyof_type": ["string", "list"],
         },
         "group_members": {
             "description": "list of group member id's working on this project,These will be dereferenced from the people collection.",
             "required": False,
-            "type": "list"
+            "type": "list",
         },
         "kickoff": {
             "description": "details the projectum kickoff meeting",
             "required": False,
             "type": "dict",
             "schema": {
-                "date": {"description": "kickoff meeting date, yyyy-mm-dd.",
-                         "required": False,
-                         "anyof_type": ["date", "string"]},
-                "due_date": {"description": "kickoff meeting by date, yyyy-mm-dd.",
-                             "required": False,
-                             "anyof_type": ["date", "string"]},
-                "end_date": {"description": "date when the kickoff was done",
-                             "required": False,
-                             "anyof_type": ["date", "string"]},
-                "name": {"description": "name of meeting",
-                         "required": False,
-                         "type": "string"},
-                "objective": {"description": "goal of the meeting",
-                              "required": False,
-                              "type": "string"},
-                "audience": {"description": "list of people attending the meeting.Normally this list is group_members, collaborators, and pi, or some subset of these. if people are invited who are not alreadyin these groups their names or id's can be added explicitly to the list",
-                             "required": False,
-                             "type": "list"},
-                "notes": {"description": "any notes about the kickoff",
-                          "required": False,
-                          "type": "list"},
-                "status": {"description": "status of the kickoff. Allowed values are {', '.join(PROJECTUM_STATI)}",
-                           "required": False,
-                           "type": "string",
-                           "eallowed": PROJECTUM_STATI},
-                "type": {"description": "type of kickoff deliverable. In general will be 'meeting'Allowed values are {', '.join(MILESTONE_TYPES)}",
-                         "required": False,
-                         "type": "string",
-                         "eallowed": MILESTONE_TYPES},
-            }
+                "date": {
+                    "description": "kickoff meeting date, yyyy-mm-dd.",
+                    "required": False,
+                    "anyof_type": ["date", "string"],
+                },
+                "due_date": {
+                    "description": "kickoff meeting by date, yyyy-mm-dd.",
+                    "required": False,
+                    "anyof_type": ["date", "string"],
+                },
+                "end_date": {
+                    "description": "date when the kickoff was done",
+                    "required": False,
+                    "anyof_type": ["date", "string"],
+                },
+                "name": {
+                    "description": "name of meeting",
+                    "required": False,
+                    "type": "string",
+                },
+                "objective": {
+                    "description": "goal of the meeting",
+                    "required": False,
+                    "type": "string",
+                },
+                "audience": {
+                    "description": "list of people attending the meeting.Normally this list is group_members, collaborators, and pi, or some subset of these. if people are invited who are not alreadyin these groups their names or id's can be added explicitly to the list",
+                    "required": False,
+                    "type": "list",
+                },
+                "notes": {
+                    "description": "any notes about the kickoff",
+                    "required": False,
+                    "type": "list",
+                },
+                "status": {
+                    "description": "status of the kickoff. Allowed values are {', '.join(PROJECTUM_STATI)}",
+                    "required": False,
+                    "type": "string",
+                    "eallowed": PROJECTUM_STATI,
+                },
+                "type": {
+                    "description": "type of kickoff deliverable. In general will be 'meeting'Allowed values are {', '.join(MILESTONE_TYPES)}",
+                    "required": False,
+                    "type": "string",
+                    "eallowed": MILESTONE_TYPES,
+                },
+            },
         },
         "lead": {
             "description": "the id of the lead student or person for the projectum. Person details will be dereferenced from the people collection.",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
         "log_url": {
             "description": "link to an online document (e.g., Google doc) that is a log of notes and meeting minutes for the projectum",
             "required": False,
-            "type": "string"
+            "type": "string",
         },
         "supplementary_info_urls": {
             "description": "list of urls that are links to repos gdocs, etc. that contain supplementary info such as data or code snippets",
             "required": False,
-            "type": "list"
+            "type": "list",
         },
         "milestones": {
             "description": "smaller deliverables done by a certain date a series of milestones ends with the projectum deliverable",
@@ -1949,78 +2123,115 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "uuid": {"description": "a universally unique id for the task so it can be referenced elsewhere",
-                             "required": True,
-                             "type": "string"},
-                    "due_date": {"description": "due date of milestone, yyyy-mm-dd",
-                                 "required": False,
-                                 "anyof_type": ["date", "string"]},
-                    "name": {"description": "what is the deliverable of milestone",
-                             "required": False,
-                             "type": "string"},
-                    "notes": {"description": "any notes about the milestone and/or small, non-deliverable to-dos to reach the milestone",
-                              "required": False,
-                              "type": "list"},
-                    "tasks": {"description": "list of todo uuids to complete the milestone ",
-                              "required": False,
-                              "type": "list"},
-                    "progress": {"description": "update on the milestone",
-                                 "required": False,
-                                 "type": "dict",
-                                 "schema": {
-                                     "text": {"description": "text description of progress and observations",
-                                              "required": False,
-                                              "type": "string"},
-                                     "figure": {"description": "token that dereferences a figure or image in group local storage db",
-                                                "required": False,
-                                                "type": "list"},
-                                     "slides_urls": {"description": "urls to slides describing the development, e.g., Google slides url",
-                                                    "required": False,
-                                                    "type": "list"}
-                                     }
-                                 },
-                    "objective": {"description": "explains goal of the milestone",
-                                  "required": False,
-                                  "type": "string"},
-                    "audience": {"description": "list of people attending the meeting.Normally this list is group_members, collaborators, and pi, or some subset of these. if people are invited who are not alreadyin these groups their names or id's can be added explicitly to the list",
-                                 "required": False,
-                                 "type": "list"},
-                    "status": {"description": "status of the milestone. Allowed values are {', '.join(PROJECTUM_STATI)}",
-                               "required": False,
-                               "type": "string",
-                               "eallowed": PROJECTUM_STATI},
-                    "type": {"description": "type of milestone deliverable. Allowed values are {', '.join(MILESTONE_TYPES)}",
-                             "required": False,
-                             "type": "string",
-                             "eallowed": MILESTONE_TYPES},
-                    "end_date": {"description": "end date of milestone, yyyy-mm-dd",
-                                 "required": False,
-                                 "anyof_type": ["date", "string"]},
-                    "identifier": {"description": "label of milestone",
-                                   "required": False,
-                                   "type": "string"},
-                }
-            }
-        },
-        "name": {"description": "name of the projectum",
-                 "required": False,
-                 "type": "string"},
-        "pi_id": {"description": "id of the PI",
-                  "required": False,
-                  "type": "string"},
-        "status": {"description": "status of the projectum. Allowed values are {', '.join(PROJECTUM_STATI)}",
-                   "required": True,
-                   "type": "string",
-                   "eallowed": PROJECTUM_STATI},
-        "other_urls": {"description": "link to remote repository. e.g. analysis or data repositories",
-                         "required": False,
-                         "type": "list"},
-        "product_url": {"description": "url for manuscript or code repository",
+                    "uuid": {
+                        "description": "a universally unique id for the task so it can be referenced elsewhere",
+                        "required": True,
+                        "type": "string",
+                    },
+                    "due_date": {
+                        "description": "due date of milestone, yyyy-mm-dd",
                         "required": False,
-                        "type": "string"},
-        "notes": {"description": "notes about the projectum",
-                  "required": False,
-                  "type": "list"},
+                        "anyof_type": ["date", "string"],
+                    },
+                    "name": {
+                        "description": "what is the deliverable of milestone",
+                        "required": False,
+                        "type": "string",
+                    },
+                    "notes": {
+                        "description": "any notes about the milestone and/or small, non-deliverable to-dos to reach the milestone",
+                        "required": False,
+                        "type": "list",
+                    },
+                    "tasks": {
+                        "description": "list of todo uuids to complete the milestone ",
+                        "required": False,
+                        "type": "list",
+                    },
+                    "progress": {
+                        "description": "update on the milestone",
+                        "required": False,
+                        "type": "dict",
+                        "schema": {
+                            "text": {
+                                "description": "text description of progress and observations",
+                                "required": False,
+                                "type": "string",
+                            },
+                            "figure": {
+                                "description": "token that dereferences a figure or image in group local storage db",
+                                "required": False,
+                                "type": "list",
+                            },
+                            "slides_urls": {
+                                "description": "urls to slides describing the development, e.g., Google slides url",
+                                "required": False,
+                                "type": "list",
+                            },
+                        },
+                    },
+                    "objective": {
+                        "description": "explains goal of the milestone",
+                        "required": False,
+                        "type": "string",
+                    },
+                    "audience": {
+                        "description": "list of people attending the meeting.Normally this list is group_members, collaborators, and pi, or some subset of these. if people are invited who are not alreadyin these groups their names or id's can be added explicitly to the list",
+                        "required": False,
+                        "type": "list",
+                    },
+                    "status": {
+                        "description": "status of the milestone. Allowed values are {', '.join(PROJECTUM_STATI)}",
+                        "required": False,
+                        "type": "string",
+                        "eallowed": PROJECTUM_STATI,
+                    },
+                    "type": {
+                        "description": "type of milestone deliverable. Allowed values are {', '.join(MILESTONE_TYPES)}",
+                        "required": False,
+                        "type": "string",
+                        "eallowed": MILESTONE_TYPES,
+                    },
+                    "end_date": {
+                        "description": "end date of milestone, yyyy-mm-dd",
+                        "required": False,
+                        "anyof_type": ["date", "string"],
+                    },
+                    "identifier": {
+                        "description": "label of milestone",
+                        "required": False,
+                        "type": "string",
+                    },
+                },
+            },
+        },
+        "name": {
+            "description": "name of the projectum",
+            "required": False,
+            "type": "string",
+        },
+        "pi_id": {"description": "id of the PI", "required": False, "type": "string"},
+        "status": {
+            "description": "status of the projectum. Allowed values are {', '.join(PROJECTUM_STATI)}",
+            "required": True,
+            "type": "string",
+            "eallowed": PROJECTUM_STATI,
+        },
+        "other_urls": {
+            "description": "link to remote repository. e.g. analysis or data repositories",
+            "required": False,
+            "type": "list",
+        },
+        "product_url": {
+            "description": "url for manuscript or code repository",
+            "required": False,
+            "type": "string",
+        },
+        "notes": {
+            "description": "notes about the projectum",
+            "required": False,
+            "type": "list",
+        },
     },
     "projects": {
         "_description": {
@@ -2058,17 +2269,23 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "year": {"description": "the year of the highlight",
-                             "required": True,
-                             "type": "integer"},
-                    "month": {"description": "the month of the highlight",
-                              "required": True,
-                              "anyof_type": ["string", "integer"]},
-                    "description": {"description": "the highlight",
-                                    "required": True,
-                                    "type": "string"},
-                }
-            }
+                    "year": {
+                        "description": "the year of the highlight",
+                        "required": True,
+                        "type": "integer",
+                    },
+                    "month": {
+                        "description": "the month of the highlight",
+                        "required": True,
+                        "anyof_type": ["string", "integer"],
+                    },
+                    "description": {
+                        "description": "the highlight",
+                        "required": True,
+                        "type": "string",
+                    },
+                },
+            },
         },
         "logo": {
             "description": "URL to the project logo",
@@ -2096,13 +2313,15 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "begin_month": {"required": False,
-                                    "anyof_type": ["string", "integer"],
-                                    },
+                    "begin_month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "begin_year": {"required": True, "type": "integer"},
-                    "end_month": {"required": False,
-                                  "anyof_type": ["string", "integer"],
-                                  },
+                    "end_month": {
+                        "required": False,
+                        "anyof_type": ["string", "integer"],
+                    },
                     "end_year": {"required": False, "type": "integer"},
                     "name": {"required": True, "type": "string"},
                     "position": {"required": True, "type": "string"},
@@ -2114,7 +2333,7 @@
             "description": "The type of project",
             "required": False,
             "anyof_type": ["string"],
-            "eallowed": PROJECT_TYPES
+            "eallowed": PROJECT_TYPES,
         },
         "website": {
             "description": "URL of the website.",
@@ -2179,7 +2398,7 @@
         "freewrite": {
             "description": "Anything and this will appear in the built documentright before the summary.  This section often used for extra review criteria for the particular proposal",
             "required": False,
-            "anyof_type": ["string", "list"]
+            "anyof_type": ["string", "list"],
         },
         "goals": {
             "description": "What are the main goals of the proposed research",
@@ -2194,7 +2413,7 @@
         "institutions": {
             "description": "The institutions of the authors in the same order",
             "required": True,
-            "anyof_type": ["string", "list"]
+            "anyof_type": ["string", "list"],
         },
         "month": {
             "description": "The month the review was submitted",
@@ -2284,7 +2503,7 @@
         "begin_date": {
             "description": "start date of the proposed grant in format YYYY-MM-DD",
             "required": False,
-            "anyof_type": ["string", "date"]
+            "anyof_type": ["string", "date"],
         },
         "begin_day": {
             "description": "start day of the proposed grant",
@@ -2294,7 +2513,7 @@
         "begin_month": {
             "description": "start month of the proposed grant",
             "required": False,
-            "anyof_type": ["string", "integer"]
+            "anyof_type": ["string", "integer"],
         },
         "begin_year": {
             "description": "start year of the proposed grant",
@@ -2311,17 +2530,29 @@
             "required": False,
             "schema": {
                 "cppflag": {"required": False, "type": "boolean"},
-                "other_agencies_submitted": {"required": False,
-                                             "anyof_type": ["string", "boolean"]},
-                "institution": {"required": False, "type": "string",
-                                "description": "place where the proposed grant will be located"},
-                "person_months_academic": {"required": False,
-                                           "anyof_type": ["float", "integer"]},
-                "person_months_summer": {"required": False,
-                                         "anyof_type": ["float", "integer"]},
+                "other_agencies_submitted": {
+                    "required": False,
+                    "anyof_type": ["string", "boolean"],
+                },
+                "institution": {
+                    "required": False,
+                    "type": "string",
+                    "description": "place where the proposed grant will be located",
+                },
+                "person_months_academic": {
+                    "required": False,
+                    "anyof_type": ["float", "integer"],
+                },
+                "person_months_summer": {
+                    "required": False,
+                    "anyof_type": ["float", "integer"],
+                },
                 "project_scope": {"required": False, "type": "string"},
-                "single_pi": {"required": False, "type": "boolean",
-                              "description": "set to true if there are no co-pi's"},
+                "single_pi": {
+                    "required": False,
+                    "type": "boolean",
+                    "description": "set to true if there are no co-pi's",
+                },
             },
             "type": "dict",
         },
@@ -2343,7 +2574,7 @@
         "end_date": {
             "description": "end date of the proposed grant in format YYYY-MM-DD",
             "required": False,
-            "anyof_type": ["string", "date"]
+            "anyof_type": ["string", "date"],
         },
         "end_day": {
             "description": "end day of the proposed grant",
@@ -2353,7 +2584,7 @@
         "end_month": {
             "description": "end month of the proposed grant",
             "required": False,
-            "anyof_type": ["string", "integer"]
+            "anyof_type": ["string", "integer"],
         },
         "end_year": {
             "description": "end year of the proposed grant",
@@ -2404,7 +2635,7 @@
         "submitted_month": {
             "description": "month that the proposal was submitted",
             "required": False,
-            "anyof_type": ["string", "integer"]
+            "anyof_type": ["string", "integer"],
         },
         "submitted_year": {
             "description": "Year that the proposal was submitted",
@@ -2448,28 +2679,27 @@
         "_id": {
             "description": "Unique identifier for the reading list.",
             "required": True,
-            "type": "string"
+            "type": "string",
         },
-        "date": {"description": "date the list was edited",
-                 "required": False,
-                 "anyof_type": ["date", "string"]},
+        "date": {
+            "description": "date the list was edited",
+            "required": False,
+            "anyof_type": ["date", "string"],
+        },
         "day": {
             "description": "The day the list was edited",
             "required": False,
-            "type": "integer"
+            "type": "integer",
         },
         "month": {
             "description": "The month the list was edited",
             "required": False,
-            "anyof_type": [
-                "integer",
-                "string"
-            ]
+            "anyof_type": ["integer", "string"],
         },
         "year": {
             "description": "The day the list was edited",
             "required": False,
-            "type": "integer"
+            "type": "integer",
         },
         "papers": {
             "description": "The list of items that are in the list",
@@ -2481,31 +2711,31 @@
                     "doi": {
                         "description": "the doi of the paper.  If it doesn't have one put 'na'",
                         "required": False,
-                        "type": "string"
+                        "type": "string",
                     },
                     "text": {
                         "description": "the description of why the item is important or interesting",
                         "required": True,
-                        "type": "string"
+                        "type": "string",
                     },
                     "url": {
                         "description": "the url of the item if it has one",
                         "required": False,
-                        "type": "string"
-                    }
-                }
-            }
+                        "type": "string",
+                    },
+                },
+            },
         },
         "purpose": {
             "description": "The purpose or target audience for the list",
             "required": False,
-            "type": "string"
+            "type": "string",
         },
         "title": {
             "description": "The title of the list",
             "required": True,
-            "type": "string"
-        }
+            "type": "string",
+        },
     },
     "refereeReports": {
         "_description": {
@@ -2565,7 +2795,7 @@
         "institutions": {
             "description": "the institutions of the pi and co-pis",
             "required": False,
-            "anyof_type": ["string", "list"]
+            "anyof_type": ["string", "list"],
         },
         "journal": {
             "description": "name of the journal",
@@ -2575,10 +2805,7 @@
         "month": {
             "description": "The month the review was requested",
             "required": False,
-            "anyof_type": [
-                "integer",
-                "string"
-            ]
+            "anyof_type": ["integer", "string"],
         },
         "recommendation": {
             "description": "Your publication recommendation",
@@ -2639,8 +2866,7 @@
             "schema": {"type": "string"},
             "type": ["list", "string"],
         },
-        "email": {"description": "email address", "required": False,
-                  "type": "string"},
+        "email": {"description": "email address", "required": False, "type": "string"},
         "university_id": {
             "description": "The university identifier for the student",
             "required": False,
@@ -2648,9 +2874,7 @@
         },
     },
     "todos": {
-        "_description": {
-            "description": "This is a collection of todo items"
-        },
+        "_description": {"description": "This is a collection of todo items"},
         "_id": {
             "description": "the person to whom these todos are applied.this should be the id of a person from people",
             "required": True,
@@ -2663,59 +2887,75 @@
             "schema": {
                 "type": "dict",
                 "schema": {
-                    "uuid": {"description": "a universally unique id for the task so it can be referenced elsewhere",
-                             "required": True,
-                             "type": "string"},
+                    "uuid": {
+                        "description": "a universally unique id for the task so it can be referenced elsewhere",
+                        "required": True,
+                        "type": "string",
+                    },
                     "assigned_by": {
                         "description": "ID of the member that assigns the task",
                         "required": False,
-                        "type": "string"},
-                    "begin_date": {"description": "the begin date",
-                                   "required": False,
-                                   "anyof_type": ["string", "date"]},
-                    "end_date": {"description": "the end date",
-                                 "required": False,
-                                 "anyof_type": ["string", "date"]},
+                        "type": "string",
+                    },
+                    "begin_date": {
+                        "description": "the begin date",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+                    },
+                    "end_date": {
+                        "description": "the end date",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+                    },
                     "deadline": {
                         "description": "true if the due date is a hard deadline",
                         "required": False,
-                        "type": "boolean"},
+                        "type": "boolean",
+                    },
                     "description": {
                         "description": "the description of the to-do task",
                         "required": True,
-                        "type": "string"},
-                    "due_date": {"description": "the due date",
-                                 "required": False,
-                                 "anyof_type": ["string", "date"]},
+                        "type": "string",
+                    },
+                    "due_date": {
+                        "description": "the due date",
+                        "required": False,
+                        "anyof_type": ["string", "date"],
+                    },
                     "duration": {
                         "description": "the size of the task/ the estimated duration it will take to finish the task. Unit: miniutes.",
                         "required": False,
-                        "type": "float"},
+                        "type": "float",
+                    },
                     "importance": {
                         "description": "the importance, from 0 to 3",
                         "required": False,
-                        "type": "integer"},
+                        "type": "integer",
+                    },
                     "status": {
                         "description": "the status: started/finished/cancelled",
                         "required": True,
                         "type": "string",
-                        "eallowed": TODO_STATI
+                        "eallowed": TODO_STATI,
                     },
-                    "notes": {"description": "additional notes for this task",
-                              "required": False,
-                              "type": "list",
-                              "schema": {"type": "string"}
-                              },
+                    "notes": {
+                        "description": "additional notes for this task",
+                        "required": False,
+                        "type": "list",
+                        "schema": {"type": "string"},
+                    },
                     "running_index": {
                         "description": "Index of a certain task used to update that task in the enumerated todo list.",
                         "required": False,
-                        "type": "integer"},
+                        "type": "integer",
+                    },
                     "tags": {
                         "description": "user-defined tags that can be used to filter tasks",
                         "required": False,
-                        "type": "list"},
-                }
-            }
+                        "type": "list",
+                    },
+                },
+            },
         },
     },
 }
