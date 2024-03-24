@@ -438,7 +438,7 @@
                         "required": false,
                         "anyof_type": ["list", "string"]
                     }
-                },
+                }
             }
         },
         "overall_purpose": {
@@ -571,7 +571,7 @@
                     "description": "The post-fix, PhD, (Admiral, retired), whatever",
                     "type": "string",
                     "required": false
-                },
+                }
             }
         },
         "to": {
@@ -591,7 +591,7 @@
                     "description": "The post-fix, PhD, (Admiral, retired), whatever",
                     "type": "string",
                     "required": false
-                },
+                }
             }
         },
         "copy_to": {
@@ -948,7 +948,7 @@
                         "type": "string"
                     },
                     "aka": {"required": false, "type": "list"}
-                },
+                }
             }
         },
         "month": {
@@ -974,7 +974,7 @@
                         "type": "string"
                     },
                     "aka": {"required": false, "type": "list"}
-                },
+                }
             }
         },
         "state": {
@@ -1074,7 +1074,7 @@
                     "description": "The title of the talk.",
                     "type": "string",
                     "required": false
-                },
+                }
             }
         },
         "lead": {
@@ -1111,7 +1111,7 @@
                     "description": "The _id of the group member presenting or a string describing the person.",
                     "type": "string",
                     "required": true
-                },
+                }
             }
         },
         "scribe": {
@@ -1381,9 +1381,9 @@
                     "status": {
                         "required": false,
                         "type": "string",
-                        "eallowed": POSITION_STATI
+                        "eallowed": "POSITION_STATI"
                     }
-                },
+                }
             }
         },
         "facilities": {
@@ -1439,7 +1439,7 @@
                         "description": "the year the facility (or wish) went away",
                         "type": "integer"
                     }
-                },
+                }
             }
         },
         "funding": {
@@ -1538,7 +1538,7 @@
                 "street": {"type": "string", "description": "street address"},
                 "city": {"type": "string", "description": "name of home city"},
                 "state": {"type": "string", "description": "name o home state"},
-                "zip": {"type": "string", "description": "zip code"},
+                "zip": {"type": "string", "description": "zip code"}
             }
         },
         "honors": {
@@ -1841,7 +1841,7 @@
                     "video": {"required": false, "type": "string"},
                     "website": {"required": false, "type": "string"},
                     "year": {"required": true, "type": "integer"}
-                },
+                }
             }
         },
         "title": {
@@ -2024,7 +2024,7 @@
                     "description": "type of deliverable",
                     "required": false,
                     "type": "string"
-                },
+                }
             }
         },
         "description": {
@@ -2091,14 +2091,14 @@
                     "description": "status of the kickoff. Allowed values are {', '.join(PROJECTUM_STATI)}",
                     "required": false,
                     "type": "string",
-                    "eallowed": PROJECTUM_STATI
+                    "eallowed": "PROJECTUM_STATI"
                 },
                 "type": {
                     "description": "type of kickoff deliverable. In general will be 'meeting'Allowed values are {', '.join(MILESTONE_TYPES)}",
                     "required": false,
                     "type": "string",
-                    "eallowed": MILESTONE_TYPES
-                },
+                    "eallowed": "MILESTONE_TYPES"
+                }
             }
         },
         "lead": {
@@ -2202,7 +2202,7 @@
                         "required": false,
                         "type": "string"
                     }
-                },
+                }
             }
         },
         "name": {
@@ -2723,7 +2723,7 @@
                         "required": false,
                         "type": "string"
                     }
-                },
+                }
             }
         },
         "purpose": {
@@ -2954,8 +2954,8 @@
                         "required": false,
                         "type": "list"
                     }
-                },
+                }
             }
         }
-    },
+    }
 }
