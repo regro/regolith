@@ -1,5 +1,7 @@
 """Builder for CVs."""
 import datetime as dt
+import uuid
+
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
 from copy import deepcopy, copy
@@ -144,17 +146,6 @@ class ActivitylogBuilder(LatexBuilderBase):
                            and get_dates(manrev, date_field_prefix="submitted"
                                      ).get("submitted_date", dt.date(1971,1,1)
                                            ) >= begin_period])
-        #########
-        # highlights
-        #########
-        for proj in projs:
-            if proj.get('highlights'):
-                proj["current_highlights"] = False
-                for highlight in proj.get('highlights'):
-                    highlight_date = get_dates(highlight)
-                    if highlight_date.get("end_date") >= begin_period:
-                                highlight["is_current"] = True
-                                proj["current_highlights"] = True
 
         #########
         # current and pending
@@ -252,6 +243,23 @@ class ActivitylogBuilder(LatexBuilderBase):
         #########
         # end current and pending
         #########
+
+        #########
+        # highlights
+        #########
+        for grant in current_grants:
+            holdid = grant.get("_id")
+            grant["_id"] = uuid.uuid4()
+            projs.append(grant)
+            grant["_id"] = holdid  #not sure if this will update on dump so just be careful
+        for proj in projs:
+            if proj.get('highlights'):
+                proj["current_highlights"] = False
+                for highlight in proj.get('highlights'):
+                    highlight_date = get_dates(highlight)
+                    if highlight_date.get("end_date") >= begin_period:
+                                highlight["is_current"] = True
+                                proj["current_highlights"] = True
 
         #########
         # advising

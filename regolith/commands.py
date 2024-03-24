@@ -266,8 +266,8 @@ def validate(rc):
     else:
         # uncomment when debugging scheme errors
         #
-        # sys.exit(f"Validation failed on some records\n {cap}")
-        sys.exit(f"Validation failed on some records")
+        sys.exit(f"Validation failed on some records\n {cap}")
+        # sys.exit(f"Validation failed on some records")
 
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),

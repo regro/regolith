@@ -18,7 +18,7 @@ from xonsh.lib.os import rmtree
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
 
-OUTPUT_FAKE_DB = True  # always turn it to false after you used it
+OUTPUT_FAKE_DB = False  # always turn it to false after you used it
 # Currently the first two must be named test solely to match the helper map test output text
 REGOLITH_MONGODB_NAME = "test"
 FS_DB_NAME = 'test'
@@ -500,4 +500,3 @@ def exemplars_to_mongo(mongo_db_name, collection_list=None):
             print('Duplicate key error, check exemplars for duplicates if tests fail')
         except mongo_errors.BulkWriteError:
             print('Duplicate key error, check exemplars for duplicates if tests fail')
-

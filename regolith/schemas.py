@@ -570,6 +570,9 @@ EXEMPLARS = {
                 },
             ],
             "status": "accepted",
+            "highlights": [
+            {"year": 2020, "month": 5, "description": "high profile pub in Nature"}
+        ],
             "title": "SymPy 2.0 Release Support",
             "budget": [
                 {
