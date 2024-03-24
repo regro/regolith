@@ -111,6 +111,7 @@ alloweds = {
         "majoredits"
     ],
     "SERVICE_TYPES": ["profession", "university", "school", "department"],
+    "SORTED_POSITION": SORTED_POSITION,
     "TODO_STATI": ["started", "finished", "cancelled", "paused"],
     "OPTIONAL_KEYS_INSTITUTIONS": [
         "aka",
