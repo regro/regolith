@@ -2116,7 +2116,8 @@ EXEMPLARS = {
     ]
 }
 
-SCHEMAS = {
+SCHEMAS = load_schemas()
+OLD_SCHEMAS = {
     "abstracts": {
         "_description": {
             "description": "Abstracts for a conference or workshop. This is "
