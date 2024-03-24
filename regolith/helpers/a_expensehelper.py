@@ -6,7 +6,7 @@ import dateutil.parser as date_parser
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.schemas import EXPENSES_STATI, EXPENSES_TYPES
+from regolith.schemas import alloweds
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
@@ -14,6 +14,9 @@ from regolith.tools import (
 from gooey import GooeyParser
 
 TARGET_COLL = "expenses" 
+
+EXPENSES_STATI = alloweds.get("EXPENSES_STATI")
+EXPENSES_TYPES = alloweds.get("EXPENSES_TYPES")
 
 def expense_constructor(key, begin_date, end_date, rc):
     '''

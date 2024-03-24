@@ -1,17 +1,14 @@
 """Helper for adding a presentation to the presentation collection.
 """
-import urllib
-from sys import stderr
 import time
 
 import dateutil.parser as date_parser
-import threading
 from warnings import warn
 
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.schemas import PRESENTATION_TYPES, PRESENTATION_STATI
+from regolith.schemas import alloweds
 from regolith.tools import (
     all_docs_from_collection,
     get_pi_id,
@@ -24,6 +21,8 @@ from gooey import GooeyParser
 TARGET_COLL = "presentations"
 EXPENSES_COLL = "expenses"
 
+PRESENTATION_TYPES = alloweds.get("PRESENTATION_TYPES")
+PRESENTATION_STATI = alloweds.get("PRESENTATION_STATI")
 
 def subparser(subpi):
     date_kwargs = {}

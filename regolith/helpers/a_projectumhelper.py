@@ -13,7 +13,7 @@ from regolith.tools import (
     all_docs_from_collection,
     get_pi_id, get_uuid,
 )
-from regolith.schemas import MILESTONE_TYPES
+# from regolith.schemas import MILESTONE_TYPES
 
 from gooey import GooeyParser
 

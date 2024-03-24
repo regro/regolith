@@ -23,8 +23,7 @@ from urllib.parse import urlparse
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current, get_due_date
 from regolith.sorters import id_key, ene_date_key, \
     doc_date_key_high
-from regolith.schemas import APPOINTMENTS_TYPES, PRESENTATION_TYPES, \
-    PRESENTATION_STATI, OPTIONAL_KEYS_INSTITUTIONS
+from regolith.schemas import alloweds
 from requests.exceptions import HTTPError, ConnectionError
 
 try:
@@ -50,6 +49,10 @@ ON_MAC = platform.system() == "Darwin"
 ON_LINUX = platform.system() == "Linux"
 ON_POSIX = os.name == "posix"
 
+APPOINTMENTS_TYPES = alloweds.get("APPOINTMENTS_TYPES")
+PRESENTATION_TYPES = alloweds.get("PRESENTATION_TYPES")
+PRESENTATION_STATI = alloweds.get("PRESENTATION_STATI")
+OPTIONAL_KEYS_INSTITUTIONS = alloweds.get("OPTIONAL_KEYS_INSTITUTIONS")
 
 def dbdirname(db, rc):
     """Gets the database dir name."""
@@ -2324,4 +2327,3 @@ def get_appointments(person, appointments, target_grant=None):
             appointments.append((person.get('_id'), bd, ed, appt.get('loading'),
                          round(weighted_duration, 2), appt.get('grant')))
     return appointments
-

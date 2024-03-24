@@ -13,10 +13,11 @@ from regolith.tools import (
     key_value_pair_filter,
     collection_str
 )
-from regolith.schemas import PROJECTUM_STATI, PROJECTUM_PAUSED_STATI, \
+from regolith.schemas import alloweds, PROJECTUM_PAUSED_STATI, \
     PROJECTUM_CANCELLED_STATI, PROJECTUM_FINISHED_STATI, PROJECTUM_ACTIVE_STATI
 from gooey import GooeyParser
 
+PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_milestones"
 PROJECTUM_STATI.append("all")
