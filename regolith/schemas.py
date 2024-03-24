@@ -1,5 +1,7 @@
 """Database schemas, examples, and tools"""
 import copy
+import json
+from pathlib import Path
 from warnings import warn
 
 from cerberus import Validator
@@ -45,6 +47,21 @@ TODO_STATI = ["started", "finished", "cancelled", "paused"]
 OPTIONAL_KEYS_INSTITUTIONS = ["aka", "departments", "schools", "state", "street", "zip"]
 # for status of kickoff, deliverable, milestones, and the projectum
 
+def load_schemas():
+    here = Path(__file__).parent
+    schema_file = here / "schemas.json"
+    with open(schema_file, "r", encoding="utf-8") as schema_file:
+        schemas = json.load(schema_file)
+    return schemas
+
+def load_exemplars():
+    here = Path(__file__).parent
+    exemplars_file = here / "exemplars.json"
+    with open(exemplars_file, "r", encoding="utf-8") as exemplars_file:
+        exemplars = json.load(exemplars_file)
+    return exemplars
+
+# EXEMPLARS = load_exemplars()
 EXEMPLARS = {
     "abstracts": {
         "_id": "Mouginot.Model",
