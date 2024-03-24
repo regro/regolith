@@ -1,6 +1,6 @@
 **Added:**
 
-* in annual activity, grants are automatically considered as projects unless specified otherwise
+* In annual activity, grants are automatically considered as projects unless specified otherwise
 
 **Changed:**
 
