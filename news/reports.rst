@@ -4,7 +4,8 @@
 
 **Changed:**
 
-* <news item>
+* schemas moved from schemas.py to schemas.json for easier maintenance.
+  they will now be loaded from the json
 
 **Deprecated:**
 
