@@ -16,6 +16,7 @@ PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
 PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
 PROJECTUM_CANCELLED_STATI = ["cancelled"]
 PROJECTUM_FINISHED_STATI = ["finished"]
+PROJECTUM_STATI = list(PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI)
 
 alloweds = {
     "ACTIVITIES_TYPES": ["teaching", "research"],
@@ -90,10 +91,7 @@ alloweds = {
     "PROJECTUM_PAUSED_STATI": PROJECTUM_PAUSED_STATI,
     "PROJECTUM_CANCELLED_STATI": PROJECTUM_CANCELLED_STATI,
     "PROJECTUM_FINISHED_STATI": PROJECTUM_FINISHED_STATI,
-    "PROJECTUM_STATI": PROJECTUM_ACTIVE_STATI
-    + PROJECTUM_PAUSED_STATI
-    + PROJECTUM_CANCELLED_STATI
-    + PROJECTUM_FINISHED_STATI,
+    "PROJECTUM_STATI": PROJECTUM_STATI,
     "PROPOSAL_STATI": ["pending", "declined", "accepted", "inprep", "submitted"],
     "PUBLICITY_TYPES": ["online", "article"],
     "REVIEW_STATI": [
@@ -110,7 +108,7 @@ alloweds = {
         "asis",
         "smalledits",
         "diffjournal",
-        "majoredits",
+        "majoredits"
     ],
     "SERVICE_TYPES": ["profession", "university", "school", "department"],
     "TODO_STATI": ["started", "finished", "cancelled", "paused"],
@@ -128,26 +126,28 @@ alloweds = {
 
 def _update_dict_target(d, filter, new_value):
     flatd = flatten(d)
-    for k, v in flatd.items():
-        for filtk, filtv in filter.items():
+    for filtk, filtv in filter.items():
+        for k, v in flatd.items():
             if filtk in k:
                 if filtv == v:
                     flatd.update({k: new_value})
-    return unflatten(flatd)
+    unflatd = unflatten(flatd)
+    return unflatd
 
 
 def insert_alloweds(doc, alloweds, key):
+    working_doc = copy.deepcopy(doc)
     for k, v in alloweds.items():
-        _update_dict_target(doc, {key: k}, v)
-    return doc
+        working_doc = _update_dict_target(working_doc, {key: k}, v)
+    return working_doc
 
 
 def load_schemas():
     here = Path(__file__).parent
     schema_file = here / "schemas.json"
     with open(schema_file, "r", encoding="utf-8") as schema_file:
-        schemas = json.load(schema_file)
-    schemas = insert_alloweds(schemas, alloweds, "eallowed")
+        raw_schemas = json.load(schema_file)
+    schemas = insert_alloweds(raw_schemas, alloweds, "eallowed")
     return schemas
 
 
