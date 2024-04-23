@@ -247,19 +247,17 @@ class ActivitylogBuilder(LatexBuilderBase):
         #########
         # highlights
         #########
-        for grant in current_grants:
-            holdid = grant.get("_id")
-            grant["_id"] = uuid.uuid4()
-            projs.append(grant)
-            grant["_id"] = holdid  #not sure if this will update on dump so just be careful
         for proj in projs:
+            ossoftware = False
             if proj.get('highlights'):
                 proj["current_highlights"] = False
                 for highlight in proj.get('highlights'):
                     highlight_date = get_dates(highlight)
                     if highlight_date.get("end_date") >= begin_period:
-                                highlight["is_current"] = True
-                                proj["current_highlights"] = True
+                        highlight["is_current"] = True
+                        proj["current_highlights"] = True
+                        if proj.get("type") == "ossoftware":
+                            ossoftware = True
 
         #########
         # advising
@@ -455,6 +453,7 @@ class ActivitylogBuilder(LatexBuilderBase):
             graduatedphds=graduateds,
             postdocs=postdocs,
             visitors=visitors,
+            ossoftware=ossoftware,
             phd_defenses=phd_defenses,
             phd_proposals=phd_proposals,
             phd_orals=phd_orals,

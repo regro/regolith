@@ -469,42 +469,12 @@ EXEMPLARS = {
         {
             "_id": "SymPy-1.1",
             "admin": "APAM",
-            "amount": 3000.0,
             "alias": "sym",
+            "amount": 3000.0,
             "awardnr": "NF-1234",
             "begin_day": 1,
             "begin_month": "May",
             "begin_year": 2030,
-            "call_for_proposals": "https://groups.google.com/d/msg"
-            "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
-            "end_day": 31,
-            "end_month": "December",
-            "end_year": 2030,
-            "funder": "NumFOCUS",
-            "funds_available": [
-                {"date": "2020-04-01", "funds_available": 2800.00},
-                {"date": "2021-01-03", "funds_available": 2100.00},
-                {"date": "2020-07-21", "funds_available": 2600.00},
-            ],
-            "narrative": "https://docs.google.com/document/d/1nZxqoL"
-            "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
-            "=sharing",
-            "program": "Small Development Grants",
-            "team": [
-                {
-                    "institution": "University of South Carolina",
-                    "name": "Anthony Scopatz",
-                    "position": "pi",
-                },
-                {
-                    "institution": "University of South Carolina",
-                    "name": "Aaron Meurer",
-                    "position": "researcher",
-                    "admin_people": ["A. D. Ministrator"],
-                },
-            ],
-            "status": "pending",
-            "title": "SymPy 1.1 Release Support",
             "budget": [
                 {
                     "begin_date": "2030-05-01",
@@ -531,13 +501,41 @@ EXEMPLARS = {
                     "amount": 1000.0,
                 },
             ],
-            "proposal_id": "SymPy-1.1",
+            "call_for_proposals": "https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
+            "end_day": 31,
+            "end_month": "December",
+            "end_year": 2030,
+            "funder": "NumFOCUS",
+            "funds_available": [
+                {"date": "2020-04-01", "funds_available": 2800.00},
+                {"date": "2021-01-03", "funds_available": 2100.00},
+                {"date": "2020-07-21", "funds_available": 2600.00},
+            ],
+            "narrative": "https://docs.google.com/document/d/1nZxqoL"
+                "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
+                "=sharing",
+            "program": "Small Development Grants",
+            "status": "pending",
+            "team": [
+                {
+                    "institution": "University of South Carolina",
+                    "name": "Anthony Scopatz",
+                    "position": "pi",
+                },
+                {
+                    "institution": "University of South Carolina",
+                    "name": "Aaron Meurer",
+                    "position": "researcher",
+                    "admin_people": ["A. D. Ministrator"],
+                },
+            ],
+            "title": "SymPy 1.1 Release Support",
         },
         {
             "_id": "SymPy-2.0",
             "admin": "APAM",
-            "amount": 3000.0,
             "alias": "sym2.0",
+            "amount": 3000.0,
             "awardnr": "NF-1234",
             "begin_day": 1,
             "begin_month": 6,
@@ -553,10 +551,14 @@ EXEMPLARS = {
                 {"date": "2021-01-03", "funds_available": 2100.00},
                 {"date": "2020-07-21", "funds_available": 2600.00},
             ],
+            "highlights": [
+                {"year": 2020, "month": 5, "description": "high profile pub in Nature"}
+            ],
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
             "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
             "=sharing",
             "program": "Small Development Grants",
+            "proposal_id": "SymPy-1.1",
             "team": [
                 {
                     "institution": "University of South Carolina",
@@ -570,29 +572,7 @@ EXEMPLARS = {
                 },
             ],
             "status": "accepted",
-            "highlights": [
-            {"year": 2020, "month": 5, "description": "high profile pub in Nature"}
-        ],
             "title": "SymPy 2.0 Release Support",
-            "budget": [
-                {
-                    "begin_date": "2019-06-01",
-                    "end_date": "2024-12-31",
-                    "student_months": 12.0,
-                    "postdoc_months": 24.0,
-                    "ss_months": 14.0,
-                    "amount": 1500.0,
-                },
-                {
-                    "begin_date": "2025-01-01",
-                    "end_date": "2030-12-31",
-                    "student_months": 12.0,
-                    "postdoc_months": 24.0,
-                    "ss_months": 0.0,
-                    "amount": 1500.0,
-                },
-            ],
-            "proposal_id": "SymPy-2.0",
         },
         {
             "_id": "dmref15",
@@ -2013,7 +1993,7 @@ EXEMPLARS = {
         ],
         "type": "funded",
         "website": "http://fuelcycle.org/",
-        "grant": "dmref15",
+        "grants": ["dmref15"],
     },
     "proposalReviews": [
         {
