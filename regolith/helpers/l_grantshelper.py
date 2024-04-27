@@ -86,6 +86,7 @@ class GrantsListerHelper(SoutHelperBase):
         else:
             desired_date = dt.date.today()
         for grant in collection:
+            print(grant.get("_id"), get_dates(grant), desired_date)
             if rc.current and not is_current(grant, now=desired_date):
                 continue
             if not rc.reveal_hidden:
