@@ -1036,8 +1036,7 @@
                     ],
                     "permanent": true,
                     "position": "assistant professor",
-                    "position_full": "Assistant Professor, Mechanical Engineering "
-                    "Department"
+                    "position_full": "Assistant Professor, Mechanical Engineering Department"
                 },
                 {
                     "begin_year": 2013,
@@ -1049,17 +1048,15 @@
                     "advisor": "scopatz",
                     "status": "undergrad",
                     "location": "Madison, WI",
-                    "organization": "CNERG, The University of " "Wisconsin-Madison",
+                    "organization": "CNERG, The University of Wisconsin-Madison",
                     "department": "Physics",
                     "other": [
-                        "Cyclus: An agent-based, discrete time nuclear fuel "
-                        "cycle simulator.",
+                        "Cyclus: An agent-based, discrete time nuclear fuel cycle simulator.",
                         "PyNE: The Nuclear Engineering Toolkit.",
                         "Website: https://cnerg.github.io/"
                     ],
                     "position": "associate scientist",
-                    "position_full": "Associate Scientist, Engineering Physics "
-                    "Department"
+                    "position_full": "Associate Scientist, Engineering Physics Department"
                 },
                 {
                     "begin_day": 1,
@@ -1068,18 +1065,13 @@
                     "end_month": "May",
                     "end_year": 2013,
                     "location": "Chicago, IL",
-                    "organization": "The FLASH Center, The University of " "Chicago",
+                    "organization": "The FLASH Center, The University of Chicago",
                     "other": [
-                        "NIF: Simulation of magnetic field generation from "
-                        "neutral plasmas using FLASH.",
-                        "CosmoB: Simulation of magnetic field generation "
-                        "from neutral plasmas using FLASH.",
-                        "FLASH4: High-energy density physics capabilities "
-                        "and utilities.",
-                        "Simulated Diagnostics: Schlieren, shadowgraphy, "
-                        "Langmuir probes, etc. from FLASH.",
-                        "OpacPlot: HDF5-based equation of state and opacity "
-                        "file format.",
+                        "NIF: Simulation of magnetic field generation from neutral plasmas using FLASH.",
+                        "CosmoB: Simulation of magnetic field generation from neutral plasmas using FLASH.",
+                        "FLASH4: High-energy density physics capabilities and utilities.",
+                        "Simulated Diagnostics: Schlieren, shadowgraphy, Langmuir probes, etc. from FLASH.",
+                        "OpacPlot: HDF5-based equation of state and opacity file format.",
                         "Website: http://flash.uchicago.edu/site/"
                     ],
                     "position": "post-doctoral scholar",
@@ -1144,8 +1136,7 @@
             "research_focus_areas": [
                 {
                     "begin_year": 2010,
-                    "description": "software applied to nuclear "
-                    "engineering and life"
+                    "description": "software applied to nuclear engineering and life"
                 }
             ],
             "service": [
@@ -1181,21 +1172,19 @@
                 {
                     "course": "EMCH 552: Intro to Nuclear Engineering",
                     "courseid": "EMCH 552",
-                    "description": "This course is an introduction to nuclear "
-                    "physics.",
+                    "description": "This course is an introduction to nuclear physics.",
                     "enrollment": "tbd",
                     "month": "August",
                     "organization": "University of South Carolina",
                     "position": "professor",
                     "semester": "Spring",
-                    "syllabus": "https://drive.google.com/open?id"
-                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "syllabus": "https://drive.google.com/open?id=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2017
                 },
                 {
                     "course": "EMCH 558/758: Reactor Power Systems",
                     "courseid": "EMCH 558",
-                    "description": "This course covers conventional " "reactors.",
+                    "description": "This course covers conventional reactors.",
                     "enrollment": 28,
                     "evaluation": {
                         "response_rate": 66.76,
@@ -1207,14 +1196,12 @@
                         "classroom_delivery": 4,
                         "approachability": 4.3,
                         "instructor_overall": 3.5,
-                        "comments": ["super duper", "dandy"],
+                        "comments": ["super duper", "dandy"]
                     },
                     "month": "January",
                     "organization": "University of South Carolina",
                     "position": "professor",
-                    "syllabus": "https://docs.google.com/document/d"
-                    "/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8"
-                    "-PxiboYdM/edit?usp=sharing",
+                    "syllabus": "https://docs.google.com/document/d/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8-PxiboYdM/edit?usp=sharing",
                     "year": 2017
                 }
             ],
@@ -1234,7 +1221,7 @@
             "aka": [
                 "Billinge"
             ],
-            "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
+            "avatar": "https://avatars1.githubusercontent.com/u/320553?v=3&s=200",
             "bio": "Simon teaches and does research",
             "committees": [
                 {
@@ -1249,9 +1236,7 @@
             "education": [
                 {
                     "begin_year": 2008,
-                    "degree": "Ph.D. Mechanical Engineering, "
-                    "Nuclear and Radiation Engineering "
-                    "Program",
+                    "degree": "Ph.D. Mechanical Engineering, Nuclear and Radiation Engineering Program",
                     "end_year": 2011,
                     "group": "ergs",
                     "advisor": "scopatz",
@@ -1260,8 +1245,7 @@
                     "location": "Austin, TX",
                     "other": [
                         "Adviser: Erich A. Schneider",
-                        "Dissertation: Essential Physics for Fuel Cycle "
-                        "Modeling & Analysis"
+                        "Dissertation: Essential Physics for Fuel Cycle Modeling & Analysis"
                     ]
                 }
             ],
@@ -1275,8 +1259,7 @@
                     "status": "phd",
                     "advisor": "scopatz",
                     "other": [
-                        "Cyclus: An agent-based, discrete time nuclear fuel "
-                        "cycle simulator.",
+                        "Cyclus: An agent-based, discrete time nuclear fuel cycle simulator.",
                         "PyNE: The Nuclear Engineering Toolkit.",
                         "Website: http://www.ergs.sc.edu/"
                     ],
@@ -1346,7 +1329,7 @@
                     "publications(quality, quantity)",
                     "invite talks",
                     "funding",
-                    "citations",
+                    "citations"
                 ]
             },
             "name": "Simon J. L. Billinge",
@@ -1369,16 +1352,13 @@
             "research_focus_areas": [
                 {
                     "begin_year": 2010,
-                    "description": "software applied to materials "
-                    "engineering and life"
+                    "description": "software applied to materials engineering and life"
                 }
             ],
             "service": [
                 {
                     "type": "profession",
-                    "name": "Master of Ceremonies and Organizer Brown University "
-                    '"Chemistry: Believe it or Not" public chemistry '
-                    "demonstration",
+                    "name": "Master of Ceremonies and Organizer Brown University Chemistry: Believe it or Not public chemistry demonstration",
                     "year": 2017,
                     "month": "August"
                 },
@@ -1414,8 +1394,7 @@
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "f16-3010",
-                    "description": "This course is an introduction to nuclear "
-                    "physics.",
+                    "description": "This course is an introduction to nuclear physics.",
                     "enrollment": 18,
                     "evaluation": {
                         "response_rate": 58.33,
@@ -1429,22 +1408,20 @@
                         "instructor_overall": 4.43,
                         "comments": [
                             "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ],
+                            "Wears pink pants.  Why?"
+                        ]
                     },
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Fall",
-                    "syllabus": "https://drive.google.com/open?id"
-                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "syllabus": "https://drive.google.com/open?id=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2016
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "f17-3010",
-                    "description": "This course is an introduction to nuclear "
-                    "physics.",
+                    "description": "This course is an introduction to nuclear physics.",
                     "enrollment": 18,
                     "evaluation": {
                         "response_rate": 58.33,
@@ -1458,22 +1435,20 @@
                         "instructor_overall": 4.43,
                         "comments": [
                             "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ],
+                            "Wears pink pants.  Why?"
+                        ]
                     },
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Fall",
-                    "syllabus": "https://drive.google.com/open?id"
-                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "syllabus": "https://drive.google.com/open?id=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2017
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "s18-3010",
-                    "description": "This course is an introduction to nuclear "
-                    "physics.",
+                    "description": "This course is an introduction to nuclear physics.",
                     "enrollment": 18,
                     "evaluation": {
                         "response_rate": 58.33,
@@ -1487,22 +1462,20 @@
                         "instructor_overall": 4.43,
                         "comments": [
                             "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ],
+                            "Wears pink pants.  Why?"
+                        ]
                     },
                     "month": "Jan",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Spring",
-                    "syllabus": "https://drive.google.com/open?id"
-                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "syllabus": "https://drive.google.com/open?id=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2018
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "s17-3010",
-                    "description": "This course is an introduction to nuclear "
-                    "physics.",
+                    "description": "This course is an introduction to nuclear physics.",
                     "enrollment": 18,
                     "evaluation": {
                         "response_rate": 58.33,
@@ -1516,56 +1489,49 @@
                         "instructor_overall": 4.43,
                         "comments": [
                             "Great teacher but disorganized",
-                            "Wears pink pants.  Why?",
-                        ],
+                            "Wears pink pants.  Why?"
+                        ]
                     },
                     "month": "Jan",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Spring",
-                    "syllabus": "https://drive.google.com/open?id"
-                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "syllabus": "https://drive.google.com/open?id=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2017
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "s19-3010",
-                    "description": "This course is an introduction to nuclear "
-                    "physics.",
+                    "description": "This course is an introduction to nuclear physics.",
                     "enrollment": 18,
                     "month": "Jan",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Spring",
-                    "syllabus": "https://drive.google.com/open?id"
-                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "syllabus": "https://drive.google.com/open?id=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2019
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "f18-3010",
-                    "description": "This course is an introduction to nuclear "
-                    "physics.",
+                    "description": "This course is an introduction to nuclear physics.",
                     "enrollment": 18,
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Fall",
-                    "syllabus": "https://drive.google.com/open?id"
-                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "syllabus": "https://drive.google.com/open?id=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2018
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
                     "courseid": "f19-3010",
-                    "description": "This course is an introduction to nuclear "
-                    "physics.",
+                    "description": "This course is an introduction to nuclear physics.",
                     "month": "August",
                     "organization": "Columbia University",
                     "position": "professor",
                     "semester": "Fall",
-                    "syllabus": "https://drive.google.com/open?id"
-                    "=0BxUpd34yizZreDBCMEJNY2FUbnc",
+                    "syllabus": "https://drive.google.com/open?id=0BxUpd34yizZreDBCMEJNY2FUbnc",
                     "year": 2019
                 }
             ],
@@ -1632,7 +1598,7 @@
             "meeting_name": "Meeting to check flexibility on dates",
             "notes": [
                 "We hope the weather will be sunny",
-                "if the weather is nice we will go to the " "beach"
+                "if the weather is nice we will go to the beach"
             ],
             "presentation_url": "http://github.com/blob/my_talk.pdf",
             "project": "18sob_clustermining",
@@ -1657,13 +1623,11 @@
             "meeting_name": "2018 NSLS-II and CFN Users Meeting",
             "notes": [
                 "We hope the weather will be sunny",
-                "if the weather is nice we will go to the " "beach"
+                "if the weather is nice we will go to the beach"
             ],
             "project": "18sob_clustermining",
             "status": "accepted",
-            "title": "ClusterMining: extracting core structures of "
-            "metallic nanoparticles from the atomic pair "
-            "distribution function",
+            "title": "ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function",
             "type": "poster"
         },
         {
@@ -1681,8 +1645,7 @@
             "notes": ["what a week!"],
             "project": "18kj_conservation",
             "status": "accepted",
-            "title": "Nanostructure challenges and successes from "
-            "16th Century warships to 21st Century energy",
+            "title": "Nanostructure challenges and successes from 16th Century warships to 21st Century energy",
             "type": "colloquium",
             "webinar": true
         }
@@ -1697,16 +1660,13 @@
                 "due_date": "2021-05-05",
                 "success_def": "audience is happy",
                 "scope": [
-                    "UCs that are supported or some other scope description "
-                    "if it is software",
-                    "sketch of science story if it is paper",
+                    "UCs that are supported or some other scope description if it is software",
+                    "sketch of science story if it is paper"
                 ],
-                "platform": "description of how and where the audience will access "
-                "the deliverable.  Journal if it is a paper",
+                "platform": "description of how and where the audience will access the deliverable.  Journal if it is a paper",
                 "roll_out": [
-                    "steps that the audience will take to access and interact with "
-                    "the deliverable",
-                    "not needed for paper submissions",
+                    "steps that the audience will take to access and interact with the deliverable",
+                    "not needed for paper submissions"
                 ],
                 "notes": ["deliverable note"],
                 "status": "proposed"
@@ -1732,20 +1692,18 @@
                     "name": "Project lead presentation",
                     "notes": ["do background reading", "understand math"],
                     "tasks": ["1saefadf-wdaagea2"],
-                    "objective": "lead presents background reading and "
-                    "initial project plan",
+                    "objective": "lead presents background reading and initial project plan",
                     "audience": ["lead", "pi", "group_members"],
                     "status": "proposed",
                     "type": "meeting",
                     "progress": {
-                        "text": "The samples have been synthesized and places in the sample cupboard. "
-                        "They turned out well and are blue as expected",
+                        "text": "The samples have been synthesized and places in the sample cupboard. They turned out well and are blue as expected",
                         "figure": [
                             "token that dereferences a figure or image in group local storage db"
                         ],
                         "slides_urls": [
                             "url to slides describing the development, e.g. Google slides url"
-                        ],
+                        ]
                     },
                     "uuid": "milestone_uuid_sb1"
                 },
@@ -1904,8 +1862,7 @@
                 "program officer"
             ],
             "goals": [
-                "The goals of the proposal are to put together a team to find a cure"
-                "for Malaria, and then to find it"
+                "The goals of the proposal are to put together a team to find a cure for Malaria, and then to find it"
             ],
             "importance": ["save lives", "lift people from poverty"],
             "institutions": "columbiau",
@@ -1941,8 +1898,7 @@
             "due_date": "2020-04-10",
             "freewrite": "I can put extra things here, such as special instructions from the",
             "goals": [
-                "The goals of the proposal are to put together a team to find a cure"
-                "for Poverty, and then to find it"
+                "The goals of the proposal are to put together a team to find a cure for Poverty, and then to find it"
             ],
             "importance": ["save lives", "lift people from poverty"],
             "institutions": [],
@@ -1958,8 +1914,7 @@
             ],
             "nsf_pot_to_advance_knowledge": ["This won't advance knowledge at all"],
             "nsf_pot_to_benefit_society": [
-                "Society will benefit by poor people being made unpoor if they want "
-                "to be"
+                "Society will benefit by poor people being made unpoor if they want to be"
             ],
             "requester": "Tessemer Guebre",
             "reviewer": "sbillinge",
@@ -1984,8 +1939,7 @@
             "end_month": "December",
             "end_year": 2030,
             "full": {
-                "benefit_of_collaboration": "http://pdf.com"
-                "/benefit_of_collaboration",
+                "benefit_of_collaboration": "http://pdf.com/benefit_of_collaboration",
                 "cv": ["http://pdf.com/scopatz-cv", "http://pdf.com/flanagan-cv"],
                 "narrative": "http://some.com/pdf"
             },
@@ -1993,8 +1947,7 @@
             "notes": "Quite an idea",
             "pi": "Anthony Scopatz",
             "pre": {
-                "benefit_of_collaboration": "http://pdf.com"
-                "/benefit_of_collaboration",
+                "benefit_of_collaboration": "http://pdf.com/benefit_of_collaboration",
                 "cv": ["http://pdf.com/scopatz-cv", "http://pdf.com/flanagan-cv"],
                 "day": 2,
                 "month": "Aug",
@@ -2009,8 +1962,7 @@
             "_id": "dmref15",
             "amount": 982785.0,
             "authors": ["qdu", "dhsu", "sbillinge"],
-            "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/"
-            "nsf14591.htm",
+            "call_for_proposals": "http://www.nsf.gov/pubs/2014/nsf14591/nsf14591.htm",
             "begin_day": 1,
             "begin_month": "May",
             "begin_year": 2018,
@@ -2020,8 +1972,7 @@
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
-                "project_scope": "lots to do but it doesn't overlap with any "
-                "other of my grants",
+                "project_scope": "lots to do but it doesn't overlap with any other of my grants",
                 "single_pi": true
             },
             "currency": "USD",
@@ -2052,8 +2003,7 @@
                     "subaward_amount": 330000.0
                 }
             ],
-            "title": "DMREF: Novel, data validated, nanostructure determination "
-            "methods for accelerating materials discovery",
+            "title": "DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery",
             "title_short": "DMREF nanostructure"
         },
         {
