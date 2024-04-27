@@ -1,26 +1,22 @@
-{    "abstracts": {
+{
+    "abstracts": {
         "_id": "Mouginot.Model",
         "coauthors": "P.P.H. Wilson",
         "email": "mouginot@wisc.edu",
         "firstname": "Baptiste",
         "institution": "University of Wisconsin-Madison",
         "lastname": "Mouginot",
-        "references": "[1] B. MOUGINOT, “cyCLASS: CLASS "
-        "models for Cyclus,”, Figshare, "
-        "https://dx.doi.org/10.6084/"
-        "m9.figshare.3468671.v2 (2016).",
-        "text": "The CLASS team has developed high "
-        "quality predictors based on pre-trained "
-        "neural network...",
+        "references": "[1] B. MOUGINOT, “cyCLASS: CLASS models for Cyclus,”, Figshare, https://dx.doi.org/10.6084/m9.figshare.3468671.v2 (2016).",
+        "text": "The CLASS team has developed high quality predictors based on pre-trained neural network...",
         "timestamp": "5/5/2017 13:15:59",
-        "title": "Model Performance Analysis",
+        "title": "Model Performance Analysis"
     },
     "assignments": {
         "_id": "hw01-rx-power",
         "category": "homework",
         "courses": ["EMCH-558-2016-S", "EMCH-758-2016-S"],
         "points": [1, 2, 3],
-        "questions": ["1-9", "1-10", "1-12"],
+        "questions": ["1-9", "1-10", "1-12"]
     },
     "beamplan": {
         "_id": "test",
@@ -33,8 +29,9 @@
             "scan the holder to locate the samples",
             "take room temperature measurement of sample and the subtrate",
             "ramp down temperature to 100K",
-            "ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure",
-        ],
+            "ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure"
+        ]
+    ],
         "holder": "film holder (1 cm * 1 cm * 1 mm)",
         "measurement": "Tramp",
         "objective": "temperature ramping PDF of one WO3 film (100, 300K, 10K)",
@@ -46,14 +43,14 @@
         "scanplan": ["Scanplan(bt, Tramp, 30, 80, 500, 10)"],
         "ship_plan": ["seal and ship to CU", "carry to the beamline"],
         "time": 190,
-        "todo": ["todo something"],
+        "todo": ["todo something"]
     },
     "beamtime": {
         "_id": "2020-1-XPD",
         "begin_date": "2020-02-14",
         "begin_time": "8:00 am",
         "end_date": "2020-02-17",
-        "end_time": "8:00 am",
+        "end_time": "8:00 am"
     },
     "blog": {
         "_id": "my-vision",
@@ -63,7 +60,7 @@
         "original": "https://scopatz.com/my-vision/",
         "post": "I would like see things move forward. Deep, I know!",
         "title": "My Vision",
-        "year": 2015,
+        "year": 2015
     },
     "citations": [
         {
@@ -92,7 +89,7 @@
                 "Isuru Fernando",
                 "Sumith Kulal",
                 "Robert Cimrman",
-                "Anthony Scopatz",
+                "Anthony Scopatz"
             ],
             "doi": "10.1021/nn501591g",
             "entrytype": "article",
@@ -105,14 +102,14 @@
             "tags": "pdf",
             "title": "SymPy: Symbolic computing in Python",
             "volume": "4",
-            "year": "2019",
+            "year": "2019"
         },
         {
             "_id": "meurer2016nomonth",
             "ackno": "we acknowledge useful convos with our friends",
             "author": [
                 "Meurer, Aaron",
-                "Anthony Scopatz",
+                "Anthony Scopatz"
             ],
             "doi": "tbd",
             "entrytype": "article",
@@ -126,8 +123,8 @@
             "title": "SymPy: Symbolic computing in Python",
             "url": "https://doi.org/10.1021/nn501591g",
             "volume": "4",
-            "year": "2017",
-        },
+            "year": "2017"
+        }
     ],
     "contacts": {
         "_id": "afriend",
@@ -141,7 +138,7 @@
         "month": "January",
         "year": 2020,
         "day": 15,
-        "uuid": "76f2a4c7-aa63-4fa3-88b5-396b0c15d368",
+        "uuid": "76f2a4c7-aa63-4fa3-88b5-396b0c15d368"
     },
     "courses": {
         "_id": "EMCH-552-2016-F",
@@ -157,7 +154,8 @@
             [0.5625, "D+"],
             [0.5, "D"],
             [-1.0, "F"]
-        ],
+        ]
+    ],
         "season": "F",
         "students": ["Human A. Person", "Human B. Person"],
         "syllabus": "emch552-2016-f-syllabus.pdf",
@@ -179,15 +177,95 @@
             "grants": ["dmref15", "SymPy-1.1"],
             "itemized_expenses": [
                 {
-                    "day": i,
+                    "day": 1,
                     "month": "Jan",
                     "year": 2018,
                     "purpose": "test",
-                    "unsegregated_expense": 10 * i,
+                    "unsegregated_expense": 10,
                     "segregated_expense": 0,
-                    "prepaid_expense": 10.3,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 2,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 20,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 3,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 30,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 4,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 40,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 5,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 50,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 6,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 60,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 7,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 70,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 8,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 80,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 9,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 90,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
+                },
+                {
+                    "day": 10,
+                    "month": "Jan",
+                    "year": 2018,
+                    "purpose": "test",
+                    "unsegregated_expense": 100,
+                    "segregated_expense": 0,
+                    "prepaid_expense": 10.3
                 }
-                for i in range(1, 11)
             ],
             "payee": "scopatz",
             "reimbursements": [
@@ -267,21 +345,21 @@
                     "amount": 100,
                     "date": "2020-09-15",
                     "submission_date": "tbd",
-                    "where": "Columbia",
-                },
+                    "where": "Columbia"
+                }
             ],
             "project": "reimbursed expense",
             "overall_purpose": "more testing",
             "notes": "some other note",
-            "status": "bad_status",
-        },
+            "status": "bad_status"
+        }
     ],
     "grades": {
         "_id": "Human A. Person-rx-power-hw02-EMCH-758-2017-S",
         "student": "hap",
         "assignment": "2017-rx-power-hw02",
         "course": "EMCH-758-2017-S",
-        "scores": [1, 1.6, 3],
+        "scores": [1, 1.6, 3]
     },
     "formalletters": [
         {
@@ -297,8 +375,8 @@
                 "first paragraph made long enough to make sure the wrapping "
                 "gives the desired result and that it looks nice all around.",
                 "para 2",
-                "para 3",
-            ],
+                "para 3"
+            ]
         }
     ],
     "grants": [
@@ -318,7 +396,7 @@
                     "student_months": 0.5,
                     "postdoc_months": 0.0,
                     "ss_months": 1.0,
-                    "amount": 1000.0,
+                    "amount": 1000.0
                 },
                 {
                     "begin_date": "2030-07-01",
@@ -326,7 +404,7 @@
                     "student_months": 1.5,
                     "postdoc_months": 0.0,
                     "ss_months": 2.0,
-                    "amount": 1000.0,
+                    "amount": 1000.0
                 },
                 {
                     "begin_date": "2030-10-01",
@@ -334,8 +412,8 @@
                     "student_months": 3.0,
                     "postdoc_months": 0.0,
                     "ss_months": 0.0,
-                    "amount": 1000.0,
-                },
+                    "amount": 1000.0
+                }
             ],
             "call_for_proposals": "https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
             "end_day": 31,
@@ -345,27 +423,27 @@
             "funds_available": [
                 {"date": "2020-04-01", "funds_available": 2800.00},
                 {"date": "2021-01-03", "funds_available": 2100.00},
-                {"date": "2020-07-21", "funds_available": 2600.00},
+                {"date": "2020-07-21", "funds_available": 2600.00}
             ],
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
-                "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
-                "=sharing",
+            "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
+            "=sharing",
             "program": "Small Development Grants",
             "status": "pending",
             "team": [
                 {
                     "institution": "University of South Carolina",
                     "name": "Anthony Scopatz",
-                    "position": "pi",
+                    "position": "pi"
                 },
                 {
                     "institution": "University of South Carolina",
                     "name": "Aaron Meurer",
                     "position": "researcher",
-                    "admin_people": ["A. D. Ministrator"],
-                },
+                    "admin_people": ["A. D. Ministrator"]
+                }
             ],
-            "title": "SymPy 1.1 Release Support",
+            "title": "SymPy 1.1 Release Support"
         },
         {
             "_id": "SymPy-2.0",
@@ -385,7 +463,7 @@
             "funds_available": [
                 {"date": "2020-04-01", "funds_available": 2800.00},
                 {"date": "2021-01-03", "funds_available": 2100.00},
-                {"date": "2020-07-21", "funds_available": 2600.00},
+                {"date": "2020-07-21", "funds_available": 2600.00}
             ],
             "highlights": [
                 {"year": 2020, "month": 5, "description": "high profile pub in Nature"}
@@ -399,16 +477,16 @@
                 {
                     "institution": "University of South Carolina",
                     "name": "Anthony Scopatz",
-                    "position": "pi",
+                    "position": "pi"
                 },
                 {
                     "institution": "University of South Carolina",
                     "name": "Aaron Meurer",
-                    "position": "researcher",
-                },
+                    "position": "researcher"
+                }
             ],
             "status": "accepted",
-            "title": "SymPy 2.0 Release Support",
+            "title": "SymPy 2.0 Release Support"
         },
         {
             "_id": "dmref15",
@@ -433,19 +511,19 @@
                 {
                     "institution": "Columbia University",
                     "name": "qdu",
-                    "position": "copi",
+                    "position": "copi"
                 },
                 {
                     "institution": "Columbia University",
                     "name": "dhsu",
-                    "position": "copi",
+                    "position": "copi"
                 },
                 {
                     "institution": "Columbia University",
                     "name": "Anthony Scopatz",
                     "position": "pi",
-                    "subaward_amount": 330000.0,
-                },
+                    "subaward_amount": 330000.0
+                }
             ],
             "title": "DMREF: Novel, data validated, nanostructure determination "
             "methods for accelerating materials discovery",
@@ -456,7 +534,7 @@
                     "student_months": 12.0,
                     "postdoc_months": 0.0,
                     "ss_months": 6.0,
-                    "amount": 327595.0,
+                    "amount": 327595.0
                 },
                 {
                     "begin_date": "2018-10-01",
@@ -464,7 +542,7 @@
                     "student_months": 8.0,
                     "postdoc_months": 0.0,
                     "ss_months": 12.0,
-                    "amount": 327595.0,
+                    "amount": 327595.0
                 },
                 {
                     "begin_date": "2019-02-01",
@@ -472,10 +550,10 @@
                     "student_months": 12.0,
                     "postdoc_months": 0.0,
                     "ss_months": 6.0,
-                    "amount": 327595.0,
-                },
+                    "amount": 327595.0
+                }
             ],
-            "proposal_id": "dmref15",
+            "proposal_id": "dmref15"
         },
         {
             "_id": "abc42",
@@ -489,13 +567,13 @@
                 {
                     "institution": "University of Pedagogy",
                     "name": "Chief Pedagogue",
-                    "position": "pi",
+                    "position": "pi"
                 },
                 {
                     "institution": "University of Pedagogy",
                     "name": "Pedagogue Jr.",
-                    "position": "copi",
-                },
+                    "position": "copi"
+                }
             ],
             "title": "The answer to life, the universe, and everything",
             "budget": [
@@ -505,10 +583,10 @@
                     "student_months": 0.0,
                     "postdoc_months": 0.0,
                     "ss_months": 1.0,
-                    "amount": 42000.0,
+                    "amount": 42000.0
                 }
             ],
-            "proposal_id": "abc42",
+            "proposal_id": "abc42"
         },
         {
             "_id": "ta",
@@ -521,13 +599,13 @@
                 {
                     "institution": "Ministry of Magic",
                     "name": "Chief Witch",
-                    "position": "pi",
+                    "position": "pi"
                 },
                 {
                     "institution": "Ministry of Magic",
                     "name": "Chief Wizard",
-                    "position": "copi",
-                },
+                    "position": "copi"
+                }
             ],
             "title": "Support for teaching assistants",
             "budget": [
@@ -537,10 +615,10 @@
                     "student_months": 0.0,
                     "postdoc_months": 0.0,
                     "ss_months": 0.0,
-                    "amount": 0.0,
+                    "amount": 0.0
                 }
-            ],
-        },
+            ]
+        }
     ],
     "groups": {
         "_id": "ergs",
@@ -563,7 +641,7 @@
     projects. Please visit the <a href="projects.html">projects page</a> for 
     more information!
     """,
-        "email": "<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>",
+        "email": "<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>"
     },
     "institutions": [
         {
@@ -575,16 +653,16 @@
             "departments": {
                 "physics": {
                     "name": "Department of Physics",
-                    "aka": ["Dept. of Physics", "Physics"],
+                    "aka": ["Dept. of Physics", "Physics"]
                 },
                 "chemistry": {
                     "name": "Department of Chemistry",
-                    "aka": ["Chemistry", "Dept. of Chemistry"],
+                    "aka": ["Chemistry", "Dept. of Chemistry"]
                 },
                 "apam": {
                     "name": "Department of Applied Physics " "and Applied Mathematics",
-                    "aka": ["APAM"],
-                },
+                    "aka": ["APAM"]
+                }
             },
             "month": "May",
             "name": "Columbia University",
@@ -594,8 +672,8 @@
                     "aka": [
                         "SEAS",
                         "Columbia Engineering",
-                        "Fu Foundation School of Engineering " "and Applied Science",
-                    ],
+                        "Fu Foundation School of Engineering " "and Applied Science"
+                    ]
                 }
             },
             "state": "NY",
@@ -603,7 +681,7 @@
             "updated": "2020-05-30",
             "uuid": "avacazdraca345rfsvwre",
             "year": 2020,
-            "zip": "10027",
+            "zip": "10027"
         },
         {
             "_id": "usouthcarolina",
@@ -614,20 +692,20 @@
             "departments": {
                 "physics": {
                     "name": "Department of Physics",
-                    "aka": ["Dept. of Physics", "Physics"],
+                    "aka": ["Dept. of Physics", "Physics"]
                 },
                 "chemistry": {
                     "name": "Department of Chemistry",
-                    "aka": ["Chemistry", "Dept. of Chemistry"],
+                    "aka": ["Chemistry", "Dept. of Chemistry"]
                 },
                 "apam": {
                     "name": "Department of Applied Physics" "and Applied Mathematics",
-                    "aka": ["APAM"],
+                    "aka": ["APAM"]
                 },
                 "mechanical engineering": {
                     "name": "Department of Mechanical Engineering",
-                    "aka": ["Mechanical", "Dept. of Mechanical"],
-                },
+                    "aka": ["Mechanical", "Dept. of Mechanical"]
+                }
             },
             "month": "May",
             "name": "The University of South Carolina",
@@ -636,8 +714,8 @@
                     "name": "College of Engineering and" "Computing",
                     "aka": [
                         "CEC",
-                        "College of Engineering and Computing",
-                    ],
+                        "College of Engineering and Computing"
+                    ]
                 }
             },
             "state": "SC",
@@ -645,8 +723,8 @@
             "updated": "2020-06-30",
             "uuid": "4E89A0DD-19AE-45CC-BCB4-83A2D84545E3",
             "year": 2020,
-            "zip": "29208",
-        },
+            "zip": "29208"
+        }
     ],
     "jobs": {
         "_id": "0004",
@@ -659,8 +737,9 @@
             "Physics",
             "Nuclear Engineering",
             "Mechanical Engineering",
-            "Or similar",
-        ],
+            "Or similar"
+        ]
+    ],
         "compensation": [
             "Salary and compensation will be based on prior work " "experience."
         ],
@@ -674,7 +753,7 @@
         "positions": ["Scientific Software Developer", "Programmer"],
         "start_date": "ASAP",
         "title": "Open Source Scientific Software Maintainer",
-        "year": 2015,
+        "year": 2015
     },
     "meetings": [
         {
@@ -683,7 +762,7 @@
                 "(Everyone) Update overdue milestones",
                 "(Professor Billinge) Explore, and plan a machine learning project for DSI"
                 "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
-                "(Emil) Set up the slack channel for the DSI project",
+                "(Emil) Set up the slack channel for the DSI project"
             ],
             "agenda": [
                 "Review actions",
@@ -694,7 +773,7 @@
                 "(Vivian and Zicheng) Finish rest of crystallography presentation next week",
                 "Emil's 7th inning Yoga Stretch",
                 "Crystallography talk",
-                "Presentation",
+                "Presentation"
             ],
             "buddies": [
                 "   Jaylyn C. Umana, " "   Simon J. L. Billinge",
@@ -707,14 +786,14 @@
                 "   Hung Vuong, " "   Daniela Hikari Yano",
                 "   Ahmed Shaaban, " "   Jiawei Zang",
                 "   Berrak Ozer, " "   Michael Winitch",
-                "   Shomik Ghose",
+                "   Shomik Ghose"
             ],
             "day": 1,
             "journal_club": {
                 "doi": "10.1107/S2053273319005606",
                 "presenter": "sbillinge",
                 "link": "https://link/to/my/talk.ppt",
-                "title": "what the paper was about and more",
+                "title": "what the paper was about and more"
             },
             "lead": "sbillinge",
             "minutes": [
@@ -729,20 +808,20 @@
                 "Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution and other ML topics",
                 "Discussed how we can derive scientific meaning from ML algorithms",
                 "Discussed real space versus reciprocal space",
-                "Finished journal club, had to postpone Akshay's presentation, and the Yoga session to next week",
+                "Finished journal club, had to postpone Akshay's presentation, and the Yoga session to next week"
             ],
             "month": 1,
             "place": "Mudd 1106",
             "presentation": {
                 "title": "PDF Distance Extraction",
                 "link": "2007ac_grpmtg",
-                "presenter": "sbillinge",
+                "presenter": "sbillinge"
             },
             "scribe": "sbillinge",
             "time": "0",
             "updated": "2020-07-31 23:27:50.764475",
             "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
-            "year": 1000,
+            "year": 1000
         },
         {
             "_id": "grp2020-07-31",
@@ -750,7 +829,7 @@
                 "(Everyone) Update overdue milestones",
                 "(Professor Billinge) Explore, and plan a machine learning project for DSI"
                 "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
-                "(Emil) Set up the slack channel for the DSI project",
+                "(Emil) Set up the slack channel for the DSI project"
             ],
             "agenda": [
                 "Review actions",
@@ -761,7 +840,7 @@
                 "(Vivian and Zicheng) Finish rest of crystallography presentation next week",
                 "Emil's 7th inning Yoga Stretch",
                 "Crystallography talk",
-                "Presentation",
+                "Presentation"
             ],
             "buddies": [
                 "   Jaylyn C. Umana, " "   Simon J. L. Billinge",
@@ -774,13 +853,13 @@
                 "   Hung Vuong, " "   Daniela Hikari Yano",
                 "   Ahmed Shaaban, " "   Jiawei Zang",
                 "   Berrak Ozer, " "   Michael Winitch",
-                "   Shomik Ghose",
+                "   Shomik Ghose"
             ],
             "day": 1,
             "journal_club": {
                 "doi": "10.1107/S2053273319005606",
                 "link": "http://myslides.com/link/to/2007ac_grpmtg",
-                "presenter": "not_a_valid_group_id",
+                "presenter": "not_a_valid_group_id"
             },
             "lead": "sbillinge",
             "minutes": [
@@ -795,21 +874,21 @@
                 "Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution and other ML topics",
                 "Discussed how we can derive scientific meaning from ML algorithms",
                 "Discussed real space versus reciprocal space",
-                "Finished journal club, had to postpone Akshay's presentation, and the Yoga session to next week",
+                "Finished journal club, had to postpone Akshay's presentation, and the Yoga session to next week"
             ],
             "month": 1,
             "place": "Mudd 1106",
             "presentation": {
                 "title": "PDF Distance Extraction",
                 "link": "2007ac_grpmtg",
-                "presenter": "not_a_valid_group_id",
+                "presenter": "not_a_valid_group_id"
             },
             "scribe": "sbillinge",
             "time": "0",
             "updated": "2020-07-31 23:27:50.764475",
             "uuid": "3fbee8d9-e283-48e7-948f-eecfc2a123b7",
-            "year": 7000,
-        },
+            "year": 7000
+        }
     ],
     "news": {
         "_id": "56b4eb6d421aa921504ef2a9",
@@ -817,7 +896,7 @@
         "body": "Dr. Robert Flanagan joined ERGS as a post-doctoral " "scholar.",
         "day": 1,
         "month": "February",
-        "year": 2016,
+        "year": 2016
     },
     "people": [
         {
@@ -827,7 +906,7 @@
                 "Scopatz, A",
                 "Scopatz, A.",
                 "Scopatz, A M",
-                "Anthony Michael Scopatz",
+                "Anthony Michael Scopatz"
             ],
             "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
             "appointments": {
@@ -842,7 +921,7 @@
                     "type": "pd",
                     "loading": 0.75,
                     "status": "finalized",
-                    "notes": ["forgetmenot"],
+                    "notes": ["forgetmenot"]
                 },
                 "s20": {
                     "begin_date": "2020-01-01",
@@ -851,7 +930,7 @@
                     "type": "pd",
                     "loading": 1.0,
                     "status": "finalized",
-                    "notes": ["fully appointed", "outdated grant"],
+                    "notes": ["fully appointed", "outdated grant"]
                 },
                 "ss20": {
                     "begin_date": "2020-06-01",
@@ -860,7 +939,7 @@
                     "type": "ss",
                     "loading": 0.8,
                     "status": "proposed",
-                    "notes": [],
+                    "notes": []
                 },
                 "ss21": {
                     "begin_date": "2020-09-01",
@@ -869,8 +948,8 @@
                     "type": "ss",
                     "loading": 1.0,
                     "status": "proposed",
-                    "notes": [],
-                },
+                    "notes": []
+                }
             },
             "bio": "Anthony Scopatz is currently an Assistant Professor",
             "bios": [
@@ -884,7 +963,7 @@
                     "month": 3,
                     "day": 1,
                     "level": "department",
-                    "unit": "apam",
+                    "unit": "apam"
                 },
                 {
                     "name": "Heather Stanford",
@@ -893,7 +972,7 @@
                     "month": 3,
                     "day": 1,
                     "level": "school",
-                    "unit": "seas",
+                    "unit": "seas"
                 },
                 {
                     "name": "Heather Stanford",
@@ -903,7 +982,7 @@
                     "day": 1,
                     "notes": "something else to remember about it, not published",
                     "level": "external",
-                    "unit": "U Denmark",
+                    "unit": "U Denmark"
                 },
                 {
                     "name": "Heather Stanford",
@@ -912,8 +991,8 @@
                     "month": 3,
                     "day": 1,
                     "unit": "columbiau",
-                    "level": "university",
-                },
+                    "level": "university"
+                }
             ],
             "education": [
                 {
@@ -930,8 +1009,8 @@
                     "other": [
                         "Adviser: Erich A. Schneider",
                         "Dissertation: Essential Physics for Fuel Cycle "
-                        "Modeling & Analysis",
-                    ],
+                        "Modeling & Analysis"
+                    ]
                 },
                 {
                     "begin_year": 2006,
@@ -943,8 +1022,8 @@
                     "other": [
                         "Adviser: Erich A. Schneider",
                         "Thesis: Recyclable Uranium Options under the Global "
-                        "Nuclear Energy Partnership",
-                    ],
+                        "Nuclear Energy Partnership"
+                    ]
                 },
                 {
                     "begin_year": 2002,
@@ -959,7 +1038,7 @@
                     "other": [
                         "Graduated with a Major in Physics and a Minor in "
                         "Mathematics"
-                    ],
+                    ]
                 },
                 {
                     "begin_year": 2008,
@@ -967,8 +1046,8 @@
                     "group": "life",
                     "institution": "solar system",
                     "department": "earth",
-                    "location": "land, mostly",
-                },
+                    "location": "land, mostly"
+                }
             ],
             "email": "scopatz@cec.sc.edu",
             "employment": [
@@ -984,12 +1063,12 @@
                         "Cyclus: An agent-based, discrete time nuclear fuel "
                         "cycle simulator.",
                         "PyNE: The Nuclear Engineering Toolkit.",
-                        "Website: http://www.ergs.sc.edu/",
+                        "Website: http://www.ergs.sc.edu/"
                     ],
                     "permanent": true,
                     "position": "assistant professor",
                     "position_full": "Assistant Professor, Mechanical Engineering "
-                    "Department",
+                    "Department"
                 },
                 {
                     "begin_year": 2013,
@@ -1007,11 +1086,11 @@
                         "Cyclus: An agent-based, discrete time nuclear fuel "
                         "cycle simulator.",
                         "PyNE: The Nuclear Engineering Toolkit.",
-                        "Website: https://cnerg.github.io/",
+                        "Website: https://cnerg.github.io/"
                     ],
                     "position": "associate scientist",
                     "position_full": "Associate Scientist, Engineering Physics "
-                    "Department",
+                    "Department"
                 },
                 {
                     "begin_day": 1,
@@ -1032,11 +1111,11 @@
                         "Langmuir probes, etc. from FLASH.",
                         "OpacPlot: HDF5-based equation of state and opacity "
                         "file format.",
-                        "Website: http://flash.uchicago.edu/site/",
+                        "Website: http://flash.uchicago.edu/site/"
                     ],
                     "position": "post-doctoral scholar",
                     "position_full": "Research Scientist, Postdoctoral Scholar",
-                    "status": "pi",
+                    "status": "pi"
                 },
                 {
                     "begin_date": "2000-01-01",
@@ -1045,16 +1124,16 @@
                     "organization": "Google",
                     "other": [],
                     "position": "janitor",
-                    "not_in_cv": true,
-                },
+                    "not_in_cv": true
+                }
             ],
             "funding": [
                 {
                     "name": "Omega Laser User's Group Travel Award",
                     "value": 1100,
-                    "year": 2013,
+                    "year": 2013
                 },
-                {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
+                {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013}
             ],
             "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
             "github_id": "ascopatz",
@@ -1068,27 +1147,27 @@
                     "since": 1991,
                     "year": 2020,
                     "month": 2,
-                    "day": 19,
+                    "day": 19
                 }
             ],
             "home_address": {
                 "street": "123 Wallabe Ln",
                 "city": "The big apple",
                 "state": "plasma",
-                "zip": "007",
+                "zip": "007"
             },
             "initials": "AMS",
             "membership": [
                 {
                     "begin_year": 2006,
                     "organization": "American Nuclear Society",
-                    "position": "Member",
+                    "position": "Member"
                 },
                 {
                     "begin_year": 2013,
                     "organization": "Python Software Foundation",
-                    "position": "Fellow",
-                },
+                    "position": "Fellow"
+                }
             ],
             "name": "Anthony Scopatz",
             "orcid_id": "0000-0002-9432-4248",
@@ -1097,7 +1176,7 @@
                 {
                     "begin_year": 2010,
                     "description": "software applied to nuclear "
-                    "engineering and life",
+                    "engineering and life"
                 }
             ],
             "service": [
@@ -1107,27 +1186,27 @@
                     "type": "profession",
                     "year": 2020,
                     "month": 3,
-                    "notes": ["something"],
+                    "notes": ["something"]
                 },
                 {
                     "name": "National Steering Committee",
                     "type": "profession",
                     "begin_year": 2018,
                     "end_year": 2021,
-                    "notes": "something",
-                },
+                    "notes": "something"
+                }
             ],
             "skills": [
                 {
                     "category": "Programming Languages",
                     "level": "expert",
-                    "name": "Python",
+                    "name": "Python"
                 },
                 {
                     "category": "Programming Languages",
                     "level": "expert",
-                    "name": "Cython",
-                },
+                    "name": "Cython"
+                }
             ],
             "teaching": [
                 {
@@ -1142,7 +1221,7 @@
                     "semester": "Spring",
                     "syllabus": "https://drive.google.com/open?id"
                     "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2017,
+                    "year": 2017
                 },
                 {
                     "course": "EMCH 558/758: Reactor Power Systems",
@@ -1167,10 +1246,10 @@
                     "syllabus": "https://docs.google.com/document/d"
                     "/1uMAx_KFZK9ugYyF6wWtLLWgITVhaTBkAf8"
                     "-PxiboYdM/edit?usp=sharing",
-                    "year": 2017,
-                },
+                    "year": 2017
+                }
             ],
-            "title": "Dr.",
+            "title": "Dr."
         },
         {
             "_id": "sbillinge",
@@ -1180,11 +1259,11 @@
                     "type": "teaching",
                     "name": "course development",
                     "year": 2018,
-                    "other": "Developed a new course for Materials Science",
+                    "other": "Developed a new course for Materials Science"
                 }
             ],
             "aka": [
-                "Billinge",
+                "Billinge"
             ],
             "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
             "bio": "Simon teaches and does research",
@@ -1195,7 +1274,7 @@
                     "year": 2018,
                     "unit": "Materials Science",
                     "level": "department",
-                    "notes": "something",
+                    "notes": "something"
                 }
             ],
             "education": [
@@ -1213,9 +1292,9 @@
                     "other": [
                         "Adviser: Erich A. Schneider",
                         "Dissertation: Essential Physics for Fuel Cycle "
-                        "Modeling & Analysis",
-                    ],
-                },
+                        "Modeling & Analysis"
+                    ]
+                }
             ],
             "email": "sb2896@columbia.edu",
             "employment": [
@@ -1230,37 +1309,37 @@
                         "Cyclus: An agent-based, discrete time nuclear fuel "
                         "cycle simulator.",
                         "PyNE: The Nuclear Engineering Toolkit.",
-                        "Website: http://www.ergs.sc.edu/",
+                        "Website: http://www.ergs.sc.edu/"
                     ],
-                    "position": "assistant professor",
-                },
+                    "position": "assistant professor"
+                }
             ],
             "facilities": [
                 {
                     "type": "other",
                     "name": "Shared {Habanero} compute cluster",
-                    "begin_year": 2015,
+                    "begin_year": 2015
                 },
                 {
                     "type": "research_wish",
                     "name": "Shared access to wet lab",
-                    "begin_year": 2015,
+                    "begin_year": 2015
                 },
                 {"type": "teaching", "name": "Courseworks2", "begin_year": 2017},
                 {
                     "type": "teaching_wish",
                     "name": "nothing right now",
-                    "begin_year": 2019,
+                    "begin_year": 2019
                 },
-                {"type": "research", "name": "I don't have one", "begin_year": 2008},
+                {"type": "research", "name": "I don't have one", "begin_year": 2008}
             ],
             "funding": [
                 {
                     "name": "Omega Laser User's Group Travel Award",
                     "value": 1100,
-                    "year": 2013,
+                    "year": 2013
                 },
-                {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
+                {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013}
             ],
             "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
             "grp_mtg_active": true,
@@ -1274,7 +1353,7 @@
                     "since": 1991,
                     "year": 2019,
                     "month": "May",
-                    "day": 12,
+                    "day": 12
                 }
             ],
             "office": "1105 Seely W. Mudd Building (inner office)",
@@ -1282,7 +1361,7 @@
                 "street": "123 Wallabe Ln",
                 "city": "The big apple",
                 "state": "plasma",
-                "zip": "007",
+                "zip": "007"
             },
             "initials": "SJLB",
             "linkedin_url": "https://scholar.google.com/citations?hl=en&user=PAJ",
@@ -1290,8 +1369,8 @@
                 {
                     "begin_year": 2006,
                     "organization": "American Nuclear Society",
-                    "position": "Member",
-                },
+                    "position": "Member"
+                }
             ],
             "miscellaneous": {
                 "metrics_for_success": [
@@ -1299,7 +1378,7 @@
                     "invite talks",
                     "funding",
                     "citations",
-                ],
+                ]
             },
             "name": "Simon J. L. Billinge",
             "orcid_id": "0000-0002-9432-4248",
@@ -1315,14 +1394,14 @@
                     "year": 2019,
                     "date": "2019-07-24",
                     "grant": "bnlldrd18",
-                    "url": "http://www.google.com",
-                },
+                    "url": "http://www.google.com"
+                }
             ],
             "research_focus_areas": [
                 {
                     "begin_year": 2010,
                     "description": "software applied to materials "
-                    "engineering and life",
+                    "engineering and life"
                 }
             ],
             "service": [
@@ -1332,19 +1411,19 @@
                     '"Chemistry: Believe it or Not" public chemistry '
                     "demonstration",
                     "year": 2017,
-                    "month": "August",
+                    "month": "August"
                 },
                 {
                     "type": "department",
                     "name": "Applied Physics program committee",
                     "begin_date": "2018-01-01",
-                    "end_date": "2018-01-01",
+                    "end_date": "2018-01-01"
                 },
                 {
                     "type": "school",
                     "name": "Ad hoc tenure committee",
                     "date": "2017-06-01",
-                    "notes": "Albert Einstein",
+                    "notes": "Albert Einstein"
                 },
                 {
                     "type": "profession",
@@ -1352,15 +1431,15 @@
                     "year": 2017,
                     "month": 12,
                     "role": "co-organizer",
-                    "other": ["great way to meet people"],
-                },
+                    "other": ["great way to meet people"]
+                }
             ],
             "skills": [
                 {
                     "category": "Programming Languages",
                     "level": "expert",
-                    "name": "Python",
-                },
+                    "name": "Python"
+                }
             ],
             "teaching": [
                 {
@@ -1390,7 +1469,7 @@
                     "semester": "Fall",
                     "syllabus": "https://drive.google.com/open?id"
                     "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2016,
+                    "year": 2016
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
@@ -1419,7 +1498,7 @@
                     "semester": "Fall",
                     "syllabus": "https://drive.google.com/open?id"
                     "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2017,
+                    "year": 2017
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
@@ -1448,7 +1527,7 @@
                     "semester": "Spring",
                     "syllabus": "https://drive.google.com/open?id"
                     "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2018,
+                    "year": 2018
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
@@ -1477,7 +1556,7 @@
                     "semester": "Spring",
                     "syllabus": "https://drive.google.com/open?id"
                     "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2017,
+                    "year": 2017
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
@@ -1491,7 +1570,7 @@
                     "semester": "Spring",
                     "syllabus": "https://drive.google.com/open?id"
                     "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2019,
+                    "year": 2019
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
@@ -1505,7 +1584,7 @@
                     "semester": "Fall",
                     "syllabus": "https://drive.google.com/open?id"
                     "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2018,
+                    "year": 2018
                 },
                 {
                     "course": "MSAE-3010: Introduction to Materials Science",
@@ -1518,10 +1597,10 @@
                     "semester": "Fall",
                     "syllabus": "https://drive.google.com/open?id"
                     "=0BxUpd34yizZreDBCMEJNY2FUbnc",
-                    "year": 2019,
-                },
+                    "year": 2019
+                }
             ],
-            "title": "Dr.",
+            "title": "Dr."
         },
         {
             "_id": "abeing",
@@ -1533,8 +1612,8 @@
                 {
                     "degree": "bachelors",
                     "institution": "University of Laughs",
-                    "begin_year": 2010,
-                },
+                    "begin_year": 2010
+                }
             ],
             "employment": [
                 {
@@ -1542,33 +1621,33 @@
                     "begin_date": "2015-06-01",
                     "end_date": "2015-08-31",
                     "organization": "columbiau",
-                    "position": "intern",
+                    "position": "intern"
                 },
                 {
                     "group": "agroup",
                     "begin_date": "2020-01-01",
                     "end_date": "2030-12-31",
                     "organization": "usouthcarolina",
-                    "position": "intern",
+                    "position": "intern"
                 },
                 {
                     "group": "ergs",
                     "begin_date": "2010-06-01",
                     "end_date": "2012-08-31",
                     "organization": "columbiau",
-                    "position": "intern",
+                    "position": "intern"
                 },
                 {
                     "group": "bg",
                     "begin_date": "2017-06-01",
                     "end_date": "2019-08-31",
                     "organization": "columbiau",
-                    "position": "intern",
-                },
+                    "position": "intern"
+                }
             ],
             "position": "intern",
-            "name": "Abstract Being",
-        },
+            "name": "Abstract Being"
+        }
     ],
     "presentations": [
         {
@@ -1584,14 +1663,14 @@
             "meeting_name": "Meeting to check flexibility on dates",
             "notes": [
                 "We hope the weather will be sunny",
-                "if the weather is nice we will go to the " "beach",
+                "if the weather is nice we will go to the " "beach"
             ],
             "presentation_url": "http://github.com/blob/my_talk.pdf",
             "project": "18sob_clustermining",
             "status": "accepted",
             "title": "Graphitic Dephenestration",
             "type": "award",
-            "webinar": false,
+            "webinar": false
         },
         {
             "_id": "18sb_nslsii",
@@ -1609,14 +1688,14 @@
             "meeting_name": "2018 NSLS-II and CFN Users Meeting",
             "notes": [
                 "We hope the weather will be sunny",
-                "if the weather is nice we will go to the " "beach",
+                "if the weather is nice we will go to the " "beach"
             ],
             "project": "18sob_clustermining",
             "status": "accepted",
             "title": "ClusterMining: extracting core structures of "
             "metallic nanoparticles from the atomic pair "
             "distribution function",
-            "type": "poster",
+            "type": "poster"
         },
         {
             "_id": "18sb04_kentstate",
@@ -1636,8 +1715,8 @@
             "title": "Nanostructure challenges and successes from "
             "16th Century warships to 21st Century energy",
             "type": "colloquium",
-            "webinar": true,
-        },
+            "webinar": true
+        }
     ],
     "projecta": [
         {
@@ -1661,7 +1740,7 @@
                     "not needed for paper submissions",
                 ],
                 "notes": ["deliverable note"],
-                "status": "proposed",
+                "status": "proposed"
             },
             "description": "My first projectum",
             "grants": "SymPy-1.1",
@@ -1674,7 +1753,7 @@
                 "objective": "introduce project to the lead",
                 "audience": ["lead", "pi", "group_members"],
                 "notes": ["kickoff note"],
-                "status": "finished",
+                "status": "finished"
             },
             "lead": "ascopatz",
             "log_url": "https://docs.google.com/document/d/1YC_wtW5Q",
@@ -1699,7 +1778,7 @@
                             "url to slides describing the development, e.g. Google slides url"
                         ],
                     },
-                    "uuid": "milestone_uuid_sb1",
+                    "uuid": "milestone_uuid_sb1"
                 },
                 {
                     "due_date": "2020-05-27",
@@ -1708,15 +1787,15 @@
                     "audience": ["lead", "pi", "group_members"],
                     "status": "proposed",
                     "type": "mergedpr",
-                    "uuid": "milestone_uuid_sb1_2",
-                },
+                    "uuid": "milestone_uuid_sb1_2"
+                }
             ],
             "name": "First Projectum",
             "pi_id": "scopatz",
             "supplementary_info_urls": ["https://google.com", "https://nytimes.com"],
             "status": "started",
             "other_urls": ["https://docs.google.com/document/d/analysis"],
-            "product_url": "https://docs.google.com/document/d/manuscript",
+            "product_url": "https://docs.google.com/document/d/manuscript"
         },
         {
             "_id": "ab_inactive",
@@ -1730,16 +1809,16 @@
                 "due_date": "2021-05-03",
                 "name": "Kickoff",
                 "status": "backburner",
-                "type": "meeting",
+                "type": "meeting"
             },
             "milestones": [
                 {
                     "due_date": "2021-05-03",
                     "name": "Milestone",
                     "status": "converged",
-                    "uuid": "milestone_uuid_inactive",
+                    "uuid": "milestone_uuid_inactive"
                 }
-            ],
+            ]
         },
         {
             "_id": "pl_firstprojectum",
@@ -1751,16 +1830,16 @@
             "kickoff": {
                 "due_date": "2021-08-03",
                 "name": "Kickoff",
-                "status": "backburner",
+                "status": "backburner"
             },
             "milestones": [
                 {
                     "due_date": "2021-08-03",
                     "name": "Milestone",
                     "status": "converged",
-                    "uuid": "milestone_uuid_pl1",
+                    "uuid": "milestone_uuid_pl1"
                 }
-            ],
+            ]
         },
         {
             "_id": "pl_secondprojectum",
@@ -1771,16 +1850,16 @@
             "kickoff": {
                 "due_date": "2021-08-03",
                 "name": "Kickoff",
-                "status": "backburner",
+                "status": "backburner"
             },
             "milestones": [
                 {
                     "due_date": "2021-08-03",
                     "name": "Milestone",
                     "status": "converged",
-                    "uuid": "milestone_uuid_pl2",
+                    "uuid": "milestone_uuid_pl2"
                 }
-            ],
+            ]
         },
         {
             "_id": "pl_thirdprojectum",
@@ -1791,17 +1870,17 @@
             "kickoff": {
                 "due_date": "2021-08-03",
                 "name": "Kickoff",
-                "status": "backburner",
+                "status": "backburner"
             },
             "milestones": [
                 {
                     "due_date": "2021-08-03",
                     "name": "Milestone",
                     "status": "converged",
-                    "uuid": "milestone_uuid_pl3",
+                    "uuid": "milestone_uuid_pl3"
                 }
-            ],
-        },
+            ]
+        }
     ],
     "projects": {
         "_id": "Cyclus",
@@ -1814,8 +1893,9 @@
         "logo": "http://fuelcycle.org/_static/big_c.png",
         "other": [
             "Discrete facilities with discrete material transactions",
-            "Low barrier to entry, rapid payback to adoption",
-        ],
+            "Low barrier to entry, rapid payback to adoption"
+        ]
+    ],
         "repo": "https://github.com/cyclus/cyclus/",
         "team": [
             {
@@ -1824,12 +1904,12 @@
                 "end_month": "July",
                 "end_year": 2015,
                 "name": "Anthony Scopatz",
-                "position": "Project Lead",
+                "position": "Project Lead"
             }
         ],
         "type": "funded",
         "website": "http://fuelcycle.org/",
-        "grants": ["dmref15"],
+        "grants": ["dmref15"]
     },
     "proposalReviews": [
         {
@@ -1846,13 +1926,13 @@
             "doe_relevance_to_program_mission": ["super relevant"],
             "does_how": [
                 "they will find the cause of Malaria",
-                "when they find it they will determine a cure",
+                "when they find it they will determine a cure"
             ],
             "due_date": "2020-04-10",
             "does_what": "Find a cure for Malaria",
             "freewrite": [
                 "I can put extra things here, such as special instructions from the",
-                "program officer",
+                "program officer"
             ],
             "goals": [
                 "The goals of the proposal are to put together a team to find a cure"
@@ -1872,7 +1952,7 @@
             "status": "submitted",
             "summary": "dynamite proposal",
             "title": "A stunning new way to cure Malaria",
-            "year": 2019,
+            "year": 2019
         },
         {
             "_id": "1906nsfExample",
@@ -1886,7 +1966,7 @@
             "doe_relevance_to_program_mission": [],
             "does_how": [
                 "they will find the cause of Poverty",
-                "when they find it they will determine a cure",
+                "when they find it they will determine a cure"
             ],
             "does_what": "Find a cure for Poverty",
             "due_date": "2020-04-10",
@@ -1905,7 +1985,7 @@
             ],
             "nsf_plan_good": [
                 "I don't see any issues with the plan",
-                "it should be very straightforward",
+                "it should be very straightforward"
             ],
             "nsf_pot_to_advance_knowledge": ["This won't advance knowledge at all"],
             "nsf_pot_to_benefit_society": [
@@ -1917,8 +1997,8 @@
             "status": "submitted",
             "summary": "dynamite proposal",
             "title": "A stunning new way to cure Poverty",
-            "year": 2019,
-        },
+            "year": 2019
+        }
     ],
     "proposals": [
         {
@@ -1938,7 +2018,7 @@
                 "benefit_of_collaboration": "http://pdf.com"
                 "/benefit_of_collaboration",
                 "cv": ["http://pdf.com/scopatz-cv", "http://pdf.com/flanagan-cv"],
-                "narrative": "http://some.com/pdf",
+                "narrative": "http://some.com/pdf"
             },
             "submitted_month": "Aug",
             "notes": "Quite an idea",
@@ -1950,11 +2030,11 @@
                 "day": 2,
                 "month": "Aug",
                 "narrative": "http://some.com/pdf",
-                "year": 1998,
+                "year": 1998
             },
             "status": "submitted",
             "title": "A very fine proposal indeed",
-            "submitted_year": 1999,
+            "submitted_year": 1999
         },
         {
             "_id": "dmref15",
@@ -1973,7 +2053,7 @@
                 "person_months_summer": 1,
                 "project_scope": "lots to do but it doesn't overlap with any "
                 "other of my grants",
-                "single_pi": true,
+                "single_pi": true
             },
             "currency": "USD",
             "submitted_date": "2015-02-02",
@@ -1989,23 +2069,23 @@
                 {
                     "institution": "Columbia University",
                     "name": "qdu",
-                    "position": "copi",
+                    "position": "copi"
                 },
                 {
                     "institution": "Columbia University",
                     "name": "dhsu",
-                    "position": "copi",
+                    "position": "copi"
                 },
                 {
                     "institution": "Columbia University",
                     "name": "sbillinge",
                     "position": "pi",
-                    "subaward_amount": 330000.0,
-                },
+                    "subaward_amount": 330000.0
+                }
             ],
             "title": "DMREF: Novel, data validated, nanostructure determination "
             "methods for accelerating materials discovery",
-            "title_short": "DMREF nanostructure",
+            "title_short": "DMREF nanostructure"
         },
         {
             "_id": "SymPy-1.1",
@@ -2018,7 +2098,7 @@
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
-                "project_scope": "",
+                "project_scope": ""
             },
             "currency": "USD",
             "pi": "Anthony Scopatz",
@@ -2027,10 +2107,10 @@
                 {
                     "institution": "Columbia University",
                     "name": "scopatz",
-                    "position": "pi",
+                    "position": "pi"
                 }
             ],
-            "title": "SymPy 1.1 Release Support",
+            "title": "SymPy 1.1 Release Support"
         },
         {
             "_id": "SymPy-2.1",
@@ -2043,7 +2123,7 @@
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
-                "project_scope": "",
+                "project_scope": ""
             },
             "currency": "USD",
             "pi": "sbillinge",
@@ -2052,10 +2132,10 @@
                 {
                     "institution": "University of 2.1",
                     "name": "Anthony Scopatz 2.1",
-                    "position": "pi",
-                },
+                    "position": "pi"
+                }
             ],
-            "title": "SymPy 2.1 Release Support",
+            "title": "SymPy 2.1 Release Support"
         },
         {
             "_id": "abc42",
@@ -2068,13 +2148,13 @@
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
-                "project_scope": "",
+                "project_scope": ""
             },
             "currency": "USD",
             "pi": "sbillinge",
             "status": "submitted",
-            "title": "The answer to life, the universe, and everything",
-        },
+            "title": "The answer to life, the universe, and everything"
+        }
     ],
     "reading_lists": [
         {
@@ -2084,20 +2164,20 @@
             "papers": [
                 {
                     "doi": "10.1107/97809553602060000935",
-                    "text": "Very basic, but brief, intro to powder diffraction in general",
+                    "text": "Very basic, but brief, intro to powder diffraction in general"
                 },
                 {
                     "doi": "10.1039/9781847558237-00464",
-                    "text": "Lightest weight overview of PDF analysis around.  Good starting point",
+                    "text": "Lightest weight overview of PDF analysis around.  Good starting point"
                 },
                 {
                     "url": "http://www.diffpy.org",
-                    "text": "Download and install PDFgui software and run through the step by step tutorial under the help tab",
-                },
+                    "text": "Download and install PDFgui software and run through the step by step tutorial under the help tab"
+                }
             ],
             "purpose": "Beginning reading about PDF",
             "title": "A step-by-step pathway towards PDF understanding.  It is recommended to read the papers in the order they are listed here.",
-            "year": 2019,
+            "year": 2019
         },
         {
             "_id": "african_swallows",
@@ -2105,11 +2185,11 @@
             "papers": [
                 {
                     "doi": "10.1107/97809553602060000935",
-                    "text": "Very basic, but brief, intro to african swallows",
-                },
+                    "text": "Very basic, but brief, intro to african swallows"
+                }
             ],
-            "title": "A step-by-step pathway towards african swallow understanding.",
-        },
+            "title": "A step-by-step pathway towards african swallow understanding."
+        }
     ],
     "refereeReports": [
         {
@@ -2132,7 +2212,7 @@
             "submitted_date": "2019-01-01",
             "title": "a ruler approach to measuring gravity waves",
             "validity_assessment": ["complete rubbish"],
-            "year": 2019,
+            "year": 2019
         },
         {
             "_id": "2002nature",
@@ -2154,14 +2234,14 @@
             "submitted_date": "2020-01-01",
             "title": "an even smaller ruler approach to measuring gravity waves",
             "validity_assessment": ["complete rubbish"],
-            "year": 2020,
-        },
+            "year": 2020
+        }
     ],
     "students": {
         "_id": "Human A. Person",
         "aka": ["H. A. Person"],
         "email": "haperson@uni.edu",
-        "university_id": "HAP42",
+        "university_id": "HAP42"
     },
     "todos": [
         {"_id": "ascopatz"},
@@ -2191,7 +2271,7 @@
                     "status": "started",
                     "notes": [
                         "about 10 minutes",
-                        "don't forget to upload to the website",
+                        "don't forget to upload to the website"
                     ],
                     "assigned_by": "sbillinge",
                     "running_index": 2,
@@ -2200,6 +2280,4 @@
             ]
         }
     ]
-}
-
 }
