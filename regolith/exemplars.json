@@ -30,8 +30,7 @@
             "take room temperature measurement of sample and the subtrate",
             "ramp down temperature to 100K",
             "ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure"
-        ]
-    ],
+        ],
         "holder": "film holder (1 cm * 1 cm * 1 mm)",
         "measurement": "Tramp",
         "objective": "temperature ramping PDF of one WO3 film (100, 300K, 10K)",
@@ -154,8 +153,7 @@
             [0.5625, "D+"],
             [0.5, "D"],
             [-1.0, "F"]
-        ]
-    ],
+        ],
         "season": "F",
         "students": ["Human A. Person", "Human B. Person"],
         "syllabus": "emch552-2016-f-syllabus.pdf",
@@ -716,8 +714,7 @@
             "Nuclear Engineering",
             "Mechanical Engineering",
             "Or similar"
-        ]
-    ],
+        ],
         "compensation": [
             "Salary and compensation will be based on prior work experience."
         ],
@@ -1821,8 +1818,7 @@
         "other": [
             "Discrete facilities with discrete material transactions",
             "Low barrier to entry, rapid payback to adoption"
-        ]
-    ],
+        ],
         "repo": "https://github.com/cyclus/cyclus/",
         "team": [
             {
