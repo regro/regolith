@@ -4,7 +4,8 @@ import sys
 import habanero
 import openpyxl
 import pytest
-from xonsh.lib import subprocess
+# from xonsh.lib import subprocess
+import subprocess
 from pathlib import Path
 
 from regolith.broker import load_db
