@@ -247,8 +247,8 @@ class ActivitylogBuilder(LatexBuilderBase):
         #########
         # highlights
         #########
+        ossoftware = False
         for proj in projs:
-            ossoftware = False
             if proj.get('highlights'):
                 proj["current_highlights"] = False
                 for highlight in proj.get('highlights'):
