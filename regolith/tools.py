@@ -296,8 +296,6 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
         for datename in datenames:
             grant[f"{datename}year"] = grant_dates[f"{datename}date"].year
             grant[f"{datename}month"] = grant_dates[f"{datename}date"].month
-        print(grant.get("_id"))
-        print(grant)
         team_names = set(gets(grant["team"], "name"))
         if len(team_names & names) == 0:
             continue
@@ -2127,7 +2125,6 @@ def google_cal_auth_flow():
     os.makedirs(tokendir, exist_ok=True)
     tokenfile = os.path.join(tokendir, 'token.json')
     curr = pathlib.Path(__file__).parent.resolve()
-    print(curr)
     flow = InstalledAppFlow.from_client_secrets_file(
         os.path.join(curr, 'credentials.json'),
         ['https://www.googleapis.com/auth/calendar.events'])
