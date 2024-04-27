@@ -1,177 +1,4 @@
-"""Database schemas, examples, and tools"""
-
-import copy
-import json
-from pathlib import Path
-from warnings import warn
-
-from cerberus import Validator
-from flatten_dict import flatten, unflatten
-
-from .sorters import POSITION_LEVELS
-
-
-SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
-PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
-PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
-PROJECTUM_CANCELLED_STATI = ["cancelled"]
-PROJECTUM_FINISHED_STATI = ["finished"]
-PROJECTUM_STATI = list(PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI)
-
-alloweds = {
-    "ACTIVITIES_TYPES": ["teaching", "research"],
-    "AGENCIES": ["nsf", "doe", "other"],
-    "APPOINTMENTS_TYPES": ["gra", "ss", "pd", "ug"],
-    "APPOINTMENTS_STATI": ["proposed", "appointed", "finalized"],
-    "COMMITTEES_TYPES": ["phdoral", "phddefense", "phdproposal", "promotion"],
-    "COMMITTEES_LEVELS": ["department", "school", "university", "external"],
-    "EXPENSES_STATI": ["unsubmitted", "submitted", "reimbursed", "declined"],
-    "EXPENSES_TYPES": ["travel", "business"],
-    "FACILITIES_TYPES": [
-        "teaching",
-        "research",
-        "shared",
-        "other",
-        "teaching_wish",
-        "research_wish",
-    ],
-    "GRANT_STATI": ["pending", "declined", "accepted", "in-prep"],
-    "GRANT_ROLES": ["pi", "copi"],
-    "MILESTONE_TYPES": [
-        "mergedpr",
-        "meeting",
-        "other",
-        "paper",
-        "release",
-        "email",
-        "handin",
-        "purchase",
-        "approval",
-        "presentation",
-        "report",
-        "submission",
-        "decision",
-        "demo",
-        "skel",
-    ],
-    "POSITION_STATI": [
-        "pi",
-        "adjunct",
-        "high-school",
-        "undergrad",
-        "ms",
-        "phd",
-        "postdoc",
-        "visitor-supported",
-        "visitor-unsupported",
-        "research-associate",
-    ],
-    "PRESENTATION_TYPES": [
-        "award",
-        "colloquium",
-        "contributed_oral",
-        "invited",
-        "keynote",
-        "plenary",
-        "poster",
-        "seminar",
-        "tutorial",
-        "other",
-    ],
-    "PRESENTATION_STATI": [
-        "in-prep",
-        "submitted",
-        "accepted",
-        "declined",
-        "cancelled",
-        "postponed",
-    ],
-    "PROJECT_TYPES": ["ossoftware", "funded", "outreach"],
-    "PROJECTUM_ACTIVE_STATI": PROJECTUM_ACTIVE_STATI,
-    "PROJECTUM_PAUSED_STATI": PROJECTUM_PAUSED_STATI,
-    "PROJECTUM_CANCELLED_STATI": PROJECTUM_CANCELLED_STATI,
-    "PROJECTUM_FINISHED_STATI": PROJECTUM_FINISHED_STATI,
-    "PROJECTUM_STATI": PROJECTUM_STATI,
-    "PROPOSAL_STATI": ["pending", "declined", "accepted", "inprep", "submitted"],
-    "PUBLICITY_TYPES": ["online", "article"],
-    "REVIEW_STATI": [
-        "invited",
-        "accepted",
-        "declined",
-        "downloaded",
-        "inprogress",
-        "submitted",
-        "cancelled",
-    ],
-    "REVIEW_RECOMMENDATIONS": [
-        "reject",
-        "asis",
-        "smalledits",
-        "diffjournal",
-        "majoredits"
-    ],
-    "SERVICE_TYPES": ["profession", "university", "school", "department"],
-    "SORTED_POSITION": SORTED_POSITION,
-    "TODO_STATI": ["started", "finished", "cancelled", "paused"],
-    "OPTIONAL_KEYS_INSTITUTIONS": [
-        "aka",
-        "departments",
-        "schools",
-        "state",
-        "street",
-        "zip",
-    ],
-    # for status of kickoff, deliverable, milestones, and the projectum
-}
-
-
-def _update_dict_target(d, filter, new_value):
-    flatd = flatten(d)
-    for filtk, filtv in filter.items():
-        for k, v in flatd.items():
-            if filtk in k:
-                if filtv == v:
-                    flatd.update({k: new_value})
-    unflatd = unflatten(flatd)
-    return unflatd
-
-
-def insert_alloweds(doc, alloweds, key):
-    working_doc = copy.deepcopy(doc)
-    for k, v in alloweds.items():
-        working_doc = _update_dict_target(working_doc, {key: k}, v)
-    return working_doc
-
-
-def load_schemas():
-    here = Path(__file__).parent
-    schema_file = here / "schemas.json"
-    with open(schema_file, "r", encoding="utf-8") as schema_file:
-        raw_schemas = json.load(schema_file)
-    schemas = insert_alloweds(raw_schemas, alloweds, "eallowed")
-    return schemas
-
-def load_exemplars():
-    here = Path(__file__).parent
-    exemplar_file = here / "exemplars.json"
-    with open(exemplar_file, "r", encoding="utf-8") as exemplar_file:
-        raw_exemplars = json.load(exemplar_file)
-    exemplars = raw_exemplars
-    return exemplars
-
-
-def load_exemplars():
-    here = Path(__file__).parent
-    exemplars_file = here / "exemplars.json"
-    with open(exemplars_file, "r", encoding="utf-8") as exemplars_file:
-        exemplars = json.load(exemplars_file)
-    return exemplars
-
-
-<<<<<<< Updated upstream
-# EXEMPLARS = load_exemplars()
-EXEMPLARS = {
-    "abstracts": {
+{    "abstracts": {
         "_id": "Mouginot.Model",
         "coauthors": "P.P.H. Wilson",
         "email": "mouginot@wisc.edu",
@@ -318,7 +145,7 @@ EXEMPLARS = {
     },
     "courses": {
         "_id": "EMCH-552-2016-F",
-        "active": False,
+        "active": false,
         "department": "EMCH",
         "number": 552,
         "scale": [
@@ -329,7 +156,7 @@ EXEMPLARS = {
             [0.625, "C"],
             [0.5625, "D+"],
             [0.5, "D"],
-            [-1.0, "F"],
+            [-1.0, "F"]
         ],
         "season": "F",
         "students": ["Human A. Person", "Human B. Person"],
@@ -338,9 +165,9 @@ EXEMPLARS = {
             "class-notes": 0.15,
             "final": 0.3,
             "homework": 0.35,
-            "midterm": 0.2,
+            "midterm": 0.2
         },
-        "year": 2016,
+        "year": 2016
     },
     "expenses": [
         {
@@ -368,19 +195,19 @@ EXEMPLARS = {
                     "amount": 500,
                     "date": "tbd",
                     "submission_date": "tbd",
-                    "where": "Columbia",
+                    "where": "Columbia"
                 },
                 {
                     "amount": 1000,
                     "date": "2019-02-15",
                     "submission_date": "2019-09-05",
-                    "where": "Columbia",
-                },
+                    "where": "Columbia"
+                }
             ],
             "project": "Cyclus",
             "overall_purpose": "testing the databallectionsse",
             "notes": "this expense was used to get the work done",
-            "status": "submitted",
+            "status": "submitted"
         },
         {
             "_id": "test2",
@@ -399,7 +226,7 @@ EXEMPLARS = {
                     "segregated_expense": 0,
                     "prepaid_expense": 10.3,
                     "currency": "USD",
-                    "notes": ["this is just a test"],
+                    "notes": ["this is just a test"]
                 }
             ],
             "payee": "sbillinge",
@@ -408,13 +235,13 @@ EXEMPLARS = {
                     "amount": 100,
                     "date": "2019-09-15",
                     "submission_date": "tbd",
-                    "where": "Columbia",
-                },
+                    "where": "Columbia"
+                }
             ],
             "project": "reimbursed expense",
             "overall_purpose": "testing",
             "notes": "some note",
-            "status": "reimbursed",
+            "status": "reimbursed"
         },
         {
             "_id": "test3",
@@ -431,7 +258,7 @@ EXEMPLARS = {
                     "purpose": "test",
                     "unsegregated_expense": 10,
                     "segregated_expense": 0,
-                    "prepaid_expense": 10.3,
+                    "prepaid_expense": 10.3
                 }
             ],
             "payee": "sbillinge",
@@ -478,42 +305,12 @@ EXEMPLARS = {
         {
             "_id": "SymPy-1.1",
             "admin": "APAM",
-            "amount": 3000.0,
             "alias": "sym",
+            "amount": 3000.0,
             "awardnr": "NF-1234",
             "begin_day": 1,
             "begin_month": "May",
             "begin_year": 2030,
-            "call_for_proposals": "https://groups.google.com/d/msg"
-            "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
-            "end_day": 31,
-            "end_month": "December",
-            "end_year": 2030,
-            "funder": "NumFOCUS",
-            "funds_available": [
-                {"date": "2020-04-01", "funds_available": 2800.00},
-                {"date": "2021-01-03", "funds_available": 2100.00},
-                {"date": "2020-07-21", "funds_available": 2600.00},
-            ],
-            "narrative": "https://docs.google.com/document/d/1nZxqoL"
-            "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
-            "=sharing",
-            "program": "Small Development Grants",
-            "team": [
-                {
-                    "institution": "University of South Carolina",
-                    "name": "Anthony Scopatz",
-                    "position": "pi",
-                },
-                {
-                    "institution": "University of South Carolina",
-                    "name": "Aaron Meurer",
-                    "position": "researcher",
-                    "admin_people": ["A. D. Ministrator"],
-                },
-            ],
-            "status": "pending",
-            "title": "SymPy 1.1 Release Support",
             "budget": [
                 {
                     "begin_date": "2030-05-01",
@@ -540,13 +337,41 @@ EXEMPLARS = {
                     "amount": 1000.0,
                 },
             ],
-            "proposal_id": "SymPy-1.1",
+            "call_for_proposals": "https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
+            "end_day": 31,
+            "end_month": "December",
+            "end_year": 2030,
+            "funder": "NumFOCUS",
+            "funds_available": [
+                {"date": "2020-04-01", "funds_available": 2800.00},
+                {"date": "2021-01-03", "funds_available": 2100.00},
+                {"date": "2020-07-21", "funds_available": 2600.00},
+            ],
+            "narrative": "https://docs.google.com/document/d/1nZxqoL"
+                "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
+                "=sharing",
+            "program": "Small Development Grants",
+            "status": "pending",
+            "team": [
+                {
+                    "institution": "University of South Carolina",
+                    "name": "Anthony Scopatz",
+                    "position": "pi",
+                },
+                {
+                    "institution": "University of South Carolina",
+                    "name": "Aaron Meurer",
+                    "position": "researcher",
+                    "admin_people": ["A. D. Ministrator"],
+                },
+            ],
+            "title": "SymPy 1.1 Release Support",
         },
         {
             "_id": "SymPy-2.0",
             "admin": "APAM",
-            "amount": 3000.0,
             "alias": "sym2.0",
+            "amount": 3000.0,
             "awardnr": "NF-1234",
             "begin_day": 1,
             "begin_month": 6,
@@ -562,10 +387,14 @@ EXEMPLARS = {
                 {"date": "2021-01-03", "funds_available": 2100.00},
                 {"date": "2020-07-21", "funds_available": 2600.00},
             ],
+            "highlights": [
+                {"year": 2020, "month": 5, "description": "high profile pub in Nature"}
+            ],
             "narrative": "https://docs.google.com/document/d/1nZxqoL"
             "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
             "=sharing",
             "program": "Small Development Grants",
+            "proposal_id": "SymPy-1.1",
             "team": [
                 {
                     "institution": "University of South Carolina",
@@ -579,29 +408,7 @@ EXEMPLARS = {
                 },
             ],
             "status": "accepted",
-            "highlights": [
-            {"year": 2020, "month": 5, "description": "high profile pub in Nature"}
-        ],
             "title": "SymPy 2.0 Release Support",
-            "budget": [
-                {
-                    "begin_date": "2019-06-01",
-                    "end_date": "2024-12-31",
-                    "student_months": 12.0,
-                    "postdoc_months": 24.0,
-                    "ss_months": 14.0,
-                    "amount": 1500.0,
-                },
-                {
-                    "begin_date": "2025-01-01",
-                    "end_date": "2030-12-31",
-                    "student_months": 12.0,
-                    "postdoc_months": 24.0,
-                    "ss_months": 0.0,
-                    "amount": 1500.0,
-                },
-            ],
-            "proposal_id": "SymPy-2.0",
         },
         {
             "_id": "dmref15",
@@ -863,7 +670,7 @@ EXEMPLARS = {
         "description": "<p>We are seeking a dedicated individual to "
         "help to aid in ...",
         "month": "July",
-        "open": False,
+        "open": false,
         "positions": ["Scientific Software Developer", "Programmer"],
         "start_date": "ASAP",
         "title": "Open Source Scientific Software Maintainer",
@@ -1179,7 +986,7 @@ EXEMPLARS = {
                         "PyNE: The Nuclear Engineering Toolkit.",
                         "Website: http://www.ergs.sc.edu/",
                     ],
-                    "permanent": True,
+                    "permanent": true,
                     "position": "assistant professor",
                     "position_full": "Assistant Professor, Mechanical Engineering "
                     "Department",
@@ -1238,7 +1045,7 @@ EXEMPLARS = {
                     "organization": "Google",
                     "other": [],
                     "position": "janitor",
-                    "not_in_cv": True,
+                    "not_in_cv": true,
                 },
             ],
             "funding": [
@@ -1367,7 +1174,7 @@ EXEMPLARS = {
         },
         {
             "_id": "sbillinge",
-            "active": True,
+            "active": true,
             "activities": [
                 {
                     "type": "teaching",
@@ -1456,7 +1263,7 @@ EXEMPLARS = {
                 {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
             ],
             "google_scholar_url": "https://scholar.google.com/citations?user=dRm8f",
-            "grp_mtg_active": True,
+            "grp_mtg_active": true,
             "hindex": [
                 {
                     "h": 65,
@@ -1718,7 +1525,7 @@ EXEMPLARS = {
         },
         {
             "_id": "abeing",
-            "active": False,
+            "active": false,
             "aka": ["being", "human", "person"],
             "avatar": "https://xkcd.com/1221/",
             "bio": "Abstract Being is an exemplar human existence",
@@ -1784,7 +1591,7 @@ EXEMPLARS = {
             "status": "accepted",
             "title": "Graphitic Dephenestration",
             "type": "award",
-            "webinar": False,
+            "webinar": false,
         },
         {
             "_id": "18sb_nslsii",
@@ -1829,7 +1636,7 @@ EXEMPLARS = {
             "title": "Nanostructure challenges and successes from "
             "16th Century warships to 21st Century energy",
             "type": "colloquium",
-            "webinar": True,
+            "webinar": true,
         },
     ],
     "projecta": [
@@ -2022,7 +1829,7 @@ EXEMPLARS = {
         ],
         "type": "funded",
         "website": "http://fuelcycle.org/",
-        "grant": "dmref15",
+        "grants": ["dmref15"],
     },
     "proposalReviews": [
         {
@@ -2159,14 +1966,14 @@ EXEMPLARS = {
             "begin_month": "May",
             "begin_year": 2018,
             "cpp_info": {
-                "cppflag": True,
+                "cppflag": true,
                 "other_agencies_submitted": "None",
                 "institution": "Columbia University",
                 "person_months_academic": 0,
                 "person_months_summer": 1,
                 "project_scope": "lots to do but it doesn't overlap with any "
                 "other of my grants",
-                "single_pi": True,
+                "single_pi": true,
             },
             "currency": "USD",
             "submitted_date": "2015-02-02",
@@ -2206,7 +2013,7 @@ EXEMPLARS = {
             "begin_date": "2030-05-01",
             "end_date": "2030-12-31",
             "cpp_info": {
-                "cppflag": True,
+                "cppflag": true,
                 "other_agencies_submitted": "None",
                 "institution": "Columbia University",
                 "person_months_academic": 0,
@@ -2226,12 +2033,12 @@ EXEMPLARS = {
             "title": "SymPy 1.1 Release Support",
         },
         {
-            "_id": "SymPy-2.0",
+            "_id": "SymPy-2.1",
             "amount": 3000.0,
             "begin_date": "2019-06-01",
             "end_date": "2030-12-31",
             "cpp_info": {
-                "cppflag": True,
+                "cppflag": true,
                 "other_agencies_submitted": "None",
                 "institution": "Columbia University",
                 "person_months_academic": 0,
@@ -2241,7 +2048,14 @@ EXEMPLARS = {
             "currency": "USD",
             "pi": "sbillinge",
             "status": "accepted",
-            "title": "SymPy 1.1 Release Support",
+            "team": [
+                {
+                    "institution": "University of 2.1",
+                    "name": "Anthony Scopatz 2.1",
+                    "position": "pi",
+                },
+            ],
+            "title": "SymPy 2.1 Release Support",
         },
         {
             "_id": "abc42",
@@ -2249,7 +2063,7 @@ EXEMPLARS = {
             "begin_date": "2020-06-01",
             "end_date": "2020-12-31",
             "cpp_info": {
-                "cppflag": True,
+                "cppflag": true,
                 "other_agencies_submitted": "None",
                 "institution": "Columbia University",
                 "person_months_academic": 0,
@@ -2359,13 +2173,13 @@ EXEMPLARS = {
                     "uuid": "1saefadf-wdaagea2",
                     "due_date": "2020-07-19",
                     "begin_date": "2020-06-15",
-                    "deadline": True,
+                    "deadline": true,
                     "duration": 60.0,
                     "importance": 2,
                     "status": "started",
                     "assigned_by": "scopatz",
                     "running_index": 1,
-                    "tags": ["reading", "downtime"],
+                    "tags": ["reading", "downtime"]
                 },
                 {
                     "description": "prepare the presentation",
@@ -2381,73 +2195,11 @@ EXEMPLARS = {
                     ],
                     "assigned_by": "sbillinge",
                     "running_index": 2,
-                    "tags": ["downtime"],
-                },
-            ],
-        },
-    ],
+                    "tags": ["downtime"]
+                }
+            ]
+        }
+    ]
 }
 
-=======
-EXEMPLARS = load_exemplars()
->>>>>>> Stashed changes
-SCHEMAS = load_schemas()
-
-for s in SCHEMAS:
-    SCHEMAS[s]["files"] = {
-        "description": "Files associated with the document",
-        # TODO: fix this since this is currently comming out a CommentedMap (+1: Yevgeny)
-        # "type": "list",
-        # "schema": {"type": "string"},
-        "required": False,
-    }
-
-
-class NoDescriptionValidator(Validator):
-    def _validate_description(self, description, field, value):
-        """Don't validate descriptions
-
-        The rule's arguments are validated against this schema:
-        {'type': 'string'}"""
-        if False:
-            pass
-
-    def _validate_eallowed(self, eallowed, field, value):
-        """Test if value is in list
-        The rule's arguments are validated against this schema:
-        {'type': 'list'}
-        """
-        if value not in eallowed:
-            warn(
-                '"{}" is not in the preferred entries for "{}", please '
-                "consider changing this entry to conform or add this to the "
-                "``eallowed`` field in the schema.".format(value, field)
-            )
-
-
-def validate(coll, record, schemas):
-    """Validate a record for a given db
-
-    Parameters
-    ----------
-    coll : str
-        The name of the db in question
-    record : dict
-        The record to be validated
-    schemas : dict
-        The schema to validate against
-
-    Returns
-    -------
-    rtn : bool
-        True is valid
-    errors: dict
-        The errors encountered (if any)
-
-    """
-    if coll in schemas:
-        schema = copy.deepcopy(schemas[coll])
-        v = NoDescriptionValidator(schema)
-        return v.validate(record), v.errors
-    else:
-        return True, ()
+}
