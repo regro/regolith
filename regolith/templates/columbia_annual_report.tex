@@ -132,7 +132,6 @@
 \resheading{Highlights from the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 {% for pr in projects %}
-{% if pr['type'] != "ossoftware" %}
     {% if pr['current_highlights'] %}
 \subsection*{Project: {{latex_safe(pr['name'])-}} }
     {% for h in pr['highlights'] %}
@@ -141,7 +140,6 @@
         {% endif %}
     {% endfor%}
         {% endif %}
-{% endif %}
 {%endfor%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Major research focus area(s) and current projects.}
@@ -407,7 +405,7 @@ None
 \end{itemize}\vspace*{-16pt}
 {% endif %}
 
-
+{% if ossoftware %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Open source tools in the period from {{ p["begin_period"] }} to {{ p["end_period"]}} }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -424,6 +422,7 @@ None
 {% endif %}
 {% endif %}
 {%endfor%}
+{% endif %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{ Technology transfer, licensing, startups in the period from {{ p["begin_period"] }} to {{ p["end_period"]}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -918,4 +917,3 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
 {%endfor%}
 
 \end{document}
-

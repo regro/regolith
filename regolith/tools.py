@@ -2125,7 +2125,6 @@ def google_cal_auth_flow():
     os.makedirs(tokendir, exist_ok=True)
     tokenfile = os.path.join(tokendir, 'token.json')
     curr = pathlib.Path(__file__).parent.resolve()
-    print(curr)
     flow = InstalledAppFlow.from_client_secrets_file(
         os.path.join(curr, 'credentials.json'),
         ['https://www.googleapis.com/auth/calendar.events'])
