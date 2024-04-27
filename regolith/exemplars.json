@@ -372,8 +372,7 @@
             "refs": ["ref 1", "ref 2"],
             "encls": ["encl 1", "encl 2"],
             "paras": [
-                "first paragraph made long enough to make sure the wrapping "
-                "gives the desired result and that it looks nice all around.",
+                "first paragraph made long enough to make sure the wrapping gives the desired result and that it looks nice all around.",
                 "para 2",
                 "para 3"
             ]
@@ -425,9 +424,7 @@
                 {"date": "2021-01-03", "funds_available": 2100.00},
                 {"date": "2020-07-21", "funds_available": 2600.00}
             ],
-            "narrative": "https://docs.google.com/document/d/1nZxqoL"
-            "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
-            "=sharing",
+            "narrative": "https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing",
             "program": "Small Development Grants",
             "status": "pending",
             "team": [
@@ -454,8 +451,7 @@
             "begin_day": 1,
             "begin_month": 6,
             "begin_year": 2019,
-            "call_for_proposals": "https://groups.google.com/d/msg"
-            "/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
+            "call_for_proposals": "https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ",
             "end_day": 31,
             "end_month": "December",
             "end_year": 2030,
@@ -468,9 +464,7 @@
             "highlights": [
                 {"year": 2020, "month": 5, "description": "high profile pub in Nature"}
             ],
-            "narrative": "https://docs.google.com/document/d/1nZxqoL"
-            "-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp"
-            "=sharing",
+            "narrative": "https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing",
             "program": "Small Development Grants",
             "proposal_id": "SymPy-1.1",
             "team": [
@@ -498,15 +492,11 @@
             "funder": "NSF",
             "grant_id": "DMREF-1534910",
             "institution": "Columbia University",
-            "notes": "Designing Materials to Revolutionize and Engineer our "
-            "Future (DMREF)",
+            "notes": "Designing Materials to Revolutionize and Engineer our Future (DMREF)",
             "person_months_academic": 0.0,
             "person_months_summer": 0.25,
             "program": "DMREF",
-            "scope": "This grant is to develop complex modeling methods for regularizing "
-            "ill-posed nanostructure inverse problems using data analytic and "
-            "machine learning based approaches. This does not overlap with any "
-            "other grant.",
+            "scope": "This grant is to develop complex modeling methods for regularizing ill-posed nanostructure inverse problems using data analytic and machine learning based approaches. This does not overlap with any other grant.",
             "team": [
                 {
                     "institution": "Columbia University",
@@ -525,8 +515,7 @@
                     "subaward_amount": 330000.0
                 }
             ],
-            "title": "DMREF: Novel, data validated, nanostructure determination "
-            "methods for accelerating materials discovery",
+            "title": "DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery",
             "budget": [
                 {
                     "begin_date": "2018-05-01",
@@ -628,19 +617,8 @@
         "name": "ERGS",
         "aka": ["Energy Research Group Something", "Scopatz Group"],
         "website": "www.ergs.sc.edu",
-        "mission_statement": """<b>ERGS</b>, or <i>Energy Research Group: 
-    Scopatz</i>, is the Computational 
-    <a href="http://www.me.sc.edu/nuclear/">Nuclear Engineering</a>
-    research group at the 
-    <a href="http://sc.edu/">University of South Carolina</a>. 
-    Our focus is on uncertainty quantification & predictive modeling, nuclear 
-    fuel cycle simulation, and improving nuclear engineering techniques through 
-    automation.
-    We are committed to open & accessible research tools and methods.""",
-        "projects": """ERGS is involved in a large number of computational 
-    projects. Please visit the <a href="projects.html">projects page</a> for 
-    more information!
-    """,
+        "mission_statement": "We are committed to open and accessible research tools and methods.",
+        "projects": "ERGS is involved in a large number of computational projects.",
         "email": "<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>"
     },
     "institutions": [
@@ -660,7 +638,7 @@
                     "aka": ["Chemistry", "Dept. of Chemistry"]
                 },
                 "apam": {
-                    "name": "Department of Applied Physics " "and Applied Mathematics",
+                    "name": "Department of Applied Physics and Applied Mathematics",
                     "aka": ["APAM"]
                 }
             },
@@ -668,11 +646,11 @@
             "name": "Columbia University",
             "schools": {
                 "seas": {
-                    "name": "School of Engineering and " "Applied Science",
+                    "name": "School of Engineering and Applied Science",
                     "aka": [
                         "SEAS",
                         "Columbia Engineering",
-                        "Fu Foundation School of Engineering " "and Applied Science"
+                        "Fu Foundation School of Engineering and Applied Science"
                     ]
                 }
             },
@@ -699,7 +677,7 @@
                     "aka": ["Chemistry", "Dept. of Chemistry"]
                 },
                 "apam": {
-                    "name": "Department of Applied Physics" "and Applied Mathematics",
+                    "name": "Department of Applied Physics and Applied Mathematics",
                     "aka": ["APAM"]
                 },
                 "mechanical engineering": {
@@ -711,7 +689,7 @@
             "name": "The University of South Carolina",
             "schools": {
                 "cec": {
-                    "name": "College of Engineering and" "Computing",
+                    "name": "College of Engineering and Computing",
                     "aka": [
                         "CEC",
                         "College of Engineering and Computing"
@@ -741,13 +719,11 @@
         ]
     ],
         "compensation": [
-            "Salary and compensation will be based on prior work " "experience."
+            "Salary and compensation will be based on prior work experience."
         ],
-        "contact": "Please send CV or resume to Prof. Scopatz at "
-        "scopatzATcec.sc.edu.",
+        "contact": "Please send CV or resume to Prof. Scopatz at scopatzATcec.sc.edu.",
         "day": 1,
-        "description": "<p>We are seeking a dedicated individual to "
-        "help to aid in ...",
+        "description": "<p>We are seeking a dedicated individual to help to aid in ...",
         "month": "July",
         "open": false,
         "positions": ["Scientific Software Developer", "Programmer"],
@@ -760,8 +736,8 @@
             "_id": "grp1000-01-01",
             "actions": [
                 "(Everyone) Update overdue milestones",
-                "(Professor Billinge) Explore, and plan a machine learning project for DSI"
-                "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
+                "(Professor Billinge) Explore, and plan a machine learning project for DSI",
+                "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project",
                 "(Emil) Set up the slack channel for the DSI project"
             ],
             "agenda": [
@@ -776,16 +752,16 @@
                 "Presentation"
             ],
             "buddies": [
-                "   Jaylyn C. Umana, " "   Simon J. L. Billinge",
-                "   Long Yang, " "   Emil Kjaer",
-                "   Sani Harouna-Mayer," "   Akshay Choudhry",
-                "   Vivian Lin, " "   Songsheng Tao",
-                "   Ran Gu, " "   Adiba Ejaz",
-                "   Zach Thatcher, " "   Yevgeny Rakita",
-                "   Zicheng 'Taylor' Liu, " "   Eric Shen ",
-                "   Hung Vuong, " "   Daniela Hikari Yano",
-                "   Ahmed Shaaban, " "   Jiawei Zang",
-                "   Berrak Ozer, " "   Michael Winitch",
+                "   Jaylyn C. Umana,    Simon J. L. Billinge",
+                "   Long Yang,    Emil Kjaer",
+                "   Sani Harouna-Mayer,   Akshay Choudhry",
+                "   Vivian Lin,    Songsheng Tao",
+                "   Ran Gu,    Adiba Ejaz",
+                "   Zach Thatcher,    Yevgeny Rakita",
+                "   Zicheng 'Taylor' Liu,    Eric Shen ",
+                "   Hung Vuong,    Daniela Hikari Yano",
+                "   Ahmed Shaaban,    Jiawei Zang",
+                "   Berrak Ozer,    Michael Winitch",
                 "   Shomik Ghose"
             ],
             "day": 1,
@@ -827,8 +803,8 @@
             "_id": "grp2020-07-31",
             "actions": [
                 "(Everyone) Update overdue milestones",
-                "(Professor Billinge) Explore, and plan a machine learning project for DSI"
-                "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project"
+                "(Professor Billinge) Explore, and plan a machine learning project for DSI",
+                "(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project",
                 "(Emil) Set up the slack channel for the DSI project"
             ],
             "agenda": [
@@ -843,16 +819,16 @@
                 "Presentation"
             ],
             "buddies": [
-                "   Jaylyn C. Umana, " "   Simon J. L. Billinge",
-                "   Long Yang, " "   Emil Kjaer",
-                "   Sani Harouna-Mayer," "   Akshay Choudhry",
-                "   Vivian Lin, " "   Songsheng Tao",
-                "   Ran Gu, " "   Adiba Ejaz",
-                "   Zach Thatcher, " "   Yevgeny Rakita",
-                "   Zicheng 'Taylor' Liu, " "   Eric Shen ",
-                "   Hung Vuong, " "   Daniela Hikari Yano",
-                "   Ahmed Shaaban, " "   Jiawei Zang",
-                "   Berrak Ozer, " "   Michael Winitch",
+                "   Jaylyn C. Umana,    Simon J. L. Billinge",
+                "   Long Yang,    Emil Kjaer",
+                "   Sani Harouna-Mayer,   Akshay Choudhry",
+                "   Vivian Lin,    Songsheng Tao",
+                "   Ran Gu,    Adiba Ejaz",
+                "   Zach Thatcher,    Yevgeny Rakita",
+                "   Zicheng 'Taylor' Liu,    Eric Shen ",
+                "   Hung Vuong,    Daniela Hikari Yano",
+                "   Ahmed Shaaban,    Jiawei Zang",
+                "   Berrak Ozer,    Michael Winitch",
                 "   Shomik Ghose"
             ],
             "day": 1,
@@ -893,7 +869,7 @@
     "news": {
         "_id": "56b4eb6d421aa921504ef2a9",
         "author": "Anthony Scopatz",
-        "body": "Dr. Robert Flanagan joined ERGS as a post-doctoral " "scholar.",
+        "body": "Dr. Robert Flanagan joined ERGS as a post-doctoral scholar.",
         "day": 1,
         "month": "February",
         "year": 2016
@@ -908,7 +884,7 @@
                 "Scopatz, A M",
                 "Anthony Michael Scopatz"
             ],
-            "avatar": "https://avatars1.githubusercontent.com/u/320553?v" "=3&s=200",
+            "avatar": "https://avatars1.githubusercontent.com/u/320553?v=3&s=200",
             "appointments": {
                 "f19": {
                     "begin_year": 2019,
@@ -998,9 +974,7 @@
                 {
                     "advisor": "scopatz",
                     "begin_year": 2008,
-                    "degree": "Ph.D. Mechanical Engineering, "
-                    "Nuclear and Radiation Engineering "
-                    "Program",
+                    "degree": "Ph.D. Mechanical Engineering, Nuclear and Radiation Engineering Program",
                     "end_year": 2011,
                     "group": "ergs",
                     "institution": "The University of Texas at Austin",
@@ -1008,21 +982,18 @@
                     "location": "Austin, TX",
                     "other": [
                         "Adviser: Erich A. Schneider",
-                        "Dissertation: Essential Physics for Fuel Cycle "
-                        "Modeling & Analysis"
+                        "Dissertation: Essential Physics for Fuel Cycle Modeling & Analysis"
                     ]
                 },
                 {
                     "begin_year": 2006,
-                    "degree": "M.S.E. Mechanical Engineering, Nuclear and "
-                    "Radiation Engineering Program",
+                    "degree": "M.S.E. Mechanical Engineering, Nuclear and Radiation Engineering Program",
                     "end_year": 2007,
                     "institution": "The University of Texas at Austin",
                     "location": "Austin, TX",
                     "other": [
                         "Adviser: Erich A. Schneider",
-                        "Thesis: Recyclable Uranium Options under the Global "
-                        "Nuclear Energy Partnership"
+                        "Thesis: Recyclable Uranium Options under the Global Nuclear Energy Partnership"
                     ]
                 },
                 {
@@ -1036,8 +1007,7 @@
                     "institution": "University of California, Santa Barbara",
                     "location": "Santa Barbara, CA",
                     "other": [
-                        "Graduated with a Major in Physics and a Minor in "
-                        "Mathematics"
+                        "Graduated with a Major in Physics and a Minor in Mathematics"
                     ]
                 },
                 {
@@ -1060,8 +1030,7 @@
                     "location": "Columbia, SC",
                     "organization": "The University of South Carolina",
                     "other": [
-                        "Cyclus: An agent-based, discrete time nuclear fuel "
-                        "cycle simulator.",
+                        "Cyclus: An agent-based, discrete time nuclear fuel cycle simulator.",
                         "PyNE: The Nuclear Engineering Toolkit.",
                         "Website: http://www.ergs.sc.edu/"
                     ],
