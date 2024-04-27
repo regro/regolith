@@ -43,7 +43,7 @@ SymPy-1.1:
       name: scopatz
       position: pi
   title: SymPy 1.1 Release Support
-SymPy-2.0:
+SymPy-2.1:
   amount: 3000.0
   begin_date: '2019-06-01'
   cpp_info:
@@ -57,7 +57,11 @@ SymPy-2.0:
   end_date: '2030-12-31'
   pi: sbillinge
   status: accepted
-  title: SymPy 1.1 Release Support
+  team:
+    - institution: University of 2.1
+      name: Anthony Scopatz 2.1
+      position: pi
+  title: SymPy 2.1 Release Support
 abc42:
   amount: 42000.0
   begin_date: '2020-06-01'

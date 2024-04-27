@@ -2268,10 +2268,10 @@
             "required": true,
             "type": "string"
         },
-        "grant": {
+        "grants": {
             "description": "Grant id if there is a grant supporting this project",
             "required": false,
-            "type": "string"
+            "type": "list"
         },
         "group": {
             "description": "id for the group in the groups collection whose project this is",

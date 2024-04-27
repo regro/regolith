@@ -357,7 +357,7 @@ def is_current(thing, now=None):
     True if the thing is current and false otherwise
 
     """
-    if not now:
+    if now is None:
         now = datetime.date.today()
     dates = get_dates(thing)
     current = False
