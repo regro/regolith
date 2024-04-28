@@ -2327,6 +2327,11 @@
             "required": false,
             "type": "string"
         },
+        "summary": {
+            "description": "The summary of the project",
+            "required": false,
+            "type": "string"
+        },
         "team": {
             "description": "People who are/have been working on this project.",
             "required": true,
