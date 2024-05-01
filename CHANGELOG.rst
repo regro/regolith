@@ -4,6 +4,29 @@ Regolith Change Log
 
 .. current developments
 
+0.9.0
+=====
+
+**Added:**
+
+* new helper_connect app added that will connect the databases then return back a prompt to input helper commands for
+  faster response
+* funds_available to grants schema
+* In annual activity, grants are automatically considered as projects unless specified otherwise
+
+**Changed:**
+
+* Grants lister helper now lists funding available when it is available
+* exemplars moved to a json file
+* lists of commands now imported from commands.py
+
+**Fixed:**
+
+* Open source title not printed when there are no OSS projects in activity builder
+* gooey install moved to new pip.txt file in requirements since it doesn't install the correct version from conda-forge
+
+
+
 v0.8.2
 ====================
 
