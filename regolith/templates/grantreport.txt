@@ -99,6 +99,7 @@ Products
       Synopsis: {{ publ.get('synopsis','') }}
       professional Summary: {{ publ.get('professional_summary','') }}
       public Summary: {{ publ.get('public_summary','') }}
+      acknowledgement statement: {{ publ.get('ackno','') }}
 {% endfor -%}}
 
 {{ hline }}
