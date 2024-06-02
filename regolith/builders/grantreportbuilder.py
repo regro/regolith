@@ -81,7 +81,7 @@ class GrantReportBuilder(LatexBuilderBase):
         report_dates = {'begin_date': rp_start_date,
                         'end_date': rp_end_date}
         print(f"INFO: generating report for grant {grant_id} for the period"
-              f"from {rp_start_date} to {rp_end_date})")
+              f" from {rp_start_date} to {rp_end_date})")
 
 
         # Get prum associated to grant and active during reporting period
@@ -158,7 +158,7 @@ class GrantReportBuilder(LatexBuilderBase):
                         grant_id in publ.get("grant", "")]
 
         for publ in publications:
-            formatted_authors = [HumanName(name).full_name
+            formatted_authors = [f" {HumanName(name).full_name}"
                                  for name in publ.get("authors",[])]
             publ["authors"] = formatted_authors
         # Participants/Organizations

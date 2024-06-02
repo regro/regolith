@@ -92,10 +92,13 @@ Products
 {{ hline }}
 {%- for publ in products %}
     - {{ publ.get('title') }}
-      {% for person in publ.get('author') -%}{{ person }}, {%- endfor %}
+      {% for person in publ.get('author') %}{{ person }}, {% endfor %}
       {{ publ.get('journal') }}, {{ publ.get('volume') }}, pp. {{ publ.get('pages') }}
       {{ publ.get('month') }}/{{ publ.get('year') }}
       {{ publ.get('doi') }}
+      Synopsis: {{ publ.get('synopsis','') }}
+      professional Summary: {{ publ.get('professional_summary','') }}
+      public Summary: {{ publ.get('public_summary','') }}
 {% endfor -%}}
 
 {{ hline }}
