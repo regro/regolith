@@ -209,6 +209,7 @@ class GrantReportBuilder(LatexBuilderBase):
         self.render(
             "grantreport.txt",
             f"{grant_id}_report_{begin_date_str}_{end_date_str}.txt",
+            grant=grant,
             begin_date=begin_date_str,
             end_date=end_date_str,
             majorActivities=major_activities,
