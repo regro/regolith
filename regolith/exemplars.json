@@ -62,11 +62,10 @@
         "year": 2015
     },
     "package": {
-        "_id": "package",
+        "_id": "unique-package-name",
         "active": true,
-        "author": ["Simon Billinge", "andrew Yang"],
         "url": "https://github.com/diffpy/diffpy.utils",
-        "grant": ""
+        "grants": ["dmref15", "SymPy-1.1"]
     },
     "citations": [
         {

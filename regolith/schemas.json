@@ -2878,29 +2878,24 @@
     },
     "packages": {
         "_id": {
-            "description": "short representation, such as this-is-package-name",
+            "description": "unique id for the representation of packages",
             "required": true,
             "type": "string"
         },
         "active": {
-            "description": "status of package, such as active or outdated.",
-            "required": false,
+            "description": "the status whether the package is active or not.",
+            "required": true,
             "type": "boolean"
         },
-        "author": {
-            "description": "author of the package.",
-            "required": true,
-            "type": ["list", "string"]
-        },
         "url": {
-            "description": "url that corresponds to the package.",
+            "description": "url to the package on GitHub or GitLab",
             "required": true,
             "type": "string"
         },
-        "grant": {
+        "grants": {
             "description": "grant(s) that take to release the package.",
             "required": false,
-            "type": ["list", "string"]
+            "type": "list"
         }
 
     },
