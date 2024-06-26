@@ -2876,6 +2876,34 @@
             "anyof_type": ["string", "integer"]
         }
     },
+    "packages": {
+        "_id": {
+            "description": "short representation, such as this-is-package-name",
+            "required": true,
+            "type": "string"
+        },
+        "active": {
+            "description": "status of package, such as active or outdated.",
+            "required": false,
+            "type": "boolean"
+        },
+        "author": {
+            "description": "author of the package.",
+            "required": true,
+            "type": ["list", "string"]
+        },
+        "url": {
+            "description": "url that corresponds to the package.",
+            "required": true,
+            "type": "string"
+        },
+        "grant": {
+            "description": "grant(s) that take to release the package.",
+            "required": false,
+            "type": ["list", "string"]
+        }
+
+    },
     "students": {
         "_description": {
             "description": "This is a collection of student names and metadata. This should probably be private."
