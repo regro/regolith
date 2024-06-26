@@ -61,6 +61,13 @@
         "title": "My Vision",
         "year": 2015
     },
+    "package": {
+        "_id": "package",
+        "active": true,
+        "author": ["Simon Billinge", "andrew Yang"],
+        "url": "https://github.com/diffpy/diffpy.utils",
+        "grant": ""
+    },
     "citations": [
         {
             "_id": "meurer2016sympy",
