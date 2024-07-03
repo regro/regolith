@@ -61,7 +61,7 @@
         "title": "My Vision",
         "year": 2015
     },
-    "package": {
+    "packages": {
         "_id": "unique-package-name",
         "active": true,
         "url": "https://github.com/diffpy/diffpy.utils",
