@@ -1,5 +1,6 @@
-"""Builder for the plan of beamtimes. The plan contains a summary of the information for the experiments in during a
-beamtime and details about how to carry out the experiments."""
+"""Builder for the plan of beamtimes. 
+The plan contains a summary of the information for the experiments in during a beamtime and details about
+how to carry out the experiments."""
 
 from datetime import datetime
 
@@ -11,10 +12,10 @@ from regolith.tools import all_docs_from_collection, group, id_key
 
 class BeamPlanBuilder(LatexBuilderBase):
     """
-    Build a file of experiment plans for the beamtime from database entries. The report is in .tex file. The template
-    of the file is in the 'templates/beamplan.tex'. The data will be grouped according to beamtime. Each beamtime
-    will generate a file of the plans. If 'beamtime' in 'rc' are not None, only plans for those beamtime will be
-    generated.
+    Build a file of experiment plans for the beamtime from database entries. The report is in .tex file.
+    The template of the file is in the 'templates/beamplan.tex'. The data will be grouped according to beamtime.
+    Each beamtime will generate a file of the plans. If 'beamtime' in 'rc' are not None,
+    only plans for those beamtime will be generated.
 
     Methods
     -------
