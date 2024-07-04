@@ -2876,31 +2876,31 @@
             "anyof_type": ["string", "integer"]
         }
     },
-    "packages": {
+    "software": {
         "_id": {
-            "description": "unique id for the representation of packages",
+            "description": "package id",
             "required": true,
             "type": "string"
         },
         "active": {
-            "description": "the status whether the package is active or not.",
+            "description": "the status whether the package is actively maintained or not.",
             "required": true,
             "type": "boolean"
         },
         "url": {
-            "description": "url to the package on GitHub or GitLab",
+            "description": "url to the package on GitHub or GitLab, etc.",
             "required": true,
             "type": "string"
         },
         "grants": {
-            "description": "grant(s) that take to release the package.",
-            "required": false,
+            "description": "grant(s) that supported package development/maintenance",
+            "required": true,
             "type": "list"
         },
-        "group": {
-            "description": "research group that develops the package.",
+        "groups": {
+            "description": "research group(s) that develop the package.",
             "required": true,
-            "type": "string"
+            "type": "list"
         }
 
     },
