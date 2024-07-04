@@ -1,4 +1,5 @@
 """Helps deploy what we have built."""
+
 import os
 import time
 from xonsh.lib import subprocess
@@ -91,6 +92,4 @@ def deploy(rc, name, url, src="html", dst=None):
     elif url.startswith("hg+"):
         deploy_hg(rc, name, url, src=src, dst=dst)
     else:
-        raise ValueError(
-            "Do not know how to deploy to this kind of URL: " + url
-        )
+        raise ValueError("Do not know how to deploy to this kind of URL: " + url)

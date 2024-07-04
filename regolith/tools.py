@@ -1,5 +1,5 @@
-"""Misc. regolith tools.
-"""
+"""Misc. regolith tools."""
+
 import email.utils
 import os
 import pathlib
@@ -21,8 +21,7 @@ from google.oauth2.credentials import Credentials
 from urllib.parse import urlparse
 
 from regolith.dates import month_to_int, date_to_float, get_dates, is_current, get_due_date
-from regolith.sorters import id_key, ene_date_key, \
-    doc_date_key_high
+from regolith.sorters import id_key, ene_date_key, doc_date_key_high
 from regolith.schemas import alloweds
 from requests.exceptions import HTTPError, ConnectionError
 
@@ -54,6 +53,7 @@ PRESENTATION_TYPES = alloweds.get("PRESENTATION_TYPES")
 PRESENTATION_STATI = alloweds.get("PRESENTATION_STATI")
 OPTIONAL_KEYS_INSTITUTIONS = alloweds.get("OPTIONAL_KEYS_INSTITUTIONS")
 
+
 def dbdirname(db, rc):
     """Gets the database dir name."""
     if db.get("local", False) is False:
@@ -73,7 +73,7 @@ def dbpathname(db, rc):
 
 def fallback(cond, backup):
     """Decorator for returning the object if cond is true and a backup if
-    cond is false. """
+    cond is false."""
 
     def dec(obj):
         return obj if cond else backup
@@ -83,7 +83,7 @@ def fallback(cond, backup):
 
 def all_docs_from_collection(client, collname, copy=True):
     """Yield all entries in all collections of a given name in a given
-    database. """
+    database."""
     yield from client.all_documents(collname, copy=copy)
 
 
@@ -137,9 +137,17 @@ def get_team_from_grant(grantcol):
         return gets(grant["team"], "name")
 
 
-def filter_publications(citations, authors, reverse=False, bold=True,
-                        since=None, before=None, ackno=False,
-                        grants=None, facilities=None):
+def filter_publications(
+    citations,
+    authors,
+    reverse=False,
+    bold=True,
+    since=None,
+    before=None,
+    ackno=False,
+    grants=None,
+    facilities=None,
+):
     """Filter publications by the author(s)/editor(s)
 
     Parameters
@@ -169,11 +177,7 @@ def filter_publications(citations, authors, reverse=False, bold=True,
         citations = list(citations)
     cites = deepcopy(citations)
     for pub in cites:
-        if (
-                len((set(pub.get("author", [])) | set(
-                    pub.get("editor", []))) & authors)
-                == 0
-        ):
+        if len((set(pub.get("author", [])) | set(pub.get("editor", []))) & authors) == 0:
             continue
         if bold:
             bold_self = []
@@ -184,14 +188,14 @@ def filter_publications(citations, authors, reverse=False, bold=True,
                     bold_self.append(a)
             pub["author"] = bold_self
         if ackno:
-            if pub.get('ackno'):
-                pub["note"] = latex_safe(f"\\newline\\newline\\noindent "
-                                         f"Acknowledgement:\\newline\\noindent "
-                                         f"{pub.get('ackno')}\\newline\\newline\\noindent ")
+            if pub.get("ackno"):
+                pub["note"] = latex_safe(
+                    f"\\newline\\newline\\noindent "
+                    f"Acknowledgement:\\newline\\noindent "
+                    f"{pub.get('ackno')}\\newline\\newline\\noindent "
+                )
         if since:
-            bibdate = date(int(pub.get("year")),
-                           month_to_int(pub.get("month", 12)),
-                           int(pub.get("day", 28)))
+            bibdate = date(int(pub.get("year")), month_to_int(pub.get("month", 12)), int(pub.get("day", 28)))
             if bibdate > since:
                 if before:
                     if bibdate < before:
@@ -222,8 +226,7 @@ def filter_publications(citations, authors, reverse=False, bold=True,
     return pubs
 
 
-def filter_projects(projects, people, reverse=False,
-                    active_only=False, group=None, ptype=None):
+def filter_projects(projects, people, reverse=False, active_only=False, group=None, ptype=None):
     """Filter projects by the author(s)
 
     Parameters
@@ -316,17 +319,14 @@ def filter_grants(input_grants, names, pi=True, reverse=True, multi_pi=False):
                 total_amount += grant["amount"]
                 subaward_amount += person.get("subaward_amount", 0.0)
                 grant["subaward_amount"] = person.get("subaward_amount", 0.0)
-                grant["pi"] = [
-                    x for x in grant["team"] if x["position"].lower() == "pi"
-                ][0]
+                grant["pi"] = [x for x in grant["team"] if x["position"].lower() == "pi"][0]
                 grant["me"] = person
         grants.append(grant)
     grants.sort(key=ene_date_key, reverse=reverse)
     return grants, total_amount, subaward_amount
 
 
-def filter_employment_for_advisees(peoplecoll, begin_period, status,
-                                   advisor, now=None):
+def filter_employment_for_advisees(peoplecoll, begin_period, status, advisor, now=None):
     """Filter people to get advisees since begin_period
 
     Parameters
@@ -355,17 +355,17 @@ def filter_employment_for_advisees(peoplecoll, begin_period, status,
                     if not end_date:
                         end_date = now
                     if end_date >= begin_period:
-                        p['role'] = i.get("position")
-                        p['begin_year'] = begin_date.year
+                        p["role"] = i.get("position")
+                        p["begin_year"] = begin_date.year
                         if not emp_dates.get("end_date"):
-                            p['end_year'] = "present"
+                            p["end_year"] = "present"
                         else:
-                            p['end_year'] = end_date.year
-                        p['status'] = status
-                        p['position'] = i.get("position")
-                        p['end_date'] = end_date
+                            p["end_year"] = end_date.year
+                        p["status"] = status
+                        p["position"] = i.get("position")
+                        p["end_date"] = end_date
                         advisees.append(p)
-                        advisees.sort(key=lambda x: x['end_date'], reverse=True)
+                        advisees.sort(key=lambda x: x["end_date"], reverse=True)
     return advisees
 
 
@@ -402,25 +402,24 @@ def filter_facilities(people, begin_period, type, verbose=False):
         svc = copy(p.get("facilities", []))
         for i in svc:
             if i.get("type") == type:
-                if i.get('year'):
-                    end_year = i.get('year')
-                elif i.get('end_year'):
-                    end_year = i.get('end_year')
+                if i.get("year"):
+                    end_year = i.get("year")
+                elif i.get("end_year"):
+                    end_year = i.get("end_year")
                 else:
                     end_year = date.today().year
-                end_date = date(end_year,
-                                i.get("end_month", 12),
-                                i.get("end_day", 28))
+                end_date = date(end_year, i.get("end_month", 12), i.get("end_day", 28))
                 if end_date >= begin_period:
-                    if not i.get('month'):
+                    if not i.get("month"):
                         month = i.get("begin_month", 0)
-                        i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                        i["month"] = SHORT_MONTH_NAMES[month_to_int(month)]
                     else:
-                        i['month'] = SHORT_MONTH_NAMES[month_to_int(i['month'])]
+                        i["month"] = SHORT_MONTH_NAMES[month_to_int(i["month"])]
                     myfacility.append(i)
-        if verbose: print("p['facilities'] = {}".format(myfacility))
-        p['facilities'] = myfacility
-        if len(p['facilities']) > 0:
+        if verbose:
+            print("p['facilities'] = {}".format(myfacility))
+        p["facilities"] = myfacility
+        if len(p["facilities"]) > 0:
             facilities.append(p)
     return facilities
 
@@ -437,7 +436,7 @@ def filter_patents(patentscoll, people, target, since=None, before=None):
                     inv,
                     case_sensitive=False,
                 )
-                for inv in i['inventors']
+                for inv in i["inventors"]
             ]
             person = fuzzy_retrieval(
                 people,
@@ -446,38 +445,32 @@ def filter_patents(patentscoll, people, target, since=None, before=None):
                 case_sensitive=False,
             )
             if person in inventors:
-                if i.get('end_year'):
-                    end_year = i.get('end_year')
+                if i.get("end_year"):
+                    end_year = i.get("end_year")
                 else:
                     end_year = date.today().year
-                end_date = date(end_year,
-                                i.get("end_month", 12),
-                                i.get("end_day", 28))
+                end_date = date(end_year, i.get("end_month", 12), i.get("end_day", 28))
                 if since:
                     if end_date >= since:
-                        if not i.get('month'):
+                        if not i.get("month"):
                             month = i.get("begin_month", 0)
-                            i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                            i["month"] = SHORT_MONTH_NAMES[month_to_int(month)]
                         else:
-                            i['month'] = SHORT_MONTH_NAMES[
-                                month_to_int(i['month'])]
+                            i["month"] = SHORT_MONTH_NAMES[month_to_int(i["month"])]
 
-                        events = [event for event in i["events"] if
-                                  date(event["year"], event["month"],
-                                       event.get("day", 28)) > since]
-                        events = sorted(events,
-                                        key=lambda event: date(
-                                            event["year"],
-                                            event["month"],
-                                            event.get("day", 28)))
+                        events = [
+                            event
+                            for event in i["events"]
+                            if date(event["year"], event["month"], event.get("day", 28)) > since
+                        ]
+                        events = sorted(
+                            events, key=lambda event: date(event["year"], event["month"], event.get("day", 28))
+                        )
                         i["events"] = events
                         patents.append(i)
                 else:
                     events = [event for event in i["events"]]
-                    events = sorted(events,
-                                    key=lambda event: date(event["year"],
-                                                           event["month"],
-                                                           28))
+                    events = sorted(events, key=lambda event: date(event["year"], event["month"], 28))
                     i["events"] = events
                     patents.append(i)
     return patents
@@ -495,7 +488,7 @@ def filter_licenses(patentscoll, people, target, since=None, before=None):
                     inv,
                     case_sensitive=False,
                 )
-                for inv in i['inventors']
+                for inv in i["inventors"]
             ]
             person = fuzzy_retrieval(
                 people,
@@ -504,42 +497,35 @@ def filter_licenses(patentscoll, people, target, since=None, before=None):
                 case_sensitive=False,
             )
             if person in inventors:
-                if i.get('end_year'):
-                    end_year = i.get('end_year')
+                if i.get("end_year"):
+                    end_year = i.get("end_year")
                 else:
                     end_year = date.today().year
-                end_date = date(end_year,
-                                i.get("end_month", 12),
-                                i.get("end_day", 28))
+                end_date = date(end_year, i.get("end_month", 12), i.get("end_day", 28))
                 if since:
                     if end_date >= since:
-                        if not i.get('month'):
+                        if not i.get("month"):
                             month = i.get("begin_month", 0)
-                            i['month'] = SHORT_MONTH_NAMES[month_to_int(month)]
+                            i["month"] = SHORT_MONTH_NAMES[month_to_int(month)]
                         else:
-                            i['month'] = SHORT_MONTH_NAMES[
-                                month_to_int(i['month'])]
-                        total = sum(
-                            [event.get("amount") for event in i["events"]])
+                            i["month"] = SHORT_MONTH_NAMES[month_to_int(i["month"])]
+                        total = sum([event.get("amount") for event in i["events"]])
                         i["total_amount"] = total
-                        events = [event for event in i["events"] if
-                                  date(event["year"], event["month"],
-                                       event.get("day", 28)) > since]
-                        events = sorted(events,
-                                        key=lambda event: date(event["year"],
-                                                               event["month"],
-                                                               event.get("day",
-                                                                         28)))
+                        events = [
+                            event
+                            for event in i["events"]
+                            if date(event["year"], event["month"], event.get("day", 28)) > since
+                        ]
+                        events = sorted(
+                            events, key=lambda event: date(event["year"], event["month"], event.get("day", 28))
+                        )
                         i["events"] = events
                         licenses.append(i)
                 else:
                     total = sum([event.get("amount") for event in events])
                     i["total_amount"] = total
                     events = [event for event in i["events"]]
-                    events = sorted(events,
-                                    key=lambda event: date(event["year"],
-                                                           event["month"],
-                                                           28))
+                    events = sorted(events, key=lambda event: date(event["year"], event["month"], 28))
                     i["events"] = events
                     licenses.append(i)
 
@@ -555,20 +541,20 @@ def filter_activities(people, begin_period, type, verbose=False):
             if i.get("type") == type:
                 idates = get_dates(i)
                 if idates["end_date"] >= begin_period:
-                    usedate = idates.get('begin_date', idates.get('date'))
-                    i['year'] = usedate.year
-                    i['month'] = SHORT_MONTH_NAMES[month_to_int(usedate.month)]
+                    usedate = idates.get("begin_date", idates.get("date"))
+                    i["year"] = usedate.year
+                    i["month"] = SHORT_MONTH_NAMES[month_to_int(usedate.month)]
                     myactivity.append(i)
-        p['activities'] = myactivity
-        if len(p['activities']) > 0:
+        p["activities"] = myactivity
+        if len(p["activities"]) > 0:
             activities.append(p)
     return activities
 
 
-def filter_presentations(people, presentations, institutions, target,
-                         types=None,
-                         since=None, before=None, statuses=None):
-    f'''
+def filter_presentations(
+    people, presentations, institutions, target, types=None, since=None, before=None, statuses=None
+):
+    f"""
     filters presentations for different types and date ranges
 
     Parameters
@@ -596,7 +582,7 @@ def filter_presentations(people, presentations, institutions, target,
     -------
     list of presentation documents
 
-    '''
+    """
     if not types:
         types = ["all"]
     if not statuses:
@@ -624,11 +610,7 @@ def filter_presentations(people, presentations, institutions, target,
             )
             for author in pauthors
         ]
-        authorids = [
-            author["_id"] if author is not None
-            else author
-            for author in authors
-        ]
+        authorids = [author["_id"] if author is not None else author for author in authors]
         if target in authorids:
             firstclean.append(pres)
     # only list the presentation if it has status in statuses
@@ -642,20 +624,20 @@ def filter_presentations(people, presentations, institutions, target,
     # if specified, only list presentations in specified date ranges
     if since:
         for pres in thirdclean:
-            if get_dates(pres).get('date'):
-                presdate = get_dates(pres).get('date')
+            if get_dates(pres).get("date"):
+                presdate = get_dates(pres).get("date")
             else:
-                presdate = get_dates(pres).get('begin_date')
+                presdate = get_dates(pres).get("begin_date")
             if presdate > since:
                 fourthclean.append(pres)
     else:
         fourthclean = thirdclean
     if before:
         for pres in fourthclean:
-            if get_dates(pres).get('date'):
-                presdate = get_dates(pres).get('date')
+            if get_dates(pres).get("date"):
+                presdate = get_dates(pres).get("date")
             else:
-                presdate = get_dates(pres).get('begin_date')
+                presdate = get_dates(pres).get("begin_date")
             if presdate < before:
                 presclean.append(pres)
     else:
@@ -667,28 +649,30 @@ def filter_presentations(people, presentations, institutions, target,
         if isinstance(pauthors, str):
             pauthors = [pauthors]
         pres["authors"] = [
-            author
-            if fuzzy_retrieval(
-                people,
-                ["aka", "name", "_id"],
-                author,
-                case_sensitive=False,
+            (
+                author
+                if fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    author,
+                    case_sensitive=False,
+                )
+                is None
+                else fuzzy_retrieval(
+                    people,
+                    ["aka", "name", "_id"],
+                    author,
+                    case_sensitive=False,
+                )["name"]
             )
-               is None
-            else fuzzy_retrieval(
-                people,
-                ["aka", "name", "_id"],
-                author,
-                case_sensitive=False,
-            )["name"]
             for author in pauthors
         ]
         authorlist = ", ".join(pres["authors"])
         pres["authors"] = authorlist
-        if get_dates(pres).get('date'):
-            presdate = get_dates(pres).get('date')
+        if get_dates(pres).get("date"):
+            presdate = get_dates(pres).get("date")
         else:
-            presdate = get_dates(pres).get('begin_date')
+            presdate = get_dates(pres).get("begin_date")
         pres["begin_month"] = presdate.month
         pres["begin_year"] = presdate.year
         pres["begin_day"] = presdate.day
@@ -698,20 +682,19 @@ def filter_presentations(people, presentations, institutions, target,
         pres["date"] = presdate
         for day in ["begin_", "end_", ""]:
             try:
-                pres["{}day_suffix".format(day)] = number_suffix(
-                    get_dates(pres).get(f'{day}date').day
-                )
+                pres["{}day_suffix".format(day)] = number_suffix(get_dates(pres).get(f"{day}date").day)
             except AttributeError:
                 print(f"presentation {pres.get('_id')} has no {day}date")
         if "institution" in pres:
-            inst = {"institution": pres.get("institution"),
-                    "department": pres.get("department")}
+            inst = {"institution": pres.get("institution"), "department": pres.get("department")}
             dereference_institution(inst, institutions)
-            pres["institution"] = {'name': inst.get("institution", ""),
-                                   'city': inst.get("city"),
-                                   'state': inst.get("state"),
-                                   'country': inst.get("country")}
-            pres["department"] = {'name': inst.get("department")}
+            pres["institution"] = {
+                "name": inst.get("institution", ""),
+                "city": inst.get("city"),
+                "state": inst.get("state"),
+                "country": inst.get("country"),
+            }
+            pres["department"] = {"name": inst.get("department")}
     if len(presclean) > 0:
         presclean = sorted(
             presclean,
@@ -755,8 +738,10 @@ def awards_grants_honors(p, target_name, funding=True, service_types=None):
             x_dates = get_dates(x)
             if x_dates.get("date"):
                 d.update(
-                    {"year": x_dates["date"].year,
-                     "_key": date_to_float(x_dates["date"].year, x_dates["date"].month)}
+                    {
+                        "year": x_dates["date"].year,
+                        "_key": date_to_float(x_dates["date"].year, x_dates["date"].month),
+                    }
                 )
             elif x_dates.get("begin_date") and x_dates.get("end_date"):
                 d.update(
@@ -777,7 +762,11 @@ def awards_grants_honors(p, target_name, funding=True, service_types=None):
     return aghs
 
 
-def awards(p, since=None, before=None, ):
+def awards(
+    p,
+    since=None,
+    before=None,
+):
     """Make sorted awards and honors
 
     Parameters
@@ -790,27 +779,33 @@ def awards(p, since=None, before=None, ):
         The end date to filter for.  None does not apply this filter
 
     """
-    if not since: since = date(1500, 1, 1)
+    if not since:
+        since = date(1500, 1, 1)
     a = []
     for x in p.get("honors", []):
         if "year" in x:
             if date(x.get("year"), 12, 31) > since:
-                d = {"description": latex_safe(x["name"]), "year": x["year"],
-                     "_key": date_to_float(x["year"], x.get("month", 0))}
+                d = {
+                    "description": latex_safe(x["name"]),
+                    "year": x["year"],
+                    "_key": date_to_float(x["year"], x.get("month", 0)),
+                }
                 a.append(d)
         elif "begin_year" in x and "end_year" in x:
             if date(x.get("begin_year", 12, 31)) > since:
-                d = {"description": latex_safe(x["name"]),
-                     "year": "{}-{}".format(x["begin_year"], x["end_year"]),
-                     "_key": date_to_float(x["begin_year"], x.get("month", 0)),
-                     }
+                d = {
+                    "description": latex_safe(x["name"]),
+                    "year": "{}-{}".format(x["begin_year"], x["end_year"]),
+                    "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                }
                 a.append(d)
         elif "begin_year" in x:
             if date(x.get("begin_year"), 12, 31) > since:
-                d = {"description": latex_safe(x["name"]),
-                     "year": "{}".format(x["begin_year"]),
-                     "_key": date_to_float(x["begin_year"], x.get("month", 0)),
-                     }
+                d = {
+                    "description": latex_safe(x["name"]),
+                    "year": "{}".format(x["begin_year"]),
+                    "_key": date_to_float(x["begin_year"], x.get("month", 0)),
+                }
                 a.append(d)
     a.sort(key=(lambda x: x.get("_key", 0.0)), reverse=True)
     return a
@@ -846,17 +841,12 @@ def latex_safe(s, url_check=True, wrapper="url"):
         if url_search:
             url = r"{start}\{wrapper}{{{s}}}{end}".format(
                 start=(latex_safe(s[: url_search.start()])),
-                end=(latex_safe(s[url_search.end():])),
+                end=(latex_safe(s[url_search.end() :])),
                 wrapper=wrapper,
-                s=latex_safe_url(s[url_search.start(): url_search.end()]),
+                s=latex_safe_url(s[url_search.start() : url_search.end()]),
             )
             return url
-    return (
-        s.replace("&", r"\&")
-        .replace("$", r"\$")
-        .replace("#", r"\#")
-        .replace("_", r"\_")
-    )
+    return s.replace("&", r"\&").replace("$", r"\$").replace("#", r"\#").replace("_", r"\_")
 
 
 def make_bibtex_file(pubs, pid, person_dir="."):
@@ -881,11 +871,10 @@ def make_bibtex_file(pubs, pid, person_dir="."):
         ent = dict(pub)
         ent["ID"] = ent.pop("_id")
         ent["ENTRYTYPE"] = ent.pop("entrytype")
-        if ent.get('doi') == 'tbd':
-            del ent['doi']
+        if ent.get("doi") == "tbd":
+            del ent["doi"]
         if ent.get("supplementary_info_urls"):
-            ent.update({"supplementary_info_urls":
-                            ", ".join(ent.get("supplementary_info_urls"))})
+            ent.update({"supplementary_info_urls": ", ".join(ent.get("supplementary_info_urls"))})
         if isinstance(ent.get("editor"), list):
             for n in ["author", "editor"]:
                 if n in ent:
@@ -969,8 +958,7 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
                 ret = [ret]
             returns.extend(ret)
         if not case_sensitive:
-            returns = [reti.lower() for reti in returns if
-                       isinstance(reti, str)]
+            returns = [reti.lower() for reti in returns if isinstance(reti, str)]
             if isinstance(value, str):
                 if value.lower() in frozenset(returns):
                     return doc
@@ -1024,29 +1012,36 @@ def dereference_institution(input_record, institutions, verbose=False):
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if not db_inst:
         print(
-            f"WARNING: {input_record.get('institution', input_record.get('organization', 'unknown'))} not found in institutions")
-        db_inst = {"name": input_record.get("institution", input_record.get("organization", "unknown")),
-                   "location": input_record.get("location",
-                                                f"{input_record.get('city', 'unknown')}, {input_record.get('state', 'unknown')}"),
-                   "city": input_record.get('city', 'unknown'),
-                   "country": input_record.get('country', 'unknown'),
-                   "state": input_record.get('state', 'unknown'),
-                   "departments": {
-                       input_record.get('department', 'unknown'): {'name': input_record.get('department', 'unknown')}}
-                   }
-    if input_record.get('department') and not db_inst.get("departments"):
+            f"WARNING: {input_record.get('institution', input_record.get('organization', 'unknown'))} not found in institutions"
+        )
+        db_inst = {
+            "name": input_record.get("institution", input_record.get("organization", "unknown")),
+            "location": input_record.get(
+                "location", f"{input_record.get('city', 'unknown')}, {input_record.get('state', 'unknown')}"
+            ),
+            "city": input_record.get("city", "unknown"),
+            "country": input_record.get("country", "unknown"),
+            "state": input_record.get("state", "unknown"),
+            "departments": {
+                input_record.get("department", "unknown"): {"name": input_record.get("department", "unknown")}
+            },
+        }
+    if input_record.get("department") and not db_inst.get("departments"):
         if verbose:
-            print(f"WARNING: no departments in {db_inst.get('_id')}. "
-                  f"{input_record.get('department')} sought")
-        db_inst.update({"departments": {
-            input_record.get('department', 'unknown'): {'name': input_record.get('department', 'unknown')}}})
+            print(f"WARNING: no departments in {db_inst.get('_id')}. " f"{input_record.get('department')} sought")
+        db_inst.update(
+            {
+                "departments": {
+                    input_record.get("department", "unknown"): {"name": input_record.get("department", "unknown")}
+                }
+            }
+        )
     if db_inst.get("country") == "USA":
         state_country = db_inst.get("state")
     else:
         state_country = db_inst.get("country")
     # now update the input record in place with what we have found
-    input_record["location"] = db_inst.get("location",
-                                           f"{db_inst['city']}, {state_country}")
+    input_record["location"] = db_inst.get("location", f"{db_inst['city']}, {state_country}")
     input_record["institution"] = db_inst["name"]
     input_record["organization"] = db_inst["name"]
     input_record["city"] = db_inst["city"]
@@ -1059,8 +1054,7 @@ def dereference_institution(input_record, institutions, verbose=False):
         for k, v in db_inst.get("departments").items():
             v.update({"_id": k})
         extracted_department = fuzzy_retrieval(
-            db_inst["departments"].values(), ["name", "aka", "_id"],
-            input_record["department"]
+            db_inst["departments"].values(), ["name", "aka", "_id"], input_record["department"]
         )
         if extracted_department:
             input_record["department"] = extracted_department.get("name")
@@ -1156,7 +1150,7 @@ def merge_collections_superior(a, b, target_id):
 
 
 def get_person_contact(name, people_coll, contacts_coll):
-    '''
+    """
     Return a person document if found in either people or contacts collections
 
     If the person is found in the people collection this person is returned.  If
@@ -1177,7 +1171,7 @@ def get_person_contact(name, people_coll, contacts_coll):
     person: dict
       The found person document
 
-    '''
+    """
     people_person = fuzzy_retrieval(
         people_coll,
         ["aka", "name", "_id"],
@@ -1227,8 +1221,7 @@ def merge_collections_intersect(a, b, target_id):
     grants collection for which "_id" in proposals has the value of
     "proposal_id" in grants, returning just those items that have the dereference
     """
-    intersect = [{**j, **i} for j in a for i in b if
-                 j.get("_id") == i.get(target_id)]
+    intersect = [{**j, **i} for j in a for i in b if j.get("_id") == i.get(target_id)]
     return intersect
 
 
@@ -1252,11 +1245,12 @@ def update_schemas(default_schema, user_schema):
     """
     updated_schema = deepcopy(default_schema)
     for key in user_schema.keys():
-        if (key in updated_schema) and isinstance(updated_schema[key],
-                                                  dict) and isinstance(
-            user_schema[key], dict):
-            updated_schema[key] = update_schemas(updated_schema[key],
-                                                 user_schema[key])
+        if (
+            (key in updated_schema)
+            and isinstance(updated_schema[key], dict)
+            and isinstance(user_schema[key], dict)
+        ):
+            updated_schema[key] = update_schemas(updated_schema[key], user_schema[key])
         else:
             updated_schema[key] = user_schema[key]
 
@@ -1266,23 +1260,16 @@ def update_schemas(default_schema, user_schema):
 def get_person(person_id, rc):
     """Get the person's name."""
     person_found = fuzzy_retrieval(
-        all_docs_from_collection(rc.client, "people"),
-        ["name", "aka", "_id"],
-        person_id,
-        case_sensitive=False
+        all_docs_from_collection(rc.client, "people"), ["name", "aka", "_id"], person_id, case_sensitive=False
     )
     if person_found:
         return person_found
     person_found = fuzzy_retrieval(
-        all_docs_from_collection(rc.client, "contacts"),
-        ["name", "aka", "_id"],
-        person_id,
-        case_sensitive=False
+        all_docs_from_collection(rc.client, "contacts"), ["name", "aka", "_id"], person_id, case_sensitive=False
     )
     if person_found:
         return person_found
-    print("WARNING: {} missing from people and contacts. Check aka.".format(
-        person_id))
+    print("WARNING: {} missing from people and contacts. Check aka.".format(person_id))
     return None
 
 
@@ -1341,8 +1328,7 @@ def get_pi_id(rc):
     """
     groupiter = list(all_docs_from_collection(rc.client, "groups"))
     peoplecoll = all_docs_from_collection(rc.client, "people")
-    pi_ref = [i.get("pi_name") for i in groupiter if
-              i.get("name").casefold() == rc.groupname.casefold()]
+    pi_ref = [i.get("pi_name") for i in groupiter if i.get("name").casefold() == rc.groupname.casefold()]
     pi = fuzzy_retrieval(peoplecoll, ["_id", "aka", "name"], pi_ref[0])
     return pi.get("_id")
 
@@ -1405,16 +1391,21 @@ def group_member_employment_start_end(person, grpname):
         for position in person.get(k, {}):
             if position.get("group", None) == grpname:
                 dates = get_dates(position)
-                if not dates.get('end_date') and not position.get("permanent"):
+                if not dates.get("end_date") and not position.get("permanent"):
                     raise RuntimeError(
-                        "WARNING: {} has no end date in employment for {} starting {}".
-                        format(person["_id"], grpname, dates.get("begin_date")))
-                grpmember.append({"_id": person["_id"],
-                                  "begin_date": dates.get("begin_date"),
-                                  "end_date": dates.get("end_date"),
-                                  "permanent": position.get("permanent"),
-                                  "status": position.get("status")
-                                  })
+                        "WARNING: {} has no end date in employment for {} starting {}".format(
+                            person["_id"], grpname, dates.get("begin_date")
+                        )
+                    )
+                grpmember.append(
+                    {
+                        "_id": person["_id"],
+                        "begin_date": dates.get("begin_date"),
+                        "end_date": dates.get("end_date"),
+                        "permanent": position.get("permanent"),
+                        "status": position.get("status"),
+                    }
+                )
     return grpmember
 
 
@@ -1519,8 +1510,7 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
                 ret = []
             returns.extend(ret)
         if not case_sensitive:
-            returns = [reti.lower() for reti in returns if
-                       isinstance(reti, str)]
+            returns = [reti.lower() for reti in returns if isinstance(reti, str)]
             if isinstance(fragment, str):
                 for item in frozenset(returns):
                     if fragment.lower() in item:
@@ -1535,8 +1525,7 @@ def fragment_retrieval(coll, fields, fragment, case_sensitive=False):
 
 
 def get_id_from_name(coll, name):
-    person = fuzzy_retrieval(coll, ["name", "aka", "_id"], name,
-                             case_sensitive=False)
+    person = fuzzy_retrieval(coll, ["name", "aka", "_id"], name, case_sensitive=False)
     if person:
         return person["_id"]
     else:
@@ -1574,11 +1563,11 @@ def is_fully_appointed(person, begin_date, end_date):
         print "appointment gap for aejaz from 2017-06-16 to 2017-06-19".
         """
 
-    if not person.get('appointments'):
+    if not person.get("appointments"):
         print("No appointments defined for this person")
         return False
     status = True
-    appts = person.get('appointments')
+    appts = person.get("appointments")
     if begin_date > end_date:
         raise ValueError("invalid begin and end dates")
     if isinstance(begin_date, str):
@@ -1600,119 +1589,120 @@ def is_fully_appointed(person, begin_date, end_date):
                 good_period = False
         else:
             if not good_period:
-                print("WARNING: appointment gap for {} from {} to {}".format(
-                    person.get('_id'),
-                    str(start_gap), str(day - relativedelta(days=1))))
+                print(
+                    "WARNING: appointment gap for {} from {} to {}".format(
+                        person.get("_id"), str(start_gap), str(day - relativedelta(days=1))
+                    )
+                )
             good_period = True
         if x == timespan.days and not good_period:
             if day != start_gap:
-                print("WARNING: appointment gap for {} from {} to {}".format(
-                    person.get('_id'),
-                    str(start_gap), str(day)))
+                print(
+                    "WARNING: appointment gap for {} from {} to {}".format(
+                        person.get("_id"), str(start_gap), str(day)
+                    )
+                )
             else:
-                print("WARNING: appointment gap for {} on {}".format(
-                    person.get('_id'), str(day)))
+                print("WARNING: appointment gap for {} on {}".format(person.get("_id"), str(day)))
     return status
 
 
 def key_value_pair_filter(collection, arguments):
     """Retrieves a list of all documents from the collection where the fragment
-        appears in any one of the given fields
+    appears in any one of the given fields
 
-        Parameters
-        ----------
-        collection: generator
-            The collection containing the documents
-        arguments: list
-            The name of the fields to look for and their accompanying substring
+    Parameters
+    ----------
+    collection: generator
+        The collection containing the documents
+    arguments: list
+        The name of the fields to look for and their accompanying substring
 
-        Returns
-        -------
-        generator:
-            The collection containing the elements that satisfy the search criteria
+    Returns
+    -------
+    generator:
+        The collection containing the elements that satisfy the search criteria
 
-        Examples
-        --------
-        >>> key_value_pair_filter(people, ['name', 'ab', 'position', 'professor'])
+    Examples
+    --------
+    >>> key_value_pair_filter(people, ['name', 'ab', 'position', 'professor'])
 
-        This would get all people for which their name contains the string 'ab'
-        and whose position is professor and return them
+    This would get all people for which their name contains the string 'ab'
+    and whose position is professor and return them
 
-        """
+    """
 
     if len(arguments) % 2 != 0:
         raise RuntimeError("Error: Number of keys and values do not match")
     elements = collection
     for i in range(0, len(arguments) - 1, 2):
-        elements = fragment_retrieval(elements, [arguments[i]],
-                                      arguments[i + 1])
+        elements = fragment_retrieval(elements, [arguments[i]], arguments[i + 1])
     return elements
 
 
 def collection_str(collection, keys=None):
     """Retrieves a list of all documents from the collection where the fragment
-        appears in any one of the given fields
+    appears in any one of the given fields
 
-        Parameters
-        ----------
-        collection: generator
-            The collection containing the documents
-        keys: list, optional
-            The name of the fields to return from the search. Defaults to none in which case only the id is returned
+    Parameters
+    ----------
+    collection: generator
+        The collection containing the documents
+    keys: list, optional
+        The name of the fields to return from the search. Defaults to none in which case only the id is returned
 
-        Returns
-        -------
-        str:
-            A str of all the values
+    Returns
+    -------
+    str:
+        A str of all the values
     """
     if not keys:
-        keys = ['_id']
-    if '_id' not in keys:
-        keys.insert(0, '_id')
+        keys = ["_id"]
+    if "_id" not in keys:
+        keys.insert(0, "_id")
     output = ""
     for doc in collection:
         for key in keys:
-            if key == '_id':
-                output += (doc.get(key) + '    ')
+            if key == "_id":
+                output += doc.get(key) + "    "
             else:
-                output += ('{}: {}    '.format(key, doc.get(key)))
-        output += '\n'
+                output += "{}: {}    ".format(key, doc.get(key))
+        output += "\n"
     return output
 
 
 def search_collection(collection, arguments, keys=None):
     """Retrieves a list of all documents from the collection where the fragment
-        appears in any one of the given fields
+    appears in any one of the given fields
 
-        Parameters
-        ----------
-        collection: generator
-            The collection containing the documents
-        arguments: list
-            The name of the fields to look for and their accompanying substring
-        keys: list, optional
-            The name of the fields to return from the search. Defaults to none in which case only the id is returned
+    Parameters
+    ----------
+    collection: generator
+        The collection containing the documents
+    arguments: list
+        The name of the fields to look for and their accompanying substring
+    keys: list, optional
+        The name of the fields to return from the search. Defaults to none in which case only the id is returned
 
-        Returns
-        -------
-        generator:
-            The collection containing the elements that satisfy the search criteria
+    Returns
+    -------
+    generator:
+        The collection containing the elements that satisfy the search criteria
 
-        Examples
-        --------
-        >>> search_collection(people, ['name', 'ab', 'position', 'professor'], ['_id', 'name'])
+    Examples
+    --------
+    >>> search_collection(people, ['name', 'ab', 'position', 'professor'], ['_id', 'name'])
 
-        This would get all people for which their name contains the string 'ab'
-        and whose position is professor. It would return the name and id of the
-        valid entries
+    This would get all people for which their name contains the string 'ab'
+    and whose position is professor. It would return the name and id of the
+    valid entries
 
-        """
+    """
     collection = key_value_pair_filter(collection, arguments)
     return collection_str(collection, keys)
 
 
-def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
-                  end_date=None):
+def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None, end_date=None):
     """
     Retrieves a list of all the appointments on the given grant(s) in the given interval of time for each person in the
     given people collection.
@@ -1746,21 +1736,15 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     """
 
     if bool(begin_date) ^ bool(end_date):
-        raise RuntimeError(
-            "please enter both begin date and end date or neither")
-    filter_key = [filter_key] if not isinstance(filter_key,
-                                                list) else filter_key
-    filter_value = [filter_value] if not isinstance(filter_value,
-                                                    list) else filter_value
+        raise RuntimeError("please enter both begin date and end date or neither")
+    filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
+    filter_value = [filter_value] if not isinstance(filter_value, list) else filter_value
     if (bool(filter_key) ^ bool(filter_value)) or (
-            filter_key and filter_value and len(filter_key) != len(
-        filter_value)):
-        raise RuntimeError(
-            "number of filter keys and filter values do not match")
-    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date,
-                                                                    str) else begin_date
-    end_date = date_parser.parse(end_date).date() if isinstance(end_date,
-                                                                str) else end_date
+        filter_key and filter_value and len(filter_key) != len(filter_value)
+    ):
+        raise RuntimeError("number of filter keys and filter values do not match")
+    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
+    end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
     timespan = 0
     if begin_date:
         timespan = end_date - begin_date
@@ -1768,38 +1752,36 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
             raise ValueError("begin date is after end date")
     appts = []
     for p in ppl_coll:
-        p_appts = p.get('appointments')
+        p_appts = p.get("appointments")
         if not p_appts:
             continue
         for a in p_appts:
-            if p_appts[a].get('type') not in APPOINTMENTS_TYPES:
+            if p_appts[a].get("type") not in APPOINTMENTS_TYPES:
                 raise ValueError(
-                    "invalid  type {} for appointment {} of {}".format(
-                        p_appts[a].get('type'), a, p.get('_id')))
+                    "invalid  type {} for appointment {} of {}".format(p_appts[a].get("type"), a, p.get("_id"))
+                )
             if filter_key:
-                if all(p_appts[a].get(filter_key[x]) == filter_value[x] for x in
-                       range(len(filter_key))):
+                if all(p_appts[a].get(filter_key[x]) == filter_value[x] for x in range(len(filter_key))):
                     if begin_date:
                         for y in range(timespan.days + 1):
                             day = begin_date + relativedelta(days=y)
                             if is_current(p_appts[a], now=day):
                                 appts.append(p_appts[a])
-                                appts[-1].update({'person': p.get('_id'),
-                                                  '_id': a})
+                                appts[-1].update({"person": p.get("_id"), "_id": a})
                                 break
                     else:
                         appts.append(p_appts[a])
-                        appts[-1].update({'person': p.get('_id'), '_id': a})
+                        appts[-1].update({"person": p.get("_id"), "_id": a})
             elif timespan:
                 for y in range(timespan.days + 1):
                     day = begin_date + relativedelta(days=y)
                     if is_current(p_appts[a], now=day):
                         appts.append(p_appts[a])
-                        appts[-1].update({'person': p.get('_id'), '_id': a})
+                        appts[-1].update({"person": p.get("_id"), "_id": a})
                         break
             else:
                 appts.append(p_appts[a])
-                appts[-1].update({'person': p.get('_id'), '_id': a})
+                appts[-1].update({"person": p.get("_id"), "_id": a})
 
     return appts
 
@@ -1837,51 +1819,45 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
          datetime.date(2020, 9, 3): {'student_days': 3.0, 'postdoc_days': 11.0, 'ss_days': 10.0}}
     """
 
-    if not grant.get('budget'):
-        raise ValueError("{} has no specified budget".format(grant.get('_id')))
+    if not grant.get("budget"):
+        raise ValueError("{} has no specified budget".format(grant.get("_id")))
     if bool(begin_date) ^ bool(end_date):
-        raise RuntimeError(
-            "please enter both begin date and end date or neither")
-    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date,
-                                                                    str) else begin_date
-    end_date = date_parser.parse(end_date).date() if isinstance(end_date,
-                                                                str) else end_date
+        raise RuntimeError("please enter both begin date and end date or neither")
+    begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
+    end_date = date_parser.parse(end_date).date() if isinstance(end_date, str) else end_date
     if isinstance(appts, dict):
         appts = collect_appts([{"appointments": appts}])
     grad_val, pd_val, ss_val = 0.0, 0.0, 0.0
     grant_amounts = {}
-    budget_dates = get_dates(grant.get('budget')[0])
-    budget_begin, budget_end = budget_dates['begin_date'], budget_dates[
-        'end_date']
-    for period in grant.get('budget'):
+    budget_dates = get_dates(grant.get("budget")[0])
+    budget_begin, budget_end = budget_dates["begin_date"], budget_dates["end_date"]
+    for period in grant.get("budget"):
         period_dates = get_dates(period)
-        period_begin, period_end = period_dates['begin_date'], period_dates[
-            'end_date']
+        period_begin, period_end = period_dates["begin_date"], period_dates["end_date"]
         budget_begin = period_begin if period_begin < budget_begin else budget_begin
         budget_end = period_end if period_end > budget_end else budget_end
-        grad_val += (period.get('student_months', 0) - period.get(
-            'student_writeoff', 0)) * 30.5
-        pd_val += (period.get('postdoc_months', 0) - period.get(
-            'postdoc_writeoff', 0)) * 30.5
-        ss_val += (period.get('ss_months', 0) - period.get('ss_writeoff',
-                                                           0)) * 30.5
+        grad_val += (period.get("student_months", 0) - period.get("student_writeoff", 0)) * 30.5
+        pd_val += (period.get("postdoc_months", 0) - period.get("postdoc_writeoff", 0)) * 30.5
+        ss_val += (period.get("ss_months", 0) - period.get("ss_writeoff", 0)) * 30.5
         span = period_end - period_begin
         for x in range(span.days + 1):
             day = period_begin + relativedelta(days=x)
             for a in appts:
-                if (a.get('grant') == grant.get('_id') or a.get(
-                        'grant') == grant.get('alias')) and is_current(a,
-                                                                       now=day):
-                    if a.get('type') == 'gra':
-                        grad_val -= a.get('loading') * 1
-                    elif a.get('type') == 'pd':
-                        pd_val -= a.get('loading') * 1
-                    elif a.get('type') == 'ss':
-                        ss_val -= a.get('loading') * 1
+                if (a.get("grant") == grant.get("_id") or a.get("grant") == grant.get("alias")) and is_current(
+                    a, now=day
+                ):
+                    if a.get("type") == "gra":
+                        grad_val -= a.get("loading") * 1
+                    elif a.get("type") == "pd":
+                        pd_val -= a.get("loading") * 1
+                    elif a.get("type") == "ss":
+                        ss_val -= a.get("loading") * 1
             if (not begin_date) or (begin_date <= day <= end_date):
-                gvals = {"student_days": round(grad_val, 2),
-                         "postdoc_days": round(pd_val, 2),
-                         "ss_days": round(ss_val, 2)}
+                gvals = {
+                    "student_days": round(grad_val, 2),
+                    "postdoc_days": round(pd_val, 2),
+                    "ss_days": round(ss_val, 2),
+                }
                 grant_amounts.update({day: gvals})
     return grant_amounts
 
@@ -1899,19 +1875,14 @@ def validate_meeting(meeting, date):
         The date we want to use to see if a meeting has happened or not
 
     """
-    meeting_date = date_parser.parse(meeting.get('_id')[3:]).date()
-    if meeting.get('journal_club') and meeting_date < date:
-        if meeting.get('journal_club').get('doi').lower() == 'tbd':
-            raise ValueError(
-                f'{meeting.get("_id")} does not have a journal club doi')
-    if meeting_date < date and meeting.get('presentation').get(
-            'link').lower() == 'tbd':
-        raise ValueError(
-            f'{meeting.get("_id")} does not have a presentation link')
-    if meeting_date < date and meeting.get('presentation').get(
-            'title').lower() == 'tbd':
-        raise ValueError(
-            f'{meeting.get("_id")} does not have a presentation title')
+    meeting_date = date_parser.parse(meeting.get("_id")[3:]).date()
+    if meeting.get("journal_club") and meeting_date < date:
+        if meeting.get("journal_club").get("doi").lower() == "tbd":
+            raise ValueError(f'{meeting.get("_id")} does not have a journal club doi')
+    if meeting_date < date and meeting.get("presentation").get("link").lower() == "tbd":
+        raise ValueError(f'{meeting.get("_id")} does not have a presentation link')
+    if meeting_date < date and meeting.get("presentation").get("title").lower() == "tbd":
+        raise ValueError(f'{meeting.get("_id")} does not have a presentation title')
 
 
 def print_task(task_list, stati, index=True):
@@ -1932,35 +1903,38 @@ def print_task(task_list, stati, index=True):
         for task in task_list:
             if index:
                 try:
-                    task["preamble"] = f"({task.get('importance')})({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
+                    task["preamble"] = (
+                        f"({task.get('importance')})({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
+                    )
                 except:
                     task["preamble"] = ""
             else:
                 task["preamble"] = ""
-            if task.get('status') == status:
+            if task.get("status") == status:
                 print(
-                    f"{task.get('preamble')}{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid',[])[:6]})")
-                if task.get('notes'):
-                    for note in task.get('notes'):
+                    f"{task.get('preamble')}{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid',[])[:6]})"
+                )
+                if task.get("notes"):
+                    for note in task.get("notes"):
                         print(f"     - {note}")
     print("-" * 76)
     print("(importance)(days to due): (Task number) Task (decreasing priority going up)")
     print("-" * 76)
-    deadline_list = [task for task in task_list
-                     if task.get('deadline') and task.get("status") in stati]
+    deadline_list = [task for task in task_list if task.get("deadline") and task.get("status") in stati]
     deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
     for task in deadline_list:
         print(
-            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid')[:6]})")
-        if task.get('notes'):
-            for note in task.get('notes'):
+            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid')[:6]})"
+        )
+        if task.get("notes"):
+            for note in task.get("notes"):
                 print(f"     - {note}")
     print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
     return
 
 
 def get_formatted_crossref_reference(doi):
-    '''
+    """
     given a doi, return the full reference and the date of the reference from Crossref REST-API
 
     parameters
@@ -1976,7 +1950,7 @@ def get_formatted_crossref_reference(doi):
       the date of the reference
     returns None None in the article cannot be found given the doi
 
-    '''
+    """
 
     cr = Crossref()
     try:
@@ -1985,45 +1959,46 @@ def get_formatted_crossref_reference(doi):
         print(f"WARNING: not able to find reference {doi} in Crossref")
         return None, None
     except ConnectionError:
-        print(f"WARNING: not able to connect to internet.  To obtain "
-              f"publication information rerun when you have an internet "
-              f"connection")
+        print(
+            f"WARNING: not able to connect to internet.  To obtain "
+            f"publication information rerun when you have an internet "
+            f"connection"
+        )
         return None, None
 
     authorlist = [
-        f"{a['given'].strip()} {a['family'].strip()}"
-        for a in article.get('message',{}).get('author','')]
+        f"{a['given'].strip()} {a['family'].strip()}" for a in article.get("message", {}).get("author", "")
+    ]
     try:
-        journal = \
-            article.get('message').get('short-container-title')[0]
+        journal = article.get("message").get("short-container-title")[0]
     except IndexError:
         try:
-            journal = article.get('message').get('container-title')[0]
+            journal = article.get("message").get("container-title")[0]
         except IndexError:
             journal = ""
-    if article.get('message').get('volume'):
+    if article.get("message").get("volume"):
         if len(authorlist) > 1:
             authorlist[-1] = "and {}".format(authorlist[-1])
         sauthorlist = ", ".join(authorlist)
-        ref_date_list = article.get('message').get('issued').get('date-parts')
+        ref_date_list = article.get("message").get("issued").get("date-parts")
         ref = "{}, {}, {}, v. {}, pp. {}, ({}).".format(
-            article.get('message').get('title')[0],
+            article.get("message").get("title")[0],
             sauthorlist,
             journal,
-            article.get('message').get('volume'),
-            article.get('message').get('page'),
+            article.get("message").get("volume"),
+            article.get("message").get("page"),
             ref_date_list[0][0],
         )
     else:
         if len(authorlist) > 1:
             authorlist[-1] = "and {}".format(authorlist[-1])
         sauthorlist = ", ".join(authorlist)
-        ref_date_list = article.get('message').get('issued').get('date-parts')
+        ref_date_list = article.get("message").get("issued").get("date-parts")
         ref = "{}, {}, {}, pp.{}, ({}).".format(
-            article.get('message').get('title')[0],
+            article.get("message").get("title")[0],
             sauthorlist,
             journal,
-            article.get('message').get('page'),
+            article.get("message").get("page"),
             ref_date_list[0][0],
         )
     ref_date_list = ref_date_list[0]
@@ -2034,7 +2009,7 @@ def get_formatted_crossref_reference(doi):
 
 
 def remove_duplicate_docs(coll, key):
-    '''
+    """
     find all docs where the target key has the same value and remove duplicates
 
     The doc found first will be kept and subsequent docs will be removed
@@ -2050,7 +2025,7 @@ def remove_duplicate_docs(coll, key):
     ------
     The list of docs with duplicates (as described above) removed
 
-    '''
+    """
     values, newcoll = [], []
     for doc in coll:
         if doc.get(key) in values:
@@ -2067,13 +2042,14 @@ def remove_duplicate_docs(coll, key):
 def validate_doc(collection_name, doc, rc):
     from regolith.schemas import validate
     from pprint import pformat
+
     v = validate(collection_name, doc, rc.schemas)
     error_message = ""
     if v[0] is False:
         error_message += f"ERROR in {doc['_id']}:\n{pformat(v[1])}\n"
         for vv in v[1]:
             error_message += f"{pformat(doc.get(vv))}\n"
-        error_message += ("-" * 15)
+        error_message += "-" * 15
         error_message += "\n"
     return v[0], error_message
 
@@ -2092,44 +2068,48 @@ def add_to_google_calendar(event):
     tokendir = os.path.expanduser("~/.config/regolith/tokens/google_calendar_api")
     creds = None
     os.makedirs(tokendir, exist_ok=True)
-    tokenfile = os.path.join(tokendir, 'token.json')
+    tokenfile = os.path.join(tokendir, "token.json")
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
     if os.path.exists(tokenfile):
-        creds = Credentials.from_authorized_user_file(tokenfile, ['https://www.googleapis.com/auth/calendar.events'])
+        creds = Credentials.from_authorized_user_file(
+            tokenfile, ["https://www.googleapis.com/auth/calendar.events"]
+        )
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            print('The google calendar feature needs authentication information to run. '
-                  'This needs to be done just once for each new device. '
-                  'Please grant permission to regolith to access your calendar. '
-                  'If this process takes more than 1 minute you will have to rerun '
-                  'the helper to complete the addition of the presentation.')
+            print(
+                "The google calendar feature needs authentication information to run. "
+                "This needs to be done just once for each new device. "
+                "Please grant permission to regolith to access your calendar. "
+                "If this process takes more than 1 minute you will have to rerun "
+                "the helper to complete the addition of the presentation."
+            )
             return 0
-        with open(tokenfile, 'w') as token:
+        with open(tokenfile, "w") as token:
             token.write(creds.to_json())
 
-    service = build('calendar', 'v3', credentials=creds)
-    event = service.events().insert(calendarId='primary', body=event).execute()
-    print('Event created: %s' % (event.get('htmlLink')))
+    service = build("calendar", "v3", credentials=creds)
+    event = service.events().insert(calendarId="primary", body=event).execute()
+    print("Event created: %s" % (event.get("htmlLink")))
     return 1
 
 
 def google_cal_auth_flow():
     """First time authentication, this function opens a window to request user consent to use google calendar API,
-     and then returns a token"""
+    and then returns a token"""
     tokendir = os.path.expanduser("~/.config/regolith/tokens/google_calendar_api")
     os.makedirs(tokendir, exist_ok=True)
-    tokenfile = os.path.join(tokendir, 'token.json')
+    tokenfile = os.path.join(tokendir, "token.json")
     curr = pathlib.Path(__file__).parent.resolve()
     flow = InstalledAppFlow.from_client_secrets_file(
-        os.path.join(curr, 'credentials.json'),
-        ['https://www.googleapis.com/auth/calendar.events'])
+        os.path.join(curr, "credentials.json"), ["https://www.googleapis.com/auth/calendar.events"]
+    )
     creds = flow.run_local_server(port=0)
-    with open(tokenfile, 'w') as token:
+    with open(tokenfile, "w") as token:
         token.write(creds.to_json())
     # Save the credentials for the next run
 
@@ -2141,17 +2121,19 @@ def get_target_repo_info(target_repo_id, repos):
       target_repo_id - string
         the id of the doc with the target repo information
       repos - list
-        the list of repos.  A repo must have a name, a url and a params 
+        the list of repos.  A repo must have a name, a url and a params
             kwarg.
 
     Returns:
-        The target repo document, or False if it is not present or properly 
+        The target repo document, or False if it is not present or properly
         formulatedinformation
     """
-    setup_message = ("INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                     "please add your repository information in reolgithrc.json and "
-                     "your private authentication token in "
-                     "user.json respectively. See regolith documentation for details.")
+    setup_message = (
+        "INFO: If you would like regolith to automatically create a repository in GitHub/GitLab, "
+        "please add your repository information in reolgithrc.json and "
+        "your private authentication token in "
+        "user.json respectively. See regolith documentation for details."
+    )
 
     target_repo = [repo for repo in repos if repo.get("_id", "") == target_repo_id]
     if len(target_repo) == 0:
@@ -2161,15 +2143,19 @@ def get_target_repo_info(target_repo_id, repos):
         print(f"more than on repo found in regolithrc.json with the name {target_repo_id}")
         return False
     target_repo = target_repo[0]
-    message_params_not_defined = (f"WARNING: The request parameters may not be defined. "
-                                  f"Info we have: {target_repo}"
-                                  f"If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                                  f"please add repository information in regolithrc.json. See regolith documentation "
-                                  f"for details.")
-    message_url_not_defined = ("WARNING: The request url may not be valid. "
-                               "If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                               "please add repository information in regolithrc.json. See regolith documentation "
-                               "for details.")
+    message_params_not_defined = (
+        f"WARNING: The request parameters may not be defined. "
+        f"Info we have: {target_repo}"
+        f"If you would like regolith to automatically create a repository in GitHub/GitLab, "
+        f"please add repository information in regolithrc.json. See regolith documentation "
+        f"for details."
+    )
+    message_url_not_defined = (
+        "WARNING: The request url may not be valid. "
+        "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+        "please add repository information in regolithrc.json. See regolith documentation "
+        "for details."
+    )
     if not target_repo.get("params"):
         print(message_params_not_defined)
         return False
@@ -2183,12 +2169,13 @@ def get_target_repo_info(target_repo_id, repos):
         built_url = f"{target_repo.get('url')}{target_repo.get('api_route')}"
         url = urlparse(built_url)
         if url.scheme and url.netloc and url.path:
-            target_repo['params'].update({"name": target_repo.get("params").get("name").strip().replace(" ", "_")})
-            target_repo['built_url'] = built_url
+            target_repo["params"].update({"name": target_repo.get("params").get("name").strip().replace(" ", "_")})
+            target_repo["built_url"] = built_url
             return target_repo
         else:
             print(message_url_not_defined)
             return False
+
 
 def get_target_token(target_token_id, tokens):
     """Checks if API authentication token is defined and valid in rc
@@ -2201,10 +2188,12 @@ def get_target_token(target_token_id, tokens):
     Returns:
         The token if the token exists and False if not
     """
-    message_token_not_defined = ("WARNING: Cannot find an authentication token.  It may not be correctly defined. If you would like regolith to "
-                                 "automatically create a repository in GitHub/GitLab, please add your private "
-                                 "authentication token in user.json. See regolith documentation for details.")
-    
+    message_token_not_defined = (
+        "WARNING: Cannot find an authentication token.  It may not be correctly defined. If you would like regolith to "
+        "automatically create a repository in GitHub/GitLab, please add your private "
+        "authentication token in user.json. See regolith documentation for details."
+    )
+
     target_token = [token for token in tokens if token.get("_id") == target_token_id]
     if len(target_token) == 0:
         print(message_token_not_defined)
@@ -2217,8 +2206,8 @@ def get_target_token(target_token_id, tokens):
 
 
 def create_repo(destination_id, token_info_id, rc):
-    """ Creates a repo at the target distination 
-    
+    """Creates a repo at the target distination
+
     tries to fail gracefully if repo information and token is not defined
 
     Parameters:
@@ -2238,28 +2227,33 @@ def create_repo(destination_id, token_info_id, rc):
     token = get_target_token(token_info_id, rc.tokens)
     if repo_info and token:
         try:
-            response = requests.post(repo_info.get('built_url'), params=repo_info['params'],
-                                     headers={'PRIVATE-TOKEN': token})
+            response = requests.post(
+                repo_info.get("built_url"), params=repo_info["params"], headers={"PRIVATE-TOKEN": token}
+            )
             response.raise_for_status()
             clone_text = f"{repo_info.get('url').replace('https://', '')}:{repo_info.get('namespace_name','<group/org name>')}/{repo_info['params'].get('name')}.git"
-            return f"repo {repo_info.get('params').get('name', 'unknown')} " \
-                   f"has been created at {repo_info.get('url')}.\nClone this " \
-                   f"to your local using (HTTPS):\ngit clone https://{clone_text}\n" \
-                   f"or (SSH):\ngit clone git@{clone_text}"
+            return (
+                f"repo {repo_info.get('params').get('name', 'unknown')} "
+                f"has been created at {repo_info.get('url')}.\nClone this "
+                f"to your local using (HTTPS):\ngit clone https://{clone_text}\n"
+                f"or (SSH):\ngit clone git@{clone_text}"
+            )
         except requests.exceptions.HTTPError:
-            raise HTTPError(f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
-                            f"due to an issue with the API call (status code: {response.status_code}). "
-                            f"If you would like regolith to automatically create a repository in GitHub/GitLab, "
-                            f"please add repository information in regolithrc.json. See regolith documentation "
-                            f"for details.")
+            raise HTTPError(
+                f"WARNING: Unsuccessful attempt at making a GitHub/GitLab etc., repository "
+                f"due to an issue with the API call (status code: {response.status_code}). "
+                f"If you would like regolith to automatically create a repository in GitHub/GitLab, "
+                f"please add repository information in regolithrc.json. See regolith documentation "
+                f"for details."
+            )
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
     else:
-        return 
+        return
 
 
 def get_tags(coll):
-    '''
+    """
     Given a collection with a tags field, returns the set of tags as a list
 
     The tags field is expected to be a string with comma or space separated tags.
@@ -2275,14 +2269,14 @@ def get_tags(coll):
     -------
     the set of all tags as a list
 
-    '''
+    """
 
     all_tags = []
     for paper in coll:
         tag_long = paper.get("tags", "")
         if not isinstance(tag_long, str):
             raise TypeError("ERROR: valid tags are comma or space separated strings of tag names")
-        tags = tag_long.split(',')
+        tags = tag_long.split(",")
         tags = [sub_item for item in tags for sub_item in item.split()]
         all_tags.extend(tags)
     all_tags = [item.strip() for item in all_tags]
@@ -2290,14 +2284,16 @@ def get_tags(coll):
     all_tags.sort()
     return all_tags
 
+
 def get_uuid():
-    '''
+    """
     returns a uuid.uuid4 string
-    '''
+    """
     return str(uuid.uuid4())
 
+
 def get_appointments(person, appointments, target_grant=None):
-    '''
+    """
     get appointments from a person from the people collection
 
     Parameters
@@ -2317,12 +2313,13 @@ def get_appointments(person, appointments, target_grant=None):
     -------
     updated appointments list
 
-    '''
-    for appt_id, appt in person.get('appointments').items():
-        if target_grant is None or appt.get('grant', 'no_grant') == target_grant:
+    """
+    for appt_id, appt in person.get("appointments").items():
+        if target_grant is None or appt.get("grant", "no_grant") == target_grant:
             bd = get_dates(appt).get("begin_date")
             ed = get_dates(appt).get("end_date")
-            weighted_duration = (ed - bd).days / 30.4 * appt.get('loading')
-            appointments.append((person.get('_id'), bd, ed, appt.get('loading'),
-                         round(weighted_duration, 2), appt.get('grant')))
+            weighted_duration = (ed - bd).days / 30.4 * appt.get("loading")
+            appointments.append(
+                (person.get("_id"), bd, ed, appt.get("loading"), round(weighted_duration, 2), appt.get("grant"))
+            )
     return appointments

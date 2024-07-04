@@ -1,4 +1,5 @@
 """API for accessing the metadata and file storage"""
+
 import copy
 
 from regolith.database import dump_database, open_dbs
@@ -66,7 +67,7 @@ class Broker:
         return load_db(rc_file)
 
     def get_file_path(self, document, name):
-        """ Get a file from the file storage associated with the document and
+        """Get a file from the file storage associated with the document and
         name
 
         Parameters

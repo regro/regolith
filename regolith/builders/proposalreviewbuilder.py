@@ -1,4 +1,5 @@
 """Builder for Proposal Reivews."""
+
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import LatexBuilderBase
@@ -6,26 +7,24 @@ from regolith.fsclient import _id_key
 from regolith.tools import (
     all_docs_from_collection,
     filter_grants,
-    fuzzy_retrieval, dereference_institution,
+    fuzzy_retrieval,
+    dereference_institution,
 )
 
 
 class PropRevBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
+
     btype = "review-prop"
-    needed_colls = ['institutions', 'proposalReviews']
+    needed_colls = ["institutions", "proposalReviews"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx["proposalReviews"] = sorted(
-            all_docs_from_collection(rc.client, "proposalReviews"), key=_id_key
-        )
-        gtx["institutions"] = sorted(
-            all_docs_from_collection(rc.client, "institutions"), key=_id_key
-        )
+        gtx["proposalReviews"] = sorted(all_docs_from_collection(rc.client, "proposalReviews"), key=_id_key)
+        gtx["institutions"] = sorted(all_docs_from_collection(rc.client, "institutions"), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -57,7 +56,6 @@ class PropRevBuilder(LatexBuilderBase):
             if isinstance(rev["freewrite"], str):
                 rev["freewrite"] = [rev["freewrite"]]
 
-
             self.render(
                 "propreport.txt",
                 "{}.txt".format(outname),
@@ -82,5 +80,5 @@ class PropRevBuilder(LatexBuilderBase):
                 creativity_originality=rev["nsf_create_original_transformative"],
                 benefit_to_society=rev["nsf_pot_to_benefit_society"],
                 plan_good=rev["nsf_plan_good"],
-                advance_knowledge=rev["nsf_pot_to_advance_knowledge"]
+                advance_knowledge=rev["nsf_pot_to_advance_knowledge"],
             )

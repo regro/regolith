@@ -1,4 +1,5 @@
 """Builder for websites."""
+
 import os
 import shutil
 
@@ -47,24 +48,16 @@ class HtmlBuilder(BuilderBase):
             key=position_key,
             reverse=True,
         )
-        gtx["abstracts"] = list(
-            all_docs_from_collection(rc.client, "abstracts")
-        )
-        gtx["group"] = document_by_value(
-            all_docs_from_collection(rc.client, "groups"), "name", rc.groupname
-        )
+        gtx["abstracts"] = list(all_docs_from_collection(rc.client, "abstracts"))
+        gtx["group"] = document_by_value(all_docs_from_collection(rc.client, "groups"), "name", rc.groupname)
         gtx["all_docs_from_collection"] = all_docs_from_collection
-        gtx["institutions"] = sorted(
-            all_docs_from_collection(rc.client, "institutions"), key=_id_key
-        )
+        gtx["institutions"] = sorted(all_docs_from_collection(rc.client, "institutions"), key=_id_key)
 
     def finish(self):
         """Move files over to their destination and remove them from the
         source"""
         # static
-        stsrc = os.path.join(
-            getattr(self.rc, "static_source", "templates"), "static"
-        )
+        stsrc = os.path.join(getattr(self.rc, "static_source", "templates"), "static")
         stdst = os.path.join(self.bldir, "static")
         if os.path.isdir(stdst):
             shutil.rmtree(stdst)
@@ -74,11 +67,11 @@ class HtmlBuilder(BuilderBase):
     def root_index(self):
         """Render root index"""
         self.render("root_index.html", "index.html", title="Home")
-        make_bibtex_file(list(all_docs_from_collection(self.rc.client,
-                                                       "citations")),
-                         pid='group',
-                         person_dir=self.bldir,
-                         )
+        make_bibtex_file(
+            list(all_docs_from_collection(self.rc.client, "citations")),
+            pid="group",
+            person_dir=self.bldir,
+        )
 
     def people(self):
         """Render people, former members, and each person"""
@@ -97,23 +90,16 @@ class HtmlBuilder(BuilderBase):
                 bold=False,
             )
 
-            bibfile = make_bibtex_file(
-                pubs, pid=p["_id"], person_dir=peeps_dir
-            )
+            bibfile = make_bibtex_file(pubs, pid=p["_id"], person_dir=peeps_dir)
             emps = p.get("employment", [])
-            emps = [em for em in emps
-                    if not em.get("not_in_cv", False)]
+            emps = [em for em in emps if not em.get("not_in_cv", False)]
             for e in emps:
-                e['position'] = e.get('position_full', e.get('position').title())
+                e["position"] = e.get("position_full", e.get("position").title())
             ene = emps + p.get("education", [])
             ene.sort(key=ene_date_key, reverse=True)
             for e in ene:
-                dereference_institution(e,
-                                        all_docs_from_collection(
-                                            rc.client, "institutions"))
-            projs = filter_projects(
-                all_docs_from_collection(rc.client, "projects"), names
-            )
+                dereference_institution(e, all_docs_from_collection(rc.client, "institutions"))
+            projs = filter_projects(all_docs_from_collection(rc.client, "projects"), names)
             for serve in p.get("service", []):
                 serve_dates = get_dates(serve)
                 date = serve_dates.get("date")
@@ -137,9 +123,7 @@ class HtmlBuilder(BuilderBase):
                 education_and_employment=ene,
                 projects=projs,
             )
-        self.render(
-            "people.html", os.path.join("people", "index.html"), title="People"
-        )
+        self.render("people.html", os.path.join("people", "index.html"), title="People")
 
         self.render(
             "former.html",
@@ -151,9 +135,7 @@ class HtmlBuilder(BuilderBase):
         """Render projects"""
         rc = self.rc
         projs = all_docs_from_collection(rc.client, "projects")
-        self.render(
-            "projects.html", "projects.html", title="Projects", projects=projs
-        )
+        self.render("projects.html", "projects.html", title="Projects", projects=projs)
 
     def blog(self):
         """Render the blog and rss"""
@@ -188,9 +170,7 @@ class HtmlBuilder(BuilderBase):
                 job=job,
                 title="{0} ({1})".format(job["title"], job["_id"]),
             )
-        self.render(
-            "jobs.html", os.path.join("jobs", "index.html"), title="Jobs"
-        )
+        self.render("jobs.html", os.path.join("jobs", "index.html"), title="Jobs")
 
     def abstracts(self):
         """Render each abstract"""
@@ -201,9 +181,7 @@ class HtmlBuilder(BuilderBase):
                 "abstract.html",
                 os.path.join("abstracts", ab["_id"] + ".html"),
                 abstract=ab,
-                title="{0} {1} - {2}".format(
-                    ab["firstname"], ab["lastname"], ab["title"]
-                ),
+                title="{0} {1} - {2}".format(ab["firstname"], ab["lastname"], ab["title"]),
             )
 
     def nojekyll(self):
@@ -216,7 +194,5 @@ class HtmlBuilder(BuilderBase):
         rc = self.rc
         if not hasattr(rc, "cname"):
             return
-        with open(
-            os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8") as f:
             f.write(rc.cname)

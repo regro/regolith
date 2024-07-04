@@ -1,4 +1,5 @@
 """Flask app for grading regolith."""
+
 import json
 import traceback
 
@@ -60,9 +61,7 @@ def form_to_grade_assignment(form):
     }
     if form["filename"]:
         grade["filename"] = form["filename"]
-    scores = {
-        int(k[5:]): float(v) for k, v in form.items() if k.startswith("score")
-    }
+    scores = {int(k[5:]): float(v) for k, v in form.items() if k.startswith("score")}
     scores = sorted(scores.items())
     grade["scores"] = [v for _, v in scores]
     return grade

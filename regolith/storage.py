@@ -1,4 +1,5 @@
 """Tools for document storgage."""
+
 import os
 import shutil
 from warnings import warn
@@ -155,9 +156,9 @@ class StorageClient(object):
             return os.path.join(self.path, file_name)
         elif temp != -1:
             if os.name == "posix":
-                return os.getcwd() + '/' + file_name
+                return os.getcwd() + "/" + file_name
             else:
-                return os.getcwd() + '\\' + file_name
+                return os.getcwd() + "\\" + file_name
         else:
             return None
 
@@ -165,7 +166,7 @@ class StorageClient(object):
 @contextmanager
 def store_client(rc):
     """Context manager for file storage
-    
+
     Parameters
     ----------
     rc : RunControl

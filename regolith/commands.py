@@ -1,4 +1,5 @@
 """Implementation of commands for command line."""
+
 import json
 import os
 import re
@@ -23,16 +24,11 @@ RE_SPACE = re.compile(r"\s+")
 INGEST_COLL_LU = {".bib": "citations"}
 
 
-
-
 def add_cmd(rc):
     """Adds documents to a collection in a database."""
     db = rc.client[rc.db]
     coll = db[rc.coll]
-    docs = [
-        json.loads(doc) if isinstance(doc, string_types) else doc
-        for doc in rc.documents
-    ]
+    docs = [json.loads(doc) if isinstance(doc, string_types) else doc for doc in rc.documents]
     rc.client.insert_many(rc.db, rc.coll, docs)
 
 
@@ -56,16 +52,14 @@ def _ingest_citations(rc):
         return record
 
     parser.customization = customizations
-    with open(rc.filename, "r", encoding='utf-8') as f:
+    with open(rc.filename, "r", encoding="utf-8") as f:
         bibs = bibtexparser.load(f, parser=parser)
     coll = rc.client[rc.db][rc.coll]
     for bib in bibs.entries:
         bibid = bib.pop("ID")
         bib["entrytype"] = bib.pop("ENTRYTYPE")
         if "author" in bib:
-            bib["author"] = [
-                a.strip() for b in bib["author"] for a in RE_AND.split(b)
-            ]
+            bib["author"] = [a.strip() for b in bib["author"] for a in RE_AND.split(b)]
         if "title" in bib:
             bib["title"] = RE_SPACE.sub(" ", bib["title"])
         rc.client.update_one(rc.db, rc.coll, {"_id": bibid}, bib, upsert=True)
@@ -84,9 +78,7 @@ def ingest(rc):
     if rc.coll == "citations":
         _ingest_citations(rc)
     else:
-        raise ValueError(
-            "don't know how to ingest collection {0!r}".format(rc.coll)
-        )
+        raise ValueError("don't know how to ingest collection {0!r}".format(rc.coll))
 
 
 def _run_app(app, rc):
@@ -120,7 +112,7 @@ def build_db_check(rc):
     dbs = set()
     for t in rc.build_targets:
         bldr = BUILDERS[t]
-        needed_colls = getattr(bldr, 'needed_colls', None)
+        needed_colls = getattr(bldr, "needed_colls", None)
         # If the requested builder doesn't state DB deps then it requires
         # all dbs!
         if not needed_colls:
@@ -139,13 +131,12 @@ def helper_db_check(rc):
     if rc.database is None:
         rc.database = rc.databases[0]["name"]
     if rc.fast_updater:
-        rc.databases = [database for database in rc.databases
-                        if database.get('name') == rc.database]
+        rc.databases = [database for database in rc.databases if database.get("name") == rc.database]
 
     # only open the needed collections
     colls = set()
     bldr = HELPERS[rc.helper_target][0]
-    needed_colls = getattr(bldr, 'needed_colls', None)
+    needed_colls = getattr(bldr, "needed_colls", None)
     # If the requested builder doesn't state DB deps then it requires
     # all dbs!
     if not needed_colls:
@@ -212,8 +203,9 @@ def fs_to_mongo(rc: RunControl) -> None:
         be loaded according to the 'databases' in it.
     """
     from regolith.mongoclient import MongoClient
+
     client = MongoClient(rc)
-    dbs = getattr(rc, 'databases')
+    dbs = getattr(rc, "databases")
     for db in dbs:
         client.import_database(db)
     return
@@ -228,7 +220,7 @@ def mongo_to_fs(rc: RunControl) -> None:
         The RunControl. The mongo client will be created according to 'mongodbpath' in it. The databases will
         be loaded according to the 'databases' in it.
     """
-    dbs = getattr(rc, 'databases')
+    dbs = getattr(rc, "databases")
     for db in dbs:
         rc.client.export_database(db)
     return
@@ -269,6 +261,7 @@ def validate(rc):
         sys.exit(f"Validation failed on some records\n {cap}")
         # sys.exit(f"Validation failed on some records")
 
+
 DISCONNECTED_COMMANDS = {
     "rc": lambda rc: print(rc._pformat()),
     "deploy": deploy,
@@ -288,5 +281,5 @@ CONNECTED_COMMANDS = {
     "validate": validate,
     "helper": helper,
     "fs-to-mongo": fs_to_mongo,
-    "mongo-to-fs": mongo_to_fs
+    "mongo-to-fs": mongo_to_fs,
 }

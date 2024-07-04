@@ -1,4 +1,5 @@
 """The main CLI for regolith"""
+
 from __future__ import print_function
 
 import copy
@@ -22,19 +23,19 @@ from gooey import Gooey, GooeyParser
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
 
+
 def create_top_level_parser():
     p = ArgumentParser()
+    p.add_argument("--version", action="store_true")
     p.add_argument(
-        "--version",
-        action="store_true"
-    )
-    p.add_argument('-n',
+        "-n",
         "--needed_colls",
         help="limit connecting collections to only those that will be used in this session",
         nargs="+",
-        default=()
+        default=(),
     )
     return p
+
 
 def create_parser(inputs):
     p = ArgumentParser()
@@ -69,13 +70,13 @@ def main(args=None):
         while leave is False:
             print("\ninput helper target and all target inputs:")
             get_cmds = input()
-            cmds = get_cmds.split(" ",1)
+            cmds = get_cmds.split(" ", 1)
             if cmds[0] == "exit" or cmds[0] == "e":
                 break
             if cmds[0] not in HELPERS:
                 rc.print_help()
             rc.helper_target = cmds[0]
-            p2 = ArgumentParser(prog='regolith helper')
+            p2 = ArgumentParser(prog="regolith helper")
             # it is not apparent from this but the following line calls the subparser in
             #   in the helper module to get the rest of the args.
             HELPERS[rc.helper_target][1](p2)

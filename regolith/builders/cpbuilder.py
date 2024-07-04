@@ -1,4 +1,5 @@
 """Builder for Current and Pending Reports."""
+
 import datetime as dt
 from copy import copy
 from nameparser import HumanName
@@ -18,6 +19,7 @@ from regolith.tools import (
 def is_pending(status):
     return status in "pending"
 
+
 def is_declined(status):
     return status in "declined"
 
@@ -26,21 +28,21 @@ class CPBuilder(LatexBuilderBase):
     """Build current and pending report from database entries"""
 
     btype = "current-pending"
-    needed_colls = ['groups', 'people', 'grants', 'proposals']
+    needed_colls = ["groups", "people", "grants", "proposals"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx["people"] = list(sorted(
-            all_docs_from_collection(rc.client, "people"),
-            key=position_key,
-            reverse=True,
-        ))
-        gtx["groups"] = list(sorted(
-            all_docs_from_collection(rc.client, "groups"), key=_id_key
-        ))
+        gtx["people"] = list(
+            sorted(
+                all_docs_from_collection(rc.client, "people"),
+                key=position_key,
+                reverse=True,
+            )
+        )
+        gtx["groups"] = list(sorted(all_docs_from_collection(rc.client, "groups"), key=_id_key))
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -51,66 +53,46 @@ class CPBuilder(LatexBuilderBase):
         gtx = self.gtx
         rc = self.rc
         for group in self.gtx["groups"]:
-            self.gtx["grants"] = list(sorted(
-                all_docs_from_collection(rc.client, "grants"), key=_id_key
-            ))
-            self.gtx["proposals"] = list(sorted(
-                all_docs_from_collection(rc.client, "proposals"), key=_id_key
-            ))
+            self.gtx["grants"] = list(sorted(all_docs_from_collection(rc.client, "grants"), key=_id_key))
+            self.gtx["proposals"] = list(sorted(all_docs_from_collection(rc.client, "proposals"), key=_id_key))
             grp = group["_id"]
-            pi = fuzzy_retrieval(
-                self.gtx["people"], ["_id", "aka", "name"], group["pi_name"]
-            )
+            pi = fuzzy_retrieval(self.gtx["people"], ["_id", "aka", "name"], group["pi_name"])
             pinames = pi["name"].split()
             piinitialslist = [i[0] for i in pinames]
-            pi['initials'] = "".join(piinitialslist).upper()
+            pi["initials"] = "".join(piinitialslist).upper()
 
-            grants = merge_collections_all(self.gtx["proposals"],
-                                           self.gtx["grants"],
-                                           "proposal_id")
+            grants = merge_collections_all(self.gtx["proposals"], self.gtx["grants"], "proposal_id")
             for g in grants:
-                g['end_date'] = get_dates(g).get('end_date')
-                g['begin_date'] = get_dates(g).get('begin_date',
-                                                   dt.date(1900, 1, 2))
+                g["end_date"] = get_dates(g).get("end_date")
+                g["begin_date"] = get_dates(g).get("begin_date", dt.date(1900, 1, 2))
                 for person in g.get("team", []):
-                    rperson = fuzzy_retrieval(
-                        self.gtx["people"], ["_id", "aka", "name"], person["name"]
-                    )
+                    rperson = fuzzy_retrieval(self.gtx["people"], ["_id", "aka", "name"], person["name"])
                     if rperson:
                         person["name"] = rperson["name"]
-                if g.get('budget'):
-                    amounts = [i.get('amount') for i in g.get('budget')]
-                    g['subaward_amount'] = sum(amounts)
+                if g.get("budget"):
+                    amounts = [i.get("amount") for i in g.get("budget")]
+                    g["subaward_amount"] = sum(amounts)
 
             current_grants = [
                 dict(g)
                 for g in grants
                 if is_current(g)
-                   and not is_pending(g.get("status", "None"))
-                   and not is_declined(g.get("status", "None"))
+                and not is_pending(g.get("status", "None"))
+                and not is_declined(g.get("status", "None"))
             ]
-            current_grants, _, _ = filter_grants(
-                current_grants, {pi["name"]}, pi=False, multi_pi=True
-            )
+            current_grants, _, _ = filter_grants(current_grants, {pi["name"]}, pi=False, multi_pi=True)
             for g in current_grants:
-                if g.get('budget'):
-                    amounts = [i.get('amount') for i in g.get('budget')]
-                    g['subaward_amount'] = sum(amounts)
+                if g.get("budget"):
+                    amounts = [i.get("amount") for i in g.get("budget")]
+                    g["subaward_amount"] = sum(amounts)
 
-            pending_grants = [
-                g for g in grants
-                if is_pending(g.get("status", "None"))
-            ]
+            pending_grants = [g for g in grants if is_pending(g.get("status", "None"))]
             for g in pending_grants:
                 for person in g["team"]:
-                    rperson = fuzzy_retrieval(
-                        self.gtx["people"], ["aka", "name"], person["name"]
-                    )
+                    rperson = fuzzy_retrieval(self.gtx["people"], ["aka", "name"], person["name"])
                     if rperson:
                         person["name"] = rperson["name"]
-            pending_grants, _, _ = filter_grants(
-                pending_grants, {pi["name"]}, pi=False, multi_pi=True
-            )
+            pending_grants, _, _ = filter_grants(pending_grants, {pi["name"]}, pi=False, multi_pi=True)
             summed_grants = pending_grants + current_grants
             for grant in summed_grants:
                 grant.update(
@@ -125,8 +107,7 @@ class CPBuilder(LatexBuilderBase):
                         grant.get("end_date").year,
                     ),
                 )
-            badids = [i["_id"] for i in current_grants if
-                      not i.get('cpp_info',{}).get('cppflag', "")]
+            badids = [i["_id"] for i in current_grants if not i.get("cpp_info", {}).get("cppflag", "")]
             # badids_pending = ([i["_id"] for i in pending_grants if
             #           not i.get('cpp_info',{}).get('cppflag', "")])
             if badids:

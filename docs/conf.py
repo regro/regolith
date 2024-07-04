@@ -60,8 +60,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"regolith"
-copyright = u"2015, Anthony Scopatz"
+project = "regolith"
+copyright = "2015, Anthony Scopatz"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -209,8 +209,8 @@ latex_documents = [
     (
         "index",
         "regolith.tex",
-        u"Regolith Documentation",
-        u"Anthony Scopatz",
+        "Regolith Documentation",
+        "Anthony Scopatz",
         "manual",
     )
 ]
@@ -240,7 +240,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "regolith", u"regolith docs", [u"Anthony Scopatz"], 1)]
+man_pages = [("index", "regolith", "regolith docs", ["Anthony Scopatz"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -255,8 +255,8 @@ texinfo_documents = [
     (
         "index",
         "regolith",
-        u"regolith documentation",
-        u"Anthony Scopatz",
+        "regolith documentation",
+        "Anthony Scopatz",
         "regolith",
         "Research group managment software.",
         "Miscellaneous",
@@ -307,9 +307,7 @@ def format_key(schema, key, indent_str=""):
     if schema.get("schema", False):
         s += "\n"
     for inner_key in schema.get("schema", ()):
-        s += format_key(
-            schema["schema"], inner_key, indent_str=indent_str + "\t"
-        )
+        s += format_key(schema["schema"], inner_key, indent_str=indent_str + "\t")
 
     return s
 
@@ -339,10 +337,7 @@ def build_schema_doc(key):
         documents = {doc["_id"]: doc for doc in documents}
         dump_json(temp.name, documents)
         docs = sorted(documents.values(), key=_id_key)
-        lines = [
-            json.dumps(doc, sort_keys=True, indent=4, separators=(",", ": "))
-            for doc in docs
-        ]
+        lines = [json.dumps(doc, sort_keys=True, indent=4, separators=(",", ": ")) for doc in docs]
         jd = "\n".join(lines)
         json_to_yaml(temp.name, temp2.name)
         with open(temp2.name, "r") as ff:
@@ -404,9 +399,7 @@ This can be enabled with ``chmod +x .git/hooks/pre-commit``"""
 
 
 # build CLI docs
-clis = sorted(
-    set(CONNECTED_COMMANDS.keys()) | set(DISCONNECTED_COMMANDS.keys())
-)
+clis = sorted(set(CONNECTED_COMMANDS.keys()) | set(DISCONNECTED_COMMANDS.keys()))
 for cli in clis:
     build_cli_doc(cli)
 

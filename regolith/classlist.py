@@ -1,4 +1,5 @@
 """Classlist implementation"""
+
 import csv
 import os
 import re
@@ -12,15 +13,14 @@ from nameparser import HumanName
 
 def load_json(filename):
     """Returns students as a list of dicts from JSON file."""
-    with open(filename, encoding='utf-8') as f:
+    with open(filename, encoding="utf-8") as f:
         students = json.load(f)
     return students
 
 
 def load_csv(filename, format="columbia"):
-    """Returns students as a list of dicts from a csv from Columbia Courseworks
-    """
-    with open(filename, encoding='utf-8') as f:
+    """Returns students as a list of dicts from a csv from Columbia Courseworks"""
+    with open(filename, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         students = []
         for row in reader:
@@ -28,19 +28,22 @@ def load_csv(filename, format="columbia"):
 
     if format == "columbia":
         email_suffix = "@columbia.edu"
-        [stud.update({"first_name": HumanName(stud["Student"]).first,
-                      "last_name": HumanName(stud["Student"]).last,
-                      "email": f"{stud.get('SIS User ID').strip()}{email_suffix}",
-                      "university_id": stud.get('SIS User ID')
-                      })
-           for stud in students]
-
+        [
+            stud.update(
+                {
+                    "first_name": HumanName(stud["Student"]).first,
+                    "last_name": HumanName(stud["Student"]).last,
+                    "email": f"{stud.get('SIS User ID').strip()}{email_suffix}",
+                    "university_id": stud.get("SIS User ID"),
+                }
+            )
+            for stud in students
+        ]
 
     for student in students:
         student["first_name"] = student.get("first_name").strip()
         student["last_name"] = student.get("last_name").strip()
-        student["_id"] = "{} {}".format(student.get("first_name"),
-                                        student.get("last_name")).strip()
+        student["_id"] = "{} {}".format(student.get("first_name"), student.get("last_name")).strip()
         student["email"] = student.get("email").strip()
         student["university_id"] = student["university_id"].strip()
 
@@ -123,7 +126,7 @@ def load_usc(filename):
     """Returns students as a list of dicts from an HTML file obtainted from the University of
     South Carolina.
     """
-    with open(filename, encoding='utf-8') as f:
+    with open(filename, encoding="utf-8") as f:
         html = f.read()
     parser = UscHtmlParser()
     parser.feed(html)
@@ -136,9 +139,7 @@ LOADERS = {"usc": load_usc, "json": load_json, "csv": load_csv}
 def add_students_to_db(students, rc):
     """Add new students to the student directory."""
     for student in students:
-        rc.client.update_one(
-            rc.db, "students", {"_id": student["_id"]}, student, upsert=True
-        )
+        rc.client.update_one(rc.db, "students", {"_id": student["_id"]}, student, upsert=True)
 
 
 def add_students_to_course(students, rc):
@@ -154,16 +155,15 @@ def add_students_to_course(students, rc):
     else:
         raise ValueError("operation {0!r} nor recognized".format(rc.op))
     course["students"] = sorted(registry)
-    rc.client.update_one(
-        rc.db, "courses", {"_id": rc.course_id}, course, upsert=True
-    )
+    rc.client.update_one(rc.db, "courses", {"_id": rc.course_id}, course, upsert=True)
 
 
 def register(rc):
     """Entry point for registering classes."""
     if not os.path.exists(rc.filename):
-        sys.exit("classlist file {} can't be found\nPlease check the filename "
-                 "and try again".format(rc.filename))
+        sys.exit(
+            "classlist file {} can't be found\nPlease check the filename " "and try again".format(rc.filename)
+        )
     if rc.format is None:
         rc.format = os.path.splitext(rc.filename)[1][1:]
     loader = LOADERS[rc.format]

@@ -6,11 +6,11 @@ from regolith.mongoclient import MongoClient
 
 
 CLIENTS = {
-    'mongo': MongoClient,
-    'mongodb': MongoClient,
-    'fs': FileSystemClient,
-    'filesystem': FileSystemClient,
-    }
+    "mongo": MongoClient,
+    "mongodb": MongoClient,
+    "fs": FileSystemClient,
+    "filesystem": FileSystemClient,
+}
 
 
 class ClientManager:
@@ -25,7 +25,7 @@ class ClientManager:
                 database["backend"] = rc.backend
         for database in databases:
             if "backend" not in database:
-                database["backend"] = 'filesystem'
+                database["backend"] = "filesystem"
             backend_object_type = CLIENTS[database["backend"]]
             # Checks to see if the clients tuple contains a client with the database's backend
             if len(client_tuple) == 0:
@@ -138,4 +138,3 @@ class ClientManager:
         for client in self.clients:
             if dbname in client.keys():
                 client.update_one(dbname, collname, filter, update, **kwargs)
-
