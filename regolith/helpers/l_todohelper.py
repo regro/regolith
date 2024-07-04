@@ -1,4 +1,5 @@
 """Helper for listing the to-do tasks.
+
 Tasks are gathered from people.yml, milestones, and group meeting actions."""
 
 import datetime as dt
@@ -91,6 +92,7 @@ def subparser(subpi):
 
 class TodoListerHelper(SoutHelperBase):
     """Helper for listing the to-do tasks.
+    
     Tasks are gathered from people.yml, milestones, and group meeting actions."""
 
     # btype must be the same as helper target in helper.py
@@ -232,8 +234,7 @@ class TodoListerHelper(SoutHelperBase):
 
 
 def _format_todos(todo, today):
-    """
-    datify dates, set orders etc and update to-do items in place
+    """datify dates, set orders etc and update to-do items in place
 
     Parameters
     ----------
