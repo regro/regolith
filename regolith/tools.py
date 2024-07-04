@@ -569,7 +569,7 @@ def filter_presentations(
       The id of the person you will build the list for
     types: list of strings.  Optional, default = all
       The types to filter for.  Allowed types are
-      {*PRESENTATION_TYPES,}
+      {*PRESENTATION_TYPES, }
     since: date.  Optional, default is None
         The begin date to filter from
     before: date. Optional, default is None
@@ -657,7 +657,7 @@ def filter_presentations(
                     author,
                     case_sensitive=False,
                 )
-                   is None
+                is None
                 else fuzzy_retrieval(
                     people,
                     ["aka", "name", "_id"],
@@ -1903,13 +1903,10 @@ def print_task(task_list, stati, index=True):
             print(f"{status}:")
         for task in task_list:
             if index:
-                try:
-                    task["preamble"] = (
-                        f"({task.get('importance')})({task.get('days_to_due')} days): "
-                        f"({task.get('running_index', 0)}) "
-                    )
-                except:
-                    task["preamble"] = ""
+                task["preamble"] = (
+                    f"({task.get('importance')})({task.get('days_to_due')} days): "
+                    f"({task.get('running_index', 0)}) "
+                )
             else:
                 task["preamble"] = ""
             if task.get("status") == status:
