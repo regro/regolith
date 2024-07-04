@@ -9,7 +9,7 @@ from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
 from regolith.tools import all_docs_from_collection, get_pi_id, get_uuid, fragment_retrieval
 from gooey import GooeyParser
-from sys import exit
+
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]
@@ -41,16 +41,16 @@ def subparser(subpi):
         "-d",
         "--deadline",
         action="store_true",
-        help=f"specify if the due date (above) has a hard deadline",
+        help="specify if the due date (above) has a hard deadline",
     )
     subpi.add_argument(
         "-m",
         "--importance",
         choices=ALLOWED_IMPORTANCE,
         type=int,
-        help=f"The importance of the task. "
-        f"Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the Eisenhower matrix of "
-        f"importance vs. urgency.  An important and urgent task would be 3.",
+        help="The importance of the task. "
+        "Corresponds roughly to (3) tt, (2) tf, (1) ft, (0) ff in the Eisenhower matrix of "
+        "importance vs. urgency.  An important and urgent task would be 3.",
         default=1,
     )
     subpi.add_argument(
@@ -92,7 +92,8 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "--date",
-        help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. Default is today.",
+        help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. "
+             "Default is today.",
         **date_kwargs,
     )
 
@@ -216,7 +217,8 @@ class TodoAdderHelper(DbHelperBase):
                     mil.update({"tasks": []})
                 mil["tasks"].append(todo_uuid)
                 print(
-                    f"The milestone uuid {rc.milestone_uuid} in projectum {target_prum.get('_id')} has been updated in projecta."
+                    f"The milestone uuid {rc.milestone_uuid} in projectum {target_prum.get('_id')} has been "
+                    "updated in projecta."
                 )
             rc.client.update_one(rc.database, "projecta", {"_id": target_prum.get("_id")}, target_prum)
         indices = [todo.get("running_index", 0) for todo in todolist]
