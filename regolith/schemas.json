@@ -2876,6 +2876,34 @@
             "anyof_type": ["string", "integer"]
         }
     },
+    "packages": {
+        "_id": {
+            "description": "unique id for the representation of packages",
+            "required": true,
+            "type": "string"
+        },
+        "active": {
+            "description": "the status whether the package is active or not.",
+            "required": true,
+            "type": "boolean"
+        },
+        "url": {
+            "description": "url to the package on GitHub or GitLab",
+            "required": true,
+            "type": "string"
+        },
+        "grants": {
+            "description": "grant(s) that take to release the package.",
+            "required": false,
+            "type": "list"
+        },
+        "group": {
+            "description": "research group that develops the package.",
+            "required": true,
+            "type": "string"
+        }
+
+    },
     "students": {
         "_description": {
             "description": "This is a collection of student names and metadata. This should probably be private."

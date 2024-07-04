@@ -61,6 +61,13 @@
         "title": "My Vision",
         "year": 2015
     },
+    "packages": {
+        "_id": "unique-package-name",
+        "active": true,
+        "url": "https://github.com/diffpy/diffpy.utils",
+        "grants": ["dmref15", "SymPy-1.1"],
+        "group": "billinge group"
+    },
     "citations": [
         {
             "_id": "meurer2016sympy",
