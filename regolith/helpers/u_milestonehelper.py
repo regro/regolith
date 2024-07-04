@@ -49,13 +49,13 @@ def subparser(subpi):
         "-s",
         "--status",
         help="Status of the milestone/deliverable: "
-        f"{*PROJECTUM_STATI,}. "
+        f"{*PROJECTUM_STATI, }. "
         "Defaults to proposed for a new milestone.",
     )
     subpi.add_argument(
         "-t",
         "--type",
-        help="Type of the milestone: " f"{*MILESTONE_TYPES,} " "Defaults to meeting for a new milestone.",
+        help="Type of the milestone: " f"{*MILESTONE_TYPES, } " "Defaults to meeting for a new milestone.",
     )
     subpi.add_argument(
         "-a",
@@ -100,12 +100,14 @@ class MilestoneUpdaterHelper(DbHelperBase):
             raise RuntimeError(
                 "Detected both a uuid fragment and projectum id.\n"
                 "You may enter either a milestone uuid or a projectum id but not both.\n"
-                "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
+                "Enter a milestone uuid to update an existing milestone, "
+                "or a projectum id to add a new milestone to that projectum.\n"
             )
         if not rc.projectum_id and not rc.milestone_uuid:
             raise RuntimeError(
                 "No milestone uuid or projectum id was entered.\n"
-                "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n"
+                "Enter a milestone uuid to update an existing milestone, "
+                "or a projectum id to add a new milestone to that projectum.\n"
             )
         if rc.projectum_id:
             rc.projectum_id = rc.projectum_id.strip()
@@ -274,9 +276,9 @@ class MilestoneUpdaterHelper(DbHelperBase):
                 multiple.append(rc.milestone_uuid)
         if updated:
             for msg in updated:
-                print(f"{msg}")
+                print(msg)
         else:
-            print(f"Failed to update projecta.")
+            print("Failed to update projecta.")
         if zero:
             print(
                 f"No ids were found that match your milestone_uuid entry ({zero[0]}).\n"
