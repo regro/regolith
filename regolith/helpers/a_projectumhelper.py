@@ -261,7 +261,7 @@ class ProjectumAdderHelper(DbHelperBase):
                 "Create public-summary",
                 "Create a public summary in a text file. Place it in the 'highlight' folder. "
                 "Iterate with PI to convergence. (The kudos template and example can be found at "
-                "https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y/edit?usp=sharing).",
+                "https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y).",
             ),
             (
                 "Add links to urls with supplementary info in the prum",
@@ -424,7 +424,8 @@ class ProjectumAdderHelper(DbHelperBase):
                 "run the commands with --no-pdf, which yields the latex source but doesn't build it, then build "
                 "the latex manually. The complied tex and pdf files are located in the `_build` folder. "
                 "If any problem about installing regolith and databases, please refer to "
-                "[rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases).",
+                "[rg-db-group wiki]("
+                "https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases).",
             ),
             ("Get arxiv reference", "Wait a day to get the full arXiv reference."),
             ("Email coauthors", "Send an email to coauthors letting them know the arXiv citation information."),
@@ -527,7 +528,8 @@ class ProjectumAdderHelper(DbHelperBase):
                 "problems with the latex building, run the commands with --no-pdf, "
                 "which yields the latex source but doesn't build it, then build the latex manually. "
                 "If any problem about installing regolith and databases, please refer to "
-                "[rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases).",
+                "[rg-db-group wiki]("
+                "https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases).",
             ),
             (
                 "Check figures and tables",
