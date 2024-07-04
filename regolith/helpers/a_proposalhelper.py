@@ -132,7 +132,6 @@ class ProposalAdderHelper(DbHelperBase):
         gtx["zip"] = zip
 
     def db_updater(self):
-        gtx = self.gtx
         rc = self.rc
         if rc.date:
             now = date_parser.parse(rc.date).date()
@@ -168,7 +167,7 @@ class ProposalAdderHelper(DbHelperBase):
                     ):
                         # assuming that the user inputs the correct duration up to 1 decimal place
                         # so the maximum allowed difference is 0.1*30.5
-                        raise ValueError(f"ERROR: please rerun specifying a duration OR an end-date but not both")
+                        raise ValueError("ERROR: please rerun specifying a duration OR an end-date but not both")
             pdoc.update({"begin_date": begin_date})
         else:
             pdoc.update({"begin_date": "tbd"})

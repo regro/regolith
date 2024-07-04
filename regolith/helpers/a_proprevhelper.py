@@ -23,7 +23,7 @@ def subparser(subpi):
         date_kwargs["widget"] = "DateChooser"
 
     subpi.add_argument("name", help="pi first name space last name in quotes", default=None)
-    subpi.add_argument("type", choices=ALLOWED_TYPES, help=f"Report type", default=None)
+    subpi.add_argument("type", choices=ALLOWED_TYPES, help="Report type", default=None)
     subpi.add_argument("due_date", help="Due date", **date_kwargs)
     subpi.add_argument(
         "-d",
@@ -32,7 +32,7 @@ def subparser(subpi):
     )
     subpi.add_argument("-q", "--requester", help="Name of the Program officer requesting")
     subpi.add_argument("-r", "--reviewer", help="name of the reviewer.  Defaults to sbillinge")
-    subpi.add_argument("-s", "--status", choices=ALLOWED_STATI, help=f"Report status", default="accepted")
+    subpi.add_argument("-s", "--status", choices=ALLOWED_STATI, help="Report status", default="accepted")
     subpi.add_argument("-t", "--title", help="the title of the proposal")
     return subpi
 
