@@ -1,4 +1,6 @@
-"""Helper for listing the to-do tasks. Tasks are gathered from people.yml, milestones, and group meeting actions."""
+"""Helper for listing the to-do tasks.
+
+Tasks are gathered from people.yml, milestones, and group meeting actions."""
 
 import datetime as dt
 import dateutil.parser as date_parser
@@ -40,8 +42,8 @@ def subparser(subpi):
         nargs="?",
         const=30,
         help="Filter for tasks of short duration. "
-        "All items with a duration <= # mins, will be returned "
-        "if the number # is specified.",
+             "All items with a duration <= # mins, will be returned "
+             "if the number # is specified.",
     )
     subpi.add_argument(
         "-t",
@@ -54,7 +56,7 @@ def subparser(subpi):
         "--stati",
         nargs="+",
         choices=TODO_STATI,
-        help=f"Filter tasks with specific stati",
+        help="Filter tasks with specific stati",
         default=["started"],
         **listbox_kwargs,
     )
@@ -73,21 +75,25 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "--date",
-        help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.",
+        help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. "
+             "Default is today.",
         **date_kwargs,
     )
     subpi.add_argument(
         "-f",
         "--filter",
         nargs="+",
-        help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ",
+        help="Search this collection by giving key element pairs. '-f description paper' will return tasks "
+             "with description containing 'paper' ",
     )
 
     return subpi
 
 
 class TodoListerHelper(SoutHelperBase):
-    """Helper for listing the to-do tasks. Tasks are gathered from people.yml, milestones, and group meeting actions."""
+    """Helper for listing the to-do tasks.
+    
+    Tasks are gathered from people.yml, milestones, and group meeting actions."""
 
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
@@ -134,7 +140,6 @@ class TodoListerHelper(SoutHelperBase):
             today = date_parser.parse(rc.date).date()
         if rc.stati == ["started"]:
             rc.stati = PROJECTUM_ACTIVE_STATI
-        running_index = 0
         if rc.filter:
             gather_todos = key_value_pair_filter(gather_todos, rc.filter)
         if rc.short:
@@ -176,7 +181,8 @@ class TodoListerHelper(SoutHelperBase):
             gather_todos[len_of_tasks:], key=lambda k: (k["status"], k["order"], -k.get("duration", 10000))
         )
         print(
-            "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r"
+            "If the indices are far from being in numerical order, please renumber them "
+            "by running regolith helper u_todo -r"
         )
         print("(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
         print("-" * 80)
@@ -228,8 +234,7 @@ class TodoListerHelper(SoutHelperBase):
 
 
 def _format_todos(todo, today):
-    """
-    datify dates, set orders etc and update to-do items in place
+    """datify dates, set orders etc and update to-do items in place
 
     Parameters
     ----------
@@ -241,9 +246,9 @@ def _format_todos(todo, today):
     nothing
 
     """
-    if type(todo["due_date"]) == str:
+    if isinstance(todo["due_date"], str):
         todo["due_date"] = date_parser.parse(todo["due_date"]).date()
-    if type(todo.get("end_date")) == str:
+    if isinstance(todo.get("end_date"), str):
         todo["end_date"] = date_parser.parse(todo["end_date"]).date()
     todo["days_to_due"] = (todo.get("due_date") - today).days
     todo["sort_finished"] = (todo.get("end_date", dt.date(1900, 1, 1)) - dt.date(1900, 1, 1)).days
