@@ -1,7 +1,6 @@
 """Builder for CVs."""
 
 import datetime as dt
-import uuid
 
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta

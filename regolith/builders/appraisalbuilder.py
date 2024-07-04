@@ -4,7 +4,6 @@ import datetime as dt
 from copy import copy, deepcopy
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.builders.cpbuilder import is_pending, CPBuilder
 from regolith.fsclient import _id_key
 from regolith.dates import month_to_int, is_current, get_dates
 from regolith.sorters import position_key, doc_date_key
@@ -26,7 +25,6 @@ from regolith.tools import (
     filter_licenses,
     merge_collections_superior,
     get_id_from_name,
-    merge_collections_all,
 )
 
 

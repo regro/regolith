@@ -5,7 +5,7 @@ import traceback
 import tempfile
 import os
 
-from flask import Flask, abort, request, render_template, redirect, url_for
+from flask import Flask, abort, request, render_template, redirect
 
 from regolith.schemas import validate
 from regolith.chained_db import _convert_to_dict
@@ -108,7 +108,7 @@ def collection_page(dbname, collname):
                     "{}".format(n, errors)
                 )
             try:
-                added = rc.client.insert_one(dbname, collname, body)
+                rc.client.insert_one(dbname, collname, body)
             except Exception:
                 traceback.print_exc()
                 raise
@@ -116,7 +116,7 @@ def collection_page(dbname, collname):
             status_id = str(body["_id"])
         elif "delete" in form:
             body = json.loads(form["body"].strip())
-            deled = rc.client.delete_one(dbname, collname, body)
+            rc.client.delete_one(dbname, collname, body)
     return render_template(
         "collection.html",
         rc=rc,
