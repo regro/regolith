@@ -22,10 +22,10 @@ def test_validate_python(make_db):
 
 
 def test_validate_python_single_col(make_db):
-    '''
+    """
     to see output from a failed test, comment out the code that rediriects stdout
     to out and replace the assert with 'assert false'. Change it back afterwards
-    '''
+    """
     repo = make_db
     os.chdir(repo)
     ## to see what is failing, comment out the rows that capture and restore the
@@ -38,6 +38,7 @@ def test_validate_python_single_col(make_db):
     sys.stdout = backup
     assert "NO ERRORS IN DBS" in out
     # assert False
+
 
 def test_validate_bad_python(make_bad_db):
     repo = make_bad_db
@@ -52,14 +53,16 @@ def test_validate_bad_python(make_bad_db):
     assert "Errors found in " in out
     assert "NO ERRORS IN DBS" not in out
 
+
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 def test_validate(make_db):
     repo = make_db
     os.chdir(repo)
     out = subprocess.check_output(["regolith", "validate"])
     if isinstance(out, bytes):
-        out = out.decode('utf-8')
+        out = out.decode("utf-8")
     assert "NO ERRORS IN DBS" in out
+
 
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")
 def test_validate_bad(make_bad_db):
