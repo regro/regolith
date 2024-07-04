@@ -28,7 +28,6 @@ class FigureBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
-        rc = self.rc
         for f in [ff for ff in os.listdir(".") if ff.endswith(".tex")]:
             fn, ext = os.path.splitext(f)
             self.render(f, fn + "_rend" + ext)

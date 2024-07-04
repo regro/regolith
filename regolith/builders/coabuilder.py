@@ -490,10 +490,11 @@ class RecentCollaboratorsBuilder(BuilderBase):
                     except TypeError:
                         print(f"ERROR: incorrect dates for an education/employment in {collab.get('name')}")
                         print(
-                            f"collab date: {collab.get('interaction_date')}, advisee date: {advis.get('interaction_date')}"
+                            f"collab date: {collab.get('interaction_date')}, "
+                            f"advisee date: {advis.get('interaction_date')}"
                         )
                         raise
-            if col_bool == True:
+            if col_bool:
                 collabs.append(collab)
         collabs.extend(advisees)
         collabs.extend(advisors)

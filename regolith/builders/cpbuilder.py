@@ -50,7 +50,6 @@ class CPBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
-        gtx = self.gtx
         rc = self.rc
         for group in self.gtx["groups"]:
             self.gtx["grants"] = list(sorted(all_docs_from_collection(rc.client, "grants"), key=_id_key))
@@ -111,7 +110,7 @@ class CPBuilder(LatexBuilderBase):
             # badids_pending = ([i["_id"] for i in pending_grants if
             #           not i.get('cpp_info',{}).get('cppflag', "")])
             if badids:
-                print(f"these grants have a problem with ccp_info: {*badids,}")
+                print(f"these grants have a problem with ccp_info: {*badids, }")
 
             iter = copy(current_grants)
             for grant in iter:

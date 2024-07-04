@@ -2,19 +2,17 @@
 
 from datetime import datetime
 import string
-import os
 from dateutil import parser as date_parser
 
 try:
     from bibtexparser.bwriter import BibTexWriter
     from bibtexparser.bibdatabase import BibDatabase
-
     HAVE_BIBTEX_PARSER = True
 except ImportError:
     HAVE_BIBTEX_PARSER = False
 
-from regolith.tools import all_docs_from_collection, filter_publications, make_bibtex_file
-from regolith.sorters import ene_date_key, position_key
+from regolith.tools import all_docs_from_collection
+from regolith.sorters import position_key
 from regolith.builders.basebuilder import LatexBuilderBase
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
@@ -60,7 +58,6 @@ class FormalLetterBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        fd = gr = False
         filestub, qualifiers = "", ""
         if self.rc.from_date:
             from_date = date_parser.parse(self.rc.from_date).date()
