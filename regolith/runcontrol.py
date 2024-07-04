@@ -1,5 +1,4 @@
-"""Run Control object for regolith
-"""
+"""Run Control object for regolith"""
 
 from __future__ import print_function
 

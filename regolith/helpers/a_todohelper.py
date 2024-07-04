@@ -1,6 +1,4 @@
-"""Helper for adding a to_do task to todos.yml
-
-"""
+"""Helper for adding a to_do task to todos.yml"""
 
 import datetime as dt
 import dateutil.parser as date_parser

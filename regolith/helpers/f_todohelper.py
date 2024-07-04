@@ -1,5 +1,4 @@
-"""Helper for marking a task as finished in todos collection.
-"""
+"""Helper for marking a task as finished in todos collection."""
 
 import datetime as dt
 import sys

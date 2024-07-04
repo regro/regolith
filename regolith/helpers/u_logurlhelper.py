@@ -1,5 +1,5 @@
 """Helper for updating a projectum's log_url
-   Log_urls are the google doc links to a projectum's Projectum Agenda Log
+Log_urls are the google doc links to a projectum's Projectum Agenda Log
 """
 
 from regolith.helpers.basehelper import DbHelperBase

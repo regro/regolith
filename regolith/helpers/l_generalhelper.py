@@ -1,5 +1,4 @@
-"""Helper for listing filtered data from collections in the database.
-"""
+"""Helper for listing filtered data from collections in the database."""
 
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key

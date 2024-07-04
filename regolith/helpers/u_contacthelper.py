@@ -1,6 +1,4 @@
-"""Helper for adding a new person to the contacts collection.
-
-"""
+"""Helper for adding a new person to the contacts collection."""
 
 import datetime as dt
 from nameparser import HumanName

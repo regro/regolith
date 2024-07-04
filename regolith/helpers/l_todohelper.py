@@ -1,6 +1,4 @@
-"""Helper for listing the to-do tasks. Tasks are gathered from people.yml, milestones, and group meeting actions.
-
-"""
+"""Helper for listing the to-do tasks. Tasks are gathered from people.yml, milestones, and group meeting actions."""
 
 import datetime as dt
 import dateutil.parser as date_parser

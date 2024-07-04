@@ -1,5 +1,4 @@
-"""Validator for meetings
-"""
+"""Validator for meetings"""
 
 import datetime as dt
 

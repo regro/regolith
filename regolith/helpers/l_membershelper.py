@@ -1,6 +1,4 @@
-"""Helper for listing group members.
-
-"""
+"""Helper for listing group members."""
 
 from regolith.dates import is_current
 from regolith.helpers.basehelper import SoutHelperBase

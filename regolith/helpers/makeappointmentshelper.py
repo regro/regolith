@@ -1,10 +1,10 @@
 """Helper for managing appointments.
 
-   - Returns members with gap in appointments
-   - Returns members supported on an outdated grant
-   - Returns members supported on a depleted grant
-   - Suggests appointments to make for these members
-   - Suggests new appointments
+- Returns members with gap in appointments
+- Returns members supported on an outdated grant
+- Returns members supported on a depleted grant
+- Suggests appointments to make for these members
+- Suggests new appointments
 """
 
 import numpy

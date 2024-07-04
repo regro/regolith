@@ -1,5 +1,4 @@
-"""Helper for adding a proposal to the proposals.yml collection.
-"""
+"""Helper for adding a proposal to the proposals.yml collection."""
 
 import datetime as dt
 import dateutil.parser as date_parser

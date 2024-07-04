@@ -1,5 +1,4 @@
-"""Misc. regolith tools.
-"""
+"""Misc. regolith tools."""
 
 import email.utils
 import os

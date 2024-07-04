@@ -1,6 +1,4 @@
-"""Helper for listing upcoming (and past) grants.
-
-"""
+"""Helper for listing upcoming (and past) grants."""
 
 import datetime as dt
 import dateutil.parser as date_parser

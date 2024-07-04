@@ -1,6 +1,6 @@
 """Helper for updating milestones to the projecta collection.
-    It can update the status, type, and due date of a projectum.
-    It can add a new milestone to the projecta collection.
+It can update the status, type, and due date of a projectum.
+It can add a new milestone to the projecta collection.
 """
 
 from copy import deepcopy

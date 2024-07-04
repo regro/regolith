@@ -1,5 +1,4 @@
-"""Helper for adding a presentation to the presentation collection.
-"""
+"""Helper for adding a presentation to the presentation collection."""
 
 import time
 

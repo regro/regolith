@@ -1,7 +1,7 @@
 """Helper for listing upcoming (and past) projectum milestones.
 
-   Projecta are small bite-sized project quanta that typically will result in
-   one manuscript.
+Projecta are small bite-sized project quanta that typically will result in
+one manuscript.
 """
 
 import datetime as dt

@@ -1,5 +1,5 @@
 """Builder for the plan of beamtimes. The plan contains a summary of the information for the experiments in during a
-beamtime and details about how to carry out the experiments. """
+beamtime and details about how to carry out the experiments."""
 
 from datetime import datetime
 

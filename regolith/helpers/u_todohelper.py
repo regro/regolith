@@ -1,5 +1,4 @@
-"""Helper for updating a task in todos of todos collection.
-"""
+"""Helper for updating a task in todos of todos collection."""
 
 import datetime as dt
 import sys

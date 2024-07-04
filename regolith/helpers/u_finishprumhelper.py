@@ -1,5 +1,4 @@
-"""Helper for finishing prum in the projecta collection
-"""
+"""Helper for finishing prum in the projecta collection"""
 
 from datetime import date
 
