@@ -2896,6 +2896,11 @@
             "description": "grant(s) that take to release the package.",
             "required": false,
             "type": "list"
+        },
+        "group": {
+            "description": "research group that develops the package.",
+            "required": true,
+            "type": "string"
         }
 
     },
