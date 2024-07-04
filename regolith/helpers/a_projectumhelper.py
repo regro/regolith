@@ -240,8 +240,9 @@ class ProjectumAdderHelper(DbHelperBase):
                 "and place in a ``figures`` directory in the slides directory. "
                 "These may then be used either in beamer or ppt. "
                 "Iterate with PI to convergence. (to get started with Inkscape download and install it, "
-                "then run the program and navigate to Help-->Tutorials.  The first two ('Basic' and 'Shapes') should "
-                "probably be enough for someone to get basic functionality.).",
+                "then run the program and navigate to Help-->Tutorials.  "
+                "The first two ('Basic' and 'Shapes') should probably be enough for someone "
+                "to get basic functionality.).",
             ),
             (
                 "Create slides",
@@ -272,17 +273,19 @@ class ProjectumAdderHelper(DbHelperBase):
         submission_checklist = [
             (
                 "Add paper to citations collection in regolith database",
-                "If it will be submitted to a preprint server such as arxiv, "
-                "put it in the citations collection in a public database, if the paper is not on a preprint server "
-                "put the entry in the citations collection on a non-public (e.g., group) database Check, double check, "
-                "and triple check that the tag for the grant is correct and the tags for the facilities are correct. "
+                "If it will be submitted to a preprint server such as arxiv, put it in the citations collection "
+                "in a public database, if the paper is not on a preprint server "
+                "put the entry in the citations collection on a non-public "
+                "(e.g., group) database Check, double check, and triple check "
+                "that the tag for the grant is correct and the tags for the facilities are correct. "
                 "Any questions, ask PI.",
             ),
             (
                 "Create public facing supplementary information as needed",
                 "Ask first before making things public, but any code or data "
-                "that we want to publish as supplementary info should be put in a place where it can be made public "
-                "or at least available to referees (e.g., in a repo on GitHub).",
+                "that we want to publish as supplementary info should be put in a place "
+                "where it can be made public or at least available to referees "
+                "(e.g., in a repo on GitHub).",
             ),
             (
                 "Make sure the public facing SI info has the right license",
@@ -334,9 +337,9 @@ class ProjectumAdderHelper(DbHelperBase):
             ),
             (
                 "Check table captions",
-                "Check the table caption is correct. Are all the items in the table properly defined in the caption. "
-                "If it is a crystal structure, are the space group and special positions mentioned in the caption? "
-                "Is all the info correct?",
+                "Check the table caption is correct. Are all the items in the table "
+                "properly defined in the caption. If it is a crystal structure, are the space group "
+                "and special positions mentioned in the caption? Is all the info correct?",
             ),
             ("Check numbers in the table", "Check all the numbers in the tables for errors."),
             (
@@ -419,8 +422,8 @@ class ProjectumAdderHelper(DbHelperBase):
                 "that you publist is building properly. Make sure that the publication appears correctly "
                 "with no errors and fix anything. If there are problems with the latex building, "
                 "run the commands with --no-pdf, which yields the latex source but doesn't build it, then build "
-                "the latex manually. The complied tex and pdf files are located in the `_build` folder. If any problem "
-                "about installing regolith and databases, please refer to "
+                "the latex manually. The complied tex and pdf files are located in the `_build` folder. "
+                "If any problem about installing regolith and databases, please refer to "
                 "[rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases).",
             ),
             ("Get arxiv reference", "Wait a day to get the full arXiv reference."),
@@ -437,17 +440,19 @@ class ProjectumAdderHelper(DbHelperBase):
             ),
             (
                 "Write rebuttal letter",
-                "Write a proper rebuttal letter based on reviewers' comments and place in the repo. In this letter "
-                "address all of the referee's points, one by one. Place a copy of the referee's comments in the repo. "
-                "Give it a unique filename in case there are more referee comments from later submissions!",
+                "Write a proper rebuttal letter based on reviewers' comments and place in the repo. "
+                "In this letter address all of the referee's points, one by one. Place a copy of "
+                "the referee's comments in the repo. Give it a unique filename in case "
+                "there are more referee comments from later submissions!",
             ),
             (
                 "Check author list",
                 "This is a good time to check that the author list is correct "
-                "(don't need to add anyone or remove anyone) and that the acknowledgements have been done correctly, "
-                "the figures are correct, the figure captions and table captions are correct and all the figures and "
-                "tables are correctly referenced, and there are no compilation errors. "
-                "Check all references for errors and update any 'unpublished' references if they have been published.",
+                "(don't need to add anyone or remove anyone) and that the acknowledgements "
+                "have been done correctly, the figures are correct, the figure captions and table captions "
+                "are correct and all the figures and tables are correctly referenced, and there are "
+                "no compilation errors. Check all references for errors and update any "
+                "'unpublished' references if they have been published.",
             ),
             (
                 "Diff the changes",
@@ -456,9 +461,10 @@ class ProjectumAdderHelper(DbHelperBase):
             ),
             (
                 "Send to coauthors",
-                "Send the final version to your coauthors. Tell them you will 'submit on' where is somewhere around "
-                "48 hours later and ask for any final corrections etc. from them. Offer them the chance to extend "
-                "the deadline if they need more time, i.e., write 'if you need more time, lease let me know.' "
+                "Send the final version to your coauthors. Tell them you will 'submit on' "
+                "where is somewhere around 48 hours later and ask for any final corrections etc. from them. "
+                "Offer them the chance to extend the deadline if they need more time, "
+                "i.e., write 'if you need more time, lease let me know.' "
                 "However, it is assumed that all the authors have been involved in the correction process up to "
                 "this point so they only have to give it one final thought...",
             ),
@@ -518,9 +524,9 @@ class ProjectumAdderHelper(DbHelperBase):
                 "In your rg-db-public/local directory, run `regolith build publist --people lyang` "
                 "(replace lyang with your name) to make sure that you publist is building properly. "
                 "Make sure that the publication appears correctly with no errors and fix anything. If there are "
-                "problems with the latex building, run the commands with --no-pdf, which yields the latex source but "
-                "doesn't build it, then build the latex manually. If any problem about installing regolith "
-                "and databases, please refer to "
+                "problems with the latex building, run the commands with --no-pdf, "
+                "which yields the latex source but doesn't build it, then build the latex manually. "
+                "If any problem about installing regolith and databases, please refer to "
                 "[rg-db-group wiki](https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases).",
             ),
             (
@@ -540,9 +546,9 @@ class ProjectumAdderHelper(DbHelperBase):
             ),
             (
                 "Check table captions",
-                "Check the table caption is correct. Are all the items in the table properly defined in the caption. "
-                "If it is a crystal structure, are the space group and special positions mentioned in the caption? "
-                "Is all the info correct?",
+                "Check the table caption is correct. Are all the items in the table "
+                "properly defined in the caption. If it is a crystal structure, are the space group "
+                "and special positions mentioned in the caption? Is all the info correct?",
             ),
             ("Check numbers in the table", "Check all the numbers in the tables for errors."),
             (
@@ -553,10 +559,11 @@ class ProjectumAdderHelper(DbHelperBase):
             (
                 "Check references",
                 "Go through the references and find all the errors. Correct errors in the bibliographic database "
-                "AS WELL AS on the proofs the manuscript. Did all the journal names compile correctly? Are they all "
-                "consistently in abbreviated form (or full form if that is the style, though that is rare). Volume, "
-                "year and page numbers appear for all references? Hard to find errors in these numbers, "
-                "but when you do, definitely correct the database!",
+                "AS WELL AS on the proofs the manuscript. Did all the journal names compile correctly? "
+                "Are they all consistently in abbreviated form "
+                "(or full form if that is the style, though that is rare). Volume, year and page numbers "
+                "appear for all references? Hard to find errors in these numbers, but when you do, "
+                "definitely correct the database!",
             ),
             (
                 "Check unpublished references",
@@ -573,9 +580,10 @@ class ProjectumAdderHelper(DbHelperBase):
             ),
             (
                 "Read the paper",
-                "Finally, after you have done all these 'mechanical' checks, read through the paper and try and find "
-                "any typos or other problems. Resist the temptation to do any rewriting here...you are looking for "
-                "mispellings and missing or extra words and so on.",
+                "Finally, after you have done all these 'mechanical' checks, "
+                "read through the paper and try and find any typos or other problems. "
+                "Resist the temptation to do any rewriting here...you are looking for mispellings "
+                "and missing or extra words and so on.",
             ),
             (
                 "Apply corrections from coauthors",
@@ -585,19 +593,20 @@ class ProjectumAdderHelper(DbHelperBase):
             ("Email coauthors", "Send an email to your coauthors that this was successfully resubmitted."),
             (
                 "Revisit talk slides",
-                "Revisit the set of talk slides that summarize the result in a few slides if they need to be updated. "
-                "Iterate with PI to convergence.",
+                "Revisit the set of talk slides that summarize the result in a few slides "
+                "if they need to be updated. Iterate with PI to convergence.",
             ),
             (
                 "Revisit the highlight slide",
-                "Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. Place it "
-                "in the 'highlight' folder. Iterate with PI to convergence (highlight templates and examples can be "
-                "found in http://gitlab.thebillingegroup.com/highlights/highlightTemplate)",
+                "Create a single 'highlight' slide that describes the result following NSF/DOE guidelines. "
+                "Place it in the 'highlight' folder. Iterate with PI to convergence "
+                "(highlight templates and examples can be found in "
+                "https://gitlab.thebillingegroup.com/highlights/highlightTemplate)",
             ),
             (
-                "Check the url links to all open shared SI data repositorities in the 'supplementary_info_urls' field "
-                "in the entry for this paper in the citations collection.",
-                "make sure they work and the data are accessible.",
+                "Check the url links to all open shared SI data repositorities "
+                "in the 'supplementary_info_urls' field in the entry for this paper "
+                "in the citations collection. make sure they work and the data are accessible.",
             ),
             (
                 "Create web news",
@@ -627,19 +636,20 @@ class ProjectumAdderHelper(DbHelperBase):
             (
                 "Check grants in the db entry",
                 "grant{} lists just the billinge-group grants that appeared in the acknowledgement section. "
-                "They have standard abbreviations that are listed at the top of the citations.yml file, e.g., fwp, "
-                "EFRC10, etc.. Use the right standard or the whole system becomes broken! If not sure.....ask PI. "
-                "List all grants in a comma-separated list.",
+                "They have standard abbreviations that are listed at the top of the citations.yml file, "
+                "e.g., fwp, EFRC10, etc.. Use the right standard or the whole system becomes broken! "
+                "If not sure.....ask PI. List all grants in a comma-separated list.",
             ),
             (
                 "Check the facility in the db entry",
-                "facility{} is every beamline that was used for data collection. Again, use the standard abbreviations "
-                "at the top of the file. Use two levels of granularity for each, so X17A would be: 'nsls, x17a', "
+                "facility{} is every beamline that was used for data collection. "
+                "Again, use the standard abbreviations at the top of the file. "
+                "Use two levels of granularity for each, so X17A would be: 'nsls, x17a', "
                 "if X17A and X7B were used it would be 'nsls, x17a, x7b' and so on.",
             ),
             (
-                "Check the nb in the db entry",
-                "nb is some other tags, also listed at the top of the file. 'art' for a regular article and 'hilite' "
+                "Check the nb in the db entry nb is some other tags, "
+                "also listed at the top of the file. 'art' for a regular article and 'hilite' "
                 "if it is one of our top top papers are the most common.",
             ),
             (
@@ -648,10 +658,10 @@ class ProjectumAdderHelper(DbHelperBase):
                 "Most papers are PDF papers, so no need to say pdf, be more targeted.",
             ),
             (
-                "Add the url link to the SI at the journal to the 'supplementary_info_urls' field in the entry for "
-                "this paper in the citations collection.",
-                "Don't necessarily remove the others if they are still open and public.  It is also ok to put URLs "
-                "to our data repositories as part of the SI in the paper",
+                "Add the url link to the SI at the journal to the 'supplementary_info_urls' field "
+                "in the entry for this paper in the citations collection.",
+                "Don't necessarily remove the others if they are still open and public. "
+                "It is also ok to put URLs to our data repositories as part of the SI in the paper",
             ),
             (
                 "Check db errors",
@@ -663,7 +673,8 @@ class ProjectumAdderHelper(DbHelperBase):
             ),
             (
                 "Add/update to Zotero",
-                "Add or update the published reference to the billinge-group-bib folder in our group Zotero account",
+                "Add or update the published reference to the billinge-group-bib folder "
+                "in our group Zotero account",
             ),
             (
                 "Finalize the highlight slide",
@@ -676,15 +687,16 @@ class ProjectumAdderHelper(DbHelperBase):
             ),
             (
                 "Finalize figures and talk slides",
-                "Make figures and talk slides that will be used in talks and place these on gitlab on talks/figures. "
-                "Iterate this with PI till it is converged.",
+                "Make figures and talk slides that will be used in talks "
+                "and place these on gitlab on talks/figures. Iterate this with PI till it is converged.",
             ),
             (
                 "Update arXiv if necessary",
                 "If the paper was listed on a preprint server like arXiv, submit a note to arXiv that the paper "
-                "has appeared and give the full reference. If the journal copyright allows you can post the published "
-                "version here, but normally that is not alllowed! Still, it is important that people "
-                "who find the paper on arXiv get directed to the correct reference.",
+                "has appeared and give the full reference. If the journal copyright allows "
+                "you can post the published version here, but normally that is not alllowed! "
+                "Still, it is important that people who find the paper on arXiv "
+                "get directed to the correct reference.",
             ),
             ("Ask PI if anything unfinished", "Ask PI about any items unfinished."),
             ("Email PI", "Email PI if finish the above."),
