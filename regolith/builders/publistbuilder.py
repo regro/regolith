@@ -1,4 +1,5 @@
 """Builder for publication lists."""
+
 import os
 
 try:
@@ -16,16 +17,17 @@ from dateutil import parser as date_parser
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 
+
 class PubListBuilder(LatexBuilderBase):
     btype = "publist"
-    needed_colls = ['citations', 'people']
+    needed_colls = ["citations", "people"]
 
     def construct_global_ctx(self):
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
         if not rc.people:
-            rc.people = ['all']
+            rc.people = ["all"]
         if isinstance(rc.people, str):
             rc.people = [rc.people]
 
@@ -78,32 +80,28 @@ class PubListBuilder(LatexBuilderBase):
             qualifiers = f"{qualifiers} from Grant{pl} {text_grants}"
         if self.rc.kwargs:
             kw = True
-            key, value = self.rc.kwargs[0].split(':', 1)
+            key, value = self.rc.kwargs[0].split(":", 1)
             if key == "facility":
                 facility = value
                 filestub = f"{filestub}_facility_{facility}"
                 qualifiers = f"{qualifiers} from facility {facility}"
 
         for p in self.gtx["people"]:
-            if p.get("_id") in self.rc.people or self.rc.people == ['all']:
+            if p.get("_id") in self.rc.people or self.rc.people == ["all"]:
                 # if self.rc.people[0] != 'all':
                 #     if p.get("_id") != self.rc.people[0]:
                 #         continue
                 outfile = p["_id"] + filestub
-                p['qualifiers'] = qualifiers
+                p["qualifiers"] = qualifiers
                 names = frozenset(p.get("aka", []) + [p["name"]])
                 citations = list(self.gtx["citations"])
                 grants = self.rc.grants
                 # build the bib files first without filtering for anything so they always contain all the relevant
                 # publications, then
-                pubs_nobold_for_bib = filter_publications(citations, names, reverse=True, bold=False,
-                                                  ackno=False)
-                pubs_ackno_for_bib = filter_publications(citations, names, reverse=True,
-                                                 bold=False, ackno=True)
+                pubs_nobold_for_bib = filter_publications(citations, names, reverse=True, bold=False, ackno=False)
+                pubs_ackno_for_bib = filter_publications(citations, names, reverse=True, bold=False, ackno=True)
                 pubs_for_bib = filter_publications(citations, names, reverse=True, ackno=False)
-                bibfile = make_bibtex_file(
-                    pubs_for_bib, pid=p["_id"], person_dir=self.bldir
-                )
+                bibfile = make_bibtex_file(pubs_for_bib, pid=p["_id"], person_dir=self.bldir)
                 bibfile_nobold = make_bibtex_file(
                     pubs_nobold_for_bib, pid=f"{p['_id']}_nobold", person_dir=self.bldir
                 )
@@ -111,23 +109,43 @@ class PubListBuilder(LatexBuilderBase):
                     pubs_ackno_for_bib, pid=f"{p['_id']}_ackno", person_dir=self.bldir
                 )
 
-                pubs_nobold = filter_publications(citations, names, reverse=True, bold=False,
-                                                  ackno=False, since=from_date,
-                                                  before=to_date, grants=grants,
-                                                  facilities=facility)
-                pubs_ackno = filter_publications(citations, names, reverse=True,
-                                                 bold=False, ackno=True,
-                                                 since=from_date,
-                                                 before=to_date, grants=grants,
-                                                 facilities=facility)
-                pubs = filter_publications(citations, names, reverse=True, ackno=False,
-                                           bold=True, since=from_date,
-                                           before=to_date, grants=grants,
-                                           facilities=facility)
+                pubs_nobold = filter_publications(
+                    citations,
+                    names,
+                    reverse=True,
+                    bold=False,
+                    ackno=False,
+                    since=from_date,
+                    before=to_date,
+                    grants=grants,
+                    facilities=facility,
+                )
+                pubs_ackno = filter_publications(
+                    citations,
+                    names,
+                    reverse=True,
+                    bold=False,
+                    ackno=True,
+                    since=from_date,
+                    before=to_date,
+                    grants=grants,
+                    facilities=facility,
+                )
+                pubs = filter_publications(
+                    citations,
+                    names,
+                    reverse=True,
+                    ackno=False,
+                    bold=True,
+                    since=from_date,
+                    before=to_date,
+                    grants=grants,
+                    facilities=facility,
+                )
 
-                if not p.get('email'):
-                    p['email'] = ""
-                emp = p.get("employment", [{'organization': ""}])
+                if not p.get("email"):
+                    p["email"] = ""
+                emp = p.get("employment", [{"organization": ""}])
                 emp.sort(key=ene_date_key, reverse=True)
                 self.render(
                     "publist.tex",
@@ -177,6 +195,6 @@ class PubListBuilder(LatexBuilderBase):
         filtered_pubs = []
         for pub in pubs:
             for grant in grants:
-                if grant in pub.get("grant",""):
+                if grant in pub.get("grant", ""):
                     filtered_pubs.append(pub)
         return filtered_pubs

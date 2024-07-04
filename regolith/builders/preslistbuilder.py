@@ -28,18 +28,19 @@ from regolith.tools import (
     fuzzy_retrieval,
     get_person_contact,
     number_suffix,
-    group_member_ids, latex_safe, filter_presentations
+    group_member_ids,
+    latex_safe,
+    filter_presentations,
 )
 from regolith.stylers import sentencecase, month_fullnames
 from regolith.dates import get_dates
+
 
 class PresListBuilder(LatexBuilderBase):
     """Build list of talks and posters (presentations) from database entries"""
 
     btype = "preslist"
-    needed_colls = ['groups', 'institutions', 'people', 'grants',
-                  'presentations', 'contacts']
-
+    needed_colls = ["groups", "institutions", "people", "grants", "presentations", "contacts"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -56,18 +57,10 @@ class PresListBuilder(LatexBuilderBase):
             key=position_key,
             reverse=True,
         )
-        gtx["grants"] = sorted(
-            all_docs_from_collection(rc.client, "grants"), key=_id_key
-        )
-        gtx["groups"] = sorted(
-            all_docs_from_collection(rc.client, "groups"), key=_id_key
-        )
-        gtx["presentations"] = sorted(
-            all_docs_from_collection(rc.client, "presentations"), key=_id_key
-        )
-        gtx["institutions"] = sorted(
-            all_docs_from_collection(rc.client, "institutions"), key=_id_key
-        )
+        gtx["grants"] = sorted(all_docs_from_collection(rc.client, "grants"), key=_id_key)
+        gtx["groups"] = sorted(all_docs_from_collection(rc.client, "groups"), key=_id_key)
+        gtx["presentations"] = sorted(all_docs_from_collection(rc.client, "presentations"), key=_id_key)
+        gtx["institutions"] = sorted(all_docs_from_collection(rc.client, "institutions"), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -78,16 +71,14 @@ class PresListBuilder(LatexBuilderBase):
         everybody = self.gtx["people"] + self.gtx["contacts"]
         for group in self.gtx["groups"]:
             grp = group["_id"]
-            grpmember_ids = group_member_ids(self.gtx['people'], grp)
+            grpmember_ids = group_member_ids(self.gtx["people"], grp)
             for member in grpmember_ids:
                 if self.rc.people:
                     if member not in self.rc.people:
                         continue
-                presclean = filter_presentations(everybody,
-                                                 self.gtx["presentations"],
-                                                 self.gtx["institutions"],
-                                                 member,
-                                                 statuses=["accepted"])
+                presclean = filter_presentations(
+                    everybody, self.gtx["presentations"], self.gtx["institutions"], member, statuses=["accepted"]
+                )
 
                 if len(presclean) > 0:
                     presclean = sorted(
@@ -96,11 +87,7 @@ class PresListBuilder(LatexBuilderBase):
                         reverse=True,
                     )
                     outfile = "presentations-" + grp + "-" + member
-                    pi = [
-                        person
-                        for person in self.gtx["people"]
-                        if person["_id"] is member
-                    ][0]
+                    pi = [person for person in self.gtx["people"] if person["_id"] is member][0]
                     self.render(
                         "preslist.tex",
                         outfile + ".tex",

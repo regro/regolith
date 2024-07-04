@@ -1,4 +1,5 @@
 """Validators and converters for regolith input."""
+
 import os
 from getpass import getpass
 
@@ -39,7 +40,7 @@ _FALSES = frozenset(["", "0", "n", "f", "no", "none", "false"])
 
 
 def to_bool(x):
-    """"Converts to a boolean in a semantically meaningful way."""
+    """ "Converts to a boolean in a semantically meaningful way."""
     if isinstance(x, bool):
         return x
     elif isinstance(x, string_types):
@@ -95,7 +96,7 @@ def ensure_email(email):
         s = user + "\n" + password
         with open(email["cred"], "w") as f:
             f.write(s)
-    with open(email["cred"], encoding='utf-8') as f:
+    with open(email["cred"], encoding="utf-8") as f:
         email["from"] = f.readline().strip()
         email["password"] = f.readline().strip()
     email["user"] = email["from"].partition("@")[0]

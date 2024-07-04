@@ -1,5 +1,6 @@
 """Builder for the plan of beamtimes. The plan contains a summary of the information for the experiments in during a
-beamtime and details about how to carry out the experiments. """
+beamtime and details about how to carry out the experiments."""
+
 from datetime import datetime
 
 import pandas as pd
@@ -22,8 +23,9 @@ class BeamPlanBuilder(LatexBuilderBase):
     latex()
         Render latex template.
     """
+
     btype = "beamplan"
-    needed_colls = ['beamplan', "beamtime"]
+    needed_colls = ["beamplan", "beamtime"]
 
     def construct_global_ctx(self):
         """Constructs the global context."""
@@ -90,14 +92,14 @@ class BeamPlanBuilder(LatexBuilderBase):
         docs = sorted(docs, key=lambda d: d.get("devices"))
         for n, doc in enumerate(docs):
             # gather information of the table
-            serial_id = str(n+1)
+            serial_id = str(n + 1)
             row = {
                 "serial id": serial_id,
                 "project leader": doc.get("project_lead", ""),
                 "number of samples": str(len(doc.get("samples", []))),
                 "measurement": doc.get("measurement", ""),
                 "devices": ", ".join(doc.get("devices", [])),
-                "estimated time (h)": "{:.1f}".format(doc.get("time", 0) / 60)
+                "estimated time (h)": "{:.1f}".format(doc.get("time", 0) / 60),
             }
             rows.append(row)
             # gather information of the plan.
@@ -108,7 +110,7 @@ class BeamPlanBuilder(LatexBuilderBase):
                 "prep_plan": doc.get("prep_plan", []),
                 "ship_plan": doc.get("ship_plan", []),
                 "exp_plan": doc.get("exp_plan", []),
-                "scanplan": doc.get("scanplan", [])
+                "scanplan": doc.get("scanplan", []),
             }
             plans.append(plan)
             # gather info of the task
@@ -133,7 +135,7 @@ class BeamPlanBuilder(LatexBuilderBase):
             "begin_time": begin_time,  # str
             "end_time": end_time,  # str
             "total_time": total_time,  # str
-            "total_sample_num": total_sample_num  # str
+            "total_sample_num": total_sample_num,  # str
         }
         return info
 

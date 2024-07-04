@@ -8,24 +8,22 @@ from regolith.tools import (
 
 
 def subparser(subpi):
-    subpi.add_argument("--person", help="pi first name space last name in quotes",
-                        default=None)
+    subpi.add_argument("--person", help="pi first name space last name in quotes", default=None)
     return subpi
 
 
 class HelloHelper(SoutHelperBase):
     """Build a helper"""
+
     btype = "hello"
-    needed_colls = ['test']
+    needed_colls = ["test"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx["test"] = sorted(
-            all_docs_from_collection(rc.client, "test"), key=_id_key
-        )
+        gtx["test"] = sorted(all_docs_from_collection(rc.client, "test"), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -38,7 +36,7 @@ class HelloHelper(SoutHelperBase):
     def latex(self):
         """Render latex template"""
         for rev in self.gtx["refereeReports"]:
-            outname = "{}_{}".format(_id_key(rev),rev["reviewer"])
+            outname = "{}_{}".format(_id_key(rev), rev["reviewer"])
             self.render(
                 "mt.txt",
                 outname + ".txt",
@@ -53,7 +51,7 @@ class HelloHelper(SoutHelperBase):
                 validityAssessment=rev["validity_assessment"],
                 finalAssessment=rev["final_assessment"],
                 recommendation=rev["recommendation"],
-                freewrite=rev["freewrite"]
+                freewrite=rev["freewrite"],
             )
             if len(rev["editor_eyes_only"]) > 0:
                 self.render(

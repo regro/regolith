@@ -16,7 +16,9 @@ PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
 PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
 PROJECTUM_CANCELLED_STATI = ["cancelled"]
 PROJECTUM_FINISHED_STATI = ["finished"]
-PROJECTUM_STATI = list(PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI)
+PROJECTUM_STATI = list(
+    PROJECTUM_ACTIVE_STATI + PROJECTUM_PAUSED_STATI + PROJECTUM_CANCELLED_STATI + PROJECTUM_FINISHED_STATI
+)
 
 alloweds = {
     "ACTIVITIES_TYPES": ["teaching", "research"],
@@ -103,13 +105,7 @@ alloweds = {
         "submitted",
         "cancelled",
     ],
-    "REVIEW_RECOMMENDATIONS": [
-        "reject",
-        "asis",
-        "smalledits",
-        "diffjournal",
-        "majoredits"
-    ],
+    "REVIEW_RECOMMENDATIONS": ["reject", "asis", "smalledits", "diffjournal", "majoredits"],
     "SERVICE_TYPES": ["profession", "university", "school", "department"],
     "SORTED_POSITION": SORTED_POSITION,
     "TODO_STATI": ["started", "finished", "cancelled", "paused"],
@@ -151,6 +147,7 @@ def load_schemas():
     schemas = insert_alloweds(raw_schemas, alloweds, "eallowed")
     return schemas
 
+
 def load_exemplars():
     here = Path(__file__).parent
     exemplar_file = here / "exemplars.json"
@@ -166,6 +163,7 @@ def load_exemplars():
     with open(exemplars_file, "r", encoding="utf-8") as exemplars_file:
         exemplars = json.load(exemplars_file)
     return exemplars
+
 
 EXEMPLARS = load_exemplars()
 SCHEMAS = load_schemas()

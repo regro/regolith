@@ -1,4 +1,5 @@
 """Builder for Grade Reports."""
+
 import os
 import pdb
 import sys
@@ -16,11 +17,9 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.tools import all_docs_from_collection
 
 
-
 class GradeReportBuilder(LatexBuilderBase):
     btype = "grades"
-    needed_colls = ['grades', 'courses', 'assignments']
-
+    needed_colls = ["grades", "courses", "assignments"]
 
     def construct_global_ctx(self):
         super().construct_global_ctx()
@@ -33,29 +32,22 @@ class GradeReportBuilder(LatexBuilderBase):
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["grades"] = list(all_docs_from_collection(rc.client, "grades"))
         gtx["courses"] = list(all_docs_from_collection(rc.client, "courses"))
-        gtx["assignments"] = list(
-            all_docs_from_collection(rc.client, "assignments")
-        )
+        gtx["assignments"] = list(all_docs_from_collection(rc.client, "assignments"))
 
     def render(self, tname, fname, **kwargs):
         template = self.env.get_template(tname)
         ctx = dict(self.gtx)
         ctx.update(kwargs)
         ctx["rc"] = ctx.get("rc", self.rc)
-        ctx["static"] = ctx.get(
-            "static", os.path.relpath("static", os.path.dirname(fname))
-        )
-        ctx["root"] = ctx.get(
-            "root", os.path.relpath("/", os.path.dirname(fname))
-        )
+        ctx["static"] = ctx.get("static", os.path.relpath("static", os.path.dirname(fname)))
+        ctx["root"] = ctx.get("root", os.path.relpath("/", os.path.dirname(fname)))
         try:
             result = template.render(ctx)
         except:
             type, value, tb = sys.exc_info()
             traceback.print_exc()
             pdb.post_mortem(tb)
-        with open(os.path.join(self.bldir, fname), "wt", encoding='utf-8'
-                  ) as f:
+        with open(os.path.join(self.bldir, fname), "wt", encoding="utf-8") as f:
             f.write(result)
 
     def latex(self):
@@ -65,15 +57,10 @@ class GradeReportBuilder(LatexBuilderBase):
                 continue
             course_id = course["_id"]
             stats = self.makestats(course)
-            asgn = filter(
-                (lambda x: course_id in x["courses"]), self.gtx["assignments"]
-            )
+            asgn = filter((lambda x: course_id in x["courses"]), self.gtx["assignments"])
             catfunc = lambda x: x["category"]
             asgn = sorted(asgn, key=catfunc)
-            grouped_assignments = {
-                k: sorted(i, key=lambda x: x["_id"])
-                for k, i in groupby(asgn, catfunc)
-            }
+            grouped_assignments = {k: sorted(i, key=lambda x: x["_id"]) for k, i in groupby(asgn, catfunc)}
 
             student_wavgs = []
             students_kwargs = {}
@@ -82,12 +69,7 @@ class GradeReportBuilder(LatexBuilderBase):
                 studs.append(student_id)
                 student_grade_list = list(
                     filter(
-                        (
-                            lambda x: (
-                                    x["student"] == student_id
-                                    and x["course"] == course_id
-                            )
-                        ),
+                        (lambda x: (x["student"] == student_id and x["course"] == course_id)),
                         self.gtx["grades"],
                     )
                 )
@@ -100,9 +82,7 @@ class GradeReportBuilder(LatexBuilderBase):
                                 break
                         else:
                             student_grades[category].append(None)
-                student_totals, student_wavg = self.maketotals(
-                    student_grades, grouped_assignments, course
-                )
+                student_totals, student_wavg = self.maketotals(student_grades, grouped_assignments, course)
                 student_wavgs.append(student_wavg)
                 students_kwargs[student_id] = dict(
                     title=student_id,
@@ -114,25 +94,23 @@ class GradeReportBuilder(LatexBuilderBase):
                     student_totals=student_totals,
                     student_wavg=student_wavg,
                 )
-            ordered_studs = sorted(studs, key=lambda x: (
-                students_kwargs[x]['student_wavg']), reverse=True)
+            ordered_studs = sorted(studs, key=lambda x: (students_kwargs[x]["student_wavg"]), reverse=True)
             max_wavg = max(student_wavgs)
             curve = 1.0 - max_wavg
             # Make grades
             scale = course.get("scale", DEFAULT_LETTER_SCALE)
             for student_id in course["students"]:
                 skw = students_kwargs[student_id]
-                skw["student_letter_grade_raw"] = find_letter_grade(
-                    skw["student_wavg"], scale
-                )
-                skw["student_letter_grade_curved"] = find_letter_grade(
-                    skw["student_wavg"] + curve, scale
-                )
+                skw["student_letter_grade_raw"] = find_letter_grade(skw["student_wavg"], scale)
+                skw["student_letter_grade_curved"] = find_letter_grade(skw["student_wavg"] + curve, scale)
             summary = [
-                "{}: {:.2f}, Grade: {}".format(stud, students_kwargs[stud][
-                    'student_wavg'] * 100., students_kwargs[stud][
-                                                   "student_letter_grade_raw"])
-                for stud in ordered_studs]
+                "{}: {:.2f}, Grade: {}".format(
+                    stud,
+                    students_kwargs[stud]["student_wavg"] * 100.0,
+                    students_kwargs[stud]["student_letter_grade_raw"],
+                )
+                for stud in ordered_studs
+            ]
             for stud in summary:
                 print(stud)
             show_letter_plot = self.plot_letter_grades(students_kwargs, scale)
@@ -146,7 +124,7 @@ class GradeReportBuilder(LatexBuilderBase):
                     max_wavg=max_wavg,
                     curve=curve,
                     show_letter_plot=show_letter_plot,
-                    **students_kwargs[student_id]
+                    **students_kwargs[student_id],
                 )
                 # TODO: this seems like something for the base class to handle
                 self.pdf(base)
@@ -178,12 +156,8 @@ class GradeReportBuilder(LatexBuilderBase):
             total_sig = np.std(total, axis=0)
             total_max_score = np.max(total, axis=0)
             total_norm = st.norm(total_mu, total_sig)
-            total_percent_above_60 = 1.0 - total_norm.cdf(
-                0.6 * total_max_score
-            )
-            total_percent_above_80 = 1.0 - total_norm.cdf(
-                0.8 * total_max_score
-            )
+            total_percent_above_60 = 1.0 - total_norm.cdf(0.6 * total_max_score)
+            total_percent_above_80 = 1.0 - total_norm.cdf(0.8 * total_max_score)
             stats[assignment_id] = (
                 mu,
                 sig,
@@ -219,9 +193,7 @@ class GradeReportBuilder(LatexBuilderBase):
         for category in student_grades.keys():
             cat = [category]
             sgtot = catmax = 0
-            for sg, asgn in zip(
-                    student_grades[category], grouped_assignments[category]
-            ):
+            for sg, asgn in zip(student_grades[category], grouped_assignments[category]):
                 if sg is not None:
                     sgtot += sum(sg["scores"])
                 catmax += sum(asgn["points"])

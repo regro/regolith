@@ -42,17 +42,19 @@ BAD_PROJECTUM = {
         "audience": ["beginning grad in chemistry"],
         "due_date": "2021-05-05",
         "success_def": "audience is happy",
-        "scope": ["UCs that are supported or some other scope description "
-                  "if it is software", "sketch of science story if it is paper"
-                  ],
+        "scope": [
+            "UCs that are supported or some other scope description " "if it is software",
+            "sketch of science story if it is paper",
+        ],
         "platform": "description of how and where the audience will access "
-                    "the deliverable.  Journal if it is a paper",
+        "the deliverable.  Journal if it is a paper",
         "roll_out": [
-            "steps that the audience will take to access and interact with "
-            "the deliverable", "not needed for paper submissions"],
+            "steps that the audience will take to access and interact with " "the deliverable",
+            "not needed for paper submissions",
+        ],
         "notes": ["deliverable note"],
-        "status": "proposed"
-    }
+        "status": "proposed",
+    },
 }
 
 
@@ -64,15 +66,16 @@ def test_mongo_invalid_insertion(make_mongodb):
         repo = Path(make_mongodb)
     from regolith.database import connect
     from regolith.runcontrol import DEFAULT_RC, load_rcfile
+
     os.chdir(repo)
     rc = copy.copy(DEFAULT_RC)
     rc.schemas = SCHEMAS
     rc._update(load_rcfile("regolithrc.json"))
     with connect(rc) as rc.client:
-        only_database_in_test = rc.databases[0]['name']
+        only_database_in_test = rc.databases[0]["name"]
         try:
-            rc.client.insert_one(only_database_in_test, 'projecta', BAD_PROJECTUM)
+            rc.client.insert_one(only_database_in_test, "projecta", BAD_PROJECTUM)
         except ValueError as e:
             result = e.args[0]
-    expected = 'ERROR in sb_firstprojectum:\n{\'lead\': [\'required field\'], \'status\': [\'required field\']}\nNone\nNone\n---------------\n'
+    expected = "ERROR in sb_firstprojectum:\n{'lead': ['required field'], 'status': ['required field']}\nNone\nNone\n---------------\n"
     assert result == expected

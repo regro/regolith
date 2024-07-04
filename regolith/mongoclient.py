@@ -1,6 +1,7 @@
 """Client interface for MongoDB.
 Maintained such that only pymongo is necessary when using helper/builders, and additional command-line tools
 are necessary to install for maintenance tasks, such as fs-to-mongo."""
+
 import itertools
 import os
 import shutil
@@ -70,19 +71,21 @@ def import_jsons(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
     for json_path in Path(dbpath).glob("*.json"):
         cmd = ["mongoimport"]
         if host is not None:
-            cmd += ['--host', host, "--db", dbname]
+            cmd += ["--host", host, "--db", dbname]
         if uri is not None:
-            cmd += ['--uri', uri]
+            cmd += ["--uri", uri]
         cmd += ["--collection", json_path.stem, "--file", str(json_path)]
         try:
             subprocess.check_call(cmd, stderr=subprocess.STDOUT)
         except FileNotFoundError:
-            print("mongoimport command not found in environment path.\n\n"
-                  "If mongo server v4.4+ installed, download MongoDB Database Tools from:"
-                  " https://www.mongodb.com/try/download/database-tools\n"
-                  "and add C:\\Program Files\\MongoDB\\Tools\\<ToolsVersion>\\bin\\ to path.\n\n"
-                  "If mongo server <v4.4, ensure that C:\\Program Files\\MongoDB\\Server\\<ServerVersion>\\bin\\ \n"
-                  "has been added to the environment path.\n")
+            print(
+                "mongoimport command not found in environment path.\n\n"
+                "If mongo server v4.4+ installed, download MongoDB Database Tools from:"
+                " https://www.mongodb.com/try/download/database-tools\n"
+                "and add C:\\Program Files\\MongoDB\\Tools\\<ToolsVersion>\\bin\\ to path.\n\n"
+                "If mongo server <v4.4, ensure that C:\\Program Files\\MongoDB\\Server\\<ServerVersion>\\bin\\ \n"
+                "has been added to the environment path.\n"
+            )
             print("..................Upload failed..................")
         except subprocess.CalledProcessError as exc:
             print("Status : FAIL", exc.returncode, exc.output)
@@ -110,13 +113,14 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
     uri : str
         Specify a resolvable URI connection string (enclose in quotes) to connect to the MongoDB deployment.
     """
-    yaml_files = itertools.chain(Path(dbpath).glob('*.yaml'), Path(dbpath).glob('*.yml'))
+    yaml_files = itertools.chain(Path(dbpath).glob("*.yaml"), Path(dbpath).glob("*.yml"))
     with TemporaryDirectory() as tempd:
         for yaml_file in yaml_files:
-            json_file = Path(tempd).joinpath(yaml_file.with_suffix('.json').name)
-            loader = YAML(typ='safe')
-            loader.constructor.yaml_constructors[u'tag:yaml.org,2002:timestamp'] = \
-                loader.constructor.yaml_constructors[u'tag:yaml.org,2002:str']
+            json_file = Path(tempd).joinpath(yaml_file.with_suffix(".json").name)
+            loader = YAML(typ="safe")
+            loader.constructor.yaml_constructors["tag:yaml.org,2002:timestamp"] = (
+                loader.constructor.yaml_constructors["tag:yaml.org,2002:str"]
+            )
             fsclient.yaml_to_json(str(yaml_file), str(json_file), loader=loader)
         import_jsons(tempd, dbname, host=host, uri=uri)
     return
@@ -125,24 +129,25 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
 def export_json(collection: str, dbpath: str, dbname: str, host: str = None, uri: str = None) -> None:
     cmd = ["mongoexport", "--collection", collection]
     if host is not None:
-        cmd += ['--host', host, "--db", dbname]
+        cmd += ["--host", host, "--db", dbname]
     if uri is not None:
-        cmd += ['--uri', uri]
+        cmd += ["--uri", uri]
     cmd += ["--out", str(os.path.join(dbpath, collection + ".json"))]
     try:
         subprocess.check_call(cmd, stderr=subprocess.STDOUT)
     except FileNotFoundError:
-        print("mongoexport command not found in environment path.\n\n"
-              "If mongo server v4.4+ installed, download MongoDB Database Tools from:"
-              " https://www.mongodb.com/try/download/database-tools\n"
-              "and add C:\\Program Files\\MongoDB\\Tools\\<ToolsVersion>\\bin\\ to path.\n\n"
-              "If mongo server <v4.4, ensure that C:\\Program Files\\MongoDB\\Server\\<ServerVersion>\\bin\\ \n"
-              "has been added to the environment path.\n")
+        print(
+            "mongoexport command not found in environment path.\n\n"
+            "If mongo server v4.4+ installed, download MongoDB Database Tools from:"
+            " https://www.mongodb.com/try/download/database-tools\n"
+            "and add C:\\Program Files\\MongoDB\\Tools\\<ToolsVersion>\\bin\\ to path.\n\n"
+            "If mongo server <v4.4, ensure that C:\\Program Files\\MongoDB\\Server\\<ServerVersion>\\bin\\ \n"
+            "has been added to the environment path.\n"
+        )
         print("..................Upload failed..................")
     except subprocess.CalledProcessError as exc:
         print("Status : FAIL", exc.returncode, exc.output)
         raise exc
-
 
 
 def load_mongo_col(col: Collection) -> dict:
@@ -161,14 +166,12 @@ def load_mongo_col(col: Collection) -> dict:
     dct : dict
         A dictionary with all the info in the collection.
     """
-    return {
-        doc['_id']: doc for doc in col.find({})
-    }
+    return {doc["_id"]: doc for doc in col.find({})}
 
 
 def doc_cleanup(doc: dict):
     doc = bson_cleanup(doc)
-    doc['_id'].replace('.', '')
+    doc["_id"].replace(".", "")
     return doc
 
 
@@ -187,6 +190,7 @@ def bson_cleanup(doc: dict):
     doc
 
     """
+
     def change_keys_id_and_date(obj, convert):
         """
         Recursively goes through the dictionary obj and replaces keys with the convert function.
@@ -208,7 +212,7 @@ def bson_cleanup(doc: dict):
         return new
 
     def convert(k):
-        return k.replace('.', '-')
+        return k.replace(".", "-")
 
     doc = change_keys_id_and_date(doc, convert)
     return doc
@@ -241,9 +245,7 @@ class MongoClient:
 
     def __init__(self, rc):
         if not MONGO_AVAILABLE:
-            raise RuntimeError(
-                "MongoDB is not available on the current system."
-            )
+            raise RuntimeError("MongoDB is not available on the current system.")
         self.rc = rc
         self.client = None
         self.proc = None
@@ -261,8 +263,7 @@ class MongoClient:
     def _startserver(self):
         mongodbpath = self.rc.mongodbpath
         self.proc = subprocess.Popen(
-            ["mongod", "--fork", "--syslog", "--dbpath", mongodbpath],
-            universal_newlines=True
+            ["mongod", "--fork", "--syslog", "--dbpath", mongodbpath], universal_newlines=True
         )
         print("mongod pid: {0}".format(self.proc.pid), file=sys.stderr)
 
@@ -278,9 +279,10 @@ class MongoClient:
             alive = False
             if self.local is False:
                 from pymongo.errors import ConnectionFailure
+
                 try:
                     # The ismaster command is cheap and does not require auth.
-                    self.client.admin.command('ismaster')
+                    self.client.admin.command("ismaster")
                     alive = True
                 except ConnectionFailure:
                     print("Server not available")
@@ -301,18 +303,20 @@ class MongoClient:
         """Opens the database client"""
         if self.closed:
             rc = self.rc
-            mongo_dbs_filter = filter(lambda db: db['backend'] == "mongo" or db["backend"] == "mongodb", rc.databases)
+            mongo_dbs_filter = filter(
+                lambda db: db["backend"] == "mongo" or db["backend"] == "mongodb", rc.databases
+            )
             mongo_dbs_list = list(mongo_dbs_filter)
             host = None
-            if hasattr(rc, 'host'):
+            if hasattr(rc, "host"):
                 host = rc.host
             else:
                 for db in mongo_dbs_list:
                     if host is not None:
-                        if host != db['url']:
+                        if host != db["url"]:
                             print("WARNING: Multiple mongo clusters not supported. Use single cluster per rc.")
                             return
-                    host = db['url']
+                    host = db["url"]
             if host is not None:
                 if "+srv" in host:
                     self.local = False
@@ -329,16 +333,20 @@ class MongoClient:
                         host = host.replace("uname_from_config", urllib.parse.quote_plus(rc.mongo_id))
                     elif "dst_url" in rc.databases[0]:
                         rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace(
-                            "pwd_from_config", urllib.parse.quote_plus(password))
+                            "pwd_from_config", urllib.parse.quote_plus(password)
+                        )
                         rc.databases[0]["dst_url"] = rc.databases[0]["dst_url"].replace(
-                            "uname_from_config", urllib.parse.quote_plus(rc.mongo_id))
+                            "uname_from_config", urllib.parse.quote_plus(rc.mongo_id)
+                        )
                         host = rc.databases[0]["dst_url"]
                 except AttributeError:
-                    print("ERROR:\n"
-                          "Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
-                          "mongo_id and mongo_db_password respectively.\n\n"
-                          "\'uname_from_config\' and \'pwd_from_config\' can/should stand in for these field in the\n"
-                          "mongo URL string in regolithrc.json.\n")
+                    print(
+                        "ERROR:\n"
+                        "Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
+                        "mongo_id and mongo_db_password respectively.\n\n"
+                        "'uname_from_config' and 'pwd_from_config' can/should stand in for these field in the\n"
+                        "mongo URL string in regolithrc.json.\n"
+                    )
             self.client = pymongo.MongoClient(host, authSource="admin")
             if not self.is_alive():
                 if self.local:
@@ -347,10 +355,11 @@ class MongoClient:
                     self._startserver()
                     time.sleep(0.1)
                 else:
-                    raise ConnectionError("Mongo server exists, communication refused. Potential TLS issue.\n"
-                                          "Attempt the following in regolith env bash terminal:\n"
-                                          "export SSL_CERT_FILE=$(python -c \"import certifi; print(certifi.where())\")"
-                                          )
+                    raise ConnectionError(
+                        "Mongo server exists, communication refused. Potential TLS issue.\n"
+                        "Attempt the following in regolith env bash terminal:\n"
+                        'export SSL_CERT_FILE=$(python -c "import certifi; print(certifi.where())")'
+                    )
             self.closed = False
 
     def load_database(self, db: dict):
@@ -366,23 +375,26 @@ class MongoClient:
         dbs: dict = self.dbs
         client: pymongo.MongoClient = self.client
         from pymongo.errors import OperationFailure
+
         try:
-            mongodb = client[db['name']]
+            mongodb = client[db["name"]]
         except OperationFailure:
-            print('WARNING: Database name provided in regolithrc.json not found in mongodb')
+            print("WARNING: Database name provided in regolithrc.json not found in mongodb")
         try:
-            for colname in [coll for coll in mongodb.list_collection_names()
-                            if coll not in db["blacklist"]
-                               and len(db["whitelist"]) == 0
-                               or coll in db["whitelist"]
-                            ]:
+            for colname in [
+                coll
+                for coll in mongodb.list_collection_names()
+                if coll not in db["blacklist"] and len(db["whitelist"]) == 0 or coll in db["whitelist"]
+            ]:
                 col = mongodb[colname]
-                dbs[db['name']][colname] = load_mongo_col(col)
+                dbs[db["name"]][colname] = load_mongo_col(col)
         except OperationFailure as fail:
             print("Mongo's Error Message:" + str(fail) + "\n")
-            print("The user does not have permission to access " + db['name'] + "\n\n")
-            print("If erroneous, the role/mongo-account utilized likely is only read/write. List collection \n"
-                  "permission as well as finding is needed")
+            print("The user does not have permission to access " + db["name"] + "\n\n")
+            print(
+                "If erroneous, the role/mongo-account utilized likely is only read/write. List collection \n"
+                "permission as well as finding is needed"
+            )
         return
 
     def import_database(self, db: dict):
@@ -393,14 +405,14 @@ class MongoClient:
         db : dict
             The dictionary of data base information, such as 'name'.
         """
-        host = getattr(self.rc, 'host', None)
-        uri = db.get('dst_url', None)
+        host = getattr(self.rc, "host", None)
+        uri = db.get("dst_url", None)
         # Catch the easy/common regolith rc error of putting the db uri as localhost rather than host
-        if uri == 'localhost':
+        if uri == "localhost":
             uri = None
-            host = 'localhost'
+            host = "localhost"
         dbpath = dbpathname(db, self.rc)
-        dbname = db['name']
+        dbname = db["name"]
         import_jsons(dbpath, dbname, host=host, uri=uri)
         import_yamls(dbpath, dbname, host=host, uri=uri)
         return
@@ -413,14 +425,14 @@ class MongoClient:
         db : dict
             The dictionary of data base information, such as 'name'.
         """
-        host = getattr(self.rc, 'host', None)
-        uri = db.get('dst_url', None)
+        host = getattr(self.rc, "host", None)
+        uri = db.get("dst_url", None)
         # Catch the easy/common regolith rc error of putting the db uri as localhost rather than host
-        if uri == 'localhost':
+        if uri == "localhost":
             uri = None
-            host = 'localhost'
+            host = "localhost"
         dbpath = os.path.abspath(dbpathname(db, self.rc))
-        dbname = db['name']
+        dbname = db["name"]
         for collection in self.dbs[dbname].keys():
             export_json(collection, dbpath, dbname, host=host, uri=uri)
         return
@@ -430,9 +442,7 @@ class MongoClient:
         dbpath = dbpathname(db, self.rc)
         os.makedirs(dbpath, exist_ok=True)
         to_add = []
-        colls = self.client[db["name"]].collection_names(
-            include_system_collections=False
-        )
+        colls = self.client[db["name"]].collection_names(include_system_collections=False)
         for collection in colls:
             f = os.path.join(dbpath, collection + ".json")
             cmd = [
@@ -521,14 +531,14 @@ class MongoClient:
 
     def find_one(self, dbname, collname, filter):
         """Finds the first document matching filter."""
-        filter['_id'].replace('.', '')
+        filter["_id"].replace(".", "")
         coll = self.client[dbname][collname]
         doc = coll.find_one(filter)
         return doc
 
     def update_one(self, dbname, collname, filter, update, **kwargs):
         """Updates one document."""
-        filter['_id'].replace('.', '')
+        filter["_id"].replace(".", "")
         doc = self.find_one(dbname, collname, filter)
         newdoc = dict(filter if doc is None else doc)
         newdoc.update(update)
@@ -541,9 +551,7 @@ class MongoClient:
             doc = coll.find_one(filter)
             if doc is None:
                 if not kwargs.get("upsert", False):
-                    raise RuntimeError(
-                        "could not update non-existing document"
-                    )
+                    raise RuntimeError("could not update non-existing document")
                 newdoc = dict(filter)
                 newdoc.update(update["$set"])
                 return self.insert_one(dbname, collname, newdoc)

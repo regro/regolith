@@ -140,9 +140,7 @@ def bootstrap_builders():
                         os.path.join(expected_base, bm, file),
                     )
                 else:
-                    os.makedirs(
-                        os.path.join(expected_base, bm, root), exist_ok=True
-                    )
+                    os.makedirs(os.path.join(expected_base, bm, root), exist_ok=True)
                     shutil.copyfile(
                         os.path.join(root, file),
                         os.path.join(expected_base, bm, root, file),

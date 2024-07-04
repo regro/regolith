@@ -9,17 +9,16 @@ from regolith.tools import (
 
 class ManRevBuilder(LatexBuilderBase):
     """Build a manuscript review from database entries"""
+
     btype = "review-man"
-    needed_colls = ['refereeReports']
+    needed_colls = ["refereeReports"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
-        gtx["refereeReports"] = sorted(
-            all_docs_from_collection(rc.client, "refereeReports"), key=_id_key
-        )
+        gtx["refereeReports"] = sorted(all_docs_from_collection(rc.client, "refereeReports"), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -28,7 +27,7 @@ class ManRevBuilder(LatexBuilderBase):
     def latex(self):
         """Render latex template"""
         for rev in self.gtx["refereeReports"]:
-            outname = "{}_{}".format(_id_key(rev),rev["reviewer"])
+            outname = "{}_{}".format(_id_key(rev), rev["reviewer"])
             self.render(
                 "refreport_author.txt",
                 outname + "_author.txt",
@@ -43,7 +42,7 @@ class ManRevBuilder(LatexBuilderBase):
                 validityAssessment=rev["validity_assessment"],
                 finalAssessment=rev["final_assessment"],
                 recommendation=rev["recommendation"],
-                freewrite=rev["freewrite"]
+                freewrite=rev["freewrite"],
             )
             if len(rev["editor_eyes_only"]) > 0:
                 self.render(

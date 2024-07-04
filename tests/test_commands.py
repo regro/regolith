@@ -22,10 +22,10 @@ def test_fs_to_mongo_python(make_db, make_mongodb):
     if make_mongodb is False:
         pytest.skip("Skipping, Mongoclient failed to start")
     if BILLINGE_TEST:
-        repo = str(Path(__file__).parent.parent.parent.joinpath('rg-db-group', 'local'))
+        repo = str(Path(__file__).parent.parent.parent.joinpath("rg-db-group", "local"))
     else:
         repo = make_db
-    cp1 = subprocess.run(['regolith', 'fs-to-mongo'], cwd=repo)
+    cp1 = subprocess.run(["regolith", "fs-to-mongo"], cwd=repo)
     assert cp1.returncode == 0
 
 
@@ -35,7 +35,7 @@ def test_mongo_to_fs_python(make_mongo_to_fs_backup_db, make_mongodb):
     repo = make_mongo_to_fs_backup_db
     os.chdir(repo)
     try:
-        main(['mongo-to-fs'])
+        main(["mongo-to-fs"])
     except Exception as e:
         print(e)
         assert True == False
@@ -58,12 +58,12 @@ def test_fs_to_mongo_python(make_fs_to_mongo_migration_db, make_mongodb):
     if make_mongodb is False:
         pytest.skip("Mongoclient failed to start")
     if BILLINGE_TEST:
-        repo = str(Path(__file__).parent.parent.parent.joinpath('rg-db-group', 'local'))
+        repo = str(Path(__file__).parent.parent.parent.joinpath("rg-db-group", "local"))
     else:
         repo = make_fs_to_mongo_migration_db
     os.chdir(repo)
     try:
-        main(['fs-to-mongo'])
+        main(["fs-to-mongo"])
     except Exception as e:
         print(e)
         assert True == False
@@ -91,22 +91,22 @@ def replace_rc_dbs(repo):
     os.chdir(repo)
     with open("regolithrc.json", "r+") as f:
         data = json.load(f)
-        data['databases'] = [
+        data["databases"] = [
             {
                 "name": FS_DB_NAME,
                 "url": repo,
                 "public": True,
                 "path": "db",
                 "local": True,
-                "backend": "filesystem"
+                "backend": "filesystem",
             },
             {
                 "name": ALTERNATE_REGOLITH_MONGODB_NAME,
-                "url": 'localhost',
+                "url": "localhost",
                 "path": repo,
                 "public": True,
                 "local": True,
-                "backend": "mongodb"
+                "backend": "mongodb",
             },
         ]
         f.seek(0)
