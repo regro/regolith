@@ -41,7 +41,7 @@ BUILDERS = {
     "recent-collabs": RecentCollaboratorsBuilder,
     "resume": ResumeBuilder,
     "review-man": ManRevBuilder,
-    "review-prop": PropRevBuilder
+    "review-prop": PropRevBuilder,
 }
 
 

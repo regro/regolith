@@ -1,4 +1,5 @@
 """Builder Base Classes"""
+
 import os
 from xonsh.lib import subprocess
 from glob import glob
@@ -15,14 +16,7 @@ except ImportError:
     HAVE_BIBTEX_PARSER = False
 
 from regolith.sorters import doc_date_key, category_val, level_val, date_key
-from regolith.tools import (
-    date_to_rfc822,
-    rfc822now,
-    gets,
-    LATEX_OPTS,
-    month_and_year,
-    latex_safe,
-    latex_safe_url)
+from regolith.tools import date_to_rfc822, rfc822now, gets, LATEX_OPTS, month_and_year, latex_safe, latex_safe_url
 
 
 class BuilderBase(object):
@@ -81,15 +75,10 @@ class BuilderBase(object):
         ctx = dict(self.gtx)
         ctx.update(kwargs)
         ctx["rc"] = ctx.get("rc", self.rc)
-        ctx["static"] = ctx.get(
-            "static", os.path.relpath("static", os.path.dirname(fname))
-        )
-        ctx["root"] = ctx.get(
-            "root", os.path.relpath("/", os.path.dirname(fname))
-        )
+        ctx["static"] = ctx.get("static", os.path.relpath("static", os.path.dirname(fname)))
+        ctx["root"] = ctx.get("root", os.path.relpath("/", os.path.dirname(fname)))
         result = template.render(ctx)
-        with open(os.path.join(self.bldir, fname), "wt", encoding='utf-8'
-                  ) as f:
+        with open(os.path.join(self.bldir, fname), "wt", encoding="utf-8") as f:
             f.write(result)
 
     def build(self):
@@ -124,7 +113,7 @@ class LatexBuilderBase(BuilderBase):
     def pdf(self, base):
         """Compiles latex files to PDF"""
         if self.rc.pdf:
-            if os.name == 'nt':
+            if os.name == "nt":
                 self.run(["pdflatex"] + LATEX_OPTS + [base + ".tex"])
             else:
                 self.run(["latex"] + LATEX_OPTS + [base + ".tex"])

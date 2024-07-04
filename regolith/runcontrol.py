@@ -1,5 +1,6 @@
 """Run Control object for regolith
 """
+
 from __future__ import print_function
 
 import json
@@ -143,11 +144,7 @@ class RunControl(object):
         return "{0}({1})".format(self.__class__.__name__, s)
 
     def __contains__(self, key):
-        return (
-            key in self._dict
-            or key in self.__dict__
-            or key in self.__class__.__dict__
-        )
+        return key in self._dict or key in self.__dict__ or key in self.__class__.__dict__
 
     def __eq__(self, other):
         if hasattr(other, "_dict"):
@@ -240,13 +237,13 @@ DEFAULT_RC = RunControl(
     mongodbpath=property(lambda self: os.path.join(self.builddir, "_dbpath")),
     user_config=os.path.expanduser("~/.config/regolith/user.json"),
     force=False,
-    database=None
+    database=None,
 )
 
 
 def load_json_rcfile(fname):
     """Loads a JSON run control file."""
-    with open(fname, "r", encoding='utf-8') as f:
+    with open(fname, "r", encoding="utf-8") as f:
         rc = json.load(f)
     return rc
 
@@ -257,9 +254,7 @@ def load_rcfile(fname):
     if ext == ".json":
         rc = load_json_rcfile(fname)
     else:
-        raise RuntimeError(
-            "could not detemine run control file type from extension."
-        )
+        raise RuntimeError("could not detemine run control file type from extension.")
     return rc
 
 
@@ -278,7 +273,7 @@ def filter_databases(rc):
 
 
 def connect_db(rc, colls=None):
-    '''
+    """
     Load up the db's
 
     Parameters
@@ -294,9 +289,8 @@ def connect_db(rc, colls=None):
       The chained databases in the form of a document
     dbs:
        The databases in the form of a runcontrol client
-    '''
+    """
     with connect(rc, dbs=colls) as rc.client:
         dbs = rc.client.dbs
         chained_db = rc.client.chained_db
     return chained_db, dbs
-

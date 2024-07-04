@@ -1,33 +1,27 @@
 """Validator for meetings
 """
+
 import datetime as dt
 
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
-from regolith.tools import (
-    all_docs_from_collection,
-    get_pi_id,
-    validate_meeting
-)
+from regolith.tools import all_docs_from_collection, get_pi_id, validate_meeting
 
 TARGET_COLL = "meetings"
 HELPER_TARGET = "v_meetings"
 
 
 def subparser(subpi):
-    subpi.add_argument(
-        "-t",
-        "--test",
-        action="store_true",
-        help="Testing flag for meeting validator")
+    subpi.add_argument("-t", "--test", action="store_true", help="Testing flag for meeting validator")
     return subpi
 
+
 class MeetingsValidatorHelper(SoutHelperBase):
-    """Helper for validating the entries of the meetings.yml file
-    """
+    """Helper for validating the entries of the meetings.yml file"""
+
     # btype must be the same as helper target in helper.py
     btype = HELPER_TARGET
-    needed_colls = [f'{TARGET_COLL}', 'institutions']
+    needed_colls = [f"{TARGET_COLL}", "institutions"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -43,10 +37,7 @@ class MeetingsValidatorHelper(SoutHelperBase):
         except BaseException:
             pass
         colls = [
-            sorted(
-                all_docs_from_collection(rc.client, collname), key=_id_key
-            )
-            for collname in self.needed_colls
+            sorted(all_docs_from_collection(rc.client, collname), key=_id_key) for collname in self.needed_colls
         ]
         for db, coll in zip(self.needed_colls, colls):
             gtx[db] = coll
@@ -58,7 +49,7 @@ class MeetingsValidatorHelper(SoutHelperBase):
     def sout(self):
         rc = self.rc
         if rc.test:
-            print('Meeting validator helper')
+            print("Meeting validator helper")
             return
         date = dt.date.today()
         collection = self.gtx["meetings"]

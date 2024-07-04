@@ -1,4 +1,5 @@
 """Contains a client database backed by the file system."""
+
 import json
 import os
 import sys
@@ -25,7 +26,7 @@ class DelayedKeyboardInterrupt:
 
     def handler(self, sig, frame):
         self.signal_received = (sig, frame)
-        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+        logging.debug("SIGINT received. Delaying KeyboardInterrupt.")
 
     def __exit__(self, type, value, traceback):
         signal.signal(signal.SIGINT, self.old_handler)
@@ -33,9 +34,7 @@ class DelayedKeyboardInterrupt:
             self.old_handler(*self.signal_received)
 
 
-
-YAML_BASE_MAP = {CommentedMap: dict,
-                 CommentedSeq: list}
+YAML_BASE_MAP = {CommentedMap: dict, CommentedSeq: list}
 
 
 def _rec_re_type(i):
@@ -154,8 +153,8 @@ class FileSystemClient:
             file
             for file in iglob(os.path.join(dbpath, "*.json"))
             if file not in db["blacklist"]
-               and len(db["whitelist"]) == 0
-               or os.path.basename(file).split(".")[0] in db["whitelist"]
+            and len(db["whitelist"]) == 0
+            or os.path.basename(file).split(".")[0] in db["whitelist"]
         ]:
             collfilename = os.path.split(f)[-1]
             base, ext = os.path.splitext(collfilename)
@@ -177,7 +176,7 @@ class FileSystemClient:
             base, ext = os.path.splitext(collfilename)
             self._collexts[base] = ext
             self._collfiletypes[base] = "yaml"
-            #print("loading " + f + "...", file=sys.stderr)
+            # print("loading " + f + "...", file=sys.stderr)
             coll, inst = load_yaml(f, return_inst=True)
             dbs[db["name"]][base] = coll
             self._yamlinsts[dbpath, base] = inst
@@ -197,9 +196,7 @@ class FileSystemClient:
 
     def dump_yaml(self, docs, collname, dbpath):
         """Dumps json docs and returns filename"""
-        f = os.path.join(
-            dbpath, collname + self._collexts.get(collname, ".yaml")
-        )
+        f = os.path.join(dbpath, collname + self._collexts.get(collname, ".yaml"))
         inst = self._yamlinsts.get((dbpath, collname), None)
         dump_yaml(f, docs, inst=inst)
         filename = os.path.split(f)[-1]
@@ -211,7 +208,7 @@ class FileSystemClient:
         os.makedirs(dbpath, exist_ok=True)
         to_add = []
         for collname, collection in self.dbs[db["name"]].items():
-            #print("dumping " + collname + "...", file=sys.stderr)
+            # print("dumping " + collname + "...", file=sys.stderr)
             filetype = self._collfiletypes.get(collname, "yaml")
             if filetype == "json":
                 filename = self.dump_json(collection, collname, dbpath)

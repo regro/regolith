@@ -1,18 +1,14 @@
 """Builder for Grant Reports"""
+
 from datetime import date
 import time
 
-#from habanero import Crossref
+# from habanero import Crossref
 from nameparser import HumanName
 import dateutil.parser as date_parser
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import (month_to_int,
-                            get_dates,
-                            get_due_date,
-                            is_current,
-                            is_after,
-                            is_before)
+from regolith.dates import month_to_int, get_dates, get_due_date, is_current, is_after, is_before
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (
@@ -20,14 +16,25 @@ from regolith.tools import (
     filter_grants,
     filter_presentations,
     fuzzy_retrieval,
-    filter_publications, get_formatted_crossref_reference
+    filter_publications,
+    get_formatted_crossref_reference,
 )
+
 
 class GrantReportBuilder(LatexBuilderBase):
     """Build a proposal review from database entries"""
+
     btype = "grant-report"
-    needed_dbs = ['presentations', 'projecta', 'people', 'grants',
-                  'institutions', 'expenses', 'citations', 'contacts']
+    needed_dbs = [
+        "presentations",
+        "projecta",
+        "people",
+        "grants",
+        "institutions",
+        "expenses",
+        "citations",
+        "contacts",
+    ]
 
     #    def __init__(self, rc):
     #        super().__init__(rc)
@@ -39,9 +46,7 @@ class GrantReportBuilder(LatexBuilderBase):
         gtx = self.gtx
         rc = self.rc
         for dbs in self.needed_dbs:
-            gtx[dbs] = sorted(
-                all_docs_from_collection(rc.client, dbs), key=_id_key
-            )
+            gtx[dbs] = sorted(all_docs_from_collection(rc.client, dbs), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -52,16 +57,13 @@ class GrantReportBuilder(LatexBuilderBase):
         rc = self.rc
 
         if not rc.grants:
-            raise RuntimeError(
-                "Error: no grant specified. Please rerun specifying a grant")
+            raise RuntimeError("Error: no grant specified. Please rerun specifying a grant")
         if isinstance(rc.grants, str):
             rc.grants = [rc.grants]
         if len(rc.grants) > 1:
-            raise RuntimeError(
-                "Error: more than one grant specified. Please rerun with"
-                "only a single grant.")
+            raise RuntimeError("Error: more than one grant specified. Please rerun with" "only a single grant.")
         grant_id = rc.grants[0]
-        grant = fuzzy_retrieval(self.gtx['grants'], ['_id', "alias", "name"], grant_id)
+        grant = fuzzy_retrieval(self.gtx["grants"], ["_id", "alias", "name"], grant_id)
         grant_dates = get_dates(grant)
 
         # Convert Date Strings to Datetime Objects
@@ -69,27 +71,33 @@ class GrantReportBuilder(LatexBuilderBase):
             rp_start_date = date_parser.parse(rc.from_date).date()
         else:
             rp_start_date = grant_dates.get("begin_date")
-            print(f"INFO: no begin-date specified.  running report from the beginning "
-                  f"of the grant period ({rp_start_date})")
+            print(
+                f"INFO: no begin-date specified.  running report from the beginning "
+                f"of the grant period ({rp_start_date})"
+            )
         if rc.to_date:
             rp_end_date = date_parser.parse(rc.to_date).date()
         else:
             rp_end_date = min([date.today(), grant_dates.get("end_date")])
-            print("INFO: no end-date specified for the reporting period.  Running "
-                  "report up to the earlier of the end of the grant, or today "
-                  f"({rp_end_date}).")
-        report_dates = {'begin_date': rp_start_date,
-                        'end_date': rp_end_date}
-        print(f"INFO: generating report for grant {grant_id} for the period"
-              f"from {rp_start_date} to {rp_end_date})")
-
+            print(
+                "INFO: no end-date specified for the reporting period.  Running "
+                "report up to the earlier of the end of the grant, or today "
+                f"({rp_end_date})."
+            )
+        report_dates = {"begin_date": rp_start_date, "end_date": rp_end_date}
+        print(
+            f"INFO: generating report for grant {grant_id} for the period"
+            f"from {rp_start_date} to {rp_end_date})"
+        )
 
         # Get prum associated to grant and active during reporting period
         #        institutions_coll = [inst for inst in self.gtx["institutions"]]
         institutions_coll = self.gtx["institutions"]
-        grant_prums = [prum for prum in self.gtx['projecta'] if
-                       grant_id in prum.get('grants', []) and "checklist" not
-                       in prum.get("deliverable").get("scope")]
+        grant_prums = [
+            prum
+            for prum in self.gtx["projecta"]
+            if grant_id in prum.get("grants", []) and "checklist" not in prum.get("deliverable").get("scope")
+        ]
         #        for prum in self.gtx['projecta']:
         #            if grant_name in prum['grants']:
         #                begin_date = get_dates(prum).get('begin_date')
@@ -101,22 +109,22 @@ class GrantReportBuilder(LatexBuilderBase):
         #                   grant_prums.append(prum)
         # Get people associated with grant
 
-        grant_prums_finished_this_period = [prum for prum in grant_prums if
-                                            is_current(report_dates,
-                                                       get_dates(prum).get('end_date'))]
-        grant_prum_leads = list(set([prum['lead'] for prum in grant_prums]))
-        grant_prum_collaborators = list(set(
-            [collab for prum in grant_prums for collab in
-             prum.get('collaborators', [])]))
-        grant_prum_group_members = list(set(
-            [grp_mbr for prum in grant_prums for grp_mbr in
-             prum.get('group_members', [])]))
+        grant_prums_finished_this_period = [
+            prum for prum in grant_prums if is_current(report_dates, get_dates(prum).get("end_date"))
+        ]
+        grant_prum_leads = list(set([prum["lead"] for prum in grant_prums]))
+        grant_prum_collaborators = list(
+            set([collab for prum in grant_prums for collab in prum.get("collaborators", [])])
+        )
+        grant_prum_group_members = list(
+            set([grp_mbr for prum in grant_prums for grp_mbr in prum.get("group_members", [])])
+        )
         grant_people = grant_prum_leads
         # Accomplishments
         major_activities = []
         significant_results = []
         for prum in grant_prums:
-            if prum['status'] == "finished":
+            if prum["status"] == "finished":
                 continue
             else:
                 major_activities.append(prum)
@@ -128,11 +136,17 @@ class GrantReportBuilder(LatexBuilderBase):
         # presentations
         for id in grant_people:
             training_and_professional_development.extend(
-                filter_presentations(self.gtx["people"],
-                                     self.gtx["presentations"],
-                                     institutions_coll, id,
-                                     types=["all"], since=rp_start_date,
-                                     before=rp_end_date, statuses=["accepted"]))
+                filter_presentations(
+                    self.gtx["people"],
+                    self.gtx["presentations"],
+                    institutions_coll,
+                    id,
+                    types=["all"],
+                    since=rp_start_date,
+                    before=rp_end_date,
+                    statuses=["accepted"],
+                )
+            )
         # thesis defendings
         # how do i access people.yml in rg-db-public vs the people.yml file in rg-db-group?
         #        defended_theses = []
@@ -154,26 +168,24 @@ class GrantReportBuilder(LatexBuilderBase):
         ##                                           set(grant_people),
         #                                           since=rp_start_date,
         #                                          before=rp_end_date)
-        publications = [publ for publ in self.gtx["citations"] if
-                        grant_id in publ.get("grant", "")]
+        publications = [publ for publ in self.gtx["citations"] if grant_id in publ.get("grant", "")]
 
         for publ in publications:
-            formatted_authors = [HumanName(name).full_name
-                                 for name in publ.get("authors",[])]
+            formatted_authors = [HumanName(name).full_name for name in publ.get("authors", [])]
             publ["authors"] = formatted_authors
         # Participants/Organizations
         participants = []
         for person in self.gtx["people"]:
-            months_on_grant, months_left = self.months_on(grant_id,
-                                                          person,
-                                                          rp_start_date,
-                                                          rp_end_date)
+            months_on_grant, months_left = self.months_on(grant_id, person, rp_start_date, rp_end_date)
             if months_on_grant > 0:
                 participants.append(
-                    {"name": person.get("name"),
-                     "email": person.get("email"),
-                     "position": person.get('position'),
-                     "months_on_grant": int(round(months_on_grant, 0))})
+                    {
+                        "name": person.get("name"),
+                        "email": person.get("email"),
+                        "position": person.get("position"),
+                        "months_on_grant": int(round(months_on_grant, 0)),
+                    }
+                )
 
         collaborators = {}
         missing_contacts = []
@@ -183,22 +195,14 @@ class GrantReportBuilder(LatexBuilderBase):
                     name = contact.get("name")
                     aka = contact.get("aka")
                     institution_id = contact.get("institution")
-                    institution = fuzzy_retrieval(institutions_coll,
-                                                  ["name", "aka", "_id"],
-                                                  institution_id)
+                    institution = fuzzy_retrieval(institutions_coll, ["name", "aka", "_id"], institution_id)
                     if institution:
                         inst_name = institution.get("name")
                     else:
-                        print(
-                            f"WARNING: institution {institution_id} not found "
-                            f"in institutions collection")
+                        print(f"WARNING: institution {institution_id} not found " f"in institutions collection")
                         inst_name = institution_id
-                    collaborators[id] = {
-                        "aka": aka, "name": name,
-                        "institution": inst_name
-                    }
-        missing_contacts = [id for id in grant_prum_collaborators
-                            if not collaborators.get(id)]
+                    collaborators[id] = {"aka": aka, "name": name, "institution": inst_name}
+        missing_contacts = [id for id in grant_prum_collaborators if not collaborators.get(id)]
         missing_contacts = list(set(missing_contacts))
         for person_id in missing_contacts:
             print(f"WARNING: contact {person_id} not found in contacts collection")
@@ -219,24 +223,23 @@ class GrantReportBuilder(LatexBuilderBase):
             grantPeople=grant_people,
             participants=participants,
             collaborators=collaborators,
-            hline="------------------------------------------------------------------------------"
+            hline="------------------------------------------------------------------------------",
         )
 
-    def months_on(self, grant, person, since=date(1970, 1, 1),
-                  before=date.today()):
+    def months_on(self, grant, person, since=date(1970, 1, 1), before=date.today()):
         #    print('Looking at months on grant {} in period since {} until {}'.format(
         #        grant, since, before), )
         total_months = 0
-        appts = person.get('appointments')
+        appts = person.get("appointments")
         if appts:
             months = 0
             for k1, v1 in appts.items():
-                if grant in v1.get('grant'):
+                if grant in v1.get("grant"):
                     appt_dates = get_dates(v1)
-                    overlap_start = max([appt_dates.get('begin_date'), since])
-                    overlap_end = min([appt_dates.get('end_date'), before])
+                    overlap_start = max([appt_dates.get("begin_date"), since])
+                    overlap_end = min([appt_dates.get("end_date"), before])
                     if overlap_end >= overlap_start:
-                        months = months + (overlap_end - overlap_start).days * v1.get("loading")/ 30.4
+                        months = months + (overlap_end - overlap_start).days * v1.get("loading") / 30.4
                     # appt_startdate = dates.get('begin_date')
                     # appt_enddate = dates.get('end_date')
                     # loading = v1.get('loading')
@@ -253,5 +256,5 @@ class GrantReportBuilder(LatexBuilderBase):
                     #    months = months + (before - since).days * loading / 30.4
             if months > 0:
                 total_months = total_months + months
-        months_left = (before - date.today())
+        months_left = before - date.today()
         return total_months, months_left

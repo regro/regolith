@@ -1,4 +1,5 @@
 """The main CLI for regolith"""
+
 from __future__ import print_function
 
 import copy
@@ -20,13 +21,15 @@ from gooey import Gooey, GooeyParser
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}
 
+
 # @Gooey(advanced=True)
-@Gooey(#body_bg_color='#808080',
-       #header_bg_color='#808080',
-       required_cols=1,
-       optional_cols=1,
-       sidebar_title='Helpers',
-       program_name='Regolith Helper GUI')
+@Gooey(  # body_bg_color='#808080',
+    # header_bg_color='#808080',
+    required_cols=1,
+    optional_cols=1,
+    sidebar_title="Helpers",
+    program_name="Regolith Helper GUI",
+)
 def create_parser():
     p = GooeyParser()
     subp = p.add_subparsers(title="helper_target", dest="helper_target")

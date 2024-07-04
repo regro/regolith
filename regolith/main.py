@@ -1,4 +1,5 @@
 """The main CLI for regolith"""
+
 from __future__ import print_function
 
 import copy
@@ -25,10 +26,7 @@ def create_parser():
     p = ArgumentParser()
     subp = p.add_subparsers(title="cmd", dest="cmd")
 
-    p.add_argument(
-        "--version",
-        action="store_true"
-    )
+    p.add_argument("--version", action="store_true")
 
     # helper subparser
     subp.add_parser(
@@ -41,14 +39,10 @@ def create_parser():
     subp.add_parser("rc", help="prints run control")
 
     # add subparser
-    addp = subp.add_parser(
-        "add", help="adds a record to a database and collection"
-    )
+    addp = subp.add_parser("add", help="adds a record to a database and collection")
     addp.add_argument("db", help="database name")
     addp.add_argument("coll", help="collection name")
-    addp.add_argument(
-        "documents", nargs="+", help="documents, in JSON / mongodb format"
-    )
+    addp.add_argument("documents", nargs="+", help="documents, in JSON / mongodb format")
 
     # ingest subparser
     ingp = subp.add_parser(
@@ -58,21 +52,17 @@ def create_parser():
     ingp.add_argument("db", help="database name")
     ingp.add_argument(
         "filename",
-        help="file to ingest. Currently valid formats are: \n{}"
-             "".format([k for k in INGEST_COLL_LU]),
+        help="file to ingest. Currently valid formats are: \n{}" "".format([k for k in INGEST_COLL_LU]),
     )
     ingp.add_argument(
         "--coll",
         dest="coll",
         default=None,
-        help="collection name, if this is not given it is infered from the "
-             "file type or file name.",
+        help="collection name, if this is not given it is infered from the " "file type or file name.",
     )
 
     # store subparser
-    strp = subp.add_parser(
-        "store", help="stores a file into the appropriate " "storage location."
-    )
+    strp = subp.add_parser("store", help="stores a file into the appropriate " "storage location.")
     strp.add_argument("storename", help="storage name")
     strp.add_argument(
         "documents",
@@ -91,8 +81,7 @@ def create_parser():
     # app subparser
     appp = subp.add_parser(
         "app",
-        help="starts up a flask app for inspecting and "
-             "modifying regolith data.",
+        help="starts up a flask app for inspecting and " "modifying regolith data.",
     )
     appp.add_argument(
         "--debug",
@@ -124,15 +113,12 @@ def create_parser():
     bldp.add_argument(
         "build_targets",
         nargs="+",
-        help="targets to build. Currently valid targets are: \n{}".format(
-            [k for k in BUILDERS]
-        ),
+        help="targets to build. Currently valid targets are: \n{}".format([k for k in BUILDERS]),
     )
     bldp.add_argument(
         "--no-pdf",
         dest="pdf",
-        help="don't produce PDFs during the build "
-             "(for builds which produce PDFs)",
+        help="don't produce PDFs during the build " "(for builds which produce PDFs)",
         action="store_false",
         default=True,
     )
@@ -140,56 +126,48 @@ def create_parser():
         "--from",
         dest="from_date",
         help="date in form YYYY-MM-DD.  Items will only be built"
-             " if their date or end_date is equal or after this date",
+        " if their date or end_date is equal or after this date",
         default=None,
     )
     bldp.add_argument(
         "--to",
         dest="to_date",
         help="date in form YYYY-MM-DD.  Items will only be built"
-             " if their date or begin_date is equal or before this date",
+        " if their date or begin_date is equal or before this date",
         default=None,
     )
     bldp.add_argument(
         "--grants",
-        nargs='+',
+        nargs="+",
         dest="grants",
         help="specify a grant or a space-separated list of grants so items are "
-             "built only if associated with this(these) grant(s)",
+        "built only if associated with this(these) grant(s)",
         default=None,
     )
     bldp.add_argument(
         "--people",
-        nargs='+',
+        nargs="+",
         dest="people",
         help="specify a person or a space-separated list of people such that "
-             "the build will be for only those people",
+        "the build will be for only those people",
         default=None,
     )
     bldp.add_argument(
         "--kwargs",
-        nargs='+',
+        nargs="+",
         dest="kwargs",
-        help="pass a specific command to build a specific task "
-             "if it exists",
+        help="pass a specific command to build a specific task " "if it exists",
         default=None,
     )
 
     # deploy subparser
-    depp = subp.add_parser(
-        "deploy", help="deploys what was built by regolith")
+    depp = subp.add_parser("deploy", help="deploys what was built by regolith")
 
     # email subparser
     emlp = subp.add_parser("email", help="automates emailing")
-    emlp.add_argument(
-        "email_target", help='targets to email, eg "test" or ' '"grades".'
-    )
-    emlp.add_argument(
-        "--to", default=None, dest="to", help="receiver of email"
-    )
-    emlp.add_argument(
-        "--subject", dest="subject", help="email subject line", default=""
-    )
+    emlp.add_argument("email_target", help='targets to email, eg "test" or ' '"grades".')
+    emlp.add_argument("--to", default=None, dest="to", help="receiver of email")
+    emlp.add_argument("--subject", dest="subject", help="email subject line", default="")
     emlp.add_argument(
         "--body",
         dest="body",
@@ -214,23 +192,17 @@ def create_parser():
     emlp.add_argument("--db", help="database name", dest="db", default=None)
 
     # classlist subparser
-    clp = subp.add_parser(
-        "classlist", help="updates classlist information from file"
-    )
-    clp.add_argument(
-        "op", help='operatation to perform, such as "add" or "replace".'
-    )
+    clp = subp.add_parser("classlist", help="updates classlist information from file")
+    clp.add_argument("op", help='operatation to perform, such as "add" or "replace".')
     clp.add_argument("filename", help="file to read class information from.")
-    clp.add_argument(
-        "course_id", help="course identifier whose registry should be updated"
-    )
+    clp.add_argument("course_id", help="course identifier whose registry should be updated")
     clp.add_argument(
         "-f",
         "--format",
         dest="format",
         default=None,
         help="file / school format to read information from. Current values are "
-             '"json" and "usc". Determined from extension if not available.',
+        '"json" and "usc". Determined from extension if not available.',
     )
     clp.add_argument(
         "-d",
@@ -243,44 +215,46 @@ def create_parser():
     clp.add_argument("--db", help="database name", dest="db", default=None)
 
     # JSON-to-YAML subparser
-    jty = subp.add_parser(
-        "json-to-yaml", help="Converts files from JSON to YAML"
-    )
+    jty = subp.add_parser("json-to-yaml", help="Converts files from JSON to YAML")
     jty.add_argument("files", nargs="+", help="file names to convert")
 
     # YAML-to-JSON subparser
-    ytj = subp.add_parser(
-        "yaml-to-json", help="Converts files from YAML to JSON"
-    )
+    ytj = subp.add_parser("yaml-to-json", help="Converts files from YAML to JSON")
     ytj.add_argument("files", nargs="+", help="file names to convert")
 
     # mongo-to-fs subparser
     mtf = subp.add_parser(
         "mongo-to-fs",
         help="Backup database from mongodb to filesystem as json. The database will be imported to the destination "
-             "specified by the 'database':'dst_url' key. For this to work, ensure that the database is included in the "
-             "dst_url, and that local is set to true."
+        "specified by the 'database':'dst_url' key. For this to work, ensure that the database is included in the "
+        "dst_url, and that local is set to true.",
     )
 
-    mtf.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
-                                    "default, the mongoexport attempts to connect to a MongoDB instance running "
-                                    "on the localhost on port number 27017.",
-                     dest="host",
-                     default=None)
+    mtf.add_argument(
+        "--host",
+        help="Specifies a resolvable hostname for the mongod to which to connect. By "
+        "default, the mongoexport attempts to connect to a MongoDB instance running "
+        "on the localhost on port number 27017.",
+        dest="host",
+        default=None,
+    )
 
     # fs-to-mongo subparser
     ftm = subp.add_parser(
         "fs-to-mongo",
         help="Import database from filesystem to mongodb. By default, the database will be import to the local "
-             "mongodb. The database can also be imported to the destination specified by the 'database':'dst_url' key."
-             " For this to work, ensure that the database is included in the dst_url, and that local is set to true."
+        "mongodb. The database can also be imported to the destination specified by the 'database':'dst_url' key."
+        " For this to work, ensure that the database is included in the dst_url, and that local is set to true.",
     )
 
-    ftm.add_argument("--host", help="Specifies a resolvable hostname for the mongod to which to connect. By "
-                                    "default, the mongoimport attempts to connect to a MongoDB instance running "
-                                    "on the localhost on port number 27017.",
-                     dest="host",
-                     default=None)
+    ftm.add_argument(
+        "--host",
+        help="Specifies a resolvable hostname for the mongod to which to connect. By "
+        "default, the mongoimport attempts to connect to a MongoDB instance running "
+        "on the localhost on port number 27017.",
+        dest="host",
+        default=None,
+    )
 
     # Validator
     val = subp.add_parser("validate", help="Validates db")
@@ -301,13 +275,11 @@ def main(args=None):
     if args1.version:
         print(__version__)
         return rc
-    if args1.cmd == 'helper':
-        p = ArgumentParser(prog='regolith helper')
+    if args1.cmd == "helper":
+        p = ArgumentParser(prog="regolith helper")
         p.add_argument(
             "helper_target",
-            help="helper target to run. Currently valid targets are: \n{}".format(
-                [k for k in HELPERS]
-            ),
+            help="helper target to run. Currently valid targets are: \n{}".format([k for k in HELPERS]),
         )
         if len(rest) == 0:
             p.print_help()
@@ -338,9 +310,9 @@ def main(args=None):
         DISCONNECTED_COMMANDS[rc.cmd](rc)
     else:
         dbs = None
-        if rc.cmd == 'build':
+        if rc.cmd == "build":
             dbs = commands.build_db_check(rc)
-        elif rc.cmd == 'helper':
+        elif rc.cmd == "helper":
             dbs = commands.helper_db_check(rc)
         with connect(rc, dbs=dbs) as rc.client:
             CONNECTED_COMMANDS[rc.cmd](rc)

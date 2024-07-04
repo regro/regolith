@@ -1,6 +1,7 @@
 """
 Helper to add expenses.
 """
+
 import datetime as dt
 import dateutil.parser as date_parser
 
@@ -13,13 +14,14 @@ from regolith.tools import (
 )
 from gooey import GooeyParser
 
-TARGET_COLL = "expenses" 
+TARGET_COLL = "expenses"
 
 EXPENSES_STATI = alloweds.get("EXPENSES_STATI")
 EXPENSES_TYPES = alloweds.get("EXPENSES_TYPES")
 
+
 def expense_constructor(key, begin_date, end_date, rc):
-    '''
+    """
     constructs a document with default fields for an expense
 
     Parameters
@@ -49,190 +51,210 @@ def expense_constructor(key, begin_date, end_date, rc):
     -------
     The constructed expense document
 
-    '''
+    """
     pdoc = {}
-    pdoc.update({'_id': key,
-                 'begin_date': begin_date,
-                 'end_date': end_date,
-                 })
+    pdoc.update(
+        {
+            "_id": key,
+            "begin_date": begin_date,
+            "end_date": end_date,
+        }
+    )
 
     if rc.business:
-        expense_type = 'business'
+        expense_type = "business"
     else:
-        expense_type = 'travel'
-    pdoc.update({'expense_type': expense_type})
+        expense_type = "travel"
+    pdoc.update({"expense_type": expense_type})
 
-    percentages = [round(100 / len(rc.grants),2) for i in rc.grants]
+    percentages = [round(100 / len(rc.grants), 2) for i in rc.grants]
 
-    pdoc.update({'grant_percentages': percentages,
-                 'grants': rc.grants})
+    pdoc.update({"grant_percentages": percentages, "grants": rc.grants})
 
-    if expense_type == 'travel':
-        pdoc.update({'itemized_expenses': [
+    if expense_type == "travel":
+        pdoc.update(
             {
-                'date': begin_date,
-                'purpose': 'registration',
-                'unsegregated_expense': 0,
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
-            },
-            {
-                'date': begin_date,
-                'purpose': 'home to airport',
-                'unsegregated_expense': 0,
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
-            },
-            {
-                'date': begin_date,
-                'purpose': 'flights',
-                'unsegregated_expense': 0,
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
-            },
-            {
-                'date': begin_date,
-                'purpose': 'airport to hotel',
-                'unsegregated_expense': 0,
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
-            },
-            {
-                'date': begin_date,
-                'purpose': 'hotel',
-                'unsegregated_expense': 0,
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
-            },
-            {
-                'date': begin_date,
-                'purpose': 'hotel to airport',
-                'unsegregated_expense': 0,
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
-            },
-            {
-                'date': begin_date,
-                'purpose': 'airport to home',
-                'unsegregated_expense': 0,
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
-            },
-            {
-                'date': begin_date,
-                'purpose': 'meals',
-                'unsegregated_expense': 0,
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
+                "itemized_expenses": [
+                    {
+                        "date": begin_date,
+                        "purpose": "registration",
+                        "unsegregated_expense": 0,
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    },
+                    {
+                        "date": begin_date,
+                        "purpose": "home to airport",
+                        "unsegregated_expense": 0,
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    },
+                    {
+                        "date": begin_date,
+                        "purpose": "flights",
+                        "unsegregated_expense": 0,
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    },
+                    {
+                        "date": begin_date,
+                        "purpose": "airport to hotel",
+                        "unsegregated_expense": 0,
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    },
+                    {
+                        "date": begin_date,
+                        "purpose": "hotel",
+                        "unsegregated_expense": 0,
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    },
+                    {
+                        "date": begin_date,
+                        "purpose": "hotel to airport",
+                        "unsegregated_expense": 0,
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    },
+                    {
+                        "date": begin_date,
+                        "purpose": "airport to home",
+                        "unsegregated_expense": 0,
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    },
+                    {
+                        "date": begin_date,
+                        "purpose": "meals",
+                        "unsegregated_expense": 0,
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    },
+                ]
             }
-        ]
-        })
+        )
     else:
-        pdoc.update({'itemized_expenses': [
+        pdoc.update(
             {
-                'date': begin_date,
-                'purpose': rc.purpose,
-                'unsegregated_expense': float(rc.amount),
-                'segregated_expense': 0,
-                'currency': 'USD',
-                'notes': [""]
-            }]
-        })
-    pdoc.update({'notes': rc.notes,
-                 'overall_purpose': rc.purpose,
-                 'payee': rc.payee,
-                 })
-    if rc.status == 'submitted':
+                "itemized_expenses": [
+                    {
+                        "date": begin_date,
+                        "purpose": rc.purpose,
+                        "unsegregated_expense": float(rc.amount),
+                        "segregated_expense": 0,
+                        "currency": "USD",
+                        "notes": [""],
+                    }
+                ]
+            }
+        )
+    pdoc.update(
+        {
+            "notes": rc.notes,
+            "overall_purpose": rc.purpose,
+            "payee": rc.payee,
+        }
+    )
+    if rc.status == "submitted":
         submission_date = dt.date.today()
 
     else:
-        submission_date = 'tbd'
+        submission_date = "tbd"
 
-    pdoc.update({'reimbursements': [
+    pdoc.update(
         {
-            'amount': 0,
-            'date': 'tbd',
-            'submission_date': submission_date,
-            'where': rc.where,
+            "reimbursements": [
+                {
+                    "amount": 0,
+                    "date": "tbd",
+                    "submission_date": submission_date,
+                    "where": rc.where,
+                }
+            ]
         }
-    ]
-    })
-    pdoc.update({
-        'status': rc.status
-    })
+    )
+    pdoc.update({"status": rc.status})
     return pdoc
+
 
 def subparser(subpi):
     amount_gooey_kwargs, notes_gooey_kwargs, date_gooey_kwargs = {}, {}, {}
     if isinstance(subpi, GooeyParser):
-        amount_gooey_kwargs['widget'] = 'DecimalField'
-        amount_gooey_kwargs['gooey_options'] = {'min': 0.00, 'max': 1000000.00, 'increment': 10.00, 'precision' : 2}
-        notes_gooey_kwargs['widget'] = 'Textarea'
-        date_gooey_kwargs['widget'] = 'DateChooser'
+        amount_gooey_kwargs["widget"] = "DecimalField"
+        amount_gooey_kwargs["gooey_options"] = {"min": 0.00, "max": 1000000.00, "increment": 10.00, "precision": 2}
+        notes_gooey_kwargs["widget"] = "Textarea"
+        date_gooey_kwargs["widget"] = "DateChooser"
 
-    subpi.add_argument("name", help="A short name for the expense",
-                       default=None
-                       )
-    subpi.add_argument("purpose", help="A short description of the business "
-                                       "purpose of the expense",
-                       default=None)
+    subpi.add_argument("name", help="A short name for the expense", default=None)
+    subpi.add_argument(
+        "purpose", help="A short description of the business " "purpose of the expense", default=None
+    )
 
-    subpi.add_argument("-b", "--business", action='store_true',
-                       help="Is the expense type business? If not specified, defaults to travel"
-                       )
-    subpi.add_argument("-a", "--amount", help="expense amount. required if a business "
-                                        "expense.",
-                       **amount_gooey_kwargs
-                       )
-    subpi.add_argument("-d", "--begin-date",
-                       help="Input begin date for this expense. "
-                            "Defaults to today's date",
-                       **date_gooey_kwargs
-                       )
-    subpi.add_argument("-e,", "--end-date",
-                       help="Input end date for this expense. "
-                            "Defaults to today's date",
-                       **date_gooey_kwargs
-                       )
-    subpi.add_argument("-g", "--grants", nargs="+",
-                       help="grant, or list of grants that cover this expense. Defaults to tbd",
-                       default="tbd")
-    subpi.add_argument("-s", "--status",
-                       choices = EXPENSES_STATI,
-                       help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
-                       default='unsubmitted'
-                       )
-    subpi.add_argument("-w", "--where",
-                       help="Where the expense has been submitted.",
-                       default=""
-                       )
-    subpi.add_argument("-n", "--notes", nargs="+",
-                       help="List of notes for the expense. Defaults to empty list",
-                       default= [],
-                       **notes_gooey_kwargs
-                       )
-    subpi.add_argument("-y", "--payee",
-                       help="payee of the expense. defaults to rc.default_user_id"
-                       )
+    subpi.add_argument(
+        "-b",
+        "--business",
+        action="store_true",
+        help="Is the expense type business? If not specified, defaults to travel",
+    )
+    subpi.add_argument(
+        "-a", "--amount", help="expense amount. required if a business " "expense.", **amount_gooey_kwargs
+    )
+    subpi.add_argument(
+        "-d",
+        "--begin-date",
+        help="Input begin date for this expense. " "Defaults to today's date",
+        **date_gooey_kwargs,
+    )
+    subpi.add_argument(
+        "-e,",
+        "--end-date",
+        help="Input end date for this expense. " "Defaults to today's date",
+        **date_gooey_kwargs,
+    )
+    subpi.add_argument(
+        "-g",
+        "--grants",
+        nargs="+",
+        help="grant, or list of grants that cover this expense. Defaults to tbd",
+        default="tbd",
+    )
+    subpi.add_argument(
+        "-s",
+        "--status",
+        choices=EXPENSES_STATI,
+        help=f"status, from {EXPENSES_STATI}. Default is unsubmitted",
+        default="unsubmitted",
+    )
+    subpi.add_argument("-w", "--where", help="Where the expense has been submitted.", default="")
+    subpi.add_argument(
+        "-n",
+        "--notes",
+        nargs="+",
+        help="List of notes for the expense. Defaults to empty list",
+        default=[],
+        **notes_gooey_kwargs,
+    )
+    subpi.add_argument("-y", "--payee", help="payee of the expense. defaults to rc.default_user_id")
     # Do not delete --database arg
-    subpi.add_argument("--database",
-                       help="The database that will be updated.  Defaults to "
-                            "first database in the regolithrc.json file."
-                       )
+    subpi.add_argument(
+        "--database",
+        help="The database that will be updated.  Defaults to " "first database in the regolithrc.json file.",
+    )
     return subpi
 
 
 class ExpenseAdderHelper(DbHelperBase):
     btype = "a_expense"
-    needed_colls = [f'{TARGET_COLL}', 'people', 'groups']
+    needed_colls = [f"{TARGET_COLL}", "people", "groups"]
 
     def construct_global_ctx(self):
         """Constructs the global context"""
@@ -245,14 +267,14 @@ class ExpenseAdderHelper(DbHelperBase):
             if rc.default_user_id:
                 rc.payee = rc.default_user_id
             else:
-                raise RuntimeError(" No default_user_id set.  Please specify this "
-                          f"either in the ~/.conf/regolith/user.json or in"
-                          f" regolithrc.json")
+                raise RuntimeError(
+                    " No default_user_id set.  Please specify this "
+                    f"either in the ~/.conf/regolith/user.json or in"
+                    f" regolithrc.json"
+                )
         if not rc.database:
             rc.database = rc.databases[0]["name"]
-        gtx[rc.coll] = sorted(
-            all_docs_from_collection(rc.client, rc.coll), key=_id_key
-        )
+        gtx[rc.coll] = sorted(all_docs_from_collection(rc.client, rc.coll), key=_id_key)
         gtx["all_docs_from_collection"] = all_docs_from_collection
         gtx["float"] = float
         gtx["str"] = str
@@ -274,13 +296,11 @@ class ExpenseAdderHelper(DbHelperBase):
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:
-            raise RuntimeError(
-                "This entry appears to already exist in the collection")
+            raise RuntimeError("This entry appears to already exist in the collection")
         else:
             pdoc = {}
 
         pdoc = expense_constructor(key, begin_date, end_date, rc)
-
 
         rc.client.insert_one(rc.database, rc.coll, pdoc)
 

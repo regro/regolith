@@ -1,4 +1,5 @@
 """Generic builder."""
+
 from copy import copy
 
 from regolith.helpers import attestationshelper as attestations
@@ -56,8 +57,9 @@ LISTER_HELPERS = {
     "l_abstract": (l_abstract.AbstractListerHelper, l_abstract.subparser),
     "l_contacts": (l_contacts.ContactsListerHelper, l_contacts.subparser),
     "l_currentappointments": (
-       l_currentappointments.CurrentAppointmentsListerHelper,
-       l_currentappointments.subparser),
+        l_currentappointments.CurrentAppointmentsListerHelper,
+        l_currentappointments.subparser,
+    ),
     "l_grants": (l_grants.GrantsListerHelper, l_grants.subparser),
     "l_members": (l_members.MembersListerHelper, l_members.subparser),
     "l_milestones": (l_milestone.MilestonesListerHelper, l_milestone.subparser),
@@ -68,8 +70,7 @@ LISTER_HELPERS = {
     "v_meetings": (v_meetings.MeetingsValidatorHelper, v_meetings.subparser),
     "attestations": (attestations.AttestationsHelper, attestations.subparser),
     "lister": (l_general.GeneralListerHelper, l_general.subparser),
-    "makeappointments": (
-       makeappointments.MakeAppointmentsHelper, makeappointments.subparser)
+    "makeappointments": (makeappointments.MakeAppointmentsHelper, makeappointments.subparser),
 }
 
 HELPERS = copy(LISTER_HELPERS)
@@ -77,6 +78,7 @@ HELPERS.update(UPDATER_HELPERS)
 # fast_updater updaters only connects to the one requested db, not to all dbs
 # in rc.databases which is the default behavior
 FAST_UPDATER_WHITELIST = ["u_milestone", "f_prum"]
+
 
 def helpr(btype, rc):
     """Returns helper of the appropriate type."""

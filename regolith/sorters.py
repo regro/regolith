@@ -1,17 +1,12 @@
 """Builder for websites."""
+
 import string
 
 from regolith.dates import date_to_float
 
-doc_date_key = lambda x: date_to_float(
-    x.get("year", 1970), x.get("month", "jan")
-)
-doc_date_key_high = lambda x: date_to_float(
-    x.get("year", 1970), x.get("month", "dec")
-)
-ene_date_key = lambda x: date_to_float(
-    x.get("end_year", 4242), x.get("end_month", "dec")
-)
+doc_date_key = lambda x: date_to_float(x.get("year", 1970), x.get("month", "jan"))
+doc_date_key_high = lambda x: date_to_float(x.get("year", 1970), x.get("month", "dec"))
+ene_date_key = lambda x: date_to_float(x.get("end_year", 4242), x.get("end_month", "dec"))
 category_val = lambda x: x.get("category", "<uncategorized>")
 level_val = lambda x: x.get("level", "<no-level>")
 id_key = lambda x: x.get("_id", "")
@@ -19,15 +14,11 @@ id_key = lambda x: x.get("_id", "")
 
 def date_key(x):
     if "end_year" in x:
-        v = date_to_float(
-            x["end_year"], x.get("end_month", "jan"), x.get("end_day", 0)
-        )
+        v = date_to_float(x["end_year"], x.get("end_month", "jan"), x.get("end_day", 0))
     elif "year" in x:
         v = date_to_float(x["year"], x.get("month", "jan"), x.get("day", 0))
     elif "begin_year" in x:
-        v = date_to_float(
-            x["begin_year"], x.get("begin_month", "jan"), x.get("begin_day", 0)
-        )
+        v = date_to_float(x["begin_year"], x.get("begin_month", "jan"), x.get("begin_day", 0))
     else:
         raise KeyError("could not find year in " + str(x))
     return v
@@ -77,7 +68,7 @@ POSITION_LEVELS = {
     "physicist": 10,
     "professor": 11,
     "president": 10,
-    "distinguished professor": 12
+    "distinguished professor": 12,
 }
 
 

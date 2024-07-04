@@ -1,4 +1,5 @@
 """Builder for websites."""
+
 import os
 import shutil
 import datetime as dt
@@ -15,11 +16,11 @@ from regolith.tools import (
     make_bibtex_file,
     document_by_value,
     dereference_institution,
-    fuzzy_retrieval
+    fuzzy_retrieval,
 )
 
 
-PROJ_URL_BASE = 'https://gitlab.thebillingegroup.com/talks/'
+PROJ_URL_BASE = "https://gitlab.thebillingegroup.com/talks/"
 
 
 class InternalHtmlBuilder(BuilderBase):
@@ -49,24 +50,16 @@ class InternalHtmlBuilder(BuilderBase):
             key=position_key,
             reverse=True,
         )
-        gtx["meetings"] = list(
-            all_docs_from_collection(rc.client, "meetings")
-        )
-        gtx["group"] = document_by_value(
-            all_docs_from_collection(rc.client, "groups"), "name", rc.groupname
-        )
+        gtx["meetings"] = list(all_docs_from_collection(rc.client, "meetings"))
+        gtx["group"] = document_by_value(all_docs_from_collection(rc.client, "groups"), "name", rc.groupname)
         gtx["all_docs_from_collection"] = all_docs_from_collection
-        gtx["institutions"] = sorted(
-            all_docs_from_collection(rc.client, "institutions"), key=_id_key
-        )
+        gtx["institutions"] = sorted(all_docs_from_collection(rc.client, "institutions"), key=_id_key)
 
     def finish(self):
         """Move files over to their destination and remove them from the
         source"""
         # static
-        stsrc = os.path.join(
-            getattr(self.rc, "static_source", "templates"), "static"
-        )
+        stsrc = os.path.join(getattr(self.rc, "static_source", "templates"), "static")
         stdst = os.path.join(self.bldir, "static")
         if os.path.isdir(stdst):
             shutil.rmtree(stdst)
@@ -83,78 +76,82 @@ class InternalHtmlBuilder(BuilderBase):
 
         pp_mtgs, f_mtgs, jclub_cumulative = [], [], []
         for mtg in mtgsi:
-            if not mtg.get('lead'):
+            if not mtg.get("lead"):
                 print("{} missing a meeting lead".format(mtg["_id"]))
-            if not mtg.get('scribe'):
+            if not mtg.get("scribe"):
                 print("{} missing a meeting scribe".format(mtg["_id"]))
             lead = fuzzy_retrieval(
-                all_docs_from_collection(rc.client, "people"),
-                ["_id", "name", "aka"],
-                mtg.get("lead"))
+                all_docs_from_collection(rc.client, "people"), ["_id", "name", "aka"], mtg.get("lead")
+            )
             if not lead:
-                print("{} lead {} not found in people".format(mtg["_id"],mtg.get("lead")))
+                print("{} lead {} not found in people".format(mtg["_id"], mtg.get("lead")))
             mtg["lead"] = lead["name"]
             scribe = fuzzy_retrieval(
-                all_docs_from_collection(rc.client, "people"),
-                ["_id", "name", "aka"],
-                mtg.get("scribe"))
+                all_docs_from_collection(rc.client, "people"), ["_id", "name", "aka"], mtg.get("scribe")
+            )
             if not scribe:
-                print("{} scribe {} not found in people".format(mtg["_id"],mtg.get("scribe")))
+                print("{} scribe {} not found in people".format(mtg["_id"], mtg.get("scribe")))
             mtg["scribe"] = scribe["name"]
             if mtg.get("journal_club"):
                 prsn_id = mtg["journal_club"].get("presenter", "None")
                 prsn = fuzzy_retrieval(
-                    all_docs_from_collection(rc.client, "people"),
-                    ["_id", "name", "aka"],
-                    prsn_id)
+                    all_docs_from_collection(rc.client, "people"), ["_id", "name", "aka"], prsn_id
+                )
                 if not prsn:
                     if prsn_id.lower() not in ["tbd", "hold", "na"]:
                         print(
-                        "WARNING: {} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
-                    prsn = {"name": prsn_id }
+                            "WARNING: {} presenter {} not found in people".format(
+                                mtg["_id"], mtg["presentation"].get("presenter")
+                            )
+                        )
+                    prsn = {"name": prsn_id}
                 mtg["journal_club"]["presenter"] = prsn["name"]
                 mtg_jc_doi = mtg["journal_club"].get("doi", "tbd")
                 mtg_jc_doi_casefold = mtg_jc_doi.casefold()
-                if mtg_jc_doi_casefold == 'na':
-                    mtg["journal_club"]["doi"] = 'N/A'
-                elif mtg_jc_doi_casefold != 'tbd':
-                    if not mtg_jc_doi_casefold.startswith('arxiv'):
+                if mtg_jc_doi_casefold == "na":
+                    mtg["journal_club"]["doi"] = "N/A"
+                elif mtg_jc_doi_casefold != "tbd":
+                    if not mtg_jc_doi_casefold.startswith("arxiv"):
                         ref, _ = get_formatted_crossref_reference(mtg["journal_club"].get("doi"))
                         mtg["journal_club"]["doi"] = ref
                     else:
                         ref = mtg_jc_doi
-                    jclub_cumulative.append((ref, get_dates(mtg).get("date","no date")))
+                    jclub_cumulative.append((ref, get_dates(mtg).get("date", "no date")))
 
             if mtg.get("presentation"):
                 prsn_id = mtg["presentation"].get("presenter", "None")
                 prsn = fuzzy_retrieval(
-                    all_docs_from_collection(rc.client, "people"),
-                    ["_id", "name", "aka"],
-                    prsn_id)
+                    all_docs_from_collection(rc.client, "people"), ["_id", "name", "aka"], prsn_id
+                )
                 if not prsn:
                     if prsn_id.lower() not in ["tbd", "hold", "na"]:
                         print(
-                        "WARNING: {} presenter {} not found in people".format(mtg["_id"],mtg["presentation"].get("presenter")))
-                    prsn = {"name": prsn_id }
+                            "WARNING: {} presenter {} not found in people".format(
+                                mtg["_id"], mtg["presentation"].get("presenter")
+                            )
+                        )
+                    prsn = {"name": prsn_id}
                 mtg["presentation"]["presenter"] = prsn["name"]
-                mtg["presentation"]["link"] = mtg["presentation"].get("link","tbd")
-            mtg['date'] = dt.date(mtg.get("year"), mtg.get("month"),
-                                  mtg.get("day"))
-            mtg['datestr'] = mtg['date'].strftime('%m/%d/%Y')
+                mtg["presentation"]["link"] = mtg["presentation"].get("link", "tbd")
+            mtg["date"] = dt.date(mtg.get("year"), mtg.get("month"), mtg.get("day"))
+            mtg["datestr"] = mtg["date"].strftime("%m/%d/%Y")
             today = dt.date.today()
-            if mtg['date'] >= today:
+            if mtg["date"] >= today:
                 f_mtgs.append(mtg)
             else:
                 pp_mtgs.append(mtg)
 
         jclub_cumulative = sorted(jclub_cumulative, key=lambda x: x[1], reverse=True)
-        pp_mtgs = sorted(pp_mtgs, key=lambda x: x.get('date'), reverse=True)
-        f_mtgs = sorted(f_mtgs, key=lambda x: x.get('date'))
+        pp_mtgs = sorted(pp_mtgs, key=lambda x: x.get("date"), reverse=True)
+        f_mtgs = sorted(f_mtgs, key=lambda x: x.get("date"))
         self.render(
-            "grpmeetings.html", "grpmeetings.html", title="Group Meetings",
-            ppmeetings=pp_mtgs, fmeetings=f_mtgs, jclublist=jclub_cumulative
+            "grpmeetings.html",
+            "grpmeetings.html",
+            title="Group Meetings",
+            ppmeetings=pp_mtgs,
+            fmeetings=f_mtgs,
+            jclublist=jclub_cumulative,
         )
-
 
     def nojekyll(self):
         """Touches a nojekyll file in the build dir"""
@@ -166,9 +163,7 @@ class InternalHtmlBuilder(BuilderBase):
         rc = self.rc
         if not hasattr(rc, "cname"):
             return
-        with open(
-                os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(self.bldir, "CNAME"), "w", encoding="utf-8") as f:
             f.write(rc.cname)
 
     def people(self):
@@ -188,16 +183,12 @@ class InternalHtmlBuilder(BuilderBase):
                 bold=False,
             )
 
-            bibfile = make_bibtex_file(
-                pubs, pid=p["_id"], person_dir=peeps_dir
-            )
+            bibfile = make_bibtex_file(pubs, pid=p["_id"], person_dir=peeps_dir)
             ene = p.get("employment", []) + p.get("education", [])
             ene.sort(key=ene_date_key, reverse=True)
             for e in ene:
                 dereference_institution(e, self.gtx["institutions"])
-            projs = filter_projects(
-                all_docs_from_collection(rc.client, "projects"), names
-            )
+            projs = filter_projects(all_docs_from_collection(rc.client, "projects"), names)
             self.render(
                 "person.html",
                 os.path.join("people", p["_id"] + ".html"),
@@ -209,9 +200,7 @@ class InternalHtmlBuilder(BuilderBase):
                 education_and_employment=ene,
                 projects=projs,
             )
-        self.render(
-            "people.html", os.path.join("people", "index.html"), title="People"
-        )
+        self.render("people.html", os.path.join("people", "index.html"), title="People")
 
         self.render(
             "former.html",
@@ -223,9 +212,7 @@ class InternalHtmlBuilder(BuilderBase):
         """Render projects"""
         rc = self.rc
         projs = all_docs_from_collection(rc.client, "projects")
-        self.render(
-            "projects.html", "projects.html", title="Projects", projects=projs
-        )
+        self.render("projects.html", "projects.html", title="Projects", projects=projs)
 
     def blog(self):
         """Render the blog and rss"""
@@ -260,9 +247,7 @@ class InternalHtmlBuilder(BuilderBase):
                 job=job,
                 title="{0} ({1})".format(job["title"], job["_id"]),
             )
-        self.render(
-            "jobs.html", os.path.join("jobs", "index.html"), title="Jobs"
-        )
+        self.render("jobs.html", os.path.join("jobs", "index.html"), title="Jobs")
 
     def abstracts(self):
         """Render each abstract"""
@@ -273,7 +258,5 @@ class InternalHtmlBuilder(BuilderBase):
                 "abstract.html",
                 os.path.join("abstracts", ab["_id"] + ".html"),
                 abstract=ab,
-                title="{0} {1} - {2}".format(
-                    ab["firstname"], ab["lastname"], ab["title"]
-                ),
+                title="{0} {1} - {2}".format(ab["firstname"], ab["lastname"], ab["title"]),
             )
