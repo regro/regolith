@@ -1,7 +1,6 @@
 """Helper for marking a task as finished in todos collection."""
 
 import datetime as dt
-import sys
 
 import dateutil.parser as date_parser
 import math
@@ -51,11 +50,13 @@ def subparser(subpi):
         "-f",
         "--filter",
         nargs="+",
-        help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ",
+        help="Search this collection by giving key element pairs. "
+             "'-f description paper' will return tasks with description containing 'paper' ",
     )
     subpi.add_argument(
         "--date",
-        help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. Default is today.",
+        help="Enter a date such that the helper can calculate how many days are left "
+             "from that date to the due-date. Default is today.",
         **date_kwargs,
     )
     return subpi
@@ -97,8 +98,8 @@ class TodoFinisherHelper(DbHelperBase):
                 rc.assigned_to = rc.default_user_id
             except AttributeError:
                 print(
-                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
-                    "in the command line"
+                    "Please set default_user_id in '~/.config/regolith/user.json', "
+                    "or you need to enter your group id in the command line"
                 )
                 return
         person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
@@ -118,7 +119,7 @@ class TodoFinisherHelper(DbHelperBase):
             if rc.filter:
                 todolist = key_value_pair_filter(todolist, rc.filter)
             for todo in todolist:
-                if type(todo["due_date"]) == str:
+                if isinstance(todo["due_date"], str):
                     todo["due_date"] = date_parser.parse(todo["due_date"]).date()
                 todo["days_to_due"] = (todo.get("due_date") - today).days
                 todo["order"] = 1 / (1 + math.exp(abs(todo["days_to_due"] - 0.5)))
@@ -126,7 +127,8 @@ class TodoFinisherHelper(DbHelperBase):
                 todolist, key=lambda k: (k["status"], k["importance"], k["order"], -k.get("duration", 10000))
             )
             print(
-                "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r"
+                "If the indices are far from being in numerical order, "
+                "please renumber them by running regolith helper u_todo -r"
             )
             print("Please choose from one of the following to update:")
             print("(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)")
@@ -163,7 +165,8 @@ class TodoFinisherHelper(DbHelperBase):
                                     upsert=True,
                                 )
                                 print(
-                                    f"The task \"({todo_u['running_index']}) {todo_u['description'].strip()}\" in {db_name} for {rc.assigned_to} has been marked as finished."
+                                    f"The task \"({todo_u['running_index']}) {todo_u['description'].strip()}\" "
+                                    f"in {db_name} for {rc.assigned_to} has been marked as finished."
                                 )
                                 return
         return

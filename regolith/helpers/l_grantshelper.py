@@ -2,8 +2,6 @@
 
 import datetime as dt
 import dateutil.parser as date_parser
-from operator import itemgetter
-
 from regolith.dates import get_dates, is_current
 from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key

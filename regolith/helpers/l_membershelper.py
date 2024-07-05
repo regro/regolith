@@ -66,7 +66,6 @@ class MembersListerHelper(SoutHelperBase):
             collection = key_value_pair_filter(self.gtx["people"], rc.filter)
         else:
             collection = self.gtx["people"]
-        bad_stati = ["finished", "cancelled", "paused", "back_burner"]
         people = []
         group = fuzzy_retrieval(gtx["groups"], ["_id", "aka", "name"], rc.groupname)
         group_id = group.get("_id")
@@ -131,7 +130,7 @@ class MembersListerHelper(SoutHelperBase):
         for person in cleaned_people:
             if person.get("position_key") < accounting:
                 accounting = person.get("position_key")
-                print(f"    -- {position_names.get(accounting,position_names.get(5))} --")
+                print(f"    -- {position_names.get(accounting, position_names.get(5))} --")
             if rc.verbose:
                 print("{}, {}".format(person.get("name"), person.get("position")))
                 print("    email: {} | group_id: {}".format(person.get("email"), person.get("_id")))
