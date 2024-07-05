@@ -1,7 +1,6 @@
 """Helper for updating a task in todos of todos collection."""
 
 import datetime as dt
-import sys
 
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
@@ -51,7 +50,7 @@ def subparser(subpi):
         "-s",
         "--stati",
         nargs="+",
-        help=f'Update tasks with specific stati"',
+        help='Update tasks with specific stati"',
         default=["started"],
         **listbox_kwargs,
     )
@@ -59,7 +58,8 @@ def subparser(subpi):
         "-f",
         "--filter",
         nargs="+",
-        help="Search this collection by giving key element pairs. '-f description paper' will return tasks with description containing 'paper' ",
+        help="Search this collection by giving key element pairs. "
+             "'-f description paper' will return tasks with description containing 'paper' ",
     )
     subpi.add_argument("-r", "--renumber", action="store_true", help="Renumber the indices.")
     subpi.add_argument(
@@ -80,9 +80,9 @@ def subparser(subpi):
         "--deadline", help="give value 't' if due_date is a hard deadline, else 'f' if not", choices=["t", "f"]
     )
     subpi.add_argument(
-        "-m", "--importance", choices=ALLOWED_IMPORTANCE, help=f"Change the importance of the task.", type=int
+        "-m", "--importance", choices=ALLOWED_IMPORTANCE, help="Change the importance of the task.", type=int
     )
-    subpi.add_argument("--status", choices=TODO_STATI, help=f"Change the status of the task.")
+    subpi.add_argument("--status", choices=TODO_STATI, help="Change the status of the task.")
     subpi.add_argument(
         "-n",
         "--notes",
@@ -107,7 +107,8 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "--date",
-        help="Enter a date such that the helper can calculate how many days are left from that date to the due date. Default is today.",
+        help="Enter a date such that the helper can calculate how many days are left "
+             "from that date to the due date. Default is today.",
         **date_kwargs,
     )
 
@@ -150,8 +151,8 @@ class TodoUpdaterHelper(DbHelperBase):
                 rc.assigned_to = rc.default_user_id
             except AttributeError:
                 print(
-                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
-                    "in the command line"
+                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter "
+                    "your group id in the command line"
                 )
                 return
         filterid = {"_id": rc.assigned_to}
@@ -220,7 +221,8 @@ class TodoUpdaterHelper(DbHelperBase):
             if rc.stati == ["started"]:
                 rc.stati = PROJECTUM_ACTIVE_STATI
             print(
-                "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r"
+                "If the indices are far from being in numerical order, please renumber them by running "
+                "regolith helper u_todo -r"
             )
             print("Please choose from one of the following to update:")
             print("(index) action (days to due date|importance|expected duration (mins)|assigned by)")
@@ -297,7 +299,8 @@ class TodoUpdaterHelper(DbHelperBase):
                                     upsert=True,
                                 )
                                 print(
-                                    f"The task \"({todo_u['running_index']}) {todo_u['description'].strip()}\" in {db_name} for {rc.assigned_to} has been updated."
+                                    f"The task \"({todo_u['running_index']}) {todo_u['description'].strip()}\" in "
+                                    f"{db_name} for {rc.assigned_to} has been updated."
                                 )
                                 return
         return
