@@ -94,7 +94,8 @@ class ReimbstatusHelper(SoutHelperBase):
                 print(
                     f"   Requested: {unseg}, "
                     f"Reimbursed: {j.get('amount')}, Date: "
-                    f"{reimb_dates.get('date',dt.date(1900,1,1).isoformat())}, Grants: {grantstring}"
+                    f"{reimb_dates.get('date', dt.date(1900, 1, 1).isoformat())}, "
+                    f"Grants: {grantstring}"
                 )
         print("\nSubmitted expenses:")
         for i in sorted_sub:
