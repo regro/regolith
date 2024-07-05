@@ -1163,10 +1163,10 @@ helper_map = [
     #   "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
     #   "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
     #  "2006as_timbuktoo has been added in expenses\n"),
-    ## The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
-    ## because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
-    ## (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
-    ## that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
+    # The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
+    # because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
+    # (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
+    # that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
     # Test Case A: Expect a new entry in outputs/presentations/presentations.yaml
     # (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
@@ -1334,7 +1334,7 @@ def test_helpers_bad(hmb, make_db):
     repo = Path(make_db)
     os.chdir(repo)
     with pytest.raises(hmb[2]) as excinfo:
-         main(args=hmb[0])
+        main(args=hmb[0])
     assert str(excinfo.value) == hmb[1]
 
 
@@ -1388,7 +1388,6 @@ helper_map_loose = [
 @pytest.mark.parametrize("hm", helper_map_loose)
 def test_helper_python_loose(hm, make_db, capsys):
     repo = Path(make_db)
-    testfile = Path(__file__)
     os.chdir(repo)
 
     main(args=hm[0])
