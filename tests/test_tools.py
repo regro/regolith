@@ -2,9 +2,9 @@ from copy import copy
 import habanero
 import pytest
 import datetime as dt
-import requests_mock
-from unittest import mock
 import copy
+import requests_mock
+
 from regolith.runcontrol import DEFAULT_RC
 
 from regolith.tools import (
@@ -3141,8 +3141,9 @@ def test_get_target_token(tokens, expected):
     actual = get_target_token("gitlab_private_token", tokens)
     assert actual == expected
 
-
 # @mock.patch("requests.post")
+
+
 @requests_mock.Mocker(kw="mock")
 def test_create_repo(**kwargs):
     kwargs["mock"].post("https://example.com/url/example", status_code=201)
