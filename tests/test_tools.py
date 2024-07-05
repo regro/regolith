@@ -1,4 +1,3 @@
-from copy import copy
 import habanero
 import pytest
 import datetime as dt
