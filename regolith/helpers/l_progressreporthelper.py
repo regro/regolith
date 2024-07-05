@@ -36,7 +36,7 @@ def subparser(subpi):
         nargs="+",
         choices=PROJECTUM_STATI,
         help=f"Filter projecta for these stati."
-        f" Default is {*(PROJECTUM_ACTIVE_STATI+PROJECTUM_FINISHED_STATI),}",
+        f" Default is {*(PROJECTUM_ACTIVE_STATI+PROJECTUM_FINISHED_STATI), }",
         default=PROJECTUM_ACTIVE_STATI + PROJECTUM_FINISHED_STATI,
         **listbox_kwargs,
     )
@@ -92,7 +92,8 @@ class ProgressReportHelper(SoutHelperBase):
                 print(f"{p.get('_id')}")
                 if p.get("deliverable"):
                     print(
-                        f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}"
+                        f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, "
+                        f"due_date: {p.get('deliverable').get('due_date')}"
                     )
                 if p.get("status") == "finished":
                     print(f"  finished: {p.get('end_date')}")
@@ -128,7 +129,8 @@ class ProgressReportHelper(SoutHelperBase):
                 print(f"{p.get('_id')}")
                 if p.get("deliverable"):
                     print(
-                        f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable').get('due_date')}"
+                        f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, "
+                        f"due_date: {p.get('deliverable').get('due_date')}"
                     )
                     print(f"  description: {p.get('description')}")
                 if p.get("status") == "finished":
@@ -139,7 +141,8 @@ class ProgressReportHelper(SoutHelperBase):
                         print("  milestones:")
                     for m in p.get("milestones"):
                         print(
-                            f"    due: {m.get('due_date')}, {m.get('name')}, type: {m.get('type')}, status: {m.get('status')}"
+                            f"    due: {m.get('due_date')}, {m.get('name')}, "
+                            f"type: {m.get('type')}, status: {m.get('status')}"
                         )
                         print(f"    objective: {m.get('objective')}")
 
@@ -173,15 +176,15 @@ class ProgressReportHelper(SoutHelperBase):
                 startedp.append(prum)
             else:
                 otherp.append(prum)
-        print(f"*************************[Orphan Projecta]*************************")
+        print("*************************[Orphan Projecta]*************************")
         for prum in otherp:
             print(f"{prum.get('_id')}, status: {prum.get('status')}")
-        print(f"*************************[Finished Projecta]*************************")
+        print("*************************[Finished Projecta]*************************")
         for prum in finishedp:
             print(f"{prum.get('_id')}, grant: {prum.get('grants')}")
             print(f"  description: {prum.get('description')}")
             print(f"  finished: {prum.get('end_date')}")
-        print(f"*************************[Proposed Projecta]*************************")
+        print("*************************[Proposed Projecta]*************************")
         self.print_projectum(proposedp)
-        print(f"*************************[In Progress Projecta]*************************")
+        print("*************************[In Progress Projecta]*************************")
         self.print_projectum(startedp)

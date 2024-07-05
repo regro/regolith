@@ -43,7 +43,7 @@ def subparser(subpi):
         "-c",
         "--current",
         action="store_true",
-        help=f"Lists only active projecta. If not specified, will be active and paused but not cancelled",
+        help="Lists only active projecta. If not specified, will be active and paused but not cancelled",
     )
     subpi.add_argument("-v", "--verbose", action="store_true", help="increase verbosity of output")
     subpi.add_argument("--grp_by_lead", action="store_true", help="Lists all projecta by their lead")
@@ -57,7 +57,7 @@ def subparser(subpi):
         "--all",
         action="store_true",
         help=f"Lists all projecta including those with statuses "
-        f"in {*PROJECTUM_CANCELLED_STATI,} that are excluded by default",
+        f"in {*PROJECTUM_CANCELLED_STATI, } that are excluded by default",
     )
     subpi.add_argument(
         "-e",
@@ -158,7 +158,7 @@ class ProjectaListerHelper(SoutHelperBase):
             collection = [prum for prum in collection if rc.grant in prum.get("grants", [])]
         if rc.orphans:
             if rc.person or rc.lead:
-                raise RuntimeError(f"you cannot specify lead or person with orphans")
+                raise RuntimeError("you cannot specify lead or person with orphans")
             dead_parents = [person.get("_id") for person in self.gtx["people"] if not person.get("active")]
             collection = [
                 prum
@@ -169,11 +169,11 @@ class ProjectaListerHelper(SoutHelperBase):
             ]
         if rc.lead:
             if rc.person or rc.orphans:
-                raise RuntimeError(f"please specify either lead or person, not both")
+                raise RuntimeError("please specify either lead or person, not both")
             collection = [prum for prum in collection if prum.get("lead") == rc.lead]
         if rc.person:
             if rc.orphans:
-                raise RuntimeError(f"please specify either lead or person, not both")
+                raise RuntimeError("please specify either lead or person, not both")
             if isinstance(rc.person, str):
                 rc.person = [rc.person]
             collection = [
@@ -220,10 +220,11 @@ class ProjectaListerHelper(SoutHelperBase):
                 if p.get("status") == "finished":
                     ended = f", end_date: {p.get('end_date')}"
                 else:
-                    ended = f""
+                    ended = ""
                 print(p.get("_id"))
                 print(
-                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, due_date: {p.get('deliverable', {}).get('due_date')}{ended}, grant: {grants}"
+                    f"    status: {p.get('status')}, begin_date: {p.get('begin_date')}, "
+                    f"due_date: {p.get('deliverable', {}).get('due_date')}{ended}, grant: {grants}"
                 )
                 print(f"    description: {p.get('description')}")
                 print("    team:")
