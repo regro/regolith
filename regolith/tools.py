@@ -20,7 +20,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from urllib.parse import urlparse
 
-from regolith.dates import month_to_int, date_to_float, get_dates, is_current, get_due_date
+from regolith.dates import month_to_int, date_to_float, get_dates, is_current
 from regolith.sorters import id_key, ene_date_key, doc_date_key_high
 from regolith.schemas import alloweds
 from requests.exceptions import HTTPError, ConnectionError
@@ -138,15 +138,15 @@ def get_team_from_grant(grantcol):
 
 
 def filter_publications(
-    citations,
-    authors,
-    reverse=False,
-    bold=True,
-    since=None,
-    before=None,
-    ackno=False,
-    grants=None,
-    facilities=None,
+        citations,
+        authors,
+        reverse=False,
+        bold=True,
+        since=None,
+        before=None,
+        ackno=False,
+        grants=None,
+        facilities=None,
 ):
     """Filter publications by the author(s)/editor(s)
 
@@ -552,7 +552,7 @@ def filter_activities(people, begin_period, type, verbose=False):
 
 
 def filter_presentations(
-    people, presentations, institutions, target, types=None, since=None, before=None, statuses=None
+        people, presentations, institutions, target, types=None, since=None, before=None, statuses=None
 ):
     f"""
     filters presentations for different types and date ranges
@@ -569,7 +569,7 @@ def filter_presentations(
       The id of the person you will build the list for
     types: list of strings.  Optional, default = all
       The types to filter for.  Allowed types are
-      {*PRESENTATION_TYPES,}
+      {*PRESENTATION_TYPES, }
     since: date.  Optional, default is None
         The begin date to filter from
     before: date. Optional, default is None
@@ -763,9 +763,9 @@ def awards_grants_honors(p, target_name, funding=True, service_types=None):
 
 
 def awards(
-    p,
-    since=None,
-    before=None,
+        p,
+        since=None,
+        before=None,
 ):
     """Make sorted awards and honors
 
@@ -841,9 +841,9 @@ def latex_safe(s, url_check=True, wrapper="url"):
         if url_search:
             url = r"{start}\{wrapper}{{{s}}}{end}".format(
                 start=(latex_safe(s[: url_search.start()])),
-                end=(latex_safe(s[url_search.end() :])),
+                end=(latex_safe(s[url_search.end():])),
                 wrapper=wrapper,
-                s=latex_safe_url(s[url_search.start() : url_search.end()]),
+                s=latex_safe_url(s[url_search.start(): url_search.end()]),
             )
             return url
     return s.replace("&", r"\&").replace("$", r"\$").replace("#", r"\#").replace("_", r"\_")
@@ -1012,7 +1012,8 @@ def dereference_institution(input_record, institutions, verbose=False):
     db_inst = fuzzy_retrieval(institutions, ["name", "_id", "aka"], inst)
     if not db_inst:
         print(
-            f"WARNING: {input_record.get('institution', input_record.get('organization', 'unknown'))} not found in institutions"
+            f"WARNING: {input_record.get('institution', input_record.get('organization', 'unknown'))} "
+            "not found in institutions"
         )
         db_inst = {
             "name": input_record.get("institution", input_record.get("organization", "unknown")),
@@ -1246,9 +1247,9 @@ def update_schemas(default_schema, user_schema):
     updated_schema = deepcopy(default_schema)
     for key in user_schema.keys():
         if (
-            (key in updated_schema)
-            and isinstance(updated_schema[key], dict)
-            and isinstance(user_schema[key], dict)
+                (key in updated_schema)
+                and isinstance(updated_schema[key], dict)
+                and isinstance(user_schema[key], dict)
         ):
             updated_schema[key] = update_schemas(updated_schema[key], user_schema[key])
         else:
@@ -1552,10 +1553,10 @@ def is_fully_appointed(person, begin_date, end_date):
 
         Examples
         --------
-        >>> appts = [{"begin_year": 2017, "begin_month": 6, "begin_day": 1, "end_year": 2017, "end_month": 6,\
-         "end_day": 15, "grant": "grant1", "loading": 1.0, "type": "pd", }, {"begin_year": 2017, "begin_month": 6, \
-         "begin_day": 20,  "end_year": 2017,  "end_month": 6, "end_day": 30, "grant": "grant2", "loading": 1.0, \
-         "type": "pd",} ]
+        >>> appts = [{"begin_year": 2017, "begin_month": 6, "begin_day": 1, "end_year": 2017,\
+         "end_month": 6, "end_day": 15, "grant": "grant1", "loading": 1.0, "type": "pd", },\
+        {"begin_year": 2017, "begin_month": 6, "begin_day": 20,  "end_year": 2017,  "end_month": 6,\
+         "end_day": 30, "grant": "grant2", "loading": 1.0, "type": "pd",} ]
         >>> aejaz = {"name": "Adiba Ejaz", "_id": "aejaz", "appointments": appts}
         >>> is_fully_appointed(aejaz, "2017-06-01", "2017-06-30")
 
@@ -1704,8 +1705,8 @@ def search_collection(collection, arguments, keys=None):
 
 def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None, end_date=None):
     """
-    Retrieves a list of all the appointments on the given grant(s) in the given interval of time for each person in the
-    given people collection.
+    Retrieves a list of all the appointments on the given grant(s) in the given interval of time
+    for each person in the given people collection.
 
     Parameters
     ----------
@@ -1740,7 +1741,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
     filter_value = [filter_value] if not isinstance(filter_value, list) else filter_value
     if (bool(filter_key) ^ bool(filter_value)) or (
-        filter_key and filter_value and len(filter_key) != len(filter_value)
+            filter_key and filter_value and len(filter_key) != len(filter_value)
     ):
         raise RuntimeError("number of filter keys and filter values do not match")
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
@@ -1844,7 +1845,7 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
             day = period_begin + relativedelta(days=x)
             for a in appts:
                 if (a.get("grant") == grant.get("_id") or a.get("grant") == grant.get("alias")) and is_current(
-                    a, now=day
+                        a, now=day
                 ):
                     if a.get("type") == "gra":
                         grad_val -= a.get("loading") * 1
@@ -1902,17 +1903,17 @@ def print_task(task_list, stati, index=True):
             print(f"{status}:")
         for task in task_list:
             if index:
-                try:
-                    task["preamble"] = (
-                        f"({task.get('importance')})({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
-                    )
-                except:
-                    task["preamble"] = ""
+                task["preamble"] = (
+                    f"({task.get('importance')})({task.get('days_to_due')} days): "
+                    f"({task.get('running_index', 0)}) "
+                )
             else:
                 task["preamble"] = ""
             if task.get("status") == status:
                 print(
-                    f"{task.get('preamble')}{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid',[])[:6]})"
+                    f"{task.get('preamble')}{task.get('description').strip()} "
+                    f"({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|"
+                    f"{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid', [])[:6]})"
                 )
                 if task.get("notes"):
                     for note in task.get("notes"):
@@ -1924,7 +1925,10 @@ def print_task(task_list, stati, index=True):
     deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
     for task in deadline_list:
         print(
-            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) {task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|{str(task.get('duration'))}|{','.join(task.get('tags', []))}|{task.get('assigned_by')}|{task.get('uuid')[:6]})"
+            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
+            f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|"
+            f"{str(task.get('duration'))}|{','.join(task.get('tags', []))}"
+            f"|{task.get('assigned_by')}|{task.get('uuid')[:6]})"
         )
         if task.get("notes"):
             for note in task.get("notes"):
@@ -1960,9 +1964,8 @@ def get_formatted_crossref_reference(doi):
         return None, None
     except ConnectionError:
         print(
-            f"WARNING: not able to connect to internet.  To obtain "
-            f"publication information rerun when you have an internet "
-            f"connection"
+            "WARNING: not able to connect to internet. To obtain publication information "
+            "rerun when you have an internet connection"
         )
         return None, None
 
@@ -2189,9 +2192,10 @@ def get_target_token(target_token_id, tokens):
         The token if the token exists and False if not
     """
     message_token_not_defined = (
-        "WARNING: Cannot find an authentication token.  It may not be correctly defined. If you would like regolith to "
-        "automatically create a repository in GitHub/GitLab, please add your private "
-        "authentication token in user.json. See regolith documentation for details."
+        "WARNING: Cannot find an authentication token.  It may not be correctly defined. "
+        "If you would like regolith to automatically create a repository in GitHub/GitLab, "
+        "please add your private authentication token in user.json. "
+        "See regolith documentation for details."
     )
 
     target_token = [token for token in tokens if token.get("_id") == target_token_id]
@@ -2231,7 +2235,9 @@ def create_repo(destination_id, token_info_id, rc):
                 repo_info.get("built_url"), params=repo_info["params"], headers={"PRIVATE-TOKEN": token}
             )
             response.raise_for_status()
-            clone_text = f"{repo_info.get('url').replace('https://', '')}:{repo_info.get('namespace_name','<group/org name>')}/{repo_info['params'].get('name')}.git"
+            clone_text = (f"{repo_info.get('url').replace('https://', '')}:"
+                          f"{repo_info.get('namespace_name', '<group/org name>')}"
+                          f"/{repo_info['params'].get('name')}.git")
             return (
                 f"repo {repo_info.get('params').get('name', 'unknown')} "
                 f"has been created at {repo_info.get('url')}.\nClone this "
