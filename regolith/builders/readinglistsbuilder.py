@@ -23,7 +23,6 @@ class ReadingListsBuilder(LatexBuilderBase):
         gtx = self.gtx
         rc = self.rc
         self.cr = Crossref()
-        cr = self.cr
         rc.verbose = True
         gtx["people"] = sorted(
             all_docs_from_collection(rc.client, "people"),
@@ -38,7 +37,6 @@ class ReadingListsBuilder(LatexBuilderBase):
 
     def latex(self):
         """Render latex template"""
-        rc = self.rc
 
         # build the collection of formatted references so that we only go
         # and fetch the formatted references once per doi

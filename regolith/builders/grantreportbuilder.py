@@ -1,23 +1,18 @@
 """Builder for Grant Reports"""
 
 from datetime import date
-import time
 
 # from habanero import Crossref
 from nameparser import HumanName
 import dateutil.parser as date_parser
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import month_to_int, get_dates, get_due_date, is_current, is_after, is_before
+from regolith.dates import get_dates, is_current
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_grants,
     filter_presentations,
     fuzzy_retrieval,
-    filter_publications,
-    get_formatted_crossref_reference,
 )
 
 
@@ -105,7 +100,8 @@ class GrantReportBuilder(LatexBuilderBase):
         #                # if projectum was finished during reporting period or is still current
         #                # some projectum don't have an "end date", but all projecta have a deliverable
         #                # due_date
-        #                if (rp_start_date <= due_date <= rp_end_date and prum['status'] is "finished") or is_current(prum):
+        #                if (rp_start_date <= due_date <= rp_end_date and \
+        #                prum['status'] is "finished") or is_current(prum):
         #                   grant_prums.append(prum)
         # Get people associated with grant
 
@@ -116,7 +112,7 @@ class GrantReportBuilder(LatexBuilderBase):
         grant_prum_collaborators = list(
             set([collab for prum in grant_prums for collab in prum.get("collaborators", [])])
         )
-        grant_prum_group_members = list(
+        list(
             set([grp_mbr for prum in grant_prums for grp_mbr in prum.get("group_members", [])])
         )
         grant_people = grant_prum_leads
@@ -158,14 +154,15 @@ class GrantReportBuilder(LatexBuilderBase):
         #                    person = prsn
         #            for education in person['education']:
         #                edu_dates = get_dates(education)
-        #                if 'phd' in education['degree'].lower() and 'columbia' in education['institution'].lower() and \
-        #                        rp_start_date.year <= edu_dates.get('end_date', edu_dates['date']).year <= rp_end_date.year:
+        #                if 'phd' in education['degree'].lower() and 'columbia' in \
+        #                education['institution'].lower() and rp_start_date.year <= edu_dates.get(\
+        #                'end_date', edu_dates['date']).year <= rp_end_date.year:
         #                    defended_theses.append(id)
 
         # Products
         # need rg-db-public's citation.yml
         #        publications = filter_publications(self.gtx["citations"],
-        ##                                           set(grant_people),
+        #                                           set(grant_people),
         #                                           since=rp_start_date,
         #                                          before=rp_end_date)
         publications = [publ for publ in self.gtx["citations"] if grant_id in publ.get("grant", "")]
