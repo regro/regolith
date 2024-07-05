@@ -36,7 +36,7 @@ def subparser(subpi):
         help=f"This helper will list all ACTIVE milestones by default. To "
         f"be active the projectum itself must be active and the "
         f"milestone within the prum also active.  Active milestones "
-        f"have a status from {*PROJECTUM_ACTIVE_STATI,}.\n "
+        f"have a status from {*PROJECTUM_ACTIVE_STATI, }.\n "
         f"Please erun specifying "
         f"--lead PERSON or --person PERSON. "
         f"Rerun with --all, --current, or --finished to get "
@@ -60,10 +60,10 @@ def subparser(subpi):
     subpi.add_argument(
         "--finished",
         action="store_true",
-        help=f"Lists all finished milestones, i.e., status is in {*PROJECTUM_FINISHED_STATI,}",
+        help=f"Lists all finished milestones, i.e., status is in {*PROJECTUM_FINISHED_STATI, }",
     )
     subpi.add_argument(
-        "--by-prum", action="store_true", help=f"Valid milestones are listed in time-order but grouped by prum"
+        "--by-prum", action="store_true", help="Valid milestones are listed in time-order but grouped by prum"
     )
     subpi.add_argument("-v", "--verbose", action="store_true", help="increase verbosity of output")
     subpi.add_argument(
@@ -71,8 +71,8 @@ def subparser(subpi):
         "--stati",
         nargs="+",
         choices=PROJECTUM_STATI,
-        help=f"Filter milestones for these stati from {*PROJECTUM_STATI,}. "
-        f"Default is active projecta, i.e. {*PROJECTUM_ACTIVE_STATI,}",
+        help=f"Filter milestones for these stati from {*PROJECTUM_STATI, }. "
+        f"Default is active projecta, i.e. {*PROJECTUM_ACTIVE_STATI, }",
         default=None,
         **listbox_kwargs,
     )
@@ -120,7 +120,8 @@ class MilestonesListerHelper(SoutHelperBase):
 
     def sout(self):
         rc = self.rc
-        # This if statement should be in all listers. Make sure to change self.gtx to get the database the lister needs
+        # This if statement should be in all listers.
+        # Make sure to change self.gtx to get the database the lister needs
         if rc.filter:
             collection = key_value_pair_filter(self.gtx["projecta"], rc.filter)
         else:
@@ -145,7 +146,7 @@ class MilestonesListerHelper(SoutHelperBase):
 
         if rc.lead:
             if rc.person:
-                raise RuntimeError(f"please specify either lead or person, not both")
+                raise RuntimeError("please specify either lead or person, not both")
             collection = [prum for prum in collection if prum.get("lead") == rc.lead]
         if rc.person:
             if isinstance(rc.person, str):
@@ -208,7 +209,8 @@ class MilestonesListerHelper(SoutHelperBase):
                     prum = ms.get("id")
             if rc.verbose:
                 print(
-                    f"{ms.get('due_date')} ({(ms.get('uuid')[:6])}): lead: {ms.get('lead')}, {ms.get('id')}, status: {ms.get('status')}"
+                    f"{ms.get('due_date')} ({(ms.get('uuid')[:6])}): lead: {ms.get('lead')}, {ms.get('id')}, "
+                    f"status: {ms.get('status')}"
                 )
                 print(f"    Type: {ms.get('type', '')}")
                 print(f"    Title: {ms.get('name')}")
@@ -224,13 +226,14 @@ class MilestonesListerHelper(SoutHelperBase):
                 out = ", ".join(audience)
                 print(f"    Audience: {out}")
                 if ms.get("notes"):
-                    print(f"    Notes:")
+                    print("    Notes:")
                     for note in ms.get("notes"):
                         print(f"      - {note}")
                 print(f"    uuid: {ms.get('uuid')}")
             else:
                 print(
-                    f"{ms.get('due_date')} ({(ms.get('uuid')[:6])}): lead: {ms.get('lead')}, {ms.get('id')}, {ms.get('name')}, status: {ms.get('status')}"
+                    f"{ms.get('due_date')} ({(ms.get('uuid')[:6])}): lead: {ms.get('lead')}, {ms.get('id')}, "
+                    f"{ms.get('name')}, status: {ms.get('status')}"
                 )
 
         return
