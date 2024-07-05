@@ -1334,8 +1334,7 @@ def test_helpers_bad(hmb, make_db):
     repo = Path(make_db)
     os.chdir(repo)
     with pytest.raises(hmb[2]) as excinfo:
-        actual = main(args=hmb[0])
-    assert str(excinfo.value) == hmb[1]
+        assert str(excinfo.value) == hmb[1]
 
 
 @pytest.mark.parametrize("db_src", db_srcs)
@@ -1388,7 +1387,6 @@ helper_map_loose = [
 @pytest.mark.parametrize("hm", helper_map_loose)
 def test_helper_python_loose(hm, make_db, capsys):
     repo = Path(make_db)
-    testfile = Path(__file__)
     os.chdir(repo)
 
     main(args=hm[0])

@@ -16,6 +16,8 @@ from regolith.dates import (
     is_before,
     is_after,
     is_between,
+    date_to_float,
+    month_to_int
 )
 
 TEST_DATE = date(2019, 6, 15)
@@ -34,10 +36,6 @@ TEST_END_DATE = date(2019, 2, 5)
 )
 def test_month_to_str(input, expected):
     assert month_to_str_int(input) == expected
-
-
-import datetime
-from regolith.dates import date_to_float, month_to_int
 
 
 @pytest.mark.parametrize(
