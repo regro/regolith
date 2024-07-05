@@ -12,7 +12,6 @@ from regolith.sorters import position_key
 from regolith.helpers.basehelper import DbHelperBase
 
 # print([k for k,v in chained_db['people'].items()])
-from pprint import pprint
 
 MONTH_COST = 3400
 
@@ -197,7 +196,7 @@ class AttestationsHelper(DbHelperBase):
                         row = f"{row}, 0.0"
                 print(row)
         else:
-            print(f"\n-----------\nLoadings by month\n------------")
+            print("\n-----------\nLoadings by month\n------------")
             index = 0
 
             for month in months:
@@ -206,7 +205,7 @@ class AttestationsHelper(DbHelperBase):
                     if person[2][index] > 0:
                         print(f"    {person[0]}\tloading: {round(person[2][index], 2)}")
                 index += 1
-            print(f"\n----------------\nExpenses\n----------------")
+            print("\n----------------\nExpenses\n----------------")
             expenses_on_grant = [expense for expense in expenses if rc.grant in expense.get("grants")]
 
             if len(expenses_on_grant) > 1:
