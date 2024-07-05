@@ -161,7 +161,7 @@ def create_parser():
     )
 
     # deploy subparser
-    depp = subp.add_parser("deploy", help="deploys what was built by regolith")
+    subp.add_parser("deploy", help="deploys what was built by regolith")
 
     # email subparser
     emlp = subp.add_parser("email", help="automates emailing")
@@ -225,9 +225,10 @@ def create_parser():
     # mongo-to-fs subparser
     mtf = subp.add_parser(
         "mongo-to-fs",
-        help="Backup database from mongodb to filesystem as json. The database will be imported to the destination "
-        "specified by the 'database':'dst_url' key. For this to work, ensure that the database is included in the "
-        "dst_url, and that local is set to true.",
+        help="Backup database from mongodb to filesystem as json. "
+             "The database will be imported to the destination specified by the 'database':'dst_url' key. "
+             "For this to work, ensure that the database is included in the "
+             "dst_url, and that local is set to true.",
     )
 
     mtf.add_argument(

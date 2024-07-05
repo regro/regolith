@@ -157,14 +157,6 @@ def load_exemplars():
     return exemplars
 
 
-def load_exemplars():
-    here = Path(__file__).parent
-    exemplars_file = here / "exemplars.json"
-    with open(exemplars_file, "r", encoding="utf-8") as exemplars_file:
-        exemplars = json.load(exemplars_file)
-    return exemplars
-
-
 EXEMPLARS = load_exemplars()
 SCHEMAS = load_schemas()
 
