@@ -1,6 +1,5 @@
 """Helper for finishing prum in the projecta collection"""
 
-from datetime import date
 
 from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
