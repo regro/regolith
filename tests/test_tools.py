@@ -1,13 +1,7 @@
-from copy import copy
-
 import habanero
 import pytest
 import datetime as dt
-import uuid
-
 import copy
-import requests
-from unittest import mock
 import requests_mock
 
 from regolith.runcontrol import DEFAULT_RC
@@ -208,7 +202,8 @@ CITATIONS = [
                     "ackno": "thanks",
                     "grant": "fwp2",
                     "month": "jun",
-                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
+                            "\\newline\\newline\\noindent ",
                     "year": "2020",
                 },
                 {
@@ -216,7 +211,8 @@ CITATIONS = [
                     "author": ["m1", "palin"],
                     "ackno": "thanks",
                     "grant": "fwp2",
-                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
+                            "\\newline\\newline\\noindent ",
                     "year": "2020",
                 },
                 {
@@ -225,7 +221,8 @@ CITATIONS = [
                     "author": ["m1", "cleese"],
                     "grant": "fwp, dmref",
                     "month": "apr",
-                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
+                            "\\newline\\newline\\noindent ",
                     "year": "2021",
                 },
             ],
@@ -2570,7 +2567,7 @@ def test_group_member_employment_start_end(person, grpname, expected):
     try:
         actual = group_member_employment_start_end(person, grpname)
         assert actual == expected
-    except:
+    except RuntimeError:
         with pytest.raises(RuntimeError) as excinfo:
             actual = group_member_employment_start_end(person, grpname)
         assert str(excinfo.value) == expected
@@ -2591,7 +2588,7 @@ def test_remove_duplicate_docs(inp, expected):
     try:
         actual = remove_duplicate_docs(inp, "dupe_key")
         assert actual == expected
-    except:
+    except RuntimeError:
         with pytest.raises(RuntimeError) as excinfo:
             actual = remove_duplicate_docs(inp, "dupe_key")
         assert str(excinfo.value) == expected
@@ -3143,8 +3140,9 @@ def test_get_target_token(tokens, expected):
     actual = get_target_token("gitlab_private_token", tokens)
     assert actual == expected
 
-
 # @mock.patch("requests.post")
+
+
 @requests_mock.Mocker(kw="mock")
 def test_create_repo(**kwargs):
     kwargs["mock"].post("https://example.com/url/example", status_code=201)
@@ -3166,7 +3164,9 @@ def test_create_repo(**kwargs):
     actual = create_repo("talk_repo", "gitlab_private_token", rc)
     assert (
         actual
-        == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor (SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
+        == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using "
+           "(HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor "
+           "(SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
     )
 
 
