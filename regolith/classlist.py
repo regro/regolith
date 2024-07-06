@@ -50,7 +50,7 @@ def load_csv(filename, format="columbia"):
     return students
 
 
-RE_ID = re.compile("^[A-Z]\d+$")
+RE_ID = re.compile(r"^[A-Z]\d+$")
 RE_NAME = re.compile("^[A-Za-z-]+$")
 
 

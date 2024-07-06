@@ -17,7 +17,7 @@ class BeamPlanBuilder(LatexBuilderBase):
     """
     Build a file of experiment plans for the beamtime from database entries. 
     
-    The report is in the .tex file. The template of the file is in the 
+    The report is in the '.tex' file. The template of the file is in the
     'templates/beamplan.tex'. The data will be grouped
     according to beamtime. Each beamtime will generate a file of the plans.
     If 'beamtime' in 'rc' are not None, only plans for those beamtime will be generated.
