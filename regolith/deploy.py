@@ -8,7 +8,7 @@ from distutils.dir_util import copy_tree
 
 try:
     import hglib
-except:
+except ImportError:
     hglib = None
 
 
