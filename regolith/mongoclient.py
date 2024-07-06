@@ -196,7 +196,8 @@ def bson_cleanup(doc: dict):
         Recursively goes through the dictionary obj and replaces keys with the convert function.
         """
         if isinstance(obj, datetime.date):
-            # Mongo cannot handle datetime.date format, but we have infrastructure to handle iso date strings present
+            # Mongo cannot handle datetime.date format,
+            # but we have infrastructure to handle iso date strings present
             # Do not convert to datetime.datetime. Mongo can handle this, but regolith cannot.
             return obj.isoformat()
         if isinstance(obj, (str, int, float)):
@@ -342,7 +343,8 @@ class MongoClient:
                 except AttributeError:
                     print(
                         "ERROR:\n"
-                        "Add a username and password to user.json in user/.config/regolith/user.json with the keys\n"
+                        "Add a username and password to user.json in "
+                        "user/.config/regolith/user.json with the keys\n"
                         "mongo_id and mongo_db_password respectively.\n\n"
                         "'uname_from_config' and 'pwd_from_config' can/should stand in for these field in the\n"
                         "mongo URL string in regolithrc.json.\n"
