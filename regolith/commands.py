@@ -52,6 +52,7 @@ def _ingest_citations(rc):
     parser.customization = customizations
     with open(rc.filename, "r", encoding="utf-8") as f:
         bibs = bibtexparser.load(f, parser=parser)
+    coll = rc.client[rc.db][rc.coll]
     for bib in bibs.entries:
         bibid = bib.pop("ID")
         bib["entrytype"] = bib.pop("ENTRYTYPE")
