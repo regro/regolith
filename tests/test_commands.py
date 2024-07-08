@@ -38,6 +38,9 @@ def test_mongo_to_fs_python(make_mongo_to_fs_backup_db, make_mongodb):
         main(["mongo-to-fs"])
     except Exception as e:
         print(e)
+        assert False
+    else:
+        assert True
     replace_rc_dbs(repo)
     os.chdir(repo)
     rc = copy.copy(DEFAULT_RC)
@@ -63,6 +66,9 @@ def test_fs_to_mongo_python(make_fs_to_mongo_migration_db, make_mongodb):
         main(["fs-to-mongo"])
     except Exception as e:
         print(e)
+        assert False
+    else:
+        assert True
     replace_rc_dbs(repo)
     os.chdir(repo)
     rc = copy.copy(DEFAULT_RC)
