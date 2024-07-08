@@ -121,7 +121,6 @@ def grade_email(rc):
 
 def class_email(rc):
     """Sends an email to all students in the active classes."""
-    gradedir = os.path.join(rc.builddir, GradeReportBuilder.btype)
     addresses = {x["_id"]: x["email"] for x in list(all_docs_from_collection(rc.client, "students"))}
     messages = []
     for course in all_docs_from_collection(rc.client, "courses"):

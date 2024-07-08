@@ -9,15 +9,12 @@ from argparse import ArgumentParser
 
 from regolith.database import connect
 
-from regolith import commands, __version__
-from regolith import storage
+from regolith import __version__
 from regolith.helper import HELPERS
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
 from regolith.commands import CONNECTED_COMMANDS
-
-from gooey import Gooey, GooeyParser
 
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())

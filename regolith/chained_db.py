@@ -62,8 +62,6 @@ class ChainDB(ChainMap):
         if key not in self:
             super().__setitem__(key, value)
         else:
-            res = None
-            results = []
             # Try to get all the data from all the mappings
             for mapping in reversed(self.maps):
                 if key in mapping:
