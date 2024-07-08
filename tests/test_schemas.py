@@ -2,7 +2,6 @@ from regolith.schemas import insert_alloweds, _update_dict_target
 
 
 def test_update_dict_target():
-    alloweds = {"TEST": ["string", "float"], "TEST2": "string"}
     doc = {
         "email": {
             "description": "contact email for the author.",
