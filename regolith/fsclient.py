@@ -103,7 +103,7 @@ def dump_yaml(filename, docs, inst=None):
     sorted_dict = ruamel.yaml.comments.CommentedMap()
     for k in sorted(docs):
         doc = docs[k]
-        _id = doc.pop("_id")
+        doc.pop("_id")
         sorted_dict[k] = ruamel.yaml.comments.CommentedMap()
         for kk in sorted(doc.keys()):
             sorted_dict[k][kk] = doc[kk]

@@ -3,7 +3,7 @@
 import json
 import traceback
 
-from flask import Flask, abort, request, render_template, redirect, url_for
+from flask import Flask, abort, request, render_template
 
 app = Flask("regolith")
 
@@ -92,11 +92,11 @@ def insert_grade(grade, form, rc):
     dbname = form["dbname"]
     collname = "grades"
     try:
-        coll = rc.client[dbname][collname]
+        rc.client[dbname][collname]
     except (KeyError, AttributeError):
         abort(404)
     try:
-        added = rc.client.insert_one(dbname, collname, grade)
+        rc.client.insert_one(dbname, collname, grade)
     except Exception:
         traceback.print_exc()
         raise
