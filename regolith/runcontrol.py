@@ -203,7 +203,7 @@ class RunControl(object):
 def flatten(iterable):
     """Generator which returns flattened version of nested sequences."""
     for el in iterable:
-        if isinstance(el, basestring):
+        if isinstance(el, str):
             yield el
         elif isinstance(el, Iterable):
             for subel in flatten(el):
@@ -220,7 +220,7 @@ def flatten(iterable):
 def ishashable(x):
     """Tests if a value is hashable."""
     if isinstance(x, Hashable):
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             return True
         elif isinstance(x, Iterable):
             return all(map(ishashable, x))

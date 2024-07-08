@@ -28,8 +28,8 @@ def test_validate_python_single_col(make_db):
     """
     repo = make_db
     os.chdir(repo)
-    ## to see what is failing, comment out the rows that capture and restore the
-    ## sys.stdout.
+    #to see what is failing, comment out the rows that capture and restore the
+    # sys.stdout.
     backup = sys.stdout
     sys.stdout = StringIO()
     main(["validate", "--collection", "projecta"])
