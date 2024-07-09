@@ -5,49 +5,49 @@ import string
 from regolith.dates import date_to_float
 
 
-def doc_date_key(date):
+def doc_date_key(document):
     """Convert a dict of Datetime object to float serialization of date info.
 
     Parameters
     ----------
-    date: dict
+    document:  dict
         the document that is expected to contain date-like information in "year" and/or "month"
 
     Returns
     -------
     the float serialization of the date information in the document
     """
-    return date_to_float(date.get("year", 1970), date.get("month", "jan"))
+    return date_to_float(document.get("year", 1970), document.get("month", "jan"))
 
 
-def doc_date_key_high(date):
+def doc_date_key_high(document):
     """Convert a dict of highest Datetime object to float serialization of date info.
 
     Parameters
     ----------
-    date: dict
-        the document that is expected to contain date-like information in "year" and/or "month"
+    document: dict
+        the document that is expected to contain date-like information in "end_year" and/or "end_month"
 
     Returns
     -------
-    float representing the date key.
+    the float serialization of the end date information in the document
     """
-    return date_to_float(date.get("year", 1970), date.get("month", "dec"))
+    return date_to_float(document.get("year", 1970), document.get("month", "dec"))
 
 
-def ene_date_key(date):
+def ene_date_key(document):
     """Convert a dict of ene Datetime object to float serialization of date info.
 
     Parameters
     ----------
-    date: dict
+    document: dict
         the document that is expected to contain date-like information in "year" and/or "month"
 
     Returns
     -------
     the float serialization of the date information in the document
     """
-    return date_to_float(date.get("end_year", 4242), date.get("end_month", "dec"))
+    return date_to_float(document.get("end_year", 4242), document.get("end_month", "dec"))
 
 
 def category_val(category):
@@ -60,7 +60,7 @@ def category_val(category):
 
     Returns
     -------
-    serialization of string representing the category.
+    string of the category item.
     """
     return category.get("category", "<uncategorized>")
 
