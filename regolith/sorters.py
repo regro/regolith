@@ -16,6 +16,7 @@ def doc_date_key(document):
     Returns
     -------
     the float serialization of the date information in the document
+    
     """
     return date_to_float(document.get("year", 1970), document.get("month", "jan"))
 
@@ -31,6 +32,7 @@ def doc_date_key_high(document):
     Returns
     -------
     the float serialization of the end date information in the document
+    
     """
     return date_to_float(document.get("year", 1970), document.get("month", "dec"))
 
@@ -41,58 +43,62 @@ def ene_date_key(document):
     Parameters
     ----------
     document: dict
-        the document that is expected to contain date-like information in "year" and/or "month"
+        the document that is expected to contain date-like information in "end_year" and/or "end_month"
 
     Returns
     -------
     the float serialization of the date information in the document
+    
     """
     return date_to_float(document.get("end_year", 4242), document.get("end_month", "dec"))
 
 
-def category_val(category):
-    """Convert the category of a dict of object into serialization of string of category info.
+def category_val(document):
+    """Convert the category of a document into string of category info.
 
     Parameters
     ----------
-    category : dict
-        A dict of all corresponding categories for objects
+    document : dict
+        The dict of all corresponding categories for objects
 
     Returns
     -------
-    string of the category item.
+    The string of the category item.
+    
     """
-    return category.get("category", "<uncategorized>")
+    return document.get("category", "<uncategorized>")
 
 
-def level_val(level):
-    """Convert the level of a dict of object into serialization of string of level info.
+def level_val(document):
+    """Convert the level of a document into string of category info.
 
     Parameters
     ----------
-    level: dict
-        A dict of all corresponding levels of objects
+    document: dict
+        The document
 
     Returns
     -------
-    serialization of string representing the level.
+    The string representing the level.
+    
     """
-    return level.get("level", "<no-level>")
+    return document.get("level", "<no-level>")
 
 
-def id_key(id):
-    """Get the id of dict of id object into serialization of string of id info.
+def id_key(document):
+    """Convert the id-key of a document into a string
 
     Parameters
     ----------
-    id: dict
-        A dict of all corresponding IDs for objects
+    document: dict
+        The document
 
     Returns
     -------
-    serialization of string representing the id.
+    The string of the _id
+    
     """
-    return id.get("_id", "")
+    return document.get("_id", "")
 
 
 def date_key(x):
