@@ -9,7 +9,7 @@ from contextlib import contextmanager
 
 try:
     import hglib
-except:
+except ImportError:
     hglib = None
 
 

@@ -43,7 +43,7 @@ class GradeReportBuilder(LatexBuilderBase):
         ctx["root"] = ctx.get("root", os.path.relpath("/", os.path.dirname(fname)))
         try:
             result = template.render(ctx)
-        except:
+        except Exception:
             type, value, tb = sys.exc_info()
             traceback.print_exc()
             pdb.post_mortem(tb)
@@ -51,14 +51,15 @@ class GradeReportBuilder(LatexBuilderBase):
             f.write(result)
 
     def latex(self):
-        rc = self.rc
         for course in self.gtx["courses"]:
             if not course.get("active", True):
                 continue
             course_id = course["_id"]
             stats = self.makestats(course)
             asgn = filter((lambda x: course_id in x["courses"]), self.gtx["assignments"])
-            catfunc = lambda x: x["category"]
+
+            def catfunc(x):
+                return x["category"]
             asgn = sorted(asgn, key=catfunc)
             grouped_assignments = {k: sorted(i, key=lambda x: x["_id"]) for k, i in groupby(asgn, catfunc)}
 
@@ -223,9 +224,8 @@ class GradeReportBuilder(LatexBuilderBase):
         for skw in students_kwargs.values():
             raws.append(skw["student_letter_grade_raw"])
             curveds.append(skw["student_letter_grade_curved"])
-        n = len(raws)
-        rfreq = [raws.count(l) for l in bins]
-        cfreq = [curveds.count(l) for l in bins]
+        rfreq = [raws.count(letter) for letter in bins]
+        cfreq = [curveds.count(letter) for letter in bins]
         width = 1.0
         pos = np.arange(len(bins))
         f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
