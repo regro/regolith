@@ -131,7 +131,7 @@ class TodoListerHelper(SoutHelperBase):
         try:
             person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
             gather_todos = person.get("todos", [])
-        except NameError:
+        except Exception:
             print("The id you entered can't be found in todos.yml.")
             return
         if not rc.date:
