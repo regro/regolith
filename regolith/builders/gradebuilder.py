@@ -57,11 +57,9 @@ class GradeReportBuilder(LatexBuilderBase):
             course_id = course["_id"]
             stats = self.makestats(course)
             asgn = filter((lambda x: course_id in x["courses"]), self.gtx["assignments"])
-
-            def catfunc(x):
-                return x["category"]
-            asgn = sorted(asgn, key=catfunc)
-            grouped_assignments = {k: sorted(i, key=lambda x: x["_id"]) for k, i in groupby(asgn, catfunc)}
+            asgn = sorted(asgn, key=lambda x: x["category"])
+            grouped_assignments = {k: sorted(i, key=lambda x: x["_id"]) for k, i in
+                                   groupby(asgn, key=lambda x: x["category"])}
 
             student_wavgs = []
             students_kwargs = {}
