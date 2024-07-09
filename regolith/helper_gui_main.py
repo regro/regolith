@@ -8,7 +8,6 @@ import os
 from regolith.database import connect
 
 from regolith import commands
-from regolith import storage
 from regolith.helper import HELPERS
 from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
 from regolith.schemas import SCHEMAS

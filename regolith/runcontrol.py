@@ -38,7 +38,7 @@ def ensuredirs(f):
 
 def touch(filename):
     """Opens a file and updates the mtime, like the posix command of the same name."""
-    with io.open(filename, "a") as f:
+    with io.open(filename, "a"):
         os.utime(filename, None)
 
 
