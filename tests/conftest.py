@@ -164,7 +164,7 @@ def make_mongodb():
         return
     try:
         exemplars_to_mongo(REGOLITH_MONGODB_NAME)
-    except:
+    except ConnectionError:
         yield False
         return
     yield repo
@@ -273,7 +273,7 @@ def make_mixed_db():
     mongo_coll = "assignments"
     try:
         exemplars_to_mongo(REGOLITH_MONGODB_NAME, collection_list=[mongo_coll])
-    except:
+    except ConnectionError:
         yield False
         return
     # Write one collection doc in file system
