@@ -1,6 +1,5 @@
 """Builder for publication lists."""
 
-import os
 
 try:
     from bibtexparser.bwriter import BibTexWriter
@@ -44,7 +43,6 @@ class PubListBuilder(LatexBuilderBase):
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def latex(self):
-        fd = gr = kw = False
         facility = None
         filestub, qualifiers = "", ""
         if self.rc.from_date:
@@ -60,7 +58,6 @@ class PubListBuilder(LatexBuilderBase):
         else:
             from_date, to_date = None, None
         if self.rc.grants:
-            gr = True
             grants = self.rc.grants
             if isinstance(grants, str):
                 grants = [grants]
@@ -73,13 +70,12 @@ class PubListBuilder(LatexBuilderBase):
             elif len(grants) == 1:
                 text_grants = grants[0]
                 pl = ""
-            cat_grants, all_grants = "", ""
+            cat_grants = ""
             for g in grants:
                 cat_grants = cat_grants + "_" + g
             filestub = f"{filestub}{cat_grants}"
             qualifiers = f"{qualifiers} from Grant{pl} {text_grants}"
         if self.rc.kwargs:
-            kw = True
             key, value = self.rc.kwargs[0].split(":", 1)
             if key == "facility":
                 facility = value

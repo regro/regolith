@@ -48,9 +48,9 @@ def sentencecase(sentence):
     -----
     tbd or n/a are returned lower case, not sentence case.
     """
-    freezecaps = re.findall("\{[^{}]+\}", sentence)
+    freezecaps = re.findall("\\{[^{}]+\\}", sentence)
     datalow = sentence.capitalize()
-    sentencecase = re.split("\{[^{}]+\}", datalow)
+    sentencecase = re.split("\\{[^{}]+\\}", datalow)
     title = ""
     freezecaps.reverse()
     for word in sentencecase:
