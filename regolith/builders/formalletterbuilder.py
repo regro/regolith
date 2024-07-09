@@ -4,12 +4,6 @@ from datetime import datetime
 import string
 from dateutil import parser as date_parser
 
-try:
-    from bibtexparser.bwriter import BibTexWriter
-    from bibtexparser.bibdatabase import BibDatabase
-    HAVE_BIBTEX_PARSER = True
-except ImportError:
-    HAVE_BIBTEX_PARSER = False
 
 from regolith.tools import all_docs_from_collection
 from regolith.sorters import position_key

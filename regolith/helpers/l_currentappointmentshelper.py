@@ -76,7 +76,7 @@ class CurrentAppointmentsListerHelper(SoutHelperBase):
         for person in people:
             p_appt = person.get("appointments", None)
             if p_appt:
-                for _id, appt in p_appt.items():
+                for k, (_id, appt) in enumerate(p_appt.items()):
                     grantid = appt.get("grant")
                     if not grantid:
                         print("No grant found in {} appt {}".format(person.get("_id"), k))
@@ -85,7 +85,7 @@ class CurrentAppointmentsListerHelper(SoutHelperBase):
                         print("No grant found for {}".format(grantid))
                     try:
                         accountnr = grant.get("account", grant["alias"])
-                    except:
+                    except NotImplemented:
                         accountnr = ""
                     loading = appt.get("loading")
                     appt_dates = get_dates(appt)

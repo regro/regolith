@@ -138,8 +138,7 @@ class RunControl(object):
 
     def _pformat(self):
         keys = sorted(self._dict.keys())
-        f = lambda k: "{0!s}={1}".format(k, pformat(self._dict[k], indent=2))
-        s = ",\n ".join(map(f, keys))
+        s = ",\n ".join(map(lambda k: "{0!s}={1}".format(k, pformat(self._dict[k], indent=2)), keys))
         return "{0}({1})".format(self.__class__.__name__, s)
 
     def __contains__(self, key):

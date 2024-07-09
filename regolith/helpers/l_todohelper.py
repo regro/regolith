@@ -75,8 +75,8 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "--date",
-        help="Enter a date such that the helper can calculate how many days are left from that date to the due-date. "
-             "Default is today.",
+        help="Enter a date such that the helper can calculate how many days are left "
+             "from that date to the due-date. Default is today.",
         **date_kwargs,
     )
     subpi.add_argument(
@@ -92,7 +92,7 @@ def subparser(subpi):
 
 class TodoListerHelper(SoutHelperBase):
     """Helper for listing the to-do tasks.
-    
+
     Tasks are gathered from people.yml, milestones, and group meeting actions."""
 
     # btype must be the same as helper target in helper.py
@@ -124,14 +124,14 @@ class TodoListerHelper(SoutHelperBase):
                 rc.assigned_to = rc.default_user_id
             except AttributeError:
                 print(
-                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
-                    "in the command line"
+                    "Please set default_user_id in '~/.config/regolith/user.json', "
+                    "or you need to enter your group id in the command line"
                 )
                 return
         try:
             person = document_by_value(all_docs_from_collection(rc.client, "todos"), "_id", rc.assigned_to)
             gather_todos = person.get("todos", [])
-        except:
+        except NameError:
             print("The id you entered can't be found in todos.yml.")
             return
         if not rc.date:
