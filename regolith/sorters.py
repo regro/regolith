@@ -5,88 +5,94 @@ import string
 from regolith.dates import date_to_float
 
 
-def doc_date_key(x):
-    """
-    Convert a Datetime object of the doc to a float key.
+def doc_date_key(date):
+    """Convert a dict of Datetime object to float serialization of date info.
+
     Parameters
     ----------
-    x
+    date: dict
+        the document that is expected to contain date-like information in "year" and/or "month"
+
+    Returns
+    -------
+    the float serialization of the date information in the document
+    """
+    return date_to_float(date.get("year", 1970), date.get("month", "jan"))
+
+
+def doc_date_key_high(date):
+    """Convert a dict of highest Datetime object to float serialization of date info.
+
+    Parameters
+    ----------
+    date: dict
+        the document that is expected to contain date-like information in "year" and/or "month"
 
     Returns
     -------
     float representing the date key.
     """
-    return date_to_float(x.get("year", 1970), x.get("month", "jan"))
+    return date_to_float(date.get("year", 1970), date.get("month", "dec"))
 
 
-def doc_date_key_high(x):
-    """
-    Convert the highest Datetime object of the doc to a float key.
+def ene_date_key(date):
+    """Convert a dict of ene Datetime object to float serialization of date info.
+
     Parameters
     ----------
-    x
+    date: dict
+        the document that is expected to contain date-like information in "year" and/or "month"
 
     Returns
     -------
-    float representing the date key.
+    the float serialization of the date information in the document
     """
-    return date_to_float(x.get("year", 1970), x.get("month", "dec"))
+    return date_to_float(date.get("end_year", 4242), date.get("end_month", "dec"))
 
 
-def ene_date_key(x):
-    """
-    Convert an ene date Datetime object of the doc to a float key.
+def category_val(category):
+    """Convert the category of a dict of object into serialization of string of category info.
+
     Parameters
     ----------
-    x
+    category : dict
+        A dict of all corresponding categories for objects
 
     Returns
     -------
-    float representing the ene date key.
+    serialization of string representing the category.
     """
-    return date_to_float(x.get("end_year", 4242), x.get("end_month", "dec"))
+    return category.get("category", "<uncategorized>")
 
 
-def category_val(x):
-    """
-    Return the category of x as a string.
+def level_val(level):
+    """Convert the level of a dict of object into serialization of string of level info.
+
     Parameters
     ----------
-    x
+    level: dict
+        A dict of all corresponding levels of objects
 
     Returns
     -------
-    string representing the category.
+    serialization of string representing the level.
     """
-    return x.get("category", "<uncategorized>")
+    return level.get("level", "<no-level>")
 
 
-def level_val(x):
-    """
-    Return the level of x as a string.
+def id_key(id):
+    """Get the id of dict of id object into serialization of string of id info.
+
     Parameters
     ----------
-    x
+    id: dict
+        A dict of all corresponding IDs for objects
 
     Returns
     -------
-    string representing the level.
+    serialization of string representing the id.
     """
-    return x.get("level", "<no-level>")
-
-
-def id_key(x):
-    """
-    Get the id of x as a string.
-    Parameters
-    ----------
-    x
-
-    Returns
-    -------
-    string representing the id.
-    """
-    return x.get("_id", "")
+    return id.get("_id", "")
 
 
 def date_key(x):
