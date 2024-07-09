@@ -4,12 +4,89 @@ import string
 
 from regolith.dates import date_to_float
 
-doc_date_key = lambda x: date_to_float(x.get("year", 1970), x.get("month", "jan"))
-doc_date_key_high = lambda x: date_to_float(x.get("year", 1970), x.get("month", "dec"))
-ene_date_key = lambda x: date_to_float(x.get("end_year", 4242), x.get("end_month", "dec"))
-category_val = lambda x: x.get("category", "<uncategorized>")
-level_val = lambda x: x.get("level", "<no-level>")
-id_key = lambda x: x.get("_id", "")
+
+def doc_date_key(x):
+    """
+    Convert a Datetime object of the doc to a float key.
+    Parameters
+    ----------
+    x
+
+    Returns
+    -------
+    float representing the date key.
+    """
+    return date_to_float(x.get("year", 1970), x.get("month", "jan"))
+
+
+def doc_date_key_high(x):
+    """
+    Convert the highest Datetime object of the doc to a float key.
+    Parameters
+    ----------
+    x
+
+    Returns
+    -------
+    float representing the date key.
+    """
+    return date_to_float(x.get("year", 1970), x.get("month", "dec"))
+
+
+def ene_date_key(x):
+    """
+    Convert an ene date Datetime object of the doc to a float key.
+    Parameters
+    ----------
+    x
+
+    Returns
+    -------
+    float representing the ene date key.
+    """
+    return date_to_float(x.get("end_year", 4242), x.get("end_month", "dec"))
+
+
+def category_val(x):
+    """
+    Return the category of x as a string.
+    Parameters
+    ----------
+    x
+
+    Returns
+    -------
+    string representing the category.
+    """
+    return x.get("category", "<uncategorized>")
+
+
+def level_val(x):
+    """
+    Return the level of x as a string.
+    Parameters
+    ----------
+    x
+
+    Returns
+    -------
+    string representing the level.
+    """
+    return x.get("level", "<no-level>")
+
+
+def id_key(x):
+    """
+    Get the id of x as a string.
+    Parameters
+    ----------
+    x
+
+    Returns
+    -------
+    string representing the id.
+    """
+    return x.get("_id", "")
 
 
 def date_key(x):
