@@ -79,13 +79,13 @@ class CurrentAppointmentsListerHelper(SoutHelperBase):
                 for _id, appt in p_appt.items():
                     grantid = appt.get("grant")
                     if not grantid:
-                        print("No grant found in {} appt {}".format(person.get("_id"), k))
+                        print(f"No grant found in {person.get("_id")} appt {person.get("appt")}")
                     grant = fuzzy_retrieval(grants, ["name", "_id", "alias"], grantid)
                     if not grant:
-                        print("No grant found for {}".format(grantid))
+                        print(f"No grant found for {grantid}")
                     try:
                         accountnr = grant.get("account", grant["alias"])
-                    except:
+                    except Exception:
                         accountnr = ""
                     loading = appt.get("loading")
                     appt_dates = get_dates(appt)

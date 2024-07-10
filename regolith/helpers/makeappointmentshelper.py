@@ -11,7 +11,6 @@ import numpy
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as date_parser
 from datetime import timedelta, date
-
 from regolith.helpers.basehelper import SoutHelperBase
 
 # from regolith.schemas import APPOINTMENTS_TYPES
@@ -30,7 +29,6 @@ from regolith.dates import (
     get_dates,
 )
 from gooey import GooeyParser
-import matplotlib
 import matplotlib.pyplot as plt
 
 TARGET_COLL = "people"
@@ -147,7 +145,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
         try:
             if not rc.database:
                 rc.database = rc.databases[0]["name"]
-        except:
+        except Exception:
             pass
         colls = [
             sorted(all_docs_from_collection(rc.client, collname), key=_id_key) for collname in self.needed_colls
@@ -213,7 +211,6 @@ class MakeAppointmentsHelper(SoutHelperBase):
                 continue
             appts = person.get("appts")
             person_dates = group_member_employment_start_end(person, "bg")
-            last_emp, months_to_cover = 0, 0
             emps = [person_date for person_date in person_dates if not person_date.get("permanent")]
             emps.sort(key=lambda x: x.get("end_date", 0))
             is_fully_appointed(
@@ -393,7 +390,8 @@ class MakeAppointmentsHelper(SoutHelperBase):
                     f"      required ss+gra burn: {grant_info[3]}"
                 )
             print(
-                f"cumulative underspend = {round(cum_underspend/30.5, 2)} months, cumulative months to support = {round(cum_months_to_cover, 2)}"
+                f"cumulative underspend = {round(cum_underspend/30.5, 2)} months, "
+                f"cumulative months to support = {round(cum_months_to_cover, 2)}"
             )
         if overspent:
             print("overspent grants:")
