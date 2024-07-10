@@ -196,7 +196,7 @@ class ProjectaListerHelper(SoutHelperBase):
                     elif not isinstance(projectum.get("end_date"), dt.date):
                         try:
                             dt.datetime(*[int(num) for num in projectum.get("end_date").split("-")])
-                        except ValueError:
+                        except Exception:
                             error_projecta.append(projectum)
                     else:
                         end_date = projectum.get("end_date")

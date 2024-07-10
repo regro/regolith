@@ -145,7 +145,7 @@ class MakeAppointmentsHelper(SoutHelperBase):
         try:
             if not rc.database:
                 rc.database = rc.databases[0]["name"]
-        except NotImplemented:
+        except Exception:
             pass
         colls = [
             sorted(all_docs_from_collection(rc.client, collname), key=_id_key) for collname in self.needed_colls
