@@ -54,7 +54,7 @@ def test_mongo_to_fs_python(make_mongo_to_fs_backup_db, make_mongodb):
             assert migrated_fs_collection == original_mongo_collection
 
 
-def test_fs_to_mongo_python(make_fs_to_mongo_migration_db, make_mongodb):
+def test_fs_to_mongo_python_v1(make_fs_to_mongo_migration_db, make_mongodb):
     if make_mongodb is False:
         pytest.skip("Mongoclient failed to start")
     if BILLINGE_TEST:
