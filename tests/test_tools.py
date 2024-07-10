@@ -1748,8 +1748,8 @@ def test_is_fully_appointed(appts, start, end, expected):
         ),
     ],
 )
-def test_get_id_from_name(input, expected):
-    assert awards_grants_honors(input) == expected
+def test_awards_grants_honors(input, expected):
+    assert awards_grants_honors(input, "service") == expected
 
 
 @pytest.mark.parametrize(

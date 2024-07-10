@@ -733,7 +733,7 @@ def awards_grants_honors(p, target_name, funding=True, service_types=None):
         if target_name != "service" or target_name == "service" and x.get("type") in service_types:
             d = {"description": latex_safe(x["name"])}
             if "year" in x:
-                x["date"] = date(x["year"], 1, 1)
+                x["date"] = date(x["year"], x["month"], 1)
                 del x["year"]
             x_dates = get_dates(x)
             if x_dates.get("date"):
