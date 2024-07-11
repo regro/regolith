@@ -1755,6 +1755,44 @@ def test_awards_grants_honors(input, expected):
 @pytest.mark.parametrize(
     "input, expected",
     [
+        (
+            {
+                "funding": [
+                    {"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013},
+                    {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
+                ],
+                "honors": [
+                    {"name": "CVPR best paper award", "year": 2024, "month": 5},
+                    {"name": "ICLR paper accepted", "year": 2022, "month": 3},
+                ]
+            },
+            [
+                {"description": "CVPR best paper award", "year": 2024, "_key": 2024.05},
+                {"description": "ICLR paper accepted", "year": 2022, "_key": 2022.03},
+                {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
+                {"description": "NIF User's Group Travel Award (\\$1,150)", "year": 2013, "_key": 2013.0},
+
+            ],
+        ),
+        (
+            {
+                "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
+                "honors": [{"name": "CVPR best paper award", "year": 2024, "month": 5}]
+            },
+            [
+                {"description": "CVPR best paper award", "year": 2024, "_key": 2024.05},
+                {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
+            ],
+        ),
+    ],
+)
+def test_honors_grants_honors_t2(input, expected):
+    assert awards_grants_honors(input, "honors") == expected
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
         (([{"_id": "afriend", "aka": ["AB Friend", "Tony Friend"], "name": "Anthony B Friend"}], "Simon"), None),
         (
             (
