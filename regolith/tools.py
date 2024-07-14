@@ -723,9 +723,7 @@ def awards_grants_honors(person, target_name, funding=True, service_types=None):
                         latex_safe(fund["name"]),
                         fund.get("currency", "$").replace("$", r"\$"),
                         fund["value"],
-                    ),
-                   "year": fund["year"],
-                   "_key": date_to_float(fund["year"], fund.get("month", 0)),
+                    ), "year": fund["year"], "_key": date_to_float(fund["year"], fund.get("month", 0)),
                 }
                 aghs.append(d)
     target = person.get(target_name, [])

@@ -28,6 +28,7 @@ def test_fs_to_mongo(make_db, make_mongodb):
     cp1 = subprocess.run(["regolith", "fs-to-mongo"], cwd=repo)
     assert cp1.returncode == 0
 
+
 def test_fs_to_mongo_python(make_fs_to_mongo_migration_db, make_mongodb):
     if make_mongodb is False:
         pytest.skip("Mongoclient failed to start")
@@ -83,7 +84,6 @@ def test_mongo_to_fs_python(make_mongo_to_fs_backup_db, make_mongodb):
             migrated_fs_collection = fs_db[coll]
             original_mongo_collection = load_mongo_col(mongo_db[coll])
             assert migrated_fs_collection == original_mongo_collection
-
 
 
 def replace_rc_dbs(repo):
