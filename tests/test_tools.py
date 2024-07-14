@@ -1737,8 +1737,7 @@ def test_is_fully_appointed(appts, start, end, expected):
         ("honors",
             [
                 {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
-            ],
-        ),
+            ],),
         ("service",
          [
              {'_key': 2020.01,
