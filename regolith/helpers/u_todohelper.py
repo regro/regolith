@@ -59,7 +59,7 @@ def subparser(subpi):
         "--filter",
         nargs="+",
         help="Search this collection by giving key element pairs. "
-             "'-f description paper' will return tasks with description containing 'paper' ",
+        "'-f description paper' will return tasks with description containing 'paper' ",
     )
     subpi.add_argument("-r", "--renumber", action="store_true", help="Renumber the indices.")
     subpi.add_argument(
@@ -108,7 +108,7 @@ def subparser(subpi):
     subpi.add_argument(
         "--date",
         help="Enter a date such that the helper can calculate how many days are left "
-             "from that date to the due date. Default is today.",
+        "from that date to the due date. Default is today.",
         **date_kwargs,
     )
 

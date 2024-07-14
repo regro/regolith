@@ -93,7 +93,7 @@ def subparser(subpi):
     subpi.add_argument(
         "--date",
         help="Enter a date such that the helper can calculate how many days are left "
-             "from that date to the deadline. Default is today.",
+        "from that date to the deadline. Default is today.",
         **date_kwargs,
     )
 

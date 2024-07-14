@@ -141,8 +141,10 @@ class AbstractListerHelper(SoutHelperBase):
         for presentation in flat_filtered_presentations:
             if presentation.get("type") in SEMINAR_TYPES:
                 dereference_institution(presentation, institutions)
-                meeting_info = (f"{presentation.get('type').title()} {presentation.get('department')}, "
-                                f"{presentation.get('institution')}")
+                meeting_info = (
+                    f"{presentation.get('type').title()} {presentation.get('department')}, "
+                    f"{presentation.get('institution')}"
+                )
             else:
                 meeting_info = f"{presentation.get('meeting_name')}, {presentation.get('location')}"
             print("\n---------------------------------------")

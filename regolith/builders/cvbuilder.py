@@ -111,8 +111,9 @@ class CVBuilder(LatexBuilderBase):
                 for e in ee:
                     dereference_institution(e, self.gtx["institutions"])
 
-            undergrads = filter_employment_for_advisees(self.gtx["people"],
-                                                        begin_period, "undergrad", person["_id"])
+            undergrads = filter_employment_for_advisees(
+                self.gtx["people"], begin_period, "undergrad", person["_id"]
+            )
             for undergrad in undergrads:
                 undergrad["role"] = undergrad["role"].title()
             masters = filter_employment_for_advisees(self.gtx["people"], begin_period, "ms", person["_id"])

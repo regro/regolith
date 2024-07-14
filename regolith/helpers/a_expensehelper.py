@@ -291,8 +291,10 @@ class ExpenseAdderHelper(DbHelperBase):
             end_date = date_parser.parse(rc.end_date).date()
         else:
             end_date = dt.date.today()
-        key = (f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}"
-               f"{rc.payee[0:2]}_{''.join(rc.name.casefold().split()).strip()}")
+        key = (
+            f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}"
+            f"{rc.payee[0:2]}_{''.join(rc.name.casefold().split()).strip()}"
+        )
         coll = self.gtx[rc.coll]
         pdocl = list(filter(lambda doc: doc["_id"] == key, coll))
         if len(pdocl) > 0:

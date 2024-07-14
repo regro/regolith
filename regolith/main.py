@@ -226,9 +226,9 @@ def create_parser():
     mtf = subp.add_parser(
         "mongo-to-fs",
         help="Backup database from mongodb to filesystem as json. "
-             "The database will be imported to the destination specified by the 'database':'dst_url' key. "
-             "For this to work, ensure that the database is included in the "
-             "dst_url, and that local is set to true.",
+        "The database will be imported to the destination specified by the 'database':'dst_url' key. "
+        "For this to work, ensure that the database is included in the "
+        "dst_url, and that local is set to true.",
     )
 
     mtf.add_argument(
