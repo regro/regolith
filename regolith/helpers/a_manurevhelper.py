@@ -29,7 +29,7 @@ def subparser(subpi):
     subpi.add_argument("journal", help="journal to be published in", default="")
     subpi.add_argument("title", help="the title of the Manuscript", default="")
     subpi.add_argument("-q", "--requester", help="name, or id in contacts, of the editor requesting the review")
-    subpi.add_argument("-s", "--status", choices=ALLOWED_STATI, help=f"Manuscript status", default="accepted")
+    subpi.add_argument("-s", "--status", choices=ALLOWED_STATI, help="Manuscript status", default="accepted")
     subpi.add_argument("-d", "--submitted-date", help="Submitted date. Defaults " "to tbd", **date_kwargs)
     subpi.add_argument("-r", "--reviewer", help="name of the reviewer. Defaults to the one saved in user.json. ")
     subpi.add_argument(
@@ -105,8 +105,8 @@ class ManuRevAdderHelper(DbHelperBase):
                 pdoc.update({"reviewer": rc.reviewer})
             except AttributeError:
                 print(
-                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
-                    "in the command line"
+                    "Please set default_user_id in '~/.config/regolith/user.json', "
+                    "or you need to enter your group id in the command line"
                 )
                 return
         if rc.submitted_date:

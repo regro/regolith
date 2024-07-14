@@ -87,13 +87,13 @@ def subparser(subpi):
         help=f"types, from {PRESENTATION_TYPES}. Default is invited",
         default="invited",
     )
-    subpi.add_argument("-w", "--webinar", help=f"Is the presentation a webinar?", action="store_true")
+    subpi.add_argument("-w", "--webinar", help="Is the presentation a webinar?", action="store_true")
     subpi.add_argument(
         "--no-expense",
-        help=f"Do not add a template expense item to the "
-        f"expenses collection.  Default is to add "
-        f"an expense if the presentation is not a "
-        f"webinar.",
+        help="Do not add a template expense item to the "
+        "expenses collection.  Default is to add "
+        "an expense if the presentation is not a "
+        "webinar.",
         action="store_true",
     )
     subpi.add_argument(
@@ -119,9 +119,9 @@ def subparser(subpi):
         "--id",
         help="Override the default id created from the date, " "speaker and place by specifying an id here",
     )
-    subpi.add_argument("--no-cal", help=f"Do not add the presentation to google calendar", action="store_true")
+    subpi.add_argument("--no-cal", help="Do not add the presentation to google calendar", action="store_true")
     subpi.add_argument(
-        "--no-repo", help=f"Do not create a GitHub/Lab repo for the presentation", action="store_true"
+        "--no-repo", help="Do not create a GitHub/Lab repo for the presentation", action="store_true"
     )
     return subpi
 
@@ -190,7 +190,6 @@ class PresentationAdderHelper(DbHelperBase):
         gtx["zip"] = zip
 
     def db_updater(self):
-        gtx = self.gtx
         rc = self.rc
 
         if not rc.no_cal:
@@ -230,7 +229,8 @@ class PresentationAdderHelper(DbHelperBase):
             name_key = split_person[0][:2].casefold()
 
         if not rc.id:
-            key = f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{name_key}_{''.join(rc.place.casefold().split()).strip()}"
+            key = (f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{name_key}_"
+                   f"{''.join(rc.place.casefold().split()).strip()}")
         else:
             key = rc.id
 

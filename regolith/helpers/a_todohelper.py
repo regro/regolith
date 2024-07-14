@@ -92,8 +92,8 @@ def subparser(subpi):
     )
     subpi.add_argument(
         "--date",
-        help="Enter a date such that the helper can calculate how many days are left from that date to the deadline. "
-             "Default is today.",
+        help="Enter a date such that the helper can calculate how many days are left "
+             "from that date to the deadline. Default is today.",
         **date_kwargs,
     )
 
@@ -133,8 +133,8 @@ class TodoAdderHelper(DbHelperBase):
                 rc.assigned_to = rc.default_user_id
             except AttributeError:
                 print(
-                    "Please set default_user_id in '~/.config/regolith/user.json', or you need to enter your group id "
-                    "in the command line"
+                    "Please set default_user_id in '~/.config/regolith/user.json', "
+                    "or you need to enter your group id in the command line"
                 )
                 return
         person = rc.client.find_one(rc.database, rc.coll, {"_id": rc.assigned_to})
