@@ -704,38 +704,38 @@ def filter_presentations(
     return presclean
 
 
-def awards_grants_honors(p, target_name, funding=True, service_types=None):
+def awards_grants_honors(person, target_name, funding=True, service_types=None):
     """Make sorted awards grants and honors list.
 
     Parameters
     ----------
-    p : dict
+    person : dict
         The person entry
     """
     if not service_types:
         service_types = ["profession"]
     aghs = []
     if funding:
-        if p.get("funding"):
-            for x in p.get("funding", ()):
+        if person.get("funding"):
+            for fund in person.get("funding", ()):
                 d = {
                     "description": "{0} ({1}{2:,})".format(
-                        latex_safe(x["name"]),
-                        x.get("currency", "$").replace("$", r"\$"),
-                        x["value"],
+                        latex_safe(fund["name"]),
+                        fund.get("currency", "$").replace("$", r"\$"),
+                        fund["value"],
                     ),
-                    "year": x["year"],
-                    "_key": date_to_float(x["year"], x.get("month", 0)),
+                   "year": fund["year"],
+                   "_key": date_to_float(fund["year"], fund.get("month", 0)),
                 }
                 aghs.append(d)
-    target = p.get(target_name, [])
-    for x in target:
-        if target_name != "service" or target_name == "service" and x.get("type") in service_types:
-            d = {"description": latex_safe(x["name"])}
-            if "year" in x:
-                x["date"] = date(x["year"], 1, 1)
-                del x["year"]
-            x_dates = get_dates(x)
+    target = person.get(target_name, [])
+    for fund in target:
+        if target_name != "service" or target_name == "service" and fund.get("type") in service_types:
+            d = {"description": latex_safe(fund["name"])}
+            if "year" in fund:
+                fund["date"] = date(fund["year"], 1, 1)
+                del fund["year"]
+            x_dates = get_dates(fund)
             if x_dates.get("date"):
                 d.update(
                     {

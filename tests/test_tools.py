@@ -63,6 +63,17 @@ PEOPLE_COLL = [
                 "status": "undergrad",
             }
         ],
+        "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
+        "service": [
+            {
+                "name": "International Steering Committee",
+                "role": "chair",
+                "type": "profession",
+                "year": 2020,
+                "month": 3,
+                "notes": ["something"],
+            }
+        ],
     },
     {
         "_id": "nm1",
@@ -94,6 +105,7 @@ PEOPLE_COLL = [
                 "status": "undergrad",
             }
         ],
+
     },
 ]
 
@@ -107,8 +119,16 @@ CONTACTS_COLL = [{"_id": "c1", "name": "contact1", "institution": "columbiau"}]
             ["m1", PEOPLE_COLL, CONTACTS_COLL],
             {
                 "_id": "m1",
-                "name": "member1",
-                "education": [
+                'funding': [{'name': "Omega Laser User's Group Travel Award",
+                             'value': 1100,
+                             'year': 2013}],
+                'name': 'member1',
+                'service': [{'month': 3,
+                             'name': 'International Steering Committee',
+                             'notes': ['something'],
+                             'role': 'chair',
+                             'type': 'profession',
+                             'year': 2020}],                "education": [
                     {
                         "group": "bg",
                         "institution": "columbiau",
@@ -134,7 +154,6 @@ CONTACTS_COLL = [{"_id": "c1", "name": "contact1", "institution": "columbiau"}]
     ],
 )
 def test_get_person_contact(input, expected):
-    print(input)
     actual = get_person_contact(input[0], input[1], input[2])
     assert actual == expected
 
@@ -1715,41 +1734,23 @@ def test_is_fully_appointed(appts, start, end, expected):
 @pytest.mark.parametrize(
     "input, expected",
     [
-        (
-            {
-                "funding": [
-                    {"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013},
-                    {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
-                ]
-            },
+        ("honors",
             [
-                {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
-                {"description": "NIF User's Group Travel Award (\\$1,150)", "year": 2013, "_key": 2013.0},
-            ],
-        ),
-        (
-            {
-                "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
-                "service": [
-                    {
-                        "name": "International Steering Committee",
-                        "role": "chair",
-                        "type": "profession",
-                        "year": 2020,
-                        "month": 3,
-                        "notes": ["something"],
-                    }
-                ],
-            },
-            [
-                {"description": "International Steering Committee", "year": 2020, "_key": 2020.03},
                 {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
             ],
         ),
+        ("service",
+         [
+             {'_key': 2020.01,
+              'description': 'International Steering Committee',
+              'year': 2020},
+             {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
+         ],
+         ),
     ],
 )
-def test_get_id_from_name(input, expected):
-    assert awards_grants_honors(input) == expected
+def test_awards_grants_honors(input, expected):
+    assert awards_grants_honors(PEOPLE_COLL[0], input, funding=True, service_types=None) == expected
 
 
 @pytest.mark.parametrize(

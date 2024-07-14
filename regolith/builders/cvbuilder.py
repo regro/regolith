@@ -55,9 +55,9 @@ class CVBuilder(LatexBuilderBase):
         else:
             people = gtx["people"]
 
-        for p in people:
+        for person in people:
             # so we don't modify the dbs when de-referencing
-            names = frozenset(p.get("aka", []) + [p["name"]] + [p["_id"]])
+            names = frozenset(person.get("aka", []) + [person["name"]] + [person["_id"]])
             begin_period = date(1650, 1, 1)
 
             pubs = filter_publications(
@@ -65,15 +65,15 @@ class CVBuilder(LatexBuilderBase):
                 names,
                 reverse=True,
             )
-            bibfile = make_bibtex_file(pubs, pid=p["_id"], person_dir=self.bldir)
-            emps = p.get("employment", [])
+            bibfile = make_bibtex_file(pubs, pid=person["_id"], person_dir=self.bldir)
+            emps = person.get("employment", [])
             emps = [em for em in emps if not em.get("not_in_cv", False)]
             for e in emps:
                 e["position"] = e.get("position_full", e.get("position").title())
             emps.sort(key=ene_date_key, reverse=True)
-            edu = p.get("education", [])
+            edu = person.get("education", [])
             edu.sort(key=ene_date_key, reverse=True)
-            teach = p.get("teaching", [])
+            teach = person.get("teaching", [])
             for t in teach:
                 t["position"] = t.get("position").title()
 
@@ -89,7 +89,7 @@ class CVBuilder(LatexBuilderBase):
                 self.gtx["people"],
                 self.gtx["presentations"],
                 self.gtx["institutions"],
-                p.get("_id"),
+                person.get("_id"),
                 statuses=["accepted"],
             )
 
@@ -104,25 +104,25 @@ class CVBuilder(LatexBuilderBase):
                 format_role = format_pi.replace("pi", "PI")
                 grant["me"]["position"] = format_role
 
-            aghs = awards_grants_honors(p, "honors")
-            service = awards_grants_honors(p, "service", funding=False)
+            aghs = awards_grants_honors(person, "honors")
+            service = awards_grants_honors(person, "service", funding=False)
             # TODO: pull this out so we can use it everywhere
             for ee in [emps, edu]:
                 for e in ee:
                     dereference_institution(e, self.gtx["institutions"])
 
-            undergrads = filter_employment_for_advisees(self.gtx["people"], begin_period, "undergrad", p["_id"])
+            undergrads = filter_employment_for_advisees(self.gtx["people"], begin_period, "undergrad", person["_id"])
             for undergrad in undergrads:
                 undergrad["role"] = undergrad["role"].title()
-            masters = filter_employment_for_advisees(self.gtx["people"], begin_period, "ms", p["_id"])
+            masters = filter_employment_for_advisees(self.gtx["people"], begin_period, "ms", person["_id"])
             for master in masters:
                 master["role"] = master["role"].title()
-            currents = filter_employment_for_advisees(self.gtx["people"], begin_period, "phd", p["_id"])
-            graduateds = filter_employment_for_advisees(self.gtx["people"], begin_period, "phd", p["_id"])
-            postdocs = filter_employment_for_advisees(self.gtx["people"], begin_period, "postdoc", p["_id"])
+            currents = filter_employment_for_advisees(self.gtx["people"], begin_period, "phd", person["_id"])
+            graduateds = filter_employment_for_advisees(self.gtx["people"], begin_period, "phd", person["_id"])
+            postdocs = filter_employment_for_advisees(self.gtx["people"], begin_period, "postdoc", person["_id"])
             postdocs = remove_duplicate_docs(postdocs, "name")
             visitors = filter_employment_for_advisees(
-                self.gtx["people"], begin_period, "visitor-unsupported", p["_id"]
+                self.gtx["people"], begin_period, "visitor-unsupported", person["_id"]
             )
             visitors = remove_duplicate_docs(visitors, "name")
             for visitor in visitors:
@@ -139,16 +139,16 @@ class CVBuilder(LatexBuilderBase):
             #############
             # hindex
             #############
-            if p.get("hindex"):
-                hindex = sorted(p.get("hindex"), key=doc_date_key).pop()
+            if person.get("hindex"):
+                hindex = sorted(person.get("hindex"), key=doc_date_key).pop()
             else:
                 hindex = {}
 
             self.render(
                 "cv.tex",
-                p["_id"] + ".tex",
-                p=p,
-                title=p.get("name", ""),
+                person["_id"] + ".tex",
+                p=person,
+                title=person.get("name", ""),
                 aghs=aghs,
                 hindex=hindex,
                 service=service,
@@ -173,4 +173,4 @@ class CVBuilder(LatexBuilderBase):
                 coi_amount=coi_amount,
                 coi_sub_amount=coi_sub_amount,
             )
-            self.pdf(p["_id"])
+            self.pdf(person["_id"])
