@@ -105,7 +105,6 @@ PEOPLE_COLL = [
                 "status": "undergrad",
             }
         ],
-
     },
 ]
 
@@ -119,16 +118,19 @@ CONTACTS_COLL = [{"_id": "c1", "name": "contact1", "institution": "columbiau"}]
             ["m1", PEOPLE_COLL, CONTACTS_COLL],
             {
                 "_id": "m1",
-                'funding': [{'name': "Omega Laser User's Group Travel Award",
-                             'value': 1100,
-                             'year': 2013}],
-                'name': 'member1',
-                'service': [{'month': 3,
-                             'name': 'International Steering Committee',
-                             'notes': ['something'],
-                             'role': 'chair',
-                             'type': 'profession',
-                             'year': 2020}],                "education": [
+                "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
+                "name": "member1",
+                "service": [
+                    {
+                        "month": 3,
+                        "name": "International Steering Committee",
+                        "notes": ["something"],
+                        "role": "chair",
+                        "type": "profession",
+                        "year": 2020,
+                    }
+                ],
+                "education": [
                     {
                         "group": "bg",
                         "institution": "columbiau",
@@ -222,7 +224,7 @@ CITATIONS = [
                     "grant": "fwp2",
                     "month": "jun",
                     "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
-                            "\\newline\\newline\\noindent ",
+                    "\\newline\\newline\\noindent ",
                     "year": "2020",
                 },
                 {
@@ -231,7 +233,7 @@ CITATIONS = [
                     "ackno": "thanks",
                     "grant": "fwp2",
                     "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
-                            "\\newline\\newline\\noindent ",
+                    "\\newline\\newline\\noindent ",
                     "year": "2020",
                 },
                 {
@@ -241,7 +243,7 @@ CITATIONS = [
                     "grant": "fwp, dmref",
                     "month": "apr",
                     "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
-                            "\\newline\\newline\\noindent ",
+                    "\\newline\\newline\\noindent ",
                     "year": "2021",
                 },
             ],
@@ -1734,18 +1736,19 @@ def test_is_fully_appointed(appts, start, end, expected):
 @pytest.mark.parametrize(
     "input, expected",
     [
-        ("honors",
+        (
+            "honors",
             [
                 {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
-            ],),
-        ("service",
-         [
-             {'_key': 2020.01,
-              'description': 'International Steering Committee',
-              'year': 2020},
-             {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
-         ],
-         ),
+            ],
+        ),
+        (
+            "service",
+            [
+                {"_key": 2020.01, "description": "International Steering Committee", "year": 2020},
+                {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
+            ],
+        ),
     ],
 )
 def test_awards_grants_honors(input, expected):
@@ -3140,6 +3143,7 @@ def test_get_target_token(tokens, expected):
     actual = get_target_token("gitlab_private_token", tokens)
     assert actual == expected
 
+
 # @mock.patch("requests.post")
 
 
@@ -3163,10 +3167,9 @@ def test_create_repo(**kwargs):
     rc._update(repo_token_information)
     actual = create_repo("talk_repo", "gitlab_private_token", rc)
     assert (
-        actual
-        == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using "
-           "(HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor "
-           "(SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
+        actual == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using "
+        "(HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor "
+        "(SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
     )
 
 

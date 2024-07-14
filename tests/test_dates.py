@@ -17,7 +17,7 @@ from regolith.dates import (
     is_after,
     is_between,
     date_to_float,
-    month_to_int
+    month_to_int,
 )
 
 TEST_DATE = date(2019, 6, 15)
