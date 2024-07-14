@@ -138,15 +138,15 @@ def get_team_from_grant(grantcol):
 
 
 def filter_publications(
-        citations,
-        authors,
-        reverse=False,
-        bold=True,
-        since=None,
-        before=None,
-        ackno=False,
-        grants=None,
-        facilities=None,
+    citations,
+    authors,
+    reverse=False,
+    bold=True,
+    since=None,
+    before=None,
+    ackno=False,
+    grants=None,
+    facilities=None,
 ):
     """Filter publications by the author(s)/editor(s)
 
@@ -552,7 +552,7 @@ def filter_activities(people, begin_period, type, verbose=False):
 
 
 def filter_presentations(
-        people, presentations, institutions, target, types=None, since=None, before=None, statuses=None
+    people, presentations, institutions, target, types=None, since=None, before=None, statuses=None
 ):
     f"""
     filters presentations for different types and date ranges
@@ -723,7 +723,9 @@ def awards_grants_honors(person, target_name, funding=True, service_types=None):
                         latex_safe(fund["name"]),
                         fund.get("currency", "$").replace("$", r"\$"),
                         fund["value"],
-                    ), "year": fund["year"], "_key": date_to_float(fund["year"], fund.get("month", 0)),
+                    ),
+                    "year": fund["year"],
+                    "_key": date_to_float(fund["year"], fund.get("month", 0)),
                 }
                 aghs.append(d)
     target = person.get(target_name, [])
@@ -761,9 +763,9 @@ def awards_grants_honors(person, target_name, funding=True, service_types=None):
 
 
 def awards(
-        p,
-        since=None,
-        before=None,
+    p,
+    since=None,
+    before=None,
 ):
     """Make sorted awards and honors
 
@@ -839,9 +841,9 @@ def latex_safe(s, url_check=True, wrapper="url"):
         if url_search:
             url = r"{start}\{wrapper}{{{s}}}{end}".format(
                 start=(latex_safe(s[: url_search.start()])),
-                end=(latex_safe(s[url_search.end():])),
+                end=(latex_safe(s[url_search.end() :])),
                 wrapper=wrapper,
-                s=latex_safe_url(s[url_search.start(): url_search.end()]),
+                s=latex_safe_url(s[url_search.start() : url_search.end()]),
             )
             return url
     return s.replace("&", r"\&").replace("$", r"\$").replace("#", r"\#").replace("_", r"\_")
@@ -1245,9 +1247,9 @@ def update_schemas(default_schema, user_schema):
     updated_schema = deepcopy(default_schema)
     for key in user_schema.keys():
         if (
-                (key in updated_schema)
-                and isinstance(updated_schema[key], dict)
-                and isinstance(user_schema[key], dict)
+            (key in updated_schema)
+            and isinstance(updated_schema[key], dict)
+            and isinstance(user_schema[key], dict)
         ):
             updated_schema[key] = update_schemas(updated_schema[key], user_schema[key])
         else:
@@ -1739,7 +1741,7 @@ def collect_appts(ppl_coll, filter_key=None, filter_value=None, begin_date=None,
     filter_key = [filter_key] if not isinstance(filter_key, list) else filter_key
     filter_value = [filter_value] if not isinstance(filter_value, list) else filter_value
     if (bool(filter_key) ^ bool(filter_value)) or (
-            filter_key and filter_value and len(filter_key) != len(filter_value)
+        filter_key and filter_value and len(filter_key) != len(filter_value)
     ):
         raise RuntimeError("number of filter keys and filter values do not match")
     begin_date = date_parser.parse(begin_date).date() if isinstance(begin_date, str) else begin_date
@@ -1843,7 +1845,7 @@ def grant_burn(grant, appts, begin_date=None, end_date=None):
             day = period_begin + relativedelta(days=x)
             for a in appts:
                 if (a.get("grant") == grant.get("_id") or a.get("grant") == grant.get("alias")) and is_current(
-                        a, now=day
+                    a, now=day
                 ):
                     if a.get("type") == "gra":
                         grad_val -= a.get("loading") * 1
@@ -2233,9 +2235,11 @@ def create_repo(destination_id, token_info_id, rc):
                 repo_info.get("built_url"), params=repo_info["params"], headers={"PRIVATE-TOKEN": token}
             )
             response.raise_for_status()
-            clone_text = (f"{repo_info.get('url').replace('https://', '')}:"
-                          f"{repo_info.get('namespace_name', '<group/org name>')}"
-                          f"/{repo_info['params'].get('name')}.git")
+            clone_text = (
+                f"{repo_info.get('url').replace('https://', '')}:"
+                f"{repo_info.get('namespace_name', '<group/org name>')}"
+                f"/{repo_info['params'].get('name')}.git"
+            )
             return (
                 f"repo {repo_info.get('params').get('name', 'unknown')} "
                 f"has been created at {repo_info.get('url')}.\nClone this "

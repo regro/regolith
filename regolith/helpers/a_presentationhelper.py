@@ -229,8 +229,10 @@ class PresentationAdderHelper(DbHelperBase):
             name_key = split_person[0][:2].casefold()
 
         if not rc.id:
-            key = (f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{name_key}_"
-                   f"{''.join(rc.place.casefold().split()).strip()}")
+            key = (
+                f"{str(begin_date.year)[2:]}{str(begin_date.strftime('%m'))}{name_key}_"
+                f"{''.join(rc.place.casefold().split()).strip()}"
+            )
         else:
             key = rc.id
 

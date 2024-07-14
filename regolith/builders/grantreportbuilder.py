@@ -112,9 +112,7 @@ class GrantReportBuilder(LatexBuilderBase):
         grant_prum_collaborators = list(
             set([collab for prum in grant_prums for collab in prum.get("collaborators", [])])
         )
-        list(
-            set([grp_mbr for prum in grant_prums for grp_mbr in prum.get("group_members", [])])
-        )
+        list(set([grp_mbr for prum in grant_prums for grp_mbr in prum.get("group_members", [])]))
         grant_people = grant_prum_leads
         # Accomplishments
         major_activities = []

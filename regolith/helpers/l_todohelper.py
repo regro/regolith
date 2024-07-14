@@ -42,8 +42,8 @@ def subparser(subpi):
         nargs="?",
         const=30,
         help="Filter for tasks of short duration. "
-             "All items with a duration <= # mins, will be returned "
-             "if the number # is specified.",
+        "All items with a duration <= # mins, will be returned "
+        "if the number # is specified.",
     )
     subpi.add_argument(
         "-t",
@@ -76,7 +76,7 @@ def subparser(subpi):
     subpi.add_argument(
         "--date",
         help="Enter a date such that the helper can calculate how many days are left "
-             "from that date to the due-date. Default is today.",
+        "from that date to the due-date. Default is today.",
         **date_kwargs,
     )
     subpi.add_argument(
@@ -84,7 +84,7 @@ def subparser(subpi):
         "--filter",
         nargs="+",
         help="Search this collection by giving key element pairs. '-f description paper' will return tasks "
-             "with description containing 'paper' ",
+        "with description containing 'paper' ",
     )
 
     return subpi
