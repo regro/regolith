@@ -63,6 +63,17 @@ PEOPLE_COLL = [
                 "status": "undergrad",
             }
         ],
+        "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
+        "service": [
+            {
+                "name": "International Steering Committee",
+                "role": "chair",
+                "type": "profession",
+                "year": 2020,
+                "month": 3,
+                "notes": ["something"],
+            }
+        ],
     },
     {
         "_id": "nm1",
@@ -94,6 +105,7 @@ PEOPLE_COLL = [
                 "status": "undergrad",
             }
         ],
+
     },
 ]
 
@@ -1715,41 +1727,23 @@ def test_is_fully_appointed(appts, start, end, expected):
 @pytest.mark.parametrize(
     "input, expected",
     [
-        (
-            {
-                "funding": [
-                    {"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013},
-                    {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
-                ]
-            },
+        ("honors",
             [
-                {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
-                {"description": "NIF User's Group Travel Award (\\$1,150)", "year": 2013, "_key": 2013.0},
-            ],
-        ),
-        (
-            {
-                "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
-                "service": [
-                    {
-                        "name": "International Steering Committee",
-                        "role": "chair",
-                        "type": "profession",
-                        "year": 2020,
-                        "month": 3,
-                        "notes": ["something"],
-                    }
-                ],
-            },
-            [
-                {"description": "International Steering Committee", "year": 2020, "_key": 2020.03},
                 {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
             ],
         ),
+        ("service",
+         [
+             {'_key': 2020.01,
+              'description': 'International Steering Committee',
+              'year': 2020},
+             {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
+         ],
+         ),
     ],
 )
-def test_get_id_from_name(input, expected):
-    assert awards_grants_honors(input) == expected
+def test_awards_grants_honors(input, expected):
+    assert awards_grants_honors(PEOPLE_COLL[0], input, funding=True, service_types=None) == expected
 
 
 @pytest.mark.parametrize(
