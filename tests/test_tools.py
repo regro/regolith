@@ -119,8 +119,16 @@ CONTACTS_COLL = [{"_id": "c1", "name": "contact1", "institution": "columbiau"}]
             ["m1", PEOPLE_COLL, CONTACTS_COLL],
             {
                 "_id": "m1",
-                "name": "member1",
-                "education": [
+                'funding': [{'name': "Omega Laser User's Group Travel Award",
+                             'value': 1100,
+                             'year': 2013}],
+                'name': 'member1',
+                'service': [{'month': 3,
+                             'name': 'International Steering Committee',
+                             'notes': ['something'],
+                             'role': 'chair',
+                             'type': 'profession',
+                             'year': 2020}],                "education": [
                     {
                         "group": "bg",
                         "institution": "columbiau",
@@ -146,7 +154,6 @@ CONTACTS_COLL = [{"_id": "c1", "name": "contact1", "institution": "columbiau"}]
     ],
 )
 def test_get_person_contact(input, expected):
-    print(input)
     actual = get_person_contact(input[0], input[1], input[2])
     assert actual == expected
 
