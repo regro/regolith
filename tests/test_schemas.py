@@ -10,7 +10,7 @@ def test_update_dict_target():
         },
         "_id": {
             "description": "Unique identifier for submission. "
-                           "This generally includes the author name and part of the title.",
+            "This generally includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
@@ -20,7 +20,7 @@ def test_update_dict_target():
     expected = {
         "_id": {
             "description": "Unique identifier for submission. "
-                           "This generally includes the author name and part of the title.",
+            "This generally includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
@@ -47,7 +47,7 @@ def test_insert_alloweds():
         },
         "_id": {
             "description": "Unique identifier for submission. "
-                           "This generally includes the author name and part of the title.",
+            "This generally includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
@@ -57,7 +57,7 @@ def test_insert_alloweds():
     expected = {
         "_id": {
             "description": "Unique identifier for submission. "
-                           "This generally includes the author name and part of the title.",
+            "This generally includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
