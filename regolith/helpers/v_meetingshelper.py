@@ -2,8 +2,8 @@
 
 import datetime as dt
 
-from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import all_docs_from_collection, get_pi_id, validate_meeting
 
 TARGET_COLL = "meetings"

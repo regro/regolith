@@ -25,9 +25,7 @@ Use `__git_commit__` instead.
 __all__ = ["__date__", "__git_commit__", "__timestamp__", "__version__"]
 
 import os.path
-
-from importlib.resources import files, as_file
-
+from importlib.resources import as_file, files
 
 # obtain version information from the version.cfg file
 cp = dict(version="", date="", commit="", timestamp="0")

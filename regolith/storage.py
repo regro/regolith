@@ -2,10 +2,10 @@
 
 import os
 import shutil
+from contextlib import contextmanager
 from warnings import warn
 
 from xonsh.lib import subprocess
-from contextlib import contextmanager
 
 try:
     import hglib

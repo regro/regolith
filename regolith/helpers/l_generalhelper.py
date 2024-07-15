@@ -1,12 +1,12 @@
 """Helper for listing filtered data from collections in the database."""
 
-from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import (
     all_docs_from_collection,
+    collection_str,
     get_pi_id,
     search_collection,
-    collection_str,
 )
 
 HELPER_TARGET = "lister"

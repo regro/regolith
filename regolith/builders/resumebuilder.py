@@ -4,15 +4,15 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
     all_docs_from_collection,
-    month_and_year,
-    filter_publications,
-    filter_projects,
-    filter_grants,
     awards_grants_honors,
+    filter_grants,
+    filter_projects,
+    filter_publications,
+    fuzzy_retrieval,
     latex_safe,
     make_bibtex_file,
     merge_collections_superior,
-    fuzzy_retrieval,
+    month_and_year,
 )
 
 

@@ -3,7 +3,7 @@
 import json
 import traceback
 
-from flask import Flask, abort, request, render_template
+from flask import Flask, abort, render_template, request
 
 app = Flask("regolith")
 

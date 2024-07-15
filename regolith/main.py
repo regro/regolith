@@ -4,19 +4,16 @@ from __future__ import print_function
 
 import copy
 import os
-from argparse import ArgumentParser, RawTextHelpFormatter, Namespace
+from argparse import ArgumentParser, Namespace, RawTextHelpFormatter
 
-from regolith.database import connect
-
-from regolith import commands
+from regolith import __version__, commands
 from regolith.builder import BUILDERS
-from regolith.commands import INGEST_COLL_LU
+from regolith.commands import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS, INGEST_COLL_LU
+from regolith.database import connect
 from regolith.helper import HELPERS
-from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
+from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
-from regolith import __version__
-from regolith.commands import DISCONNECTED_COMMANDS, CONNECTED_COMMANDS
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}

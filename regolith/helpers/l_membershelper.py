@@ -1,17 +1,16 @@
 """Helper for listing group members."""
 
-from regolith.dates import is_current
-from regolith.helpers.basehelper import SoutHelperBase
+from regolith.dates import get_dates, is_current
 from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import SoutHelperBase
 from regolith.sorters import position_key
 from regolith.tools import (
     all_docs_from_collection,
-    key_value_pair_filter,
     collection_str,
-    get_pi_id,
     fuzzy_retrieval,
+    get_pi_id,
+    key_value_pair_filter,
 )
-from regolith.dates import get_dates
 
 TARGET_COLL = "people"
 HELPER_TARGET = "l_members"

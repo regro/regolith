@@ -1,7 +1,7 @@
-This document contains methodological information about the dp_regolith_prums_to_mongodb prum worked on by lead: dpeters. 
+This document contains methodological information about the dp_regolith_prums_to_mongodb prum worked on by lead: dpeters.
 
 
-# NOTES 
+# NOTES
 
 - Initial hypothesis is that the latency introduced by the file system (fs) backend of the regolith software is due to the
   database rc calls that load the entire database before query or CRUD ops.
@@ -9,9 +9,9 @@ This document contains methodological information about the dp_regolith_prums_to
 - helpers (e.g., listers, updaters).
 - Code modifications that limit/delete all database loading protocols are documented in the following tables. The modifications
   serve as a basis for the methodology used to diagnose the regolith latency issue.
-- All trials were profiled using python's cProfiler and the .html files have been linked to the dp_regolith_prums_to_mongodb 
+- All trials were profiled using python's cProfiler and the .html files have been linked to the dp_regolith_prums_to_mongodb
   document in projecta.yml.
-- We were able to conclude that the database loading protocols for a_projectum cause latency on the fs backend. Separately, 
+- We were able to conclude that the database loading protocols for a_projectum cause latency on the fs backend. Separately,
   the connection configuration architecture causes latency on the MongoDB backend.
 
 
@@ -22,7 +22,7 @@ This document contains methodological information about the dp_regolith_prums_to
 |----------------------|----|--------------|---------------------------|
 | a_projectumhelper.py |    | no mod       | **11.832 s**              |
 
-**trials 21-40** 
+**trials 21-40**
 
 | script               | line | new code                                                    | avg. total execution time |
 |----------------------|------|-------------------------------------------------------------|---------------------------|
@@ -54,7 +54,7 @@ This document contains methodological information about the dp_regolith_prums_to
 |----------------------|----|--------------|---------------------------|
 | a_projectumhelper.py |    | no mod       | **3.606 s**               |
 
-**trials 21-40** 
+**trials 21-40**
 
 | script               | line | new code                                                    |  avg. total execution time |
 |----------------------|------|-------------------------------------------------------------|--------------------------|
@@ -78,7 +78,7 @@ This document contains methodological information about the dp_regolith_prums_to
 |                      | 166  | # }                                                         |
 |                      | 167  | return {}                                                   |
 
-**trials 61-80** 
+**trials 61-80**
 
 | script               | line | new code                                                    | avg. total execution time |
 |----------------------|------|-------------------------------------------------------------|---------------------------|

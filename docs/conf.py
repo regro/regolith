@@ -11,18 +11,18 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-from collections.abc import MutableMapping
 import json
 import tempfile
+from collections.abc import MutableMapping
 from subprocess import check_output
 from textwrap import indent
 
 import cloud_sptheme as csp
 
 from regolith import __version__ as REGOLITH_VERSION
-from regolith.fsclient import json_to_yaml, dump_json, _id_key
+from regolith.fsclient import _id_key, dump_json, json_to_yaml
 from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
-from regolith.schemas import SCHEMAS, EXEMPLARS
+from regolith.schemas import EXEMPLARS, SCHEMAS
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

@@ -1,15 +1,15 @@
 """Helper for adding a new person to the contacts collection."""
 
 import datetime as dt
-from nameparser import HumanName
-import dateutil.parser as date_parser
 import uuid
 
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+import dateutil.parser as date_parser
 from gooey import GooeyParser
+from nameparser import HumanName
 
+from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import DbHelperBase
+from regolith.tools import all_docs_from_collection, fragment_retrieval
 
 TARGET_COLL = "contacts"
 

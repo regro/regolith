@@ -2,9 +2,10 @@
 
 import os
 import time
-from xonsh.lib import subprocess
-from warnings import warn
 from distutils.dir_util import copy_tree
+from warnings import warn
+
+from xonsh.lib import subprocess
 
 try:
     import hglib

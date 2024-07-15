@@ -5,17 +5,15 @@ from __future__ import print_function
 import copy
 import os
 
-from regolith.database import connect
-
-from regolith import commands
-from regolith.helper import HELPERS
-from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
-from regolith.schemas import SCHEMAS
-from regolith.tools import update_schemas
-from regolith.commands import CONNECTED_COMMANDS
-
 from gooey import Gooey, GooeyParser
 
+from regolith import commands
+from regolith.commands import CONNECTED_COMMANDS
+from regolith.database import connect
+from regolith.helper import HELPERS
+from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
+from regolith.schemas import SCHEMAS
+from regolith.tools import update_schemas
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}

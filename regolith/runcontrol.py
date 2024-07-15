@@ -2,19 +2,15 @@
 
 from __future__ import print_function
 
+import io
 import json
 import os
-import io
+from collections.abc import Hashable, Iterable, Mapping
 from pprint import pformat
-from collections.abc import (
-    Mapping,
-    Iterable,
-    Hashable,
-)
 from warnings import warn
 
-from regolith.validators import always_true, noop, DEFAULT_VALIDATORS
 from regolith.database import connect
+from regolith.validators import DEFAULT_VALIDATORS, always_true, noop
 
 FORBIDDEN_NAMES = frozenset(["del", "global"])
 

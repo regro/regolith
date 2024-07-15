@@ -1,15 +1,20 @@
 """Helper for adding a to_do task to todos.yml"""
 
 import datetime as dt
+
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
-
-from regolith.chained_db import _convert_to_dict
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, get_pi_id, get_uuid, fragment_retrieval
 from gooey import GooeyParser
 
+from regolith.chained_db import _convert_to_dict
+from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import DbHelperBase
+from regolith.tools import (
+    all_docs_from_collection,
+    fragment_retrieval,
+    get_pi_id,
+    get_uuid,
+)
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]

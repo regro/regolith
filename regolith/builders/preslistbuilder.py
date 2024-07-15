@@ -21,12 +21,12 @@ in the presentations.yml. The presentations are output in a ./_build directory."
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
+from regolith.stylers import month_fullnames, sentencecase
 from regolith.tools import (
     all_docs_from_collection,
-    group_member_ids,
     filter_presentations,
+    group_member_ids,
 )
-from regolith.stylers import sentencecase, month_fullnames
 
 
 class PresListBuilder(LatexBuilderBase):

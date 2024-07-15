@@ -4,16 +4,17 @@ Prints name, institution, and email (if applicable) of the contact.
 
 import dateutil
 import dateutil.parser as date_parser
-from regolith.dates import is_current, get_dates
-from regolith.helpers.basehelper import SoutHelperBase
+from gooey import GooeyParser
+
+from regolith.dates import get_dates, is_current
 from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
     fuzzy_retrieval,
+    get_pi_id,
     search_collection,
 )
-from gooey import GooeyParser
 
 TARGET_COLL = "contacts"
 HELPER_TARGET = "l_contacts"

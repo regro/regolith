@@ -5,21 +5,21 @@ from datetime import date
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
-from regolith.sorters import ene_date_key, position_key, doc_date_key
-from regolith.stylers import sentencecase, month_fullnames
+from regolith.sorters import doc_date_key, ene_date_key, position_key
+from regolith.stylers import month_fullnames, sentencecase
 from regolith.tools import (
     all_docs_from_collection,
-    filter_publications,
-    filter_projects,
-    filter_grants,
     awards_grants_honors,
-    make_bibtex_file,
-    filter_employment_for_advisees,
     dereference_institution,
-    merge_collections_superior,
+    filter_employment_for_advisees,
+    filter_grants,
     filter_presentations,
-    remove_duplicate_docs,
+    filter_projects,
+    filter_publications,
     fuzzy_retrieval,
+    make_bibtex_file,
+    merge_collections_superior,
+    remove_duplicate_docs,
 )
 
 

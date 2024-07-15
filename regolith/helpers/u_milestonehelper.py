@@ -3,17 +3,17 @@ It can update the status, type, and due date of a projectum.
 It can add a new milestone to the projecta collection.
 """
 
-from copy import deepcopy
 import datetime as dt
+from copy import deepcopy
+
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, fragment_retrieval, get_uuid
 from regolith.dates import get_due_date
+from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import DbHelperBase
 from regolith.schemas import alloweds
-
+from regolith.tools import all_docs_from_collection, fragment_retrieval, get_uuid
 
 TARGET_COLL = "projecta"
 MILESTONE_TYPES = alloweds.get("MILESTONE_TYPES")

@@ -4,10 +4,7 @@ from nameparser import HumanName
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
-from regolith.tools import (
-    all_docs_from_collection,
-    dereference_institution,
-)
+from regolith.tools import all_docs_from_collection, dereference_institution
 
 
 class PropRevBuilder(LatexBuilderBase):

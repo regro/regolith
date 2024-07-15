@@ -2,7 +2,7 @@
 Loads the dbs for interactive sessions
 """
 
-from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases, connect_db
+from regolith.runcontrol import DEFAULT_RC, connect_db, filter_databases, load_rcfile
 
 rc = DEFAULT_RC
 rc._update(load_rcfile("regolithrc.json"))

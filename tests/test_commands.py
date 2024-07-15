@@ -1,18 +1,18 @@
-import subprocess
+import copy
+import json
 import os
+import subprocess
 import sys
 from pathlib import Path
+
 import pytest
-import json
-import copy
 
-from regolith.main import main
-from tests.conftest import ALTERNATE_REGOLITH_MONGODB_NAME, FS_DB_NAME
-from regolith.runcontrol import DEFAULT_RC, load_rcfile
 from regolith.database import connect
-from regolith.mongoclient import load_mongo_col
 from regolith.dates import convert_doc_iso_to_date
-
+from regolith.main import main
+from regolith.mongoclient import load_mongo_col
+from regolith.runcontrol import DEFAULT_RC, load_rcfile
+from tests.conftest import ALTERNATE_REGOLITH_MONGODB_NAME, FS_DB_NAME
 
 BILLINGE_TEST = False  # special tests for Billinge group, switch it to False before push to remote
 

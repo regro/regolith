@@ -9,11 +9,11 @@ from regolith.fsclient import _id_key
 from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_publications,
-    filter_projects,
-    make_bibtex_file,
-    document_by_value,
     dereference_institution,
+    document_by_value,
+    filter_projects,
+    filter_publications,
+    make_bibtex_file,
 )
 
 

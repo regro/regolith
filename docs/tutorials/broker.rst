@@ -101,4 +101,3 @@ they could be stored centrally and retrieved as needed.
 Also note that we could have also used the builder to replace other pieces of
 the document, eg ``\author{ {{-db['people']['cwright']['name']-}} }`` would
 have been replaced with the full name of the author.
-
