@@ -47,6 +47,7 @@ class ManRevBuilder(LatexBuilderBase):
                     "refreport_editor.txt",
                     outname + "_editor.txt",
                     title=rev["title"],
+                    newline="\n",
                     firstAuthorLastName=rev["first_author_last_name"],
                     editorEyesOnly=rev["editor_eyes_only"],
                 )
