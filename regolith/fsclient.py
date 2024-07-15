@@ -1,11 +1,13 @@
 """Contains a client database backed by the file system."""
 
+import datetime
 import json
+import logging
 import os
+import signal
 import sys
 from collections import defaultdict
 from copy import deepcopy
-import datetime
 from glob import iglob
 
 import ruamel.yaml
@@ -13,9 +15,6 @@ from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from regolith.tools import dbpathname
-
-import signal
-import logging
 
 
 class DelayedKeyboardInterrupt:

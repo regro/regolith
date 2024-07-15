@@ -13,7 +13,7 @@
 <h1><a href="#honors">Honors</a></h1>
 {%for h in sorted(p['honors'], key=doc_date_key, reverse=True)%}
   <h3>{{h['name']}}</h3>
-  {{h.get('month', '')}} {{h['year']}}{%if 'duration' in h%}, 
+  {{h.get('month', '')}} {{h['year']}}{%if 'duration' in h%},
   Duration: {{h['duration']}}{%endif%}
   {%if 'description' in h%}<br/>{{h['description']}}{%endif%}
   <br/><br/>
@@ -50,8 +50,8 @@
 <h1><a href="#funding">Awards, Grants, & Contracts</a></h1>
 {%for f in sorted(p['funding'], key=doc_date_key, reverse=True)%}
   <h3>{{f['name']}}</h3>
-  {{f.get('currency', '$')}}{{'{:,.2f}'.format(f['value'])}} in 
-  {{f.get('month', '')}} {{f['year']}}{%if 'duration' in f%}, 
+  {{f.get('currency', '$')}}{{'{:,.2f}'.format(f['value'])}} in
+  {{f.get('month', '')}} {{f['year']}}{%if 'duration' in f%},
   Duration: {{f['duration']}}{%endif%}
   <br/><br/>
 {%endfor%}
@@ -63,7 +63,7 @@
 <h1><a href="#service">Service</a></h1>
 {%for s in sorted(p['service'], key=doc_date_key, reverse=True)%}
   <h3>{{s['name']}}</h3>
-  {{s.get('month', '')}} {{s['year']}}{%if 'duration' in s%}, 
+  {{s.get('month', '')}} {{s['year']}}{%if 'duration' in s%},
   Duration: {{s['duration']}}{%endif%}
   {%if 'description' in s%}<br/>{{s['description']}}{%endif%}
   <br/><br/>
@@ -82,7 +82,7 @@
   {%if 'description' in proj%}{{proj['description']}}{%endif%}
   <ul>{%for pos in sorted(proj['team'], key=date_key, reverse=True)%}
     <li><b>{{pos['position']}}:</b><i>
-      {{pos.get('begin_month', '')}} {{pos['begin_year']}} - 
+      {{pos.get('begin_month', '')}} {{pos['begin_year']}} -
       {{pos.get('end_month', '')}} {{pos.get('end_year', 'present')}}
     </i></li>
   {%endfor%}</ul>
@@ -158,7 +158,7 @@
   <h2>{{m['organization']}}</h2>
   {{m['position']}},
   <i>
-    {{m.get('begin_month', '')}} {{m['begin_year']}} - 
+    {{m.get('begin_month', '')}} {{m['begin_year']}} -
     {{m.get('end_month', '')}} {{m.get('end_year', 'present')}}
   </i>
   {%if 'description' in m%}<br/>{{m['description']}}{%endif%}

@@ -1,4 +1,4 @@
-from regolith.schemas import insert_alloweds, _update_dict_target
+from regolith.schemas import _update_dict_target, insert_alloweds
 
 
 def test_update_dict_target():

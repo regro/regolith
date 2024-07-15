@@ -1,35 +1,35 @@
 """Builder for CVs."""
 
 import datetime as dt
+from copy import copy, deepcopy
 
 from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
-from copy import deepcopy, copy
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.builders.cpbuilder import is_pending, is_declined
+from regolith.builders.cpbuilder import is_declined, is_pending
+from regolith.dates import get_dates, is_current
 from regolith.fsclient import _id_key
-from regolith.dates import is_current, get_dates
-from regolith.sorters import position_key, doc_date_key
-from regolith.stylers import sentencecase, month_fullnames
+from regolith.sorters import doc_date_key, position_key
+from regolith.stylers import month_fullnames, sentencecase
 from regolith.tools import (
     all_docs_from_collection,
-    filter_publications,
-    filter_projects,
-    filter_grants,
-    make_bibtex_file,
-    fuzzy_retrieval,
-    filter_employment_for_advisees,
-    filter_service,
-    filter_facilities,
-    filter_activities,
-    filter_presentations,
     awards,
-    filter_patents,
-    filter_licenses,
-    get_id_from_name,
-    merge_collections_all,
+    filter_activities,
     filter_committees,
+    filter_employment_for_advisees,
+    filter_facilities,
+    filter_grants,
+    filter_licenses,
+    filter_patents,
+    filter_presentations,
+    filter_projects,
+    filter_publications,
+    filter_service,
+    fuzzy_retrieval,
+    get_id_from_name,
+    make_bibtex_file,
+    merge_collections_all,
 )
 
 

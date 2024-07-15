@@ -52,6 +52,3 @@ will need major revisions to be worthy of publication
 is not appropriate for {{ journal }} and should be submitted to a more
 appropriate journal
 {% endif -%}
-
-
-

@@ -109,4 +109,3 @@ Broader Impacts:
 
 In Summary:
 {{ summary }}
-

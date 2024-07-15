@@ -1,13 +1,13 @@
 import os
+
+# from xonsh.lib import subprocess
+import subprocess
 import sys
+from pathlib import Path
 
 import habanero
 import openpyxl
 import pytest
-
-# from xonsh.lib import subprocess
-import subprocess
-from pathlib import Path
 
 from regolith.broker import load_db
 from regolith.main import main

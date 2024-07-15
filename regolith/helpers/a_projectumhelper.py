@@ -5,20 +5,17 @@ one manuscript.
 """
 
 import datetime as dt
+
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
+from gooey import GooeyParser
 
-from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.tools import (
-    all_docs_from_collection,
-    get_pi_id,
-    get_uuid,
-)
+from regolith.helpers.basehelper import DbHelperBase
+from regolith.tools import all_docs_from_collection, get_pi_id, get_uuid
 
 # from regolith.schemas import MILESTONE_TYPES
 
-from gooey import GooeyParser
 
 TARGET_COLL = "projecta"
 

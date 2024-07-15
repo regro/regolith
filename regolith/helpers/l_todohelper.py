@@ -3,21 +3,22 @@
 Tasks are gathered from people.yml, milestones, and group meeting actions."""
 
 import datetime as dt
-import dateutil.parser as date_parser
 import math
 
-from regolith.helpers.basehelper import SoutHelperBase
+import dateutil.parser as date_parser
+from gooey import GooeyParser
+from nameparser import HumanName
+
 from regolith.fsclient import _id_key
-from regolith.schemas import alloweds, PROJECTUM_ACTIVE_STATI
+from regolith.helpers.basehelper import SoutHelperBase
+from regolith.schemas import PROJECTUM_ACTIVE_STATI, alloweds
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
     document_by_value,
-    print_task,
+    get_pi_id,
     key_value_pair_filter,
+    print_task,
 )
-from nameparser import HumanName
-from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 HELPER_TARGET = "l_todo"

@@ -65,7 +65,7 @@ function onKeyDown(k) {
 	tick();
 }
 
-// Maze functions modified from the ones at 
+// Maze functions modified from the ones at
 // http://rosettacode.org/wiki/Maze_generation#JavaScript
 function mazegen(x,y) {
     var n=x*y-1;
@@ -99,10 +99,10 @@ function mazegen(x,y) {
             unvisited[next[0]+1][next[1]+1]= false;
             if (next[0] == here[0])
                 horiz[next[0]][(next[1]+here[1]-1)/2]= true;
-            else 
+            else
                 verti[(next[0]+here[0]-1)/2][next[1]]= true;
             path.push(here= next);
-        } else 
+        } else
             here= path.pop();
     }
     return ({x: x, y: y, horiz: horiz, verti: verti});
@@ -120,7 +120,7 @@ function mazedisplay(m) {
         var line= [];
         if (0 == j%2)
             for (var k=0; k<m.y*4+1; k++)
-                if (0 == k%4) 
+                if (0 == k%4)
                     line[k]= '#';
                 else
                     if (j>0 && m.verti[j/2-1][Math.floor(k/4)])
@@ -162,8 +162,3 @@ function initRgDungeon() {
 	ut.initInput(onKeyDown);
     console.log(rgmap.join('\n'));
 }
-
-
-
-
-

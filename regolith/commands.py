@@ -7,14 +7,13 @@ import sys
 from copy import copy
 from pprint import pprint
 
-from regolith.builder import builder, BUILDERS
+from regolith import storage
+from regolith.builder import BUILDERS, builder
 from regolith.deploy import deploy as dploy
 from regolith.emailer import emailer
-from regolith.helper import HELPERS, helpr, UPDATER_HELPERS, FAST_UPDATER_WHITELIST
+from regolith.helper import FAST_UPDATER_WHITELIST, HELPERS, UPDATER_HELPERS, helpr
 from regolith.runcontrol import RunControl
 from regolith.tools import string_types
-from regolith import storage
-
 
 email = emailer
 

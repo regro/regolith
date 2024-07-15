@@ -1,9 +1,14 @@
 """Builder for publication lists."""
 
-from regolith.tools import all_docs_from_collection, filter_publications, make_bibtex_file
-from regolith.sorters import ene_date_key, position_key
-from regolith.builders.basebuilder import LatexBuilderBase
 from dateutil import parser as date_parser
+
+from regolith.builders.basebuilder import LatexBuilderBase
+from regolith.sorters import ene_date_key, position_key
+from regolith.tools import (
+    all_docs_from_collection,
+    filter_publications,
+    make_bibtex_file,
+)
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 

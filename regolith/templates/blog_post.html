@@ -3,7 +3,7 @@
 <h1>{{post['title']}}</h1>
 {% endblock header %}
 {% block content %}
-<h2>Posted by {{post['author']}} on 
+<h2>Posted by {{post['author']}} on
     <i>{{post['month']}} {{post['day']}}, {{post['year']}}</i>
 </h2>
 {%if post.get('original')%}

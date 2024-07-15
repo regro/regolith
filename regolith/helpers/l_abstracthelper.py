@@ -1,10 +1,16 @@
 import operator
 
-from regolith.dates import get_dates
-from regolith.helpers.basehelper import SoutHelperBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, get_pi_id, get_person_contact, dereference_institution
 from gooey import GooeyParser
+
+from regolith.dates import get_dates
+from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import SoutHelperBase
+from regolith.tools import (
+    all_docs_from_collection,
+    dereference_institution,
+    get_person_contact,
+    get_pi_id,
+)
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"

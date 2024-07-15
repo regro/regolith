@@ -299,7 +299,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     }
 {% endfor %}
 {% endif %}
-              
+
 
 {% if len(currentphds) > 0 or len(graduatedphds) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,7 +322,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     \end{itemize}
 {% endif %}
 {% endif %}
-    
+
 {% if len(postdocs) > 0 %}
 \subsection*{ Postdoctoral researchers and research scientists supported on grants}
     \begin{itemize}[label=$-$]
@@ -340,7 +340,7 @@ subaward of \textbf{ \${{"{:,.2f}".format(coi_amount)}} } total awarded. }
     {%endfor%}
     \end{itemize}
 {% endif %}
-    
+
 
 {% if len(masters) > 0 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -478,7 +478,7 @@ $^\mathrm{ {{-pres['end_day_suffix']-}} }$
 {% endfor %}
 {% endif %}
 
-            
+
 {%if 'membership' in p and len(p['membership']) > 0%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \resheading{Memberships}

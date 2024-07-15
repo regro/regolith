@@ -14,7 +14,7 @@
   {%endfor%}</ul>{%endif%}
   {%if 'team' in proj%}<h3>Team</h3><ul>{%for pos in proj['team']%}
     <li><b>{{pos['name']}}:</b> {{pos['position']}}, <i>
-      {{pos.get('begin_month', '')}} {{pos['begin_year']}} - 
+      {{pos.get('begin_month', '')}} {{pos['begin_year']}} -
       {{pos.get('end_month', '')}} {{pos.get('end_year', 'present')}}</i>
     </li>
   {%endfor%}</ul>{%endif%}

@@ -1,11 +1,16 @@
-from regolith.helpers.basehelper import SoutHelperBase
-from regolith.dates import get_dates
-from regolith.tools import fuzzy_retrieval, merge_collections_superior, all_docs_from_collection
-from regolith.sorters import position_key
-from datetime import date, timedelta
-from regolith.helpers.makeappointmentshelper import _future_grant
-from regolith.fsclient import _id_key
 import calendar
+from datetime import date, timedelta
+
+from regolith.dates import get_dates
+from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import SoutHelperBase
+from regolith.helpers.makeappointmentshelper import _future_grant
+from regolith.sorters import position_key
+from regolith.tools import (
+    all_docs_from_collection,
+    fuzzy_retrieval,
+    merge_collections_superior,
+)
 
 SEMESTER_START_MONTH = {"fall": (9, 12), "spring": (1, 5), "summer": (6, 8)}
 

@@ -7,15 +7,13 @@ import os
 import shlex
 from argparse import ArgumentParser
 
-from regolith.database import connect
-
 from regolith import __version__
+from regolith.commands import CONNECTED_COMMANDS
+from regolith.database import connect
 from regolith.helper import HELPERS
-from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases
+from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
 from regolith.schemas import SCHEMAS
 from regolith.tools import update_schemas
-from regolith.commands import CONNECTED_COMMANDS
-
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}

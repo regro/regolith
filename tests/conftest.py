@@ -5,13 +5,11 @@ import json
 import os
 import tempfile
 from copy import deepcopy
+from subprocess import CalledProcessError
 
 import pytest
 from pymongo import MongoClient
 from pymongo import errors as mongo_errors
-
-from subprocess import CalledProcessError
-
 from xonsh.lib import subprocess
 from xonsh.lib.os import rmtree
 

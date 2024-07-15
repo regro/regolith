@@ -1,22 +1,22 @@
 """Helper for adding a presentation to the presentation collection."""
 
 import time
-
-import dateutil.parser as date_parser
 from warnings import warn
 
+import dateutil.parser as date_parser
+from gooey import GooeyParser
+
+from regolith.fsclient import _id_key
 from regolith.helpers.a_expensehelper import expense_constructor
 from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
 from regolith.schemas import alloweds
 from regolith.tools import (
-    all_docs_from_collection,
-    get_pi_id,
     add_to_google_calendar,
-    google_cal_auth_flow,
+    all_docs_from_collection,
     create_repo,
+    get_pi_id,
+    google_cal_auth_flow,
 )
-from gooey import GooeyParser
 
 TARGET_COLL = "presentations"
 EXPENSES_COLL = "expenses"

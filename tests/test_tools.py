@@ -1,49 +1,49 @@
+import copy
+import datetime as dt
+
 import habanero
 import pytest
-import datetime as dt
-import copy
 import requests_mock
 
 from regolith.runcontrol import DEFAULT_RC
-
 from regolith.tools import (
-    filter_publications,
+    awards_grants_honors,
+    collect_appts,
+    collection_str,
+    compound_dict,
+    compound_list,
+    create_repo,
+    date_to_rfc822,
+    dereference_institution,
+    filter_employment_for_advisees,
     filter_presentations,
-    fuzzy_retrieval,
+    filter_publications,
     fragment_retrieval,
-    number_suffix,
-    latex_safe,
-    update_schemas,
+    fuzzy_retrieval,
+    get_appointments,
+    get_formatted_crossref_reference,
+    get_id_from_name,
+    get_person_contact,
+    get_tags,
+    get_target_repo_info,
+    get_target_token,
+    get_uuid,
+    grant_burn,
     group,
-    is_fully_appointed,
-    group_member_ids,
     group_member_employment_start_end,
+    group_member_ids,
+    is_fully_appointed,
+    key_value_pair_filter,
+    latex_safe,
     merge_collections_all,
     merge_collections_intersect,
     merge_collections_superior,
     month_and_year,
+    number_suffix,
     remove_duplicate_docs,
-    awards_grants_honors,
-    get_id_from_name,
-    get_person_contact,
-    date_to_rfc822,
-    key_value_pair_filter,
-    collection_str,
     search_collection,
-    collect_appts,
-    grant_burn,
+    update_schemas,
     validate_meeting,
-    get_formatted_crossref_reference,
-    compound_dict,
-    compound_list,
-    filter_employment_for_advisees,
-    get_tags,
-    dereference_institution,
-    get_target_repo_info,
-    get_target_token,
-    create_repo,
-    get_uuid,
-    get_appointments,
 )
 
 PEOPLE_COLL = [
