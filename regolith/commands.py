@@ -243,7 +243,7 @@ def validate(rc):
                     any_errors = True
                     print(f"Errors found in {name}")
                     print("=" * len(f"Errors found in {name}"))
-                print(f"ERROR in {doc_id}:")
+                print(f"ERROR in {doc_id}: ")
                 pprint(v[1])
                 cap = copy(v[1])
                 for vv in v[1]:

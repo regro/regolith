@@ -200,7 +200,7 @@ class GrantReportBuilder(LatexBuilderBase):
         missing_contacts = [id for id in grant_prum_collaborators if not collaborators.get(id)]
         missing_contacts = list(set(missing_contacts))
         for person_id in missing_contacts:
-            print(f"WARNING: contact {person_id} not found in contacts collection")
+            print(f"WARNING: contact {person_id} found not in contacts collection")
 
         # Impacts
         begin_date_str = rp_start_date.isoformat()

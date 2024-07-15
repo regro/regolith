@@ -67,7 +67,7 @@ class FormalLetterBuilder(LatexBuilderBase):
             from_date, to_date = None, None
 
         for letter in self.gtx["formalletters"]:
-            if letter.get("date") is type(datetime.date):
+            if isinstance(letter.get("date"), type(datetime.date)):
                 letter_date = letter.get("date")
             else:
                 letter_date = date_parser.parse(letter.get("date")).date()

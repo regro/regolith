@@ -111,7 +111,7 @@ class GrpPubReadListAdderHelper(DbHelperBase):
             all_tags = get_tags(self.gtx["citations"])
         else:
             all_tags = rc.tags
-        print(f"Making lists for tags:\n{all_tags}")
+        print(f"Making lists for tags: \n{all_tags}")
         if rc.date:
             update_date = date_parser.parse(rc.date).date()
         else:

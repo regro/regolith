@@ -375,7 +375,7 @@ def is_current(thing, now=None):
         if dates.get("begin_date") <= now <= dates.get("end_date"):
             current = True
     except RuntimeError:
-        raise RuntimeError(f"Cannot find begin_date in document:\n {thing['_id']}")
+        raise RuntimeError(f"Cannot find begin_date in document: \n {thing['_id']}")
     return current
 
 
@@ -403,7 +403,7 @@ def has_started(thing, now=None):
         if dates.get("begin_date") <= now:
             started = True
     except RuntimeError:
-        raise RuntimeError(f"Cannot find begin_date in document:\n {thing}")
+        raise RuntimeError(f"Cannot find begin_date in document: \n {thing}")
     return started
 
 
@@ -458,7 +458,7 @@ def is_before(thing, now=None):
         if dates.get("date") < now:
             before = True
     except RuntimeError:
-        raise RuntimeError(f"Cannot find date in document:\n {thing}")
+        raise RuntimeError(f"Cannot find date in document: \n {thing}")
     return before
 
 
@@ -486,7 +486,7 @@ def is_after(thing, now=None):
         if now < dates.get("date"):
             after = True
     except RuntimeError:
-        raise RuntimeError(f"Cannot find date in document:\n {thing}")
+        raise RuntimeError(f"Cannot find date in document: \n {thing}")
     return after
 
 

@@ -55,7 +55,7 @@ class ReimbursementBuilder(BuilderBase):
             if ex["payee"] != "direct_billed":
                 for chosen_one in chosen_ones:
                     if not payee:
-                        print(f"WARNING: payee {ex['payee']} not found in " f"people coll")
+                        print(f"WARNING: payee {ex['payee']} found not in " f"people coll")
                     elif payee.get("name") != chosen_one.get("name"):
                         continue
                     # open the template

@@ -132,7 +132,7 @@ class ContactsListerHelper(SoutHelperBase):
                         if contact.get(k):
                             if isinstance(contact.get(k), list):
                                 lst_expanded = "\n        -".join(map(str, contact.get(k)))
-                                contact_str += f"    {k}:\n        -{lst_expanded}\n"
+                                contact_str += f"    {k}: \n -{lst_expanded}\n"
                             else:
                                 contact_str += f"    {k}: {contact.get(k)}\n"
                     string_contacts += contact_str

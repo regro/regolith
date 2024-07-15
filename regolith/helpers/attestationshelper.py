@@ -105,11 +105,11 @@ class AttestationsHelper(DbHelperBase):
                 end_date = date.today()
         else:
             print(
-                f"Instructions/Notes:\n"
+                f"Instructions/Notes: \n"
                 f"  Quarters are: Q1 July thru Sept, Q2 Oct - Dec, Q3 Jan - Mar, Q4 Apr - Jun\n"
                 f"  Grad salaries are about ${MONTH_COST} per month"
             )
-            print(f"Collecting Appointments for grant {rc.grant}:")
+            print(f"Collecting Appointments for grant {rc.grant}: ")
             begin_date = get_dates(grant).get("begin_date")
             end_date = get_dates(grant).get("end_date")
 
@@ -200,7 +200,7 @@ class AttestationsHelper(DbHelperBase):
             index = 0
 
             for month in months:
-                print(f"{month.isoformat()}:")
+                print(f"{month.isoformat()}: ")
                 for person in people_loadings:
                     if person[2][index] > 0:
                         print(f"    {person[0]}\tloading: {round(person[2][index], 2)}")
@@ -242,7 +242,7 @@ class AttestationsHelper(DbHelperBase):
                     for amt, dte in zip(all_reimb_amts, all_reimb_dates):
                         if month.year == dte.year and month.month == dte.month:
                             month_spend += amt
-                    print(f"{month}: expenses monthly total = {month_spend:.2f}")
+                    print(f"{month}: expenses monthly total = {month_spend: .2f}")
 
             print(f"Total spend = {round(total_spend, 2)}")
 
