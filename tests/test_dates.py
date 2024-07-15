@@ -4,20 +4,20 @@ from datetime import date
 import pytest
 
 from regolith.dates import (
-    date_to_float,
+    month_to_str_int,
     day_to_str_int,
     find_gaps_overlaps,
     get_dates,
-    get_due_date,
-    has_finished,
-    has_started,
-    is_after,
-    is_before,
-    is_between,
-    is_current,
     last_day,
-    month_to_int,
-    month_to_str_int,
+    is_current,
+    get_due_date,
+    has_started,
+    has_finished,
+    is_before,
+    is_after,
+    is_between,
+    date_to_float,
+    month_to_int
 )
 
 TEST_DATE = date(2019, 6, 15)
