@@ -159,6 +159,11 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
         html_tex_bool = False
         if file.name.endswith(".html") or file.name.endswith(".tex"):
             html_tex_bool = True
+        elif file.name.endswith(".txt"):
+            txt_bool = True
+        else:
+            html_tex_bool = False
+            txt_bool = False
         if bm == "reimb":
             actual = openpyxl.load_workbook(actual_file)["T&B"]
             actual = [str(actual[b]) for b in xls_check]
@@ -170,6 +175,13 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
             actual = openpyxl.load_workbook(actual_file)[sheet]
             actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
         elif html_tex_bool:
+            with open(actual_file, "r") as f:
+                actual = [line.strip() for line in f]
+            actual = [string for string in actual if ".." not in string]
+            actual = [string for string in actual if "Temp" not in string]
+            actual = [string for string in actual if "/tmp/" not in string]
+            actual = [string for string in actual if len(string) != 0]
+        elif txt_bool:
             with open(actual_file, "r") as f:
                 actual = [line.strip() for line in f]
             actual = [string for string in actual if ".." not in string]
@@ -196,13 +208,20 @@ def test_builder(bm, db_src, make_db, make_mongodb, monkeypatch):
             expected = [string for string in expected if "Temp" not in string]
             expected = [string for string in expected if "/tmp/" not in string]
             expected = [string for string in expected if len(string) != 0]
+        elif txt_bool:
+            with open(actual_file, "r") as f:
+                expected = [line.strip() for line in f]
+            expected = [string for string in expected if ".." not in string]
+            expected = [string for string in expected if "Temp" not in string]
+            expected = [string for string in expected if "/tmp/" not in string]
+            expected = [string for string in expected if len(string) != 0]
         else:
             with open(file, "r") as f:
                 expected = f.read()
 
         # Skip because of a date time in
         if file != "rss.xml":
-            assert expected == actual
+            assert actual == expected
 
 
 @pytest.mark.parametrize("db_src", db_srcs)
@@ -288,8 +307,11 @@ def test_builder_python(bm, db_src, make_db, make_mongodb, monkeypatch):
         actual_file = build_dir / file.name
         # if they are tex or html, disregard certain formatting things
         html_tex_bool = False
+        txt_bool = False
         if file.name.endswith(".html") or file.name.endswith(".tex"):
             html_tex_bool = True
+        if file.name.endswith(".txt"):
+            txt_bool = True
         if bm == "reimb":
             actual = openpyxl.load_workbook(actual_file)["T&B"]
             actual = [str(actual[b]) for b in xls_check]
@@ -301,6 +323,13 @@ def test_builder_python(bm, db_src, make_db, make_mongodb, monkeypatch):
             actual = openpyxl.load_workbook(actual_file)[sheet]
             actual = [str(actual[cell]) for cell in recent_collabs_xlsx_check]
         elif html_tex_bool:
+            with open(actual_file, "r") as f:
+                actual = [line.strip() for line in f]
+            actual = [string for string in actual if ".." not in string]
+            actual = [string for string in actual if "Temp" not in string]
+            actual = [string for string in actual if "/tmp/" not in string]
+            actual = [string for string in actual if len(string) != 0]
+        elif txt_bool:
             with open(actual_file, "r") as f:
                 actual = [line.strip() for line in f]
             actual = [string for string in actual if ".." not in string]
@@ -322,6 +351,13 @@ def test_builder_python(bm, db_src, make_db, make_mongodb, monkeypatch):
             expected = openpyxl.load_workbook(file)[sheet]
             expected = [str(expected[cell]) for cell in recent_collabs_xlsx_check]
         elif html_tex_bool:
+            with open(file, "r") as f:
+                expected = [line.strip() for line in f]
+            expected = [string for string in expected if ".." not in string]
+            expected = [string for string in expected if "Temp" not in string]
+            expected = [string for string in expected if "/tmp/" not in string]
+            expected = [string for string in expected if len(string) != 0]
+        elif txt_bool:
             with open(file, "r") as f:
                 expected = [line.strip() for line in f]
             expected = [string for string in expected if ".." not in string]

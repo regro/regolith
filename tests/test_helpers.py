@@ -1,8 +1,8 @@
+import copy
 import os
 from pathlib import Path
-import pytest
-import copy
 
+import pytest
 import requests_mock
 
 from regolith.main import main
@@ -1495,9 +1495,9 @@ def test_helper_python_mock(hmr, make_db, db_src, make_mongodb, capsys, **kwargs
 
 
 def assert_mongo_vs_yaml_outputs(expecteddir, mongo_database):
-    from regolith.mongoclient import load_mongo_col
-    from regolith.fsclient import load_yaml
     from regolith.dates import convert_doc_iso_to_date
+    from regolith.fsclient import load_yaml
+    from regolith.mongoclient import load_mongo_col
 
     os.chdir(expecteddir)
     for root, dirs, files in os.walk("."):

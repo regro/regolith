@@ -2,10 +2,11 @@
 
 import datetime as dt
 from copy import copy
+
 from nameparser import HumanName
 
 from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import is_current, get_dates
+from regolith.dates import get_dates, is_current
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.tools import (

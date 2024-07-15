@@ -1,10 +1,10 @@
 import os
 import sys
 from io import StringIO
+from subprocess import CalledProcessError
 
 import pytest
 from xonsh.lib import subprocess
-from subprocess import CalledProcessError
 
 from regolith.main import main
 

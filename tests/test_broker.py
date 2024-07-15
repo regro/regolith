@@ -4,7 +4,6 @@ import tempfile
 
 from regolith.broker import load_db
 
-
 TMPDIR = tempfile.gettempdir()
 
 

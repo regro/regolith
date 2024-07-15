@@ -6,28 +6,28 @@ import pathlib
 import platform
 import re
 import sys
-import requests
 import uuid
-from copy import copy
-from copy import deepcopy
-from datetime import datetime, date
-from dateutil import parser as date_parser
-from dateutil.relativedelta import relativedelta
-from habanero import Crossref
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
+from copy import copy, deepcopy
+from datetime import date, datetime
 from urllib.parse import urlparse
 
-from regolith.dates import month_to_int, date_to_float, get_dates, is_current
-from regolith.sorters import id_key, ene_date_key, doc_date_key_high
+import requests
+from dateutil import parser as date_parser
+from dateutil.relativedelta import relativedelta
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from habanero import Crossref
+from requests.exceptions import ConnectionError, HTTPError
+
+from regolith.dates import date_to_float, get_dates, is_current, month_to_int
 from regolith.schemas import alloweds
-from requests.exceptions import HTTPError, ConnectionError
+from regolith.sorters import doc_date_key_high, ene_date_key, id_key
 
 try:
-    from bibtexparser.bwriter import BibTexWriter
     from bibtexparser.bibdatabase import BibDatabase
+    from bibtexparser.bwriter import BibTexWriter
 
     HAVE_BIBTEX_PARSER = True
 except ImportError:
@@ -2043,8 +2043,9 @@ def remove_duplicate_docs(coll, key):
 
 
 def validate_doc(collection_name, doc, rc):
-    from regolith.schemas import validate
     from pprint import pformat
+
+    from regolith.schemas import validate
 
     v = validate(collection_name, doc, rc.schemas)
     error_message = ""

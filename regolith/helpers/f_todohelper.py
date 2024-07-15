@@ -1,20 +1,20 @@
 """Helper for marking a task as finished in todos collection."""
 
 import datetime as dt
-
-import dateutil.parser as date_parser
 import math
 
-from regolith.helpers.basehelper import DbHelperBase
+import dateutil.parser as date_parser
+from gooey import GooeyParser
+
 from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import DbHelperBase
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
     document_by_value,
-    print_task,
+    get_pi_id,
     key_value_pair_filter,
+    print_task,
 )
-from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [0, 1, 2]

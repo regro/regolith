@@ -1,24 +1,23 @@
 """Builder for websites."""
 
+import datetime as dt
 import os
 import shutil
-import datetime as dt
 
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates
 from regolith.fsclient import _id_key
-from regolith.sorters import position_key, ene_date_key
+from regolith.sorters import ene_date_key, position_key
 from regolith.tools import (
     all_docs_from_collection,
-    filter_publications,
+    dereference_institution,
+    document_by_value,
     filter_projects,
+    filter_publications,
+    fuzzy_retrieval,
     get_formatted_crossref_reference,
     make_bibtex_file,
-    document_by_value,
-    dereference_institution,
-    fuzzy_retrieval,
 )
-
 
 PROJ_URL_BASE = "https://gitlab.thebillingegroup.com/talks/"
 

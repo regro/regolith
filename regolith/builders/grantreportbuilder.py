@@ -2,9 +2,10 @@
 
 from datetime import date
 
+import dateutil.parser as date_parser
+
 # from habanero import Crossref
 from nameparser import HumanName
-import dateutil.parser as date_parser
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.dates import get_dates, is_current

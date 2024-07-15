@@ -1,16 +1,16 @@
 import json
 import os
 import shutil
-from xonsh.lib import subprocess
 import sys
 import tempfile
 from copy import deepcopy
 
+from xonsh.lib import subprocess
+
 from regolith.broker import load_db
 from regolith.fsclient import dump_yaml
-from regolith.schemas import EXEMPLARS
 from regolith.main import main
-
+from regolith.schemas import EXEMPLARS
 
 builder_map = [
     "cv",

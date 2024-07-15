@@ -2,6 +2,7 @@
 Maintained such that only pymongo is necessary when using helper/builders, and additional command-line tools
 are necessary to install for maintenance tasks, such as fs-to-mongo."""
 
+import datetime
 import itertools
 import os
 import shutil
@@ -13,7 +14,6 @@ from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
-import datetime
 
 from ruamel.yaml import YAML
 
@@ -35,8 +35,8 @@ except ImportError:
 
 from pymongo.collection import Collection
 
-from regolith.tools import dbpathname, fallback
 from regolith import fsclient
+from regolith.tools import dbpathname, fallback
 
 if not MONGO_AVAILABLE:
     ON_PYMONGO_V2 = ON_PYMONGO_V3 = False
@@ -118,9 +118,9 @@ def import_yamls(dbpath: str, dbname: str, host: str = None, uri: str = None) ->
         for yaml_file in yaml_files:
             json_file = Path(tempd).joinpath(yaml_file.with_suffix(".json").name)
             loader = YAML(typ="safe")
-            loader.constructor.yaml_constructors["tag:yaml.org,2002:timestamp"] = (
-                loader.constructor.yaml_constructors["tag:yaml.org,2002:str"]
-            )
+            loader.constructor.yaml_constructors[
+                "tag:yaml.org,2002:timestamp"
+            ] = loader.constructor.yaml_constructors["tag:yaml.org,2002:str"]
             fsclient.yaml_to_json(str(yaml_file), str(json_file), loader=loader)
         import_jsons(tempd, dbname, host=host, uri=uri)
     return

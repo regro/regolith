@@ -1,8 +1,9 @@
 import datetime as dt
+
 from regolith.dates import get_dates
-from regolith.tools import all_docs_from_collection
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
+from regolith.tools import all_docs_from_collection
 
 TARGET_COLL = "expenses"
 

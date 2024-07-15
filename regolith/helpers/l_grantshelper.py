@@ -1,18 +1,20 @@
 """Helper for listing upcoming (and past) grants."""
 
 import datetime as dt
+
 import dateutil.parser as date_parser
+from gooey import GooeyParser
+
 from regolith.dates import get_dates, is_current
-from regolith.helpers.basehelper import SoutHelperBase
 from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import (
     all_docs_from_collection,
+    collection_str,
     get_pi_id,
     key_value_pair_filter,
-    collection_str,
     merge_collections_superior,
 )
-from gooey import GooeyParser
 
 TARGET_COLL = "grants"
 HELPER_TARGET = "l_grants"

@@ -10,7 +10,6 @@ from flatten_dict import flatten, unflatten
 
 from .sorters import POSITION_LEVELS
 
-
 SORTED_POSITION = sorted(POSITION_LEVELS.keys(), key=POSITION_LEVELS.get)
 PROJECTUM_ACTIVE_STATI = ["proposed", "converged", "started"]
 PROJECTUM_PAUSED_STATI = ["backburner", "paused"]
