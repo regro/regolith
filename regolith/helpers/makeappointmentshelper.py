@@ -7,29 +7,29 @@
 - Suggests new appointments
 """
 
+from datetime import date, timedelta
+
+import matplotlib.pyplot as plt
 import numpy
-from dateutil.relativedelta import relativedelta
 from dateutil import parser as date_parser
-from datetime import timedelta, date
-from regolith.helpers.basehelper import SoutHelperBase
+from dateutil.relativedelta import relativedelta
+from gooey import GooeyParser
+
+from regolith.dates import get_dates
 
 # from regolith.schemas import APPOINTMENTS_TYPES
 from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import SoutHelperBase
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
-    is_fully_appointed,
     collect_appts,
+    fuzzy_retrieval,
+    get_pi_id,
     grant_burn,
     group_member_employment_start_end,
+    is_fully_appointed,
     merge_collections_superior,
-    fuzzy_retrieval,
 )
-from regolith.dates import (
-    get_dates,
-)
-from gooey import GooeyParser
-import matplotlib.pyplot as plt
 
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"

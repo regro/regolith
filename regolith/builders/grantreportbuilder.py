@@ -2,9 +2,10 @@
 
 from datetime import date
 
+import dateutil.parser as date_parser
+
 # from habanero import Crossref
 from nameparser import HumanName
-import dateutil.parser as date_parser
 
 from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.dates import get_dates, is_current
@@ -209,6 +210,7 @@ class GrantReportBuilder(LatexBuilderBase):
             "grantreport.txt",
             f"{grant_id}_report_{begin_date_str}_{end_date_str}.txt",
             begin_date=begin_date_str,
+            newline="\n",
             end_date=end_date_str,
             majorActivities=major_activities,
             significantResults=significant_results,

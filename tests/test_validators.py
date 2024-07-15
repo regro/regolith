@@ -1,12 +1,12 @@
+import copy
+import os
 from collections.abc import Sequence
 from pathlib import Path
-import os
-import copy
+from pprint import pprint
 
 import pytest
 
-from regolith.schemas import SCHEMAS, validate, EXEMPLARS
-from pprint import pprint
+from regolith.schemas import EXEMPLARS, SCHEMAS, validate
 
 
 @pytest.mark.parametrize("key", SCHEMAS.keys())

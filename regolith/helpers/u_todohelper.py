@@ -1,22 +1,22 @@
 """Helper for updating a task in todos of todos collection."""
 
 import datetime as dt
+import math
 
 import dateutil.parser as date_parser
 from dateutil.relativedelta import relativedelta
-import math
+from gooey import GooeyParser
 
-from regolith.helpers.basehelper import DbHelperBase
 from regolith.fsclient import _id_key
-from regolith.schemas import alloweds, PROJECTUM_ACTIVE_STATI
+from regolith.helpers.basehelper import DbHelperBase
+from regolith.schemas import PROJECTUM_ACTIVE_STATI, alloweds
 from regolith.tools import (
     all_docs_from_collection,
-    get_pi_id,
     document_by_value,
-    print_task,
+    get_pi_id,
     key_value_pair_filter,
+    print_task,
 )
-from gooey import GooeyParser
 
 TARGET_COLL = "todos"
 ALLOWED_IMPORTANCE = [3, 2, 1, 0]

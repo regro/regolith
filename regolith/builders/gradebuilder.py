@@ -4,9 +4,9 @@ import os
 import pdb
 import sys
 import traceback
-import numpy as np
-
 from itertools import groupby
+
+import numpy as np
 
 try:
     import scipy.stats as st

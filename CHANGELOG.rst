@@ -578,7 +578,3 @@ v0.1.4
 **Changed:**
 
 * People page only shows current members, former members on Former Members page
-
-
-
-

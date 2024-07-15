@@ -4,14 +4,12 @@ import datetime as dt
 import sys
 
 import nameparser
+from gooey import GooeyParser
 
-from regolith.helpers.basehelper import DbHelperBase
 from regolith.dates import month_to_str_int
 from regolith.fsclient import _id_key
-from regolith.tools import (
-    all_docs_from_collection,
-)
-from gooey import GooeyParser
+from regolith.helpers.basehelper import DbHelperBase
+from regolith.tools import all_docs_from_collection
 
 ALLOWED_TYPES = ["nsf", "doe", "other"]
 ALLOWED_STATI = ["invited", "accepted", "declined", "downloaded", "inprogress", "submitted", "cancelled"]

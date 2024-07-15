@@ -1,12 +1,12 @@
 """Classlist implementation"""
 
 import csv
+import json
 import os
 import re
-import json
 import sys
 from html.parser import HTMLParser
-from pprint import pprint, pformat
+from pprint import pformat, pprint
 
 from nameparser import HumanName
 

@@ -51,7 +51,5 @@ will need major revisions to be worthy of publication
 {%- elif recommendation == "diffjournal" -%}
 is not appropriate for {{ journal }} and should be submitted to a more
 appropriate journal
-{% endif -%}
-
-
-
+{% endif %}
+{{ newline }}

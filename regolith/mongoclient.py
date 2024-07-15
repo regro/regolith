@@ -2,6 +2,7 @@
 Maintained such that only pymongo is necessary when using helper/builders, and additional command-line tools
 are necessary to install for maintenance tasks, such as fs-to-mongo."""
 
+import datetime
 import itertools
 import os
 import shutil
@@ -13,7 +14,6 @@ from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
-import datetime
 
 from ruamel.yaml import YAML
 
@@ -35,8 +35,8 @@ except ImportError:
 
 from pymongo.collection import Collection
 
-from regolith.tools import dbpathname, fallback
 from regolith import fsclient
+from regolith.tools import dbpathname, fallback
 
 if not MONGO_AVAILABLE:
     ON_PYMONGO_V2 = ON_PYMONGO_V3 = False

@@ -5,7 +5,6 @@ Copyright 2015-2016, the xonsh developers
 """
 
 import itertools
-
 from collections import ChainMap
 from collections.abc import MutableMapping
 

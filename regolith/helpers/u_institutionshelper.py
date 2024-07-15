@@ -2,12 +2,14 @@
 Helper for updating/adding  to the projecta collection.
 """
 
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, fragment_retrieval
-import uuid
 import datetime as dt
+import uuid
+
 from gooey import GooeyParser
+
+from regolith.fsclient import _id_key
+from regolith.helpers.basehelper import DbHelperBase
+from regolith.tools import all_docs_from_collection, fragment_retrieval
 
 TARGET_COLL = "institutions"
 
