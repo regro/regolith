@@ -6,6 +6,7 @@ one manuscript.
 
 from gooey import GooeyParser
 
+from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter
 from src.regolith.dates import get_due_date
 from src.regolith.fsclient import _id_key
 from src.regolith.helpers.basehelper import SoutHelperBase
@@ -16,7 +17,6 @@ from src.regolith.schemas import (
     PROJECTUM_PAUSED_STATI,
     alloweds,
 )
-from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter
 
 PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 TARGET_COLL = "projecta"
