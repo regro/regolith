@@ -19,7 +19,7 @@ jobs:
       - name: check out regolith
         uses: actions/checkout@v3
         with:
-          repository: billingegroup/regolith
+          repository: regro/regolith
           path: .
           fetch-depth: 0  # avoid shallow clone with no tags
 
