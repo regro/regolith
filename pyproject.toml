@@ -13,7 +13,7 @@ maintainers = [
   { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
   { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
-description = "A research group content management system"
+description = "Research Group Content Management System"
 keywords = ["content management system"]
 readme = "README.rst"
 requires-python = ">=3.10"
@@ -22,7 +22,7 @@ classifiers = [
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
+        'License :: OSI Approved :: BSD License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',

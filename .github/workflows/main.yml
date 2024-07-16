@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - CI
   pull_request:
   workflow_dispatch:
 
@@ -18,10 +19,9 @@ jobs:
       - name: check out regolith
         uses: actions/checkout@v3
         with:
-          repository: regro/regolith
-          # for bookkeeping have regolith at the same level as everything else in the
-          # directory tree
+          repository: billingegroup/regolith
           path: .
+          fetch-depth: 0  # avoid shallow clone with no tags
 
       - name: initialize miniconda
         # this uses a marketplace action that sets up miniconda in a way that makes
@@ -32,7 +32,7 @@ jobs:
           # environment.yml file is needed by this action.  Because I don't want
           # maintain this but rather maintain the requirements files it just has
           # basic things in it like conda and pip
-          environment-file: environment.yml
+          environment-file: ./environment.yml
           python-version: 3
           auto-activate-base: false
 
@@ -44,13 +44,11 @@ jobs:
           conda activate test
           conda install --file requirements/run.txt
           conda install --file requirements/test.txt
-          pip install -r requirements/pip.txt
           pip install .
-
-      - name: run tests
+      - name: Validate regolith
         shell: bash -l {0}
         run: |
           conda activate test
-          coverage run run_tests.py
+          coverage run -m pytest -vv -s
           coverage report -m
           codecov

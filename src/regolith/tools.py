@@ -2045,7 +2045,7 @@ def remove_duplicate_docs(coll, key):
 def validate_doc(collection_name, doc, rc):
     from pprint import pformat
 
-    from regolith.schemas import validate
+    from src.schemas import validate
 
     v = validate(collection_name, doc, rc.schemas)
     error_message = ""

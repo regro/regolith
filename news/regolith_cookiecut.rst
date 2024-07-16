@@ -1,10 +1,11 @@
 **Added:**
 
-* <news item>
+* Add docs.yml, main.yml, and pre-commit.yml in the .github/workflows
 
 **Changed:**
 
-* <news item>
+* Change regolith directory to src/regolith
+* Change test function location to src/regolith/tests
 
 **Deprecated:**
 
@@ -12,7 +13,8 @@
 
 **Removed:**
 
-* <news item>
+* Remove old License, original regolith, docs, tests directory.
+* Remove python-package.yml
 
 **Fixed:**
 

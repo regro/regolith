@@ -1,7 +1,7 @@
 .. _regolith_interactive:
 
 ******************************************************
-Interactive Sessions (``regolith.interact``)
+Interactive Sessions (``src.interact``)
 ******************************************************
 
 Usage
