@@ -1,8 +1,8 @@
 """Builder for Resumes."""
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.sorters import ene_date_key, position_key
-from regolith.tools import (
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.sorters import ene_date_key, position_key
+from src.regolith.tools import (
     all_docs_from_collection,
     awards_grants_honors,
     filter_grants,

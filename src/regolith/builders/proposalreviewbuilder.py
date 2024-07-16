@@ -2,9 +2,9 @@
 
 from nameparser import HumanName
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, dereference_institution
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.fsclient import _id_key
+from src.regolith.tools import all_docs_from_collection, dereference_institution
 
 
 class PropRevBuilder(LatexBuilderBase):

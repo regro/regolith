@@ -7,8 +7,8 @@ import traceback
 
 from flask import Flask, abort, redirect, render_template, request
 
-from regolith.chained_db import _convert_to_dict
-from regolith.schemas import validate
+from src.regolith.chained_db import _convert_to_dict
+from src.regolith.schemas import validate
 
 app = Flask("regolith")
 

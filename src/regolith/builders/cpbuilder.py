@@ -5,11 +5,11 @@ from copy import copy
 
 from nameparser import HumanName
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import get_dates, is_current
-from regolith.fsclient import _id_key
-from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, filter_grants, fuzzy_retrieval, merge_collections_all
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.dates import get_dates, is_current
+from src.regolith.fsclient import _id_key
+from src.regolith.sorters import position_key
+from src.regolith.tools import all_docs_from_collection, filter_grants, fuzzy_retrieval, merge_collections_all
 
 
 def is_pending(status):

@@ -2,7 +2,7 @@ import datetime
 import tempfile
 from pathlib import Path
 
-from regolith.fsclient import date_encoder, dump_json
+from src.regolith.fsclient import date_encoder, dump_json
 
 
 def test_date_encoder():

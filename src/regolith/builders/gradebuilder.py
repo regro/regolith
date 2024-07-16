@@ -13,8 +13,8 @@ try:
 except ImportError:
     st = None
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.tools import all_docs_from_collection
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.tools import all_docs_from_collection
 
 
 class GradeReportBuilder(LatexBuilderBase):

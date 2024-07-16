@@ -12,8 +12,8 @@ try:
 except ImportError:
     publish_string
 
-from regolith.builders.gradebuilder import GradeReportBuilder
-from regolith.tools import all_docs_from_collection
+from src.regolith.builders.gradebuilder import GradeReportBuilder
+from src.regolith.tools import all_docs_from_collection
 
 
 def attach_txt(filename):

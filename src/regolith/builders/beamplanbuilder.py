@@ -9,8 +9,8 @@ from datetime import datetime
 
 import pandas as pd
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.tools import all_docs_from_collection, group, id_key
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.tools import all_docs_from_collection, group, id_key
 
 
 class BeamPlanBuilder(LatexBuilderBase):

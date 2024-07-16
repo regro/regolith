@@ -9,10 +9,10 @@ import dateutil.parser as date_parser
 from gooey import GooeyParser
 from nameparser import HumanName
 
-from regolith.fsclient import _id_key
-from regolith.helpers.basehelper import SoutHelperBase
-from regolith.schemas import PROJECTUM_ACTIVE_STATI, alloweds
-from regolith.tools import (
+from src.regolith.fsclient import _id_key
+from src.regolith.helpers.basehelper import SoutHelperBase
+from src.regolith.schemas import PROJECTUM_ACTIVE_STATI, alloweds
+from src.regolith.tools import (
     all_docs_from_collection,
     document_by_value,
     get_pi_id,

@@ -3,9 +3,9 @@ import os
 import sys
 from io import StringIO
 
-from regolith import __version__
-from regolith.main import main
-from regolith.runcontrol import DEFAULT_RC
+from src.regolith import __version__
+from src.regolith.main import main
+from src.regolith.runcontrol import DEFAULT_RC
 
 
 def test_version():

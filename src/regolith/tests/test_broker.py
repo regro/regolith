@@ -2,7 +2,7 @@ import os
 import subprocess
 import tempfile
 
-from regolith.broker import load_db
+from src.regolith.broker import load_db
 
 TMPDIR = tempfile.gettempdir()
 

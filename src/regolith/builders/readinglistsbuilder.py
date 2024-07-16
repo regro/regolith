@@ -2,10 +2,10 @@
 
 from habanero import Crossref
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.fsclient import _id_key
-from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, get_formatted_crossref_reference
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.fsclient import _id_key
+from src.regolith.sorters import position_key
+from src.regolith.tools import all_docs_from_collection, get_formatted_crossref_reference
 
 
 class ReadingListsBuilder(LatexBuilderBase):

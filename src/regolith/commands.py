@@ -7,13 +7,13 @@ import sys
 from copy import copy
 from pprint import pprint
 
-from regolith import storage
-from regolith.builder import BUILDERS, builder
-from regolith.deploy import deploy as dploy
-from regolith.emailer import emailer
-from regolith.helper import FAST_UPDATER_WHITELIST, HELPERS, UPDATER_HELPERS, helpr
-from regolith.runcontrol import RunControl
-from regolith.tools import string_types
+from src.regolith import storage
+from src.regolith.builder import BUILDERS, builder
+from src.regolith.deploy import deploy as dploy
+from src.regolith.emailer import emailer
+from src.regolith.helper import FAST_UPDATER_WHITELIST, HELPERS, UPDATER_HELPERS, helpr
+from src.regolith.runcontrol import RunControl
+from src.regolith.tools import string_types
 
 email = emailer
 
@@ -91,14 +91,14 @@ def _run_app(app, rc):
 
 def app(rc):
     """Runs flask app"""
-    from regolith.app import app
+    from src.regolith.app import app
 
     _run_app(app, rc)
 
 
 def grade(rc):
     """Runs flask grading app"""
-    from regolith.grader import app
+    from src.regolith.grader import app
 
     _run_app(app, rc)
 
@@ -164,14 +164,14 @@ def deploy(rc):
 
 def classlist(rc):
     """Sets values for the class list."""
-    from regolith.classlist import register
+    from src.regolith.classlist import register
 
     register(rc)
 
 
 def json_to_yaml(rc):
     """Converts JSON to YAML"""
-    from regolith import fsclient
+    from src.regolith import fsclient
 
     for inp in rc.files:
         base, ext = os.path.splitext(inp)
@@ -181,7 +181,7 @@ def json_to_yaml(rc):
 
 def yaml_to_json(rc):
     """Converts YAML to JSON"""
-    from regolith import fsclient
+    from src.regolith import fsclient
 
     for inp in rc.files:
         base, ext = os.path.splitext(inp)
@@ -198,7 +198,7 @@ def fs_to_mongo(rc: RunControl) -> None:
         The RunControl. The mongo client will be created according to 'mongodbpath' in it. The databases will
         be loaded according to the 'databases' in it.
     """
-    from regolith.mongoclient import MongoClient
+    from src.regolith.mongoclient import MongoClient
 
     client = MongoClient(rc)
     dbs = getattr(rc, "databases")
@@ -224,7 +224,7 @@ def mongo_to_fs(rc: RunControl) -> None:
 
 def validate(rc):
     """Validate the combined database against the schemas"""
-    from regolith.schemas import validate
+    from src.regolith.schemas import validate
 
     print("=" * 10 + "\nVALIDATING\n")
     any_errors = False

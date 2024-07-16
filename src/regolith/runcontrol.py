@@ -9,8 +9,8 @@ from collections.abc import Hashable, Iterable, Mapping
 from pprint import pformat
 from warnings import warn
 
-from regolith.database import connect
-from regolith.validators import DEFAULT_VALIDATORS, always_true, noop
+from src.regolith.database import connect
+from src.regolith.validators import DEFAULT_VALIDATORS, always_true, noop
 
 FORBIDDEN_NAMES = frozenset(["del", "global"])
 

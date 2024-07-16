@@ -1,24 +1,24 @@
 """Generic builder."""
 
-from regolith.builders.activitylogbuilder import ActivitylogBuilder
-from regolith.builders.beamplanbuilder import BeamPlanBuilder
-from regolith.builders.coabuilder import RecentCollaboratorsBuilder
-from regolith.builders.cpbuilder import CPBuilder
-from regolith.builders.cvbuilder import CVBuilder
-from regolith.builders.figurebuilder import FigureBuilder
-from regolith.builders.formalletterbuilder import FormalLetterBuilder
-from regolith.builders.gradebuilder import GradeReportBuilder
-from regolith.builders.grantreportbuilder import GrantReportBuilder
-from regolith.builders.htmlbuilder import HtmlBuilder
-from regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
-from regolith.builders.manuscriptreviewbuilder import ManRevBuilder
-from regolith.builders.postdocadbuilder import PostdocadBuilder
-from regolith.builders.preslistbuilder import PresListBuilder
-from regolith.builders.proposalreviewbuilder import PropRevBuilder
-from regolith.builders.publistbuilder import PubListBuilder
-from regolith.builders.readinglistsbuilder import ReadingListsBuilder
-from regolith.builders.reimbursementbuilder import ReimbursementBuilder
-from regolith.builders.resumebuilder import ResumeBuilder
+from src.regolith.builders.activitylogbuilder import ActivitylogBuilder
+from src.regolith.builders.beamplanbuilder import BeamPlanBuilder
+from src.regolith.builders.coabuilder import RecentCollaboratorsBuilder
+from src.regolith.builders.cpbuilder import CPBuilder
+from src.regolith.builders.cvbuilder import CVBuilder
+from src.regolith.builders.figurebuilder import FigureBuilder
+from src.regolith.builders.formalletterbuilder import FormalLetterBuilder
+from src.regolith.builders.gradebuilder import GradeReportBuilder
+from src.regolith.builders.grantreportbuilder import GrantReportBuilder
+from src.regolith.builders.htmlbuilder import HtmlBuilder
+from src.regolith.builders.internalhtmlbuilder import InternalHtmlBuilder
+from src.regolith.builders.manuscriptreviewbuilder import ManRevBuilder
+from src.regolith.builders.postdocadbuilder import PostdocadBuilder
+from src.regolith.builders.preslistbuilder import PresListBuilder
+from src.regolith.builders.proposalreviewbuilder import PropRevBuilder
+from src.regolith.builders.publistbuilder import PubListBuilder
+from src.regolith.builders.readinglistsbuilder import ReadingListsBuilder
+from src.regolith.builders.reimbursementbuilder import ReimbursementBuilder
+from src.regolith.builders.resumebuilder import ResumeBuilder
 
 BUILDERS = {
     "annual-activity": ActivitylogBuilder,

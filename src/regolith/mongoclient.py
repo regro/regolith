@@ -17,7 +17,7 @@ from tempfile import TemporaryDirectory
 
 from ruamel.yaml import YAML
 
-from regolith.tools import validate_doc
+from src.regolith.tools import validate_doc
 
 #
 # setup mongo

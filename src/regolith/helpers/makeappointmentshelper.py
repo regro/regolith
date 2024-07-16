@@ -15,7 +15,7 @@ from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
 from gooey import GooeyParser
 
-from regolith.dates import get_dates
+from src.regolith.dates import get_dates
 
 # from regolith.schemas import APPOINTMENTS_TYPES
 from regolith.fsclient import _id_key

@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 import requests_mock
 
-from regolith.main import main
-from regolith.schemas import alloweds
+from src.regolith.main import main
+from src.regolith.schemas import alloweds
 
 MILESTONE_TYPES = alloweds.get("MILESTONE_TYPES")
 

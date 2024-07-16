@@ -7,9 +7,9 @@ import uuid
 
 from gooey import GooeyParser
 
-from regolith.fsclient import _id_key
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.tools import all_docs_from_collection, fragment_retrieval
+from src.regolith.fsclient import _id_key
+from src.regolith.helpers.basehelper import DbHelperBase
+from src.regolith.tools import all_docs_from_collection, fragment_retrieval
 
 TARGET_COLL = "institutions"
 

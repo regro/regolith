@@ -3,7 +3,7 @@
 import os
 from getpass import getpass
 
-from regolith.tools import string_types
+from src.regolith.tools import string_types
 
 
 def noop(x):

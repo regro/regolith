@@ -6,7 +6,7 @@ from subprocess import CalledProcessError
 import pytest
 from xonsh.lib import subprocess
 
-from regolith.main import main
+from src.regolith.main import main
 
 
 def test_validate_python(make_db):

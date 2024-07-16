@@ -1,8 +1,8 @@
 from collections import defaultdict
 from copy import deepcopy
 
-from regolith.fsclient import FileSystemClient
-from regolith.mongoclient import MongoClient
+from src.regolith.fsclient import FileSystemClient
+from src.regolith.mongoclient import MongoClient
 
 CLIENTS = {
     "mongo": MongoClient,

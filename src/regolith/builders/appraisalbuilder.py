@@ -3,12 +3,12 @@
 import datetime as dt
 from copy import copy, deepcopy
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import get_dates, is_current, month_to_int
-from regolith.fsclient import _id_key
-from regolith.sorters import doc_date_key, position_key
-from regolith.stylers import month_fullnames, sentencecase
-from regolith.tools import (
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.dates import get_dates, is_current, month_to_int
+from src.regolith.fsclient import _id_key
+from src.regolith.sorters import doc_date_key, position_key
+from src.regolith.stylers import month_fullnames, sentencecase
+from src.regolith.tools import (
     all_docs_from_collection,
     awards,
     filter_activities,

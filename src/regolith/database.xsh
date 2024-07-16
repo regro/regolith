@@ -11,9 +11,9 @@ try:
 except:
     hglib = None
 
-from regolith.chained_db import ChainDB
-from regolith.tools import dbdirname
-from regolith.client_manager import ClientManager
+from src.regolith.chained_db import ChainDB
+from src.regolith.tools import dbdirname
+from src.regolith.client_manager import ClientManager
 
 
 def load_git_database(db, client, rc):

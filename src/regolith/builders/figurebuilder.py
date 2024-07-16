@@ -4,9 +4,9 @@ import os
 
 from jinja2 import Environment, FileSystemLoader
 
-from regolith.broker import Broker
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.tools import fuzzy_retrieval
+from src.regolith.broker import Broker
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.tools import fuzzy_retrieval
 
 
 class FigureBuilder(LatexBuilderBase):

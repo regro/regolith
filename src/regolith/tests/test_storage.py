@@ -5,8 +5,8 @@ import sys
 
 import pytest
 
-from regolith.runcontrol import DEFAULT_RC, load_rcfile
-from regolith.storage import find_store, storage_path
+from src.regolith.runcontrol import DEFAULT_RC, load_rcfile
+from src.regolith.storage import find_store, storage_path
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="does not run on windows")

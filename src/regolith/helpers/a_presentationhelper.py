@@ -6,11 +6,11 @@ from warnings import warn
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
-from regolith.fsclient import _id_key
-from regolith.helpers.a_expensehelper import expense_constructor
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.schemas import alloweds
-from regolith.tools import (
+from src.regolith.fsclient import _id_key
+from src.regolith.helpers.a_expensehelper import expense_constructor
+from src.regolith.helpers.basehelper import DbHelperBase
+from src.regolith.schemas import alloweds
+from src.regolith.tools import (
     add_to_google_calendar,
     all_docs_from_collection,
     create_repo,

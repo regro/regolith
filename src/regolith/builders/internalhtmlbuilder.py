@@ -4,11 +4,11 @@ import datetime as dt
 import os
 import shutil
 
-from regolith.builders.basebuilder import BuilderBase
-from regolith.dates import get_dates
-from regolith.fsclient import _id_key
-from regolith.sorters import ene_date_key, position_key
-from regolith.tools import (
+from src.regolith.builders.basebuilder import BuilderBase
+from src.regolith.dates import get_dates
+from src.regolith.fsclient import _id_key
+from src.regolith.sorters import ene_date_key, position_key
+from src.regolith.tools import (
     all_docs_from_collection,
     dereference_institution,
     document_by_value,

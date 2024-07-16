@@ -9,11 +9,11 @@ from copy import deepcopy
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
-from regolith.dates import get_due_date
-from regolith.fsclient import _id_key
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.schemas import alloweds
-from regolith.tools import all_docs_from_collection, fragment_retrieval, get_uuid
+from src.regolith.dates import get_due_date
+from src.regolith.fsclient import _id_key
+from src.regolith.helpers.basehelper import DbHelperBase
+from src.regolith.schemas import alloweds
+from src.regolith.tools import all_docs_from_collection, fragment_retrieval, get_uuid
 
 TARGET_COLL = "projecta"
 MILESTONE_TYPES = alloweds.get("MILESTONE_TYPES")

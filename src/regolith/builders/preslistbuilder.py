@@ -18,11 +18,11 @@ contacts.yml (if the person was not found in people.yml), but if the person is
 absent both database files, it will still build but using the string name given
 in the presentations.yml. The presentations are output in a ./_build directory."""
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.fsclient import _id_key
-from regolith.sorters import position_key
-from regolith.stylers import month_fullnames, sentencecase
-from regolith.tools import all_docs_from_collection, filter_presentations, group_member_ids
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.fsclient import _id_key
+from src.regolith.sorters import position_key
+from src.regolith.stylers import month_fullnames, sentencecase
+from src.regolith.tools import all_docs_from_collection, filter_presentations, group_member_ids
 
 
 class PresListBuilder(LatexBuilderBase):

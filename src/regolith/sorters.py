@@ -2,7 +2,7 @@
 
 import string
 
-from regolith.dates import date_to_float
+from src.regolith.dates import date_to_float
 
 
 def doc_date_key(document):

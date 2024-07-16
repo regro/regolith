@@ -7,10 +7,10 @@ import dateutil.parser as date_parser
 # from habanero import Crossref
 from nameparser import HumanName
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.dates import get_dates, is_current
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection, filter_presentations, fuzzy_retrieval
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.dates import get_dates, is_current
+from src.regolith.fsclient import _id_key
+from src.regolith.tools import all_docs_from_collection, filter_presentations, fuzzy_retrieval
 
 
 class GrantReportBuilder(LatexBuilderBase):

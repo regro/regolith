@@ -6,13 +6,13 @@ import sys
 from pathlib import Path
 
 import pytest
-from tests.conftest import ALTERNATE_REGOLITH_MONGODB_NAME, FS_DB_NAME
+from src.regolith.tests.conftest import ALTERNATE_REGOLITH_MONGODB_NAME, FS_DB_NAME
 
-from regolith.database import connect
-from regolith.dates import convert_doc_iso_to_date
-from regolith.main import main
-from regolith.mongoclient import load_mongo_col
-from regolith.runcontrol import DEFAULT_RC, load_rcfile
+from src.regolith.database import connect
+from src.regolith.dates import convert_doc_iso_to_date
+from src.regolith.main import main
+from src.regolith.mongoclient import load_mongo_col
+from src.regolith.runcontrol import DEFAULT_RC, load_rcfile
 
 BILLINGE_TEST = False  # special tests for Billinge group, switch it to False before push to remote
 

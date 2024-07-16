@@ -13,8 +13,8 @@ from pymongo import errors as mongo_errors
 from xonsh.lib import subprocess
 from xonsh.lib.os import rmtree
 
-from regolith.fsclient import dump_yaml
-from regolith.schemas import EXEMPLARS
+from src.regolith.fsclient import dump_yaml
+from src.regolith.schemas import EXEMPLARS
 
 OUTPUT_FAKE_DB = False  # always turn it to false after you used it
 # Currently the first two must be named test solely to match the helper map test output text

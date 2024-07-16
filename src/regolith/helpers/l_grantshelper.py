@@ -5,10 +5,10 @@ import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
-from regolith.dates import get_dates, is_current
-from regolith.fsclient import _id_key
-from regolith.helpers.basehelper import SoutHelperBase
-from regolith.tools import (
+from src.regolith.dates import get_dates, is_current
+from src.regolith.fsclient import _id_key
+from src.regolith.helpers.basehelper import SoutHelperBase
+from src.regolith.tools import (
     all_docs_from_collection,
     collection_str,
     get_pi_id,

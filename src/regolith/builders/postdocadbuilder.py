@@ -1,8 +1,8 @@
 """Builder for Current and Pending Reports."""
 
-from regolith.builders.basebuilder import LatexBuilderBase
-from regolith.fsclient import _id_key
-from regolith.tools import all_docs_from_collection
+from src.regolith.builders.basebuilder import LatexBuilderBase
+from src.regolith.fsclient import _id_key
+from src.regolith.tools import all_docs_from_collection
 
 
 class PostdocadBuilder(LatexBuilderBase):

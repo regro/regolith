@@ -7,13 +7,13 @@ import os
 
 from gooey import Gooey, GooeyParser
 
-from regolith import commands
-from regolith.commands import CONNECTED_COMMANDS
-from regolith.database import connect
-from regolith.helper import HELPERS
-from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
-from regolith.schemas import SCHEMAS
-from regolith.tools import update_schemas
+from src.regolith import commands
+from src.regolith.commands import CONNECTED_COMMANDS
+from src.regolith.database import connect
+from src.regolith.helper import HELPERS
+from src.regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
+from src.regolith.schemas import SCHEMAS
+from src.regolith.tools import update_schemas
 
 NEED_RC = set(CONNECTED_COMMANDS.keys())
 NEED_RC |= {"rc", "deploy", "store"}

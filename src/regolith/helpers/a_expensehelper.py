@@ -7,10 +7,10 @@ import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
-from regolith.fsclient import _id_key
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.schemas import alloweds
-from regolith.tools import all_docs_from_collection, get_pi_id
+from src.regolith.fsclient import _id_key
+from src.regolith.helpers.basehelper import DbHelperBase
+from src.regolith.schemas import alloweds
+from src.regolith.tools import all_docs_from_collection, get_pi_id
 
 TARGET_COLL = "expenses"
 

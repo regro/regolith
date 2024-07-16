@@ -9,9 +9,9 @@ import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
-from regolith.fsclient import _id_key
-from regolith.helpers.basehelper import SoutHelperBase
-from regolith.schemas import (
+from src.regolith.fsclient import _id_key
+from src.regolith.helpers.basehelper import SoutHelperBase
+from src.regolith.schemas import (
     PROJECTUM_ACTIVE_STATI,
     PROJECTUM_CANCELLED_STATI,
     PROJECTUM_FINISHED_STATI,

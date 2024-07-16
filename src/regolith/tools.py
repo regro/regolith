@@ -21,9 +21,9 @@ from googleapiclient.discovery import build
 from habanero import Crossref
 from requests.exceptions import ConnectionError, HTTPError
 
-from regolith.dates import date_to_float, get_dates, is_current, month_to_int
-from regolith.schemas import alloweds
-from regolith.sorters import doc_date_key_high, ene_date_key, id_key
+from src.regolith.dates import date_to_float, get_dates, is_current, month_to_int
+from src.regolith.schemas import alloweds
+from src.regolith.sorters import doc_date_key_high, ene_date_key, id_key
 
 try:
     from bibtexparser.bibdatabase import BibDatabase

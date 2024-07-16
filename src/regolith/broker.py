@@ -2,9 +2,9 @@
 
 import copy
 
-from regolith.database import dump_database, open_dbs
-from regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
-from regolith.storage import push, store_client
+from src.regolith.database import dump_database, open_dbs
+from src.regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
+from src.regolith.storage import push, store_client
 
 
 def load_db(rc_file="regolithrc.json"):

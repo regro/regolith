@@ -5,8 +5,8 @@ import habanero
 import pytest
 import requests_mock
 
-from regolith.runcontrol import DEFAULT_RC
-from regolith.tools import (
+from src.regolith.runcontrol import DEFAULT_RC
+from src.regolith.tools import (
     awards_grants_honors,
     collect_appts,
     collection_str,

@@ -5,11 +5,11 @@ import dateutil.parser as date_parser
 import matplotlib.pyplot as plt
 import numpy as np
 
-from regolith.dates import get_dates
-from regolith.fsclient import _id_key
-from regolith.helpers.basehelper import DbHelperBase
-from regolith.sorters import position_key
-from regolith.tools import all_docs_from_collection, fuzzy_retrieval, get_appointments, merge_collections_superior
+from src.regolith.dates import get_dates
+from src.regolith.fsclient import _id_key
+from src.regolith.helpers.basehelper import DbHelperBase
+from src.regolith.sorters import position_key
+from src.regolith.tools import all_docs_from_collection, fuzzy_retrieval, get_appointments, merge_collections_superior
 
 # print([k for k,v in chained_db['people'].items()])
 
