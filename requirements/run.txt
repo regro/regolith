@@ -13,6 +13,7 @@ pandas
 pymongo
 matplotlib-base
 habanero
+gooey
 google-api-python-client
 google-auth-oauthlib
 wxpython
