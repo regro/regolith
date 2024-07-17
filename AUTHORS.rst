@@ -1,5 +1,6 @@
 Authors
 =======
+Anthony Scopatz
 
 Billinge Group and community contibutors.
 
