@@ -44,6 +44,7 @@ jobs:
           conda activate test
           conda install --file requirements/run.txt
           conda install --file requirements/test.txt
+          pip install -r requirements/pip.txt
           pip install .
       - name: Validate regolith
         shell: bash -l {0}
