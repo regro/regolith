@@ -5,12 +5,7 @@ from gooey import GooeyParser
 from src.regolith.dates import get_dates
 from src.regolith.fsclient import _id_key
 from src.regolith.helpers.basehelper import SoutHelperBase
-from src.regolith.tools import (
-    all_docs_from_collection,
-    dereference_institution,
-    get_person_contact,
-    get_pi_id,
-)
+from src.regolith.tools import all_docs_from_collection, dereference_institution, get_person_contact, get_pi_id
 
 TARGET_COLL = "presentations"
 HELPER_TARGET = "l_abstract"

@@ -4,11 +4,7 @@ from dateutil import parser as date_parser
 
 from src.regolith.builders.basebuilder import LatexBuilderBase
 from src.regolith.sorters import ene_date_key, position_key
-from src.regolith.tools import (
-    all_docs_from_collection,
-    filter_publications,
-    make_bibtex_file,
-)
+from src.regolith.tools import all_docs_from_collection, filter_publications, make_bibtex_file
 
 LATEX_OPTS = ["-halt-on-error", "-file-line-error"]
 

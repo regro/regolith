@@ -22,11 +22,7 @@ from src.regolith.builders.basebuilder import LatexBuilderBase
 from src.regolith.fsclient import _id_key
 from src.regolith.sorters import position_key
 from src.regolith.stylers import month_fullnames, sentencecase
-from src.regolith.tools import (
-    all_docs_from_collection,
-    filter_presentations,
-    group_member_ids,
-)
+from src.regolith.tools import all_docs_from_collection, filter_presentations, group_member_ids
 
 
 class PresListBuilder(LatexBuilderBase):

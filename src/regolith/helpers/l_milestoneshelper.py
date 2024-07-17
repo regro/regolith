@@ -16,12 +16,7 @@ from regolith.schemas import (
     PROJECTUM_PAUSED_STATI,
     alloweds,
 )
-from regolith.tools import (
-    all_docs_from_collection,
-    collection_str,
-    get_pi_id,
-    key_value_pair_filter,
-)
+from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter
 
 PROJECTUM_STATI = alloweds.get("PROJECTUM_STATI")
 TARGET_COLL = "projecta"

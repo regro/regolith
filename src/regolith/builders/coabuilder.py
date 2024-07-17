@@ -18,11 +18,7 @@ from nameparser import HumanName
 from src.regolith.builders.basebuilder import BuilderBase
 from src.regolith.dates import get_dates, is_after, month_to_int
 from src.regolith.sorters import position_key
-from src.regolith.tools import (
-    all_docs_from_collection,
-    filter_publications,
-    fuzzy_retrieval,
-)
+from src.regolith.tools import all_docs_from_collection, filter_publications, fuzzy_retrieval
 
 NUM_COAUTHOR_MONTHS = 48
 NUM_POSTDOC_MONTHS = None

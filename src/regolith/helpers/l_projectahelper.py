@@ -9,6 +9,7 @@ import datetime as dt
 import dateutil.parser as date_parser
 from gooey import GooeyParser
 
+from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter
 from src.regolith.fsclient import _id_key
 from src.regolith.helpers.basehelper import SoutHelperBase
 from src.regolith.schemas import (
@@ -16,12 +17,6 @@ from src.regolith.schemas import (
     PROJECTUM_CANCELLED_STATI,
     PROJECTUM_FINISHED_STATI,
     PROJECTUM_PAUSED_STATI,
-)
-from regolith.tools import (
-    all_docs_from_collection,
-    collection_str,
-    get_pi_id,
-    key_value_pair_filter,
 )
 
 TARGET_COLL = "projecta"

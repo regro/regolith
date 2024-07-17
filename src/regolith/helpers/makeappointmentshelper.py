@@ -15,8 +15,6 @@ from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
 from gooey import GooeyParser
 
-from src.regolith.dates import get_dates
-
 # from regolith.schemas import APPOINTMENTS_TYPES
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
@@ -30,6 +28,7 @@ from regolith.tools import (
     is_fully_appointed,
     merge_collections_superior,
 )
+from src.regolith.dates import get_dates
 
 TARGET_COLL = "people"
 HELPER_TARGET = "makeappointments"
