@@ -35,8 +35,8 @@ except ImportError:
 
 from pymongo.collection import Collection
 
-from regolith import fsclient
-from regolith.tools import dbpathname, fallback
+from src.regolith import fsclient
+from src.regolith.tools import dbpathname, fallback
 
 if not MONGO_AVAILABLE:
     ON_PYMONGO_V2 = ON_PYMONGO_V3 = False
