@@ -1,0 +1,87 @@
+\documentclass[prl,aps,tighten,amsmath,amssymb,floatfix]{revtex4-1}
+
+\usepackage{graphicx}
+
+\newcommand{\midrule}{\hline}
+\newcommand{\bottomrule}{\hline\hline}
+
+\begin{document}
+\title{The experiment plan for the beamtime {{bt}}}
+\date{\today}
+\maketitle
+
+\section{Summary}
+The beamtime starts at {{begin_time}} on {{begin_date}} and ends at {{end_time}} on {{end_date}}.
+There are {{total_sample_num}} samples in total.
+The estimated experiment time is {{total_time}} hour.
+The TABLE.~\ref{tab:exps} shows the summary of the experiment plans for this beamtime.
+
+\begin{table}[htpb]
+\caption{Summary of the experiment plans.}
+\label{tab:exps}
+\resizebox{\textwidth}{!}{
+{{table-}}
+}
+\end{table}
+
+{% if len(tasks) > 0 -%}
+\subsection{Tasks before the beamtime}
+\begin{enumerate}
+{% for task in tasks -%}
+\item {{task}}
+{% endfor -%}
+\end{enumerate}
+{% endif -%}
+
+\section{Details}
+
+{% for plan in plans %}
+
+\subsection{Experiment {{plan["serial_id"]}}}
+
+\subsubsection{Objective}
+{{plan["objective"]}}
+
+\subsubsection{Samples}
+{% for sample in plan["samples"] -%}
+\item {{sample}}
+{% endfor -%}
+
+{% if len(plan["prep_plan"]) > 0 -%}
+\subsubsection{Preparation}
+\begin{enumerate}
+{% for step in plan["prep_plan"] -%}
+\item {{step}}
+{% endfor -%}
+\end{enumerate}
+{% endif -%}
+
+{% if len(plan["ship_plan"]) > 0 -%}
+\subsubsection{Shipment}
+\begin{enumerate}
+{% for step in plan["ship_plan"] -%}
+\item {{step}}
+{% endfor -%}
+\end{enumerate}
+{% endif -%}
+
+{% if len(plan["exp_plan"]) > 0 -%}
+\subsubsection{Measurement}
+\begin{enumerate}
+{% for step in plan["exp_plan"] -%}
+\item {{step}}
+{% endfor -%}
+\end{enumerate}
+{% endif -%}
+
+{% if len(plan["scanplan"]) > 0 -%}
+\subsubsection{Measurement}
+\begin{enumerate}
+{% for p in plan["scanplan"] -%}
+\item {{p}}
+{% endfor -%}
+\end{enumerate}
+{% endif -%}
+
+{% endfor %}
+\end{document}

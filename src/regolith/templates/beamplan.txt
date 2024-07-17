@@ -1,0 +1,54 @@
+The experiment plan for the beamtime {{bt}}
+begin date:              {{begin_date}}
+begin time:              {{begin_time}}
+end data:                {{end_date}}
+end time:                {{end_time}}
+total number of samples: {{total_sample_num}}
+estimated total time:    {{total_time}} hour
+
+Summary
+-------
+{{table_for_txt}}
+
+{% if len(tasks) > 0 -%}
+Tasks before the beamtime:
+{% for task in tasks -%}
+ - {{task}}
+{% endfor -%}
+{% endif -%}
+{% for plan in plans %}
+Experiment {{plan["serial_id"]}}
+{{"-" * (len(plan["serial_id"]) + 11)}}
+Objective:
+    {{plan["objective"]}}
+Samples:
+{% for sample in plan["samples"] -%}
+ - {{sample}}
+{% endfor -%}
+Scanplan:
+{% for step in plan["scanplan"] -%}
+ - {{step}}
+{% endfor -%}
+{% if len(plan["prep_plan"]) > 0 -%}
+Preparation:
+{% for step in plan["prep_plan"] -%}
+ - {{step}}
+{% endfor -%}
+{% endif -%}
+{% if len(plan["ship_plan"]) > 0 -%}
+Shipment:
+{% for step in plan["ship_plan"] -%}
+ - {{step}}
+{% endfor -%}
+{% endif -%}
+{% if len(plan["exp_plan"]) > 0 -%}
+Measurement:
+{% for step in plan["exp_plan"] -%}
+ - {{step}}
+{% endfor -%}
+Scanplan:
+{% for step in plan["scanplan"] -%}
+ - {{step}}
+{% endfor -%}
+{% endif -%}
+{% endfor %}

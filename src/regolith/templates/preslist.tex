@@ -1,0 +1,54 @@
+\documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
+
+
+% Packages
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{booktabs,dcolumn}
+\usepackage{siunitx}
+\usepackage[utf8]{inputenc}
+
+% Document
+\begin{document}
+\textbf{Presentations}
+
+\textbf{ {{-latex_safe(pi['name']).upper() }}}
+\vskip 12pt
+
+\begin{enumerate}
+{% for pres in presentations %}
+\item {{ latex_safe(pres['authors'])-}}, {\bf {{ latex_safe(
+sentencecase(pres['title']))-}} },
+{%-set inst = pres['institution'] %}
+{%-if pres['type'] in ['colloquium', 'seminar']%}
+{\it {{ latex_safe(pres['type']).title()-}} },
+{\it {{ latex_safe(pres['department']['name'])-}} },
+{\it {{ latex_safe(inst['name'])-}} },
+{\it {{ latex_safe(inst['city'])-}}},
+{\it {{ latex_safe(inst['state'])-}}}
+{%- if inst.get('country','USA') not in ['USA', 'usa'] -%}
+{\it , {{ latex_safe(inst['country'])-}} }
+{%-endif -%}
+{%-else %}
+{\it {{ latex_safe(pres['meeting_name'])-}} },
+{\it {{ latex_safe(pres['location'])-}} }
+{%-endif -%}
+{%-if pres['webinar'] in ['true', true]%}
+{\it (Webinar)}
+{%-endif -%}
+{\it ,} { {{ latex_safe(monthstyle.get(pres['begin_month'],'None'))}} }
+{{-pres['begin_day']-}}
+{%-if not pres['end_day'] or pres['end_day'] == pres['begin_day']-%}
+$^\mathrm{ {{-pres['begin_day_suffix']-}} }$
+{%-elif pres['end_month'] != pres['begin_month']-%}
+--{{-pres['end_month']-}} {{-pres['end_day']-}}
+$^\mathrm{ {{-pres['end_day_suffix']-}} }$
+{%-else-%}
+--{{-pres['end_day']-}}
+$^\mathrm{ {{-pres['end_day_suffix']-}} }$
+{%-endif %}
+( {{-pres['begin_year']-}} ).
+{% endfor %}
+\end{enumerate}
+
+\end{document}

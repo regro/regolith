@@ -1,0 +1,61 @@
+\documentclass[prl,tighten,amsmath,amssymb,floatfix]{revtex4-1}
+
+
+% Packages
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{booktabs,dcolumn}
+\usepackage{siunitx}
+\usepackage[utf8]{inputenc}
+
+\setlength{\parindent}{0pt}
+
+% Document
+\begin{document}
+\textbf{Current and Pending Support}
+
+\textbf{ {{-latex_safe(pi['name']).upper() }}}
+\vskip 14pt
+{% for grant_block, name in zip([pending, current], ['Pending', 'Current']) %}
+{% if len(grant_block) > 0 %}
+\textit{ {{-name-}} }
+{% for g in grant_block %}
+\vskip 12pt\noindent
+\textbf{Investigator:} {{ latex_safe(pi['name']) }}\
+\textbf{Other Agencies to which proposal submitted:}
+{{ latex_safe(g.get('cpp_info',{}).get("other_agencies_submitted", 'None')) }}
+
+\textbf{Support:}\ {{ name }}
+
+\textbf{Project/Proposal Title:}  {{ latex_safe(g['title'])-}}
+{% if not g.get('cpp_info',{}).get('single_pi') %}
+\ (multi-PI grant.  {{latex_safe(pi['initials'])}}
+amt = \${{"{:,}".format(float(g['subaward_amount']))}})
+{% endif %}
+
+\textbf{Source of Support:}\
+{{ g.get('funder', 'None') }}
+    {% if name == 'Current'-%}
+    ({{ g.get('awardnr', 'None') }})
+    {% endif %}
+
+\textbf{Total Award Amount}:
+\${{-"{:,}".format(float(g.get('amount', 0))) }}\\
+\textbf{ Total Award Period Covered:}
+{{g.get('award_start_date')}} - {{g.get('award_end_date')}}
+
+\textbf{Location of Project:} {{ g.get('cpp_info',{}).get('institution', group.get('institution')) }}
+
+\textbf{Person Months per Year Committed to Project:}
+\textbf{Academic:} {{ str(g.get('cpp_info',{}).get('person_months_academic', 0)) }}\
+\textbf{Summer:} {{ str(g.get('cpp_info',{}).get('person_months_summer', 0)) }}
+
+\textbf{Describe Research Including Synergies and Delineation with
+Respect to this Proposal/Award:} {{ g.get('cpp_info',{}).get('project_scope', 'N/A')-}}
+{% endfor %}
+{% endif %}
+\vskip 14pt
+{% endfor %}
+
+
+\end{document}

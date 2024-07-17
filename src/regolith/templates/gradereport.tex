@@ -1,0 +1,131 @@
+{% raw %}
+\documentclass[letterpaper,11pt]{article}
+\newlength{\outerbordwidth}
+\pagestyle{empty}
+\raggedbottom
+\raggedright
+\usepackage[svgnames]{xcolor}
+\usepackage{framed}
+\usepackage{tocloft}
+\usepackage[backend=bibtex,maxnames=99]{biblatex}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+{% if show_letter_plot %}
+\usepackage{graphicx}
+{% endif %}
+
+%-----------------------------------------------------------
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=red            % color of external links
+}
+
+%-----------------------------------------------------------
+%Edit these values as you see fit
+
+% Width of border outside of title bars
+\setlength{\outerbordwidth}{3pt}
+% Outer background color of title bars (0 = black, 1 = white)
+\definecolor{shadecolor}{gray}{0.75}
+% Inner background color of title bars
+\definecolor{shadecolorB}{gray}{0.93}
+
+
+%-----------------------------------------------------------
+{% endraw %}
+
+\title{ {{course_id}} Grades }
+\author{ {{student_id}} }
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{tabular}[h]{|l||c|c|c|c|}
+\hline
+\textbf{Category} & \textbf{Score} & \textbf{Max} & \textbf{Weight} &
+    \textbf{Weighted Frac} \\
+{% for row in student_totals %}
+\hline
+\textbf{ {{row[0]}} }
+{% for x in row[1:] %}
+    & {{x}}
+{% endfor %} \\
+{% endfor %}
+\hline
+\end{tabular}
+
+\vspace{1em}
+\textbf{Total weighted average, raw:} {{student_wavg*100}}\%
+
+\textbf{Best weighted average, raw:} {{max_wavg*100}}\%
+
+\textbf{Letter Grade, raw:} {{student_letter_grade_raw}}
+
+\textbf{Curve, $100 - \mathrm{best}$:} {{curve*100}}\%
+
+\textbf{Total weighted average, curved:} {{(student_wavg+curve)*100}}\%
+
+\textbf{Letter Grade, curved:} {{student_letter_grade_curved}}
+
+{% if show_letter_plot %}
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.5]{student-letter-grade-dist.eps}
+\end{figure}
+{% endif %}
+
+
+{% for category, asngs in sorted(grouped_assignments.items()) %}
+\vspace{1em}\hrulefill
+
+\section*{ {{category.capitalize()}} }
+
+{% for asgn, sg in zip(asngs, student_grades[category]) %}
+{% set asgn_id = asgn['_id'] %}
+\subsection*{ {{asgn_id}} }
+
+\begin{tabular}[h]{|l||c|c|c|c|c|c|c|}
+\hline
+\textbf{Question} & \textbf{Score} & \textbf{Points} & \textbf{Mean} & \textbf{STD}
+                  & \textbf{Max} & \textbf{$>60\%$} & \textbf{$>80\%$} \\
+{% for i in range(len(asgn['points'])) %}
+\hline
+\textbf{ {{asgn['questions'][i]}} } &
+    {% if sg == None %}
+    {\color{red} nil} &
+    {% else %}
+    {{sg['scores'][i] | round(3)}} &
+    {% endif %}
+    {{asgn['points'][i] | round(3)}} &
+    {{stats[asgn_id][0][i] | round(3)}} &
+    {{stats[asgn_id][1][i] | round(3)}} &
+    {{stats[asgn_id][2][i] | round(3)}} &
+    {{stats[asgn_id][3][i] | round(3)}} &
+    {{stats[asgn_id][4][i] | round(3)}} \\
+{% endfor %}
+\hline
+\textbf{Total} &
+    {% if sg == None %}
+    {\color{red} nil} &
+    {% else %}
+    {{sum(sg['scores']) | round(3)}} &
+    {% endif %}
+    {{sum(asgn['points']) | round(3)}} &
+    {{stats[asgn_id][5] | round(3)}} &
+    {{stats[asgn_id][6] | round(3)}} &
+    {{stats[asgn_id][7] | round(3)}} &
+    {{stats[asgn_id][8] | round(3)}} &
+    {{stats[asgn_id][9] | round(3)}} \\
+\hline
+\end{tabular}
+{% endfor %}
+
+
+{% endfor %}
+
+\end{document}
