@@ -13,14 +13,23 @@
 #
 ##############################################################################
 
-"""Definition of __version__."""
+"""
+Convenience module for debugging the unit tests using
 
-#  We do not use the other three variables, but can be added back if needed.
-#  __all__ = ["__date__", "__git_commit__", "__timestamp__", "__version__"]
+python -m regolith.tests.debug
 
-# obtain version information
-from importlib.metadata import version
+Exceptions raised by failed tests or other errors are not caught.
+"""
 
-__version__ = version("regolith")
+
+if __name__ == "__main__":
+    import sys
+
+    from regolith.tests import testsuite
+
+    pattern = sys.argv[1] if len(sys.argv) > 1 else ""
+    suite = testsuite(pattern)
+    suite.debug()
+
 
 # End of file

@@ -12,15 +12,23 @@
 # See LICENSE.rst for license information.
 #
 ##############################################################################
+"""Convenience module for executing all unit tests with
+python -m regolith.tests.run
+"""
 
-"""Definition of __version__."""
+import sys
 
-#  We do not use the other three variables, but can be added back if needed.
-#  __all__ = ["__date__", "__git_commit__", "__timestamp__", "__version__"]
+import pytest
 
-# obtain version information
-from importlib.metadata import version
-
-__version__ = version("regolith")
+if __name__ == "__main__":
+    # show output results from every test function
+    args = ["-v"]
+    # show the message output for skipped and expected failure tests
+    if len(sys.argv) > 1:
+        args.extend(sys.argv[1:])
+    print("pytest arguments: {}".format(args))
+    # call pytest and exit with the return code from pytest
+    exit_res = pytest.main(args)
+    sys.exit(exit_res)
 
 # End of file

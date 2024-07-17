@@ -18,11 +18,7 @@ from nameparser import HumanName
 from regolith.builders.basebuilder import BuilderBase
 from regolith.dates import get_dates, is_after, month_to_int
 from regolith.sorters import position_key
-from regolith.tools import (
-    all_docs_from_collection,
-    filter_publications,
-    fuzzy_retrieval,
-)
+from regolith.tools import all_docs_from_collection, filter_publications, fuzzy_retrieval
 
 NUM_COAUTHOR_MONTHS = 48
 NUM_POSTDOC_MONTHS = None

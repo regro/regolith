@@ -1,12 +1,24 @@
-# stup import hooks
-import xonsh.imphooks
-from xonsh.built_ins import XSH
-from xonsh.execer import Execer
+#!/usr/bin/env python
+##############################################################################
+#
+# (c) 2024 The Trustees of Columbia University in the City of New York.
+# All rights reserved.
+#
+# File coded by: Billinge Group members and community contributors.
+#
+# See GitHub contributions for a more detailed list of contributors.
+# https://github.com/regro/regolith/graphs/contributors
+#
+# See LICENSE.rst for license information.
+#
+##############################################################################
 
-XSH.load(execer=Execer())
-execer = XSH.execer
-xonsh.imphooks.install_import_hooks(execer=execer)
+"""A research group content management system"""
 
-__version__ = "0.8.2"
+# package version
+from regolith.version import __version__
 
-del xonsh
+# silence the pyflakes syntax checker
+assert __version__ or True
+
+# End of file
