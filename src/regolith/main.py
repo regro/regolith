@@ -8,7 +8,11 @@ from argparse import ArgumentParser, Namespace, RawTextHelpFormatter
 
 from src.regolith import __version__, commands
 from src.regolith.builder import BUILDERS
-from src.regolith.commands import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS, INGEST_COLL_LU
+from src.regolith.commands import (
+    CONNECTED_COMMANDS,
+    DISCONNECTED_COMMANDS,
+    INGEST_COLL_LU,
+)
 from src.regolith.database import connect
 from src.regolith.helper import HELPERS
 from src.regolith.runcontrol import DEFAULT_RC, filter_databases, load_rcfile
