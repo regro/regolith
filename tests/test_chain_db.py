@@ -1,4 +1,4 @@
-from regolith.chained_db import ChainDB
+from src.regolith.chained_db import ChainDB
 
 
 def test_dddi():

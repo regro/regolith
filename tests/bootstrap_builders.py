@@ -7,10 +7,10 @@ from copy import deepcopy
 
 from xonsh.lib import subprocess
 
-from regolith.broker import load_db
-from regolith.fsclient import dump_yaml
-from regolith.main import main
-from regolith.schemas import EXEMPLARS
+from src.regolith.broker import load_db
+from src.regolith.fsclient import dump_yaml
+from src.regolith.main import main
+from src.regolith.schemas import EXEMPLARS
 
 builder_map = [
     "cv",

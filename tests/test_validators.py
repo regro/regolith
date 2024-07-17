@@ -6,7 +6,7 @@ from pprint import pprint
 
 import pytest
 
-from regolith.schemas import EXEMPLARS, SCHEMAS, validate
+from src.regolith.schemas import EXEMPLARS, SCHEMAS, validate
 
 
 @pytest.mark.parametrize("key", SCHEMAS.keys())

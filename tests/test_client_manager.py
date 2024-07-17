@@ -3,10 +3,10 @@ from copy import copy, deepcopy
 
 import pytest
 
-from regolith.database import connect
-from regolith.runcontrol import DEFAULT_RC, load_rcfile
-from regolith.schemas import EXEMPLARS
-from regolith.tools import all_docs_from_collection
+from src.regolith.database import connect
+from src.regolith.runcontrol import DEFAULT_RC, load_rcfile
+from src.regolith.schemas import EXEMPLARS
+from src.regolith.tools import all_docs_from_collection
 
 
 def test_collection_retrieval_python(make_mixed_db):

@@ -9,8 +9,8 @@ import habanero
 import openpyxl
 import pytest
 
-from regolith.broker import load_db
-from regolith.main import main
+from src.regolith.broker import load_db
+from src.regolith.main import main
 
 builder_map = [
     "cv",

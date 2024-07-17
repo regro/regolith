@@ -3,7 +3,7 @@ from datetime import date
 
 import pytest
 
-from regolith.dates import (
+from src.regolith.dates import (
     date_to_float,
     day_to_str_int,
     find_gaps_overlaps,
