@@ -21,6 +21,7 @@ from src.regolith.version import __version__
 # silence the pyflakes syntax checker
 assert __version__ or True
 
+
 # End of file
 def __version__():
     return None
