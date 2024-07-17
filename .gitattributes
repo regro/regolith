@@ -1,1 +1,1 @@
-regolith/_version.py export-subst
+src/regolith/version.py export-subst
