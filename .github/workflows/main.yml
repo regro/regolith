@@ -32,7 +32,7 @@ jobs:
           # environment.yml file is needed by this action.  Because I don't want
           # maintain this but rather maintain the requirements files it just has
           # basic things in it like conda and pip
-          environment-file: ./environment.yml
+          environment-file: environment.yml
           python-version: 3
           auto-activate-base: false
 
