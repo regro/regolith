@@ -16,9 +16,11 @@
 """Research Group Content Management System"""
 
 # package version
-from regolith.version import __version__
+from src.regolith.version import __version__
 
 # silence the pyflakes syntax checker
 assert __version__ or True
 
 # End of file
+def __version__():
+    return None
