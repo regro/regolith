@@ -10,4 +10,4 @@ max-line-length = 115
 # https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#labels-why-pycodestyle-warnings
 extend-ignore = E203
 per-file-ignores =
-    tests/test_helpers.py: E501
+    src/regolith/tests/test_helpers.py: E501
