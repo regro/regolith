@@ -7,14 +7,12 @@ name = "regolith"
 dynamic=['version']
 authors = [
   { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
-  { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
 maintainers = [
   { name="Simon J.L. Billinge group", email="simon.billinge@gmail.com" },
-  { name="Anthony Scopatz", email="scopatz@gmail.com" },
 ]
-description = "A research group content management system"
-keywords = ["content management system"]
+description = "A Group System Management System"
+keywords = ['Content management system']
 readme = "README.rst"
 requires-python = ">=3.10"
 classifiers = [
@@ -22,7 +20,7 @@ classifiers = [
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication',
+        'License :: OSI Approved :: BSD License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
@@ -31,14 +29,12 @@ classifiers = [
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
         'Topic :: Scientific/Engineering :: Physics',
+        'Topic :: Scientific/Engineering :: Chemistry',
 ]
-
-[tool.setuptools]
-script-files = ["scripts/regolith", "scripts/helper_gui", "scripts/helper_connect", "scripts/profile_regolith", "scripts/profile_helper_gui"]
 
 [project.urls]
 Homepage = "https://github.com/regro/regolith/"
-Issues = "https://github.com/regro/regolith/issues"
+Issues = "https://github.com/regro/regolith/issues/"
 
 [tool.setuptools-git-versioning]
 enabled = true
@@ -47,18 +43,10 @@ dev_template = "{tag}"
 dirty_template = "{tag}"
 
 [tool.setuptools.packages.find]
-where = ["."]  # list of folders that contain the packages (["."] by default)
-include = ["regolith*"]  # package names should match these glob patterns (["*"] by default)
-exclude = []  # exclude packages matching these glob patterns (empty by default)
-namespaces = true  # to disable scanning PEP 420 namespaces (true by default)
-
-[tool.setuptools.package-data]
-regolith = ["templates/*",
-            "static/*.*",
-            "static/img/*.*",
-            "*.xsh",
-            "*.json"
-            ]
+where = ["src"]  # list of folders that contain the packages (["."] by default)
+include = ["*"]  # package names should match these glob patterns (["*"] by default)
+exclude = ["regolith.tests*"]  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.black]
 line-length = 115
