@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 import pytest
-from tests.conftest import ALTERNATE_REGOLITH_MONGODB_NAME, FS_DB_NAME
+from src.regolith.tests.conftest import ALTERNATE_REGOLITH_MONGODB_NAME, FS_DB_NAME
 
 from src.regolith.database import connect
 from src.regolith.dates import convert_doc_iso_to_date
