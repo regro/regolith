@@ -1,6 +1,8 @@
+flake8
 mock
 pytest
 coverage
 codecov
 requests-mock
 pytest-mock
+pytest-env
