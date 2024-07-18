@@ -5,7 +5,7 @@ validate
 
 	usage: regolith validate [-h] [--collection COLLECTION]
 
-	optional arguments:
+	options:
 	  -h, --help            show this help message and exit
 	  --collection COLLECTION
 	                        If provided only validate that collection
