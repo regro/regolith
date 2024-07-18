@@ -2,7 +2,12 @@
 
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, search_collection
+from regolith.tools import (
+    all_docs_from_collection,
+    collection_str,
+    get_pi_id,
+    search_collection,
+)
 
 HELPER_TARGET = "lister"
 

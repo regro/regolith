@@ -22,7 +22,11 @@ from regolith.builders.basebuilder import LatexBuilderBase
 from regolith.fsclient import _id_key
 from regolith.sorters import position_key
 from regolith.stylers import month_fullnames, sentencecase
-from regolith.tools import all_docs_from_collection, filter_presentations, group_member_ids
+from regolith.tools import (
+    all_docs_from_collection,
+    filter_presentations,
+    group_member_ids,
+)
 
 
 class PresListBuilder(LatexBuilderBase):
