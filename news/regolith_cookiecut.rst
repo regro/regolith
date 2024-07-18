@@ -16,7 +16,7 @@
 
 **Fixed:**
 
-* Fix Regolith by flake8 and black under PEP-8 standard.
+* Rearrange Regolith package to new Billingegroup package standards
 
 **Security:**
 
