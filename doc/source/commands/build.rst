@@ -21,4 +21,3 @@ build
 	                        specify a grant or a space-separated list of grants so items are built only if associated with this(these) grant(s)
 	  --people PEOPLE [PEOPLE ...]
 	                        specify a person or a space-separated list of people such that the build will be for only those people
-
