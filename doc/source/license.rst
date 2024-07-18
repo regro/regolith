@@ -7,11 +7,6 @@ License
 
 OPEN SOURCE LICENSE AGREEMENT
 =============================
-BSD 3-Clause License
-
-Copyright (c) 2024, The Trustees of Columbia University in 
-the City of New York.
-All Rights Reserved. 
 
 The laws of most jurisdictions throughout the world automatically confer
 exclusive Copyright and Related Rights (defined below) upon the creator and
