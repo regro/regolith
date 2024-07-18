@@ -258,4 +258,3 @@ regolith.helpers.u_milestonehelper module
     :members:
     :undoc-members:
     :show-inheritance:
-

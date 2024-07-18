@@ -178,4 +178,3 @@ regolith.builders.appraisalbuilder module
     :members:
     :undoc-members:
     :show-inheritance:
-

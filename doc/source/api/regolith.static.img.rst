@@ -7,4 +7,3 @@ regolith.static.img package
     :members:
     :undoc-members:
     :show-inheritance:
-
