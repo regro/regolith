@@ -221,4 +221,3 @@ regolith.mongoclient module
     :members:
     :undoc-members:
     :show-inheritance:
-
