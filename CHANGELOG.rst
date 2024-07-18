@@ -1,6 +1,6 @@
-====================
-Regolith Change Log
-====================
+=============
+Release Notes
+=============
 
 .. current developments
 
