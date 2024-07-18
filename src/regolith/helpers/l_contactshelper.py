@@ -9,12 +9,7 @@ from gooey import GooeyParser
 from regolith.dates import get_dates, is_current
 from regolith.fsclient import _id_key
 from regolith.helpers.basehelper import SoutHelperBase
-from regolith.tools import (
-    all_docs_from_collection,
-    fuzzy_retrieval,
-    get_pi_id,
-    search_collection,
-)
+from regolith.tools import all_docs_from_collection, fuzzy_retrieval, get_pi_id, search_collection
 
 TARGET_COLL = "contacts"
 HELPER_TARGET = "l_contacts"
