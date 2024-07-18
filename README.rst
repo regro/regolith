@@ -118,4 +118,3 @@ Contact
 -------
 
 For more information on regolith please visit the project `web-page <https://regro.github.io/>`_ or email Prof. Simon Billinge at sb2896@columbia.edu.
-
