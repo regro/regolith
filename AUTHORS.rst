@@ -1,11 +1,12 @@
 Authors
 =======
-Anthony Scopatz
 
-Billinge Group and community contibutors.
+Originally written by Anthony Scopatz
+Significant contributions by Christopher "CJ" Wright and Simon J. L. Billinge
+Billinge Group and other community contibutors.
 
 Contributors
 ------------
 
-For a list of contributors, visit
+For a full list of contributors, visit
 https://github.com/regro/regolith/graphs/contributors
