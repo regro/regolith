@@ -17,12 +17,7 @@ from regolith.schemas import (
     PROJECTUM_FINISHED_STATI,
     PROJECTUM_PAUSED_STATI,
 )
-from regolith.tools import (
-    all_docs_from_collection,
-    collection_str,
-    get_pi_id,
-    key_value_pair_filter,
-)
+from regolith.tools import all_docs_from_collection, collection_str, get_pi_id, key_value_pair_filter
 
 TARGET_COLL = "projecta"
 HELPER_TARGET = "l_projecta"

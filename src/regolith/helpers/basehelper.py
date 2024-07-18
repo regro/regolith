@@ -8,15 +8,7 @@ from jinja2 import Environment, FileSystemLoader
 from xonsh.lib import subprocess
 
 from regolith.sorters import category_val, date_key, doc_date_key, level_val
-from regolith.tools import (
-    LATEX_OPTS,
-    date_to_rfc822,
-    gets,
-    latex_safe,
-    latex_safe_url,
-    month_and_year,
-    rfc822now,
-)
+from regolith.tools import LATEX_OPTS, date_to_rfc822, gets, latex_safe, latex_safe_url, month_and_year, rfc822now
 
 
 class HelperBase(object):
