@@ -118,7 +118,7 @@ pygments_style = "pastie"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "redcloud"
+html_theme = "sphinx_rtd_theme"
 # html_theme = 'blackcloud'
 
 # Theme options are theme-specific and customize the look and feel of a theme
