@@ -1,28 +1,22 @@
-:tocdepth: -1
+.. _api:
 
-regolith package
-================
-
-.. automodule:: regolith
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Subpackages
------------
+=================
+Regolith API
+=================
+For those of you who want the gritty details.
 
 .. toctree::
-    :titlesonly:
+    :maxdepth: 1
 
     regolith.builders
     regolith.static
     regolith.templates
     regolith.helpers
 
-Submodules
+Other API usage
 ----------
 
-regolith.fsclient module
+regolith.fsclient
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.fsclient
@@ -30,7 +24,7 @@ regolith.fsclient module
     :undoc-members:
     :show-inheritance:
 
-regolith.helper_connect_main module
+regolith.helper_connect_main
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.helper_connect_main
@@ -38,7 +32,7 @@ regolith.helper_connect_main module
     :undoc-members:
     :show-inheritance:
 
-regolith.stylers module
+regolith.stylers
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.stylers
@@ -46,7 +40,7 @@ regolith.stylers module
     :undoc-members:
     :show-inheritance:
 
-regolith.sorters module
+regolith.sorters
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.sorters
@@ -54,7 +48,7 @@ regolith.sorters module
     :undoc-members:
     :show-inheritance:
 
-regolith.helper_gui_main module
+regolith.helper_gui_main
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.helper_gui_main
@@ -62,7 +56,7 @@ regolith.helper_gui_main module
     :undoc-members:
     :show-inheritance:
 
-regolith.deploy module
+regolith.deploy
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.deploy
@@ -70,7 +64,7 @@ regolith.deploy module
     :undoc-members:
     :show-inheritance:
 
-regolith.grader module
+regolith.grader
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.grader
@@ -78,7 +72,7 @@ regolith.grader module
     :undoc-members:
     :show-inheritance:
 
-regolith.validators module
+regolith.validators
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.validators
@@ -86,7 +80,7 @@ regolith.validators module
     :undoc-members:
     :show-inheritance:
 
-regolith.runcontrol module
+regolith.runcontrol
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.runcontrol
@@ -94,7 +88,7 @@ regolith.runcontrol module
     :undoc-members:
     :show-inheritance:
 
-regolith.tools module
+regolith.tools
 ^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.tools
@@ -102,7 +96,7 @@ regolith.tools module
     :undoc-members:
     :show-inheritance:
 
-regolith.client_manager module
+regolith.client_manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.client_manager
@@ -110,7 +104,7 @@ regolith.client_manager module
     :undoc-members:
     :show-inheritance:
 
-regolith.builder module
+regolith.builder
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.builder
@@ -118,7 +112,7 @@ regolith.builder module
     :undoc-members:
     :show-inheritance:
 
-regolith.classlist module
+regolith.classlist
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.classlist
@@ -126,7 +120,7 @@ regolith.classlist module
     :undoc-members:
     :show-inheritance:
 
-regolith.schemas module
+regolith.schemas
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.schemas
@@ -134,7 +128,7 @@ regolith.schemas module
     :undoc-members:
     :show-inheritance:
 
-regolith.storage module
+regolith.storage
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.storage
@@ -142,7 +136,7 @@ regolith.storage module
     :undoc-members:
     :show-inheritance:
 
-regolith.helper module
+regolith.helper
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.helper
@@ -150,7 +144,7 @@ regolith.helper module
     :undoc-members:
     :show-inheritance:
 
-regolith.emailer module
+regolith.emailer
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.emailer
@@ -158,7 +152,7 @@ regolith.emailer module
     :undoc-members:
     :show-inheritance:
 
-regolith.app module
+regolith.app
 ^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.app
@@ -166,7 +160,7 @@ regolith.app module
     :undoc-members:
     :show-inheritance:
 
-regolith.dates module
+regolith.dates
 ^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.dates
@@ -174,7 +168,7 @@ regolith.dates module
     :undoc-members:
     :show-inheritance:
 
-regolith.broker module
+regolith.broker
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.broker
@@ -182,7 +176,7 @@ regolith.broker module
     :undoc-members:
     :show-inheritance:
 
-regolith.main module
+regolith.main
 ^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.main
@@ -190,7 +184,7 @@ regolith.main module
     :undoc-members:
     :show-inheritance:
 
-regolith.chained_db module
+regolith.chained_db
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.chained_db
@@ -198,7 +192,7 @@ regolith.chained_db module
     :undoc-members:
     :show-inheritance:
 
-regolith.interact module
+regolith.interact
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.interact
@@ -206,7 +200,7 @@ regolith.interact module
     :undoc-members:
     :show-inheritance:
 
-regolith.commands module
+regolith.commands
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.commands
@@ -214,7 +208,7 @@ regolith.commands module
     :undoc-members:
     :show-inheritance:
 
-regolith.mongoclient module
+regolith.mongoclient
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.mongoclient

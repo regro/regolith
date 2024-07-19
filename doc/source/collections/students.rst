@@ -7,7 +7,7 @@ Schema
 The following lists key names mapped to its type and meaning for each entry.
 
 :_id: string, short representation, such as this-is-my-name, required
-:aka: ('list', 'string'), list of aliases, optional
+:aka: ['list', 'string'], list of aliases, optional
 
 	:type: string, optional
 :email: string, email address, optional

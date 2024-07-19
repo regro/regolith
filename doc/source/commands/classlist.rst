@@ -19,3 +19,4 @@ classlist
 	                        if not available.
 	  -d, --dry-run         only does a dry run and reports results
 	  --db DB               database name
+

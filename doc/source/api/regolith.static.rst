@@ -15,3 +15,4 @@ Subpackages
     :titlesonly:
 
     regolith.static.img
+

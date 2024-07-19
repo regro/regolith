@@ -13,3 +13,4 @@ ingest
 	  -h, --help   show this help message and exit
 	  --coll COLL  collection name, if this is not given it is infered from the
 	               file type or file name.
+

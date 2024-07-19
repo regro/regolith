@@ -9,10 +9,12 @@ The following lists key names mapped to its type and meaning for each entry.
 :_id: string, unique id for the presentation, required
 :abstract: string, abstract of the presentation, optional
 :authors: ['string', 'list'], Author list., required
+:begin_date: ['date', 'string'], begin date in YYYY-MM-DD, optional
 :begin_day: integer, optional
-:begin_month: ['string', 'integer'], required
-:begin_year: integer, year the conference or trip begins., required
+:begin_month: ['string', 'integer'], optional
+:begin_year: integer, year the conference or trip begins., optional
 :department: string, department of the institution where thepresentation will be made, if applicable.  should be discoverable in institutions., optional
+:end_date: ['date', 'string'], end_date in YYYY-MM-DD, optional
 :end_day: integer, optional
 :end_month: ['string', 'integer'], optional
 :end_year: integer, year the conference or trip ends, optional
@@ -20,6 +22,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :location: string, city and {state or country} of meeting, optional
 :meeting_name: string, full name of the conference or meeting.  If it is a departmental seminar or colloquium, write Seminaror Colloquium and fill in department and institution fields, optional
 :notes: ['list', 'string'], any reminder or memory aid about anything, optional
+:presentation_url: string, the url to the presentation on Google slides, GitHub or wherever, optional
 :project: ['string', 'list'], project or list of projects that this presentation is associated with.  Should be discoverable in projects collection, optional
 :status: string, Is the application in prep or submitted, was the invitation accepted or declined, was the trip cancelled?, required
 
@@ -29,6 +32,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		* accepted
 		* declined
 		* cancelled
+		* postponed
 :title: string, title of the presentation, required
 :type: string, type of presentation, required
 
@@ -41,6 +45,9 @@ The following lists key names mapped to its type and meaning for each entry.
 		* plenary
 		* poster
 		* seminar
+		* tutorial
+		* other
+:webinar: boolean, true if a webinar. Default to false, optional
 
 
 YAML Example
@@ -67,6 +74,7 @@ YAML Example
 	  title: Nanostructure challenges and successes from 16th Century warships to 21st
 	    Century energy
 	  type: colloquium
+	  webinar: true
 	18sb_nslsii:
 	  abstract: We pulled apart graphite with tape
 	  authors:
@@ -93,6 +101,7 @@ YAML Example
 	  abstract: We pulled apart graphite with tape
 	  authors:
 	    - scopatz
+	    - afriend
 	  begin_day: 22
 	  begin_month: 5
 	  begin_year: 2018
@@ -103,10 +112,12 @@ YAML Example
 	  notes:
 	    - We hope the weather will be sunny
 	    - if the weather is nice we will go to the beach
+	  presentation_url: http://github.com/blob/my_talk.pdf
 	  project: 18sob_clustermining
 	  status: accepted
 	  title: Graphitic Dephenestration
 	  type: award
+	  webinar: false
 
 
 JSON/Mongo Example
@@ -134,7 +145,8 @@ JSON/Mongo Example
 	    "project": "18kj_conservation",
 	    "status": "accepted",
 	    "title": "Nanostructure challenges and successes from 16th Century warships to 21st Century energy",
-	    "type": "colloquium"
+	    "type": "colloquium",
+	    "webinar": true
 	}
 	{
 	    "_id": "18sb_nslsii",
@@ -165,7 +177,8 @@ JSON/Mongo Example
 	    "_id": "18sb_this_and_that",
 	    "abstract": "We pulled apart graphite with tape",
 	    "authors": [
-	        "scopatz"
+	        "scopatz",
+	        "afriend"
 	    ],
 	    "begin_day": 22,
 	    "begin_month": 5,
@@ -178,8 +191,10 @@ JSON/Mongo Example
 	        "We hope the weather will be sunny",
 	        "if the weather is nice we will go to the beach"
 	    ],
+	    "presentation_url": "http://github.com/blob/my_talk.pdf",
 	    "project": "18sob_clustermining",
 	    "status": "accepted",
 	    "title": "Graphitic Dephenestration",
-	    "type": "award"
+	    "type": "award",
+	    "webinar": false
 	}

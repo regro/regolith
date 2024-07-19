@@ -21,3 +21,4 @@ email
 	  -c COURSE_IDS [COURSE_IDS ...], --course-id COURSE_IDS [COURSE_IDS ...]
 	                        course identifier that should be emailed.
 	  --db DB               database name
+

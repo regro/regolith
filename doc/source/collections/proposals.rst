@@ -6,9 +6,10 @@ Schema
 ------
 The following lists key names mapped to its type and meaning for each entry.
 
-:_id: ('string', 'integer', 'float'), short representation, such as this-is-my-name, required
-:amount: ('integer', 'float'), value of award, required
-:authors: ['list', 'string'], other investigator names, required
+:_id: ['string', 'integer', 'float'], short representation, such as this-is-my-name, required
+:amount: ['integer', 'float'], value of award, required
+:authors: ['list', 'string'], other investigator names, optional
+:begin_date: ['string', 'date'], start date of the proposed grant in format YYYY-MM-DD, optional
 :begin_day: integer, start day of the proposed grant, optional
 :begin_month: ['string', 'integer'], start month of the proposed grant, optional
 :begin_year: integer, start year of the proposed grant, optional
@@ -21,27 +22,31 @@ The following lists key names mapped to its type and meaning for each entry.
 	:person_months_academic: ['float', 'integer'], optional
 	:person_months_summer: ['float', 'integer'], optional
 	:project_scope: string, optional
+	:single_pi: boolean, set to true if there are no co-pi's, optional
 :currency: string, typically '$' or 'USD', required
-:day: integer, day that the proposal was submitted, required
-:due_date: string, day that the proposal is due, optional
-:duration: ('integer', 'float'), number of years, required
-:end_day: ('string', 'integer'), end day of the proposed grant, optional
+:due_date: ['string', 'date'], day that the proposal is due, optional
+:duration: ['integer', 'float'], number of years, optional
+:end_date: ['string', 'date'], end date of the proposed grant in format YYYY-MM-DD, optional
+:end_day: ['string', 'integer'], end day of the proposed grant, optional
 :end_month: ['string', 'integer'], end month of the proposed grant, optional
 :end_year: integer, end year of the proposed grant, optional
 :full: dict, full body of the proposal, optional
 :funder: string, who will fund the proposalas funder in grants, optional
-:month: ['string', 'integer'], month that the proposal was submitted, required
 :notes: ['string', 'list'], anything you want to note, optional
 :pi: string, principal investigator name, required
 :pre: dict, Information about the pre-proposal, optional
-:status: string, e.g. 'pending', 'accepted', 'rejected', required
+:status: string, e.g. 'pending', 'accepted', 'declined', required
 
 	Allowed values: 
 		* pending
 		* declined
 		* accepted
-		* in-prep
+		* inprep
 		* submitted
+:submitted_date: ['string', 'date'], date that the proposal was submitted, optional
+:submitted_day: integer, day that the proposal was submitted, optional
+:submitted_month: ['string', 'integer'], month that the proposal was submitted, optional
+:submitted_year: integer, Year that the proposal was submitted, optional
 :team: list, information about the team members participating in the grant., optional
 
 	:type: dict, optional
@@ -51,10 +56,9 @@ The following lists key names mapped to its type and meaning for each entry.
 		:institution: string, optional
 		:name: string, optional
 		:position: string, optional
-		:subaward_amount: ('integer', 'float'), optional
+		:subaward_amount: ['integer', 'float'], optional
 :title: string, actual title of proposal, required
 :title_short: string, short title of proposal, optional
-:year: integer, Year that the proposal was submitted, required
 
 
 YAML Example
@@ -62,6 +66,59 @@ YAML Example
 
 .. code-block:: yaml
 
+	SymPy-1.1:
+	  amount: 3000.0
+	  begin_date: '2030-05-01'
+	  cpp_info:
+	    cppflag: true
+	    institution: Columbia University
+	    other_agencies_submitted: None
+	    person_months_academic: 0
+	    person_months_summer: 1
+	    project_scope: ''
+	  currency: USD
+	  end_date: '2030-12-31'
+	  pi: Anthony Scopatz
+	  status: pending
+	  team:
+	    - institution: Columbia University
+	      name: scopatz
+	      position: pi
+	  title: SymPy 1.1 Release Support
+	SymPy-2.1:
+	  amount: 3000.0
+	  begin_date: '2019-06-01'
+	  cpp_info:
+	    cppflag: true
+	    institution: Columbia University
+	    other_agencies_submitted: None
+	    person_months_academic: 0
+	    person_months_summer: 1
+	    project_scope: ''
+	  currency: USD
+	  end_date: '2030-12-31'
+	  pi: sbillinge
+	  status: accepted
+	  team:
+	    - institution: University of 2.1
+	      name: Anthony Scopatz 2.1
+	      position: pi
+	  title: SymPy 2.1 Release Support
+	abc42:
+	  amount: 42000.0
+	  begin_date: '2020-06-01'
+	  cpp_info:
+	    cppflag: true
+	    institution: Columbia University
+	    other_agencies_submitted: None
+	    person_months_academic: 0
+	    person_months_summer: 1
+	    project_scope: ''
+	  currency: USD
+	  end_date: '2020-12-31'
+	  pi: sbillinge
+	  status: submitted
+	  title: The answer to life, the universe, and everything
 	dmref15:
 	  amount: 982785.0
 	  authors:
@@ -79,32 +136,31 @@ YAML Example
 	    person_months_academic: 0
 	    person_months_summer: 1
 	    project_scope: lots to do but it doesn't overlap with any other of my grants
+	    single_pi: true
 	  currency: USD
-	  day: 2
 	  duration: 3
 	  end_day: 1
 	  end_month: May
 	  end_year: 2019
 	  funder: NSF
-	  month: february
 	  notes: Quite an idea
 	  pi: Simon Billinge
 	  status: accepted
+	  submitted_date: '2015-02-02'
 	  team:
-	    - institution: Columbia Unviersity
+	    - institution: Columbia University
 	      name: qdu
-	      position: Co-PI
-	    - institution: Columbia Unviersity
+	      position: copi
+	    - institution: Columbia University
 	      name: dhsu
-	      position: Co-PI
-	    - institution: Columbia Unviersity
+	      position: copi
+	    - institution: Columbia University
 	      name: sbillinge
-	      position: PI
+	      position: pi
 	      subaward_amount: 330000.0
 	  title: 'DMREF: Novel, data validated, nanostructure determination methods for accelerating
 	    materials discovery'
 	  title_short: DMREF nanostructure
-	  year: 2015
 	mypropsal:
 	  amount: 1000000.0
 	  authors:
@@ -114,7 +170,6 @@ YAML Example
 	  begin_month: May
 	  begin_year: 2030
 	  currency: USD
-	  day: 18
 	  duration: 3
 	  end_day: 31
 	  end_month: December
@@ -125,7 +180,6 @@ YAML Example
 	      - http://pdf.com/scopatz-cv
 	      - http://pdf.com/flanagan-cv
 	    narrative: http://some.com/pdf
-	  month: Aug
 	  notes: Quite an idea
 	  pi: Anthony Scopatz
 	  pre:
@@ -138,8 +192,10 @@ YAML Example
 	    narrative: http://some.com/pdf
 	    year: 1998
 	  status: submitted
+	  submitted_day: 18
+	  submitted_month: Aug
+	  submitted_year: 1999
 	  title: A very fine proposal indeed
-	  year: 1999
 
 
 JSON/Mongo Example
@@ -147,6 +203,74 @@ JSON/Mongo Example
 
 .. code-block:: json
 
+	{
+	    "_id": "SymPy-1.1",
+	    "amount": 3000.0,
+	    "begin_date": "2030-05-01",
+	    "cpp_info": {
+	        "cppflag": true,
+	        "institution": "Columbia University",
+	        "other_agencies_submitted": "None",
+	        "person_months_academic": 0,
+	        "person_months_summer": 1,
+	        "project_scope": ""
+	    },
+	    "currency": "USD",
+	    "end_date": "2030-12-31",
+	    "pi": "Anthony Scopatz",
+	    "status": "pending",
+	    "team": [
+	        {
+	            "institution": "Columbia University",
+	            "name": "scopatz",
+	            "position": "pi"
+	        }
+	    ],
+	    "title": "SymPy 1.1 Release Support"
+	}
+	{
+	    "_id": "SymPy-2.1",
+	    "amount": 3000.0,
+	    "begin_date": "2019-06-01",
+	    "cpp_info": {
+	        "cppflag": true,
+	        "institution": "Columbia University",
+	        "other_agencies_submitted": "None",
+	        "person_months_academic": 0,
+	        "person_months_summer": 1,
+	        "project_scope": ""
+	    },
+	    "currency": "USD",
+	    "end_date": "2030-12-31",
+	    "pi": "sbillinge",
+	    "status": "accepted",
+	    "team": [
+	        {
+	            "institution": "University of 2.1",
+	            "name": "Anthony Scopatz 2.1",
+	            "position": "pi"
+	        }
+	    ],
+	    "title": "SymPy 2.1 Release Support"
+	}
+	{
+	    "_id": "abc42",
+	    "amount": 42000.0,
+	    "begin_date": "2020-06-01",
+	    "cpp_info": {
+	        "cppflag": true,
+	        "institution": "Columbia University",
+	        "other_agencies_submitted": "None",
+	        "person_months_academic": 0,
+	        "person_months_summer": 1,
+	        "project_scope": ""
+	    },
+	    "currency": "USD",
+	    "end_date": "2020-12-31",
+	    "pi": "sbillinge",
+	    "status": "submitted",
+	    "title": "The answer to life, the universe, and everything"
+	}
 	{
 	    "_id": "dmref15",
 	    "amount": 982785.0,
@@ -165,40 +289,39 @@ JSON/Mongo Example
 	        "other_agencies_submitted": "None",
 	        "person_months_academic": 0,
 	        "person_months_summer": 1,
-	        "project_scope": "lots to do but it doesn't overlap with any other of my grants"
+	        "project_scope": "lots to do but it doesn't overlap with any other of my grants",
+	        "single_pi": true
 	    },
 	    "currency": "USD",
-	    "day": 2,
 	    "duration": 3,
 	    "end_day": 1,
 	    "end_month": "May",
 	    "end_year": 2019,
 	    "funder": "NSF",
-	    "month": "february",
 	    "notes": "Quite an idea",
 	    "pi": "Simon Billinge",
 	    "status": "accepted",
+	    "submitted_date": "2015-02-02",
 	    "team": [
 	        {
-	            "institution": "Columbia Unviersity",
+	            "institution": "Columbia University",
 	            "name": "qdu",
-	            "position": "Co-PI"
+	            "position": "copi"
 	        },
 	        {
-	            "institution": "Columbia Unviersity",
+	            "institution": "Columbia University",
 	            "name": "dhsu",
-	            "position": "Co-PI"
+	            "position": "copi"
 	        },
 	        {
-	            "institution": "Columbia Unviersity",
+	            "institution": "Columbia University",
 	            "name": "sbillinge",
-	            "position": "PI",
+	            "position": "pi",
 	            "subaward_amount": 330000.0
 	        }
 	    ],
 	    "title": "DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery",
-	    "title_short": "DMREF nanostructure",
-	    "year": 2015
+	    "title_short": "DMREF nanostructure"
 	}
 	{
 	    "_id": "mypropsal",
@@ -211,7 +334,6 @@ JSON/Mongo Example
 	    "begin_month": "May",
 	    "begin_year": 2030,
 	    "currency": "USD",
-	    "day": 18,
 	    "duration": 3,
 	    "end_day": 31,
 	    "end_month": "December",
@@ -224,7 +346,6 @@ JSON/Mongo Example
 	        ],
 	        "narrative": "http://some.com/pdf"
 	    },
-	    "month": "Aug",
 	    "notes": "Quite an idea",
 	    "pi": "Anthony Scopatz",
 	    "pre": {
@@ -239,6 +360,8 @@ JSON/Mongo Example
 	        "year": 1998
 	    },
 	    "status": "submitted",
-	    "title": "A very fine proposal indeed",
-	    "year": 1999
+	    "submitted_day": 18,
+	    "submitted_month": "Aug",
+	    "submitted_year": 1999,
+	    "title": "A very fine proposal indeed"
 	}

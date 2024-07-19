@@ -10,3 +10,4 @@ json-to-yaml
 
 	options:
 	  -h, --help  show this help message and exit
+
