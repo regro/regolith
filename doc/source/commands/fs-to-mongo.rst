@@ -10,4 +10,3 @@ fs-to-mongo
 	  --host HOST  Specifies a resolvable hostname for the mongod to which to
 	               connect. By default, the mongoimport attempts to connect to a
 	               MongoDB instance running on the localhost on port number 27017.
-
