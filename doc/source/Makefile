@@ -24,7 +24,7 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 .PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
 DOCREPONAME = regro.github.io
-DOCREPOURL  = git@github.com:regro/regolith-docs.git
+DOCREPOURL  = git@github.com:regro/regolith.git
 
 
 help:
