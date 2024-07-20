@@ -5,7 +5,7 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
-BUILDDIR      = _build
+BUILDDIR      = build
 BASENAME      = $(subst .,,$(subst $() $(),,regolith))
 RELEASE = v0.1
 
