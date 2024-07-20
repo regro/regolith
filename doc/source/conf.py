@@ -19,10 +19,15 @@ from textwrap import indent
 
 import cloud_sptheme as csp
 
+import regolith
 from regolith import __version__ as REGOLITH_VERSION
 from regolith.fsclient import _id_key, dump_json, json_to_yaml
 from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
 from regolith.schemas import EXEMPLARS, SCHEMAS
+
+autodoc_mock_imports = [
+    regolith,
+]
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -113,7 +118,7 @@ pygments_style = "pastie"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "redcloud"
+html_theme = "sphinx_rtd_theme"
 # html_theme = 'blackcloud'
 
 # Theme options are theme-specific and customize the look and feel of a theme
