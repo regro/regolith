@@ -6,11 +6,12 @@ build
 	usage: regolith build [-h] [--no-pdf] [--from FROM_DATE] [--to TO_DATE]
 	                      [--grants GRANTS [GRANTS ...]]
 	                      [--people PEOPLE [PEOPLE ...]]
+	                      [--kwargs KWARGS [KWARGS ...]]
 	                      build_targets [build_targets ...]
 
 	positional arguments:
 	  build_targets         targets to build. Currently valid targets are: 
-	                        ['cv', 'html', 'publist', 'grade', 'grades', 'resume', 'current-pending', 'postdocad', 'review-man', 'review-prop', 'preslist', 'reimb', 'figure']
+	                        ['annual-activity', 'beamplan', 'current-pending', 'cv', 'figure', 'formalletter', 'grade', 'grades', 'grant-report', 'html', 'internalhtml', 'postdocad', 'preslist', 'publist', 'reading-lists', 'reimb', 'recent-collabs', 'resume', 'review-man', 'review-prop']
 
 	options:
 	  -h, --help            show this help message and exit
@@ -21,3 +22,5 @@ build
 	                        specify a grant or a space-separated list of grants so items are built only if associated with this(these) grant(s)
 	  --people PEOPLE [PEOPLE ...]
 	                        specify a person or a space-separated list of people such that the build will be for only those people
+	  --kwargs KWARGS [KWARGS ...]
+	                        pass a specific command to build a specific task if it exists

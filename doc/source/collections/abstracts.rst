@@ -10,7 +10,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :coauthors: string, names of coauthors, optional
 :email: string, contact email for the author., required
 :firstname: string, first name of the author., required
-:institution: string, name of the inistitution, required
+:institution: string, name of the institution, required
 :lastname: string, last name of the author., required
 :references: string, HTML string of reference for the abstract itself, optional
 :text: string, HTML string of the abstract., required

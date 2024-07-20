@@ -31,18 +31,10 @@ YAML Example
 	  department: Mechanical Engineering
 	  email: <b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>
 	  institution: University of South Carolina
-	  mission_statement: "<b>ERGS</b>, or <i>Energy Research Group: \n    Scopatz</i>,\
-	    \ is the Computational \n    <a href=\"http://www.me.sc.edu/nuclear/\">Nuclear\
-	    \ Engineering</a>\n    research group at the \n    <a href=\"http://sc.edu/\"\
-	    >University of South Carolina</a>. \n    Our focus is on uncertainty quantification\
-	    \ & predictive modeling, nuclear \n    fuel cycle simulation, and improving nuclear\
-	    \ engineering techniques through \n    automation.\n    We are committed to open\
-	    \ & accessible research tools and methods."
+	  mission_statement: We are committed to open and accessible research tools and methods.
 	  name: ERGS
 	  pi_name: Anthony Scopatz
-	  projects: "ERGS is involved in a large number of computational \n    projects. Please\
-	    \ visit the <a href=\"projects.html\">projects page</a> for \n    more information!\n\
-	    \    "
+	  projects: ERGS is involved in a large number of computational projects.
 	  website: www.ergs.sc.edu
 
 
@@ -60,9 +52,9 @@ JSON/Mongo Example
 	    "department": "Mechanical Engineering",
 	    "email": "<b>scopatz</b> <i>(AT)</i> <b>cec.sc.edu</b>",
 	    "institution": "University of South Carolina",
-	    "mission_statement": "<b>ERGS</b>, or <i>Energy Research Group: \n    Scopatz</i>, is the Computational \n    <a href=\"http://www.me.sc.edu/nuclear/\">Nuclear Engineering</a>\n    research group at the \n    <a href=\"http://sc.edu/\">University of South Carolina</a>. \n    Our focus is on uncertainty quantification & predictive modeling, nuclear \n    fuel cycle simulation, and improving nuclear engineering techniques through \n    automation.\n    We are committed to open & accessible research tools and methods.",
+	    "mission_statement": "We are committed to open and accessible research tools and methods.",
 	    "name": "ERGS",
 	    "pi_name": "Anthony Scopatz",
-	    "projects": "ERGS is involved in a large number of computational \n    projects. Please visit the <a href=\"projects.html\">projects page</a> for \n    more information!\n    ",
+	    "projects": "ERGS is involved in a large number of computational projects.",
 	    "website": "www.ergs.sc.edu"
 	}
