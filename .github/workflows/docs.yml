@@ -7,7 +7,7 @@ on:
   release:
 
 jobs:
-  test:
+  docs:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,6 +28,7 @@ jobs:
           --file requirements/build.txt
           --file requirements/run.txt
           --file requirements/docs.txt
+          --file requirements/pip.txt
           --quiet --yes
 
       - name: install the package
