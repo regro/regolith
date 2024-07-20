@@ -6,20 +6,25 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
+BASENAME      = $(subst .,,$(subst $() $(),,regolith))
 RELEASE = v0.1
 
+# User-friendly check for sphinx-build
+ifeq ($(shell which $(SPHINXBUILD) >/dev/null 2>&1; echo $$?), 1)
+$(error The '$(SPHINXBUILD)' command was not found. Make sure you have Sphinx installed, then set the SPHINXBUILD environment variable to point to the full path of the '$(SPHINXBUILD)' executable. Alternatively you can add the directory with the executable to your PATH. If you don't have Sphinx installed, grab it from http://sphinx-doc.org/)
+endif
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 # the i18n builder cannot share the environment and doctrees with the others
-I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
 .PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
-DOCREPONAME = scopatz-regolith.github.io
-DOCREPOURL  = git@github.com:scopatz/regolith-docs.git
+DOCREPONAME = regro.github.io
+DOCREPOURL  = git@github.com:regro/regolith-docs.git
 
 
 help:
@@ -192,3 +197,27 @@ push-root:
 	git add . && \
 	git commit -am "Pushed root-level docs at $(date)" && \
 	git push
+
+GITREPOPATH = $(shell cd $(CURDIR) && git rev-parse --git-dir)
+GITREMOTE = origin
+GITREMOTEURL = $(shell git config --get remote.$(GITREMOTE).url)
+GITLASTCOMMIT = $(shell git rev-parse --short HEAD)
+
+publish:
+	@test -d build/html || \
+	    ( echo >&2 "Run 'make html' first!"; false )
+	git show-ref --verify --quiet refs/heads/gh-pages || \
+	    git branch --track gh-pages $(GITREMOTE)/gh-pages
+	test -d build/gh-pages || \
+	    git clone -s -b gh-pages $(GITREPOPATH) build/gh-pages
+	cd build/gh-pages && \
+	    git pull $(GITREMOTEURL) gh-pages
+	rsync -acv --delete --exclude=.git --exclude=.rsync-exclude \
+	    --exclude-from=build/gh-pages/.rsync-exclude \
+	    --link-dest=$(CURDIR)/build/html build/html/ build/gh-pages/
+	cd build/gh-pages && \
+	    git add --all . && \
+	    git diff --cached --quiet || \
+	    git commit -m "Sync with the source at $(GITLASTCOMMIT)."
+	cd build/gh-pages && \
+	    git push origin gh-pages
