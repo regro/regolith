@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>regolith.broker &mdash; regolith - software group content management system</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
   
@@ -15,7 +15,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
               <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8
+                0.9.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -55,9 +55,6 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
@@ -101,7 +98,7 @@
 
 
 <div class="viewcode-block" id="load_db">
-<a class="viewcode-back" href="../../api/index.html#regolith.broker.load_db">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.broker.load_db">[docs]</a>
 <span class="k">def</span> <span class="nf">load_db</span><span class="p">(</span><span class="n">rc_file</span><span class="o">=</span><span class="s2">&quot;regolithrc.json&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Broker instance from an rc file&quot;&quot;&quot;</span>
     <span class="n">rc</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">DEFAULT_RC</span><span class="p">)</span>
@@ -112,7 +109,7 @@
 
 
 <div class="viewcode-block" id="Broker">
-<a class="viewcode-back" href="../../api/index.html#regolith.broker.Broker">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.broker.Broker">[docs]</a>
 <span class="k">class</span> <span class="nc">Broker</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface to the database and file storage systems</span>
 
@@ -140,7 +137,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">db_client</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">client</span>
 
 <div class="viewcode-block" id="Broker.add_file">
-<a class="viewcode-back" href="../../api/index.html#regolith.broker.Broker.add_file">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.broker.Broker.add_file">[docs]</a>
     <span class="k">def</span> <span class="nf">add_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a file to a document in a collection.</span>
 
@@ -163,7 +160,7 @@
 
 
 <div class="viewcode-block" id="Broker.from_rc">
-<a class="viewcode-back" href="../../api/index.html#regolith.broker.Broker.from_rc">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.broker.Broker.from_rc">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_rc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rc_file</span><span class="o">=</span><span class="s2">&quot;regolithrc.json&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a Broker instance&quot;&quot;&quot;</span>
@@ -171,7 +168,7 @@
 
 
 <div class="viewcode-block" id="Broker.get_file_path">
-<a class="viewcode-back" href="../../api/index.html#regolith.broker.Broker.get_file_path">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.broker.Broker.get_file_path">[docs]</a>
     <span class="k">def</span> <span class="nf">get_file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a file from the file storage associated with the document and</span>
 <span class="sd">        name</span>
@@ -207,7 +204,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+    <p>&#169; Copyright 2015, Anthony Scopatz, 2024, The Trustees of Columbia University in the City of New York.</p>
   </div>
 
    

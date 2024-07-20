@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>regolith.runcontrol &mdash; regolith - software group content management system</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
   
@@ -15,7 +15,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
               <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8
+                0.9.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -55,9 +55,6 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
@@ -109,7 +106,7 @@
 
 
 <div class="viewcode-block" id="warn_forbidden_name">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.warn_forbidden_name">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.warn_forbidden_name">[docs]</a>
 <span class="k">def</span> <span class="nf">warn_forbidden_name</span><span class="p">(</span><span class="n">forname</span><span class="p">,</span> <span class="n">inname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Warns the user that a forbidden name has been found.&quot;&quot;&quot;</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;found forbidden name </span><span class="si">{0!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">forname</span><span class="p">)</span>
@@ -122,7 +119,7 @@
 
 
 <div class="viewcode-block" id="ensuredirs">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.ensuredirs">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.ensuredirs">[docs]</a>
 <span class="k">def</span> <span class="nf">ensuredirs</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;For a file path, ensure that its directory path exists.&quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -132,7 +129,7 @@
 
 
 <div class="viewcode-block" id="touch">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.touch">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.touch">[docs]</a>
 <span class="k">def</span> <span class="nf">touch</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Opens a file and updates the mtime, like the posix command of the same name.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">):</span>
@@ -141,7 +138,7 @@
 
 
 <div class="viewcode-block" id="exec_file">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.exec_file">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.exec_file">[docs]</a>
 <span class="k">def</span> <span class="nf">exec_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">glb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A function equivalent to the Python 2.x execfile statement.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -156,7 +153,7 @@
 
 
 <div class="viewcode-block" id="NotSpecifiedType">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.NotSpecifiedType">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.NotSpecifiedType">[docs]</a>
 <span class="k">class</span> <span class="nc">NotSpecifiedType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A helper class singleton for run control meaning that a &#39;real&#39; value</span>
 <span class="sd">    has not been given.&quot;&quot;&quot;</span>
@@ -173,7 +170,7 @@
 
 
 <div class="viewcode-block" id="RunControl">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.RunControl">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.RunControl">[docs]</a>
 <span class="k">class</span> <span class="nc">RunControl</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A composable configuration class. Unlike argparse.Namespace,</span>
 <span class="sd">    this keeps the object dictionary (__dict__) separate from the run</span>
@@ -307,7 +304,7 @@
 
 
 <div class="viewcode-block" id="flatten">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.flatten">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.flatten">[docs]</a>
 <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generator which returns flattened version of nested sequences.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
@@ -327,7 +324,7 @@
 
 
 <div class="viewcode-block" id="ishashable">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.ishashable">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.ishashable">[docs]</a>
 <span class="k">def</span> <span class="nf">ishashable</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests if a value is hashable.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">):</span>
@@ -353,7 +350,7 @@
 
 
 <div class="viewcode-block" id="load_json_rcfile">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.load_json_rcfile">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.load_json_rcfile">[docs]</a>
 <span class="k">def</span> <span class="nf">load_json_rcfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a JSON run control file.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -363,7 +360,7 @@
 
 
 <div class="viewcode-block" id="load_rcfile">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.load_rcfile">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.load_rcfile">[docs]</a>
 <span class="k">def</span> <span class="nf">load_rcfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a run control file.&quot;&quot;&quot;</span>
     <span class="n">base</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
@@ -376,7 +373,7 @@
 
 
 <div class="viewcode-block" id="filter_databases">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.filter_databases">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.filter_databases">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_databases</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filters the databases list down to only the ones we need, in place.&quot;&quot;&quot;</span>
     <span class="n">dbs</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span>
@@ -393,7 +390,7 @@
 
 
 <div class="viewcode-block" id="connect_db">
-<a class="viewcode-back" href="../../api/index.html#regolith.runcontrol.connect_db">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.runcontrol.connect_db">[docs]</a>
 <span class="k">def</span> <span class="nf">connect_db</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">colls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load up the db&#39;s</span>
@@ -426,7 +423,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+    <p>&#169; Copyright 2015, Anthony Scopatz, 2024, The Trustees of Columbia University in the City of New York.</p>
   </div>
 
    

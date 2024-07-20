@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=a82ae3da"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.9.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <p>This document contains methodological information about the dp_regolith_prums_to_mongodb prum worked on by lead: dpeters.</p>
+<p># NOTES</p>
+<ul class="simple">
+<li><p>Initial hypothesis is that the latency introduced by the file system (fs) backend of the regolith software is due to the
+database rc calls that load the entire database before query or CRUD ops.</p></li>
+<li><p>a_projectum was chosen to test this hypothesis because the helper adder code is easier to work with than the code for other</p></li>
+<li><p>helpers (e.g., listers, updaters).</p></li>
+<li><p>Code modifications that limit/delete all database loading protocols are documented in the following tables. The modifications
+serve as a basis for the methodology used to diagnose the regolith latency issue.</p></li>
+<li><p>All trials were profiled using python’s cProfiler and the .html files have been linked to the dp_regolith_prums_to_mongodb
+document in projecta.yml.</p></li>
+<li><p>We were able to conclude that the database loading protocols for a_projectum cause latency on the fs backend. Separately,
+the connection configuration architecture causes latency on the MongoDB backend.</p></li>
+</ul>
+<p>## FS CLIENT TRIALS
+<strong>trials 1-20</strong></p>
+<div class="line-block">
+<div class="line">script               | line | new code     | avg. total execution time |</div>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">|----------------------|</span></a>—-<a href="#id3"><span class="problematic" id="id4">|--------------|</span></a>—————————|
+| a_projectumhelper.py |    | no mod       | <strong>11.832 s</strong>              |</p>
+<p><strong>trials 21-40</strong></p>
+<div class="line-block">
+<div class="line">script               | line | new code                                                    | avg. total execution time |</div>
+</div>
+<p><a href="#id5"><span class="problematic" id="id6">|----------------------|</span></a>——<a href="#id7"><span class="problematic" id="id8">|-------------------------------------------------------------|</span></a>—————————|
+| a_projectumhelper.py | 90   | # gtx[rc.coll] = sorted(                                    | <strong>11.654 s</strong>              |
+|                      | 91   | # all_docs_from_collection(rc.client, rc.coll), key=_id_key |
+|                      | 92   | # )                                                         |
+|                      | 93   | gtx[rc.coll] = [{“_id”: “hold”}]                            |
+|                      | 94   | # gtx[“all_docs_from_collection”] = all_docs_from_collection|</p>
+<p><strong>trials 41-60</strong></p>
+<div class="line-block">
+<div class="line">script               | line | new code                                                    | avg. total execution time |</div>
+</div>
+<p><a href="#id9"><span class="problematic" id="id10">|----------------------|</span></a>——<a href="#id11"><span class="problematic" id="id12">|-------------------------------------------------------------|</span></a>—————————|
+| a_projectumhelper.py | 86   | rc.pi_id = “sbillinge”                                      | <strong>2.348 s</strong>               |
+|                      | 90   | # gtx[rc.coll] = sorted(                                    |
+|                      | 91   | # all_docs_from_collection(rc.client, rc.coll), key=_id_key |
+|                      | 92   | # )                                                         |
+|                      | 93   | gtx[rc.coll] = [{“_id”: “hold”}]                            |
+|                      | 94   | # gtx[“all_docs_from_collection”] = all_docs_from_collection|
+| database.xsh         | 179  | for k, v in coll:                                           |
+| fsclient.py          | 92   | docs = {}                                                   |
+|                      | 94   | for _id, doc in docs:                                       |</p>
+<p>## MONGODB CLIENT TRIALS
+<strong>trials 1-20</strong></p>
+<div class="line-block">
+<div class="line">script               | line | new code     | avg. total execution time |</div>
+</div>
+<p><a href="#id13"><span class="problematic" id="id14">|----------------------|</span></a>—-<a href="#id15"><span class="problematic" id="id16">|--------------|</span></a>—————————|
+| a_projectumhelper.py |    | no mod       | <strong>3.606 s</strong>               |</p>
+<p><strong>trials 21-40</strong></p>
+<div class="line-block">
+<div class="line">script               | line | new code                                                    |  avg. total execution time |</div>
+</div>
+<p><a href="#id17"><span class="problematic" id="id18">|----------------------|</span></a>——<a href="#id19"><span class="problematic" id="id20">|-------------------------------------------------------------|</span></a>————————–|
+| a_projectumhelper.py | 90   | # gtx[rc.coll] = sorted(                                    | <strong>3.698 s</strong>
+|                      | 91   | # all_docs_from_collection(rc.client, rc.coll), key=_id_key |
+|                      | 92   | # )                                                         |
+|                      | 93   | gtx[rc.coll] = [{“_id”: “hold”}]                            |
+|                      | 94   | # gtx[“all_docs_from_collection”] = all_docs_from_collection|</p>
+<p><strong>trials 41-60</strong></p>
+<div class="line-block">
+<div class="line">script               | line | new code                                                    | avg. total execution time |</div>
+</div>
+<p><a href="#id21"><span class="problematic" id="id22">|----------------------|</span></a>——<a href="#id23"><span class="problematic" id="id24">|-------------------------------------------------------------|</span></a>—————————|
+| a_projectumhelper.py | 90   | # gtx[rc.coll] = sorted(                                    | <strong>3.390 s</strong>
+|                      | 91   | # all_docs_from_collection(rc.client, rc.coll), key=_id_key |
+|                      | 92   | # )                                                         |
+|                      | 93   | gtx[rc.coll] = [{“_id”: “hold”}]                            |
+|                      | 94   | # gtx[“all_docs_from_collection”] = all_docs_from_collection|
+| mongoclient.py       | 164  | # return {                                                  |
+|                      | 165  | # doc[‘_id’]: doc for doc in col.find({})                   |
+|                      | 166  | # }                                                         |
+|                      | 167  | return {}                                                   |</p>
+<p><strong>trials 61-80</strong></p>
+<div class="line-block">
+<div class="line">script               | line | new code                                                    | avg. total execution time |</div>
+</div>
+<p><a href="#id25"><span class="problematic" id="id26">|----------------------|</span></a>——<a href="#id27"><span class="problematic" id="id28">|-------------------------------------------------------------|</span></a>—————————|
+| a_projectumhelper.py | 86   | rc.pi_id = “sbillinge”                                      | <strong>2.939 s</strong>               |
+|                      | 90   | # gtx[rc.coll] = sorted(                                    |
+|                      | 91   | # all_docs_from_collection(rc.client, rc.coll), key=_id_key |
+|                      | 92   | # )                                                         |
+|                      | 93   | gtx[rc.coll] = [{“_id”: “hold”}]                            |
+|                      | 94   | # gtx[“all_docs_from_collection”] = all_docs_from_collection|
+| database.xsh         | 179  | for k, v in coll:                                           |
+| fsclient.py          | 92   | docs = {}                                                   |
+|                      | 94   | for _id, doc in docs:                                       |
+| mongoclient.py       | 164  | # return {                                                  |
+|                      | 165  | # doc[‘_id’]: doc for doc in col.find({})                   |
+|                      | 166  | # }                                                         |
+|                      | 167  | return {}                                                   |</p>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz, 2024, The Trustees of Columbia University in the City of New York.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

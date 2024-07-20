@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>regolith.fsclient &mdash; regolith - software group content management system</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
   
@@ -15,7 +15,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
               <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8
+                0.9.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -55,9 +55,6 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
@@ -111,7 +108,7 @@
 
 
 <div class="viewcode-block" id="DelayedKeyboardInterrupt">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.DelayedKeyboardInterrupt">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.DelayedKeyboardInterrupt">[docs]</a>
 <span class="k">class</span> <span class="nc">DelayedKeyboardInterrupt</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -119,7 +116,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">old_handler</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DelayedKeyboardInterrupt.handler">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.DelayedKeyboardInterrupt.handler">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.DelayedKeyboardInterrupt.handler">[docs]</a>
     <span class="k">def</span> <span class="nf">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">signal_received</span> <span class="o">=</span> <span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;SIGINT received. Delaying KeyboardInterrupt.&quot;</span><span class="p">)</span></div>
@@ -155,7 +152,7 @@
 
 
 <div class="viewcode-block" id="load_json">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.load_json">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.load_json">[docs]</a>
 <span class="k">def</span> <span class="nf">load_json</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a JSON file and returns a dict of its documents.&quot;&quot;&quot;</span>
     <span class="n">docs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -169,7 +166,7 @@
 
 
 <div class="viewcode-block" id="date_encoder">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.date_encoder">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.date_encoder">[docs]</a>
 <span class="k">def</span> <span class="nf">date_encoder</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span></div>
@@ -177,7 +174,7 @@
 
 
 <div class="viewcode-block" id="dump_json">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.dump_json">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.dump_json">[docs]</a>
 <span class="k">def</span> <span class="nf">dump_json</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">date_handler</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dumps a dict of documents into a file.&quot;&quot;&quot;</span>
     <span class="n">docs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">docs</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
@@ -189,7 +186,7 @@
 
 
 <div class="viewcode-block" id="load_yaml">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.load_yaml">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.load_yaml">[docs]</a>
 <span class="k">def</span> <span class="nf">load_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">return_inst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a YAML file and returns a dict of its documents.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -206,7 +203,7 @@
 
 
 <div class="viewcode-block" id="dump_yaml">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.dump_yaml">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.dump_yaml">[docs]</a>
 <span class="k">def</span> <span class="nf">dump_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">inst</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dumps a dict of documents into a file.&quot;&quot;&quot;</span>
     <span class="n">inst</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span> <span class="k">if</span> <span class="n">inst</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">inst</span>
@@ -226,7 +223,7 @@
 
 
 <div class="viewcode-block" id="json_to_yaml">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.json_to_yaml">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.json_to_yaml">[docs]</a>
 <span class="k">def</span> <span class="nf">json_to_yaml</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a JSON file to a YAML one.&quot;&quot;&quot;</span>
     <span class="n">docs</span> <span class="o">=</span> <span class="n">load_json</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
@@ -235,7 +232,7 @@
 
 
 <div class="viewcode-block" id="yaml_to_json">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.yaml_to_json">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.yaml_to_json">[docs]</a>
 <span class="k">def</span> <span class="nf">yaml_to_json</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a YAML file to a JSON one.&quot;&quot;&quot;</span>
     <span class="n">docs</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">)</span>
@@ -244,7 +241,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient">[docs]</a>
 <span class="k">class</span> <span class="nc">FileSystemClient</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A client database backed by the file system.&quot;&quot;&quot;</span>
 
@@ -259,13 +256,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_yamlinsts</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="FileSystemClient.is_alive">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.is_alive">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.is_alive">[docs]</a>
     <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span></div>
 
 
 <div class="viewcode-block" id="FileSystemClient.open">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.open">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.open">[docs]</a>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
@@ -274,7 +271,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.load_json">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.load_json">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.load_json">[docs]</a>
     <span class="k">def</span> <span class="nf">load_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads the JSON part of a database.&quot;&quot;&quot;</span>
         <span class="n">dbs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span>
@@ -293,7 +290,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.load_yaml">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.load_yaml">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.load_yaml">[docs]</a>
     <span class="k">def</span> <span class="nf">load_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads the YAML part of a database.&quot;&quot;&quot;</span>
         <span class="n">dbs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span>
@@ -315,7 +312,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.load_database">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.load_database">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.load_database">[docs]</a>
     <span class="k">def</span> <span class="nf">load_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads a database.&quot;&quot;&quot;</span>
         <span class="n">dbpath</span> <span class="o">=</span> <span class="n">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
@@ -324,7 +321,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.dump_json">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.dump_json">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.dump_json">[docs]</a>
     <span class="k">def</span> <span class="nf">dump_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps json docs and returns filename&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">collname</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
@@ -334,7 +331,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.dump_yaml">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.dump_yaml">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.dump_yaml">[docs]</a>
     <span class="k">def</span> <span class="nf">dump_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps json docs and returns filename&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">collname</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collexts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">))</span>
@@ -345,7 +342,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.dump_database">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.dump_database">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.dump_database">[docs]</a>
     <span class="k">def</span> <span class="nf">dump_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps a database back to the filesystem.&quot;&quot;&quot;</span>
         <span class="n">dbpath</span> <span class="o">=</span> <span class="n">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
@@ -365,14 +362,14 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.close">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.close">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.close">[docs]</a>
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="FileSystemClient.keys">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.keys">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.keys">[docs]</a>
     <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
 
@@ -381,14 +378,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
 <div class="viewcode-block" id="FileSystemClient.collection_names">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.collection_names">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.collection_names">[docs]</a>
     <span class="k">def</span> <span class="nf">collection_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">include_system_collections</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the collaction names for a database.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="FileSystemClient.all_documents">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.all_documents">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.all_documents">[docs]</a>
     <span class="k">def</span> <span class="nf">all_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an iteratable over all documents in a collection.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
@@ -397,7 +394,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.insert_one">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.insert_one">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.insert_one">[docs]</a>
     <span class="k">def</span> <span class="nf">insert_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts one document to a database/collection.&quot;&quot;&quot;</span>
         <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
@@ -405,7 +402,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.insert_many">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.insert_many">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.insert_many">[docs]</a>
     <span class="k">def</span> <span class="nf">insert_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">docs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts many documents into a database/collection.&quot;&quot;&quot;</span>
         <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
@@ -414,7 +411,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.delete_one">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.delete_one">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.delete_one">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes a single document from a collection&quot;&quot;&quot;</span>
         <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
@@ -422,7 +419,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.find_one">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.find_one">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.find_one">[docs]</a>
     <span class="k">def</span> <span class="nf">find_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the first document matching filter.&quot;&quot;&quot;</span>
         <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
@@ -437,7 +434,7 @@
 
 
 <div class="viewcode-block" id="FileSystemClient.update_one">
-<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.update_one">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.fsclient.FileSystemClient.update_one">[docs]</a>
     <span class="k">def</span> <span class="nf">update_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates one document.&quot;&quot;&quot;</span>
         <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
@@ -456,7 +453,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+    <p>&#169; Copyright 2015, Anthony Scopatz, 2024, The Trustees of Columbia University in the City of New York.</p>
   </div>
 
    

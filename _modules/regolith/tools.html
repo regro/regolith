@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>regolith.tools &mdash; regolith - software group content management system</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
   
@@ -15,7 +15,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
               <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8
+                0.9.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -55,9 +55,6 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
@@ -148,7 +145,7 @@
 
 
 <div class="viewcode-block" id="dbdirname">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.dbdirname">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.dbdirname">[docs]</a>
 <span class="k">def</span> <span class="nf">dbdirname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the database dir name.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
@@ -161,7 +158,7 @@
 
 
 <div class="viewcode-block" id="dbpathname">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.dbpathname">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.dbpathname">[docs]</a>
 <span class="k">def</span> <span class="nf">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the database path name.&quot;&quot;&quot;</span>
     <span class="n">dbdir</span> <span class="o">=</span> <span class="n">dbdirname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
@@ -171,7 +168,7 @@
 
 
 <div class="viewcode-block" id="fallback">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.fallback">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.fallback">[docs]</a>
 <span class="k">def</span> <span class="nf">fallback</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">backup</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator for returning the object if cond is true and a backup if</span>
 <span class="sd">    cond is false.&quot;&quot;&quot;</span>
@@ -184,7 +181,7 @@
 
 
 <div class="viewcode-block" id="all_docs_from_collection">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.all_docs_from_collection">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.all_docs_from_collection">[docs]</a>
 <span class="k">def</span> <span class="nf">all_docs_from_collection</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield all entries in all collections of a given name in a given</span>
 <span class="sd">    database.&quot;&quot;&quot;</span>
@@ -210,7 +207,7 @@
 
 
 <div class="viewcode-block" id="date_to_rfc822">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.date_to_rfc822">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.date_to_rfc822">[docs]</a>
 <span class="k">def</span> <span class="nf">date_to_rfc822</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a date to an RFC 822 formatted string.&quot;&quot;&quot;</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
@@ -219,7 +216,7 @@
 
 
 <div class="viewcode-block" id="rfc822now">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.rfc822now">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.rfc822now">[docs]</a>
 <span class="k">def</span> <span class="nf">rfc822now</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a string of the current time according to RFC 822.&quot;&quot;&quot;</span>
     <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
@@ -228,7 +225,7 @@
 
 
 <div class="viewcode-block" id="gets">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.gets">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.gets">[docs]</a>
 <span class="k">def</span> <span class="nf">gets</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets a key from every element of a sequence if possible.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
@@ -237,7 +234,7 @@
 
 
 <div class="viewcode-block" id="month_and_year">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.month_and_year">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.month_and_year">[docs]</a>
 <span class="k">def</span> <span class="nf">month_and_year</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a string from month and year data, if available.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -250,7 +247,7 @@
 
 
 <div class="viewcode-block" id="get_team_from_grant">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_team_from_grant">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_team_from_grant">[docs]</a>
 <span class="k">def</span> <span class="nf">get_team_from_grant</span><span class="p">(</span><span class="n">grantcol</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">grantcol</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">gets</span><span class="p">(</span><span class="n">grant</span><span class="p">[</span><span class="s2">&quot;team&quot;</span><span class="p">],</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span></div>
@@ -258,7 +255,7 @@
 
 
 <div class="viewcode-block" id="filter_publications">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_publications">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_publications">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_publications</span><span class="p">(</span>
     <span class="n">citations</span><span class="p">,</span>
     <span class="n">authors</span><span class="p">,</span>
@@ -350,7 +347,7 @@
 
 
 <div class="viewcode-block" id="filter_projects">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_projects">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_projects">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_projects</span><span class="p">(</span><span class="n">projects</span><span class="p">,</span> <span class="n">people</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">active_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ptype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter projects by the author(s)</span>
 
@@ -401,7 +398,7 @@
 
 
 <div class="viewcode-block" id="filter_grants">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_grants">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_grants">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_grants</span><span class="p">(</span><span class="n">input_grants</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">pi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">multi_pi</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter grants by those involved</span>
 
@@ -456,7 +453,7 @@
 
 
 <div class="viewcode-block" id="filter_employment_for_advisees">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_employment_for_advisees">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_employment_for_advisees">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_employment_for_advisees</span><span class="p">(</span><span class="n">peoplecoll</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">advisor</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter people to get advisees since begin_period</span>
 
@@ -502,7 +499,7 @@
 
 
 <div class="viewcode-block" id="filter_service">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_service">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_service">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_service</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
     <span class="n">myservice</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service&quot;</span><span class="p">,</span> <span class="p">[]):</span>
@@ -518,7 +515,7 @@
 
 
 <div class="viewcode-block" id="filter_committees">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_committees">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_committees">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_committees</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
     <span class="n">mycommittees</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">committee</span> <span class="ow">in</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;committees&quot;</span><span class="p">,</span> <span class="p">[]):</span>
@@ -534,7 +531,7 @@
 
 
 <div class="viewcode-block" id="filter_facilities">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_facilities">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_facilities">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_facilities</span><span class="p">(</span><span class="n">people</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">facilities</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">people</span><span class="p">:</span>
@@ -566,7 +563,7 @@
 
 
 <div class="viewcode-block" id="filter_patents">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_patents">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_patents">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_patents</span><span class="p">(</span><span class="n">patentscoll</span><span class="p">,</span> <span class="n">people</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">patents</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">allowed_statuses</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;pending&quot;</span><span class="p">]</span>
@@ -621,7 +618,7 @@
 
 
 <div class="viewcode-block" id="filter_licenses">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_licenses">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_licenses">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_licenses</span><span class="p">(</span><span class="n">patentscoll</span><span class="p">,</span> <span class="n">people</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">licenses</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">allowed_statuses</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;pending&quot;</span><span class="p">]</span>
@@ -680,7 +677,7 @@
 
 
 <div class="viewcode-block" id="filter_activities">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_activities">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_activities">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_activities</span><span class="p">(</span><span class="n">people</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">activities</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">people</span><span class="p">:</span>
@@ -702,7 +699,7 @@
 
 
 <div class="viewcode-block" id="filter_presentations">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.filter_presentations">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.filter_presentations">[docs]</a>
 <span class="k">def</span> <span class="nf">filter_presentations</span><span class="p">(</span>
     <span class="n">people</span><span class="p">,</span> <span class="n">presentations</span><span class="p">,</span> <span class="n">institutions</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">statuses</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
@@ -858,7 +855,7 @@
 
 
 <div class="viewcode-block" id="awards_grants_honors">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.awards_grants_honors">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.awards_grants_honors">[docs]</a>
 <span class="k">def</span> <span class="nf">awards_grants_honors</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">funding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">service_types</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make sorted awards grants and honors list.</span>
 
@@ -919,7 +916,7 @@
 
 
 <div class="viewcode-block" id="awards">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.awards">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.awards">[docs]</a>
 <span class="k">def</span> <span class="nf">awards</span><span class="p">(</span>
     <span class="n">p</span><span class="p">,</span>
     <span class="n">since</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -976,7 +973,7 @@
 
 
 <div class="viewcode-block" id="latex_safe_url">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.latex_safe_url">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.latex_safe_url">[docs]</a>
 <span class="k">def</span> <span class="nf">latex_safe_url</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes a string that is a URL latex safe.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\#&quot;</span><span class="p">)</span></div>
@@ -984,7 +981,7 @@
 
 
 <div class="viewcode-block" id="latex_safe">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.latex_safe">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.latex_safe">[docs]</a>
 <span class="k">def</span> <span class="nf">latex_safe</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">url_check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">wrapper</span><span class="o">=</span><span class="s2">&quot;url&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make string latex safe</span>
 
@@ -1015,7 +1012,7 @@
 
 
 <div class="viewcode-block" id="make_bibtex_file">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.make_bibtex_file">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.make_bibtex_file">[docs]</a>
 <span class="k">def</span> <span class="nf">make_bibtex_file</span><span class="p">(</span><span class="n">pubs</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">person_dir</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a bibtex file given the publications</span>
 
@@ -1064,7 +1061,7 @@
 
 
 <div class="viewcode-block" id="document_by_value">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.document_by_value">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.document_by_value">[docs]</a>
 <span class="k">def</span> <span class="nf">document_by_value</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a specific document by one of its values</span>
 
@@ -1094,7 +1091,7 @@
 
 
 <div class="viewcode-block" id="fuzzy_retrieval">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.fuzzy_retrieval">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.fuzzy_retrieval">[docs]</a>
 <span class="k">def</span> <span class="nf">fuzzy_retrieval</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve a document from the documents where value is compared against</span>
 <span class="sd">    multiple potential sources</span>
@@ -1142,7 +1139,7 @@
 
 
 <div class="viewcode-block" id="number_suffix">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.number_suffix">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.number_suffix">[docs]</a>
 <span class="k">def</span> <span class="nf">number_suffix</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;returns the suffix that adjectivises a number (st, nd, rd, th)</span>
 
@@ -1167,7 +1164,7 @@
 
 
 <div class="viewcode-block" id="dereference_institution">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.dereference_institution">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.dereference_institution">[docs]</a>
 <span class="k">def</span> <span class="nf">dereference_institution</span><span class="p">(</span><span class="n">input_record</span><span class="p">,</span> <span class="n">institutions</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Tool for replacing placeholders for institutions with the actual</span>
 <span class="sd">    institution data. Note that the replacement is done inplace</span>
@@ -1248,7 +1245,7 @@
 
 
 <div class="viewcode-block" id="merge_collections_all">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.merge_collections_all">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.merge_collections_all">[docs]</a>
 <span class="k">def</span> <span class="nf">merge_collections_all</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">target_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    merge two collections into a single merged collection</span>
@@ -1294,7 +1291,7 @@
 
 
 <div class="viewcode-block" id="merge_collections_superior">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.merge_collections_superior">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.merge_collections_superior">[docs]</a>
 <span class="k">def</span> <span class="nf">merge_collections_superior</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">target_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    merge two collections into a single merged collection</span>
@@ -1337,7 +1334,7 @@
 
 
 <div class="viewcode-block" id="get_person_contact">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_person_contact">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_person_contact">[docs]</a>
 <span class="k">def</span> <span class="nf">get_person_contact</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">people_coll</span><span class="p">,</span> <span class="n">contacts_coll</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a person document if found in either people or contacts collections</span>
@@ -1383,7 +1380,7 @@
 
 
 <div class="viewcode-block" id="merge_collections_intersect">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.merge_collections_intersect">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.merge_collections_intersect">[docs]</a>
 <span class="k">def</span> <span class="nf">merge_collections_intersect</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">target_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    merge two collections such thta just the intersection is returned</span>
@@ -1419,7 +1416,7 @@
 
 
 <div class="viewcode-block" id="update_schemas">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.update_schemas">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.update_schemas">[docs]</a>
 <span class="k">def</span> <span class="nf">update_schemas</span><span class="p">(</span><span class="n">default_schema</span><span class="p">,</span> <span class="n">user_schema</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merging the user schema into the default schema recursively and return the</span>
@@ -1454,7 +1451,7 @@
 
 
 <div class="viewcode-block" id="get_person">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_person">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_person">[docs]</a>
 <span class="k">def</span> <span class="nf">get_person</span><span class="p">(</span><span class="n">person_id</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the person&#39;s name.&quot;&quot;&quot;</span>
     <span class="n">person_found</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span>
@@ -1473,7 +1470,7 @@
 
 
 <div class="viewcode-block" id="group">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.group">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.group">[docs]</a>
 <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Group the document in the database according to the value of the doc[by] in db.</span>
@@ -1514,7 +1511,7 @@
 
 
 <div class="viewcode-block" id="get_pi_id">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_pi_id">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_pi_id">[docs]</a>
 <span class="k">def</span> <span class="nf">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gets the database id of the group PI</span>
@@ -1539,7 +1536,7 @@
 
 
 <div class="viewcode-block" id="group_member_ids">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.group_member_ids">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.group_member_ids">[docs]</a>
 <span class="k">def</span> <span class="nf">group_member_ids</span><span class="p">(</span><span class="n">ppl_coll</span><span class="p">,</span> <span class="n">grpname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a list of all group member ids</span>
 
@@ -1578,7 +1575,7 @@
 
 
 <div class="viewcode-block" id="group_member_employment_start_end">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.group_member_employment_start_end">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.group_member_employment_start_end">[docs]</a>
 <span class="k">def</span> <span class="nf">group_member_employment_start_end</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">grpname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get start and end dates of group member employment</span>
@@ -1621,7 +1618,7 @@
 
 
 <div class="viewcode-block" id="compound_dict">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.compound_dict">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.compound_dict">[docs]</a>
 <span class="k">def</span> <span class="nf">compound_dict</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">li</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recursive function that collects all the strings from a document that is a dictionary</span>
@@ -1652,7 +1649,7 @@
 
 
 <div class="viewcode-block" id="compound_list">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.compound_list">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.compound_list">[docs]</a>
 <span class="k">def</span> <span class="nf">compound_list</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">li</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recursive function that collects all the strings from a document that is a list</span>
@@ -1682,7 +1679,7 @@
 
 
 <div class="viewcode-block" id="fragment_retrieval">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.fragment_retrieval">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.fragment_retrieval">[docs]</a>
 <span class="k">def</span> <span class="nf">fragment_retrieval</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">fragment</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves a list of all documents from the collection where the fragment</span>
 <span class="sd">    appears in any one of the given fields</span>
@@ -1745,7 +1742,7 @@
 
 
 <div class="viewcode-block" id="get_id_from_name">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_id_from_name">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_id_from_name">[docs]</a>
 <span class="k">def</span> <span class="nf">get_id_from_name</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="n">person</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;_id&quot;</span><span class="p">],</span> <span class="n">name</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">person</span><span class="p">:</span>
@@ -1756,7 +1753,7 @@
 
 
 <div class="viewcode-block" id="is_fully_appointed">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.is_fully_appointed">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.is_fully_appointed">[docs]</a>
 <span class="k">def</span> <span class="nf">is_fully_appointed</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">begin_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if a collection of appointments for a person is valid and fully loaded</span>
 <span class="sd">        for a given interval of time</span>
@@ -1834,7 +1831,7 @@
 
 
 <div class="viewcode-block" id="key_value_pair_filter">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.key_value_pair_filter">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.key_value_pair_filter">[docs]</a>
 <span class="k">def</span> <span class="nf">key_value_pair_filter</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">arguments</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves a list of all documents from the collection where the fragment</span>
 <span class="sd">    appears in any one of the given fields</span>
@@ -1870,7 +1867,7 @@
 
 
 <div class="viewcode-block" id="collection_str">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.collection_str">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.collection_str">[docs]</a>
 <span class="k">def</span> <span class="nf">collection_str</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves a list of all documents from the collection where the fragment</span>
 <span class="sd">    appears in any one of the given fields</span>
@@ -1904,7 +1901,7 @@
 
 
 <div class="viewcode-block" id="search_collection">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.search_collection">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.search_collection">[docs]</a>
 <span class="k">def</span> <span class="nf">search_collection</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves a list of all documents from the collection where the fragment</span>
 <span class="sd">    appears in any one of the given fields</span>
@@ -1938,7 +1935,7 @@
 
 
 <div class="viewcode-block" id="collect_appts">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.collect_appts">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.collect_appts">[docs]</a>
 <span class="k">def</span> <span class="nf">collect_appts</span><span class="p">(</span><span class="n">ppl_coll</span><span class="p">,</span> <span class="n">filter_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">begin_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieves a list of all the appointments on the given grant(s) in the given interval of time</span>
@@ -2025,7 +2022,7 @@
 
 
 <div class="viewcode-block" id="grant_burn">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.grant_burn">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.grant_burn">[docs]</a>
 <span class="k">def</span> <span class="nf">grant_burn</span><span class="p">(</span><span class="n">grant</span><span class="p">,</span> <span class="n">appts</span><span class="p">,</span> <span class="n">begin_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieves the total burn of a grant over an interval of time by integrating over all appointments</span>
@@ -2104,7 +2101,7 @@
 
 
 <div class="viewcode-block" id="validate_meeting">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.validate_meeting">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.validate_meeting">[docs]</a>
 <span class="k">def</span> <span class="nf">validate_meeting</span><span class="p">(</span><span class="n">meeting</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Validates a meeting by checking is it has a journal club doi, a presentation link, and a presentation</span>
@@ -2130,7 +2127,7 @@
 
 
 <div class="viewcode-block" id="print_task">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.print_task">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.print_task">[docs]</a>
 <span class="k">def</span> <span class="nf">print_task</span><span class="p">(</span><span class="n">task_list</span><span class="p">,</span> <span class="n">stati</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print tasks in a nice format.</span>
@@ -2184,7 +2181,7 @@
 
 
 <div class="viewcode-block" id="get_formatted_crossref_reference">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_formatted_crossref_reference">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_formatted_crossref_reference">[docs]</a>
 <span class="k">def</span> <span class="nf">get_formatted_crossref_reference</span><span class="p">(</span><span class="n">doi</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    given a doi, return the full reference and the date of the reference from Crossref REST-API</span>
@@ -2261,7 +2258,7 @@
 
 
 <div class="viewcode-block" id="remove_duplicate_docs">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.remove_duplicate_docs">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.remove_duplicate_docs">[docs]</a>
 <span class="k">def</span> <span class="nf">remove_duplicate_docs</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    find all docs where the target key has the same value and remove duplicates</span>
@@ -2295,7 +2292,7 @@
 
 
 <div class="viewcode-block" id="validate_doc">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.validate_doc">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.validate_doc">[docs]</a>
 <span class="k">def</span> <span class="nf">validate_doc</span><span class="p">(</span><span class="n">collection_name</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pformat</span>
 
@@ -2314,7 +2311,7 @@
 
 
 <div class="viewcode-block" id="add_to_google_calendar">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.add_to_google_calendar">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.add_to_google_calendar">[docs]</a>
 <span class="k">def</span> <span class="nf">add_to_google_calendar</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes a newly created event, and adds it to the user&#39;s google calendar</span>
 
@@ -2361,7 +2358,7 @@
 
 
 <div class="viewcode-block" id="google_cal_auth_flow">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.google_cal_auth_flow">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.google_cal_auth_flow">[docs]</a>
 <span class="k">def</span> <span class="nf">google_cal_auth_flow</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;First time authentication, this function opens a window to request user consent to use google calendar API,</span>
 <span class="sd">    and then returns a token&quot;&quot;&quot;</span>
@@ -2380,7 +2377,7 @@
 
 
 <div class="viewcode-block" id="get_target_repo_info">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_target_repo_info">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_target_repo_info">[docs]</a>
 <span class="k">def</span> <span class="nf">get_target_repo_info</span><span class="p">(</span><span class="n">target_repo_id</span><span class="p">,</span> <span class="n">repos</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;checks if repo information is defined and valid in rc</span>
 
@@ -2446,7 +2443,7 @@
 
 
 <div class="viewcode-block" id="get_target_token">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_target_token">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_target_token">[docs]</a>
 <span class="k">def</span> <span class="nf">get_target_token</span><span class="p">(</span><span class="n">target_token_id</span><span class="p">,</span> <span class="n">tokens</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if API authentication token is defined and valid in rc</span>
 
@@ -2478,7 +2475,7 @@
 
 
 <div class="viewcode-block" id="create_repo">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.create_repo">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.create_repo">[docs]</a>
 <span class="k">def</span> <span class="nf">create_repo</span><span class="p">(</span><span class="n">destination_id</span><span class="p">,</span> <span class="n">token_info_id</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a repo at the target distination</span>
 
@@ -2532,7 +2529,7 @@
 
 
 <div class="viewcode-block" id="get_tags">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_tags">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_tags">[docs]</a>
 <span class="k">def</span> <span class="nf">get_tags</span><span class="p">(</span><span class="n">coll</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a collection with a tags field, returns the set of tags as a list</span>
@@ -2568,7 +2565,7 @@
 
 
 <div class="viewcode-block" id="get_uuid">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_uuid">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_uuid">[docs]</a>
 <span class="k">def</span> <span class="nf">get_uuid</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    returns a uuid.uuid4 string</span>
@@ -2578,7 +2575,7 @@
 
 
 <div class="viewcode-block" id="get_appointments">
-<a class="viewcode-back" href="../../api/index.html#regolith.tools.get_appointments">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.tools.get_appointments">[docs]</a>
 <span class="k">def</span> <span class="nf">get_appointments</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">appointments</span><span class="p">,</span> <span class="n">target_grant</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    get appointments from a person from the people collection</span>
@@ -2620,7 +2617,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+    <p>&#169; Copyright 2015, Anthony Scopatz, 2024, The Trustees of Columbia University in the City of New York.</p>
   </div>
 
    

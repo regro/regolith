@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>regolith.mongoclient &mdash; regolith - software group content management system</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
   
@@ -15,7 +15,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
               <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8
+                0.9.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -55,9 +55,6 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
@@ -142,7 +139,7 @@
 
 
 <div class="viewcode-block" id="import_jsons">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.import_jsons">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.import_jsons">[docs]</a>
 <span class="k">def</span> <span class="nf">import_jsons</span><span class="p">(</span><span class="n">dbpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dbname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Import the json files to mongo db.</span>
 
@@ -190,7 +187,7 @@
 
 
 <div class="viewcode-block" id="import_yamls">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.import_yamls">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.import_yamls">[docs]</a>
 <span class="k">def</span> <span class="nf">import_yamls</span><span class="p">(</span><span class="n">dbpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dbname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Import the yaml files to mongo db.</span>
 
@@ -226,7 +223,7 @@
 
 
 <div class="viewcode-block" id="export_json">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.export_json">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.export_json">[docs]</a>
 <span class="k">def</span> <span class="nf">export_json</span><span class="p">(</span><span class="n">collection</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dbname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mongoexport&quot;</span><span class="p">,</span> <span class="s2">&quot;--collection&quot;</span><span class="p">,</span> <span class="n">collection</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">host</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -253,7 +250,7 @@
 
 
 <div class="viewcode-block" id="load_mongo_col">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.load_mongo_col">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.load_mongo_col">[docs]</a>
 <span class="k">def</span> <span class="nf">load_mongo_col</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="n">Collection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the pymongo collection to a dictionary.</span>
 
@@ -275,7 +272,7 @@
 
 
 <div class="viewcode-block" id="doc_cleanup">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.doc_cleanup">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.doc_cleanup">[docs]</a>
 <span class="k">def</span> <span class="nf">doc_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">doc</span> <span class="o">=</span> <span class="n">bson_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
     <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -284,7 +281,7 @@
 
 
 <div class="viewcode-block" id="bson_cleanup">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.bson_cleanup">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.bson_cleanup">[docs]</a>
 <span class="k">def</span> <span class="nf">bson_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This method should be used prior to updating or adding a document to a collection in mongo. Specifically, this</span>
@@ -338,7 +335,7 @@
 
 
 <div class="viewcode-block" id="MongoClient">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient">[docs]</a>
 <span class="k">class</span> <span class="nc">MongoClient</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A client backed by MongoDB.</span>
 
@@ -382,7 +379,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mongod pid: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proc</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MongoClient.is_alive">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.is_alive">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.is_alive">[docs]</a>
     <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether or not the client is alive and available to</span>
 <span class="sd">        send/receive data.</span>
@@ -417,7 +414,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.open">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.open">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.open">[docs]</a>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Opens the database client&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
@@ -484,7 +481,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.load_database">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.load_database">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.load_database">[docs]</a>
     <span class="k">def</span> <span class="nf">load_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the database information from mongo database.</span>
 
@@ -522,7 +519,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.import_database">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.import_database">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.import_database">[docs]</a>
     <span class="k">def</span> <span class="nf">import_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the database from filesystem to the mongo backend.</span>
 
@@ -545,7 +542,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.export_database">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.export_database">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.export_database">[docs]</a>
     <span class="k">def</span> <span class="nf">export_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Exports the database from mongo backend to the filesystem.</span>
 
@@ -568,7 +565,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.dump_database">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.dump_database">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.dump_database">[docs]</a>
     <span class="k">def</span> <span class="nf">dump_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps a database dict via mongoexport.&quot;&quot;&quot;</span>
         <span class="n">dbpath</span> <span class="o">=</span> <span class="n">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
@@ -596,7 +593,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.close">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.close">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.close">[docs]</a>
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the database connection.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
@@ -604,7 +601,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.keys">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.keys">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.keys">[docs]</a>
     <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">list_database_names</span><span class="p">()</span></div>
 
@@ -613,14 +610,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
 <div class="viewcode-block" id="MongoClient.collection_names">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.collection_names">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.collection_names">[docs]</a>
     <span class="k">def</span> <span class="nf">collection_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">include_system_collections</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the collection names for the database name.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">dbname</span><span class="p">]</span><span class="o">.</span><span class="n">collection_names</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="MongoClient.all_documents">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.all_documents">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.all_documents">[docs]</a>
     <span class="k">def</span> <span class="nf">all_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an iterable over all documents in a collection.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
@@ -629,7 +626,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.insert_one">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.insert_one">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.insert_one">[docs]</a>
     <span class="k">def</span> <span class="nf">insert_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts one document to a database/collection.&quot;&quot;&quot;</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="n">doc_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
@@ -645,7 +642,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.insert_many">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.insert_many">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.insert_many">[docs]</a>
     <span class="k">def</span> <span class="nf">insert_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">docs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts many documents into a database/collection.&quot;&quot;&quot;</span>
         <span class="n">docs</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">]</span>
@@ -672,7 +669,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.delete_one">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.delete_one">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.delete_one">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes a single document from a collection&quot;&quot;&quot;</span>
         <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
@@ -684,7 +681,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.find_one">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.find_one">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.find_one">[docs]</a>
     <span class="k">def</span> <span class="nf">find_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the first document matching filter.&quot;&quot;&quot;</span>
         <span class="nb">filter</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -694,7 +691,7 @@
 
 
 <div class="viewcode-block" id="MongoClient.update_one">
-<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.update_one">[docs]</a>
+<a class="viewcode-back" href="../../api/regolith.html#regolith.mongoclient.MongoClient.update_one">[docs]</a>
     <span class="k">def</span> <span class="nf">update_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates one document.&quot;&quot;&quot;</span>
         <span class="nb">filter</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -728,7 +725,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+    <p>&#169; Copyright 2015, Anthony Scopatz, 2024, The Trustees of Columbia University in the City of New York.</p>
   </div>
 
    
