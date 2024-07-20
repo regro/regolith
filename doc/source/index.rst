@@ -700,7 +700,7 @@ For those who want to dive deeper into the library itself.
 .. toctree::
     :maxdepth: 1
 
-    api/index
+    api/regolith
 
 
 Regolith Commands
