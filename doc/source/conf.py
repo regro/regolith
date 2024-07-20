@@ -17,8 +17,6 @@ from collections.abc import MutableMapping
 from subprocess import check_output
 from textwrap import indent
 
-import sphinx_rtd_theme as csp
-
 import regolith
 from regolith import __version__ as REGOLITH_VERSION
 from regolith.fsclient import _id_key, dump_json, json_to_yaml
