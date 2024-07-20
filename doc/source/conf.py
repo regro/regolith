@@ -208,7 +208,7 @@ html_show_sphinx = True
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-basename = "regolith-docs".replace(" ", "").replace(".", "")
+basename = "regolith".replace(" ", "").replace(".", "")
 htmlhelp_basename = basename + "doc"
 
 # -- Options for LaTeX output --------------------------------------------------
