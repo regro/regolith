@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.a_projectumhelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.a_projectumhelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.a_projectumhelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper for adding a projectum to the projecta collection.</span>
+
+<span class="sd">Projecta are small bite-sized project quanta that typically will result in</span>
+<span class="sd">one manuscript.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">dateutil.parser</span> <span class="k">as</span> <span class="nn">date_parser</span>
+<span class="kn">from</span> <span class="nn">dateutil.relativedelta</span> <span class="kn">import</span> <span class="n">relativedelta</span>
+<span class="kn">from</span> <span class="nn">gooey</span> <span class="kn">import</span> <span class="n">GooeyParser</span>
+
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.basehelper</span> <span class="kn">import</span> <span class="n">DbHelperBase</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span><span class="p">,</span> <span class="n">get_pi_id</span><span class="p">,</span> <span class="n">get_uuid</span>
+
+<span class="c1"># from regolith.schemas import MILESTONE_TYPES</span>
+
+
+<span class="n">TARGET_COLL</span> <span class="o">=</span> <span class="s2">&quot;projecta&quot;</span>
+
+
+<div class="viewcode-block" id="subparser">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_projectumhelper.subparser">[docs]</a>
+<span class="k">def</span> <span class="nf">subparser</span><span class="p">(</span><span class="n">subpi</span><span class="p">):</span>
+    <span class="n">date_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subpi</span><span class="p">,</span> <span class="n">GooeyParser</span><span class="p">):</span>
+        <span class="n">date_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DateChooser&quot;</span>
+
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A short but unique name for the projectum&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;id of the group lead or tbd&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;--notes&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Anything to note&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--description&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Slightly longer description of the projectum&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--collaborators&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;list of outside collaborator ids separated by spaces, &quot;</span>
+        <span class="s2">&quot;&#39;aeinstein efermi&#39;.  Builders will get the full names &quot;</span>
+        <span class="s2">&quot;from the contacts collection&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--group-members&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;list of group member ids, e.g., &#39;astudent acolleague&#39;. &quot;</span>
+        <span class="s2">&quot;Builders will get full names from people collection.&quot;</span>
+        <span class="s2">&quot;Do not add the lead or the group&quot;</span>
+        <span class="s2">&quot;the pi who are added by default.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-g&quot;</span><span class="p">,</span> <span class="s2">&quot;--grants&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;grant or (occasionally) list of grants that support this work&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-u&quot;</span><span class="p">,</span> <span class="s2">&quot;--due-date&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;proposed due date for the deliverable&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">date_kwargs</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--checklist&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use this to turn the prum into a paper submission&quot;</span> <span class="s2">&quot;checklist.&quot;</span>
+    <span class="p">)</span>
+    <span class="c1"># Do not delete --database arg</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--database&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The database that will be updated.  Defaults to &quot;</span> <span class="s2">&quot;first database in the regolithrc.json file.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Do not delete --date arg</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--date&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The begin_date for the projectum  Defaults to &quot;</span> <span class="s2">&quot;today&#39;s date.&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">date_kwargs</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">subpi</span></div>
+
+
+
+<div class="viewcode-block" id="ProjectumAdderHelper">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_projectumhelper.ProjectumAdderHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">ProjectumAdderHelper</span><span class="p">(</span><span class="n">DbHelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for adding a projectum to the projecta collection.</span>
+
+<span class="sd">    Projecta are small bite-sized project quanta that typically will result in</span>
+<span class="sd">    one manuscript.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># btype must be the same as helper target in helper.py</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="s2">&quot;a_projectum&quot;</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ProjectumAdderHelper.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_projectumhelper.ProjectumAdderHelper.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span> <span class="o">=</span> <span class="n">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">database</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="ProjectumAdderHelper.db_updater">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_projectumhelper.ProjectumAdderHelper.db_updater">[docs]</a>
+    <span class="k">def</span> <span class="nf">db_updater</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">date</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">due_date</span><span class="p">:</span>
+            <span class="n">due_date</span> <span class="o">=</span> <span class="n">now</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">due_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">due_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span>
+        <span class="n">pdocl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">doc</span><span class="p">:</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="p">,</span> <span class="n">coll</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdocl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This entry appears to already exist in the collection&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdoc</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="n">now</span><span class="p">,</span>
+                <span class="s2">&quot;log_url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;supplementary_info_urls&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;pi_id&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span><span class="p">,</span>
+                <span class="s2">&quot;lead&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">,</span>
+                <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">notes</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span> <span class="o">==</span> <span class="s2">&quot;tbd&quot;</span><span class="p">:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;proposed&quot;</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;started&quot;</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">grants</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">]</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;grants&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;grants&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;tbd&quot;</span><span class="p">]})</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">group_members</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">group_members</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">group_members</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">group_members</span><span class="p">]</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;group_members&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">group_members</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;group_members&quot;</span><span class="p">:</span> <span class="p">[]})</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">collaborators</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">collaborators</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">collaborators</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">collaborators</span><span class="p">]</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;collaborators&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">collaborators</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;collaborators&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">})</span>
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;deliverable&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">due_date</span><span class="p">,</span>
+                    <span class="s2">&quot;audience&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="s2">&quot;Who will use the software or read the paper? &quot;</span>
+                        <span class="s2">&quot;Your target audience. e.g., beginning grad in chemistry&quot;</span>
+                    <span class="p">],</span>
+                    <span class="s2">&quot;success_def&quot;</span><span class="p">:</span> <span class="s2">&quot;audience is happy&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;scope&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="s2">&quot;If this is a software release, list any use-cases that are in &quot;</span>
+                        <span class="s2">&quot;scope. These may be located in the Gdoc associated with the &quot;</span>
+                        <span class="s2">&quot;prum.  Otherwise include some other kind of scope description &quot;</span>
+                        <span class="s2">&quot;of what is in and what is not&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;If this is a science paper summarize: &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;the scientific question that is being answered&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;any hypotheses that will be tested to answer it&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;the approach that will be taken&quot;</span><span class="p">,</span>
+                    <span class="p">],</span>
+                    <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;description of how and where the audience will access &quot;</span>
+                    <span class="s2">&quot;the deliverable.  The journal where it will be submitted &quot;</span>
+                    <span class="s2">&quot;if it is a paper. Whether it is a web-app, or which &quot;</span>
+                    <span class="s2">&quot;operating systems will be supported, for software&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;roll_out&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="s2">&quot;steps that the audience will take to access and interact with the deliverable&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;leave as empty list for paper submissions&quot;</span><span class="p">,</span>
+                    <span class="p">],</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;proposed&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;kickoff&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">now</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">7</span><span class="p">),</span>
+                    <span class="s2">&quot;audience&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lead&quot;</span><span class="p">,</span> <span class="s2">&quot;pi&quot;</span><span class="p">,</span> <span class="s2">&quot;group_members&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Kick off meeting&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="s2">&quot;introduce project to the lead&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;converged&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">secondm</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">now</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">21</span><span class="p">),</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Kickoff meeting&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="s2">&quot;Prum Lead understands the project deliverables &quot;</span> <span class="s2">&quot;and goals&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;audience&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lead&quot;</span><span class="p">,</span> <span class="s2">&quot;pi&quot;</span><span class="p">,</span> <span class="s2">&quot;group_members&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;converged&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;() Schedule the meeting&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;() Have the meeting, take good notes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;() Update the prum milestones with plan&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;slides_urls&quot;</span><span class="p">:</span> <span class="p">[]},</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;meeting&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;uuid&quot;</span><span class="p">:</span> <span class="n">get_uuid</span><span class="p">(),</span>
+        <span class="p">}</span>
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;milestones&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">secondm</span><span class="p">]})</span>
+
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">checklist</span><span class="p">:</span>
+            <span class="n">pdoc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_checklists</span><span class="p">(</span><span class="n">pdoc</span><span class="p">,</span> <span class="n">now</span><span class="p">)</span>
+
+        <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">,</span> <span class="n">pdoc</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has been added in </span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="ProjectumAdderHelper.insert_checklists">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_projectumhelper.ProjectumAdderHelper.insert_checklists">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert_checklists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdoc</span><span class="p">,</span> <span class="n">now</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create manuscript checklist, one item as one milestone.&quot;&quot;&quot;</span>
+        <span class="n">presubmission_checklist</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Create slide figures&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Create Inkscape graphics (Inkscape is preferrable over ppt) for the slides &quot;</span>
+                <span class="s2">&quot;and place in a ``figures`` directory in the slides directory. &quot;</span>
+                <span class="s2">&quot;These may then be used either in beamer or ppt. &quot;</span>
+                <span class="s2">&quot;Iterate with PI to convergence. (to get started with Inkscape download and install it, &quot;</span>
+                <span class="s2">&quot;then run the program and navigate to Help--&gt;Tutorials.  &quot;</span>
+                <span class="s2">&quot;The first two (&#39;Basic&#39; and &#39;Shapes&#39;) should probably be enough for someone &quot;</span>
+                <span class="s2">&quot;to get basic functionality.).&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Create slides&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Create a &#39;slides&#39; folder in the paper repo or a Google slides deck for a series of talk slides. &quot;</span>
+                <span class="s2">&quot;Iterate the slide skeleton with PI to convergence. &quot;</span>
+                <span class="s2">&quot;(For a beamer template: https://gitlab.thebillingegroup.com/talks/beamerTalkTemplate).&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Create a highlight slide&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Create a &#39;highlight&#39; folder in the paper repo. Create a single &#39;highlight&#39; slide that describes &quot;</span>
+                <span class="s2">&quot;the result following NSF/DOE guidelines. Place it in the &#39;highlight&#39; folder. &quot;</span>
+                <span class="s2">&quot;Iterate with PI to convergence (highlight templates and examples can be found in &quot;</span>
+                <span class="s2">&quot;https://gitlab.thebillingegroup.com/papers/highlights)&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Create public-summary&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Create a public summary in a text file. Place it in the &#39;highlight&#39; folder. &quot;</span>
+                <span class="s2">&quot;Iterate with PI to convergence. (The kudos template and example can be found at &quot;</span>
+                <span class="s2">&quot;https://docs.google.com/document/d/1j4ZsM8zS_nZo03s7T48uwzDbh8xTPksAQM3ZLgJ-g-Y).&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Add links to urls with supplementary info in the prum&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Add url links to raw or analyzed data and code that was used in the data analysis, &quot;</span>
+                <span class="s2">&quot;and anything else, in gitlab or elsewhere into the &#39;supplementary_info_urls&#39; field in the prum&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="n">submission_checklist</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Add paper to citations collection in regolith database&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;If it will be submitted to a preprint server such as arxiv, put it in the citations collection &quot;</span>
+                <span class="s2">&quot;in a public database, if the paper is not on a preprint server &quot;</span>
+                <span class="s2">&quot;put the entry in the citations collection on a non-public &quot;</span>
+                <span class="s2">&quot;(e.g., group) database Check, double check, and triple check &quot;</span>
+                <span class="s2">&quot;that the tag for the grant is correct and the tags for the facilities are correct. &quot;</span>
+                <span class="s2">&quot;Any questions, ask PI.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Create public facing supplementary information as needed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Ask first before making things public, but any code or data &quot;</span>
+                <span class="s2">&quot;that we want to publish as supplementary info should be put in a place &quot;</span>
+                <span class="s2">&quot;where it can be made public or at least available to referees &quot;</span>
+                <span class="s2">&quot;(e.g., in a repo on GitHub).&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Make sure the public facing SI info has the right license&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;check with the PI for the best license to put on this, &quot;</span>
+                <span class="s2">&quot;but it will likely be some kind of creative commons license&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Put url links to all open shared SI data repositorities into the &#39;supplementary_info_urls&#39; field &quot;</span>
+                <span class="s2">&quot;in the entry for this paper in the citations collection.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;the url links in supplementary_info_urls in the projecta collection are to internal data- &quot;</span>
+                <span class="s2">&quot;and code- stores so future group members can find things. &quot;</span>
+                <span class="s2">&quot;The fields in the citations collection should be public facing urls&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check the author list&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check the author list. Last chance to check for missing authors. &quot;</span>
+                <span class="s2">&quot;Does each author agree to submit to the specific journal? &quot;</span>
+                <span class="s2">&quot;Make sure all authors have approved submission.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check publisher accounts&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check that all of the authors have accounts for the publisher you are submitting to &quot;</span>
+                <span class="s2">&quot;(if possible) and that they have their ORCID IDs associated with their accounts &quot;</span>
+                <span class="s2">&quot;(ie. for ACS, authors need to link their Paragon accounts with their ORCID IDs).&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check institution&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Is author&#39;s name, institution correct? Last chance to avoid embarrassing typos.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check acknowledgement&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Are beamlines, grants, fundings properly acknowledged at the end of the paper? &quot;</span>
+                <span class="s2">&quot;Double check this with PI and use the ackno statements in the Group Google group.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check figures and tables&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Are all the figures, tables in the paper correct (the ones you intended)?&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check figure captions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check the Figure captions for errors. If they refer to a green line, is the relevant line green, &quot;</span>
+                <span class="s2">&quot;and so on.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check figure axis labels&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check that the figure axis labels are correctly labeled. &quot;</span>
+                <span class="s2">&quot;Make sure it doesn&#39;t say G when F is plotted. Make sure the units are correct. &quot;</span>
+                <span class="s2">&quot;Make sure it says &#39;G (A^-2)&#39; and NOT &#39;G(r)&#39; (common mistake).&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check table captions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check the table caption is correct. Are all the items in the table &quot;</span>
+                <span class="s2">&quot;properly defined in the caption. If it is a crystal structure, are the space group &quot;</span>
+                <span class="s2">&quot;and special positions mentioned in the caption? Is all the info correct?&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Check numbers in the table&quot;</span><span class="p">,</span> <span class="s2">&quot;Check all the numbers in the tables for errors.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check any question marks&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check all the question marks in the text. Is there any &#39;FIG.???&#39; or unrecognized character?&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check figure references&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check references to the all figures and tables. &quot;</span>
+                <span class="s2">&quot;Does reference to Figure 4 refer to the right figure for example.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check references&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Go through the references and find all the errors. Correct errors in the bibliographic database &quot;</span>
+                <span class="s2">&quot;(citations.yml, or the Zotero collection, for example), not in the local bib file. &quot;</span>
+                <span class="s2">&quot;Did all the journal names compile correctly? Are they all consistently in abbreviated form &quot;</span>
+                <span class="s2">&quot;(or full form if that is the style, though that is rare). Volume, &quot;</span>
+                <span class="s2">&quot;year and page numbers appear for all references? Hard to find errors in these numbers, &quot;</span>
+                <span class="s2">&quot;but when you do, definitely correct the database!&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Check reference style&quot;</span><span class="p">,</span> <span class="s2">&quot;Is reference&#39;s style in accordance with journal&#39;s requirement?&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check journal submission requirements&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check the journal submission requirements for cover letters, table of contents pictures, &quot;</span>
+                <span class="s2">&quot;list of referees, etc..&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Check arxiv&quot;</span><span class="p">,</span> <span class="s2">&quot;Check with PI; will the paper be submitted to arXiv?&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Get approval&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Get final approval from all authors for the final version of the manuscript, cover letter, &quot;</span>
+                <span class="s2">&quot;referees list, etc., submission to arXiv if appropriate.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check open access&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check with coauthors if the paper should be submitted open access. &quot;</span>
+                <span class="s2">&quot;Do not guess on this one as there may be financial consequences&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check cover letter&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;In the cover letter, does it contain editor-in-chief&#39;s name and institution &quot;</span>
+                <span class="s2">&quot;(usually at the top left of the letter) ? Is the content of letter concise and eye-catching? &quot;</span>
+                <span class="s2">&quot;Are (three) suggested reviewers&#39; information in the letter?&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Do a trial submission&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Go through the online submission process finding out all the questions that you will be asked, &quot;</span>
+                <span class="s2">&quot;but don&#39;t actually press submit, and then check with the PI about the right answers&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Commit and push&quot;</span><span class="p">,</span> <span class="s2">&quot;Commit all the changes to your local repo, then push the changes to gitlab.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Create a PR of the updated citations entry&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Create a PR to merge to the billingeGroup repository and work to get it merged&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Submit to journal&quot;</span><span class="p">,</span> <span class="s2">&quot;Go ahead and make the submission, usually online.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Push a tag&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;If during the submission process you need to make any changes, do it in your local repo and &quot;</span>
+                <span class="s2">&quot;make another commit and push. When the submission is finalized, tag the repo that points to &quot;</span>
+                <span class="s2">&quot;THIS VERSION IS THE SUBMITTED VERSION. create the submission tag.  If the current version of &quot;</span>
+                <span class="s2">&quot;your local repo is the submitted version, type, e.g., `git tag -l` to list previous tags &quot;</span>
+                <span class="s2">&quot;(try and keep the tag name formatting consistent) &quot;</span>
+                <span class="s2">&quot;`git tag -a 20180525PRLsubmitted -m &lt;initial submission to PRL&gt;` `git push origin &lt;tag_name&gt;`.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Modify tag if needed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;If you forgot to tag and made some changes to the repo &quot;</span>
+                <span class="s2">&quot;and need to point the tag to an earlier version, or want to view all the different tags, &quot;</span>
+                <span class="s2">&quot;or do some other complicated thing, more info about tagging git repos is here: &quot;</span>
+                <span class="s2">&quot;https://git-scm.com/book/en/v2/Git-Basics-Tagging&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Submit to arxiv if needed&quot;</span><span class="p">,</span> <span class="s2">&quot;Submit to arxiv if appropriate.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Push an arxiv tag&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Make a new tag of the version submitted to arXiv with the name arXivSubmitted20170610.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check db errors&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;In your rg-db-public/local directory, run `regolith build publist --people lyang` &quot;</span>
+                <span class="s2">&quot;(replace `lyang` with your own name ID in the group) to make sure &quot;</span>
+                <span class="s2">&quot;that you publist is building properly. Make sure that the publication appears correctly &quot;</span>
+                <span class="s2">&quot;with no errors and fix anything. If there are problems with the latex building, &quot;</span>
+                <span class="s2">&quot;run the commands with --no-pdf, which yields the latex source but doesn&#39;t build it, then build &quot;</span>
+                <span class="s2">&quot;the latex manually. The complied tex and pdf files are located in the `_build` folder. &quot;</span>
+                <span class="s2">&quot;If any problem about installing regolith and databases, please refer to &quot;</span>
+                <span class="s2">&quot;[rg-db-group wiki](&quot;</span>
+                <span class="s2">&quot;https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases).&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Get arxiv reference&quot;</span><span class="p">,</span> <span class="s2">&quot;Wait a day to get the full arXiv reference.&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Email coauthors&quot;</span><span class="p">,</span> <span class="s2">&quot;Send an email to coauthors letting them know the arXiv citation information.&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Ask PI if anything unfinished&quot;</span><span class="p">,</span> <span class="s2">&quot;Ask PI about any items unfinished.&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Email PI&quot;</span><span class="p">,</span> <span class="s2">&quot;Email PI if finish the above.&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="n">resubmission_checklist</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Work on the changes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Make changes to the manuscript in the repo. You don&#39;t need to save it to a new name or anything &quot;</span>
+                <span class="s2">&quot;because we can recover the old version by checking out the tagged version.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Write rebuttal letter&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Write a proper rebuttal letter based on reviewers&#39; comments and place in the repo. &quot;</span>
+                <span class="s2">&quot;In this letter address all of the referee&#39;s points, one by one. Place a copy of &quot;</span>
+                <span class="s2">&quot;the referee&#39;s comments in the repo. Give it a unique filename in case &quot;</span>
+                <span class="s2">&quot;there are more referee comments from later submissions!&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check author list&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;This is a good time to check that the author list is correct &quot;</span>
+                <span class="s2">&quot;(don&#39;t need to add anyone or remove anyone) and that the acknowledgements &quot;</span>
+                <span class="s2">&quot;have been done correctly, the figures are correct, the figure captions and table captions &quot;</span>
+                <span class="s2">&quot;are correct and all the figures and tables are correctly referenced, and there are &quot;</span>
+                <span class="s2">&quot;no compilation errors. Check all references for errors and update any &quot;</span>
+                <span class="s2">&quot;&#39;unpublished&#39; references if they have been published.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Diff the changes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;create a diff.pdf file that shows changes to the manuscript between the version in the tag of &quot;</span>
+                <span class="s2">&quot;the previous submission and the current version, and include this in the resubmission.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Send to coauthors&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Send the final version to your coauthors. Tell them you will &#39;submit on&#39; &quot;</span>
+                <span class="s2">&quot;where is somewhere around 48 hours later and ask for any final corrections etc. from them. &quot;</span>
+                <span class="s2">&quot;Offer them the chance to extend the deadline if they need more time, &quot;</span>
+                <span class="s2">&quot;i.e., write &#39;if you need more time, lease let me know.&#39; &quot;</span>
+                <span class="s2">&quot;However, it is assumed that all the authors have been involved in the correction process up to &quot;</span>
+                <span class="s2">&quot;this point so they only have to give it one final thought...&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Git commit changes&quot;</span><span class="p">,</span> <span class="s2">&quot;Commit all the changes to your local repo, then push the changes to gitlab.&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Resubmit&quot;</span><span class="p">,</span> <span class="s2">&quot;Resubmit following the instructions of the journal.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Commit any additional changes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;If during the submission process you need to make any changes, do it in your local repo and &quot;</span>
+                <span class="s2">&quot;make another commit and push.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Push a resubmission tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Make a new resubmission tag (see above for details)&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check db entry&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check the entry in citations.yml doesn&#39;t need to be updated, and update if it does.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Ask PI if anything unfinished&quot;</span><span class="p">,</span> <span class="s2">&quot;Ask PI about any items unfinished.&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Email PI&quot;</span><span class="p">,</span> <span class="s2">&quot;Email PI if finish the above.&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="n">accepted_checklist</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Share the news&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Congratulations on the acceptance of the paper. Let all coauthors know the great news!&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Share with BNL if needed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;If it is a BNL paper (check with PI, but it should acknowledge BNL funding-not just beamtime), &quot;</span>
+                <span class="s2">&quot;send a pdf copy of the accepted version of the paper from the repo to Arlene at BNL to get &quot;</span>
+                <span class="s2">&quot;a BNL publication number.  If you are not sure what this means, ask PI&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Share the proof&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;When you receive the proofs, share them quickly with all the authors. Request comments back &quot;</span>
+                <span class="s2">&quot;in 24 hours. Proofs should be responded to within 48 hours in normal circumstances.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Respond the editor&quot;</span><span class="p">,</span> <span class="s2">&quot;Go through and answer any questions from the editor.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check author names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Last chance to check that all the authors&#39; names are correct and there are no missing authors.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Check institutions&quot;</span><span class="p">,</span> <span class="s2">&quot;Check all authors&#39; institutions are correct.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check acknowledgement&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Make sure that all funding and all beamlines used are correctly acknowledged. &quot;</span>
+                <span class="s2">&quot;Usually this is done by the bosses, but more eyes catch more mistakes.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Update the db entry&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;In citations.yml, (the reference should have been added during the submission step) double check &quot;</span>
+                <span class="s2">&quot;the grants</span><span class="si">{}</span><span class="s2">, facilities</span><span class="si">{}</span><span class="s2">, nb</span><span class="si">{}</span><span class="s2"> field entries. Any questions, ask PI. Put &#39;to be published&#39; &quot;</span>
+                <span class="s2">&quot;in the note</span><span class="si">{}</span><span class="s2"> section. If it has not been submitted to arxiv before, move the entry &quot;</span>
+                <span class="s2">&quot;from rg-db-group to rg-db-public github repo. Otherwise, it should be at rg-db-public already. &quot;</span>
+                <span class="s2">&quot;Create a PR to merge to the billingeGroup repository for edits if necessary.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check db errors&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;In your rg-db-public/local directory, run `regolith build publist --people lyang` &quot;</span>
+                <span class="s2">&quot;(replace lyang with your name) to make sure that you publist is building properly. &quot;</span>
+                <span class="s2">&quot;Make sure that the publication appears correctly with no errors and fix anything. If there are &quot;</span>
+                <span class="s2">&quot;problems with the latex building, run the commands with --no-pdf, &quot;</span>
+                <span class="s2">&quot;which yields the latex source but doesn&#39;t build it, then build the latex manually. &quot;</span>
+                <span class="s2">&quot;If any problem about installing regolith and databases, please refer to &quot;</span>
+                <span class="s2">&quot;[rg-db-group wiki](&quot;</span>
+                <span class="s2">&quot;https://github.com/Billingegroup/rg-db-group/wiki/Set-up-regolith-and-databases).&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check figures and tables&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Are all the figures, tables in the paper correct (the ones you intended)?&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check the figure caption&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check the Figure captions for errors. If they refer to a green line, is the relevant line green, &quot;</span>
+                <span class="s2">&quot;and so on.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check figure axis labels&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check that the figure axis labels are correctly labeled. Make sure it doesn&#39;t say G when &quot;</span>
+                <span class="s2">&quot;F is plotted. Make sure the units are correct. Make sure it says &#39;G (A^-2)&#39; and NOT &#39;G(r)&#39; &quot;</span>
+                <span class="s2">&quot;(common mistake)&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check table captions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check the table caption is correct. Are all the items in the table &quot;</span>
+                <span class="s2">&quot;properly defined in the caption. If it is a crystal structure, are the space group &quot;</span>
+                <span class="s2">&quot;and special positions mentioned in the caption? Is all the info correct?&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Check numbers in the table&quot;</span><span class="p">,</span> <span class="s2">&quot;Check all the numbers in the tables for errors.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check figure references&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Check references to the all figures and tables. Does reference to Figure 4 refer to &quot;</span>
+                <span class="s2">&quot;the right figure for example&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check references&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Go through the references and find all the errors. Correct errors in the bibliographic database &quot;</span>
+                <span class="s2">&quot;AS WELL AS on the proofs the manuscript. Did all the journal names compile correctly? &quot;</span>
+                <span class="s2">&quot;Are they all consistently in abbreviated form &quot;</span>
+                <span class="s2">&quot;(or full form if that is the style, though that is rare). Volume, year and page numbers &quot;</span>
+                <span class="s2">&quot;appear for all references? Hard to find errors in these numbers, but when you do, &quot;</span>
+                <span class="s2">&quot;definitely correct the database!&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check unpublished references&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;If any references are listed as unpublished, on arXiv or submitted or something, &quot;</span>
+                <span class="s2">&quot;check if they have appeared and give the full reference if at all possible. To do this, &quot;</span>
+                <span class="s2">&quot;update the bibliographic database (e.g., citations.yml) with this information and then &quot;</span>
+                <span class="s2">&quot;recompile the references, then copy paste the new bbl file back into the TeX source.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check reference titles if needed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;If the manuscript style has titles in the references, make sure there are no capitalization &quot;</span>
+                <span class="s2">&quot;or other compilation errors. Again, correct these in the database using </span><span class="si">{braces}</span><span class="s2"> around words &quot;</span>
+                <span class="s2">&quot;where you want to preserve the capitalization as well as on the proof.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Read the paper&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Finally, after you have done all these &#39;mechanical&#39; checks, &quot;</span>
+                <span class="s2">&quot;read through the paper and try and find any typos or other problems. &quot;</span>
+                <span class="s2">&quot;Resist the temptation to do any rewriting here...you are looking for mispellings &quot;</span>
+                <span class="s2">&quot;and missing or extra words and so on.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Apply corrections from coauthors&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Collect all the corrections from the other authors &quot;</span>
+                <span class="s2">&quot;and add any additional ones to the proof and return it.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Email coauthors&quot;</span><span class="p">,</span> <span class="s2">&quot;Send an email to your coauthors that this was successfully resubmitted.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Revisit talk slides&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Revisit the set of talk slides that summarize the result in a few slides &quot;</span>
+                <span class="s2">&quot;if they need to be updated. Iterate with PI to convergence.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Revisit the highlight slide&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Create a single &#39;highlight&#39; slide that describes the result following NSF/DOE guidelines. &quot;</span>
+                <span class="s2">&quot;Place it in the &#39;highlight&#39; folder. Iterate with PI to convergence &quot;</span>
+                <span class="s2">&quot;(highlight templates and examples can be found in &quot;</span>
+                <span class="s2">&quot;https://gitlab.thebillingegroup.com/highlights/highlightTemplate)&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check the url links to all open shared SI data repositorities &quot;</span>
+                <span class="s2">&quot;in the &#39;supplementary_info_urls&#39; field in the entry for this paper &quot;</span>
+                <span class="s2">&quot;in the citations collection. make sure they work and the data are accessible.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Create web news&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Create a web news story for thebillingegroup.com site. Place it in the &#39;highlight&#39; folder. &quot;</span>
+                <span class="s2">&quot;Iterate with PI to convergence&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Revisit kudos&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Revisit the Kudos summary if it needs to be updated. Iterate with PI to convergence.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Ask PI if anything unfinished&quot;</span><span class="p">,</span> <span class="s2">&quot;Ask PI about any items unfinished.&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Email PI&quot;</span><span class="p">,</span> <span class="s2">&quot;Email PI if finish the above.&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="n">published_checklist</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;Congrats&quot;</span><span class="p">,</span> <span class="s2">&quot;Phew, it is over! Pat yourself on the back and celebrate!&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Let coauthors know&quot;</span><span class="p">,</span> <span class="s2">&quot;Let your coauthors know the link to the final paper and the final reference.&quot;</span><span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Update db entry&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Update citations.yml at rg-db-public github repo with the correct reference information. &quot;</span>
+                <span class="s2">&quot;Commit your edited citations.yml and create a PR to merge to the billingeGroup repository.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check db entry&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;CAREFULLY double and triple check the meta-data associated with the paper in citations.yml:&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check grants in the db entry&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;grant</span><span class="si">{}</span><span class="s2"> lists just the billinge-group grants that appeared in the acknowledgement section. &quot;</span>
+                <span class="s2">&quot;They have standard abbreviations that are listed at the top of the citations.yml file, &quot;</span>
+                <span class="s2">&quot;e.g., fwp, EFRC10, etc.. Use the right standard or the whole system becomes broken! &quot;</span>
+                <span class="s2">&quot;If not sure.....ask PI. List all grants in a comma-separated list.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check the facility in the db entry&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;facility</span><span class="si">{}</span><span class="s2"> is every beamline that was used for data collection. &quot;</span>
+                <span class="s2">&quot;Again, use the standard abbreviations at the top of the file. &quot;</span>
+                <span class="s2">&quot;Use two levels of granularity for each, so X17A would be: &#39;nsls, x17a&#39;, &quot;</span>
+                <span class="s2">&quot;if X17A and X7B were used it would be &#39;nsls, x17a, x7b&#39; and so on.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check the nb in the db entry nb is some other tags, &quot;</span>
+                <span class="s2">&quot;also listed at the top of the file. &#39;art&#39; for a regular article and &#39;hilite&#39; &quot;</span>
+                <span class="s2">&quot;if it is one of our top top papers are the most common.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check the tags in the db entry&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tags should reflect the content so we can automatically build reading lists by subject. &quot;</span>
+                <span class="s2">&quot;Most papers are PDF papers, so no need to say pdf, be more targeted.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Add the url link to the SI at the journal to the &#39;supplementary_info_urls&#39; field &quot;</span>
+                <span class="s2">&quot;in the entry for this paper in the citations collection.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Don&#39;t necessarily remove the others if they are still open and public. &quot;</span>
+                <span class="s2">&quot;It is also ok to put URLs to our data repositories as part of the SI in the paper&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Check db errors&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;In your rg-db-public/local directory, run `regolith build publist --people lyang` &quot;</span>
+                <span class="s2">&quot;(replace lyang with your name) to make sure that you publist is building properly. &quot;</span>
+                <span class="s2">&quot;Make sure that the publication appears correctly with no errors and fix anything. If there are &quot;</span>
+                <span class="s2">&quot;problems with the latex building, run the commands with --no-pdf, which yields the latex source &quot;</span>
+                <span class="s2">&quot;but doesn&#39;t build it, then build the latex manually.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Add/update to Zotero&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Add or update the published reference to the billinge-group-bib folder &quot;</span>
+                <span class="s2">&quot;in our group Zotero account&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Finalize the highlight slide&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Make a highlight of your work and put it in gitlab/highlights &quot;</span>
+                <span class="s2">&quot;(if not done already during the accepted paper checklist). &quot;</span>
+                <span class="s2">&quot;Look in there for standards to work from. This is an important activity. &quot;</span>
+                <span class="s2">&quot;Now you have done your great work, this is how you can advertise it to others. &quot;</span>
+                <span class="s2">&quot;Top papers we send these highlights to the funding agencies. &quot;</span>
+                <span class="s2">&quot;Iterate the highlight with PI till it is converged.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Finalize figures and talk slides&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Make figures and talk slides that will be used in talks &quot;</span>
+                <span class="s2">&quot;and place these on gitlab on talks/figures. Iterate this with PI till it is converged.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Update arXiv if necessary&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;If the paper was listed on a preprint server like arXiv, submit a note to arXiv that the paper &quot;</span>
+                <span class="s2">&quot;has appeared and give the full reference. If the journal copyright allows &quot;</span>
+                <span class="s2">&quot;you can post the published version here, but normally that is not alllowed! &quot;</span>
+                <span class="s2">&quot;Still, it is important that people who find the paper on arXiv &quot;</span>
+                <span class="s2">&quot;get directed to the correct reference.&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Ask PI if anything unfinished&quot;</span><span class="p">,</span> <span class="s2">&quot;Ask PI about any items unfinished.&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Email PI&quot;</span><span class="p">,</span> <span class="s2">&quot;Email PI if finish the above.&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="n">checklistm_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">checklist_delay_days</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">presubmission_checklist</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">submission_checklist</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">[</span><span class="mi">74</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">resubmission_checklist</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">[</span><span class="mi">134</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">accepted_checklist</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">[</span><span class="mi">194</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">published_checklist</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">checklist_names</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;presubmission&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">presubmission_checklist</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;submission&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">submission_checklist</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;resubmission&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">resubmission_checklist</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;accepted&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">accepted_checklist</span><span class="p">)</span>
+            <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;published&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">published_checklist</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">checklists</span> <span class="o">=</span> <span class="n">presubmission_checklist</span> <span class="o">+</span> <span class="n">submission_checklist</span> <span class="o">+</span> <span class="n">accepted_checklist</span> <span class="o">+</span> <span class="n">published_checklist</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">objective</span><span class="p">),</span> <span class="n">checklist_name</span><span class="p">,</span> <span class="n">delay_days</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">checklists</span><span class="p">,</span> <span class="n">checklist_names</span><span class="p">,</span> <span class="n">checklist_delay_days</span>
+        <span class="p">):</span>
+            <span class="n">checklistm</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">now</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">delay_days</span><span class="p">),</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checklist_name</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="n">objective</span><span class="p">,</span>
+                <span class="s2">&quot;audience&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;converged&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;mergedpr&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">checklistm_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">checklistm</span><span class="p">)</span>
+
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;milestones&quot;</span><span class="p">:</span> <span class="n">checklistm_list</span><span class="p">})</span>
+
+        <span class="c1"># update the deliverable to fit checklist prum</span>
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;deliverable&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">now</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">checklist_delay_days</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                    <span class="s2">&quot;audience&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;PI&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;success_def&quot;</span><span class="p">:</span> <span class="s2">&quot;audience is happy&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;scope&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;checklist&quot;</span><span class="p">,</span> <span class="s2">&quot;All publication data and metadata are correct and complete&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;regolith publication collection in rg-db-public&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;roll_out&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;PI merging PRs&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;converged&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># update the kickoff to fit checklist prum</span>
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;kickoff&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">now</span><span class="p">,</span>
+                    <span class="s2">&quot;audience&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lead&quot;</span><span class="p">,</span> <span class="s2">&quot;pi&quot;</span><span class="p">,</span> <span class="s2">&quot;group_members&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Kick off meeting&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="s2">&quot;introduce project to the lead&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;finished&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pdoc</span></div>
+</div>
+
+
+        <span class="c1"># secondm = {&#39;due_date&#39;: now + relativedelta(days=21),</span>
+        <span class="c1">#            &#39;name&#39;: &#39;Example milestone&#39;,</span>
+        <span class="c1">#            &#39;objective&#39;: &#39;This acts as an example milestone. It shows how &#39;</span>
+        <span class="c1">#                         &#39;to construct your milestones.  It should be deleted &#39;</span>
+        <span class="c1">#                         &#39;before depositing the prum.&#39;,</span>
+        <span class="c1">#            &#39;audience&#39;: [&quot;update the audience as required, but it is &quot;</span>
+        <span class="c1">#                         &quot;often lead, pi and group_members (see below). &quot;</span>
+        <span class="c1">#                         &quot;these resolve to their values defined elsewhere.  &quot;</span>
+        <span class="c1">#                         &quot;If putting in people&#39;s names use their ids where &quot;</span>
+        <span class="c1">#                         &quot;possible and they will be looked for in the &quot;</span>
+        <span class="c1">#                         &quot;people and contacts collections.&quot;,</span>
+        <span class="c1">#                         &#39;lead&#39;, &#39;pi&#39;, &#39;group_members&#39;],</span>
+        <span class="c1">#            &#39;status&#39;: &#39;proposed&#39;,</span>
+        <span class="c1">#            &#39;notes&#39;: [&quot;() get a clear picture of the deliverable and what &quot;</span>
+        <span class="c1">#                      &quot;needs to be done to get there.  Have discussions &quot;</span>
+        <span class="c1">#                      &quot;with group members to develop ideas.  Propose them &quot;</span>
+        <span class="c1">#                      &quot;even if you are not sure, you will get feedback. &quot;</span>
+        <span class="c1">#                      &quot;This is the process.&quot;,</span>
+        <span class="c1">#                      &quot;() edit the template &#39;deliverable&#39; to reflect that.&quot;,</span>
+        <span class="c1">#                      &quot;() chart out milestones at a high level first working &quot;</span>
+        <span class="c1">#                      &quot;back from the deliverable.  &#39;To deliver that &quot;</span>
+        <span class="c1">#                      &quot;(deliverable) I have to do this, this and this, and &quot;</span>
+        <span class="c1">#                      &quot;to deliver it by then I have to do these things by &quot;</span>
+        <span class="c1">#                      &quot;these dates.&#39;&quot;,</span>
+        <span class="c1">#                      f&quot;() then write the detailed milestones, turning each &quot;</span>
+        <span class="c1">#                      f&quot;one into a deliverable that is captured in the type &quot;</span>
+        <span class="c1">#                      f&quot;field.  Allowed values for milestone types are: &quot;</span>
+        <span class="c1">#                      f&quot;{*MILESTONE_TYPES,}.  If you are tempted to use &#39;other&#39; &quot;</span>
+        <span class="c1">#                      f&quot;think more about the milestone objective, you &quot;</span>
+        <span class="c1">#                      f&quot;probably haven&#39;t defined it well enough in your head.&quot;,</span>
+        <span class="c1">#                      &quot;() Think carefully about the deliverable date.  &quot;</span>
+        <span class="c1">#                      &quot;Can you hit it?  If not, change it so you can hit &quot;</span>
+        <span class="c1">#                      &quot;it.  You may have to adjust your final deliverable date &quot;</span>
+        <span class="c1">#                      &quot;but discuss this with the team, because scope could also &quot;</span>
+        <span class="c1">#                      &quot;be reduced rather than pushing off final deliverable.  &quot;</span>
+        <span class="c1">#                      &quot;When you are comfortable with the due date, and it has &quot;</span>
+        <span class="c1">#                      &quot;been reviewed, make the appoint on the calendar, for &quot;</span>
+        <span class="c1">#                      &quot;example, if it is a meeting or presentation, send &quot;</span>
+        <span class="c1">#                      &quot;schedule it now.&quot;,</span>
+        <span class="c1">#                      &quot;() within each milestone, make a todo list (this &quot;</span>
+        <span class="c1">#                      &quot;is a todo-list) in the notes field.  A todo is a &quot;</span>
+        <span class="c1">#                      &quot;note prepended by () (no space in the middle).  These are the smaller &quot;</span>
+        <span class="c1">#                      &quot;tasks you will have to do to complete the milestone.  &quot;</span>
+        <span class="c1">#                      &quot;When you complete them turn () in to (x).&quot;,</span>
+        <span class="c1">#                      &quot;() Iterate all these with your team/advisor maybe &quot;</span>
+        <span class="c1">#                      &quot;in a Google doc or on Slack to make sure you are &quot;</span>
+        <span class="c1">#                      &quot;on the right track.  To converge this shoot for &quot;</span>
+        <span class="c1">#                      &quot;multiple round-trips per day.&quot;,</span>
+        <span class="c1">#                      &quot;() using u_milestones in helper_gui, or &quot;</span>
+        <span class="c1">#                      &quot;otherwise, get them entered into the prum and the &quot;</span>
+        <span class="c1">#                      &quot;prum deposited.&quot;,</span>
+        <span class="c1">#                      &quot;() by the time the edited prum is submitted, set &quot;</span>
+        <span class="c1">#                      &quot;all the statuses to converged or started, and &quot;</span>
+        <span class="c1">#                      &quot;delete this example milestone.&quot;,</span>
+        <span class="c1">#                      &quot;() later, when you finish a milestone use &quot;</span>
+        <span class="c1">#                      &quot;u_milestones or editing in the yaml &quot;</span>
+        <span class="c1">#                      &quot;file set status to finished and add an end_date, &quot;</span>
+        <span class="c1">#                      &quot;and fill in the progress section. This should be &quot;</span>
+        <span class="c1">#                      &quot;brief but just links to a brief text description &quot;</span>
+        <span class="c1">#                      &quot;of the outcome that would be suitable for a grant &quot;</span>
+        <span class="c1">#                      &quot;annual report, and any url links to &quot;</span>
+        <span class="c1">#                      &quot;presentations or related docs.  Link to specific &quot;</span>
+        <span class="c1">#                      &quot;files of relevance to this milestone not general docs and repos.&quot;,</span>
+        <span class="c1">#            ],</span>
+        <span class="c1">#            &quot;progress&quot;: {&#39;text&#39;: &#39;write text here capturing how the milestone &#39;</span>
+        <span class="c1">#                                 &#39;is progressing, but at the least when the milestone &#39;</span>
+        <span class="c1">#                                 &#39;closes.  The goal of this is that it will be &#39;</span>
+        <span class="c1">#                                 &#39;printed as a progress report for a grant &#39;</span>
+        <span class="c1">#                                 &#39;so write it as if it will be read by an external &#39;</span>
+        <span class="c1">#                                 &#39;person. It doesnt have to describe the whole prum &#39;</span>
+        <span class="c1">#                                 &#39;but clearly show the progress that has been made. &#39;</span>
+        <span class="c1">#                                 &#39;It can be multiple paragraphs or a short statement&#39;</span>
+        <span class="c1">#                                 &#39;depending on the situation&#39;,</span>
+        <span class="c1">#                         &#39;slides_urls&#39;: [&quot;&lt;replace with a URL to, for example, &quot;</span>
+        <span class="c1">#                                        &quot;a Gslides slide deck &quot;</span>
+        <span class="c1">#                                        &quot;with useful figures in it, or a Gdoc &quot;</span>
+        <span class="c1">#                                        &quot;with more complicated info like tables &quot;</span>
+        <span class="c1">#                                        &quot;or something. This is for the PI to &quot;</span>
+        <span class="c1">#                                        &quot;be able to find quality content to augment &quot;</span>
+        <span class="c1">#                                        &quot;the report&gt;&quot;,&quot;&lt;replace with another URL if &quot;</span>
+        <span class="c1">#                                                      &quot;more than one is needed&gt;&quot;]},</span>
+        <span class="c1">#            &#39;type&#39;: &#39;meeting&#39;,</span>
+        <span class="c1">#            &#39;uuid&#39;: get_uuid()</span>
+        <span class="c1"># }</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

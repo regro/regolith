@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.builders.reimbursementbuilder &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.builders.reimbursementbuilder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.builders.reimbursementbuilder</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Builder for Resumes.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">openpyxl</span>
+
+<span class="kn">from</span> <span class="nn">regolith.builders.basebuilder</span> <span class="kn">import</span> <span class="n">BuilderBase</span>
+<span class="kn">from</span> <span class="nn">regolith.dates</span> <span class="kn">import</span> <span class="n">get_dates</span>
+<span class="kn">from</span> <span class="nn">regolith.sorters</span> <span class="kn">import</span> <span class="n">position_key</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span><span class="p">,</span> <span class="n">fuzzy_retrieval</span><span class="p">,</span> <span class="n">month_and_year</span>
+
+
+<div class="viewcode-block" id="ReimbursementBuilder">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.reimbursementbuilder.ReimbursementBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">ReimbursementBuilder</span><span class="p">(</span><span class="n">BuilderBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build reimbursement from database entries&quot;&quot;&quot;</span>
+
+    <span class="n">btype</span> <span class="o">=</span> <span class="s2">&quot;reimb&quot;</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;expenses&quot;</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">,</span> <span class="s2">&quot;grants&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="c1"># TODO: templates for other universities?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;reimb.xlsx&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;excel&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ReimbursementBuilder.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.reimbursementbuilder.ReimbursementBuilder.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="c1"># openpyxl is soooo slow, so only allow it to be run when a person</span>
+        <span class="c1"># (or people list) is specified</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Missing person for the reimbursement.  Please &quot;</span>
+                <span class="s2">&quot;rerun specifying --people and a person or list &quot;</span>
+                <span class="s2">&quot;of people&quot;</span>
+            <span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;month_and_year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">month_and_year</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">),</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">position_key</span><span class="p">,</span>
+            <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;expenses&quot;</span><span class="p">,</span> <span class="s2">&quot;grants&quot;</span><span class="p">]:</span>
+            <span class="n">gtx</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span></div>
+
+
+<div class="viewcode-block" id="ReimbursementBuilder.excel">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.reimbursementbuilder.ReimbursementBuilder.excel">[docs]</a>
+    <span class="k">def</span> <span class="nf">excel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">people</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ex</span> <span class="ow">in</span> <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;expenses&quot;</span><span class="p">]:</span>
+            <span class="n">payee</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;_id&quot;</span><span class="p">],</span> <span class="n">ex</span><span class="p">[</span><span class="s2">&quot;payee&quot;</span><span class="p">])</span>
+            <span class="n">chosen_ones</span> <span class="o">=</span> <span class="p">[</span><span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;_id&quot;</span><span class="p">],</span> <span class="n">one</span><span class="p">)</span> <span class="k">for</span> <span class="n">one</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ex</span><span class="p">[</span><span class="s2">&quot;payee&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;direct_billed&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">chosen_one</span> <span class="ow">in</span> <span class="n">chosen_ones</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">payee</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: payee </span><span class="si">{</span><span class="n">ex</span><span class="p">[</span><span class="s1">&#39;payee&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> not found in &quot;</span> <span class="sa">f</span><span class="s2">&quot;people coll&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">payee</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">chosen_one</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="c1"># open the template</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ex</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="n">ex</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ex</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">]]</span>
+                        <span class="n">grant_fractions</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">grant_fractions</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span> <span class="k">for</span> <span class="n">percent</span> <span class="ow">in</span> <span class="n">ex</span><span class="p">[</span><span class="s2">&quot;grant_percentages&quot;</span><span class="p">]]</span>
+
+                    <span class="n">wb</span> <span class="o">=</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">load_workbook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">)</span>
+                    <span class="n">ws</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="s2">&quot;T&amp;B&quot;</span><span class="p">]</span>
+
+                    <span class="n">grants</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">grant_label</span> <span class="ow">in</span> <span class="n">ex</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">]:</span>
+                        <span class="n">grant</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;_id&quot;</span><span class="p">],</span> <span class="n">grant_label</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">grant</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no grant found with label </span><span class="si">{</span><span class="n">grant_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">grants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grant</span><span class="p">)</span>
+                    <span class="n">ha</span> <span class="o">=</span> <span class="n">payee</span><span class="p">[</span><span class="s2">&quot;home_address&quot;</span><span class="p">]</span>
+                    <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;B17&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">payee</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                    <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;B20&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ha</span><span class="p">[</span><span class="s2">&quot;street&quot;</span><span class="p">]</span>
+                    <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;B23&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ha</span><span class="p">[</span><span class="s2">&quot;city&quot;</span><span class="p">]</span>
+                    <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;G23&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ha</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span>
+                    <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;L23&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ha</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span>
+                    <span class="n">ws</span><span class="p">[</span><span class="s2">&quot;B36&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ex</span><span class="p">[</span><span class="s2">&quot;overall_purpose&quot;</span><span class="p">]</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="mi">42</span>
+                    <span class="n">total_amount</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">item_ws</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="s2">&quot;T&amp;B&quot;</span><span class="p">]</span>
+                    <span class="n">purpose_column</span> <span class="o">=</span> <span class="mi">4</span>
+                    <span class="n">ue_column</span> <span class="o">=</span> <span class="mi">13</span>
+                    <span class="n">se_column</span> <span class="o">=</span> <span class="mi">16</span>
+                    <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ex</span><span class="p">[</span><span class="s2">&quot;itemized_expenses&quot;</span><span class="p">]):</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="n">i</span>
+                        <span class="n">expdates</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">49</span><span class="p">:</span>
+                            <span class="n">item_ws</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="s2">&quot;Extra_Page&quot;</span><span class="p">]</span>
+                            <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="n">r</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="n">i</span>
+                            <span class="n">purpose_column</span> <span class="o">=</span> <span class="mi">5</span>
+                            <span class="n">ue_column</span> <span class="o">=</span> <span class="mi">12</span>
+                            <span class="n">se_column</span> <span class="o">=</span> <span class="mi">14</span>
+                        <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expdates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">))</span>
+                        <span class="n">item_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">item_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">expdates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%x</span><span class="s2">&quot;</span><span class="p">))</span>
+                        <span class="n">item_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">purpose_column</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;purpose&quot;</span><span class="p">])</span>
+                        <span class="n">item_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span>
+                            <span class="n">row</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                            <span class="n">column</span><span class="o">=</span><span class="n">ue_column</span><span class="p">,</span>
+                            <span class="n">value</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                        <span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">total_amount</span> <span class="o">+=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;tbd&quot;</span><span class="p">:</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: unsegregated expense in </span><span class="si">{}</span><span class="s2"> is &quot;</span> <span class="s2">&quot;tbd&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ex</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]))</span>
+                                <span class="n">item</span><span class="p">[</span><span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;unsegregated expense in </span><span class="si">{}</span><span class="s2"> is not &quot;</span> <span class="s2">&quot;a number&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ex</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]))</span>
+
+                        <span class="n">item_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">se_column</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;segregated_expense&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+                    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">fraction</span> <span class="o">*</span> <span class="n">total_amount</span> <span class="k">for</span> <span class="n">fraction</span> <span class="ow">in</span> <span class="n">grant_fractions</span><span class="p">])</span> <span class="o">-</span> <span class="n">total_amount</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mf">0.01</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;grant percentages do not sum to 100&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">grant</span><span class="p">,</span> <span class="n">fraction</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">grants</span><span class="p">,</span> <span class="n">grant_fractions</span><span class="p">):</span>
+                        <span class="n">nr</span> <span class="o">=</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;account&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="n">row</span> <span class="o">=</span> <span class="mi">55</span> <span class="o">+</span> <span class="n">i</span>
+                        <span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;C</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                        <span class="n">location2</span> <span class="o">=</span> <span class="s2">&quot;K</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                        <span class="n">ws</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">=</span> <span class="n">nr</span>
+                        <span class="n">ws</span><span class="p">[</span><span class="n">location2</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_amount</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">fraction</span><span class="p">)</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="k">if</span> <span class="n">ex</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;expense_type&quot;</span><span class="p">,</span> <span class="s2">&quot;business&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;business&quot;</span><span class="p">:</span>
+                        <span class="n">spots</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;G10&quot;</span><span class="p">,</span> <span class="s2">&quot;L11&quot;</span><span class="p">,</span> <span class="s2">&quot;O11&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">spots</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;G7&quot;</span><span class="p">,</span> <span class="s2">&quot;L8&quot;</span><span class="p">,</span> <span class="s2">&quot;O8&quot;</span><span class="p">)</span>
+
+                    <span class="n">ws</span><span class="p">[</span><span class="n">spots</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
+                    <span class="n">ws</span><span class="p">[</span><span class="n">spots</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%x</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">ws</span><span class="p">[</span><span class="n">spots</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%x</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="n">wb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bldir</span><span class="p">,</span> <span class="n">ex</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.xlsx&quot;</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

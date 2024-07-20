@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refereereports &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Software" href="software.html" />
+    <link rel="prev" title="Reading_Lists" href="reading_lists.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Collections</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="abstracts.html">Abstracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="assignments.html">Assignments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="beamplan.html">Beamplan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blog.html">Blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="citations.html">Citations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="courses.html">Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expenses.html">Expenses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formalletters.html">Formalletters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grades.html">Grades</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grants.html">Grants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groups.html">Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="institutions.html">Institutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html">Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meetings.html">Meetings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="news.html">News</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html">People</a></li>
+<li class="toctree-l2"><a class="reference internal" href="presentations.html">Presentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projecta.html">Projecta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects.html">Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposalReviews.html">Proposalreviews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposals.html">Proposals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reading_lists.html">Reading_Lists</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Refereereports</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#schema">Schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-example">YAML Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json-mongo-example">JSON/Mongo Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="software.html">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="students.html">Students</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todos.html">Todos</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Collections</a></li>
+      <li class="breadcrumb-item active">Refereereports</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="refereereports">
+<h1>Refereereports<a class="headerlink" href="#refereereports" title="Link to this heading"></a></h1>
+<p>This is a collection of information that will be be used to build a referee report. This should probably be private.</p>
+<section id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="Link to this heading"></a></h2>
+<p>The following lists key names mapped to its type and meaning for each entry.</p>
+<dl class="field-list">
+<dt class="field-odd">_id<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, the ID, required</p>
+</dd>
+<dt class="field-even">claimed_found_what<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, What the authors claim to have found, required</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, required</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">claimed_why_important<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, What importance the authors claim, required</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, required</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">did_how<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, How the study was done, required</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, required</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">did_what<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, What the study was, required</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, required</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">due_date<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘string’, ‘date’], date the review is due in ISO format, required</p>
+</dd>
+<dt class="field-odd">editor_eyes_only<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, Comments you don’t want passed to the author, optional</p>
+</dd>
+<dt class="field-even">final_assessment<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, Summary of impressions of the study, required</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, required</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">first_author_last_name<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, Last name of first author will be referred to with et al., required</p>
+</dd>
+<dt class="field-even">freewrite<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, Things that you want to add that don’t fit into any category above, optional</p>
+</dd>
+<dt class="field-odd">institutions<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘list’], the institutions of the pi and co-pis, optional</p>
+</dd>
+<dt class="field-even">journal<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, name of the journal, required</p>
+</dd>
+<dt class="field-odd">month<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘integer’, ‘string’], The month the review was requested, optional</p>
+</dd>
+<dt class="field-even">recommendation<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, Your publication recommendation, required</p>
+<dl class="simple">
+<dt>Allowed values:</dt><dd><ul class="simple">
+<li><p>reject</p></li>
+<li><p>asis</p></li>
+<li><p>smalledits</p></li>
+<li><p>diffjournal</p></li>
+<li><p>majoredits</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">requester<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, Name of the program officer who requested the review, required</p>
+</dd>
+<dt class="field-even">reviewer<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, name of person reviewing the paper, required</p>
+</dd>
+<dt class="field-odd">status<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, Where you are with the review, required</p>
+<dl class="simple">
+<dt>Allowed values:</dt><dd><ul class="simple">
+<li><p>invited</p></li>
+<li><p>accepted</p></li>
+<li><p>declined</p></li>
+<li><p>downloaded</p></li>
+<li><p>inprogress</p></li>
+<li><p>submitted</p></li>
+<li><p>cancelled</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">submitted_date<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘string’, ‘date’], submitted date in ISO YYYY-MM-DD format., optional</p>
+</dd>
+<dt class="field-odd">title<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, title of the paper under review, required</p>
+</dd>
+<dt class="field-even">validity_assessment<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, List of impressions of the validity of the claims, required</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, required</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">year<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘integer’], year when the review is being done, required</p>
+</dd>
+</dl>
+</section>
+<section id="yaml-example">
+<h2>YAML Example<a class="headerlink" href="#yaml-example" title="Link to this heading"></a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">1902nature</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">claimed_found_what</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gravity waves</span>
+<span class="w">  </span><span class="nt">claimed_why_important</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">more money for ice cream</span>
+<span class="w">  </span><span class="nt">did_how</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">measured with a ruler</span>
+<span class="w">  </span><span class="nt">did_what</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">found a much cheaper way to measure gravity waves</span>
+<span class="w">  </span><span class="nt">due_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-11&#39;</span>
+<span class="w">  </span><span class="nt">editor_eyes_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">to be honest, I don&#39;t believe a word of it</span>
+<span class="w">  </span><span class="nt">final_assessment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The authors should really start over</span>
+<span class="w">  </span><span class="nt">first_author_last_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Wingit</span>
+<span class="w">  </span><span class="nt">freewrite</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">this comment didn&#39;t fit anywhere above</span>
+<span class="w">  </span><span class="nt">journal</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Nature</span>
+<span class="w">  </span><span class="nt">month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jun</span>
+<span class="w">  </span><span class="nt">recommendation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reject</span>
+<span class="w">  </span><span class="nt">requester</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Max Planck</span>
+<span class="w">  </span><span class="nt">reviewer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">submitted</span>
+<span class="w">  </span><span class="nt">submitted_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2019-01-01&#39;</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a ruler approach to measuring gravity waves</span>
+<span class="w">  </span><span class="nt">validity_assessment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">complete rubbish</span>
+<span class="w">  </span><span class="nt">year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019</span>
+<span class="nt">2002nature</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">claimed_found_what</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">more gravity waves</span>
+<span class="w">  </span><span class="nt">claimed_why_important</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">even more money for ice cream</span>
+<span class="w">  </span><span class="nt">did_how</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">measured with a ruler</span>
+<span class="w">  </span><span class="nt">did_what</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">found an even cheaper way to measure gravity waves</span>
+<span class="w">  </span><span class="nt">due_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2021-04-11&#39;</span>
+<span class="w">  </span><span class="nt">editor_eyes_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">to be honest, I don&#39;t believe a word of it</span>
+<span class="w">  </span><span class="nt">final_assessment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The authors should really start over</span>
+<span class="w">  </span><span class="nt">first_author_last_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Wingit</span>
+<span class="w">  </span><span class="nt">freewrite</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">this comment didn&#39;t fit anywhere above</span>
+<span class="w">  </span><span class="nt">journal</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Nature</span>
+<span class="w">  </span><span class="nt">month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jun</span>
+<span class="w">  </span><span class="nt">recommendation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reject</span>
+<span class="w">  </span><span class="nt">requester</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Max Planck</span>
+<span class="w">  </span><span class="nt">reviewer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">accepted</span>
+<span class="w">  </span><span class="nt">submitted_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-01-01&#39;</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">an even smaller ruler approach to measuring gravity waves</span>
+<span class="w">  </span><span class="nt">validity_assessment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">complete rubbish</span>
+<span class="w">  </span><span class="nt">year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2020</span>
+</pre></div>
+</div>
+</section>
+<section id="json-mongo-example">
+<h2>JSON/Mongo Example<a class="headerlink" href="#json-mongo-example" title="Link to this heading"></a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1902nature&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;claimed_found_what&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;gravity waves&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;claimed_why_important&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;more money for ice cream&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;did_how&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;measured with a ruler&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;did_what&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;found a much cheaper way to measure gravity waves&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;due_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;editor_eyes_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;to be honest, I don&#39;t believe a word of it&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;final_assessment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;The authors should really start over&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;first_author_last_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Wingit&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;freewrite&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;this comment didn&#39;t fit anywhere above&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;journal&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Nature&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;month&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;jun&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;recommendation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reject&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;requester&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Max Planck&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;reviewer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submitted&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;submitted_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-01-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a ruler approach to measuring gravity waves&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;validity_assessment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;complete rubbish&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2019</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2002nature&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;claimed_found_what&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;more gravity waves&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;claimed_why_important&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;even more money for ice cream&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;did_how&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;measured with a ruler&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;did_what&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;found an even cheaper way to measure gravity waves&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;due_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-04-11&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;editor_eyes_only&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;to be honest, I don&#39;t believe a word of it&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;final_assessment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;The authors should really start over&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;first_author_last_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Wingit&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;freewrite&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;this comment didn&#39;t fit anywhere above&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;journal&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Nature&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;month&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;jun&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;recommendation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reject&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;requester&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Max Planck&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;reviewer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;accepted&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;submitted_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;an even smaller ruler approach to measuring gravity waves&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;validity_assessment&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;complete rubbish&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2020</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reading_lists.html" class="btn btn-neutral float-left" title="Reading_Lists" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="software.html" class="btn btn-neutral float-right" title="Software" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

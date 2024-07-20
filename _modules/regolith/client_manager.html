@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.client_manager &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.client_manager</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.client_manager</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">FileSystemClient</span>
+<span class="kn">from</span> <span class="nn">regolith.mongoclient</span> <span class="kn">import</span> <span class="n">MongoClient</span>
+
+<span class="n">CLIENTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;mongo&quot;</span><span class="p">:</span> <span class="n">MongoClient</span><span class="p">,</span>
+    <span class="s2">&quot;mongodb&quot;</span><span class="p">:</span> <span class="n">MongoClient</span><span class="p">,</span>
+    <span class="s2">&quot;fs&quot;</span><span class="p">:</span> <span class="n">FileSystemClient</span><span class="p">,</span>
+    <span class="s2">&quot;filesystem&quot;</span><span class="p">:</span> <span class="n">FileSystemClient</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="ClientManager">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager">[docs]</a>
+<span class="k">class</span> <span class="nc">ClientManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Client wrapper that allows for multiple backend clients to be used in parallel with one chained DB</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">databases</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="n">client_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="s2">&quot;backend&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">database</span> <span class="ow">in</span> <span class="n">databases</span><span class="p">:</span>
+                <span class="n">database</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">backend</span>
+        <span class="k">for</span> <span class="n">database</span> <span class="ow">in</span> <span class="n">databases</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;backend&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">database</span><span class="p">:</span>
+                <span class="n">database</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;filesystem&quot;</span>
+            <span class="n">backend_object_type</span> <span class="o">=</span> <span class="n">CLIENTS</span><span class="p">[</span><span class="n">database</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]]</span>
+            <span class="c1"># Checks to see if the clients tuple contains a client with the database&#39;s backend</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">client_tuple</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">client_tuple</span> <span class="o">=</span> <span class="n">client_tuple</span> <span class="o">+</span> <span class="p">(</span><span class="n">CLIENTS</span><span class="p">[</span><span class="n">database</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]](</span><span class="n">rc</span><span class="p">),)</span>
+            <span class="k">elif</span> <span class="kc">True</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">backend_object_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="n">client_tuple</span><span class="p">]:</span>
+                <span class="n">client_tuple</span> <span class="o">=</span> <span class="n">client_tuple</span> <span class="o">+</span> <span class="p">(</span><span class="n">CLIENTS</span><span class="p">[</span><span class="n">database</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]](</span><span class="n">rc</span><span class="p">),)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clients</span> <span class="o">=</span> <span class="n">client_tuple</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">rc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># self.open()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collfiletypes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collexts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yamlinsts</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;dbs&quot;</span><span class="p">:</span>
+            <span class="n">concatenated_dbs_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+                <span class="n">concatenated_dbs_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">dbs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">concatenated_dbs_dict</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">client</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ClientManager.open">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.open">[docs]</a>
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Opens the database connections&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">open</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.close">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.close">[docs]</a>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the database connections.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.load_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.load_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">CLIENTS</span><span class="p">[</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]]):</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">load_database</span><span class="p">(</span><span class="n">db</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.import_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.import_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">import_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">MongoClient</span><span class="p">):</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">import_database</span><span class="p">(</span><span class="n">db</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.export_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.export_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">export_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">MongoClient</span><span class="p">):</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">export_database</span><span class="p">(</span><span class="n">db</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.dump_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.dump_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">dump_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+        <span class="n">to_add</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Iterate through the clients just in case databases on different backends have same name</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">CLIENTS</span><span class="p">[</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]]):</span>
+                <span class="k">if</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">temp_add</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">dump_database</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">temp_add</span><span class="p">:</span>
+                        <span class="n">to_add</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">temp_add</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">to_add</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.keys">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">keys</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.collection_names">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.collection_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">collection_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">include_system_collections</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the collaction names for a database.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dbname</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">collection_names</span><span class="p">(</span><span class="n">dbname</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.all_documents">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.all_documents">[docs]</a>
+    <span class="k">def</span> <span class="nf">all_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an iteratable over all documents in a collection.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="p">{}))</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.insert_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.insert_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts one document to a database/collection.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dbname</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.insert_many">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.insert_many">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">docs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts many documents into a database/collection.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dbname</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">insert_many</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">docs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.delete_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.delete_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes a single document from a collection&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dbname</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">delete_one</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.find_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.find_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">find_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the first document matching filter.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dbname</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClientManager.update_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.client_manager.ClientManager.update_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates one document.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dbname</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">update_one</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

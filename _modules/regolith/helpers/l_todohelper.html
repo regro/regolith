@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.l_todohelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.l_todohelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.l_todohelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper for listing the to-do tasks.</span>
+
+<span class="sd">Tasks are gathered from people.yml, milestones, and group meeting actions.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">dateutil.parser</span> <span class="k">as</span> <span class="nn">date_parser</span>
+<span class="kn">from</span> <span class="nn">gooey</span> <span class="kn">import</span> <span class="n">GooeyParser</span>
+<span class="kn">from</span> <span class="nn">nameparser</span> <span class="kn">import</span> <span class="n">HumanName</span>
+
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.basehelper</span> <span class="kn">import</span> <span class="n">SoutHelperBase</span>
+<span class="kn">from</span> <span class="nn">regolith.schemas</span> <span class="kn">import</span> <span class="n">PROJECTUM_ACTIVE_STATI</span><span class="p">,</span> <span class="n">alloweds</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">all_docs_from_collection</span><span class="p">,</span>
+    <span class="n">document_by_value</span><span class="p">,</span>
+    <span class="n">get_pi_id</span><span class="p">,</span>
+    <span class="n">key_value_pair_filter</span><span class="p">,</span>
+    <span class="n">print_task</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">TARGET_COLL</span> <span class="o">=</span> <span class="s2">&quot;todos&quot;</span>
+<span class="n">HELPER_TARGET</span> <span class="o">=</span> <span class="s2">&quot;l_todo&quot;</span>
+<span class="n">Importance</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># eisenhower matrix (important|urgent) tt=3, tf=2, ft=1, ff=0</span>
+<span class="n">STATI</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;accepted&quot;</span><span class="p">,</span> <span class="s2">&quot;downloaded&quot;</span><span class="p">,</span> <span class="s2">&quot;inprep&quot;</span><span class="p">]</span>
+
+<span class="n">TODO_STATI</span> <span class="o">=</span> <span class="n">alloweds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TODO_STATI&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="subparser">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_todohelper.subparser">[docs]</a>
+<span class="k">def</span> <span class="nf">subparser</span><span class="p">(</span><span class="n">subpi</span><span class="p">):</span>
+    <span class="n">listbox_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">date_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">int_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subpi</span><span class="p">,</span> <span class="n">GooeyParser</span><span class="p">):</span>
+        <span class="n">listbox_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Listbox&quot;</span>
+        <span class="n">date_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DateChooser&quot;</span>
+        <span class="n">int_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;IntegerField&quot;</span>
+        <span class="n">int_kwargs</span><span class="p">[</span><span class="s2">&quot;gooey_options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">}</span>
+
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--short&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span>
+        <span class="n">const</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter for tasks of short duration. &quot;</span>
+        <span class="s2">&quot;All items with a duration &lt;= # mins, will be returned &quot;</span>
+        <span class="s2">&quot;if the number # is specified.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--tags&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter tasks by tags. Items are returned if they contain any of the tags listed&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--stati&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">TODO_STATI</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter tasks with specific stati&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;started&quot;</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">listbox_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--outstandingreview&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List outstanding reviews&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--assigned-to&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter tasks that are assigned to this user id. Default id is saved in user.json. &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-b&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--assigned-by&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span>
+        <span class="n">const</span><span class="o">=</span><span class="s2">&quot;default_id&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter tasks that are assigned to other members by this user id. Default id is saved in user.json. &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--date&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enter a date such that the helper can calculate how many days are left &quot;</span>
+        <span class="s2">&quot;from that date to the due-date. Default is today.&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">date_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--filter&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Search this collection by giving key element pairs. &#39;-f description paper&#39; will return tasks &quot;</span>
+        <span class="s2">&quot;with description containing &#39;paper&#39; &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">subpi</span></div>
+
+
+
+<div class="viewcode-block" id="TodoListerHelper">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_todohelper.TodoListerHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">TodoListerHelper</span><span class="p">(</span><span class="n">SoutHelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for listing the to-do tasks.</span>
+
+<span class="sd">    Tasks are gathered from people.yml, milestones, and group meeting actions.&quot;&quot;&quot;</span>
+
+    <span class="c1"># btype must be the same as helper target in helper.py</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="n">HELPER_TARGET</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;refereeReports&quot;</span><span class="p">,</span> <span class="s2">&quot;proposalReviews&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TodoListerHelper.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_todohelper.TodoListerHelper.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="s2">&quot;groups&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span> <span class="o">=</span> <span class="n">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">colls</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">collname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">collname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">db</span><span class="p">,</span> <span class="n">coll</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">,</span> <span class="n">colls</span><span class="p">):</span>
+            <span class="n">gtx</span><span class="p">[</span><span class="n">db</span><span class="p">]</span> <span class="o">=</span> <span class="n">coll</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="TodoListerHelper.sout">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_todohelper.TodoListerHelper.sout">[docs]</a>
+    <span class="k">def</span> <span class="nf">sout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">assigned_to</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">assigned_to</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">default_user_id</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;Please set default_user_id in &#39;~/.config/regolith/user.json&#39;, &quot;</span>
+                    <span class="s2">&quot;or you need to enter your group id in the command line&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">person</span> <span class="o">=</span> <span class="n">document_by_value</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;todos&quot;</span><span class="p">),</span> <span class="s2">&quot;_id&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">assigned_to</span><span class="p">)</span>
+            <span class="n">gather_todos</span> <span class="o">=</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;todos&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The id you entered can&#39;t be found in todos.yml.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">date</span><span class="p">:</span>
+            <span class="n">today</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">today</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">stati</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;started&quot;</span><span class="p">]:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">stati</span> <span class="o">=</span> <span class="n">PROJECTUM_ACTIVE_STATI</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">:</span>
+            <span class="n">gather_todos</span> <span class="o">=</span> <span class="n">key_value_pair_filter</span><span class="p">(</span><span class="n">gather_todos</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">short</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">todo</span> <span class="ow">in</span> <span class="n">gather_todos</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">todo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">float</span><span class="p">(</span><span class="n">todo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="nb">float</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">short</span><span class="p">):</span>
+                    <span class="n">gather_todos</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">todo</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">todo</span> <span class="ow">in</span> <span class="n">gather_todos</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">takeme</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">todo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+                        <span class="n">takeme</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">takeme</span><span class="p">:</span>
+                    <span class="n">gather_todos</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">todo</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">assigned_by</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">assigned_by</span> <span class="o">==</span> <span class="s2">&quot;default_id&quot;</span><span class="p">:</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">assigned_by</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">default_user_id</span>
+            <span class="k">for</span> <span class="n">todo</span> <span class="ow">in</span> <span class="n">gather_todos</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">todo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;assigned_by&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">rc</span><span class="o">.</span><span class="n">assigned_by</span><span class="p">:</span>
+                    <span class="n">gather_todos</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">todo</span><span class="p">)</span>
+        <span class="n">len_of_started_tasks</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">milestones</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">todo</span> <span class="ow">in</span> <span class="n">gather_todos</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;milestone: &quot;</span> <span class="ow">in</span> <span class="n">todo</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]:</span>
+                <span class="n">milestones</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">todo</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;started&quot;</span><span class="p">:</span>
+                <span class="n">len_of_started_tasks</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">len_of_tasks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">gather_todos</span><span class="p">)</span>  <span class="c1"># - milestones</span>
+        <span class="k">for</span> <span class="n">todo</span> <span class="ow">in</span> <span class="n">gather_todos</span><span class="p">:</span>
+            <span class="n">_format_todos</span><span class="p">(</span><span class="n">todo</span><span class="p">,</span> <span class="n">today</span><span class="p">)</span>
+        <span class="n">gather_todos</span><span class="p">[:</span><span class="n">len_of_tasks</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">gather_todos</span><span class="p">[:</span><span class="n">len_of_tasks</span><span class="p">],</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="s2">&quot;importance&quot;</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">],</span> <span class="o">-</span><span class="n">k</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)),</span>
+        <span class="p">)</span>
+        <span class="n">gather_todos</span><span class="p">[</span><span class="n">len_of_started_tasks</span><span class="p">:</span><span class="n">len_of_tasks</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">gather_todos</span><span class="p">[</span><span class="n">len_of_started_tasks</span><span class="p">:</span><span class="n">len_of_tasks</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">k</span><span class="p">[</span><span class="s2">&quot;sort_finished&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">gather_todos</span><span class="p">[</span><span class="n">len_of_tasks</span><span class="p">:]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">gather_todos</span><span class="p">[</span><span class="n">len_of_tasks</span><span class="p">:],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">],</span> <span class="o">-</span><span class="n">k</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;If the indices are far from being in numerical order, please renumber them &quot;</span>
+            <span class="s2">&quot;by running regolith helper u_todo -r&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gather_todos</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">print_task</span><span class="p">(</span><span class="n">gather_todos</span><span class="p">,</span> <span class="n">stati</span><span class="o">=</span><span class="n">rc</span><span class="o">.</span><span class="n">stati</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">outstandingreview</span><span class="p">:</span>
+            <span class="n">prop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;proposalReviews&quot;</span><span class="p">]</span>
+            <span class="n">man</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;refereeReports&quot;</span><span class="p">]</span>
+            <span class="n">outstanding_todo</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">manuscript</span> <span class="ow">in</span> <span class="n">man</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">manuscript</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reviewer&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">rc</span><span class="o">.</span><span class="n">assigned_to</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">manuscript</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">STATI</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Manuscript by </span><span class="si">{</span><span class="n">manuscript</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;first_author_last_name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">manuscript</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;journal&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;is due on </span><span class="si">{</span><span class="n">manuscript</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;due_date&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">outstanding_todo</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">out</span><span class="p">,</span> <span class="n">manuscript</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;due_date&quot;</span><span class="p">),</span> <span class="n">manuscript</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">proposal</span> <span class="ow">in</span> <span class="n">prop</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reviewer&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">rc</span><span class="o">.</span><span class="n">assigned_to</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">STATI</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="n">HumanName</span><span class="p">(</span><span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="n">HumanName</span><span class="p">(</span><span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Proposal by </span><span class="si">{</span><span class="n">name</span><span class="o">.</span><span class="n">last</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;agency&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;requester&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;is due on </span><span class="si">{</span><span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;due_date&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">outstanding_todo</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">out</span><span class="p">,</span> <span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;due_date&quot;</span><span class="p">),</span> <span class="n">proposal</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)))</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outstanding_todo</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Outstanding Reviews:&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">)</span>
+            <span class="n">outstanding_todo</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">outstanding_todo</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">for</span> <span class="n">stati</span> <span class="ow">in</span> <span class="n">STATI</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">stati</span> <span class="ow">in</span> <span class="p">[</span><span class="n">output</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">outstanding_todo</span><span class="p">]:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stati</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">outstanding_todo</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">output</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">stati</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">return</span></div>
+</div>
+
+
+
+<span class="k">def</span> <span class="nf">_format_todos</span><span class="p">(</span><span class="n">todo</span><span class="p">,</span> <span class="n">today</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;datify dates, set orders etc and update to-do items in place</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    todo: dict</span>
+<span class="sd">      the to-do item to be munged</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    nothing</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">todo</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">todo</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">todo</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">todo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">todo</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">todo</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="n">todo</span><span class="p">[</span><span class="s2">&quot;days_to_due&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">todo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;due_date&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">today</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+    <span class="n">todo</span><span class="p">[</span><span class="s2">&quot;sort_finished&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">todo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1900</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1900</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">days</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">todo</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">todo</span><span class="p">[</span><span class="s2">&quot;days_to_due&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+        <span class="n">todo</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+    <span class="k">return</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

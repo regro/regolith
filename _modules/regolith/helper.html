@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Generic builder.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">a_expensehelper</span> <span class="k">as</span> <span class="n">a_expense</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">a_grppub_readlisthelper</span> <span class="k">as</span> <span class="n">a_gprl</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">a_manurevhelper</span> <span class="k">as</span> <span class="n">a_manurev</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">a_presentationhelper</span> <span class="k">as</span> <span class="n">a_presentation</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">a_projectumhelper</span> <span class="k">as</span> <span class="n">a_projectum</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">a_proposalhelper</span> <span class="k">as</span> <span class="n">a_proposal</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">a_proprevhelper</span> <span class="k">as</span> <span class="n">a_proprev</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">a_todohelper</span> <span class="k">as</span> <span class="n">a_todo</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">attestationshelper</span> <span class="k">as</span> <span class="n">attestations</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">f_todohelper</span> <span class="k">as</span> <span class="n">f_todo</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_abstracthelper</span> <span class="k">as</span> <span class="n">l_abstract</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_contactshelper</span> <span class="k">as</span> <span class="n">l_contacts</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_currentappointmentshelper</span> <span class="k">as</span> <span class="n">l_currentappointments</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_generalhelper</span> <span class="k">as</span> <span class="n">l_general</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_grantshelper</span> <span class="k">as</span> <span class="n">l_grants</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_membershelper</span> <span class="k">as</span> <span class="n">l_members</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_milestoneshelper</span> <span class="k">as</span> <span class="n">l_milestone</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_progressreporthelper</span> <span class="k">as</span> <span class="n">l_progress</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_projectahelper</span> <span class="k">as</span> <span class="n">l_projecta</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">l_todohelper</span> <span class="k">as</span> <span class="n">l_todo</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">makeappointmentshelper</span> <span class="k">as</span> <span class="n">makeappointments</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">reimbstatushelper</span> <span class="k">as</span> <span class="n">reimbstatus</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">u_contacthelper</span> <span class="k">as</span> <span class="n">u_contact</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">u_finishprumhelper</span> <span class="k">as</span> <span class="n">u_finishprum</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">u_institutionshelper</span> <span class="k">as</span> <span class="n">u_institutions</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">u_logurlhelper</span> <span class="k">as</span> <span class="n">u_logurl</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">u_milestonehelper</span> <span class="k">as</span> <span class="n">u_milestone</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">u_todohelper</span> <span class="k">as</span> <span class="n">u_todo</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers</span> <span class="kn">import</span> <span class="n">v_meetingshelper</span> <span class="k">as</span> <span class="n">v_meetings</span>
+
+<span class="c1"># Updtaer helpers will update the db and should not load all databases but only</span>
+<span class="c1"># the one specified in rc.database for updating.</span>
+<span class="n">UPDATER_HELPERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;a_expense&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">a_expense</span><span class="o">.</span><span class="n">ExpenseAdderHelper</span><span class="p">,</span> <span class="n">a_expense</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;a_grppub_readlist&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">a_gprl</span><span class="o">.</span><span class="n">GrpPubReadListAdderHelper</span><span class="p">,</span> <span class="n">a_gprl</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;a_manurev&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">a_manurev</span><span class="o">.</span><span class="n">ManuRevAdderHelper</span><span class="p">,</span> <span class="n">a_manurev</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;a_presentation&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">a_presentation</span><span class="o">.</span><span class="n">PresentationAdderHelper</span><span class="p">,</span> <span class="n">a_presentation</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;a_projectum&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">a_projectum</span><span class="o">.</span><span class="n">ProjectumAdderHelper</span><span class="p">,</span> <span class="n">a_projectum</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;a_proposal&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">a_proposal</span><span class="o">.</span><span class="n">ProposalAdderHelper</span><span class="p">,</span> <span class="n">a_proposal</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;a_proprev&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">a_proprev</span><span class="o">.</span><span class="n">PropRevAdderHelper</span><span class="p">,</span> <span class="n">a_proprev</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;a_todo&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">a_todo</span><span class="o">.</span><span class="n">TodoAdderHelper</span><span class="p">,</span> <span class="n">a_todo</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;f_prum&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">u_finishprum</span><span class="o">.</span><span class="n">FinishprumUpdaterHelper</span><span class="p">,</span> <span class="n">u_finishprum</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;f_todo&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">f_todo</span><span class="o">.</span><span class="n">TodoFinisherHelper</span><span class="p">,</span> <span class="n">f_todo</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;u_contact&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">u_contact</span><span class="o">.</span><span class="n">ContactUpdaterHelper</span><span class="p">,</span> <span class="n">u_contact</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;u_institution&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">u_institutions</span><span class="o">.</span><span class="n">InstitutionsUpdaterHelper</span><span class="p">,</span> <span class="n">u_institutions</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;u_logurl&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">u_logurl</span><span class="o">.</span><span class="n">LogUrlUpdaterHelper</span><span class="p">,</span> <span class="n">u_logurl</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;u_milestone&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">u_milestone</span><span class="o">.</span><span class="n">MilestoneUpdaterHelper</span><span class="p">,</span> <span class="n">u_milestone</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;u_todo&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">u_todo</span><span class="o">.</span><span class="n">TodoUpdaterHelper</span><span class="p">,</span> <span class="n">u_todo</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="c1"># Lister helpers need to load collections across all the databses to show everything</span>
+<span class="n">LISTER_HELPERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;l_abstract&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_abstract</span><span class="o">.</span><span class="n">AbstractListerHelper</span><span class="p">,</span> <span class="n">l_abstract</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;l_contacts&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_contacts</span><span class="o">.</span><span class="n">ContactsListerHelper</span><span class="p">,</span> <span class="n">l_contacts</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;l_currentappointments&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">l_currentappointments</span><span class="o">.</span><span class="n">CurrentAppointmentsListerHelper</span><span class="p">,</span>
+        <span class="n">l_currentappointments</span><span class="o">.</span><span class="n">subparser</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;l_grants&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_grants</span><span class="o">.</span><span class="n">GrantsListerHelper</span><span class="p">,</span> <span class="n">l_grants</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;l_members&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_members</span><span class="o">.</span><span class="n">MembersListerHelper</span><span class="p">,</span> <span class="n">l_members</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;l_milestones&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_milestone</span><span class="o">.</span><span class="n">MilestonesListerHelper</span><span class="p">,</span> <span class="n">l_milestone</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;l_progress&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_progress</span><span class="o">.</span><span class="n">ProgressReportHelper</span><span class="p">,</span> <span class="n">l_progress</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;l_projecta&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_projecta</span><span class="o">.</span><span class="n">ProjectaListerHelper</span><span class="p">,</span> <span class="n">l_projecta</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;l_reimbstatus&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">reimbstatus</span><span class="o">.</span><span class="n">ReimbstatusHelper</span><span class="p">,</span> <span class="n">reimbstatus</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;l_todo&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_todo</span><span class="o">.</span><span class="n">TodoListerHelper</span><span class="p">,</span> <span class="n">l_todo</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;v_meetings&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">v_meetings</span><span class="o">.</span><span class="n">MeetingsValidatorHelper</span><span class="p">,</span> <span class="n">v_meetings</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;attestations&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">attestations</span><span class="o">.</span><span class="n">AttestationsHelper</span><span class="p">,</span> <span class="n">attestations</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;lister&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">l_general</span><span class="o">.</span><span class="n">GeneralListerHelper</span><span class="p">,</span> <span class="n">l_general</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+    <span class="s2">&quot;makeappointments&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">makeappointments</span><span class="o">.</span><span class="n">MakeAppointmentsHelper</span><span class="p">,</span> <span class="n">makeappointments</span><span class="o">.</span><span class="n">subparser</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">HELPERS</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">LISTER_HELPERS</span><span class="p">)</span>
+<span class="n">HELPERS</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">UPDATER_HELPERS</span><span class="p">)</span>
+<span class="c1"># fast_updater updaters only connects to the one requested db, not to all dbs</span>
+<span class="c1"># in rc.databases which is the default behavior</span>
+<span class="n">FAST_UPDATER_WHITELIST</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;u_milestone&quot;</span><span class="p">,</span> <span class="s2">&quot;f_prum&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="helpr">
+<a class="viewcode-back" href="../../api/index.html#regolith.helper.helpr">[docs]</a>
+<span class="k">def</span> <span class="nf">helpr</span><span class="p">(</span><span class="n">btype</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns helper of the appropriate type.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">HELPERS</span><span class="p">[</span><span class="n">btype</span><span class="p">][</span><span class="mi">0</span><span class="p">](</span><span class="n">rc</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

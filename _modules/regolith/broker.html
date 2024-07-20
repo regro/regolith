@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.broker &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.broker</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.broker</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;API for accessing the metadata and file storage&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">regolith.database</span> <span class="kn">import</span> <span class="n">dump_database</span><span class="p">,</span> <span class="n">open_dbs</span>
+<span class="kn">from</span> <span class="nn">regolith.runcontrol</span> <span class="kn">import</span> <span class="n">DEFAULT_RC</span><span class="p">,</span> <span class="n">filter_databases</span><span class="p">,</span> <span class="n">load_rcfile</span>
+<span class="kn">from</span> <span class="nn">regolith.storage</span> <span class="kn">import</span> <span class="n">push</span><span class="p">,</span> <span class="n">store_client</span>
+
+
+<div class="viewcode-block" id="load_db">
+<a class="viewcode-back" href="../../api/index.html#regolith.broker.load_db">[docs]</a>
+<span class="k">def</span> <span class="nf">load_db</span><span class="p">(</span><span class="n">rc_file</span><span class="o">=</span><span class="s2">&quot;regolithrc.json&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Broker instance from an rc file&quot;&quot;&quot;</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">DEFAULT_RC</span><span class="p">)</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">load_rcfile</span><span class="p">(</span><span class="n">rc_file</span><span class="p">))</span>
+    <span class="n">filter_databases</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Broker</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Broker">
+<a class="viewcode-back" href="../../api/index.html#regolith.broker.Broker">[docs]</a>
+<span class="k">class</span> <span class="nc">Broker</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface to the database and file storage systems</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; # Load the db</span>
+<span class="sd">    &gt;&gt;&gt; db = Broker.from_rc()</span>
+<span class="sd">    &gt;&gt;&gt; # Get a docment from the broker</span>
+<span class="sd">    &gt;&gt;&gt; ergs =db[&#39;group&#39;][&#39;ergs&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; # Store a file</span>
+<span class="sd">    &gt;&gt;&gt; db.add_file(ergs, &#39;myfile&#39;, &#39;/path/to/file/hello.txt&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; # Get a file from the store</span>
+<span class="sd">    &gt;&gt;&gt; path = db.get_file_path(ergs, &#39;myfile&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="n">DEFAULT_RC</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">rc</span>
+        <span class="c1"># TODO: Lazy load these</span>
+        <span class="k">with</span> <span class="n">store_client</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="k">as</span> <span class="n">sclient</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">store</span> <span class="o">=</span> <span class="n">sclient</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">open_dbs</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dbs</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">dbs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">md</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">chained_db</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_client</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">client</span>
+
+<div class="viewcode-block" id="Broker.add_file">
+<a class="viewcode-back" href="../../api/index.html#regolith.broker.Broker.add_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a file to a document in a collection.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        document : dict</span>
+<span class="sd">            The document to add the file to</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name of the reference to the file</span>
+<span class="sd">        filepath : str</span>
+<span class="sd">            Location of the file on local disk</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">copydoc</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;files&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">document</span><span class="p">:</span>
+            <span class="n">document</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">document</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_path</span>
+        <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">:</span>
+            <span class="n">dump_database</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">push</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">store</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Broker.from_rc">
+<a class="viewcode-back" href="../../api/index.html#regolith.broker.Broker.from_rc">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_rc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rc_file</span><span class="o">=</span><span class="s2">&quot;regolithrc.json&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a Broker instance&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">load_db</span><span class="p">(</span><span class="n">rc_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Broker.get_file_path">
+<a class="viewcode-back" href="../../api/index.html#regolith.broker.Broker.get_file_path">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a file from the file storage associated with the document and</span>
+<span class="sd">        name</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        document : dict</span>
+<span class="sd">            The document which stores the reference to the file</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the file stored (note that this can be different from</span>
+<span class="sd">            the filename itself)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        path : str or None</span>
+<span class="sd">            The file path, if not in the storage None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;files&quot;</span> <span class="ow">in</span> <span class="n">document</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">document</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">md</span><span class="p">[</span><span class="n">item</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

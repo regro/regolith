@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.builders package &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="regolith.static package" href="regolith.static.html" />
+    <link rel="prev" title="Regolith API" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../collections/index.html">Collections</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Regolith API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">regolith.builders package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.reimbursementbuilder">regolith.builders.reimbursementbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.preslistbuilder">regolith.builders.preslistbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.beamplanbuilder">regolith.builders.beamplanbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.manuscriptreviewbuilder">regolith.builders.manuscriptreviewbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.figurebuilder">regolith.builders.figurebuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.activitylogbuilder">regolith.builders.activitylogbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.coabuilder">regolith.builders.coabuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.basebuilder">regolith.builders.basebuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.proposalreviewbuilder">regolith.builders.proposalreviewbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.grantreportbuilder">regolith.builders.grantreportbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.postdocadbuilder">regolith.builders.postdocadbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.publistbuilder">regolith.builders.publistbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.internalhtmlbuilder">regolith.builders.internalhtmlbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.formalletterbuilder">regolith.builders.formalletterbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.gradebuilder">regolith.builders.gradebuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.htmlbuilder">regolith.builders.htmlbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.cvbuilder">regolith.builders.cvbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.resumebuilder">regolith.builders.resumebuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.readinglistsbuilder">regolith.builders.readinglistsbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.cpbuilder">regolith.builders.cpbuilder module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-regolith.builders.appraisalbuilder">regolith.builders.appraisalbuilder module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="regolith.static.html">regolith.static package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regolith.templates.html">regolith.templates package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regolith.helpers.html">regolith.helpers package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#other-api-usage">Other API usage</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Regolith API</a></li>
+      <li class="breadcrumb-item active">regolith.builders package</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-regolith.builders">
+<span id="regolith-builders-package"></span><h1>regolith.builders package<a class="headerlink" href="#module-regolith.builders" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<section id="module-regolith.builders.reimbursementbuilder">
+<span id="regolith-builders-reimbursementbuilder-module"></span><h3>regolith.builders.reimbursementbuilder module<a class="headerlink" href="#module-regolith.builders.reimbursementbuilder" title="Link to this heading"></a></h3>
+<p>Builder for Resumes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.reimbursementbuilder.ReimbursementBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.reimbursementbuilder.</span></span><span class="sig-name descname"><span class="pre">ReimbursementBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/reimbursementbuilder.html#ReimbursementBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.reimbursementbuilder.ReimbursementBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.BuilderBase" title="regolith.builders.basebuilder.BuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuilderBase</span></code></a></p>
+<p>Build reimbursement from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.reimbursementbuilder.ReimbursementBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'reimb'</span></em><a class="headerlink" href="#regolith.builders.reimbursementbuilder.ReimbursementBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.reimbursementbuilder.ReimbursementBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/reimbursementbuilder.html#ReimbursementBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.reimbursementbuilder.ReimbursementBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.reimbursementbuilder.ReimbursementBuilder.excel">
+<span class="sig-name descname"><span class="pre">excel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/reimbursementbuilder.html#ReimbursementBuilder.excel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.reimbursementbuilder.ReimbursementBuilder.excel" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.reimbursementbuilder.ReimbursementBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['expenses',</span> <span class="pre">'people',</span> <span class="pre">'grants']</span></em><a class="headerlink" href="#regolith.builders.reimbursementbuilder.ReimbursementBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.preslistbuilder">
+<span id="regolith-builders-preslistbuilder-module"></span><h3>regolith.builders.preslistbuilder module<a class="headerlink" href="#module-regolith.builders.preslistbuilder" title="Link to this heading"></a></h3>
+<p>Builder for Lists of Presentations.</p>
+<p>This builder will build a presentation list for each group-member in each group
+listed in groups.yml.  Group members are indicated in the employment and
+education sections of the individual in people.yml.</p>
+<p>There are a number of filtering options, i.e., for presentation-type (invited,
+colloquium, seminar, poster, contributed_oral) and for whether the invitation
+was accepted or declined.  As of now, these filters can only be updated by
+editing this file but may appear as command-line options later.  It will also
+get institution and department information from institutions.yml if they are
+there.</p>
+<p>The author list is built from information in people.yml where possible and
+contacts.yml as a fallback.  The author list is built by first performing a
+fuzzy search for the person in people.yml, followed by a fuzzy search through
+contacts.yml (if the person was not found in people.yml), but if the person is
+absent both database files, it will still build but using the string name given
+in the presentations.yml. The presentations are output in a ./_build directory.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.preslistbuilder.PresListBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.preslistbuilder.</span></span><span class="sig-name descname"><span class="pre">PresListBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/preslistbuilder.html#PresListBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.preslistbuilder.PresListBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build list of talks and posters (presentations) from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.preslistbuilder.PresListBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'preslist'</span></em><a class="headerlink" href="#regolith.builders.preslistbuilder.PresListBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.preslistbuilder.PresListBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/preslistbuilder.html#PresListBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.preslistbuilder.PresListBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.preslistbuilder.PresListBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/preslistbuilder.html#PresListBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.preslistbuilder.PresListBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.preslistbuilder.PresListBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['groups',</span> <span class="pre">'institutions',</span> <span class="pre">'people',</span> <span class="pre">'grants',</span> <span class="pre">'presentations',</span> <span class="pre">'contacts']</span></em><a class="headerlink" href="#regolith.builders.preslistbuilder.PresListBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.beamplanbuilder">
+<span id="regolith-builders-beamplanbuilder-module"></span><h3>regolith.builders.beamplanbuilder module<a class="headerlink" href="#module-regolith.builders.beamplanbuilder" title="Link to this heading"></a></h3>
+<p>Builder for the planning of beamtimes.</p>
+<p>The plan contains a summary of the information for the experiments
+in during a beamtime and details about how to carry out the experiments.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.beamplanbuilder.BeamPlanBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.beamplanbuilder.</span></span><span class="sig-name descname"><span class="pre">BeamPlanBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/beamplanbuilder.html#BeamPlanBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.beamplanbuilder.BeamPlanBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build a file of experiment plans for the beamtime from database entries.</p>
+<p>The report is in the ‘.tex’ file. The template of the file is in the
+‘templates/beamplan.tex’. The data will be grouped
+according to beamtime. Each beamtime will generate a file of the plans.
+If ‘beamtime’ in ‘rc’ are not None, only plans for those beamtime will be generated.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.beamplanbuilder.BeamPlanBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/beamplanbuilder.html#BeamPlanBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.beamplanbuilder.BeamPlanBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.beamplanbuilder.BeamPlanBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/beamplanbuilder.html#BeamPlanBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.beamplanbuilder.BeamPlanBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.beamplanbuilder.BeamPlanBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'beamplan'</span></em><a class="headerlink" href="#regolith.builders.beamplanbuilder.BeamPlanBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/beamplanbuilder.html#BeamPlanBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/beamplanbuilder.html#BeamPlanBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Render latex template.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.beamplanbuilder.BeamPlanBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['beamplan',</span> <span class="pre">'beamtime']</span></em><a class="headerlink" href="#regolith.builders.beamplanbuilder.BeamPlanBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.manuscriptreviewbuilder">
+<span id="regolith-builders-manuscriptreviewbuilder-module"></span><h3>regolith.builders.manuscriptreviewbuilder module<a class="headerlink" href="#module-regolith.builders.manuscriptreviewbuilder" title="Link to this heading"></a></h3>
+<p>Builder for Current and Pending Reports.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.manuscriptreviewbuilder.ManRevBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.manuscriptreviewbuilder.</span></span><span class="sig-name descname"><span class="pre">ManRevBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/manuscriptreviewbuilder.html#ManRevBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.manuscriptreviewbuilder.ManRevBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build a manuscript review from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.manuscriptreviewbuilder.ManRevBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'review-man'</span></em><a class="headerlink" href="#regolith.builders.manuscriptreviewbuilder.ManRevBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.manuscriptreviewbuilder.ManRevBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/manuscriptreviewbuilder.html#ManRevBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.manuscriptreviewbuilder.ManRevBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.manuscriptreviewbuilder.ManRevBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/manuscriptreviewbuilder.html#ManRevBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.manuscriptreviewbuilder.ManRevBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.manuscriptreviewbuilder.ManRevBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['refereeReports']</span></em><a class="headerlink" href="#regolith.builders.manuscriptreviewbuilder.ManRevBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.figurebuilder">
+<span id="regolith-builders-figurebuilder-module"></span><h3>regolith.builders.figurebuilder module<a class="headerlink" href="#module-regolith.builders.figurebuilder" title="Link to this heading"></a></h3>
+<p>Builder for Figure including documents.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.figurebuilder.FigureBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.figurebuilder.</span></span><span class="sig-name descname"><span class="pre">FigureBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/figurebuilder.html#FigureBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.figurebuilder.FigureBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build resume from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.figurebuilder.FigureBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'figure'</span></em><a class="headerlink" href="#regolith.builders.figurebuilder.FigureBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.figurebuilder.FigureBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/figurebuilder.html#FigureBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.figurebuilder.FigureBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.figurebuilder.FigureBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/figurebuilder.html#FigureBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.figurebuilder.FigureBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.activitylogbuilder">
+<span id="regolith-builders-activitylogbuilder-module"></span><h3>regolith.builders.activitylogbuilder module<a class="headerlink" href="#module-regolith.builders.activitylogbuilder" title="Link to this heading"></a></h3>
+<p>Builder for CVs.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.activitylogbuilder.ActivitylogBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.activitylogbuilder.</span></span><span class="sig-name descname"><span class="pre">ActivitylogBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/activitylogbuilder.html#ActivitylogBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.activitylogbuilder.ActivitylogBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build CV from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.activitylogbuilder.ActivitylogBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'annual-activity'</span></em><a class="headerlink" href="#regolith.builders.activitylogbuilder.ActivitylogBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.activitylogbuilder.ActivitylogBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/activitylogbuilder.html#ActivitylogBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.activitylogbuilder.ActivitylogBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.activitylogbuilder.ActivitylogBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/activitylogbuilder.html#ActivitylogBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.activitylogbuilder.ActivitylogBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.activitylogbuilder.ActivitylogBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['groups',</span> <span class="pre">'people',</span> <span class="pre">'grants',</span> <span class="pre">'proposals',</span> <span class="pre">'institutions',</span> <span class="pre">'projects',</span> <span class="pre">'presentations',</span> <span class="pre">'patents',</span> <span class="pre">'citations',</span> <span class="pre">'proposalReviews',</span> <span class="pre">'refereeReports',</span> <span class="pre">'recletts',</span> <span class="pre">'contacts']</span></em><a class="headerlink" href="#regolith.builders.activitylogbuilder.ActivitylogBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.coabuilder">
+<span id="regolith-builders-coabuilder-module"></span><h3>regolith.builders.coabuilder module<a class="headerlink" href="#module-regolith.builders.coabuilder" title="Link to this heading"></a></h3>
+<p>Builder for Recent Collaborators.</p>
+<p>For the specified person it returns the name and institution of all
+graduate student and post-doc advisors,
+all graduate student advisees, all post-doc advisees in the past 60 monts
+and all coauthors in the past 48 months.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">RecentCollaboratorsBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#RecentCollaboratorsBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.BuilderBase" title="regolith.builders.basebuilder.BuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuilderBase</span></code></a></p>
+<p>Build recent collaborators from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'recent-collabs'</span></em><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#RecentCollaboratorsBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Construct the global ctx including database and methods.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder.excel">
+<span class="sig-name descname"><span class="pre">excel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#RecentCollaboratorsBuilder.excel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder.excel" title="Link to this definition"></a></dt>
+<dd><p>Query data base and build nsf and doe excels.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder.fill_in_tab">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fill_in_tab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ws</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ppl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_cell_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ABCDE'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#RecentCollaboratorsBuilder.fill_in_tab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder.fill_in_tab" title="Link to this definition"></a></dt>
+<dd><p>Add the information in person, institution pairs into the table 4 in nsf table.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['citations',</span> <span class="pre">'people',</span> <span class="pre">'contacts',</span> <span class="pre">'institutions']</span></em><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder.query_ppl">
+<span class="sig-name descname"><span class="pre">query_ppl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#RecentCollaboratorsBuilder.query_ppl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder.query_ppl" title="Link to this definition"></a></dt>
+<dd><p>Query the data base for the target’s collaborators’ information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder.render_template1">
+<span class="sig-name descname"><span class="pre">render_template1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">person_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collabs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#RecentCollaboratorsBuilder.render_template1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder.render_template1" title="Link to this definition"></a></dt>
+<dd><p>Render the nsf template.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.RecentCollaboratorsBuilder.render_template2">
+<span class="sig-name descname"><span class="pre">render_template2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">person_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collabs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#RecentCollaboratorsBuilder.render_template2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.RecentCollaboratorsBuilder.render_template2" title="Link to this definition"></a></dt>
+<dd><p>Render the doe template.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.apply_cell_style">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">apply_cell_style</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">cells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#apply_cell_style"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.apply_cell_style" title="Link to this definition"></a></dt>
+<dd><p>Apply the format to cells.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.copy_cell_style">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">copy_cell_style</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style_ref_cell</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#copy_cell_style"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.copy_cell_style" title="Link to this definition"></a></dt>
+<dd><p>Copy the cell format to a dictionary.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.filter_since_date">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">filter_since_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pubs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#filter_since_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.filter_since_date" title="Link to this definition"></a></dt>
+<dd><p>Filter the publications after the since_date.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.find_coeditors">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">find_coeditors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">person</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#find_coeditors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.find_coeditors" title="Link to this definition"></a></dt>
+<dd><p>Get the coeditors info of the person. Return (last, first, inst, journal).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.find_merged_cell">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">find_merged_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cells</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#find_merged_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.find_merged_cell" title="Link to this definition"></a></dt>
+<dd><p>Find the index of all merged cells.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.format_last_first_institution_names">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">format_last_first_institution_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ppl_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excluded_inst_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#format_last_first_institution_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.format_last_first_institution_names" title="Link to this definition"></a></dt>
+<dd><p>Get the last name, first name and institution name.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.format_to_nsf">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">format_to_nsf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#format_to_nsf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.format_to_nsf" title="Link to this definition"></a></dt>
+<dd><p>Format the 3 tups to 2 tups. (‘type_str’, ‘last, first’, ‘inst’, …).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.get_advisees_name_inst">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">get_advisees_name_inst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">advisor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#get_advisees_name_inst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.get_advisees_name_inst" title="Link to this definition"></a></dt>
+<dd><p>Get advisor’s advisees. Yield (last name, first name, institutions)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.get_advisors_name_inst">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">get_advisors_name_inst</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">advisee</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#get_advisors_name_inst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.get_advisors_name_inst" title="Link to this definition"></a></dt>
+<dd><p>Get the advisee’s advisor. Yield (last name, first name, institution name).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.get_coauthors_from_pubs">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">get_coauthors_from_pubs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pubs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">not_person</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#get_coauthors_from_pubs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.get_coauthors_from_pubs" title="Link to this definition"></a></dt>
+<dd><p>Get co-authors’ names from the publication. Not include the person itself.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.get_inst_name">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">get_inst_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">person</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#get_inst_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.get_inst_name" title="Link to this definition"></a></dt>
+<dd><p>Get the name of instituion of the person’s latest employment.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.get_person">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">get_person</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">person_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#get_person"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.get_person" title="Link to this definition"></a></dt>
+<dd><p>Get the person’s name.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.get_person_pubs">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">get_person_pubs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">person</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#get_person_pubs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.get_person_pubs" title="Link to this definition"></a></dt>
+<dd><p>Get the publications from one person.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.get_recent_org">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">get_recent_org</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">person_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#get_recent_org"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.get_recent_org" title="Link to this definition"></a></dt>
+<dd><p>Get the person’s most recent organization.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.get_since_dates">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">get_since_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#get_since_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.get_since_dates" title="Link to this definition"></a></dt>
+<dd><p>Get the since_date from command.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.is_merged">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">is_merged</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#is_merged"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.is_merged" title="Link to this definition"></a></dt>
+<dd><p>Whether the cell is merged.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.make_person_4tups">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">make_person_4tups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">person</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#make_person_4tups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.make_person_4tups" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.query_people_and_institutions">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">query_people_and_institutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#query_people_and_institutions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.query_people_and_institutions" title="Link to this definition"></a></dt>
+<dd><p>Get the people and institutions names.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.retrieve_names_and_insts">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">retrieve_names_and_insts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collabs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">not_person_akas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#retrieve_names_and_insts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.retrieve_names_and_insts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.coabuilder.unmerge">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.coabuilder.</span></span><span class="sig-name descname"><span class="pre">unmerge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ws</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cells</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/coabuilder.html#unmerge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.coabuilder.unmerge" title="Link to this definition"></a></dt>
+<dd><p>Unmerge the cells.</p>
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.basebuilder">
+<span id="regolith-builders-basebuilder-module"></span><h3>regolith.builders.basebuilder module<a class="headerlink" href="#module-regolith.builders.basebuilder" title="Link to this heading"></a></h3>
+<p>Builder Base Classes</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.BuilderBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.basebuilder.</span></span><span class="sig-name descname"><span class="pre">BuilderBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#BuilderBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.BuilderBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for builders</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.BuilderBase.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#BuilderBase.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.BuilderBase.build" title="Link to this definition"></a></dt>
+<dd><p>Build the thing that is being built, note this runs all commands
+listed in <code class="docutils literal notranslate"><span class="pre">self.cmds</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.BuilderBase.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#BuilderBase.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.BuilderBase.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.BuilderBase.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#BuilderBase.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.BuilderBase.render" title="Link to this definition"></a></dt>
+<dd><p>Render the template into a file using the kwargs and global context</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tname</strong> (<em>str</em>) – Template name</p></li>
+<li><p><strong>fname</strong> (<em>str</em>) – Resulting file name</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs to the renderer</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.LatexBuilderBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.basebuilder.</span></span><span class="sig-name descname"><span class="pre">LatexBuilderBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#LatexBuilderBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.LatexBuilderBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.BuilderBase" title="regolith.builders.basebuilder.BuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuilderBase</span></code></a></p>
+<p>Base class for Latex builders</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.LatexBuilderBase.clean">
+<span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#LatexBuilderBase.clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.LatexBuilderBase.clean" title="Link to this definition"></a></dt>
+<dd><p>Remove files created by latex</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.LatexBuilderBase.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#LatexBuilderBase.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.LatexBuilderBase.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.LatexBuilderBase.pdf">
+<span class="sig-name descname"><span class="pre">pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#LatexBuilderBase.pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.LatexBuilderBase.pdf" title="Link to this definition"></a></dt>
+<dd><p>Compiles latex files to PDF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.basebuilder.LatexBuilderBase.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/basebuilder.html#LatexBuilderBase.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.basebuilder.LatexBuilderBase.run" title="Link to this definition"></a></dt>
+<dd><p>Run command in build dir</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.proposalreviewbuilder">
+<span id="regolith-builders-proposalreviewbuilder-module"></span><h3>regolith.builders.proposalreviewbuilder module<a class="headerlink" href="#module-regolith.builders.proposalreviewbuilder" title="Link to this heading"></a></h3>
+<p>Builder for Proposal Reivews.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.proposalreviewbuilder.PropRevBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.proposalreviewbuilder.</span></span><span class="sig-name descname"><span class="pre">PropRevBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/proposalreviewbuilder.html#PropRevBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.proposalreviewbuilder.PropRevBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build a proposal review from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.proposalreviewbuilder.PropRevBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'review-prop'</span></em><a class="headerlink" href="#regolith.builders.proposalreviewbuilder.PropRevBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.proposalreviewbuilder.PropRevBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/proposalreviewbuilder.html#PropRevBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.proposalreviewbuilder.PropRevBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.proposalreviewbuilder.PropRevBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/proposalreviewbuilder.html#PropRevBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.proposalreviewbuilder.PropRevBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.proposalreviewbuilder.PropRevBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['institutions',</span> <span class="pre">'proposalReviews']</span></em><a class="headerlink" href="#regolith.builders.proposalreviewbuilder.PropRevBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.grantreportbuilder">
+<span id="regolith-builders-grantreportbuilder-module"></span><h3>regolith.builders.grantreportbuilder module<a class="headerlink" href="#module-regolith.builders.grantreportbuilder" title="Link to this heading"></a></h3>
+<p>Builder for Grant Reports</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.grantreportbuilder.GrantReportBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.grantreportbuilder.</span></span><span class="sig-name descname"><span class="pre">GrantReportBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/grantreportbuilder.html#GrantReportBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.grantreportbuilder.GrantReportBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build a proposal review from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.grantreportbuilder.GrantReportBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'grant-report'</span></em><a class="headerlink" href="#regolith.builders.grantreportbuilder.GrantReportBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.grantreportbuilder.GrantReportBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/grantreportbuilder.html#GrantReportBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.grantreportbuilder.GrantReportBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.grantreportbuilder.GrantReportBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/grantreportbuilder.html#GrantReportBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.grantreportbuilder.GrantReportBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.grantreportbuilder.GrantReportBuilder.months_on">
+<span class="sig-name descname"><span class="pre">months_on</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grant</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">person</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.date(1970,</span> <span class="pre">1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">datetime.date(2024,</span> <span class="pre">7,</span> <span class="pre">20)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/grantreportbuilder.html#GrantReportBuilder.months_on"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.grantreportbuilder.GrantReportBuilder.months_on" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.grantreportbuilder.GrantReportBuilder.needed_dbs">
+<span class="sig-name descname"><span class="pre">needed_dbs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['presentations',</span> <span class="pre">'projecta',</span> <span class="pre">'people',</span> <span class="pre">'grants',</span> <span class="pre">'institutions',</span> <span class="pre">'expenses',</span> <span class="pre">'citations',</span> <span class="pre">'contacts']</span></em><a class="headerlink" href="#regolith.builders.grantreportbuilder.GrantReportBuilder.needed_dbs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.postdocadbuilder">
+<span id="regolith-builders-postdocadbuilder-module"></span><h3>regolith.builders.postdocadbuilder module<a class="headerlink" href="#module-regolith.builders.postdocadbuilder" title="Link to this heading"></a></h3>
+<p>Builder for Current and Pending Reports.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.postdocadbuilder.PostdocadBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.postdocadbuilder.</span></span><span class="sig-name descname"><span class="pre">PostdocadBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/postdocadbuilder.html#PostdocadBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.postdocadbuilder.PostdocadBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build current and pending report from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.postdocadbuilder.PostdocadBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'postdocads'</span></em><a class="headerlink" href="#regolith.builders.postdocadbuilder.PostdocadBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.postdocadbuilder.PostdocadBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/postdocadbuilder.html#PostdocadBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.postdocadbuilder.PostdocadBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.postdocadbuilder.PostdocadBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/postdocadbuilder.html#PostdocadBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.postdocadbuilder.PostdocadBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.postdocadbuilder.PostdocadBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['postdocads']</span></em><a class="headerlink" href="#regolith.builders.postdocadbuilder.PostdocadBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.publistbuilder">
+<span id="regolith-builders-publistbuilder-module"></span><h3>regolith.builders.publistbuilder module<a class="headerlink" href="#module-regolith.builders.publistbuilder" title="Link to this heading"></a></h3>
+<p>Builder for publication lists.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.publistbuilder.PubListBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.publistbuilder.</span></span><span class="sig-name descname"><span class="pre">PubListBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/publistbuilder.html#PubListBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.publistbuilder.PubListBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.publistbuilder.PubListBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'publist'</span></em><a class="headerlink" href="#regolith.builders.publistbuilder.PubListBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.publistbuilder.PubListBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/publistbuilder.html#PubListBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.publistbuilder.PubListBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.publistbuilder.PubListBuilder.filter_pubs_by_grant">
+<span class="sig-name descname"><span class="pre">filter_pubs_by_grant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pubs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grants</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/publistbuilder.html#PubListBuilder.filter_pubs_by_grant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.publistbuilder.PubListBuilder.filter_pubs_by_grant" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.publistbuilder.PubListBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/publistbuilder.html#PubListBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.publistbuilder.PubListBuilder.latex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.publistbuilder.PubListBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['citations',</span> <span class="pre">'people']</span></em><a class="headerlink" href="#regolith.builders.publistbuilder.PubListBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.internalhtmlbuilder">
+<span id="regolith-builders-internalhtmlbuilder-module"></span><h3>regolith.builders.internalhtmlbuilder module<a class="headerlink" href="#module-regolith.builders.internalhtmlbuilder" title="Link to this heading"></a></h3>
+<p>Builder for websites.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.internalhtmlbuilder.</span></span><span class="sig-name descname"><span class="pre">InternalHtmlBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.BuilderBase" title="regolith.builders.basebuilder.BuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuilderBase</span></code></a></p>
+<p>Build HTML files for website</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.abstracts">
+<span class="sig-name descname"><span class="pre">abstracts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.abstracts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.abstracts" title="Link to this definition"></a></dt>
+<dd><p>Render each abstract</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.blog">
+<span class="sig-name descname"><span class="pre">blog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.blog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.blog" title="Link to this definition"></a></dt>
+<dd><p>Render the blog and rss</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'internalhtml'</span></em><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.cname">
+<span class="sig-name descname"><span class="pre">cname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.cname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.cname" title="Link to this definition"></a></dt>
+<dd><p>Add CNAME</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.finish">
+<span class="sig-name descname"><span class="pre">finish</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.finish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.finish" title="Link to this definition"></a></dt>
+<dd><p>Move files over to their destination and remove them from the
+source</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.jobs">
+<span class="sig-name descname"><span class="pre">jobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.jobs" title="Link to this definition"></a></dt>
+<dd><p>Render the jobs and each job</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.meetings">
+<span class="sig-name descname"><span class="pre">meetings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.meetings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.meetings" title="Link to this definition"></a></dt>
+<dd><p>Render projects</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['people',</span> <span class="pre">'meetings']</span></em><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.nojekyll">
+<span class="sig-name descname"><span class="pre">nojekyll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.nojekyll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.nojekyll" title="Link to this definition"></a></dt>
+<dd><p>Touches a nojekyll file in the build dir</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.people">
+<span class="sig-name descname"><span class="pre">people</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.people"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.people" title="Link to this definition"></a></dt>
+<dd><p>Render people, former members, and each person</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.projects">
+<span class="sig-name descname"><span class="pre">projects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.projects" title="Link to this definition"></a></dt>
+<dd><p>Render projects</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.root_index">
+<span class="sig-name descname"><span class="pre">root_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/internalhtmlbuilder.html#InternalHtmlBuilder.root_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.internalhtmlbuilder.InternalHtmlBuilder.root_index" title="Link to this definition"></a></dt>
+<dd><p>Render root index</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.formalletterbuilder">
+<span id="regolith-builders-formalletterbuilder-module"></span><h3>regolith.builders.formalletterbuilder module<a class="headerlink" href="#module-regolith.builders.formalletterbuilder" title="Link to this heading"></a></h3>
+<p>Builder for publication lists.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.formalletterbuilder.FormalLetterBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.formalletterbuilder.</span></span><span class="sig-name descname"><span class="pre">FormalLetterBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/formalletterbuilder.html#FormalLetterBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.formalletterbuilder.FormalLetterBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.formalletterbuilder.FormalLetterBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'formalletter'</span></em><a class="headerlink" href="#regolith.builders.formalletterbuilder.FormalLetterBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.formalletterbuilder.FormalLetterBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/formalletterbuilder.html#FormalLetterBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.formalletterbuilder.FormalLetterBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.formalletterbuilder.FormalLetterBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/formalletterbuilder.html#FormalLetterBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.formalletterbuilder.FormalLetterBuilder.latex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.formalletterbuilder.FormalLetterBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['formalletters']</span></em><a class="headerlink" href="#regolith.builders.formalletterbuilder.FormalLetterBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.gradebuilder">
+<span id="regolith-builders-gradebuilder-module"></span><h3>regolith.builders.gradebuilder module<a class="headerlink" href="#module-regolith.builders.gradebuilder" title="Link to this heading"></a></h3>
+<p>Builder for Grade Reports.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.gradebuilder.</span></span><span class="sig-name descname"><span class="pre">GradeReportBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#GradeReportBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.basename">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">student_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">course_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#GradeReportBuilder.basename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.basename" title="Link to this definition"></a></dt>
+<dd><p>Returns the base file name for a student in a course.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'grades'</span></em><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#GradeReportBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#GradeReportBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.latex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.makestats">
+<span class="sig-name descname"><span class="pre">makestats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">course</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#GradeReportBuilder.makestats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.makestats" title="Link to this definition"></a></dt>
+<dd><p>Returns a dictionary of statistics for a course whose keys are
+the assignments and whose values are a (mean-problem, std-problem,
+mean-total, std-total) tuple.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.maketotals">
+<span class="sig-name descname"><span class="pre">maketotals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">student_grades</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouped_assignments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">course</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#GradeReportBuilder.maketotals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.maketotals" title="Link to this definition"></a></dt>
+<dd><p>Makes total grades.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['grades',</span> <span class="pre">'courses',</span> <span class="pre">'assignments']</span></em><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.plot_letter_grades">
+<span class="sig-name descname"><span class="pre">plot_letter_grades</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">students_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#GradeReportBuilder.plot_letter_grades"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.plot_letter_grades" title="Link to this definition"></a></dt>
+<dd><p>Plots the letter grades in a histogram</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.GradeReportBuilder.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#GradeReportBuilder.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.GradeReportBuilder.render" title="Link to this definition"></a></dt>
+<dd><p>Render the template into a file using the kwargs and global context</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tname</strong> (<em>str</em>) – Template name</p></li>
+<li><p><strong>fname</strong> (<em>str</em>) – Resulting file name</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional kwargs to the renderer</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.gradebuilder.find_letter_grade">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.gradebuilder.</span></span><span class="sig-name descname"><span class="pre">find_letter_grade</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">((0.97,</span> <span class="pre">'A+'),</span> <span class="pre">(0.93,</span> <span class="pre">'A'),</span> <span class="pre">(0.9,</span> <span class="pre">'A-'),</span> <span class="pre">(0.87,</span> <span class="pre">'B+'),</span> <span class="pre">(0.83,</span> <span class="pre">'B'),</span> <span class="pre">(0.8,</span> <span class="pre">'B-'),</span> <span class="pre">(0.77,</span> <span class="pre">'C+'),</span> <span class="pre">(0.73,</span> <span class="pre">'C'),</span> <span class="pre">(0.7,</span> <span class="pre">'C-'),</span> <span class="pre">(0.67,</span> <span class="pre">'D+'),</span> <span class="pre">(0.63,</span> <span class="pre">'D'),</span> <span class="pre">(0.6,</span> <span class="pre">'D-'),</span> <span class="pre">(-1.0,</span> <span class="pre">'F'))</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/gradebuilder.html#find_letter_grade"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.gradebuilder.find_letter_grade" title="Link to this definition"></a></dt>
+<dd><p>Finds the letter grade from a score and a value.</p>
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.htmlbuilder">
+<span id="regolith-builders-htmlbuilder-module"></span><h3>regolith.builders.htmlbuilder module<a class="headerlink" href="#module-regolith.builders.htmlbuilder" title="Link to this heading"></a></h3>
+<p>Builder for websites.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.htmlbuilder.</span></span><span class="sig-name descname"><span class="pre">HtmlBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.BuilderBase" title="regolith.builders.basebuilder.BuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuilderBase</span></code></a></p>
+<p>Build HTML files for website</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.abstracts">
+<span class="sig-name descname"><span class="pre">abstracts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.abstracts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.abstracts" title="Link to this definition"></a></dt>
+<dd><p>Render each abstract</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.blog">
+<span class="sig-name descname"><span class="pre">blog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.blog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.blog" title="Link to this definition"></a></dt>
+<dd><p>Render the blog and rss</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'html'</span></em><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.cname">
+<span class="sig-name descname"><span class="pre">cname</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.cname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.cname" title="Link to this definition"></a></dt>
+<dd><p>Add CNAME</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.finish">
+<span class="sig-name descname"><span class="pre">finish</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.finish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.finish" title="Link to this definition"></a></dt>
+<dd><p>Move files over to their destination and remove them from the
+source</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.jobs">
+<span class="sig-name descname"><span class="pre">jobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.jobs" title="Link to this definition"></a></dt>
+<dd><p>Render the jobs and each job</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.nojekyll">
+<span class="sig-name descname"><span class="pre">nojekyll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.nojekyll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.nojekyll" title="Link to this definition"></a></dt>
+<dd><p>Touches a nojekyll file in the build dir</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.people">
+<span class="sig-name descname"><span class="pre">people</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.people"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.people" title="Link to this definition"></a></dt>
+<dd><p>Render people, former members, and each person</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.projects">
+<span class="sig-name descname"><span class="pre">projects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.projects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.projects" title="Link to this definition"></a></dt>
+<dd><p>Render projects</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.htmlbuilder.HtmlBuilder.root_index">
+<span class="sig-name descname"><span class="pre">root_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/htmlbuilder.html#HtmlBuilder.root_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.htmlbuilder.HtmlBuilder.root_index" title="Link to this definition"></a></dt>
+<dd><p>Render root index</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.cvbuilder">
+<span id="regolith-builders-cvbuilder-module"></span><h3>regolith.builders.cvbuilder module<a class="headerlink" href="#module-regolith.builders.cvbuilder" title="Link to this heading"></a></h3>
+<p>Builder for CVs.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.cvbuilder.CVBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.cvbuilder.</span></span><span class="sig-name descname"><span class="pre">CVBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/cvbuilder.html#CVBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.cvbuilder.CVBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build CV from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.cvbuilder.CVBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cv'</span></em><a class="headerlink" href="#regolith.builders.cvbuilder.CVBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.cvbuilder.CVBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/cvbuilder.html#CVBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.cvbuilder.CVBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.cvbuilder.CVBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/cvbuilder.html#CVBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.cvbuilder.CVBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.cvbuilder.CVBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['institutions',</span> <span class="pre">'people',</span> <span class="pre">'grants',</span> <span class="pre">'citations',</span> <span class="pre">'projects',</span> <span class="pre">'proposals',</span> <span class="pre">'presentations']</span></em><a class="headerlink" href="#regolith.builders.cvbuilder.CVBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.resumebuilder">
+<span id="regolith-builders-resumebuilder-module"></span><h3>regolith.builders.resumebuilder module<a class="headerlink" href="#module-regolith.builders.resumebuilder" title="Link to this heading"></a></h3>
+<p>Builder for Resumes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.resumebuilder.ResumeBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.resumebuilder.</span></span><span class="sig-name descname"><span class="pre">ResumeBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/resumebuilder.html#ResumeBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.resumebuilder.ResumeBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build resume from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.resumebuilder.ResumeBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'resume'</span></em><a class="headerlink" href="#regolith.builders.resumebuilder.ResumeBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.resumebuilder.ResumeBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/resumebuilder.html#ResumeBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.resumebuilder.ResumeBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.resumebuilder.ResumeBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/resumebuilder.html#ResumeBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.resumebuilder.ResumeBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.resumebuilder.ResumeBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['institutions',</span> <span class="pre">'people',</span> <span class="pre">'grants',</span> <span class="pre">'citations',</span> <span class="pre">'projects',</span> <span class="pre">'proposals']</span></em><a class="headerlink" href="#regolith.builders.resumebuilder.ResumeBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.readinglistsbuilder">
+<span id="regolith-builders-readinglistsbuilder-module"></span><h3>regolith.builders.readinglistsbuilder module<a class="headerlink" href="#module-regolith.builders.readinglistsbuilder" title="Link to this heading"></a></h3>
+<p>Builder for Reading Lists.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.readinglistsbuilder.ReadingListsBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.readinglistsbuilder.</span></span><span class="sig-name descname"><span class="pre">ReadingListsBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/readinglistsbuilder.html#ReadingListsBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.readinglistsbuilder.ReadingListsBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build reading lists from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.readinglistsbuilder.ReadingListsBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'readinglists'</span></em><a class="headerlink" href="#regolith.builders.readinglistsbuilder.ReadingListsBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.readinglistsbuilder.ReadingListsBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/readinglistsbuilder.html#ReadingListsBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.readinglistsbuilder.ReadingListsBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.readinglistsbuilder.ReadingListsBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/readinglistsbuilder.html#ReadingListsBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.readinglistsbuilder.ReadingListsBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.readinglistsbuilder.ReadingListsBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['people',</span> <span class="pre">'reading_lists']</span></em><a class="headerlink" href="#regolith.builders.readinglistsbuilder.ReadingListsBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-regolith.builders.cpbuilder">
+<span id="regolith-builders-cpbuilder-module"></span><h3>regolith.builders.cpbuilder module<a class="headerlink" href="#module-regolith.builders.cpbuilder" title="Link to this heading"></a></h3>
+<p>Builder for Current and Pending Reports.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.cpbuilder.CPBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.cpbuilder.</span></span><span class="sig-name descname"><span class="pre">CPBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/cpbuilder.html#CPBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.cpbuilder.CPBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build current and pending report from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.cpbuilder.CPBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'current-pending'</span></em><a class="headerlink" href="#regolith.builders.cpbuilder.CPBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.cpbuilder.CPBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/cpbuilder.html#CPBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.cpbuilder.CPBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.cpbuilder.CPBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/cpbuilder.html#CPBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.cpbuilder.CPBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.cpbuilder.CPBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['groups',</span> <span class="pre">'people',</span> <span class="pre">'grants',</span> <span class="pre">'proposals']</span></em><a class="headerlink" href="#regolith.builders.cpbuilder.CPBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.cpbuilder.is_declined">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.cpbuilder.</span></span><span class="sig-name descname"><span class="pre">is_declined</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/cpbuilder.html#is_declined"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.cpbuilder.is_declined" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="regolith.builders.cpbuilder.is_pending">
+<span class="sig-prename descclassname"><span class="pre">regolith.builders.cpbuilder.</span></span><span class="sig-name descname"><span class="pre">is_pending</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/cpbuilder.html#is_pending"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.cpbuilder.is_pending" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-regolith.builders.appraisalbuilder">
+<span id="regolith-builders-appraisalbuilder-module"></span><h3>regolith.builders.appraisalbuilder module<a class="headerlink" href="#module-regolith.builders.appraisalbuilder" title="Link to this heading"></a></h3>
+<p>Builder for CVs.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="regolith.builders.appraisalbuilder.AppraisalBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">regolith.builders.appraisalbuilder.</span></span><span class="sig-name descname"><span class="pre">AppraisalBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/appraisalbuilder.html#AppraisalBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.appraisalbuilder.AppraisalBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#regolith.builders.basebuilder.LatexBuilderBase" title="regolith.builders.basebuilder.LatexBuilderBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></a></p>
+<p>Build CV from database entries</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.appraisalbuilder.AppraisalBuilder.btype">
+<span class="sig-name descname"><span class="pre">btype</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'annual-activity'</span></em><a class="headerlink" href="#regolith.builders.appraisalbuilder.AppraisalBuilder.btype" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.appraisalbuilder.AppraisalBuilder.construct_global_ctx">
+<span class="sig-name descname"><span class="pre">construct_global_ctx</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/appraisalbuilder.html#AppraisalBuilder.construct_global_ctx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.appraisalbuilder.AppraisalBuilder.construct_global_ctx" title="Link to this definition"></a></dt>
+<dd><p>Constructs the global context</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="regolith.builders.appraisalbuilder.AppraisalBuilder.latex">
+<span class="sig-name descname"><span class="pre">latex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/regolith/builders/appraisalbuilder.html#AppraisalBuilder.latex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#regolith.builders.appraisalbuilder.AppraisalBuilder.latex" title="Link to this definition"></a></dt>
+<dd><p>Render latex template</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="regolith.builders.appraisalbuilder.AppraisalBuilder.needed_colls">
+<span class="sig-name descname"><span class="pre">needed_colls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['groups',</span> <span class="pre">'people',</span> <span class="pre">'grants',</span> <span class="pre">'proposals',</span> <span class="pre">'institutions',</span> <span class="pre">'projects',</span> <span class="pre">'presentations',</span> <span class="pre">'patents',</span> <span class="pre">'citations']</span></em><a class="headerlink" href="#regolith.builders.appraisalbuilder.AppraisalBuilder.needed_colls" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Regolith API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="regolith.static.html" class="btn btn-neutral float-right" title="regolith.static package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.dates &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.dates</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.dates</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Date based tools&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">calendar</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">dateutil</span> <span class="kn">import</span> <span class="n">parser</span> <span class="k">as</span> <span class="n">date_parser</span>
+
+<span class="n">MONTHS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;jan&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;jan.&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;january&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;feb&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;feb.&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;february&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;mar&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;mar.&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;march&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;apr&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">&quot;apr.&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">&quot;april&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">&quot;may&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;may.&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;jun&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;jun.&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;june&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;jul&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;jul.&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;july&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;aug&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;aug.&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;august&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;sep&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;sep.&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;sept&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;sept.&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;september&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;oct&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;oct.&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;october&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;nov&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;nov.&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;november&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">&quot;dec.&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">&quot;december&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;tbd&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="month_to_int">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.month_to_int">[docs]</a>
+<span class="k">def</span> <span class="nf">month_to_int</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a month to an integer.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">MONTHS</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">m</span></div>
+
+
+
+<div class="viewcode-block" id="month_to_str_int">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.month_to_str_int">[docs]</a>
+<span class="k">def</span> <span class="nf">month_to_str_int</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a month to an int form, str type, with a leading zero&quot;&quot;&quot;</span>
+    <span class="n">mi</span> <span class="o">=</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mi</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">ms</span> <span class="o">=</span> <span class="s2">&quot;0</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mi</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ms</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ms</span></div>
+
+
+
+<div class="viewcode-block" id="day_to_str_int">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.day_to_str_int">[docs]</a>
+<span class="k">def</span> <span class="nf">day_to_str_int</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a day to an int form, str type, with a leading zero&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="s2">&quot;0</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ds</span></div>
+
+
+
+<div class="viewcode-block" id="date_to_float">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.date_to_float">[docs]</a>
+<span class="k">def</span> <span class="nf">date_to_float</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts years / months / days to a float, eg 2015.0818 is August</span>
+<span class="sd">    18th 2015.&quot;&quot;&quot;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">d</span> <span class="o">/</span> <span class="mf">10000.0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_gaps_overlaps">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.find_gaps_overlaps">[docs]</a>
+<span class="k">def</span> <span class="nf">find_gaps_overlaps</span><span class="p">(</span><span class="n">dateslist</span><span class="p">,</span> <span class="n">overlaps_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find whether there is a gap or an overlap in a list of date-ranges</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dateslist: list of tuples of datetime.date objects</span>
+<span class="sd">      The list of date-ranges.</span>
+<span class="sd">    overlaps_ok: bool</span>
+<span class="sd">      Returns false if there are gaps but true if there are overlaps but no gaps</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">      True if there are no gaps or overlaps else False</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">dateslist</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dateslist</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dateslist</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">dateslist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overlaps_ok</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">dateslist</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">dateslist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">days</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">status</span></div>
+
+
+
+<div class="viewcode-block" id="last_day">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.last_day">[docs]</a>
+<span class="k">def</span> <span class="nf">last_day</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the last day of the month for the month given</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    year: integer</span>
+<span class="sd">      the year that the month is in</span>
+<span class="sd">    month: integer or string</span>
+<span class="sd">      the month.  if a string should be resolvable using regolith month_to_int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The last day of that month</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">month</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="convert_doc_iso_to_date">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.convert_doc_iso_to_date">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_doc_iso_to_date</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">convert_date</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursively goes through the dictionary obj and converts date from iso to datetime.date</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">obj</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">date</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">new</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_date</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">convert_date</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">return</span> <span class="n">new</span>
+
+    <span class="k">return</span> <span class="n">convert_date</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_dates">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.get_dates">[docs]</a>
+<span class="k">def</span> <span class="nf">get_dates</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">date_field_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    given a dict like thing, return the date items</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thing: dict</span>
+<span class="sd">      the dict that contains the dates</span>
+<span class="sd">    date_field_prefix: string (optional)</span>
+<span class="sd">      the prefix to look for before the date parameter. For example given &quot;submission&quot;</span>
+<span class="sd">      the function will search for submission_day, submission_year, etc.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">       dict containing datetime.date objects for valid begin_date end_date and date, and</span>
+<span class="sd">       prefix_date if a prefix string was passed.  Missing and empty dates and</span>
+<span class="sd">       date items that contain the string &#39;tbd&#39; are not returned.  If no valid</span>
+<span class="sd">       date items are found, an empty dict is returned</span>
+
+<span class="sd">    Description</span>
+<span class="sd">    -----------</span>
+<span class="sd">    If &quot;begin_date&quot;, &quot;end_date&quot; or &quot;date&quot; values are found, if these are are in</span>
+<span class="sd">    an ISO format string they will be converted to datetime.date objects and</span>
+<span class="sd">    returned in the dictionary under keys of the same name.  A specified date</span>
+<span class="sd">    will override any date built from year/month/day data.</span>
+
+<span class="sd">    If they are not found the function will look for begin_year, end_year and</span>
+<span class="sd">    year.</span>
+
+<span class="sd">    If &quot;year&quot;, &quot;month&quot; and &quot;day&quot; are found the function will return these in the</span>
+<span class="sd">    &quot;date&quot; field and begin_date and end_date will match the &quot;date&quot; field. If only</span>
+<span class="sd">    a &quot;year&quot; is found, then the date attribute will be none but the begin and end</span>
+<span class="sd">    dates will be the first and last day of that respective year.</span>
+
+<span class="sd">    If year is found but no month or day are found the function will return</span>
+<span class="sd">    begin_date and end_date with the beginning and the end of the given year/month.</span>
+<span class="sd">    The returned date will be None.</span>
+
+<span class="sd">    If end_year is found, the end month and end day are missing they are set to</span>
+<span class="sd">    12 and 31, respectively</span>
+
+<span class="sd">    If begin_year is found, the begin month and begin day are missing they are set to</span>
+<span class="sd">    1 and 1, respectively</span>
+
+<span class="sd">    If a date field prefix is passed in this function will search for prefix_year as</span>
+<span class="sd">    well as prefix_month, prefix_day, and prefix_date. For example, if the prefix string</span>
+<span class="sd">    passed in is &quot;submitted&quot; then this function will look for submitted_date instead of</span>
+<span class="sd">    just date.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; get_dates({&#39;submission_day&#39;: 10, &#39;submission_year&#39;: 2020, &#39;submission_month&#39;: &#39;Feb&#39;}, &quot;submission&quot;)</span>
+
+<span class="sd">    This would return a dictionary consisting of the begin date, end, date, and date for the given input.</span>
+<span class="sd">    Instead of searching for &quot;day&quot; in the thing, it would search for &quot;submission_day&quot; since a prefix was</span>
+<span class="sd">    given. The following dictionary is returned (note that a submission_date and a date key are in the</span>
+<span class="sd">    dictionary):</span>
+<span class="sd">    {&#39;begin_date&#39;: datetime.date(2020, 2, 10),</span>
+<span class="sd">     &#39;end_date&#39;: datetime.date(2020, 2, 10),</span>
+<span class="sd">     &#39;submission_date&#39;: datetime.date(2020, 2, 10),</span>
+<span class="sd">     &#39;date&#39;: datetime.date(2020, 2, 10)</span>
+<span class="sd">    }</span>
+
+<span class="sd">    &gt;&gt;&gt; get_dates({&#39;begin_year&#39;: 2019, &#39;end_year&#39;: 2020, &#39;end_month&#39;: &#39;Feb&#39;})</span>
+
+<span class="sd">    This will return a dictionary consisting of the begin date, end date, and date for the given input.</span>
+<span class="sd">    Because no prefix string was passed in, the function will search for &quot;date&quot; in the input instead of</span>
+<span class="sd">    prefix_input. The following dictionary is returned:</span>
+<span class="sd">    {&#39;begin_date&#39;: datetime.date(2019, 1, 1),</span>
+<span class="sd">     &#39;end_date&#39;: datetime.date(2020, 2, 29),</span>
+<span class="sd">    }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">datenames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">date_field_prefix</span><span class="p">:</span>
+        <span class="n">datenames</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">date_field_prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">datename</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">datename</span> <span class="ow">in</span> <span class="n">datenames</span><span class="p">]</span>
+
+    <span class="n">minimal_set</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;end_year&quot;</span><span class="p">,</span> <span class="s2">&quot;begin_year&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span> <span class="s2">&quot;begin_date&quot;</span><span class="p">,</span> <span class="s2">&quot;end_date&quot;</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">]</span>
+    <span class="n">minimal_things</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">datenames</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">date_field_prefix</span>
+        <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">minimal_set</span><span class="p">]))</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">minimal_things</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">minimal_things</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: cannot find any dates in </span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(no id)&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">dates</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">thing</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">minimal_set</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;begin_day&quot;</span><span class="p">,</span> <span class="s2">&quot;begin_month&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;tbd&quot;</span><span class="p">:</span>
+                    <span class="n">thing</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">thing</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_year&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_year&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: end_year specified without begin_year </span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(no id)&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">begin_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">date</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_year&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_month&quot;</span><span class="p">):</span>
+            <span class="n">thing</span><span class="p">[</span><span class="s2">&quot;begin_month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_day&quot;</span><span class="p">):</span>
+            <span class="n">thing</span><span class="p">[</span><span class="s2">&quot;begin_day&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">begin_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="s2">&quot;begin_year&quot;</span><span class="p">],</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="s2">&quot;begin_month&quot;</span><span class="p">]),</span> <span class="n">thing</span><span class="p">[</span><span class="s2">&quot;begin_day&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_year&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_month&quot;</span><span class="p">):</span>
+            <span class="n">thing</span><span class="p">[</span><span class="s2">&quot;end_month&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_day&quot;</span><span class="p">):</span>
+            <span class="n">thing</span><span class="p">[</span><span class="s2">&quot;end_day&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">last_day</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="s2">&quot;end_year&quot;</span><span class="p">],</span> <span class="n">thing</span><span class="p">[</span><span class="s2">&quot;end_month&quot;</span><span class="p">])</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="s2">&quot;end_year&quot;</span><span class="p">],</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="s2">&quot;end_month&quot;</span><span class="p">]),</span> <span class="n">thing</span><span class="p">[</span><span class="s2">&quot;end_day&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>  <span class="c1"># prefix_year</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">datenames</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>  <span class="c1"># prefix_month</span>
+            <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_year&quot;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;WARNING: both year and begin_year specified in </span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(no id)&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="s2">&quot;Year info will be used&quot;</span>
+                <span class="p">)</span>
+            <span class="n">begin_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">datenames</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>  <span class="c1"># prfix_day</span>
+            <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_year&quot;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;WARNING: both year and begin_year specified in </span><span class="si">{</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;(no id)&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="s2">&quot;Year info will be used&quot;</span>
+                <span class="p">)</span>
+            <span class="n">begin_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span>
+                <span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                <span class="n">month_to_int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span>
+                <span class="n">last_day</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
+            <span class="n">begin_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="p">)</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span> <span class="n">month_to_int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">thing</span><span class="p">[</span><span class="n">datenames</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="p">)</span>
+    <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">begin_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">begin_date</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">datenames</span><span class="p">[</span><span class="mi">3</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">datenames</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">datenames</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">datenames</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">date_field_prefix</span><span class="p">:</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span> <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">datenames</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">date</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">date</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span> <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">date</span><span class="p">}</span>
+    <span class="n">dates_no_nones</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dates</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">dates_no_nones</span></div>
+
+
+
+<div class="viewcode-block" id="get_due_date">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.get_due_date">[docs]</a>
+<span class="k">def</span> <span class="nf">get_due_date</span><span class="p">(</span><span class="n">thing</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thing: dict</span>
+<span class="sd">      gets the field named &#39;due_date&#39; from doc and ensurese it is a</span>
+<span class="sd">      datetime.date object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The due date as a datetime.date object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">due_date</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;due_date&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">due_date</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">due_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">due_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">due_date</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;due date not a known type&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">due_date</span></div>
+
+
+
+<div class="viewcode-block" id="is_current">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.is_current">[docs]</a>
+<span class="k">def</span> <span class="nf">is_current</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    given a thing with dates, returns true if the thing is current</span>
+<span class="sd">    looks for begin_ and end_ daty things (date, year, month, day), or just</span>
+<span class="sd">    the daty things themselves. e.g., begin_date, end_month, month, and so on.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thing: dict</span>
+<span class="sd">      the thing that we want to know whether or not it is current</span>
+<span class="sd">    now: datetime.date object</span>
+<span class="sd">      a date for now.  If it is None it uses the current date.  Default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    True if the thing is current and false otherwise</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">now</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">):</span>
+        <span class="n">dates</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">now</span> <span class="o">&lt;=</span> <span class="n">dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">):</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot find begin_date in document:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">thing</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">current</span></div>
+
+
+
+<div class="viewcode-block" id="has_started">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.has_started">[docs]</a>
+<span class="k">def</span> <span class="nf">has_started</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    given a thing with dates, returns true if the thing has started</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thing: dict</span>
+<span class="sd">      the thing that we want to know whether or not it is has started</span>
+<span class="sd">    now: datetime.date object</span>
+<span class="sd">      a date for now.  If it is None it uses the current date.  Default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    True if the thing has started and false otherwise</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">now</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+    <span class="n">started</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">now</span><span class="p">:</span>
+            <span class="n">started</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot find begin_date in document:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">thing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">started</span></div>
+
+
+
+<div class="viewcode-block" id="has_finished">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.has_finished">[docs]</a>
+<span class="k">def</span> <span class="nf">has_finished</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    given a thing with dates, returns true if the thing has finished</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thing: dict</span>
+<span class="sd">      the thing that we want to know whether or not it has finished</span>
+<span class="sd">    now: datetime.date object</span>
+<span class="sd">      a date for now.  If it is None it uses the current date.  Default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    True if the thing has finished and false otherwise</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">now</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+    <span class="n">finished</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">):</span>
+        <span class="n">dates</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">now</span><span class="p">:</span>
+        <span class="n">finished</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">finished</span></div>
+
+
+
+<div class="viewcode-block" id="is_before">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.is_before">[docs]</a>
+<span class="k">def</span> <span class="nf">is_before</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    given a thing with a date, returns true if the thing is before the input date</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thing: dict</span>
+<span class="sd">      the thing that we want to know whether or not is before a date</span>
+<span class="sd">    now: datetime.date object</span>
+<span class="sd">      a date for now.  If it is None it uses the current date.  Default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    True if the thing is before the date</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">now</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">now</span><span class="p">:</span>
+            <span class="n">before</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot find date in document:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">thing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">before</span></div>
+
+
+
+<div class="viewcode-block" id="is_after">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.is_after">[docs]</a>
+<span class="k">def</span> <span class="nf">is_after</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    given a thing with a date, returns true if the thing is after the input date</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thing: dict</span>
+<span class="sd">      the thing that we want to know whether or not is after a date</span>
+<span class="sd">    now: datetime.date object</span>
+<span class="sd">      a date for now.  If it is None it uses the current date.  Default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    True if the thing is after the date</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">now</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">thing</span><span class="p">)</span>
+    <span class="n">after</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="n">dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">):</span>
+            <span class="n">after</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot find date in document:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">thing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">after</span></div>
+
+
+
+<div class="viewcode-block" id="is_between">
+<a class="viewcode-back" href="../../api/index.html#regolith.dates.is_between">[docs]</a>
+<span class="k">def</span> <span class="nf">is_between</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    given a thing with a date, returns true if the thing is between the start and end date</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thing: dict</span>
+<span class="sd">      the thing that we want to know whether or not is after a date</span>
+<span class="sd">    start: datetime.date object</span>
+<span class="sd">      a date for the start.  If it is None it uses the current date.  Default is None</span>
+<span class="sd">    end: datetime.date object</span>
+<span class="sd">      a date for the end.  If it is None it uses the current date.  Default is None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    True if the thing is between the start and end</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">start</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">end</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="n">between</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">is_after</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_before</span><span class="p">(</span><span class="n">thing</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="n">between</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">between</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

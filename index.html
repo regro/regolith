@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Regolith &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=dbee5847"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorials" href="tutorials/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            regolith
+              <img src="_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Regolith</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <link href="_static/unicodetiles.css" rel="stylesheet" type="text/css" />
+<script src="_static/unicodetiles.min.js"></script>
+<script src="_static/rg-dungeon.js"></script>
+<div style="text-align:center;">
+    <div id="game"><h1>welcome to the regolith docs</h1></div>
+</div>
+<script type="text/javascript">initRgDungeon();</script><section id="regolith">
+<h1>Regolith<a class="headerlink" href="#regolith" title="Link to this heading"></a></h1>
+<p>Regolith is a content management system for software &amp; research groups.
+Regolith creates and manages a database of people, publications, projects,
+proposals &amp; grants, courses, and more! From this database, regolith is then
+able to:</p>
+<ul class="simple">
+<li><p>Generate a group website,</p></li>
+<li><p>Generate CVs and publication lists for the group members,</p></li>
+<li><p>Act as a grade book for your courses, and more!</p></li>
+</ul>
+<p>Databases may be file-based (JSON and YAML) or MongoDB-based.</p>
+<p>Regolith is developed as a <a class="reference external" href="https://github.com/regro/regolith">regro project</a></p>
+</section>
+<section id="example-sites">
+<h1>Example Sites<a class="headerlink" href="#example-sites" title="Link to this heading"></a></h1>
+<p>The following are some sample websites that are powered by regolith, even though
+building
+websites is just one of the many facets of this tool:</p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="http://www.ergs.sc.edu">ERGS Home Page</a></p></li>
+<li><p><a class="reference external" href="http://twofcs.ergs.sc.edu">Technical WorkShop on Fuel Cycle Simulation</a></p></li>
+</ol>
+</section>
+<section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<section id="make-your-first-database">
+<h2>1. Make your first database<a class="headerlink" href="#make-your-first-database" title="Link to this heading"></a></h2>
+<p>The quickest way to get started is to set up your first minimal database using a
+handy cookie cutter.  These instructions use the command line and assume you know
+how to use the terminal/cmd prompt, and that you know how to install software from
+either Pypi using <code class="code highlight bash docutils literal highlight-bash">pip</code> or Anaconda/Miniconda using <code class="code highlight bash docutils literal highlight-bash">conda</code>.  The
+instructions use the linux shell commands which should work on Mac and linux
+computers, and on windows if you are running from at Git Bash terminal (recommended)
+but will be slightly different (but still work) on a windows cmd terminal.</p>
+<p>First install the cookiecutter package if you don’t already have it</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>conda<span class="w"> </span>install<span class="w"> </span>cookiecutter
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>cookiecutter
+</pre></div>
+</div>
+<p>Next, clone the GitHub repository with the handy beginning database template</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com/sbillinge/regolithdb-cookiecutter.git
+</pre></div>
+</div>
+<p>to get it using SSH or</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/sbillinge/regolithdb-cookiecutter.git
+</pre></div>
+</div>
+<p>to get it using the HTTPS protocol (just use whichever works for you)</p>
+<p>Make a note of the path to the resulting <code class="code highlight bash docutils literal highlight-bash">regolithdb-cookiecutter</code> directory,
+(e.g., <code class="code highlight bash docutils literal highlight-bash">/c/Users/me/scratch/regolithdb-cookiecutter</code> but yours will be different).
+This is not your database, this is just the template and will be removed shortly.</p>
+<p>Next, in a new terminal, or in the same terminal, move to the directory where
+you want to install your own permanent database.  For example, we like to
+create a directory off our home directory called <code class="code highlight bash docutils literal highlight-bash">dbs</code> where we will keep
+all of our databases (believe me, once you start using Regolith you will want
+to make more and more)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~<span class="w">        </span><span class="c1"># takes you to your home directory</span>
+$<span class="w"> </span>mkdir<span class="w"> </span>dbs<span class="w">   </span><span class="c1"># creates the dbs directory if it is not already there</span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>dbs<span class="w">      </span><span class="c1"># change dir to the new dbs directory</span>
+</pre></div>
+</div>
+<p>Now by running cookiecutter your starting db will be built from the template</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cookiecutter<span class="w"> </span>&lt;path&gt;/&lt;to&gt;/regolithdb-cookiecutter
+</pre></div>
+</div>
+<p>The program will ask a series of questions and you can type responses.  Take your
+time and answer the questions as accurately as possible, because you are already
+entering data into your database!</p>
+<p>Here is an example, and the questions look like</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cookiecutter<span class="w"> </span>~/scratch/regolithdb-cookiecutter/
+database_name<span class="w"> </span><span class="o">[</span>my-cv-db<span class="o">]</span>:
+my_first_name<span class="w"> </span><span class="o">[</span>Albert<span class="o">]</span>:<span class="w"> </span>Simon
+my_last_name<span class="w"> </span><span class="o">[</span>Einstein<span class="o">]</span>:<span class="w"> </span>Billinge
+id_for_me<span class="w"> </span><span class="o">[</span>aeinstein<span class="o">]</span>:<span class="w"> </span>sbillinge
+my_group_name<span class="w"> </span><span class="o">[</span>Einstein<span class="w"> </span>Group<span class="o">]</span>:<span class="w"> </span>Billinge<span class="w"> </span>Group
+</pre></div>
+</div>
+<p>and so on.  If you just hit enter the cookie-cutter will use the default values
+and you will build a database for Einstein, but type the values you want in
+answer to each question to make your own.</p>
+<p>If you make a mistake just type CTL^C
+and do it again.  You may have to remove the directory if it has already been
+created, for example, <code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>rm<span class="w"> </span>-r<span class="w"> </span>my-cv-db</code>.  Watch what you type here and
+be careful not to remove something you care about by mistake!</p>
+<p>When you are happy with your database setup, type</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>ls
+</pre></div>
+</div>
+<p>which lists all the files in your current directory,
+and you should see a directory called <code class="code highlight bash docutils literal highlight-bash">my-cv-db</code> or whatever you chose to
+call you database.  OK, let’s go and look at our database.  change directory into it and do a directory
+listing,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>my-cv-db
+$<span class="w"> </span>ls
+</pre></div>
+</div>
+<p>or open a file
+browser such as windows explorer and check out what is in there.</p>
+<p>You will see a direcotry called <code class="code highlight bash docutils literal highlight-bash">db</code> and a file called <code class="code highlight bash docutils literal highlight-bash">regolithrc.json</code>.
+All of the collections in your database are in the <code class="code highlight bash docutils literal highlight-bash">db</code> directory.  The
+<code class="code highlight bash docutils literal highlight-bash">regolithrc.json</code> contains a bunch of information that Regolith needs to run and do its business.</p>
+<p>You can use the Regolith program to do many things with, and to, your
+database. But you must always run Regolith from a directory that contains a
+<code class="code highlight bash docutils literal highlight-bash">regolithrc.json</code> file.  Since you are in a directory that contains one,
+you can run Regolith from here, but first you have to install it….</p>
+</section>
+<section id="install-regolith">
+<h2>2. install Regolith<a class="headerlink" href="#install-regolith" title="Link to this heading"></a></h2>
+<p>Regolith packages are available from conda-forge and PyPI:</p>
+<p><strong>conda:</strong></p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>regolith
+</pre></div>
+</div>
+<p><strong>pip:</strong></p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>regolith
+</pre></div>
+</div>
+<p>The Regolith code is migrating quickly these days.  If you prefer you can
+install from the GitHub repository mode and get the latest changes.
+In that case, clone the <a class="reference external" href="https://github.com/regro/regolith">GitHub repository</a>,
+change directory to the top level directory in that cloned repository where the
+<code class="code highlight bash docutils literal highlight-bash">setup.py</code> file is.  From inside your virtual environment, type</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>regolith<span class="w"> </span>-e
+</pre></div>
+</div>
+<p>which installs regolith in this environment in develop mode.  In this mode, the
+version of Regolith you run will change each time you update from the repo
+leading to instability so be careful.</p>
+<p>To check that your installation is working, let’s have Regolith make us a
+todo list from our database.</p>
+<p>Make sure you are in a directory that
+contains a <code class="code highlight bash docutils literal highlight-bash">regolithrc.json</code> file (which you should be, i.e., the
+top level directory of <code class="code highlight bash docutils literal highlight-bash">~/dbs/my-cv-db</code>, if you have been
+following these instructions) and type</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span>l_todos
+</pre></div>
+</div>
+<p>and you should see something like</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>loading<span class="w"> </span>.<span class="se">\.</span>/db<span class="se">\t</span>odos.yml...
+dumping<span class="w"> </span>todos...
+usage:<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-s<span class="w"> </span>STATI<span class="w"> </span><span class="o">[</span>STATI<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>--short<span class="w"> </span><span class="o">[</span>SHORT<span class="o">]]</span>
+<span class="w">                       </span><span class="o">[</span>-t<span class="w"> </span>TAGS<span class="w"> </span><span class="o">[</span>TAGS<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>-a<span class="w"> </span>ASSIGNED_TO<span class="o">]</span>
+<span class="w">                       </span><span class="o">[</span>-b<span class="w"> </span><span class="o">[</span>ASSIGNED_BY<span class="o">]]</span><span class="w"> </span><span class="o">[</span>--date<span class="w"> </span>DATE<span class="o">]</span>
+<span class="w">                       </span><span class="o">[</span>-f<span class="w"> </span>FILTER<span class="w"> </span><span class="o">[</span>FILTER<span class="w"> </span>...<span class="o">]]</span>
+<span class="w">                       </span>helper_target
+
+positional<span class="w"> </span>arguments:
+<span class="w">  </span>helper_target<span class="w">         </span>helper<span class="w"> </span>target<span class="w"> </span>to<span class="w"> </span>run.<span class="w"> </span>Currently<span class="w"> </span>valid<span class="w"> </span>targets<span class="w"> </span>are:
+<span class="w">                        </span><span class="o">[</span><span class="s1">&#39;a_expense&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_grppub_readlist&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_manurev&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;a_presentation&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_projectum&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_proposal&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;a_proprev&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_todo&#39;</span>,<span class="w"> </span><span class="s1">&#39;f_prum&#39;</span>,<span class="w"> </span><span class="s1">&#39;f_todo&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;l_abstract&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_contacts&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_grants&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_members&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;l_milestones&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_progress&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_projecta&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_todo&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;u_contact&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_institution&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_logurl&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;u_milestone&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_todo&#39;</span>,<span class="w"> </span><span class="s1">&#39;v_meetings&#39;</span>,<span class="w"> </span><span class="s1">&#39;lister&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;makeappointments&#39;</span><span class="o">]</span>
+
+optional<span class="w"> </span>arguments:
+<span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<span class="w">  </span>-s<span class="w"> </span>STATI<span class="w"> </span><span class="o">[</span>STATI<span class="w"> </span>...<span class="o">]</span>,<span class="w"> </span>--stati<span class="w"> </span>STATI<span class="w"> </span><span class="o">[</span>STATI<span class="w"> </span>...<span class="o">]</span>
+<span class="w">                        </span>Filter<span class="w"> </span>tasks<span class="w"> </span>with<span class="w"> </span>specific<span class="w"> </span>status<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="s1">&#39;started&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;finished&#39;</span>,<span class="w"> </span><span class="s1">&#39;cancelled&#39;</span>,<span class="w"> </span><span class="s1">&#39;paused&#39;</span><span class="o">]</span>.<span class="w"> </span>Default<span class="w"> </span>is
+<span class="w">                        </span>started.
+<span class="w">  </span>--short<span class="w"> </span><span class="o">[</span>SHORT<span class="o">]</span><span class="w">       </span>Filter<span class="w"> </span>tasks<span class="w"> </span>with<span class="w"> </span>estimated<span class="w"> </span>duration<span class="w"> </span>&lt;<span class="o">=</span><span class="w"> </span><span class="m">30</span><span class="w"> </span>mins,<span class="w"> </span>but
+<span class="w">                        </span><span class="k">if</span><span class="w"> </span>a<span class="w"> </span>number<span class="w"> </span>is<span class="w"> </span>specified,<span class="w"> </span>the<span class="w"> </span>duration<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>filtered
+<span class="w">                        </span>tasks<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>less<span class="w"> </span>than<span class="w"> </span>that<span class="w"> </span>number<span class="w"> </span>of<span class="w"> </span>minutes.
+<span class="w">  </span>-t<span class="w"> </span>TAGS<span class="w"> </span><span class="o">[</span>TAGS<span class="w"> </span>...<span class="o">]</span>,<span class="w"> </span>--tags<span class="w"> </span>TAGS<span class="w"> </span><span class="o">[</span>TAGS<span class="w"> </span>...<span class="o">]</span>
+<span class="w">                        </span>Filter<span class="w"> </span>tasks<span class="w"> </span>by<span class="w"> </span>tags.<span class="w"> </span>Items<span class="w"> </span>are<span class="w"> </span>returned<span class="w"> </span><span class="k">if</span><span class="w"> </span>they
+<span class="w">                        </span>contain<span class="w"> </span>any<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>tags<span class="w"> </span>listed
+<span class="w">  </span>-a<span class="w"> </span>ASSIGNED_TO,<span class="w"> </span>--assigned-to<span class="w"> </span>ASSIGNED_TO
+<span class="w">                        </span>Filter<span class="w"> </span>tasks<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>assigned<span class="w"> </span>to<span class="w"> </span>this<span class="w"> </span>user<span class="w"> </span>id.
+<span class="w">                        </span>Default<span class="w"> </span>id<span class="w"> </span>is<span class="w"> </span>saved<span class="w"> </span><span class="k">in</span><span class="w"> </span>user.json.
+<span class="w">  </span>-b<span class="w"> </span><span class="o">[</span>ASSIGNED_BY<span class="o">]</span>,<span class="w"> </span>--assigned-by<span class="w"> </span><span class="o">[</span>ASSIGNED_BY<span class="o">]</span>
+<span class="w">                        </span>Filter<span class="w"> </span>tasks<span class="w"> </span>that<span class="w"> </span>are<span class="w"> </span>assigned<span class="w"> </span>to<span class="w"> </span>other<span class="w"> </span>members<span class="w"> </span>by
+<span class="w">                        </span>this<span class="w"> </span>user<span class="w"> </span>id.<span class="w"> </span>Default<span class="w"> </span>id<span class="w"> </span>is<span class="w"> </span>saved<span class="w"> </span><span class="k">in</span><span class="w"> </span>user.json.
+<span class="w">  </span>--date<span class="w"> </span>DATE<span class="w">           </span>Enter<span class="w"> </span>a<span class="w"> </span>date<span class="w"> </span>such<span class="w"> </span>that<span class="w"> </span>the<span class="w"> </span>helper<span class="w"> </span>can<span class="w"> </span>calculate<span class="w"> </span>how
+<span class="w">                        </span>many<span class="w"> </span>days<span class="w"> </span>are<span class="w"> </span>left<span class="w"> </span>from<span class="w"> </span>that<span class="w"> </span>date<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>due-date.
+<span class="w">                        </span>Default<span class="w"> </span>is<span class="w"> </span>today.
+<span class="w">  </span>-f<span class="w"> </span>FILTER<span class="w"> </span><span class="o">[</span>FILTER<span class="w"> </span>...<span class="o">]</span>,<span class="w"> </span>--filter<span class="w"> </span>FILTER<span class="w"> </span><span class="o">[</span>FILTER<span class="w"> </span>...<span class="o">]</span>
+<span class="w">                        </span>Search<span class="w"> </span>this<span class="w"> </span>collection<span class="w"> </span>by<span class="w"> </span>giving<span class="w"> </span>key<span class="w"> </span>element<span class="w"> </span>pairs.
+<span class="w">                        </span><span class="s1">&#39;-f description paper&#39;</span><span class="w"> </span>will<span class="w"> </span><span class="k">return</span><span class="w"> </span>tasks<span class="w"> </span>with
+<span class="w">                        </span>description<span class="w"> </span>containing<span class="w"> </span><span class="s1">&#39;paper&#39;</span>
+If<span class="w"> </span>the<span class="w"> </span>indices<span class="w"> </span>are<span class="w"> </span>far<span class="w"> </span>from<span class="w"> </span>being<span class="w"> </span><span class="k">in</span><span class="w"> </span>numerical<span class="w"> </span>order,<span class="w"> </span>please<span class="w"> </span>renumber<span class="w"> </span>them<span class="w"> </span>by<span class="w"> </span>running<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span>u_todo<span class="w"> </span>-r
+<span class="o">(</span>index<span class="o">)</span><span class="w"> </span>action<span class="w"> </span><span class="o">(</span>days<span class="w"> </span>to<span class="w"> </span>due<span class="w"> </span>date<span class="p">|</span>importance<span class="p">|</span>expected<span class="w"> </span>duration<span class="w"> </span><span class="o">(</span>mins<span class="o">)</span><span class="p">|</span>tags<span class="p">|</span>assigned<span class="w"> </span>by<span class="o">)</span>
+--------------------------------------------------------------------------------
+started:
+<span class="o">(</span><span class="m">1</span><span class="o">)</span><span class="w"> </span>Do<span class="w"> </span>all<span class="w"> </span>the<span class="w"> </span>things<span class="w"> </span>to<span class="w"> </span><span class="nb">set</span><span class="w"> </span>up<span class="w"> </span>todos<span class="w"> </span><span class="k">in</span><span class="w"> </span>regolith<span class="w"> </span><span class="o">(</span><span class="m">59</span><span class="p">|</span><span class="m">3</span><span class="p">|</span><span class="m">60</span>.0<span class="o">||</span>None<span class="o">)</span>
+------------------------------
+Tasks<span class="w"> </span><span class="o">(</span>decreasing<span class="w"> </span>priority<span class="w"> </span>going<span class="w"> </span>up<span class="o">)</span>
+------------------------------
+<span class="m">2021</span>-07-29<span class="o">(</span><span class="m">59</span><span class="w"> </span>days<span class="o">)</span>:<span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span><span class="w"> </span>Do<span class="w"> </span>all<span class="w"> </span>the<span class="w"> </span>things<span class="w"> </span>to<span class="w"> </span><span class="nb">set</span><span class="w"> </span>up<span class="w"> </span>todos<span class="w"> </span><span class="k">in</span><span class="w"> </span>regolith<span class="w"> </span><span class="o">(</span><span class="m">59</span><span class="p">|</span><span class="m">3</span><span class="p">|</span><span class="m">60</span>.0<span class="o">||</span>None<span class="o">)</span>
+------------------------------
+Deadlines:
+------------------------------
+</pre></div>
+</div>
+<p>After all the help messages is your list of Todo items.  There is just one item,
+<code class="code highlight bash docutils literal highlight-bash">Do<span class="w"> </span>all<span class="w"> </span>the<span class="w"> </span>things<span class="w"> </span>to<span class="w"> </span><span class="nb">set</span><span class="w"> </span>up<span class="w"> </span>todos<span class="w"> </span><span class="k">in</span><span class="w"> </span>regolith</code>.</p>
+<p>OK, your Regolith is working.  If it isn’t working, consider joining, browsing
+and posting questions to the <a class="reference external" href="https://groups.google.com/u/1/g/regolith-users">regolith-users</a>
+Google group.</p>
+</section>
+</section>
+<section id="quick-ish-start">
+<h1>Quick(ish) Start<a class="headerlink" href="#quick-ish-start" title="Link to this heading"></a></h1>
+<p>OK, let’s use Regolith to build our cv.  Why not.  again, in a terminal navigate
+to the top level directory of your database (where the <code class="code highlight bash docutils literal highlight-bash">regolithrc.json</code>
+file is). and type:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>build<span class="w"> </span>cv
+</pre></div>
+</div>
+<p>Regolith will take information from the various collections in your database and
+build them into your academic cv according to a pre-determined template.  The
+current template builds the cv using latex.  If your computer has latex installed
+and Regolith can find it, your cv should appear as a pdf document in the directory
+<code class="code highlight bash docutils literal highlight-bash">my-cv-db/_build</code> (or more generally <code class="code highlight bash docutils literal highlight-bash">&lt;path&gt;/&lt;to&gt;/&lt;database_name&gt;/_build</code>).
+All your built documents will appear in the <code class="code highlight bash docutils literal highlight-bash">_build</code>
+directory.</p>
+<p>If you don’t have latex installed we can  have Regolith build the latex
+source file for the cv but without trying to
+render it to PDF,</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>build<span class="w"> </span>cv<span class="w"> </span>--no-pdf
+</pre></div>
+</div>
+<p>The latex source is a text file that you will find in the <code class="code highlight bash docutils literal highlight-bash">_build</code> directory
+and you can open it in a text editor.  Even without latex installed you can
+render it by opening a free account at <a class="reference external" href="http://overleaf.com">http://overleaf.com</a> starting a new blank
+project, uploading the <code class="code highlight bash docutils literal highlight-bash">&lt;filename&gt;.tex</code> and <code class="code highlight bash docutils literal highlight-bash">&lt;filename&gt;.bib</code> files to
+that project and hitting the <code class="code highlight bash docutils literal highlight-bash">recompile</code> button.</p>
+<p>Whether it builds on your computer or on overleaf, it should look something like</p>
+<img alt="../_static/cv.pdf" src="../_static/cv.pdf" />
+<p>If, for some reason, the publication list doesn’t render
+correctly, try running the latex command again.  If you are going to
+do much building with regolith it is definitely recommended to install latex on
+your computer, such as MikTeX for windows (latex comes installed with many linux
+systems and is easily installed on IOS).</p>
+</section>
+<section id="what-next">
+<h1>What Next?<a class="headerlink" href="#what-next" title="Link to this heading"></a></h1>
+<p>You have not spent too much time entering data into your database yet, but you
+can already build a number of different things.  Try building your
+resume (<code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>regolith<span class="w"> </span>build<span class="w"> </span>resume</code>), your publication list
+(<code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>regolith<span class="w"> </span>build<span class="w"> </span>publist</code>) and your presentation list
+(<code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>regolith<span class="w"> </span>build<span class="w"> </span>preslist</code>).  You can even build a web-page
+for your group (<code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>regolith<span class="w"> </span>build<span class="w"> </span>html</code>).  It will look pretty
+ugly until we set it up properly with a nice template, but all the content
+will be dynamically built from the latest info in your databases.</p>
+<p>To see everything you can build, type <code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>regolith<span class="w"> </span>build<span class="w"> </span>--help</code>.
+To build some of those things you will need more collections that are not
+in the cookie cutter template, for example,
+<code class="code highlight bash docutils literal highlight-bash">proposals</code> and <code class="code highlight bash docutils literal highlight-bash">grants</code> collections, but you get the idea.</p>
+<p>So next we might want to work on those collections and start adding more data.
+This can be done in a couple of ways.  Probably the simplest to begin
+with is just use a text editor or IDE like PyCharm.   The <code class="code highlight bash docutils literal highlight-bash">yml</code> files are
+yaml files, which is a human readable way of storing information that can be
+read and understood by python.  Please read about it <a class="reference external" href="https://en.wikipedia.org/wiki/YAML">here</a>
+if you are not familiar with it. However, briefly to get you started, it encodes
+whether information is part of a list or a dictionary by indentation and semantics.
+For example,</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>key:
+<span class="w">  </span>-<span class="w"> </span>list<span class="w"> </span>item
+<span class="w">  </span>-<span class="w"> </span>another<span class="w"> </span>list<span class="w"> </span>item
+</pre></div>
+</div>
+<p>would be read by python as <code class="code highlight python docutils literal highlight-python"><span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;list item&quot;</span><span class="p">,</span> <span class="s2">&quot;another list item&quot;</span><span class="p">]}</span></code>,
+and a collection consisting of a list of dictionaries would look like this in yaml:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>id:
+<span class="w">  </span>-<span class="w"> </span>name:<span class="w"> </span>Arthur
+<span class="w">    </span>quest:<span class="w"> </span>To<span class="w"> </span>find<span class="w"> </span>the<span class="w"> </span>Holy<span class="w"> </span>Grail
+<span class="w">    </span>favorite_color:<span class="w"> </span>Blue
+<span class="w">  </span>-<span class="w"> </span>name:<span class="w"> </span>Sir<span class="w"> </span>Lancelot
+<span class="w">    </span>quest:<span class="w"> </span>To<span class="w"> </span>find<span class="w"> </span>the<span class="w"> </span>Holy<span class="w"> </span>Grail
+<span class="w">    </span>favorite_color:<span class="w"> </span>Green,<span class="w"> </span>no<span class="w"> </span>pink
+</pre></div>
+</div>
+<p>Long story short, you can update your database by directly editing the file,
+and this is quick and easy when you get comfortable with the YAML syntax,
+but can be frustrating as you are learning it.</p>
+<p>If you want to check what
+fields are allowed or required in a collection look at the Collections part of
+the docs, <a class="reference internal" href="collections/index.html#regolith-collections"><span class="std std-ref">Collections</span></a>, which are built from the Regolith schema
+(or directly look at the
+schema in <code class="code highlight bash docutils literal highlight-bash">schema.py</code>).  You can automatically check if your database
+edits are valid by running <code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>regolith<span class="w"> </span>validate</code>.</p>
+</section>
+<section id="getting-help-from-helpers">
+<h1>Getting Help from Helpers<a class="headerlink" href="#getting-help-from-helpers" title="Link to this heading"></a></h1>
+<p>Regolith builders build documents, but there are a small but growing number of
+tools that either will run popular queries on the database and print the results
+to the terminal (“lister helpers” with <code class="code highlight bash docutils literal highlight-bash">l_</code> prefixes – you
+already used one,
+it was the lister helper that builds your todo list).</p>
+<p>There are also helpers
+that help you to add documents to your database collections.  These are
+“adder helpers”  with <code class="code highlight bash docutils literal highlight-bash">a_</code> prefixes.  An important adder helper is
+<code class="code highlight bash docutils literal highlight-bash">a_todo</code> helper that will add a todo item to your list.</p>
+<p>“Updater
+helpers” will update existing entries in your databases and have prefix
+<code class="code highlight bash docutils literal highlight-bash">u_</code>.</p>
+<p>An important special kind of updater helper is a “finish helper” that will mark
+something as finished (and give it a finish date).  So when you do that
+pesky 15th todo item on your todo list, run
+<code class="code highlight bash docutils literal highlight-bash">regolith<span class="w"> </span>helper<span class="w"> </span>f_todo<span class="w"> </span>-i<span class="w"> </span><span class="m">15</span></code> to finish it.</p>
+<p>That is a lot of typing to finish a todo, so consider setting up an alias in
+the config file for your terminal program (my terminals run bash so I put the
+alias in the <code class="code highlight bash docutils literal highlight-bash">.bashrc</code> file in my home directory (<code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~</code> to get there).
+With this alias I just type <code class="code highlight bash docutils literal highlight-bash">rhlt<span class="w"> </span><span class="m">15</span></code> to finish that 15th todo item.</p>
+<p>To explore what helpers are there so you can play with them, type</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>helper
+</pre></div>
+</div>
+<p>and hit return.  It will return a list of available helpers, e.g.,</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>helper
+<span class="w">    </span>usage:<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span>helper_target
+<span class="w">    </span>regolith<span class="w"> </span>helper:<span class="w"> </span>error:<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>arguments<span class="w"> </span>are<span class="w"> </span>required:<span class="w"> </span>helper_target
+<span class="w">    </span>usage:<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span>helper_target
+
+<span class="w">    </span>positional<span class="w"> </span>arguments:
+<span class="w">      </span>helper_target<span class="w">  </span>helper<span class="w"> </span>target<span class="w"> </span>to<span class="w"> </span>run.<span class="w"> </span>Currently<span class="w"> </span>valid<span class="w"> </span>targets<span class="w"> </span>are:
+<span class="w">                     </span><span class="o">[</span><span class="s1">&#39;a_expense&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_grppub_readlist&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_manurev&#39;</span>,
+<span class="w">                     </span><span class="s1">&#39;a_presentation&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_projectum&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_proposal&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_proprev&#39;</span>,
+<span class="w">                     </span><span class="s1">&#39;a_todo&#39;</span>,<span class="w"> </span><span class="s1">&#39;f_prum&#39;</span>,<span class="w"> </span><span class="s1">&#39;f_todo&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_abstract&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_contacts&#39;</span>,
+<span class="w">                     </span><span class="s1">&#39;l_grants&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_members&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_milestones&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_progress&#39;</span>,
+<span class="w">                     </span><span class="s1">&#39;l_projecta&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_todo&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_contact&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_institution&#39;</span>,
+<span class="w">                     </span><span class="s1">&#39;u_logurl&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_milestone&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_todo&#39;</span>,<span class="w"> </span><span class="s1">&#39;v_meetings&#39;</span>,<span class="w"> </span><span class="s1">&#39;lister&#39;</span>,
+<span class="w">                     </span><span class="s1">&#39;makeappointments&#39;</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>then if you want to know how to use any of the helpers type</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span>&lt;helper<span class="w"> </span>target&gt;
+</pre></div>
+</div>
+<p>and hit return, e.g.,</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span>l_contacts
+usage:<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-v<span class="o">]</span><span class="w"> </span><span class="o">[</span>-n<span class="w"> </span>NAME<span class="o">]</span><span class="w"> </span><span class="o">[</span>-i<span class="w"> </span>INST<span class="o">]</span><span class="w"> </span><span class="o">[</span>-d<span class="w"> </span>DATE<span class="o">]</span><span class="w"> </span><span class="o">[</span>-r<span class="w"> </span>RANGE<span class="o">]</span>
+<span class="w">                       </span><span class="o">[</span>-o<span class="w"> </span>NOTES<span class="o">]</span><span class="w"> </span><span class="o">[</span>-f<span class="w"> </span>FILTER<span class="w"> </span><span class="o">[</span>FILTER<span class="w"> </span>...<span class="o">]]</span>
+<span class="w">                       </span><span class="o">[</span>-k<span class="w"> </span>KEYS<span class="w"> </span><span class="o">[</span>KEYS<span class="w"> </span>...<span class="o">]]</span>
+<span class="w">                       </span>helper_target<span class="w"> </span>run
+regolith<span class="w"> </span>helper:<span class="w"> </span>error:<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>arguments<span class="w"> </span>are<span class="w"> </span>required:<span class="w"> </span>run
+usage:<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-v<span class="o">]</span><span class="w"> </span><span class="o">[</span>-n<span class="w"> </span>NAME<span class="o">]</span><span class="w"> </span><span class="o">[</span>-i<span class="w"> </span>INST<span class="o">]</span><span class="w"> </span><span class="o">[</span>-d<span class="w"> </span>DATE<span class="o">]</span><span class="w"> </span><span class="o">[</span>-r<span class="w"> </span>RANGE<span class="o">]</span>
+<span class="w">                       </span><span class="o">[</span>-o<span class="w"> </span>NOTES<span class="o">]</span><span class="w"> </span><span class="o">[</span>-f<span class="w"> </span>FILTER<span class="w"> </span><span class="o">[</span>FILTER<span class="w"> </span>...<span class="o">]]</span>
+<span class="w">                       </span><span class="o">[</span>-k<span class="w"> </span>KEYS<span class="w"> </span><span class="o">[</span>KEYS<span class="w"> </span>...<span class="o">]]</span>
+<span class="w">                       </span>helper_target<span class="w"> </span>run
+
+positional<span class="w"> </span>arguments:
+<span class="w">  </span>helper_target<span class="w">         </span>helper<span class="w"> </span>target<span class="w"> </span>to<span class="w"> </span>run.<span class="w"> </span>Currently<span class="w"> </span>valid<span class="w"> </span>targets<span class="w"> </span>are:
+<span class="w">                        </span><span class="o">[</span><span class="s1">&#39;a_expense&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_grppub_readlist&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_manurev&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;a_presentation&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_projectum&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_proposal&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;a_proprev&#39;</span>,<span class="w"> </span><span class="s1">&#39;a_todo&#39;</span>,<span class="w"> </span><span class="s1">&#39;f_prum&#39;</span>,<span class="w"> </span><span class="s1">&#39;f_todo&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;l_abstract&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_contacts&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_grants&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_members&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;l_milestones&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_progress&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_projecta&#39;</span>,<span class="w"> </span><span class="s1">&#39;l_todo&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;u_contact&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_institution&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_logurl&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;u_milestone&#39;</span>,<span class="w"> </span><span class="s1">&#39;u_todo&#39;</span>,<span class="w"> </span><span class="s1">&#39;v_meetings&#39;</span>,<span class="w"> </span><span class="s1">&#39;lister&#39;</span>,
+<span class="w">                        </span><span class="s1">&#39;makeappointments&#39;</span><span class="o">]</span>
+<span class="w">  </span>run<span class="w">                   </span>run<span class="w"> </span>the<span class="w"> </span>lister.<span class="w"> </span>To<span class="w"> </span>see<span class="w"> </span>allowed<span class="w"> </span>optional<span class="w"> </span>arguments,
+<span class="w">                        </span><span class="nb">type</span><span class="w"> </span><span class="s2">&quot;regolith helper l_contacts&quot;</span>.
+
+optional<span class="w"> </span>arguments:
+<span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<span class="w">  </span>-v,<span class="w"> </span>--verbose<span class="w">         </span>Increases<span class="w"> </span>the<span class="w"> </span>verbosity<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>output.
+<span class="w">  </span>-n<span class="w"> </span>NAME,<span class="w"> </span>--name<span class="w"> </span>NAME<span class="w">  </span>name<span class="w"> </span>or<span class="w"> </span>name<span class="w"> </span>fragment<span class="w"> </span><span class="o">(</span>single<span class="w"> </span>argument<span class="w"> </span>only<span class="o">)</span><span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>to
+<span class="w">                        </span>find<span class="w"> </span>contacts.
+<span class="w">  </span>-i<span class="w"> </span>INST,<span class="w"> </span>--inst<span class="w"> </span>INST<span class="w">  </span>institution<span class="w"> </span>or<span class="w"> </span>an<span class="w"> </span>institution<span class="w"> </span>fragment<span class="w"> </span><span class="o">(</span>single
+<span class="w">                        </span>argument<span class="w"> </span>only<span class="o">)</span><span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>to<span class="w"> </span>find<span class="w"> </span>contacts.
+<span class="w">  </span>-d<span class="w"> </span>DATE,<span class="w"> </span>--date<span class="w"> </span>DATE<span class="w">  </span>approximate<span class="w"> </span>date<span class="w"> </span><span class="k">in</span><span class="w"> </span>ISO<span class="w"> </span>format<span class="w"> </span><span class="o">(</span>YYYY-MM-DD<span class="o">)</span>
+<span class="w">                        </span>corresponding<span class="w"> </span>to<span class="w"> </span>when<span class="w"> </span>the<span class="w"> </span>contact<span class="w"> </span>was<span class="w"> </span>entered<span class="w"> </span><span class="k">in</span><span class="w"> </span>the
+<span class="w">                        </span>database.<span class="w"> </span>Comes<span class="w"> </span>with<span class="w"> </span>a<span class="w"> </span>default<span class="w"> </span>range<span class="w"> </span>of<span class="w"> </span><span class="m">4</span><span class="w"> </span>months
+<span class="w">                        </span>centered<span class="w"> </span>around<span class="w"> </span>the<span class="w"> </span>date<span class="p">;</span><span class="w"> </span>change<span class="w"> </span>range<span class="w"> </span>using<span class="w"> </span>--range
+<span class="w">                        </span>argument.
+<span class="w">  </span>-r<span class="w"> </span>RANGE,<span class="w"> </span>--range<span class="w"> </span>RANGE
+<span class="w">                        </span>range<span class="w"> </span><span class="o">(</span><span class="k">in</span><span class="w"> </span>months<span class="o">)</span><span class="w"> </span>centered<span class="w"> </span>around<span class="w"> </span>date<span class="w"> </span>d<span class="w"> </span>specified<span class="w"> </span>by
+<span class="w">                        </span>--date,<span class="w"> </span>i.e.<span class="w"> </span><span class="o">(</span>d<span class="w"> </span>+/-<span class="w"> </span>r/2<span class="o">)</span>.
+<span class="w">  </span>-o<span class="w"> </span>NOTES,<span class="w"> </span>--notes<span class="w"> </span>NOTES
+<span class="w">                        </span>fragment<span class="w"> </span><span class="o">(</span>single<span class="w"> </span>argument<span class="w"> </span>only<span class="o">)</span><span class="w"> </span>to<span class="w"> </span>be<span class="w"> </span>found<span class="w"> </span><span class="k">in</span><span class="w"> </span>the
+<span class="w">                        </span>notes<span class="w"> </span>section<span class="w"> </span>of<span class="w"> </span>a<span class="w"> </span>contact.
+<span class="w">  </span>-f<span class="w"> </span>FILTER<span class="w"> </span><span class="o">[</span>FILTER<span class="w"> </span>...<span class="o">]</span>,<span class="w"> </span>--filter<span class="w"> </span>FILTER<span class="w"> </span><span class="o">[</span>FILTER<span class="w"> </span>...<span class="o">]</span>
+<span class="w">                        </span>Search<span class="w"> </span>this<span class="w"> </span>collection<span class="w"> </span>by<span class="w"> </span>giving<span class="w"> </span>key<span class="w"> </span>element<span class="w"> </span>pairs.
+<span class="w">  </span>-k<span class="w"> </span>KEYS<span class="w"> </span><span class="o">[</span>KEYS<span class="w"> </span>...<span class="o">]</span>,<span class="w"> </span>--keys<span class="w"> </span>KEYS<span class="w"> </span><span class="o">[</span>KEYS<span class="w"> </span>...<span class="o">]</span>
+<span class="w">                        </span>Specify<span class="w"> </span>what<span class="w"> </span>keys<span class="w"> </span>to<span class="w"> </span><span class="k">return</span><span class="w"> </span>values<span class="w"> </span>from<span class="w"> </span>when<span class="w"> </span>running
+<span class="w">                        </span>--filter.<span class="w"> </span>If<span class="w"> </span>no<span class="w"> </span>argument<span class="w"> </span>is<span class="w"> </span>given<span class="w"> </span>the<span class="w"> </span>default<span class="w"> </span>is<span class="w"> </span>just
+<span class="w">                        </span>the<span class="w"> </span>id.
+</pre></div>
+</div>
+<p>you then would rerun the command giving all required, and any
+optional, command
+line arguments. e.g.,</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span>l_contacts<span class="w"> </span>run<span class="w"> </span>--name<span class="w"> </span>frank<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>will return all contacts in the contacts collection where <code class="code highlight bash docutils literal highlight-bash">frank</code> appears anywhere
+in the name, such as <code class="code highlight bash docutils literal highlight-bash">Frankie<span class="w"> </span>Valli</code>, <code class="code highlight bash docutils literal highlight-bash">Baron<span class="w"> </span>von<span class="w"> </span>Frankenstein</code>
+and <code class="code highlight bash docutils literal highlight-bash">Anne<span class="w"> </span>Frank</code> (if they are in your contacts).  The <code class="code highlight bash docutils literal highlight-bash">-v</code>
+command stands for <code class="code highlight bash docutils literal highlight-bash">verbose</code> which means more information is
+returned than if you don’t type <code class="code highlight bash docutils literal highlight-bash">-v</code>.  You can try it now:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>regolith<span class="w"> </span>helper<span class="w"> </span>l_contacts<span class="w"> </span>run<span class="w"> </span>-n<span class="w"> </span>auth<span class="w"> </span>-v
+</pre></div>
+</div>
+</section>
+<section id="setting-up-gitlab-repository-information-for-api-requests">
+<h1>Setting up Gitlab repository information for API requests<a class="headerlink" href="#setting-up-gitlab-repository-information-for-api-requests" title="Link to this heading"></a></h1>
+<p>Some helpers have features that make API requests to GitLab (or GitHub). For example, the a_presentation helper has a functionality that
+creates a repository in a designated GitLab group. In order to use these features, the target repository
+information needs to be defined in your configuration files (<code class="code docutils literal notranslate"><span class="pre">regolithrc.json</span></code>, <code class="code docutils literal notranslate"><span class="pre">user.json</span></code>).</p>
+<section id="setting-up-destination-repo-information">
+<h2>Setting up Destination Repo Information<a class="headerlink" href="#setting-up-destination-repo-information" title="Link to this heading"></a></h2>
+<p>The designated repository information should be defined in <code class="code docutils literal notranslate"><span class="pre">regolithrc.json</span></code> in the directory in which you are
+running the helper. Create a collection of repository targets designated as <code class="code docutils literal notranslate"><span class="pre">repos</span></code> (see below for an example).
+according to the following pattern.  We will use as an example an entry that will
+allow <code class="code docutils literal notranslate"><span class="pre">a_presentation</span></code> to successfully create a repository in a group called <cite>talks</cite>
+on a GitLab instance.</p>
+<p><code class="code docutils literal notranslate"><span class="pre">a_presentation</span></code> looks for a rep with the entry <code class="code docutils literal notranslate"><span class="pre">_id</span></code> with value <code class="docutils literal notranslate"><span class="pre">&quot;talk_repo&quot;</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<dl>
+<dt>“repos”:[</dt><dd><blockquote>
+<div><dl>
+<dt>{“_id”: “talk_repo”,     # a_presentation looks for the entry with this ID</dt><dd><dl class="simple">
+<dt>“params”: {“namespace_id”: “35”,             # These params are handed to the API post request.</dt><dd><p>“initialize_with_readme”: “True”  # “name” is also needed but a_presentation generates that automatially
+},</p>
+</dd>
+</dl>
+<p>“url”: “<a class="reference external" href="https://gitlab.example.com">https://gitlab.example.com</a>”,  # The URL of the main GitLab/GitHub instance
+“api_route”: “/api/v4/projects/”,     # This is the route to the REST-API.  The value</p>
+<blockquote>
+<div><p>#   shown here is correct for GitLab at the time of writing</p>
+</div></blockquote>
+<p>“namespace_name”: “talks”      # the name of group/org which corresponds to the namespace_id above.</p>
+</dd>
+</dl>
+<p>},
+{</p>
+<blockquote>
+<div><p>“_id”: “another_example_repo”,
+[…]</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>The namespace ID is the repository’s group ID which can be found on the target repository’s main page.
+The <code class="code docutils literal notranslate"><span class="pre">url</span></code> and <code class="code docutils literal notranslate"><span class="pre">api_route</span></code> should be in the format above, including the dashes.</p>
+<p>For more information on the required request info, or to see a list of additional attributes
+that can also be defined in the request (e.g. <code class="docutils literal notranslate"><span class="pre">initialize_with_readme</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code>, etc.),
+see GitHub or GitLab API documentation, e.g., for GitLab the <a class="reference external" href="https://docs.gitlab.com/ee/api/projects.html#create-project">GitLab docs</a>.
+(Note that additional attributes can be defined under <code class="docutils literal notranslate"><span class="pre">params</span></code>, where needed.)</p>
+</section>
+<section id="setting-up-your-private-access-token">
+<h2>Setting up your Private Access Token<a class="headerlink" href="#setting-up-your-private-access-token" title="Link to this heading"></a></h2>
+<p>Your personal/private API request token should be defined in <code class="code docutils literal notranslate"><span class="pre">user.json</span></code>, which can be found in your
+~/.config directory. Similarly, define a distinct ID for each private token. For example, to create a repo
+in GitLab, you should define your authentication token with the ID, <code class="docutils literal notranslate"><span class="pre">&quot;gitlab_private_token&quot;</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gitlab_private_token&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;token&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;private-token&gt;&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;example_token&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="p">[</span><span class="err">...</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>To learn more about creating a personal access token, refer to the
+<a class="reference external" href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#personal-access-tokens">Gitlab docs</a>.
+Note that your personal access token should have the <code class="docutils literal notranslate"><span class="pre">api</span></code> scope enabled in order to make a successful request.</p>
+<p>To change the target directory, you can change the parameters (or IDs) in the function
+<code class="code docutils literal notranslate"><span class="pre">create_repo(destination_id,</span> <span class="pre">token_info_id,</span> <span class="pre">rc)</span></code> in <cite>a_presentationhelper.py</cite> to
+the IDs of your desired repo info and corresponding token.</p>
+</section>
+</section>
+<section id="setting-up-github-repository-information-for-api-requests">
+<h1>Setting up GitHub repository information for API requests<a class="headerlink" href="#setting-up-github-repository-information-for-api-requests" title="Link to this heading"></a></h1>
+</section>
+<section id="using-the-filter-capabilities-in-the-helpers">
+<h1>Using the filter capabilities in the helpers<a class="headerlink" href="#using-the-filter-capabilities-in-the-helpers" title="Link to this heading"></a></h1>
+<p>Most helpers have a filter  field.  This allows you to filter the relevant collection
+before running the helper functionality.</p>
+<p>The logic of filter is the following.  A document will be valid if the value of key contains value for all keys and values using AND logic.</p>
+<p>As an example, if we consider filtering in the <code class="code highlight bash docutils literal highlight-bash">l_milestones</code> helper we will get the following behavior. <code class="code highlight bash docutils literal highlight-bash">l_milestones</code> operates on the <code class="code highlight bash docutils literal highlight-bash">projecta</code> collection, so the filter will be applied to this collection.
+If you specify <code class="code highlight bash docutils literal highlight-bash">--filter<span class="w"> </span>lead<span class="w"> </span>voe</code> it will return all documents where <code class="code highlight bash docutils literal highlight-bash">voe</code> appears in the value for the <code class="code highlight bash docutils literal highlight-bash">lead</code> field (e.g., if there is someone with an id of <code class="code highlight bash docutils literal highlight-bash">carvoe</code> and another person with and id of <code class="code highlight bash docutils literal highlight-bash">voedemort</code> the filter will return all the documents where either of these people are <code class="code highlight bash docutils literal highlight-bash">lead</code>).</p>
+<p>If you then select <code class="code highlight bash docutils literal highlight-bash">current</code> and <code class="code highlight bash docutils literal highlight-bash">verbose</code> the helper will do the normal thing of returning in verbose form the current milestones, but it will do it on the filtered collection.</p>
+<p>A slight gotcha is that since filter uses “in” in its logic, if the type of the key value is a string it will find all strings that contain that fragment, as above, but if the type of the key value is a list it will return documents where the specified value is in the list, so <code class="code highlight bash docutils literal highlight-bash">--filter<span class="w"> </span>group_member<span class="w"> </span>voe</code> will return all the documents where <code class="code highlight bash docutils literal highlight-bash">voe</code> is listed as a group member, but it won’t return any documents where <code class="code highlight bash docutils literal highlight-bash">carvoe</code> or <code class="code highlight bash docutils literal highlight-bash">voedemort</code> are listed as a group member.</p>
+<p>The filter uses AND logic and operates such that <code class="code highlight bash docutils literal highlight-bash">--filter<span class="w"> </span>lead<span class="w"> </span>voe<span class="w"> </span>grants<span class="w"> </span>mygrant21<span class="w"> </span>status<span class="w"> </span>finished</code> will return all prums that are led by <code class="code highlight bash docutils literal highlight-bash">carvoe</code> or <code class="code highlight bash docutils literal highlight-bash">voedemort</code> that acknowledge the mygrant21 grant and are finished.  Actually, similar behavior can be obtained also by selecting <code class="code highlight bash docutils literal highlight-bash">--lead<span class="w"> </span>voe<span class="w"> </span>--stati<span class="w"> </span>finished<span class="w"> </span>--filter<span class="w"> </span>grants<span class="w"> </span>mygrant21</code></p>
+<p>unfortunately the filter function does not currently recurse, so it will only operate on top level key-value pairs where the type of the value is a string or a list or a tuple.</p>
+</section>
+<section id="backing-up-and-protecting-your-work">
+<h1>Backing up and protecting your work<a class="headerlink" href="#backing-up-and-protecting-your-work" title="Link to this heading"></a></h1>
+<p>Now you have started saving your precious life’s work in your regolith database
+you better start protecting it and backing it up.  One low overhead approach
+for this is simply to set up your database directory to be backed up remotely as
+a Google drive or Dropbox synced directory, for example.</p>
+<p>However, Regolith is set up to
+work with git and GitHub and this is a powerful option if you are
+comfortable with it.  This gets more useful when you want to start
+sharing databases with group members, for example, using GitHub access rights.
+It is also possible to make sure people’s edits to the database won’t
+break things by setting up continuous integration (CI) that runs some
+validation and builders and makes sure they don’t crash before the
+edits are accepted.  This is much more advanced usage which you
+should save for later.</p>
+<p>To get started with the GitHub option, the next thing to do is to turn your database directory
+on your filesystem into a git repository and link it to a repository on
+your personal space on GitHub (you will need a GitHub account).  You can make
+that repo private so the world
+cannot see your todo list, or public so that the world can see the web-page
+you build from it.  We will get back to this later, but Regolith will build
+collections from across databases, so you can have parts of your <code class="code highlight bash docutils literal highlight-bash">people</code>
+collection private and other parts public.  Depending which <code class="code highlight bash docutils literal highlight-bash">regolithrc.json</code>
+file you use to build with, you can pull from the public, or private, or both
+parts.  Again, this is a peep to the future.
+For now, let’s assume you just want to back up and keep versions of
+you private database.  You will make a repository on your personal GitHub account
+and synchronize your local database with this repo.
+<a class="reference external" href="https://docs.github.com/en/github/importing-your-projects-to-github/importing-source-code-to-github/adding-an-existing-project-to-github-using-the-command-line">Instructions for doing this are here</a></p>
+<p>Once you get everything set up you will want to periodically (meaning
+frequently) type</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-a<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;my commit message&quot;</span>
+$<span class="w"> </span>git<span class="w"> </span>push
+</pre></div>
+</div>
+<p>This will add, commit and push all files that git is tracking that have been
+updated locally.  If you add a new file to the repository and want it in the
+GitHub backup, you will have to explicitly add it before committing,</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>my_new_file.py
+$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;an even more informative commit message&quot;</span>
+</pre></div>
+</div>
+<p><code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>git<span class="w"> </span>commit</code> commits (i.e., checks in) to the git database (yes,
+git, like you now, is using a database backend) everything that has been added, or staged, for commit.
+<code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-a</code> automatically adds all files that git is tracking
+(have been previously committed in the past) that have been edited and then
+commits them.</p>
+<p>They are now safely captured in the git database and you can retrieve them
+later if you accidentally delete your personal database or mess it up some other way.
+But this version of the git database is still stored on your local computer, so
+if you spill coffee on your computer, you may lose everything.  <code class="code highlight bash docutils literal highlight-bash">$<span class="w"> </span>git<span class="w"> </span>push</code> pushes all
+these updates to a remote computer on the internet at the GitHub headquarters.
+Git and GitHub form a wonderful but complicated infrastructure, it is well worth
+getting to know how to use them well.  For now, we have used it to
+secure your precious database.  Remember to make frequent pushes.</p>
+<p>OK, you are started with your Regolith database.  Go play.  Regolith
+can do many more complicated things to help with administering your
+research group, or whatever you are working on.  We will continue to
+add tutorials below explaining some of these things, so check back
+from time to time.  And remember join and to ask questions at the <a class="reference external" href="https://groups.google.com/u/1/g/regolith-users">regolith-users</a>
+Google group.  They will get answered.</p>
+</section>
+<section id="tutorials">
+<h1>Tutorials<a class="headerlink" href="#tutorials" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+</div>
+</section>
+<section id="run-control">
+<h1>Run Control<a class="headerlink" href="#run-control" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rc.html#user-configuration">User Configuration</a></li>
+</ul>
+</div>
+</section>
+<section id="database-collections">
+<h1>Database Collections<a class="headerlink" href="#database-collections" title="Link to this heading"></a></h1>
+<p><strong>Collections</strong> are the regolith (and mongo) abstraction for <em>tables</em>.
+<strong>Entries</strong> (or <em>rows</em>) in
+a collection must follow the schema defined below. In general, the following notions
+hold:</p>
+<ul class="simple">
+<li><p>An entry is a dictionary with string keys.</p></li>
+<li><p>Each entry must contain a unique identifier. This is called <code class="docutils literal notranslate"><span class="pre">&quot;_id&quot;</span></code> in JSON
+and Mongo, and is simply the top-level key in YAML.</p></li>
+<li><p>A collection is a list of entries that follow the same schema.</p></li>
+</ul>
+<p>Not all regolith actions will use every collection type. It is common for regolith
+projects to just use some of the collections below. For example, building a group
+website will use different collections than managing students and grades in a course!
+With these points in mind, feel free to dive into the databases below!</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="collections/index.html">Collections</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="collections/abstracts.html">Abstracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/assignments.html">Assignments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/beamplan.html">Beamplan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/blog.html">Blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/citations.html">Citations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/contacts.html">Contacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/courses.html">Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/expenses.html">Expenses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/formalletters.html">Formalletters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/grades.html">Grades</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/grants.html">Grants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/groups.html">Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/institutions.html">Institutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/jobs.html">Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/meetings.html">Meetings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/news.html">News</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/people.html">People</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/presentations.html">Presentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/projecta.html">Projecta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/projects.html">Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/proposalReviews.html">Proposalreviews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/proposals.html">Proposals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/reading_lists.html">Reading_Lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/refereeReports.html">Refereereports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/software.html">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/students.html">Students</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections/todos.html">Todos</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="regolith-api">
+<h1>Regolith API<a class="headerlink" href="#regolith-api" title="Link to this heading"></a></h1>
+<p>For those who want to dive deeper into the library itself.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Regolith API</a></li>
+</ul>
+</div>
+</section>
+<section id="regolith-commands">
+<h1>Regolith Commands<a class="headerlink" href="#regolith-commands" title="Link to this heading"></a></h1>
+<p>Shell commmands for regolith</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Regolith Commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="commands/add.html">add</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/app.html">app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/build.html">build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/classlist.html">classlist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/deploy.html">deploy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/email.html">email</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/fs-to-mongo.html">fs-to-mongo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/grade.html">grade</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/helper.html">helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/ingest.html">ingest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/json-to-yaml.html">json-to-yaml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/mongo-to-fs.html">mongo-to-fs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/rc.html">rc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/store.html">store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/validate.html">validate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands/yaml-to-json.html">yaml-to-json</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="database-maintenance">
+<h1>Database Maintenance<a class="headerlink" href="#database-maintenance" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials/index.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

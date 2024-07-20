@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Release Notes &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=dbee5847"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            regolith
+              <img src="_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Release Notes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="release-notes">
+<span id="index-0"></span><h1>Release Notes<a class="headerlink" href="#release-notes" title="Link to this heading"></a></h1>
+<section id="id1">
+<h2>0.9.0<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>new helper_connect app added that will connect the databases then return back a prompt to input helper commands for
+faster response</p></li>
+<li><p>funds_available to grants schema</p></li>
+<li><p>In annual activity, grants are automatically considered as projects unless specified otherwise</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>Grants lister helper now lists funding available when it is available</p></li>
+<li><p>exemplars moved to a json file</p></li>
+<li><p>lists of commands now imported from commands.py</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Open source title not printed when there are no OSS projects in activity builder</p></li>
+<li><p>gooey install moved to new pip.txt file in requirements since it doesn’t install the correct version from conda-forge</p></li>
+</ul>
+</section>
+<section id="v0-8-2">
+<h2>v0.8.2<a class="headerlink" href="#v0-8-2" title="Link to this heading"></a></h2>
+</section>
+<section id="v0-8-1">
+<h2>v0.8.1<a class="headerlink" href="#v0-8-1" title="Link to this heading"></a></h2>
+</section>
+<section id="v0-8-0">
+<h2>v0.8.0<a class="headerlink" href="#v0-8-0" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>the option to specify a different database for the expense and presentation
+items when running a_presentation.</p></li>
+<li><p>scripts (profile_regolith and profile_helper_gui) that run regolith and helper_gui with the python cProfiler. Used for debugging and code development.</p></li>
+<li><p>universally unique IDs added to all tasks, and now listed by todo lister</p></li>
+<li><p>milestone lister now prints the uuids of the milestones</p></li>
+<li><p>additional tests for c+p, annual-activity and grant-report builders</p></li>
+<li><p>repo_info_complete in tools to check the existence of remote repositories before operating on them</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>token_info_complete in tools to check for the existence of the user’s private API authentication token</p></li>
+<li><p>create_repo in tools to create a repository in a given remote repository</p></li>
+<li><p>functionality to presentation helper that creates a repo by calling on create_repo function in tools when no_talk_repo box is not checked</p></li>
+<li><p>no_repo box/option added to presentation helper gui</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>no_in_cv option for employment entries that they don’t appear in cv’s and resumes</p></li>
+<li><p>get_appointments() function</p></li>
+<li><p>effort reporting report shows each person’s loadings by grant by month over a fixed period</p></li>
+<li><p>new functionality that allows general kwargs to be passed to builders from the command line</p></li>
+<li><p>Builder for building formal letters with To/From/Subject etc. fields</p></li>
+<li><p>presentation_url field to presentation in presentations</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>functionality to presentation adder to allow the presentation url to be added</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>publist can be built specifying a facility where the measurements were made</p></li>
+<li><p>supplementary_info_urls field to citations and projecta</p></li>
+<li><p>u_milesone now x’s out all the unfinished todo items when it “finishes” a milestone</p></li>
+<li><p>u_milestone uses “–milestone_uuid” option to select which milestone to update</p></li>
+<li><p>all milestones now have uuids</p></li>
+<li><p>Add the command “regolith –version” to print the version number.</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>default milestone added by a_projectum is now more useful. It duplicates the kickoff meeting</p></li>
+<li><p>added empty notes field and currency type USD to template expenses in
+a_expenses and a_presentation</p></li>
+<li><p>None</p></li>
+<li><p>Better debugging in get_dates() when date information is missing by printing the id of the offending document</p></li>
+<li><p>Order of tests in helper_tests so all the updaters are at the end</p></li>
+<li><p>grants lister prints in columns and is grouped by the unit that administers the grant</p></li>
+<li><p>amounts in attestations are limited to 2-sig-figs</p></li>
+<li><p>Order of CLI args in u_milestone for greater ease of use</p></li>
+<li><dl class="simple">
+<dt>prum finisher now adds end-dates to all milestones.  If they have an end-date</dt><dd><p>it leaves the date as is, otherwise it adds the prum end-date</p>
+</dd>
+</dl>
+</li>
+<li><p>Abstract lister now outputs the meeting name and basic information about the meeting of the presentation</p></li>
+<li><p>Abstract lister now lists in date order</p></li>
+<li><p>grant report builder updated to run without needing to specify report
+beginning and ending dates.  Default dates are taken as being the start
+date of the grant and today’s date if not specified at runtime.</p></li>
+<li><dl class="simple">
+<dt>prum lister now lists paused projecta as well as current as default behavior.</dt><dd><p>selecting –current gives just active prums</p>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>prum lister now appends the prum status even in non-verbose mode</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Template prum now has better advice for how to fill it when made by a_projectum</p></li>
+<li><dl class="simple">
+<dt>reading list builder now builds reading lists from the citations database by</dt><dd><p>using the tags field for each paper</p>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>tests of tex and html files now compare outputs line by line
+and ignore variables paths that have proven to be unstable</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Standardized CLI option names by replacing the underscore with a hyphen in the</dt><dd><p>following: –end_date, –<a href="#id2"><span class="problematic" id="id3">begin_</span></a>-date, –submitted_date, –no_cal, –due_date,
+–group_members, –other_agencies, –months_academic, –months_summer,
+–assigned_to, –assigned_by, –loc_inst, –kv_filter, –return_fields,
+–helper_help, –school_aka, –school_name, –school-id, –dept_aka, –dept_name,
+–dept_id, –estimated_duration.</p>
+</dd>
+</dl>
+</li>
+<li><p>Reformatted printing of todos to make the order clearer</p></li>
+<li><p>“–projectum_id” has been changed from a required arg to an optional arg</p></li>
+<li><p>u_milestone uses “–projectum_id” option to add a new milestone to a prum</p></li>
+<li><p>Updater helpers now only open the specified database, not all the databases in rc.databases.  If they don’t find the collection in that database they will report a failure to update.</p></li>
+</ul>
+<p><strong>Deprecated:</strong></p>
+<ul class="simple">
+<li><p>None</p></li>
+</ul>
+<p><strong>Removed:</strong></p>
+<ul class="simple">
+<li><p>None</p></li>
+<li><p>todo lister no longer lists milestones from projecta.  this will be handled differently moving forward</p></li>
+<li><p>the u_milestone functionality that lists a prum’s milestones has been removed</p></li>
+<li><p>“–index”, “–verbose”, and “–current” optional args have been removed</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>load all collections bug introduced accidentally when working on mongo backend</p></li>
+<li><p>None</p></li>
+<li><p>monthly loadings now handles edge cases better</p></li>
+<li><p>broken error message for missing institution in dereference_institution function</p></li>
+<li><p>dereference_institutions will always return a department now</p></li>
+<li><p>fixed typo in postdoc advisee getter</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>date handling for end-dates of current students/postdocs</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>updated to raw strings places where they should be to propagate escaped special</dt><dd><p>characters, e.g., latex_safe</p>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>fixed formatting UserWarnings in makeappointments helper</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>remove bug that wrong list item taken from calendar.daterange() was being</dt><dd><p>used in l_currentappointments helper</p>
+</dd>
+</dl>
+</li>
+<li><p>manuscript review new correctly prints freewrite field</p></li>
+<li><p>prum lister now correctly finds due_date</p></li>
+<li><p>bug in adder that builds reading lists from tags in citations making duplicate entries</p></li>
+<li><p>Changed how the reading-list builder fetches the references from Crossref so that it only fetches each needed reference once.</p></li>
+<li><p>xonsh input_hooks now explicitly has execer=None instead of blank parens to satisfy xonsh deprecation warning</p></li>
+<li><p>publist builder now produces bib files before filtering so we don’t accidentally build a publist with an incomplete
+bib file</p></li>
+</ul>
+<p><strong>Security:</strong></p>
+<ul class="simple">
+<li><p>None</p></li>
+</ul>
+</section>
+<section id="v0-5-1">
+<h2>v0.5.1<a class="headerlink" href="#v0-5-1" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>code to give more feedback to the user when the builder fails due to a database error</p></li>
+</ul>
+<ul class="simple">
+<li><p>regolith classlist can now read csv files in Columbia University format</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>classlist register now checks whether a given file actually exists</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>merge_collections to tools.py.  merges two collections</p></li>
+<li><p>tests for manuscript review builder</p></li>
+</ul>
+<ul class="simple">
+<li><p>function for finding gaps and overlaps in lists of date-ranges</p></li>
+<li><p>utf8 support in all current latex builder templates</p></li>
+</ul>
+<ul class="simple">
+<li><p>function to dates that returns months as strings with leading zero where required</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>function to dates that returns days as strings with leading zero where required</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>ability to build publists with specified date ranges and filtered by grant</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>tbd is now a valid month, returning 1 as an integer</p></li>
+<li><p>begin and end day now allowed in employment and education</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>unsegregated expense can now tolerate “tbd”.  This allows users to put a</dt><dd><p>placeholder entry when the exact amount is not known, and then find it easily
+later.  Code flags all tbd entries at build time, but doesn’t crash.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<ul class="simple">
+<li><p>removed remote.rc logic from database.xsh</p></li>
+<li><p>current and pending builder extended to build c+p from merged proposal and grants collections</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>added filter for cppflag so you can have current grants that don’t appear in the current and pending form by setting cppflag to false in the db</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>add needed_colls statement for quicker building</p></li>
+<li><p>moved has_started, has_finished and is_current to tools.py</p></li>
+</ul>
+<ul class="simple">
+<li><p>Load only dbs needed for builder, if builder declares which dbs it needs</p></li>
+<li><dl class="simple">
+<dt>reimbursement builder requires a person to be specified on the command line</dt><dd><p>to run due to the extreme slowness of openpyxl</p>
+</dd>
+</dl>
+</li>
+</ul>
+<ul class="simple">
+<li><p>User supplied schemas now handles new keys in regolith validate.</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>valueschema -&gt; valuesrules in schema as valueschema deprecated in cerberus</p></li>
+</ul>
+<ul class="simple">
+<li><p>cpbuilder does name comparison on fuzzy-searched name for standardization</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>cpbuilder includes initials when it is a multi-pi grant</p></li>
+<li><p>filter_grants in tools.py bug fixed that incorrectly reassigns team members</p></li>
+<li><p>updated docstring on filter_grants to make it clearer</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>fix indenting of the editor eyes only block</p></li>
+</ul>
+<ul class="simple">
+<li><p>import from collections.abc not collections</p></li>
+<li><p>months can now be expressed as ints or strings as per the schema</p></li>
+<li><dl class="simple">
+<dt>fix bug introduced in Jinja2 v2.11 that doesn’t recognize conditional text</dt><dd><p>in the import</p>
+</dd>
+</dl>
+</li>
+<li><p>bug so that needed_colls results in only selected collections to be opened</p></li>
+<li><p>publist will now build even if person email and employment are missing</p></li>
+</ul>
+</section>
+<section id="v0-5-0">
+<h2>v0.5.0<a class="headerlink" href="#v0-5-0" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>builders can now take –from and –to command-line args to specify date range</p></li>
+<li><p>added banner to groups schema, which is an image for website banner</p></li>
+</ul>
+<p>None</p>
+<ul class="simple">
+<li><p>Google profile URL to people schema</p></li>
+<li><p>Research Focus Areas to people schema</p></li>
+<li><p>status to employment which will be selected from a list for sorting on the
+website</p></li>
+<li><dl class="simple">
+<dt>filters in <code class="docutils literal notranslate"><span class="pre">regolith.tools</span></code> that return true if a given date is since or before or</dt><dd><p>between other dates</p>
+</dd>
+</dl>
+</li>
+<li><p>Add phone and address to CV and Resume if available</p></li>
+</ul>
+<ul class="simple">
+<li><p>builder for post-doc ad</p></li>
+<li><p>a builder for proposal reviews.  Currently tuned for doe-bes and nsf-dmr</p></li>
+<li><p>builder for writing referee reports on manuscripts</p></li>
+</ul>
+<ul class="simple">
+<li><p>Make bib for entire group</p></li>
+</ul>
+<ul class="simple">
+<li><p>contacts to schema.py, a lighter type of person</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>builder now takes grant from grant field in expense and not by recursing</dt><dd><p>into project</p>
+</dd>
+</dl>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>if payee is direct_billed, builder will not build a reimbursement form</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">all_documents</span></code> now defaults to a deepcopy to prevent unintended mutation</p></li>
+<li><p>institutions schema to add street and make conditionals work better</p></li>
+<li><p>All months can now be integers or strings in the schemas</p></li>
+<li><p>Make a <code class="docutils literal notranslate"><span class="pre">.bat</span></code> file in scripts, which should help on windows</p></li>
+<li><p>now builds just accepted talks by default, not declined or pending</p></li>
+</ul>
+<ul class="simple">
+<li><dl class="simple">
+<dt>proposals schema in schema.py to include fields for building current and</dt><dd><p>pending report forms</p>
+</dd>
+</dl>
+</li>
+</ul>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">xonsh.lib.os.rmtree</span></code> in <code class="docutils literal notranslate"><span class="pre">conftest.py</span></code> rather that building our own.
+The xonsh version is expected to do a better job on windows.</p></li>
+</ul>
+<p><strong>Removed:</strong></p>
+<dl class="simple">
+<dt>None</dt><dd><ul class="simple">
+<li><p>MTN: removed unused block from fuzzy_logic</p></li>
+<li><p>MTN: nicer handling of non-list objects in fuzzy_logic</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>BUG: total amount now reproduces correctly in grants section</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>BUG: account numbers not showing up in built reimbursement form</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>Made the example current grant go to 2025 rather than 2018</p></li>
+<li><dl class="simple">
+<dt>FIX: tests to run on windows OS by removing</dt><dd><p>removed directory paths</p>
+</dd>
+</dl>
+</li>
+<li><p>Makes sure some URLs in CV builder are also latex safe.</p></li>
+<li><p>correct spacing after date when it is a single day event</p></li>
+<li><p>Don’t want to use latex_safe when we need the latex formatting</p></li>
+<li><p>Cast to string on way into <code class="docutils literal notranslate"><span class="pre">latex_safe</span></code></p></li>
+</ul>
+<ul class="simple">
+<li><p>BUG: ints now handled the same as strings (appended) in fuzzy_logic</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>BUG: now passes gtx as a list to fuzzy_logic not as a generator</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="v0-4-0">
+<h2>v0.4.0<a class="headerlink" href="#v0-4-0" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Optional <code class="docutils literal notranslate"><span class="pre">static_source</span></code> key in the rc for the html build.</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>institution dereference is done by <code class="docutils literal notranslate"><span class="pre">regolith.tools.dereference_institution</span></code> function</p></li>
+<li><p>HTML pages dereference institutions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">person.html</span></code> allows for authors or editors and hides publications in details</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">root_index.html</span></code> allows for banner to be speced in <code class="docutils literal notranslate"><span class="pre">groups</span></code> collection</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.builders.CVBuilder</span></code> now dereferences institutions/organizations
+for employers and education</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.builders.CVBuilder</span></code> deepcopies each person so we don’t modify
+the records during dereference</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.tools.latex_safe</span></code> wraps URLs in <code class="docutils literal notranslate"><span class="pre">\url{}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.builders.basebuilder.LatexBuilderBase</span></code> runs <code class="docutils literal notranslate"><span class="pre">pdflatex</span></code> last
+if running on windows, rather than <code class="docutils literal notranslate"><span class="pre">latex</span></code> then <code class="docutils literal notranslate"><span class="pre">dvipdf</span></code></p></li>
+<li><p>Order yaml collections by key before dump for deterministic changes in collection order (make git more sane)</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Properly handle authors and editors set in <code class="docutils literal notranslate"><span class="pre">regolith.tools.filter_publications</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.tools.fuzzy_retrieval</span></code> properly handles null values</p></li>
+<li><p>education and employment subschemas for people are now just lists</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.builders.BuilderBase</span></code> uses <code class="docutils literal notranslate"><span class="pre">latex_safe</span></code> from <code class="docutils literal notranslate"><span class="pre">regolith.tools</span></code></p></li>
+<li><p>wrap <cite>dbdir</cite> in <cite>&#64;()</cite> so xonsh does the right thing</p></li>
+</ul>
+</section>
+<section id="v0-3-1">
+<h2>v0.3.1<a class="headerlink" href="#v0-3-1" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Schema for expenses tracking</p></li>
+<li><p>builder for Columbia reimbursement forms</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">open</span></code> uses explict ‘utf-8’ bindings (for windows users)</p></li>
+<li><p>Allow education to be ongoing</p></li>
+<li><p>Allow begin and end years for service</p></li>
+<li><p>Make employment optional</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Build presentation PDFs when running in normal operation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.database.load_git_database</span></code> checks branch gracefully</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.tools.document_by_value</span></code> doesn’t splay address incorrectly</p></li>
+</ul>
+</section>
+<section id="v0-3-0">
+<h2>v0.3.0<a class="headerlink" href="#v0-3-0" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>option for fuzzy_retrieval to be case insensitive</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.broker.Broker</span></code> for interfacing with dbs and stores from python</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.builders.figurebuilder</span></code> for including files from the store in
+tex documents</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regolith.database.open_dbs</span></code> to open the databases without closing</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate</span></code> takes in optional <code class="docutils literal notranslate"><span class="pre">--collection</span></code> kwarg to restrict
+validation to a single collection</p></li>
+<li><p>ORCID ID in people schema</p></li>
+<li><p>Added presentations schema and exemplar</p></li>
+<li><p>Added institutions schema and exemplar</p></li>
+<li><p>Added presentation list builder</p></li>
+<li><p>number_suffix function to tools, returns the suffice to turn numbers into adjectives</p></li>
+<li><p>Method to find all group members from a given group</p></li>
+<li><p>a stylers.py module</p></li>
+<li><p>a function that puts strings into sentence case but preserving capitalization
+of text in braces</p></li>
+<li><p>User configuration file handling for adding keys to the <code class="docutils literal notranslate"><span class="pre">regolithrc.json</span></code>
+globally</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>added aka to groups schema</p></li>
+<li><p>Docs for collections fully auto generate (don’t need to edit the index)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zip</span></code> and <code class="docutils literal notranslate"><span class="pre">state</span></code> only apply to <code class="docutils literal notranslate"><span class="pre">USA</span></code> institutions</p></li>
+<li><p>added group item in people schema</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">KeyError</span></code> for <code class="docutils literal notranslate"><span class="pre">ChainDB</span></code> now prints the offending key</p></li>
+</ul>
+<p>None</p>
+<ul class="simple">
+<li><p>preslist now includes end-dates when meeting is longer than one day</p></li>
+<li><p>Builder for making presentation lists now builds lists for all group members</p></li>
+<li><p>Departments and schools in institutions are now dictionaries</p></li>
+<li><p>Preslist builder now puts titles in sentence case</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">xonsh</span></code> standard lib subprocess and os</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">validate</span></code> exits with error code 1 if there are bad records</p></li>
+<li><p>Preslist crash when institution had no department</p></li>
+<li><p>Departments and schools in institutions now use valueschema so they can have
+unknown keys but validated values</p></li>
+</ul>
+</section>
+<section id="v0-2-0">
+<h2>v0.2.0<a class="headerlink" href="#v0-2-0" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CPBuilder</span></code> for building current and pending support reports</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initials</span></code> field to <code class="docutils literal notranslate"><span class="pre">people</span></code> document</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">person_months_academic</span></code>, <code class="docutils literal notranslate"><span class="pre">person_months_summer</span></code>, and <code class="docutils literal notranslate"><span class="pre">scope</span></code> to
+<code class="docutils literal notranslate"><span class="pre">grant</span></code> document</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fuzzy_retrieval</span></code> tool for getting documents based off of multiple
+potential fields (eg. <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">aka</span></code> for searching people)</p></li>
+<li><p>Tests for the exemplars</p></li>
+<li><p>Group collection for tracking research group information</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">document_by_value</span></code> tool for getting a document by it’s value</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bibtexparser</span></code> to test deps</p></li>
+<li><p>Builder integration tests</p></li>
+<li><p>Option for not making PDFs during the build process
+(for PDF building builders)</p></li>
+<li><p>Added presentations schema and exemplar</p></li>
+<li><p>Second exemplars for <code class="docutils literal notranslate"><span class="pre">grants</span></code> and <code class="docutils literal notranslate"><span class="pre">proposals</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bootstrap_builders</span></code> for generating the outputs to test the builders
+against</p></li>
+<li><p>publist tex file to tests</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>moved builders into <code class="docutils literal notranslate"><span class="pre">builders</span></code> folder</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">group</span></code> collection to <code class="docutils literal notranslate"><span class="pre">groups</span></code> collection</p></li>
+<li><p>Use the position sorter to enumerate the possible positions in the schema</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">base.html</span></code> and <code class="docutils literal notranslate"><span class="pre">index.html</span></code> for webpages are auto-generated (if not
+present)</p></li>
+<li><p>test against <code class="docutils literal notranslate"><span class="pre">html</span></code> in addition to other builders</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Pin to cerberus 1.1 in requirements. 1.2 causing testing problems.</p></li>
+<li><p>Fixed error that anded authors and editors</p></li>
+<li><p>Error in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> which caused builders to not be found</p></li>
+<li><p>Error in <code class="docutils literal notranslate"><span class="pre">BaseBuilder</span></code> which caused it to look in the wrong spot for
+templates</p></li>
+<li><p>Fixed bug in grad builder when the total wieght is zero.</p></li>
+<li><p>Actually use <code class="docutils literal notranslate"><span class="pre">ChainedDB</span></code> when working with the DBs</p></li>
+<li><p>Error in <code class="docutils literal notranslate"><span class="pre">ChainedDB</span></code> which caused bad keys to return with <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+</ul>
+</section>
+<section id="v0-1-11">
+<h2>v0.1.11<a class="headerlink" href="#v0-1-11" title="Link to this heading"></a></h2>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Local DBs were not being loaded properly</p></li>
+</ul>
+</section>
+<section id="v0-1-10">
+<h2>v0.1.10<a class="headerlink" href="#v0-1-10" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Regolith commands can run using a local db rather than a remote</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code> a base class for building latex documents</p></li>
+<li><p>Users can override keys in each collection’s schema via the RC</p></li>
+<li><p>Command for validating the combined database <code class="docutils literal notranslate"><span class="pre">regolith</span> <span class="pre">validate</span></code></p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CVBuilder</span></code> and <code class="docutils literal notranslate"><span class="pre">ResumeBuilder</span></code> builders now inheret from <code class="docutils literal notranslate"><span class="pre">LatexBuilderBase</span></code></p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Use get syntax with <code class="docutils literal notranslate"><span class="pre">filter_publications</span></code> in case author not in dict</p></li>
+<li><p>If a collection is not in the schema it is auto valid</p></li>
+</ul>
+</section>
+<section id="v0-1-9">
+<h2>v0.1.9<a class="headerlink" href="#v0-1-9" title="Link to this heading"></a></h2>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">all_documents</span></code> now returns the values of an empty dict if the collection
+doesn’t exist</p></li>
+</ul>
+</section>
+<section id="v0-1-8">
+<h2>v0.1.8<a class="headerlink" href="#v0-1-8" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Database clients now merge collections across databases so records across
+public and private databases can be put together. This is in
+<code class="docutils literal notranslate"><span class="pre">client.chained_db</span></code>.</p></li>
+<li><p>Blacklist for db files (eg. <code class="docutils literal notranslate"><span class="pre">travis.yml</span></code>) the default (if no blacklist is
+specified in the <code class="docutils literal notranslate"><span class="pre">rc</span></code> is to blacklist <code class="docutils literal notranslate"><span class="pre">['.travis.yml',</span> <span class="pre">'.travis.yaml']</span></code></p></li>
+<li><p>Schemas and exemplars for the collections.
+Database entries are checked against the schema, making sure that all the
+required fields are filled and the values are the same type(s) listed in the
+schema. The schema also includes descriptions of the data to be included.
+The exemplars are examples which have all the specified fields and are
+used to check the validation.</p></li>
+<li><p>Docs auto generate for collections (if they were documented in the schema).</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">all_docs_from_collection</span></code> use the <code class="docutils literal notranslate"><span class="pre">chained_db</span></code> to pull from all dbs at
+once. This is a breaking API change for <code class="docutils literal notranslate"><span class="pre">rc.client.all_documents</span></code></p></li>
+<li><p>App now validates incoming data against schema</p></li>
+</ul>
+<p><strong>Deprecated:</strong></p>
+<ul class="simple">
+<li><p>Mongo database support is being deprecated (no <code class="docutils literal notranslate"><span class="pre">chained_db</span></code> support)</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Properly implemented the classlist <code class="docutils literal notranslate"><span class="pre">replace</span></code> operation.</p></li>
+<li><p>Fixed issue with classlist insertions using Mongo-style API
+(deprecated).</p></li>
+<li><p>Properly filter on course ids when emailing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fsclient</span></code> dbs explicitly load ‘utf-8’ files, which fixes an issue on
+Windows</p></li>
+</ul>
+</section>
+<section id="v0-1-7">
+<h2>v0.1.7<a class="headerlink" href="#v0-1-7" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BuilderBase</span></code> Class for builders</p></li>
+<li><p>Logo to docs</p></li>
+<li><p>Filesystem-based client may now read from YAML files, in addition to JSON.
+Each collection can be in either JSON or YAML.</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>Refactored builders to use base class</p></li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li><p>Fixed issue with CV builder not filtering grants properly.</p></li>
+<li><p>Fixed bug with <code class="docutils literal notranslate"><span class="pre">super</span></code> not being called in the HTML builder.</p></li>
+</ul>
+</section>
+<section id="v0-1-6">
+<h2>v0.1.6<a class="headerlink" href="#v0-1-6" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Use Rever’s whitespace parsing</p></li>
+<li><p>Fix template news</p></li>
+</ul>
+</section>
+<section id="v0-1-5">
+<h2>v0.1.5<a class="headerlink" href="#v0-1-5" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p>Rever release tool</p></li>
+<li><p>Interactive session support</p></li>
+<li><p>run better release</p></li>
+</ul>
+</section>
+<section id="v0-1-4">
+<h2>v0.1.4<a class="headerlink" href="#v0-1-4" title="Link to this heading"></a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">collabs</span></code> field in db for collaborators</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">active</span></code> field in db for current collaborators/group members</p></li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><p>People page only shows current members, former members on Former Members page</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

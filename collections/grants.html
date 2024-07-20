@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grants &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Groups" href="groups.html" />
+    <link rel="prev" title="Grades" href="grades.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Collections</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="abstracts.html">Abstracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="assignments.html">Assignments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="beamplan.html">Beamplan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blog.html">Blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="citations.html">Citations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="courses.html">Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expenses.html">Expenses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formalletters.html">Formalletters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grades.html">Grades</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Grants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#schema">Schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-example">YAML Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json-mongo-example">JSON/Mongo Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="groups.html">Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="institutions.html">Institutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html">Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meetings.html">Meetings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="news.html">News</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html">People</a></li>
+<li class="toctree-l2"><a class="reference internal" href="presentations.html">Presentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projecta.html">Projecta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects.html">Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposalReviews.html">Proposalreviews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposals.html">Proposals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reading_lists.html">Reading_Lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refereeReports.html">Refereereports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="software.html">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="students.html">Students</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todos.html">Todos</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Collections</a></li>
+      <li class="breadcrumb-item active">Grants</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="grants">
+<h1>Grants<a class="headerlink" href="#grants" title="Link to this heading"></a></h1>
+<p>This collection represents grants that have been awarded to the group.</p>
+<section id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="Link to this heading"></a></h2>
+<p>The following lists key names mapped to its type and meaning for each entry.</p>
+<dl class="field-list">
+<dt class="field-odd">_id<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘integer’, ‘float’], short representation, such as this-is-my-name, required</p>
+</dd>
+<dt class="field-even">account<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, the account number which holds the funds, optional</p>
+</dd>
+<dt class="field-odd">admin<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, the unit or group administering the grant, optional</p>
+</dd>
+<dt class="field-even">alias<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, the alias of the grant, optional</p>
+</dd>
+<dt class="field-odd">amount<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘integer’, ‘float’], value of award, required</p>
+</dd>
+<dt class="field-even">awardnr<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, the number of the award from the agency, optional</p>
+</dd>
+<dt class="field-odd">begin_date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘date’], start date of the grant (if string, in format YYYY-MM-DD), optional</p>
+</dd>
+<dt class="field-even">begin_day<span class="colon">:</span></dt>
+<dd class="field-even"><p>integer, start day of the grant, optional</p>
+</dd>
+<dt class="field-odd">begin_month<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘integer’], start month of the grant, optional</p>
+</dd>
+<dt class="field-even">begin_year<span class="colon">:</span></dt>
+<dd class="field-even"><p>integer, start year of the grant, optional</p>
+</dd>
+<dt class="field-odd">benefit_of_collaboration<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, optional</p>
+</dd>
+<dt class="field-even">budget<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, budget periods of grant, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">begin_date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘date’], start date of the budget period in format YYYY-MM-DD, optional</p>
+</dd>
+<dt class="field-even">end_date<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘string’, ‘date’], end date of the budget period in format YYYY-MM-DD, optional</p>
+</dd>
+<dt class="field-odd">student_months<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘float’, ‘integer’], number of months of funding for student members during the academic year, optional</p>
+</dd>
+<dt class="field-even">postdoc_months<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘float’, ‘integer’], number of months of funding for postdoc members during the academic year, optional</p>
+</dd>
+<dt class="field-odd">ss_months<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘float’, ‘integer’], number of months of funding for the summer, optional</p>
+</dd>
+<dt class="field-even">amount<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘float’, ‘integer’], subaward for this budget period, optional</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">call_for_proposals<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, optional</p>
+</dd>
+<dt class="field-even">currency<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, typically ‘$’ or ‘USD’, optional</p>
+</dd>
+<dt class="field-odd">end_date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘date’], start date of the grant (if string, in format YYYY-MM-DD), optional</p>
+</dd>
+<dt class="field-even">end_day<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘string’, ‘integer’], end day of the grant, optional</p>
+</dd>
+<dt class="field-odd">end_month<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘integer’], end month of the grant, optional</p>
+</dd>
+<dt class="field-even">end_year<span class="colon">:</span></dt>
+<dd class="field-even"><p>integer, end year of the grant, optional</p>
+</dd>
+<dt class="field-odd">funder<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, the agency funding the work, required</p>
+</dd>
+<dt class="field-even">funds_available<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, funds available on date, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘date’], optional</p>
+</dd>
+<dt class="field-even">funds_available<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘integer’, ‘float’], optional</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">grant_id<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, the identifier for this work, optional</p>
+</dd>
+<dt class="field-even">highlights<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, lists of highlights from the project, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">year<span class="colon">:</span></dt>
+<dd class="field-odd"><p>integer, optional</p>
+</dd>
+<dt class="field-even">month<span class="colon">:</span></dt>
+<dd class="field-even"><p>integer, optional</p>
+</dd>
+<dt class="field-odd">description<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, optional</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">institution<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, the host institution for the grant, optional</p>
+</dd>
+<dt class="field-even">narrative<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, optional</p>
+</dd>
+<dt class="field-odd">notes<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, notes about the grant, optional</p>
+</dd>
+<dt class="field-even">person_months_academic<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘integer’, ‘float’], Number of months of funding during the academic year, optional</p>
+</dd>
+<dt class="field-odd">person_months_summer<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘integer’, ‘float’], Number of months of funding during the summer, optional</p>
+</dd>
+<dt class="field-even">program<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, the program the work was funded under, optional</p>
+</dd>
+<dt class="field-odd">proposal_id<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, initial proposal made for grant, optional</p>
+</dd>
+<dt class="field-even">scope<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, The scope of the grant, answers the prompt: Describe Research Including Synergies and Delineation with Respect to this Proposal/Award:, optional</p>
+</dd>
+<dt class="field-odd">status<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, status of the grant, optional</p>
+<dl class="simple">
+<dt>Allowed values:</dt><dd><ul class="simple">
+<li><p>pending</p></li>
+<li><p>declined</p></li>
+<li><p>accepted</p></li>
+<li><p>in-prep</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">team<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, information about the team members participating in the grant., required</p>
+<dl class="field-list">
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict, optional</p>
+<dl class="field-list">
+<dt class="field-odd">admin_people<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, optional</p>
+</dd>
+<dt class="field-even">cv<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, optional</p>
+</dd>
+<dt class="field-odd">institution<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, optional</p>
+</dd>
+<dt class="field-even">name<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, optional</p>
+</dd>
+<dt class="field-odd">position<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, optional</p>
+<dl class="simple">
+<dt>Allowed values:</dt><dd><ul class="simple">
+<li><p>pi</p></li>
+<li><p>copi</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">subaward_amount<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘integer’, ‘float’], optional</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">title<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, actual title of proposal / grant, required</p>
+</dd>
+</dl>
+</section>
+<section id="yaml-example">
+<h2>YAML Example<a class="headerlink" href="#yaml-example" title="Link to this heading"></a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">SymPy-1.1</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">admin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">APAM</span>
+<span class="w">  </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sym</span>
+<span class="w">  </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000.0</span>
+<span class="w">  </span><span class="nt">awardnr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NF-1234</span>
+<span class="w">  </span><span class="nt">begin_day</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">begin_month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">May</span>
+<span class="w">  </span><span class="nt">begin_year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2030</span>
+<span class="w">  </span><span class="nt">budget</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000.0</span>
+<span class="w">      </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2030-05-01&#39;</span>
+<span class="w">      </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2030-06-30&#39;</span>
+<span class="w">      </span><span class="nt">postdoc_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">ss_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">      </span><span class="nt">student_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000.0</span>
+<span class="w">      </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2030-07-01&#39;</span>
+<span class="w">      </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2030-09-30&#39;</span>
+<span class="w">      </span><span class="nt">postdoc_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">ss_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
+<span class="w">      </span><span class="nt">student_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.5</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000.0</span>
+<span class="w">      </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2030-10-01&#39;</span>
+<span class="w">      </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2030-12-31&#39;</span>
+<span class="w">      </span><span class="nt">postdoc_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">ss_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">student_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.0</span>
+<span class="w">  </span><span class="nt">call_for_proposals</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ</span>
+<span class="w">  </span><span class="nt">end_day</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">31</span>
+<span class="w">  </span><span class="nt">end_month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">December</span>
+<span class="w">  </span><span class="nt">end_year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2030</span>
+<span class="w">  </span><span class="nt">funder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NumFOCUS</span>
+<span class="w">  </span><span class="nt">funds_available</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-01&#39;</span>
+<span class="w">      </span><span class="nt">funds_available</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2800.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2021-01-03&#39;</span>
+<span class="w">      </span><span class="nt">funds_available</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2100.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-07-21&#39;</span>
+<span class="w">      </span><span class="nt">funds_available</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2600.0</span>
+<span class="w">  </span><span class="nt">narrative</span><span class="p">:</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing</span>
+<span class="w">  </span><span class="nt">program</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Small Development Grants</span>
+<span class="w">  </span><span class="nt">team</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">University of South Carolina</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Anthony Scopatz</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">admin_people</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A. D. Ministrator</span>
+<span class="w">      </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">University of South Carolina</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Aaron Meurer</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">researcher</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SymPy 1.1 Release Support</span>
+<span class="nt">SymPy-2.0</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">admin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">APAM</span>
+<span class="w">  </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sym2.0</span>
+<span class="w">  </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000.0</span>
+<span class="w">  </span><span class="nt">awardnr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NF-1234</span>
+<span class="w">  </span><span class="nt">begin_day</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">begin_month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">  </span><span class="nt">begin_year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019</span>
+<span class="w">  </span><span class="nt">call_for_proposals</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ</span>
+<span class="w">  </span><span class="nt">end_day</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">31</span>
+<span class="w">  </span><span class="nt">end_month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">December</span>
+<span class="w">  </span><span class="nt">end_year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2030</span>
+<span class="w">  </span><span class="nt">funder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NumFOCUS</span>
+<span class="w">  </span><span class="nt">funds_available</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-01&#39;</span>
+<span class="w">      </span><span class="nt">funds_available</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2800.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2021-01-03&#39;</span>
+<span class="w">      </span><span class="nt">funds_available</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2100.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-07-21&#39;</span>
+<span class="w">      </span><span class="nt">funds_available</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2600.0</span>
+<span class="w">  </span><span class="nt">highlights</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">high profile pub in Nature</span>
+<span class="w">      </span><span class="nt">month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">      </span><span class="nt">year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2020</span>
+<span class="w">  </span><span class="nt">narrative</span><span class="p">:</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing</span>
+<span class="w">  </span><span class="nt">program</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Small Development Grants</span>
+<span class="w">  </span><span class="nt">proposal_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SymPy-2.0</span>
+<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">accepted</span>
+<span class="w">  </span><span class="nt">team</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">University of South Carolina</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Anthony Scopatz</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">University of South Carolina</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Aaron Meurer</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">researcher</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SymPy 2.0 Release Support</span>
+<span class="nt">abc42</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abc42</span>
+<span class="w">  </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42000.0</span>
+<span class="w">  </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-06-01&#39;</span>
+<span class="w">  </span><span class="nt">budget</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42000.0</span>
+<span class="w">      </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-06-01&#39;</span>
+<span class="w">      </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-12-31&#39;</span>
+<span class="w">      </span><span class="nt">postdoc_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">ss_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">      </span><span class="nt">student_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">  </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-12-31&#39;</span>
+<span class="w">  </span><span class="nt">funder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Life</span>
+<span class="w">  </span><span class="nt">program</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Metaphysical Grants</span>
+<span class="w">  </span><span class="nt">proposal_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abc42</span>
+<span class="w">  </span><span class="nt">team</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">University of Pedagogy</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Chief Pedagogue</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">University of Pedagogy</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pedagogue Jr.</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">copi</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The answer to life, the universe, and everything</span>
+<span class="nt">dmref15</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">account</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GG012345</span>
+<span class="w">  </span><span class="nt">admin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DSI</span>
+<span class="w">  </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dmref15</span>
+<span class="w">  </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">982785.0</span>
+<span class="w">  </span><span class="nt">awardnr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DMR-0785462</span>
+<span class="w">  </span><span class="nt">budget</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">327595.0</span>
+<span class="w">      </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2018-05-01&#39;</span>
+<span class="w">      </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2018-09-30&#39;</span>
+<span class="w">      </span><span class="nt">postdoc_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">ss_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6.0</span>
+<span class="w">      </span><span class="nt">student_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">327595.0</span>
+<span class="w">      </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2018-10-01&#39;</span>
+<span class="w">      </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2019-01-30&#39;</span>
+<span class="w">      </span><span class="nt">postdoc_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">ss_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12.0</span>
+<span class="w">      </span><span class="nt">student_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.0</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">327595.0</span>
+<span class="w">      </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2019-02-01&#39;</span>
+<span class="w">      </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2019-05-01&#39;</span>
+<span class="w">      </span><span class="nt">postdoc_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">ss_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6.0</span>
+<span class="w">      </span><span class="nt">student_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12.0</span>
+<span class="w">  </span><span class="nt">funder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NSF</span>
+<span class="w">  </span><span class="nt">grant_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DMREF-1534910</span>
+<span class="w">  </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Columbia University</span>
+<span class="w">  </span><span class="nt">notes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Designing Materials to Revolutionize and Engineer our Future (DMREF)</span>
+<span class="w">  </span><span class="nt">person_months_academic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">  </span><span class="nt">person_months_summer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.25</span>
+<span class="w">  </span><span class="nt">program</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DMREF</span>
+<span class="w">  </span><span class="nt">proposal_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dmref15</span>
+<span class="w">  </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">This grant is to develop complex modeling methods for regularizing ill-posed</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">nanostructure inverse problems using data analytic and machine learning based</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">approaches. This does not overlap with any other grant.</span>
+<span class="w">  </span><span class="nt">team</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Columbia University</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">qdu</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">copi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Columbia University</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dhsu</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">copi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Columbia University</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Anthony Scopatz</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pi</span>
+<span class="w">      </span><span class="nt">subaward_amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">330000.0</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;DMREF:</span><span class="nv"> </span><span class="s">Novel,</span><span class="nv"> </span><span class="s">data</span><span class="nv"> </span><span class="s">validated,</span><span class="nv"> </span><span class="s">nanostructure</span><span class="nv"> </span><span class="s">determination</span><span class="nv"> </span><span class="s">methods</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">accelerating</span>
+<span class="w">    </span><span class="s">materials</span><span class="nv"> </span><span class="s">discovery&#39;</span>
+<span class="nt">ta</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">  </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-06-01&#39;</span>
+<span class="w">  </span><span class="nt">budget</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">begin_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-06-01&#39;</span>
+<span class="w">      </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-08-30&#39;</span>
+<span class="w">      </span><span class="nt">postdoc_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">ss_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">      </span><span class="nt">student_months</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">  </span><span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-12-31&#39;</span>
+<span class="w">  </span><span class="nt">funder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Life</span>
+<span class="w">  </span><span class="nt">program</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Underground Grants</span>
+<span class="w">  </span><span class="nt">team</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ministry of Magic</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Chief Witch</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pi</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">institution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ministry of Magic</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Chief Wizard</span>
+<span class="w">      </span><span class="nt">position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">copi</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Support for teaching assistants</span>
+</pre></div>
+</div>
+</section>
+<section id="json-mongo-example">
+<h2>JSON/Mongo Example<a class="headerlink" href="#json-mongo-example" title="Link to this heading"></a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SymPy-1.1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;APAM&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sym&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3000.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;awardnr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NF-1234&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;begin_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;begin_month&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;May&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;begin_year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2030</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;budget&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1000.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2030-05-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2030-06-30&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;postdoc_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ss_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;student_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1000.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2030-07-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2030-09-30&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;postdoc_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ss_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;student_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.5</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1000.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2030-10-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2030-12-31&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;postdoc_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ss_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;student_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3.0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;call_for_proposals&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;end_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">31</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;end_month&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;December&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;end_year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2030</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;funder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NumFOCUS&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;funds_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;funds_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2800.0</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-01-03&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;funds_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2100.0</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-21&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;funds_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2600.0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;narrative&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;program&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Small Development Grants&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;team&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;University of South Carolina&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Anthony Scopatz&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pi&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;admin_people&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;A. D. Ministrator&quot;</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;University of South Carolina&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Aaron Meurer&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;researcher&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SymPy 1.1 Release Support&quot;</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SymPy-2.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;APAM&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sym2.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3000.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;awardnr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NF-1234&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;begin_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;begin_month&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;begin_year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2019</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;call_for_proposals&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://groups.google.com/d/msg/numfocus/wPjhdm8NJiA/S8JL1_NZDQAJ&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;end_day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">31</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;end_month&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;December&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;end_year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2030</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;funder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NumFOCUS&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;funds_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;funds_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2800.0</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-01-03&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;funds_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2100.0</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-21&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;funds_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2600.0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;highlights&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;high profile pub in Nature&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;month&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2020</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;narrative&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;program&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Small Development Grants&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;proposal_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SymPy-2.0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;accepted&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;team&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;University of South Carolina&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Anthony Scopatz&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pi&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;University of South Carolina&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Aaron Meurer&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;researcher&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SymPy 2.0 Release Support&quot;</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc42&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc42&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">42000.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-06-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;budget&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">42000.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-06-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-12-31&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;postdoc_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ss_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;student_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-12-31&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;funder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Life&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;program&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Metaphysical Grants&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;proposal_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc42&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;team&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;University of Pedagogy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Chief Pedagogue&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pi&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;University of Pedagogy&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Pedagogue Jr.&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;copi&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The answer to life, the universe, and everything&quot;</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dmref15&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;account&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GG012345&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;admin&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DSI&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dmref15&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">982785.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;awardnr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DMR-0785462&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;budget&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">327595.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-05-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-09-30&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;postdoc_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ss_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;student_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">12.0</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">327595.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2018-10-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-01-30&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;postdoc_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ss_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">12.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;student_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">8.0</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">327595.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-02-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2019-05-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;postdoc_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ss_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">6.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;student_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">12.0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;funder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;NSF&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;grant_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DMREF-1534910&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Columbia University&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;notes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Designing Materials to Revolutionize and Engineer our Future (DMREF)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;person_months_academic&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;person_months_summer&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.25</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;program&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DMREF&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;proposal_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dmref15&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;scope&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This grant is to develop complex modeling methods for regularizing ill-posed nanostructure inverse problems using data analytic and machine learning based approaches. This does not overlap with any other grant.&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;team&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Columbia University&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;qdu&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;copi&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Columbia University&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dhsu&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;copi&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Columbia University&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Anthony Scopatz&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pi&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;subaward_amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">330000.0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DMREF: Novel, data validated, nanostructure determination methods for accelerating materials discovery&quot;</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ta&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-06-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;budget&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;begin_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-06-01&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-08-30&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;postdoc_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;ss_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;student_months&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;end_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-12-31&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;funder&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Life&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;program&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Underground Grants&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;team&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ministry of Magic&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Chief Witch&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pi&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;institution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ministry of Magic&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Chief Wizard&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;copi&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Support for teaching assistants&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="grades.html" class="btn btn-neutral float-left" title="Grades" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="groups.html" class="btn btn-neutral float-right" title="Groups" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.builders.grantreportbuilder &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.builders.grantreportbuilder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.builders.grantreportbuilder</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Builder for Grant Reports&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+
+<span class="kn">import</span> <span class="nn">dateutil.parser</span> <span class="k">as</span> <span class="nn">date_parser</span>
+
+<span class="c1"># from habanero import Crossref</span>
+<span class="kn">from</span> <span class="nn">nameparser</span> <span class="kn">import</span> <span class="n">HumanName</span>
+
+<span class="kn">from</span> <span class="nn">regolith.builders.basebuilder</span> <span class="kn">import</span> <span class="n">LatexBuilderBase</span>
+<span class="kn">from</span> <span class="nn">regolith.dates</span> <span class="kn">import</span> <span class="n">get_dates</span><span class="p">,</span> <span class="n">is_current</span>
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span><span class="p">,</span> <span class="n">filter_presentations</span><span class="p">,</span> <span class="n">fuzzy_retrieval</span>
+
+
+<div class="viewcode-block" id="GrantReportBuilder">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.grantreportbuilder.GrantReportBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">GrantReportBuilder</span><span class="p">(</span><span class="n">LatexBuilderBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a proposal review from database entries&quot;&quot;&quot;</span>
+
+    <span class="n">btype</span> <span class="o">=</span> <span class="s2">&quot;grant-report&quot;</span>
+    <span class="n">needed_dbs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;presentations&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;projecta&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;people&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;grants&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;institutions&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;expenses&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;citations&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;contacts&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1">#    def __init__(self, rc):</span>
+    <span class="c1">#        super().__init__(rc)</span>
+    <span class="c1">#        self.needed_dbs = needed_dbs</span>
+
+<div class="viewcode-block" id="GrantReportBuilder.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.grantreportbuilder.GrantReportBuilder.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">for</span> <span class="n">dbs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_dbs</span><span class="p">:</span>
+            <span class="n">gtx</span><span class="p">[</span><span class="n">dbs</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">dbs</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="GrantReportBuilder.latex">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.grantreportbuilder.GrantReportBuilder.latex">[docs]</a>
+    <span class="k">def</span> <span class="nf">latex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render latex template&quot;&quot;&quot;</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Error: no grant specified. Please rerun specifying a grant&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">grants</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Error: more than one grant specified. Please rerun with&quot;</span> <span class="s2">&quot;only a single grant.&quot;</span><span class="p">)</span>
+        <span class="n">grant_id</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">grant</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">,</span> <span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">grant_id</span><span class="p">)</span>
+        <span class="n">grant_dates</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">grant</span><span class="p">)</span>
+
+        <span class="c1"># Convert Date Strings to Datetime Objects</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">from_date</span><span class="p">:</span>
+            <span class="n">rp_start_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">from_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rp_start_date</span> <span class="o">=</span> <span class="n">grant_dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;INFO: no begin-date specified.  running report from the beginning &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;of the grant period (</span><span class="si">{</span><span class="n">rp_start_date</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">to_date</span><span class="p">:</span>
+            <span class="n">rp_end_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">to_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rp_end_date</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span> <span class="n">grant_dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)])</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;INFO: no end-date specified for the reporting period.  Running &quot;</span>
+                <span class="s2">&quot;report up to the earlier of the end of the grant, or today &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">rp_end_date</span><span class="si">}</span><span class="s2">).&quot;</span>
+            <span class="p">)</span>
+        <span class="n">report_dates</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="n">rp_start_date</span><span class="p">,</span> <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">rp_end_date</span><span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;INFO: generating report for grant </span><span class="si">{</span><span class="n">grant_id</span><span class="si">}</span><span class="s2"> for the period&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;from </span><span class="si">{</span><span class="n">rp_start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">rp_end_date</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get prum associated to grant and active during reporting period</span>
+        <span class="c1">#        institutions_coll = [inst for inst in self.gtx[&quot;institutions&quot;]]</span>
+        <span class="n">institutions_coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;institutions&quot;</span><span class="p">]</span>
+        <span class="n">grant_prums</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">prum</span>
+            <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;projecta&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">grant_id</span> <span class="ow">in</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grants&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="ow">and</span> <span class="s2">&quot;checklist&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;deliverable&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="c1">#        for prum in self.gtx[&#39;projecta&#39;]:</span>
+        <span class="c1">#            if grant_name in prum[&#39;grants&#39;]:</span>
+        <span class="c1">#                begin_date = get_dates(prum).get(&#39;begin_date&#39;)</span>
+        <span class="c1">#                due_date = get_due_date(prum[&#39;deliverable&#39;])</span>
+        <span class="c1">#                # if projectum was finished during reporting period or is still current</span>
+        <span class="c1">#                # some projectum don&#39;t have an &quot;end date&quot;, but all projecta have a deliverable</span>
+        <span class="c1">#                # due_date</span>
+        <span class="c1">#                if (rp_start_date &lt;= due_date &lt;= rp_end_date and \</span>
+        <span class="c1">#                prum[&#39;status&#39;] is &quot;finished&quot;) or is_current(prum):</span>
+        <span class="c1">#                   grant_prums.append(prum)</span>
+        <span class="c1"># Get people associated with grant</span>
+
+        <span class="n">grant_prums_finished_this_period</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">prum</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">grant_prums</span> <span class="k">if</span> <span class="n">is_current</span><span class="p">(</span><span class="n">report_dates</span><span class="p">,</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">prum</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">))</span>
+        <span class="p">]</span>
+        <span class="n">grant_prum_leads</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">prum</span><span class="p">[</span><span class="s2">&quot;lead&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">grant_prums</span><span class="p">]))</span>
+        <span class="n">grant_prum_collaborators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">set</span><span class="p">([</span><span class="n">collab</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">grant_prums</span> <span class="k">for</span> <span class="n">collab</span> <span class="ow">in</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;collaborators&quot;</span><span class="p">,</span> <span class="p">[])])</span>
+        <span class="p">)</span>
+        <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">grp_mbr</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">grant_prums</span> <span class="k">for</span> <span class="n">grp_mbr</span> <span class="ow">in</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;group_members&quot;</span><span class="p">,</span> <span class="p">[])]))</span>
+        <span class="n">grant_people</span> <span class="o">=</span> <span class="n">grant_prum_leads</span>
+        <span class="c1"># Accomplishments</span>
+        <span class="n">major_activities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">significant_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">grant_prums</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prum</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;finished&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">major_activities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prum</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">grant_prums_finished_this_period</span><span class="p">:</span>
+            <span class="n">significant_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prum</span><span class="p">)</span>
+
+        <span class="c1"># Opportunities for Training and Professional Development</span>
+        <span class="n">training_and_professional_development</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># presentations</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">grant_people</span><span class="p">:</span>
+            <span class="n">training_and_professional_development</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="n">filter_presentations</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;presentations&quot;</span><span class="p">],</span>
+                    <span class="n">institutions_coll</span><span class="p">,</span>
+                    <span class="nb">id</span><span class="p">,</span>
+                    <span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">],</span>
+                    <span class="n">since</span><span class="o">=</span><span class="n">rp_start_date</span><span class="p">,</span>
+                    <span class="n">before</span><span class="o">=</span><span class="n">rp_end_date</span><span class="p">,</span>
+                    <span class="n">statuses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;accepted&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="c1"># thesis defendings</span>
+        <span class="c1"># how do i access people.yml in rg-db-public vs the people.yml file in rg-db-group?</span>
+        <span class="c1">#        defended_theses = []</span>
+        <span class="c1">#        for id in grant_people:</span>
+        <span class="c1">#            for prsn in self.gtx[&#39;people&#39;]:</span>
+        <span class="c1">#                if prsn[&quot;_id&quot;] != id:</span>
+        <span class="c1">#                    continue</span>
+        <span class="c1">#                else:</span>
+        <span class="c1">#                    person = prsn</span>
+        <span class="c1">#            for education in person[&#39;education&#39;]:</span>
+        <span class="c1">#                edu_dates = get_dates(education)</span>
+        <span class="c1">#                if &#39;phd&#39; in education[&#39;degree&#39;].lower() and &#39;columbia&#39; in \</span>
+        <span class="c1">#                education[&#39;institution&#39;].lower() and rp_start_date.year &lt;= edu_dates.get(\</span>
+        <span class="c1">#                &#39;end_date&#39;, edu_dates[&#39;date&#39;]).year &lt;= rp_end_date.year:</span>
+        <span class="c1">#                    defended_theses.append(id)</span>
+
+        <span class="c1"># Products</span>
+        <span class="c1"># need rg-db-public&#39;s citation.yml</span>
+        <span class="c1">#        publications = filter_publications(self.gtx[&quot;citations&quot;],</span>
+        <span class="c1">#                                           set(grant_people),</span>
+        <span class="c1">#                                           since=rp_start_date,</span>
+        <span class="c1">#                                          before=rp_end_date)</span>
+        <span class="n">publications</span> <span class="o">=</span> <span class="p">[</span><span class="n">publ</span> <span class="k">for</span> <span class="n">publ</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;citations&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">grant_id</span> <span class="ow">in</span> <span class="n">publ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grant&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">publ</span> <span class="ow">in</span> <span class="n">publications</span><span class="p">:</span>
+            <span class="n">formatted_authors</span> <span class="o">=</span> <span class="p">[</span><span class="n">HumanName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">full_name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">publ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authors&quot;</span><span class="p">,</span> <span class="p">[])]</span>
+            <span class="n">publ</span><span class="p">[</span><span class="s2">&quot;authors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatted_authors</span>
+        <span class="c1"># Participants/Organizations</span>
+        <span class="n">participants</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]:</span>
+            <span class="n">months_on_grant</span><span class="p">,</span> <span class="n">months_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">months_on</span><span class="p">(</span><span class="n">grant_id</span><span class="p">,</span> <span class="n">person</span><span class="p">,</span> <span class="n">rp_start_date</span><span class="p">,</span> <span class="n">rp_end_date</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">months_on_grant</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">participants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;months_on_grant&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">months_on_grant</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+        <span class="n">collaborators</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">missing_contacts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">grant_prum_collaborators</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">contact</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;contacts&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+                    <span class="n">aka</span> <span class="o">=</span> <span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;aka&quot;</span><span class="p">)</span>
+                    <span class="n">institution_id</span> <span class="o">=</span> <span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;institution&quot;</span><span class="p">)</span>
+                    <span class="n">institution</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="n">institutions_coll</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;_id&quot;</span><span class="p">],</span> <span class="n">institution_id</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">institution</span><span class="p">:</span>
+                        <span class="n">inst_name</span> <span class="o">=</span> <span class="n">institution</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: institution </span><span class="si">{</span><span class="n">institution_id</span><span class="si">}</span><span class="s2"> not found &quot;</span> <span class="sa">f</span><span class="s2">&quot;in institutions collection&quot;</span><span class="p">)</span>
+                        <span class="n">inst_name</span> <span class="o">=</span> <span class="n">institution_id</span>
+                    <span class="n">collaborators</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;aka&quot;</span><span class="p">:</span> <span class="n">aka</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;institution&quot;</span><span class="p">:</span> <span class="n">inst_name</span><span class="p">}</span>
+        <span class="n">missing_contacts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">id</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">grant_prum_collaborators</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">collaborators</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)]</span>
+        <span class="n">missing_contacts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">missing_contacts</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">person_id</span> <span class="ow">in</span> <span class="n">missing_contacts</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: contact </span><span class="si">{</span><span class="n">person_id</span><span class="si">}</span><span class="s2"> not found in contacts collection&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Impacts</span>
+        <span class="n">begin_date_str</span> <span class="o">=</span> <span class="n">rp_start_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="n">end_date_str</span> <span class="o">=</span> <span class="n">rp_end_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+            <span class="s2">&quot;grantreport.txt&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">grant_id</span><span class="si">}</span><span class="s2">_report_</span><span class="si">{</span><span class="n">begin_date_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">end_date_str</span><span class="si">}</span><span class="s2">.txt&quot;</span><span class="p">,</span>
+            <span class="n">begin_date</span><span class="o">=</span><span class="n">begin_date_str</span><span class="p">,</span>
+            <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">end_date</span><span class="o">=</span><span class="n">end_date_str</span><span class="p">,</span>
+            <span class="n">majorActivities</span><span class="o">=</span><span class="n">major_activities</span><span class="p">,</span>
+            <span class="n">significantResults</span><span class="o">=</span><span class="n">significant_results</span><span class="p">,</span>
+            <span class="n">trainingAndProfessionalDevelopment</span><span class="o">=</span><span class="n">training_and_professional_development</span><span class="p">,</span>
+            <span class="c1">#            defendedTheses=defended_theses,</span>
+            <span class="n">products</span><span class="o">=</span><span class="n">publications</span><span class="p">,</span>
+            <span class="n">grantPeople</span><span class="o">=</span><span class="n">grant_people</span><span class="p">,</span>
+            <span class="n">participants</span><span class="o">=</span><span class="n">participants</span><span class="p">,</span>
+            <span class="n">collaborators</span><span class="o">=</span><span class="n">collaborators</span><span class="p">,</span>
+            <span class="n">hline</span><span class="o">=</span><span class="s2">&quot;------------------------------------------------------------------------------&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GrantReportBuilder.months_on">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.grantreportbuilder.GrantReportBuilder.months_on">[docs]</a>
+    <span class="k">def</span> <span class="nf">months_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grant</span><span class="p">,</span> <span class="n">person</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">before</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()):</span>
+        <span class="c1">#    print(&#39;Looking at months on grant {} in period since {} until {}&#39;.format(</span>
+        <span class="c1">#        grant, since, before), )</span>
+        <span class="n">total_months</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">appts</span> <span class="o">=</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appointments&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">appts</span><span class="p">:</span>
+            <span class="n">months</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">k1</span><span class="p">,</span> <span class="n">v1</span> <span class="ow">in</span> <span class="n">appts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">v1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grant&quot;</span><span class="p">):</span>
+                    <span class="n">appt_dates</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span>
+                    <span class="n">overlap_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">appt_dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">),</span> <span class="n">since</span><span class="p">])</span>
+                    <span class="n">overlap_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">appt_dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">),</span> <span class="n">before</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">overlap_end</span> <span class="o">&gt;=</span> <span class="n">overlap_start</span><span class="p">:</span>
+                        <span class="n">months</span> <span class="o">=</span> <span class="n">months</span> <span class="o">+</span> <span class="p">(</span><span class="n">overlap_end</span> <span class="o">-</span> <span class="n">overlap_start</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">*</span> <span class="n">v1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;loading&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mf">30.4</span>
+                    <span class="c1"># appt_startdate = dates.get(&#39;begin_date&#39;)</span>
+                    <span class="c1"># appt_enddate = dates.get(&#39;end_date&#39;)</span>
+                    <span class="c1"># loading = v1.get(&#39;loading&#39;)</span>
+                    <span class="c1"># if appt_enddate &gt;= since and appt_startdate &lt;= before:</span>
+                    <span class="c1">#    months = months + (</span>
+                    <span class="c1">#            app_enddate - appt_startdate).days * loading / 30.4</span>
+                    <span class="c1"># elif startdate &gt;= since and enddate &gt; before:</span>
+                    <span class="c1">#    months = months + (</span>
+                    <span class="c1">#            before - startdate).days * loading / 30.4</span>
+                    <span class="c1"># elif startdate &lt; since and enddate &lt;= before:</span>
+                    <span class="c1">#    months = months + (</span>
+                    <span class="c1">#            enddate - since).days * loading / 30.4</span>
+                    <span class="c1"># elif startdate &lt; since and enddate &gt; before:</span>
+                    <span class="c1">#    months = months + (before - since).days * loading / 30.4</span>
+            <span class="k">if</span> <span class="n">months</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">total_months</span> <span class="o">=</span> <span class="n">total_months</span> <span class="o">+</span> <span class="n">months</span>
+        <span class="n">months_left</span> <span class="o">=</span> <span class="n">before</span> <span class="o">-</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">total_months</span><span class="p">,</span> <span class="n">months_left</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

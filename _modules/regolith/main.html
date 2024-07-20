@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.main &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.main</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The main CLI for regolith&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">RawTextHelpFormatter</span>
+
+<span class="kn">from</span> <span class="nn">regolith</span> <span class="kn">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">commands</span>
+<span class="kn">from</span> <span class="nn">regolith.builder</span> <span class="kn">import</span> <span class="n">BUILDERS</span>
+<span class="kn">from</span> <span class="nn">regolith.commands</span> <span class="kn">import</span> <span class="n">CONNECTED_COMMANDS</span><span class="p">,</span> <span class="n">DISCONNECTED_COMMANDS</span><span class="p">,</span> <span class="n">INGEST_COLL_LU</span>
+<span class="kn">from</span> <span class="nn">regolith.database</span> <span class="kn">import</span> <span class="n">connect</span>
+<span class="kn">from</span> <span class="nn">regolith.helper</span> <span class="kn">import</span> <span class="n">HELPERS</span>
+<span class="kn">from</span> <span class="nn">regolith.runcontrol</span> <span class="kn">import</span> <span class="n">DEFAULT_RC</span><span class="p">,</span> <span class="n">filter_databases</span><span class="p">,</span> <span class="n">load_rcfile</span>
+<span class="kn">from</span> <span class="nn">regolith.schemas</span> <span class="kn">import</span> <span class="n">SCHEMAS</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">update_schemas</span>
+
+<span class="n">NEED_RC</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">CONNECTED_COMMANDS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">NEED_RC</span> <span class="o">|=</span> <span class="p">{</span><span class="s2">&quot;rc&quot;</span><span class="p">,</span> <span class="s2">&quot;deploy&quot;</span><span class="p">,</span> <span class="s2">&quot;store&quot;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="create_parser">
+<a class="viewcode-back" href="../../api/index.html#regolith.main.create_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">create_parser</span><span class="p">():</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">subp</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;cmd&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;cmd&quot;</span><span class="p">)</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+
+    <span class="c1"># helper subparser</span>
+    <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;helper&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;runs an available helper target&quot;</span><span class="p">,</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># rc subparser</span>
+    <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;rc&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;prints run control&quot;</span><span class="p">)</span>
+
+    <span class="c1"># add subparser</span>
+    <span class="n">addp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;adds a record to a database and collection&quot;</span><span class="p">)</span>
+    <span class="n">addp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;database name&quot;</span><span class="p">)</span>
+    <span class="n">addp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;coll&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;collection name&quot;</span><span class="p">)</span>
+    <span class="n">addp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;documents&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;documents, in JSON / mongodb format&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ingest subparser</span>
+    <span class="n">ingp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;ingest&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;ingest many records from a foreign &quot;</span> <span class="s2">&quot;resource into a database&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ingp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;database name&quot;</span><span class="p">)</span>
+    <span class="n">ingp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;filename&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;file to ingest. Currently valid formats are: </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">INGEST_COLL_LU</span><span class="p">]),</span>
+    <span class="p">)</span>
+    <span class="n">ingp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--coll&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;coll&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;collection name, if this is not given it is infered from the &quot;</span> <span class="s2">&quot;file type or file name.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># store subparser</span>
+    <span class="n">strp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;stores a file into the appropriate &quot;</span> <span class="s2">&quot;storage location.&quot;</span><span class="p">)</span>
+    <span class="n">strp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;storename&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;storage name&quot;</span><span class="p">)</span>
+    <span class="n">strp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;documents&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;paths to documents, i.e. &quot;</span> <span class="s2">&quot;PDFs, images, etc.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">strp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--force&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;force&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;forces copy of file if one of the same name &quot;</span> <span class="s2">&quot;already exists&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># app subparser</span>
+    <span class="n">appp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;app&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;starts up a flask app for inspecting and &quot;</span> <span class="s2">&quot;modifying regolith data.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">appp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--debug&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;starts server in debug mode&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># grade subparser</span>
+    <span class="n">grdp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;grade&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;starts up a flask app for adding &quot;</span> <span class="s2">&quot;grades to the database.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">grdp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--debug&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;starts server in debug mode&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># builder subparser</span>
+    <span class="n">bldp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;build&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;builds various available targets&quot;</span><span class="p">,</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">bldp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;build_targets&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;targets to build. Currently valid targets are: </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">BUILDERS</span><span class="p">]),</span>
+    <span class="p">)</span>
+    <span class="n">bldp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--no-pdf&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;don&#39;t produce PDFs during the build &quot;</span> <span class="s2">&quot;(for builds which produce PDFs)&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_false&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">bldp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--from&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;from_date&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;date in form YYYY-MM-DD.  Items will only be built&quot;</span>
+        <span class="s2">&quot; if their date or end_date is equal or after this date&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">bldp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--to&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;to_date&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;date in form YYYY-MM-DD.  Items will only be built&quot;</span>
+        <span class="s2">&quot; if their date or begin_date is equal or before this date&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">bldp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--grants&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;grants&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;specify a grant or a space-separated list of grants so items are &quot;</span>
+        <span class="s2">&quot;built only if associated with this(these) grant(s)&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">bldp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--people&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;people&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;specify a person or a space-separated list of people such that &quot;</span>
+        <span class="s2">&quot;the build will be for only those people&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">bldp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--kwargs&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;kwargs&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;pass a specific command to build a specific task &quot;</span> <span class="s2">&quot;if it exists&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># deploy subparser</span>
+    <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;deploy&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;deploys what was built by regolith&quot;</span><span class="p">)</span>
+
+    <span class="c1"># email subparser</span>
+    <span class="n">emlp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;automates emailing&quot;</span><span class="p">)</span>
+    <span class="n">emlp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;email_target&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;targets to email, eg &quot;test&quot; or &#39;</span> <span class="s1">&#39;&quot;grades&quot;.&#39;</span><span class="p">)</span>
+    <span class="n">emlp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--to&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;receiver of email&quot;</span><span class="p">)</span>
+    <span class="n">emlp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--subject&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;subject&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;email subject line&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">emlp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--body&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;body&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;email body, as restructured text&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">emlp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--attach&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;attachments&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;attachments to send along as well.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">emlp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--course-id&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;course_ids&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;course identifier that should be emailed.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">emlp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--db&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;database name&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># classlist subparser</span>
+    <span class="n">clp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;classlist&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;updates classlist information from file&quot;</span><span class="p">)</span>
+    <span class="n">clp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;op&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;operatation to perform, such as &quot;add&quot; or &quot;replace&quot;.&#39;</span><span class="p">)</span>
+    <span class="n">clp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;file to read class information from.&quot;</span><span class="p">)</span>
+    <span class="n">clp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;course_id&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;course identifier whose registry should be updated&quot;</span><span class="p">)</span>
+    <span class="n">clp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--format&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;format&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;file / school format to read information from. Current values are &quot;</span>
+        <span class="s1">&#39;&quot;json&quot; and &quot;usc&quot;. Determined from extension if not available.&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">clp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--dry-run&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;dry_run&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;only does a dry run and reports results&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">clp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--db&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;database name&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># JSON-to-YAML subparser</span>
+    <span class="n">jty</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;json-to-yaml&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Converts files from JSON to YAML&quot;</span><span class="p">)</span>
+    <span class="n">jty</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;file names to convert&quot;</span><span class="p">)</span>
+
+    <span class="c1"># YAML-to-JSON subparser</span>
+    <span class="n">ytj</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;yaml-to-json&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Converts files from YAML to JSON&quot;</span><span class="p">)</span>
+    <span class="n">ytj</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;file names to convert&quot;</span><span class="p">)</span>
+
+    <span class="c1"># mongo-to-fs subparser</span>
+    <span class="n">mtf</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;mongo-to-fs&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Backup database from mongodb to filesystem as json. &quot;</span>
+        <span class="s2">&quot;The database will be imported to the destination specified by the &#39;database&#39;:&#39;dst_url&#39; key. &quot;</span>
+        <span class="s2">&quot;For this to work, ensure that the database is included in the &quot;</span>
+        <span class="s2">&quot;dst_url, and that local is set to true.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">mtf</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specifies a resolvable hostname for the mongod to which to connect. By &quot;</span>
+        <span class="s2">&quot;default, the mongoexport attempts to connect to a MongoDB instance running &quot;</span>
+        <span class="s2">&quot;on the localhost on port number 27017.&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;host&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># fs-to-mongo subparser</span>
+    <span class="n">ftm</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;fs-to-mongo&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Import database from filesystem to mongodb. By default, the database will be import to the local &quot;</span>
+        <span class="s2">&quot;mongodb. The database can also be imported to the destination specified by the &#39;database&#39;:&#39;dst_url&#39; key.&quot;</span>
+        <span class="s2">&quot; For this to work, ensure that the database is included in the dst_url, and that local is set to true.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ftm</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specifies a resolvable hostname for the mongod to which to connect. By &quot;</span>
+        <span class="s2">&quot;default, the mongoimport attempts to connect to a MongoDB instance running &quot;</span>
+        <span class="s2">&quot;on the localhost on port number 27017.&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;host&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Validator</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;validate&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Validates db&quot;</span><span class="p">)</span>
+    <span class="n">val</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--collection&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;collection&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If provided only validate that collection&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../api/index.html#regolith.main.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">DEFAULT_RC</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">()</span>
+    <span class="n">args0</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">()</span>
+    <span class="n">args1</span><span class="p">,</span> <span class="n">rest</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="n">args0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args1</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rc</span>
+    <span class="k">if</span> <span class="n">args1</span><span class="o">.</span><span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;helper&quot;</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s2">&quot;regolith helper&quot;</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;helper_target&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;helper target to run. Currently valid targets are: </span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">HELPERS</span><span class="p">]),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="n">args2</span><span class="p">,</span> <span class="n">rest2</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">(</span><span class="n">rest</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="n">args0</span><span class="p">)</span>
+        <span class="c1"># it is not apparent from this but the following line calls the subparser in</span>
+        <span class="c1">#   in the helper module to get the rest of the args.</span>
+        <span class="n">HELPERS</span><span class="p">[</span><span class="n">args2</span><span class="o">.</span><span class="n">helper_target</span><span class="p">][</span><span class="mi">1</span><span class="p">](</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rest2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="n">args3</span><span class="p">,</span> <span class="n">rest3</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">(</span><span class="n">rest</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="n">args0</span><span class="p">)</span>
+        <span class="n">ns</span> <span class="o">=</span> <span class="n">args3</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ns</span> <span class="o">=</span> <span class="n">args1</span>
+    <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">cmd</span> <span class="ow">in</span> <span class="n">NEED_RC</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">user_config</span><span class="p">):</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">load_rcfile</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">user_config</span><span class="p">))</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">load_rcfile</span><span class="p">(</span><span class="s2">&quot;regolithrc.json&quot;</span><span class="p">))</span>
+    <span class="n">rc</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;schemas&quot;</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">_dict</span><span class="p">:</span>
+        <span class="n">user_schema</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">schemas</span><span class="p">)</span>
+        <span class="n">default_schema</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">SCHEMAS</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">schemas</span> <span class="o">=</span> <span class="n">update_schemas</span><span class="p">(</span><span class="n">default_schema</span><span class="p">,</span> <span class="n">user_schema</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">schemas</span> <span class="o">=</span> <span class="n">SCHEMAS</span>
+    <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">cmd</span> <span class="ow">in</span> <span class="n">NEED_RC</span><span class="p">:</span>
+        <span class="n">filter_databases</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">cmd</span> <span class="ow">in</span> <span class="n">DISCONNECTED_COMMANDS</span><span class="p">:</span>
+        <span class="n">DISCONNECTED_COMMANDS</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">cmd</span><span class="p">](</span><span class="n">rc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dbs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;build&quot;</span><span class="p">:</span>
+            <span class="n">dbs</span> <span class="o">=</span> <span class="n">commands</span><span class="o">.</span><span class="n">build_db_check</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">rc</span><span class="o">.</span><span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;helper&quot;</span><span class="p">:</span>
+            <span class="n">dbs</span> <span class="o">=</span> <span class="n">commands</span><span class="o">.</span><span class="n">helper_db_check</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">connect</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">dbs</span><span class="o">=</span><span class="n">dbs</span><span class="p">)</span> <span class="k">as</span> <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">:</span>
+            <span class="n">CONNECTED_COMMANDS</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">cmd</span><span class="p">](</span><span class="n">rc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rc</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

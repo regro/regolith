@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mongo Database Maintenance &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Database Maintenance" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Database Maintenance</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Mongo Database Maintenance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#enabling-database-maintenance-functionality">Enabling Database Maintenance Functionality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-a-server">Setting Up a Server</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uploading-additional-collections-to-the-cluster">Uploading Additional Collections to the Cluster</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#backing-up-or-downloading-the-database">Backing Up or Downloading the Database</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Database Maintenance</a></li>
+      <li class="breadcrumb-item active">Mongo Database Maintenance</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mongo-database-maintenance">
+<h1>Mongo Database Maintenance<a class="headerlink" href="#mongo-database-maintenance" title="Link to this heading"></a></h1>
+<section id="enabling-database-maintenance-functionality">
+<h2>Enabling Database Maintenance Functionality<a class="headerlink" href="#enabling-database-maintenance-functionality" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line">This section is for those who would like to maintain a MongoDB backend (local or remote) to varying extents. (note:
+if you are simply doing read-writes to an <strong>existing remote mongo server</strong> with <strong>existing collections</strong> via the
+helpers or gui, please skip)</div>
+</div>
+<div class="line-block">
+<div class="line">The first step to becoming a maintainer is by downloading the community edition of the mongodb server, along with the
+mongodb tools, from the mongodb website. These will allow you to</div>
+</div>
+<ol class="arabic simple">
+<li><p>run mongo-related tests locally with Regolith, thus allowing you to update Regolith’s mongo-interoperability with
+confidence,</p></li>
+<li><p>run the “Regolith fs-to-mongo” command to move whole collections to your server and,</p></li>
+<li><p>run the “Regolith mongo-to-fs” command to save collections from your server in the json format</p></li>
+</ol>
+<p>These downloads are a multistep process, so follow carefully</p>
+<ol class="arabic simple">
+<li><p>Go to <a class="reference external" href="https://docs.mongodb.com/manual/administration/install-community/">https://docs.mongodb.com/manual/administration/install-community/</a> and download the community server as a
+service for your relevant operating system. At the time of writing, this is a link to version 4.4.6.</p></li>
+</ol>
+<p>If you are a windows user, please see the additional notes below.</p>
+<ol class="arabic simple" start="2">
+<li><p>In order for all Regolith-Mongo functionality to work locally on windows, you must ensure that you have either
+installed the mongodb server as a service, or that you start the service before running mongo maintenance commands
+in Regolith.</p></li>
+<li><p>For certain operating systems and methods of download, both the server and the tools will be downloaded
+simultaneously (macOS and Ubuntu at the time of writing). If that is not the case (windows users), be sure to also
+download the tools from the following link <a class="reference external" href="https://www.mongodb.com/try/download/database-tools?tck=docs_databasetools">https://www.mongodb.com/try/download/database-tools?tck=docs_databasetools</a>.</p></li>
+<li><p>You will likely be provided an option to download “Compass”. Compass is the desktop GUI application to interface
+visually with local and remote mongo servers. It doesn’t hurt to have this as a maintainer, however, none of our current
+maintenance practices utilize it.</p></li>
+<li><p>Windows users must go through the additional step of adding the mongo executables to their environment path variable
+manually. In order to do so, search “Path” in your windows search bar. You should be presented with an “Edit the System
+and Environment Variables” control panel link. After following this link, press “environment variables”, “path” under
+user variables, “Edit…” under user variables, “new” in the resulting window, to add two new directories to the path
+variable. These directories will take the forms
+“C:\Program Files\MongoDB\Server\&lt;e.g. 4.4&gt;\bin” and “C:\Program Files\MongoDB\Tools\&lt;e.g. 100&gt;\bin”</p></li>
+</ol>
+<div class="line-block">
+<div class="line">The second step is setting up a server (local or remote)</div>
+</div>
+</section>
+<section id="setting-up-a-server">
+<h2>Setting Up a Server<a class="headerlink" href="#setting-up-a-server" title="Link to this heading"></a></h2>
+<p><strong>LOCAL</strong></p>
+<div class="line-block">
+<div class="line">Your local server is automatically running as a service on localhost if you have downloaded the community version of
+mongodb correctly. <strong>Congradulations!</strong></div>
+</div>
+<div class="line-block">
+<div class="line">Accessing your local mongodb server <strong>for administrative purposes</strong> can be done simply by typing “mongo” into your
+terminal, which opens the mongodb shell. By default, you will have three databases present (admin, config, local).
+These are administrative databases that are only meant to be accessed by high access users. The immediately important
+commands are show and use. The important variables to immediately know are dbs, db, and collections. “dbs” is your
+list of databases. “db” is your current database, etc. The “use” command, followed by a string will create a database
+with the name of the provided string.</div>
+</div>
+<div class="line-block">
+<div class="line">Accessing your local mongodb server via Regolith for <strong>non-administrative purposes such as helper or gui access</strong> can
+be done by changing the ‘url’ key in your regolithrc.json file to ‘localhost’ and the ‘backend’ key to ‘mongodb’</div>
+</div>
+<p><strong>REMOTE</strong></p>
+<div class="line-block">
+<div class="line">Setting up a remote mongo server is most easily done with a DBaaS provider. Mongo itself provides a nice DBaaS
+known as Atlas, which provides plenty of free storage space for text-only collections. This process is straightforward
+and is explained on the Atlas website.</div>
+</div>
+<div class="line-block">
+<div class="line">The way to then access the remote server through Regolith is to click the “CONNECT” button on your cluster through the
+website GUI. Next, select “Connect to your application”, followed by selecting python 3.6 or later options. The URL
+that you are presented with can be inserted into your regolithrc.json file under the ‘URL’ key.</div>
+</div>
+<div class="line-block">
+<div class="line">Note: user.json in your config folder can be utilized to fill in the url username and password by replacing them with
+‘uname_from_config:pwd_from_config’ in the URL, and adding your username and password to user.json as ‘mongo_id’ and
+‘mongo_db_password’</div>
+</div>
+<section id="uploading-additional-collections-to-the-cluster">
+<h3>Uploading Additional Collections to the Cluster<a class="headerlink" href="#uploading-additional-collections-to-the-cluster" title="Link to this heading"></a></h3>
+<div class="line-block">
+<div class="line">When porting yaml or json files from our local filesystem to the mongo cluster, the regolithrc.json file must take a
+specific format. Follow the below steps in order to create a new regolithrc.json file and pass collections wholesale
+to mongo.</div>
+</div>
+<div class="line-block">
+<div class="line">Note: The database you pass the collections to does not have to exist. A new name will auto-create a new database.</div>
+</div>
+<ol class="arabic simple">
+<li><p>Create a directory called rg-db-mongo-port</p></li>
+<li><p>In this directory, create the following folder structure (projecta.yml is inside of db as an example)</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+---</span><span class="n">db</span>
+<span class="o">|</span>       <span class="n">projecta</span><span class="o">.</span><span class="n">yml</span>
+<span class="o">|</span>
+\<span class="o">---</span><span class="n">local</span>
+        <span class="n">regolithrc</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Structure your regolithrc.json file in the following way, with &lt;databaseName&gt; filled in with the name of the
+database on the cluster that you intend to upload the yaml files to. Note that the database name must be replaced
+both in the name and dst_url keys</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;groupname&quot;</span><span class="p">:</span> <span class="s2">&quot;Billinge Group&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;databases&quot;</span><span class="p">:</span> <span class="p">[</span>
+  <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;databaseName&gt;&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;dst_url&quot;</span><span class="p">:</span> <span class="s2">&quot;mongodb+srv://uname_from_config:pwd_from_config@&lt;clusterName&gt;.uc5ro.mongodb.net/&lt;databaseName&gt;?w=majority&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;public&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+   <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;db&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;local&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+   <span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="s2">&quot;mongodb&quot;</span><span class="p">}</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Add all of the collections that you would like to upload to mongo in the form of yaml or json files in the db directory</p></li>
+<li><p>Ensure that your user.json file contains a valid userID and password in the ‘mongo_id’ and ‘mongo_db_password’ keys</p></li>
+<li><p>From the local directory, activate your regolith environment (by entering “conda activate &lt;regolithEnvName&gt;” in the terminal)</p></li>
+<li><p>Still in the local directory, now with the regolith environment active, enter the following into the terminal “regolith fs-to-mongo”</p></li>
+</ol>
+</section>
+<section id="backing-up-or-downloading-the-database">
+<h3>Backing Up or Downloading the Database<a class="headerlink" href="#backing-up-or-downloading-the-database" title="Link to this heading"></a></h3>
+<div class="line-block">
+<div class="line">Follow the steps in the “Uploading Additional Collections to the Cluster” section, but skip step 4, and in step 7 enter
+“regolith mongo-to-fs” in the terminal instead. The db directory will be where all of the collections from your
+database land.</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Database Maintenance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

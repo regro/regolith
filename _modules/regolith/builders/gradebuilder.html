@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.builders.gradebuilder &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.builders.gradebuilder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.builders.gradebuilder</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Builder for Grade Reports.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">st</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">st</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="kn">from</span> <span class="nn">regolith.builders.basebuilder</span> <span class="kn">import</span> <span class="n">LatexBuilderBase</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span>
+
+
+<div class="viewcode-block" id="GradeReportBuilder">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.GradeReportBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">GradeReportBuilder</span><span class="p">(</span><span class="n">LatexBuilderBase</span><span class="p">):</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="s2">&quot;grades&quot;</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;grades&quot;</span><span class="p">,</span> <span class="s2">&quot;courses&quot;</span><span class="p">,</span> <span class="s2">&quot;assignments&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="GradeReportBuilder.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.GradeReportBuilder.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;sum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;id_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;grades&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;grades&quot;</span><span class="p">))</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;courses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;courses&quot;</span><span class="p">))</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;assignments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;assignments&quot;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="GradeReportBuilder.render">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.GradeReportBuilder.render">[docs]</a>
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tname</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="n">tname</span><span class="p">)</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s2">&quot;rc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rc&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s2">&quot;static&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;static&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="s2">&quot;static&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s2">&quot;root&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="n">pdb</span><span class="o">.</span><span class="n">post_mortem</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bldir</span><span class="p">,</span> <span class="n">fname</span><span class="p">),</span> <span class="s2">&quot;wt&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GradeReportBuilder.latex">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.GradeReportBuilder.latex">[docs]</a>
+    <span class="k">def</span> <span class="nf">latex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;courses&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">course</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">course_id</span> <span class="o">=</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">makestats</span><span class="p">(</span><span class="n">course</span><span class="p">)</span>
+            <span class="n">asgn</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">((</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">course_id</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;courses&quot;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;assignments&quot;</span><span class="p">])</span>
+            <span class="n">asgn</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">asgn</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">])</span>
+            <span class="n">grouped_assignments</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">asgn</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">])</span>
+            <span class="p">}</span>
+
+            <span class="n">student_wavgs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">students_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">studs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">student_id</span> <span class="ow">in</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;students&quot;</span><span class="p">]:</span>
+                <span class="n">studs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">student_id</span><span class="p">)</span>
+                <span class="n">student_grade_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="nb">filter</span><span class="p">(</span>
+                        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;student&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">student_id</span> <span class="ow">and</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;course&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">course_id</span><span class="p">)),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;grades&quot;</span><span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">student_grades</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">grouped_assignments</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+                <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">asngs</span> <span class="ow">in</span> <span class="n">grouped_assignments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">asgn</span> <span class="ow">in</span> <span class="n">asngs</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">student_grade_list</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">sg</span><span class="p">[</span><span class="s2">&quot;assignment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">asgn</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]:</span>
+                                <span class="n">student_grades</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span>
+                                <span class="k">break</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">student_grades</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">student_totals</span><span class="p">,</span> <span class="n">student_wavg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maketotals</span><span class="p">(</span><span class="n">student_grades</span><span class="p">,</span> <span class="n">grouped_assignments</span><span class="p">,</span> <span class="n">course</span><span class="p">)</span>
+                <span class="n">student_wavgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">student_wavg</span><span class="p">)</span>
+                <span class="n">students_kwargs</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">title</span><span class="o">=</span><span class="n">student_id</span><span class="p">,</span>
+                    <span class="n">stats</span><span class="o">=</span><span class="n">stats</span><span class="p">,</span>
+                    <span class="n">student_id</span><span class="o">=</span><span class="n">student_id</span><span class="p">,</span>
+                    <span class="n">course_id</span><span class="o">=</span><span class="n">course_id</span><span class="p">,</span>
+                    <span class="n">grouped_assignments</span><span class="o">=</span><span class="n">grouped_assignments</span><span class="p">,</span>
+                    <span class="n">student_grades</span><span class="o">=</span><span class="n">student_grades</span><span class="p">,</span>
+                    <span class="n">student_totals</span><span class="o">=</span><span class="n">student_totals</span><span class="p">,</span>
+                    <span class="n">student_wavg</span><span class="o">=</span><span class="n">student_wavg</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">ordered_studs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">studs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">students_kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s2">&quot;student_wavg&quot;</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">max_wavg</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">student_wavgs</span><span class="p">)</span>
+            <span class="n">curve</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">max_wavg</span>
+            <span class="c1"># Make grades</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="n">course</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="n">DEFAULT_LETTER_SCALE</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">student_id</span> <span class="ow">in</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;students&quot;</span><span class="p">]:</span>
+                <span class="n">skw</span> <span class="o">=</span> <span class="n">students_kwargs</span><span class="p">[</span><span class="n">student_id</span><span class="p">]</span>
+                <span class="n">skw</span><span class="p">[</span><span class="s2">&quot;student_letter_grade_raw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_letter_grade</span><span class="p">(</span><span class="n">skw</span><span class="p">[</span><span class="s2">&quot;student_wavg&quot;</span><span class="p">],</span> <span class="n">scale</span><span class="p">)</span>
+                <span class="n">skw</span><span class="p">[</span><span class="s2">&quot;student_letter_grade_curved&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_letter_grade</span><span class="p">(</span><span class="n">skw</span><span class="p">[</span><span class="s2">&quot;student_wavg&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">curve</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+            <span class="n">summary</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{:.2f}</span><span class="s2">, Grade: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">stud</span><span class="p">,</span>
+                    <span class="n">students_kwargs</span><span class="p">[</span><span class="n">stud</span><span class="p">][</span><span class="s2">&quot;student_wavg&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">,</span>
+                    <span class="n">students_kwargs</span><span class="p">[</span><span class="n">stud</span><span class="p">][</span><span class="s2">&quot;student_letter_grade_raw&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">stud</span> <span class="ow">in</span> <span class="n">ordered_studs</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">stud</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">stud</span><span class="p">)</span>
+            <span class="n">show_letter_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_letter_grades</span><span class="p">(</span><span class="n">students_kwargs</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+            <span class="c1"># render PDF</span>
+            <span class="k">for</span> <span class="n">student_id</span> <span class="ow">in</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;students&quot;</span><span class="p">]:</span>
+                <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span> <span class="n">course_id</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+                    <span class="s2">&quot;gradereport.tex&quot;</span><span class="p">,</span>
+                    <span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.tex&quot;</span><span class="p">,</span>
+                    <span class="n">p</span><span class="o">=</span><span class="n">student_id</span><span class="p">,</span>
+                    <span class="n">max_wavg</span><span class="o">=</span><span class="n">max_wavg</span><span class="p">,</span>
+                    <span class="n">curve</span><span class="o">=</span><span class="n">curve</span><span class="p">,</span>
+                    <span class="n">show_letter_plot</span><span class="o">=</span><span class="n">show_letter_plot</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">students_kwargs</span><span class="p">[</span><span class="n">student_id</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="c1"># TODO: this seems like something for the base class to handle</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">base</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GradeReportBuilder.makestats">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.GradeReportBuilder.makestats">[docs]</a>
+    <span class="k">def</span> <span class="nf">makestats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">course</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary of statistics for a course whose keys are</span>
+<span class="sd">        the assignments and whose values are a (mean-problem, std-problem,</span>
+<span class="sd">        mean-total, std-total) tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">course_id</span> <span class="o">=</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">grade</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;grades&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">grade</span><span class="p">[</span><span class="s2">&quot;course&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">course_id</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">assignment_id</span> <span class="o">=</span> <span class="n">grade</span><span class="p">[</span><span class="s2">&quot;assignment&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">assignment_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+                <span class="n">scores</span><span class="p">[</span><span class="n">assignment_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">scores</span><span class="p">[</span><span class="n">assignment_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grade</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">])</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">assignment_id</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">scores</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">max_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
+            <span class="n">percent_above_60</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">0.6</span> <span class="o">*</span> <span class="n">max_score</span><span class="p">)</span>
+            <span class="n">percent_above_80</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">max_score</span><span class="p">)</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">total_mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">total_sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">total_max_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">total_norm</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">total_mu</span><span class="p">,</span> <span class="n">total_sig</span><span class="p">)</span>
+            <span class="n">total_percent_above_60</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">total_norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">0.6</span> <span class="o">*</span> <span class="n">total_max_score</span><span class="p">)</span>
+            <span class="n">total_percent_above_80</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">total_norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">total_max_score</span><span class="p">)</span>
+            <span class="n">stats</span><span class="p">[</span><span class="n">assignment_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">mu</span><span class="p">,</span>
+                <span class="n">sig</span><span class="p">,</span>
+                <span class="n">max_score</span><span class="p">,</span>
+                <span class="n">percent_above_60</span><span class="p">,</span>
+                <span class="n">percent_above_80</span><span class="p">,</span>
+                <span class="n">total_mu</span><span class="p">,</span>
+                <span class="n">total_sig</span><span class="p">,</span>
+                <span class="n">total_max_score</span><span class="p">,</span>
+                <span class="n">total_percent_above_60</span><span class="p">,</span>
+                <span class="n">total_percent_above_80</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># handle stats for ungraded assignments</span>
+        <span class="k">for</span> <span class="n">assignment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;assignments&quot;</span><span class="p">]:</span>
+            <span class="n">assignment_id</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">assignment_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">:</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">assignment</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">])</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span> <span class="o">*</span> <span class="n">n</span>
+                <span class="n">stats</span><span class="p">[</span><span class="n">assignment_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stats</span></div>
+
+
+<div class="viewcode-block" id="GradeReportBuilder.basename">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.GradeReportBuilder.basename">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">basename</span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span> <span class="n">course_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the base file name for a student in a course.&quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">student_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">+=</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">course_id</span>
+        <span class="k">return</span> <span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="GradeReportBuilder.maketotals">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.GradeReportBuilder.maketotals">[docs]</a>
+    <span class="k">def</span> <span class="nf">maketotals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">student_grades</span><span class="p">,</span> <span class="n">grouped_assignments</span><span class="p">,</span> <span class="n">course</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Makes total grades.&quot;&quot;&quot;</span>
+        <span class="n">totals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">totalweight</span> <span class="o">=</span> <span class="n">totalfrac</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">student_grades</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">cat</span> <span class="o">=</span> <span class="p">[</span><span class="n">category</span><span class="p">]</span>
+            <span class="n">sgtot</span> <span class="o">=</span> <span class="n">catmax</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">sg</span><span class="p">,</span> <span class="n">asgn</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">student_grades</span><span class="p">[</span><span class="n">category</span><span class="p">],</span> <span class="n">grouped_assignments</span><span class="p">[</span><span class="n">category</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">sg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">sgtot</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sg</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">])</span>
+                <span class="n">catmax</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">asgn</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">])</span>
+            <span class="n">cat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sgtot</span><span class="p">)</span>
+            <span class="n">cat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">catmax</span><span class="p">)</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">][</span><span class="n">category</span><span class="p">]</span>
+            <span class="n">cat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+            <span class="n">totalweight</span> <span class="o">+=</span> <span class="n">weight</span>
+            <span class="n">catfrac</span> <span class="o">=</span> <span class="n">sgtot</span> <span class="o">/</span> <span class="n">catmax</span>
+            <span class="c1"># cat.append(catfrac)</span>
+            <span class="n">wfrac</span> <span class="o">=</span> <span class="n">catfrac</span> <span class="o">*</span> <span class="n">weight</span>
+            <span class="n">cat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wfrac</span><span class="p">)</span>
+            <span class="n">totalfrac</span> <span class="o">+=</span> <span class="n">wfrac</span>
+            <span class="n">totals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cat</span><span class="p">)</span>
+        <span class="n">wtotal</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">totalweight</span> <span class="k">else</span> <span class="n">totalfrac</span> <span class="o">/</span> <span class="n">totalweight</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">totals</span><span class="p">),</span> <span class="n">wtotal</span></div>
+
+
+<div class="viewcode-block" id="GradeReportBuilder.plot_letter_grades">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.GradeReportBuilder.plot_letter_grades">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_letter_grades</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">students_kwargs</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plots the letter grades in a histogram&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scale</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">raws</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">curveds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">skw</span> <span class="ow">in</span> <span class="n">students_kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">raws</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">skw</span><span class="p">[</span><span class="s2">&quot;student_letter_grade_raw&quot;</span><span class="p">])</span>
+            <span class="n">curveds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">skw</span><span class="p">[</span><span class="s2">&quot;student_letter_grade_curved&quot;</span><span class="p">])</span>
+        <span class="n">rfreq</span> <span class="o">=</span> <span class="p">[</span><span class="n">raws</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">bins</span><span class="p">]</span>
+        <span class="n">cfreq</span> <span class="o">=</span> <span class="p">[</span><span class="n">curveds</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">bins</span><span class="p">]</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span>
+        <span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">pos</span> <span class="o">+</span> <span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Raw Grade&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of Students&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">rfreq</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">pos</span> <span class="o">+</span> <span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Curved Grade&quot;</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">cfreq</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bldir</span><span class="p">,</span> <span class="s2">&quot;student-letter-grade-dist&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.eps&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+</div>
+
+
+
+<span class="n">DEFAULT_LETTER_SCALE</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="mf">0.97</span><span class="p">,</span> <span class="s2">&quot;A+&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.93</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.90</span><span class="p">,</span> <span class="s2">&quot;A-&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.87</span><span class="p">,</span> <span class="s2">&quot;B+&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.83</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.80</span><span class="p">,</span> <span class="s2">&quot;B-&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.77</span><span class="p">,</span> <span class="s2">&quot;C+&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.73</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.70</span><span class="p">,</span> <span class="s2">&quot;C-&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.67</span><span class="p">,</span> <span class="s2">&quot;D+&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.63</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.60</span><span class="p">,</span> <span class="s2">&quot;D-&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="find_letter_grade">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.gradebuilder.find_letter_grade">[docs]</a>
+<span class="k">def</span> <span class="nf">find_letter_grade</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">DEFAULT_LETTER_SCALE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Finds the letter grade from a score and a value.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">lower</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">scale</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lower</span> <span class="o">&lt;=</span> <span class="n">score</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">letter</span>
+    <span class="k">return</span> <span class="n">letter</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

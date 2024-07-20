@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.emailer &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.emailer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.emailer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Emails people via SMTP&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">email.mime.application</span> <span class="kn">import</span> <span class="n">MIMEApplication</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">docutils.core</span> <span class="kn">import</span> <span class="n">publish_string</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">publish_string</span>
+
+<span class="kn">from</span> <span class="nn">regolith.builders.gradebuilder</span> <span class="kn">import</span> <span class="n">GradeReportBuilder</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span>
+
+
+<div class="viewcode-block" id="attach_txt">
+<a class="viewcode-back" href="../../api/index.html#regolith.emailer.attach_txt">[docs]</a>
+<span class="k">def</span> <span class="nf">attach_txt</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="n">_subtype</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msg</span></div>
+
+
+
+<div class="viewcode-block" id="attach_pdf">
+<a class="viewcode-back" href="../../api/index.html#regolith.emailer.attach_pdf">[docs]</a>
+<span class="k">def</span> <span class="nf">attach_pdf</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">pdf</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEApplication</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">_subtype</span><span class="o">=</span><span class="s2">&quot;pdf&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msg</span></div>
+
+
+
+<span class="n">ATTACHERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;.txt&quot;</span><span class="p">:</span> <span class="n">attach_txt</span><span class="p">,</span>
+    <span class="s2">&quot;.rst&quot;</span><span class="p">:</span> <span class="n">attach_txt</span><span class="p">,</span>
+    <span class="s2">&quot;.pdf&quot;</span><span class="p">:</span> <span class="n">attach_pdf</span><span class="p">,</span>
+    <span class="s2">&quot;.ipynb&quot;</span><span class="p">:</span> <span class="n">attach_txt</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="make_message">
+<a class="viewcode-back" href="../../api/index.html#regolith.emailer.make_message">[docs]</a>
+<span class="k">def</span> <span class="nf">make_message</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">to</span><span class="p">,</span> <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">attachments</span><span class="o">=</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates an email following the approriate format. The body kwarg</span>
+<span class="sd">    may be a string of restructured text.  Attachements is a list of filenames</span>
+<span class="sd">    to attach.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s2">&quot;alternative&quot;</span><span class="p">)</span>
+    <span class="n">plain</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s2">&quot;plain&quot;</span><span class="p">)</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">plain</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">publish_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">publish_string</span><span class="p">(</span>
+            <span class="n">body</span><span class="p">,</span>
+            <span class="n">writer_name</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">,</span>
+            <span class="n">settings_overrides</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;output_encoding&quot;</span><span class="p">:</span> <span class="s2">&quot;unicode&quot;</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">MIMEText</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">attachments</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">msg</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s2">&quot;mixed&quot;</span><span class="p">)</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="n">attachments</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">attachment</span><span class="p">)</span>
+            <span class="n">att</span> <span class="o">=</span> <span class="n">ATTACHERS</span><span class="p">[</span><span class="n">ext</span><span class="p">](</span><span class="n">attachment</span><span class="p">)</span>
+            <span class="n">att</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span>
+                <span class="s2">&quot;content-disposition&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;attachment&quot;</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">attachment</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">att</span><span class="p">)</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;Subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;From&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">email</span><span class="p">[</span><span class="s2">&quot;from&quot;</span><span class="p">]</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="test_email">
+<a class="viewcode-back" href="../../api/index.html#regolith.emailer.test_email">[docs]</a>
+<span class="k">def</span> <span class="nf">test_email</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends a test email from regolith.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">to</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;--to must be given to send a test email.&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.rst&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;This is *only* a test attachment.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">make_message</span><span class="p">(</span>
+            <span class="n">rc</span><span class="p">,</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">to</span><span class="p">,</span>
+            <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Regolith test email&quot;</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="s2">&quot;This is *only* a test. Do not be alarmed.&quot;</span><span class="p">,</span>
+            <span class="n">attachments</span><span class="o">=</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">message</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="grade_email">
+<a class="viewcode-back" href="../../api/index.html#regolith.emailer.grade_email">[docs]</a>
+<span class="k">def</span> <span class="nf">grade_email</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends grade report emails to students.&quot;&quot;&quot;</span>
+    <span class="n">gradedir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">builddir</span><span class="p">,</span> <span class="n">GradeReportBuilder</span><span class="o">.</span><span class="n">btype</span><span class="p">)</span>
+    <span class="n">addresses</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;students&quot;</span><span class="p">))}</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;courses&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">course</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">course_id</span> <span class="o">=</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">course_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">course_ids</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">student_id</span> <span class="ow">in</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;students&quot;</span><span class="p">]:</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="n">GradeReportBuilder</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">student_id</span><span class="p">,</span> <span class="n">course_id</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.pdf&quot;</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gradedir</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="n">fname</span> <span class="o">+</span> <span class="s2">&quot; does not exist, please run &quot;</span> <span class="s1">&#39;&quot;regolith build grade&quot; prior to emailing &#39;</span> <span class="s2">&quot;grades.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">make_message</span><span class="p">(</span>
+                <span class="n">rc</span><span class="p">,</span>
+                <span class="n">addresses</span><span class="p">[</span><span class="n">student_id</span><span class="p">],</span>
+                <span class="n">subject</span><span class="o">=</span><span class="s2">&quot;Current grades for &quot;</span> <span class="o">+</span> <span class="n">course_id</span><span class="p">,</span>
+                <span class="n">body</span><span class="o">=</span><span class="s2">&quot;Please see the attached PDF and &quot;</span> <span class="s2">&quot;please report any errors.&quot;</span><span class="p">,</span>
+                <span class="n">attachments</span><span class="o">=</span><span class="p">[</span><span class="n">fname</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">messages</span></div>
+
+
+
+<div class="viewcode-block" id="class_email">
+<a class="viewcode-back" href="../../api/index.html#regolith.emailer.class_email">[docs]</a>
+<span class="k">def</span> <span class="nf">class_email</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends an email to all students in the active classes.&quot;&quot;&quot;</span>
+    <span class="n">addresses</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;students&quot;</span><span class="p">))}</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;courses&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">course</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">course_id</span> <span class="o">=</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">course_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">course_ids</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">subject</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{0}</span><span class="s2">] </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">course_id</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">subject</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">student_id</span> <span class="ow">in</span> <span class="n">course</span><span class="p">[</span><span class="s2">&quot;students&quot;</span><span class="p">]:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">make_message</span><span class="p">(</span>
+                <span class="n">rc</span><span class="p">,</span>
+                <span class="n">addresses</span><span class="p">[</span><span class="n">student_id</span><span class="p">],</span>
+                <span class="n">subject</span><span class="o">=</span><span class="n">subject</span><span class="p">,</span>
+                <span class="n">body</span><span class="o">=</span><span class="n">rc</span><span class="o">.</span><span class="n">body</span><span class="p">,</span>
+                <span class="n">attachments</span><span class="o">=</span><span class="n">rc</span><span class="o">.</span><span class="n">attachments</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">messages</span></div>
+
+
+
+<div class="viewcode-block" id="list_email">
+<a class="viewcode-back" href="../../api/index.html#regolith.emailer.list_email">[docs]</a>
+<span class="k">def</span> <span class="nf">list_email</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List class emails&quot;&quot;&quot;</span>
+    <span class="n">course</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="s2">&quot;courses&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">course_ids</span><span class="p">})</span>
+    <span class="n">student_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">course</span><span class="p">[</span><span class="s2">&quot;students&quot;</span><span class="p">])</span>
+    <span class="n">students</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">db</span><span class="p">][</span><span class="s2">&quot;students&quot;</span><span class="p">]</span>
+    <span class="n">emails</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">students</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">student_ids</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">emails</span><span class="p">)))</span></div>
+
+
+
+<span class="n">EMAIL_CONSTRUCTORS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="n">test_email</span><span class="p">,</span>
+    <span class="s2">&quot;grade&quot;</span><span class="p">:</span> <span class="n">grade_email</span><span class="p">,</span>
+    <span class="s2">&quot;grades&quot;</span><span class="p">:</span> <span class="n">grade_email</span><span class="p">,</span>
+    <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">class_email</span><span class="p">,</span>
+    <span class="s2">&quot;list&quot;</span><span class="p">:</span> <span class="n">list_email</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="emailer">
+<a class="viewcode-back" href="../../api/index.html#regolith.emailer.emailer">[docs]</a>
+<span class="k">def</span> <span class="nf">emailer</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs and sends out emails&quot;&quot;&quot;</span>
+    <span class="n">constructor</span> <span class="o">=</span> <span class="n">EMAIL_CONSTRUCTORS</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">email_target</span><span class="p">]</span>
+    <span class="n">emails</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">emails</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">email</span>
+    <span class="k">with</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="n">port</span><span class="o">=</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">])</span> <span class="k">as</span> <span class="n">smtp</span><span class="p">:</span>
+        <span class="n">smtp</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;verbosity&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;tls&quot;</span><span class="p">]:</span>
+            <span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+            <span class="n">smtp</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+        <span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">],</span> <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">to</span><span class="p">,</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">emails</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sending email to &quot;</span> <span class="o">+</span> <span class="n">to</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
+            <span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s2">&quot;from&quot;</span><span class="p">],</span> <span class="n">to</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

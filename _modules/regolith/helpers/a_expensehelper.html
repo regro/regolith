@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.a_expensehelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.a_expensehelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.a_expensehelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Helper to add expenses.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">dateutil.parser</span> <span class="k">as</span> <span class="nn">date_parser</span>
+<span class="kn">from</span> <span class="nn">gooey</span> <span class="kn">import</span> <span class="n">GooeyParser</span>
+
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.basehelper</span> <span class="kn">import</span> <span class="n">DbHelperBase</span>
+<span class="kn">from</span> <span class="nn">regolith.schemas</span> <span class="kn">import</span> <span class="n">alloweds</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span><span class="p">,</span> <span class="n">get_pi_id</span>
+
+<span class="n">TARGET_COLL</span> <span class="o">=</span> <span class="s2">&quot;expenses&quot;</span>
+
+<span class="n">EXPENSES_STATI</span> <span class="o">=</span> <span class="n">alloweds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXPENSES_STATI&quot;</span><span class="p">)</span>
+<span class="n">EXPENSES_TYPES</span> <span class="o">=</span> <span class="n">alloweds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;EXPENSES_TYPES&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="expense_constructor">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_expensehelper.expense_constructor">[docs]</a>
+<span class="k">def</span> <span class="nf">expense_constructor</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">begin_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    constructs a document with default fields for an expense</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    key str</span>
+<span class="sd">      The key for (&#39;_id&#39;) for this entry in the expenses collection</span>
+<span class="sd">    begin_date datetime.date</span>
+<span class="sd">      The date of the start of the travel/expense</span>
+<span class="sd">    end_date datetime.date</span>
+<span class="sd">      The date of the end of the travel/expense</span>
+<span class="sd">    rc runcontrol object</span>
+<span class="sd">      The runcontrol object.  Should contain:</span>
+<span class="sd">         required:</span>
+<span class="sd">         rc.business (bool) True if a business expense, false if a travel one.</span>
+<span class="sd">         rc.grants (list) The list of grants that will be charged</span>
+<span class="sd">         rc.purpose (str) The purpose of the trip/expense</span>
+<span class="sd">         rc.payee (str) id of the payee</span>
+<span class="sd">         rc.where (str) where submitted/reimbursed (e.g., which institution/person</span>
+<span class="sd">            it was submitted to or which bank account it was reimbursed to</span>
+<span class="sd">         required if rc.business:</span>
+<span class="sd">         rc.amount (float) The amount of the expense if it is a business expense</span>
+<span class="sd">         optional:</span>
+<span class="sd">         rc.notes (list of strings) notes to add if there are any</span>
+<span class="sd">         rc.status (str) the status of the expense (defaults to unsubmitted)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    The constructed expense document</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pdoc</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+            <span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+            <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">business</span><span class="p">:</span>
+        <span class="n">expense_type</span> <span class="o">=</span> <span class="s2">&quot;business&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">expense_type</span> <span class="o">=</span> <span class="s2">&quot;travel&quot;</span>
+    <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;expense_type&quot;</span><span class="p">:</span> <span class="n">expense_type</span><span class="p">})</span>
+
+    <span class="n">percentages</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">]</span>
+
+    <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;grant_percentages&quot;</span><span class="p">:</span> <span class="n">percentages</span><span class="p">,</span> <span class="s2">&quot;grants&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">grants</span><span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">expense_type</span> <span class="o">==</span> <span class="s2">&quot;travel&quot;</span><span class="p">:</span>
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;itemized_expenses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;registration&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;home to airport&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;flights&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;airport to hotel&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;hotel&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;hotel to airport&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;airport to home&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;meals&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">},</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;itemized_expenses&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">purpose</span><span class="p">,</span>
+                        <span class="s2">&quot;unsegregated_expense&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span>
+                        <span class="s2">&quot;segregated_expense&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">&quot;currency&quot;</span><span class="p">:</span> <span class="s2">&quot;USD&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">],</span>
+                    <span class="p">}</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">notes</span><span class="p">,</span>
+            <span class="s2">&quot;overall_purpose&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">purpose</span><span class="p">,</span>
+            <span class="s2">&quot;payee&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">payee</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;submitted&quot;</span><span class="p">:</span>
+        <span class="n">submission_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">submission_date</span> <span class="o">=</span> <span class="s2">&quot;tbd&quot;</span>
+
+    <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;reimbursements&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;tbd&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;submission_date&quot;</span><span class="p">:</span> <span class="n">submission_date</span><span class="p">,</span>
+                    <span class="s2">&quot;where&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">where</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">status</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">pdoc</span></div>
+
+
+
+<div class="viewcode-block" id="subparser">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_expensehelper.subparser">[docs]</a>
+<span class="k">def</span> <span class="nf">subparser</span><span class="p">(</span><span class="n">subpi</span><span class="p">):</span>
+    <span class="n">amount_gooey_kwargs</span><span class="p">,</span> <span class="n">notes_gooey_kwargs</span><span class="p">,</span> <span class="n">date_gooey_kwargs</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subpi</span><span class="p">,</span> <span class="n">GooeyParser</span><span class="p">):</span>
+        <span class="n">amount_gooey_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DecimalField&quot;</span>
+        <span class="n">amount_gooey_kwargs</span><span class="p">[</span><span class="s2">&quot;gooey_options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mf">0.00</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">1000000.00</span><span class="p">,</span> <span class="s2">&quot;increment&quot;</span><span class="p">:</span> <span class="mf">10.00</span><span class="p">,</span> <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+        <span class="n">notes_gooey_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Textarea&quot;</span>
+        <span class="n">date_gooey_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DateChooser&quot;</span>
+
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A short name for the expense&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;purpose&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A short description of the business &quot;</span> <span class="s2">&quot;purpose of the expense&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-b&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--business&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Is the expense type business? If not specified, defaults to travel&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-a&quot;</span><span class="p">,</span> <span class="s2">&quot;--amount&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;expense amount. required if a business &quot;</span> <span class="s2">&quot;expense.&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">amount_gooey_kwargs</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--begin-date&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input begin date for this expense. &quot;</span> <span class="s2">&quot;Defaults to today&#39;s date&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">date_gooey_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-e,&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--end-date&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input end date for this expense. &quot;</span> <span class="s2">&quot;Defaults to today&#39;s date&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">date_gooey_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-g&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--grants&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;grant, or list of grants that cover this expense. Defaults to tbd&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;tbd&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--status&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">EXPENSES_STATI</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;status, from </span><span class="si">{</span><span class="n">EXPENSES_STATI</span><span class="si">}</span><span class="s2">. Default is unsubmitted&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;unsubmitted&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-w&quot;</span><span class="p">,</span> <span class="s2">&quot;--where&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Where the expense has been submitted.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-n&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--notes&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of notes for the expense. Defaults to empty list&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="o">**</span><span class="n">notes_gooey_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;--payee&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;payee of the expense. defaults to rc.default_user_id&quot;</span><span class="p">)</span>
+    <span class="c1"># Do not delete --database arg</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--database&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The database that will be updated.  Defaults to &quot;</span> <span class="s2">&quot;first database in the regolithrc.json file.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">subpi</span></div>
+
+
+
+<div class="viewcode-block" id="ExpenseAdderHelper">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_expensehelper.ExpenseAdderHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">ExpenseAdderHelper</span><span class="p">(</span><span class="n">DbHelperBase</span><span class="p">):</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="s2">&quot;a_expense&quot;</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ExpenseAdderHelper.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_expensehelper.ExpenseAdderHelper.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span> <span class="o">=</span> <span class="n">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">payee</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">default_user_id</span><span class="p">:</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">payee</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">default_user_id</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot; No default_user_id set.  Please specify this &quot;</span>
+                    <span class="s2">&quot;either in the ~/.conf/regolith/user.json or in&quot;</span>
+                    <span class="s2">&quot; regolithrc.json&quot;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">database</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="ExpenseAdderHelper.db_updater">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_expensehelper.ExpenseAdderHelper.db_updater">[docs]</a>
+    <span class="k">def</span> <span class="nf">db_updater</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="c1"># dates</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">begin_date</span><span class="p">:</span>
+            <span class="n">begin_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">begin_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">begin_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">end_date</span><span class="p">:</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">end_date</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">begin_date</span><span class="o">.</span><span class="n">year</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">begin_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%m&#39;</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">payee</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span>
+        <span class="n">pdocl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">doc</span><span class="p">:</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="p">,</span> <span class="n">coll</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdocl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This entry appears to already exist in the collection&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdoc</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">pdoc</span> <span class="o">=</span> <span class="n">expense_constructor</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">begin_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+
+        <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">,</span> <span class="n">pdoc</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has been added in </span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

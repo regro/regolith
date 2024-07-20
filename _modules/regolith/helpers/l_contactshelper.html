@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.l_contactshelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.l_contactshelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.l_contactshelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper for finding and listing contacts from the contacts.yml database.</span>
+<span class="sd">Prints name, institution, and email (if applicable) of the contact.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">dateutil</span>
+<span class="kn">import</span> <span class="nn">dateutil.parser</span> <span class="k">as</span> <span class="nn">date_parser</span>
+<span class="kn">from</span> <span class="nn">gooey</span> <span class="kn">import</span> <span class="n">GooeyParser</span>
+
+<span class="kn">from</span> <span class="nn">regolith.dates</span> <span class="kn">import</span> <span class="n">get_dates</span><span class="p">,</span> <span class="n">is_current</span>
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.basehelper</span> <span class="kn">import</span> <span class="n">SoutHelperBase</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span><span class="p">,</span> <span class="n">fuzzy_retrieval</span><span class="p">,</span> <span class="n">get_pi_id</span><span class="p">,</span> <span class="n">search_collection</span>
+
+<span class="n">TARGET_COLL</span> <span class="o">=</span> <span class="s2">&quot;contacts&quot;</span>
+<span class="n">HELPER_TARGET</span> <span class="o">=</span> <span class="s2">&quot;l_contacts&quot;</span>
+
+
+<div class="viewcode-block" id="subparser">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_contactshelper.subparser">[docs]</a>
+<span class="k">def</span> <span class="nf">subparser</span><span class="p">(</span><span class="n">subpi</span><span class="p">):</span>
+    <span class="n">date_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">int_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subpi</span><span class="p">,</span> <span class="n">GooeyParser</span><span class="p">):</span>
+        <span class="n">date_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DateChooser&quot;</span>
+        <span class="n">int_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;IntegerField&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;run the lister. To see allowed optional arguments, type &quot;regolith helper l_contacts&quot;.&#39;</span>
+        <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Increases the verbosity of the output.&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;--name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;name or name fragment (single argument only) to use to find contacts.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--inst&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;institution or an institution fragment (single argument only) to use to find contacts.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--date&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;approximate date corresponding to when the contact was entered in the database. &quot;</span>
+        <span class="s2">&quot;Comes with a default range of 4 months centered around the date; change range using --range argument.&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">date_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-r&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--range&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;range (in months) centered around date d specified by --date, i.e. (d +/- r/2).&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">int_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--notes&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;fragment (single argument only) to be found in the notes section of a contact.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--filter&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Search this collection by giving key element pairs.&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-k&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--keys&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify what keys to return values from when running --filter. &quot;</span>
+        <span class="s2">&quot;If no argument is given the default is just the id.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">subpi</span></div>
+
+
+
+<div class="viewcode-block" id="ContactsListerHelper">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_contactshelper.ContactsListerHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">ContactsListerHelper</span><span class="p">(</span><span class="n">SoutHelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for finding and listing contacts from the contacts.yml file&quot;&quot;&quot;</span>
+
+    <span class="c1"># btype must be the same as helper target in helper.py</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="n">HELPER_TARGET</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;institutions&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ContactsListerHelper.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_contactshelper.ContactsListerHelper.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="s2">&quot;groups&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span> <span class="o">=</span> <span class="n">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">colls</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">collname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">collname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">db</span><span class="p">,</span> <span class="n">coll</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">,</span> <span class="n">colls</span><span class="p">):</span>
+            <span class="n">gtx</span><span class="p">[</span><span class="n">db</span><span class="p">]</span> <span class="o">=</span> <span class="n">coll</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="ContactsListerHelper.sout">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_contactshelper.ContactsListerHelper.sout">[docs]</a>
+    <span class="k">def</span> <span class="nf">sout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="n">list_search</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;contacts&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">list_search</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">inst</span><span class="p">:</span>
+            <span class="n">list_search</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;institution&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">inst</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
+            <span class="n">list_search</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;notes&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">notes</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">:</span>
+            <span class="n">list_search</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">)</span>
+        <span class="n">filtered_contacts_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">search_collection</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">list_search</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;    </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">filtered_contacts_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">filtered_contacts_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;    </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">date</span><span class="p">:</span>
+            <span class="n">date_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">temp_dat</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+            <span class="n">temp_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">temp_dat</span> <span class="o">-</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">relativedelta</span><span class="o">.</span><span class="n">relativedelta</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">range</span><span class="p">)))</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+                <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">temp_dat</span> <span class="o">+</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">relativedelta</span><span class="o">.</span><span class="n">relativedelta</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">range</span><span class="p">)))</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">contact</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+                <span class="n">curr_d</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">contact</span><span class="p">)[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">is_current</span><span class="p">(</span><span class="n">temp_dict</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="n">curr_d</span><span class="p">):</span>
+                    <span class="n">date_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">))</span>
+                <span class="n">filtered_contacts_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">filtered_contacts_id</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">date_list</span><span class="p">]</span>
+        <span class="n">filtered_contacts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">string_contacts</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">contact</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">filtered_contacts_id</span><span class="p">:</span>
+                <span class="n">filtered_contacts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contact</span><span class="p">)</span>
+                <span class="n">institution</span> <span class="o">=</span> <span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;institution&quot;</span><span class="p">)</span>
+                <span class="n">institution_name</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;institutions&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;_id&quot;</span><span class="p">,</span> <span class="s2">&quot;aka&quot;</span><span class="p">],</span> <span class="n">institution</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">institution_name</span><span class="p">:</span>
+                    <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;institution&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">institution_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="n">contact_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;institution&quot;</span><span class="p">,</span> <span class="s2">&quot;department&quot;</span><span class="p">,</span> <span class="s2">&quot;notes&quot;</span><span class="p">,</span> <span class="s2">&quot;aka&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="nb">list</span><span class="p">):</span>
+                                <span class="n">lst_expanded</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">        -&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)))</span>
+                                <span class="n">contact_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">        -</span><span class="si">{</span><span class="n">lst_expanded</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">contact_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">string_contacts</span> <span class="o">+=</span> <span class="n">contact_str</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">string_contacts</span> <span class="o">+=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">  |  </span><span class="si">{</span><span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">  |&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;  institution: </span><span class="si">{</span><span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;institution&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">  |&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;  email: </span><span class="si">{</span><span class="n">contact</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;missing&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">string_contacts</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+        <span class="k">return</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

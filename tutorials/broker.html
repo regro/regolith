@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Broker &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Top-level Configuration Keys" href="../rc.html" />
+    <link rel="prev" title="Tutorials" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Broker</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#storing-files-with-the-broker">Storing files with the broker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#loading-the-broker">Loading the broker</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inserting-files-into-the-store">Inserting files into the store</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#retrieving-files-from-the-store">Retrieving files from the store</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">Broker</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="broker">
+<h1>Broker<a class="headerlink" href="#broker" title="Link to this heading"></a></h1>
+<section id="storing-files-with-the-broker">
+<h2>Storing files with the broker<a class="headerlink" href="#storing-files-with-the-broker" title="Link to this heading"></a></h2>
+<p>Sharing figures (and other files) among various group members can be
+difficult, as everyone has slightly different file systems.
+Regolith has a system to help with this by providing file storage which can
+be addressed to various documents in the database. In order to do so, the user
+must clone the regolith-storage github directory into their dbs folder, and run
+python in a terminal in that (regolith-storage) directory with their
+regolith_env conda environment activated. The user must also have push rights to the
+regolith-storage git directory, and an SSH connection established.</p>
+<section id="loading-the-broker">
+<h3>Loading the broker<a class="headerlink" href="#loading-the-broker" title="Link to this heading"></a></h3>
+<p>To load the broker you need a <code class="docutils literal notranslate"><span class="pre">regolithrc.json</span></code> file. This file should
+be present in the regolith-storage directory that the user has cloned. The following
+block of code should be run in the user’s python terminal, in the cloned storage
+directory, with the regolith_env conda environment activated. If you intend to
+add a file to the heap, do not put the file in the cloned directory before loading the
+database as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">regolith.broker</span> <span class="kn">import</span> <span class="n">Broker</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">Broker</span><span class="o">.</span><span class="n">from_rc</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="inserting-files-into-the-store">
+<h3>Inserting files into the store<a class="headerlink" href="#inserting-files-into-the-store" title="Link to this heading"></a></h3>
+<p>To insert documents into the broker you can use the <code class="docutils literal notranslate"><span class="pre">add_file</span></code> interface.
+Due to the fact that the metadata is utilizing a local url and filesystem client,
+the user must add, commit, push to origin and PR the effected local databases after
+the addition of the file edits their metadata. See below for an example of how to
+both create and store a file in the regro document of the projects collection.</p>
+<p>Note: Now is the time to take files to be added and paste them into the cloned storage
+directory. Do not paste them into the _build folder, but rather the base directory.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;hello_world.png&#39;</span><span class="p">)</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="s1">&#39;projects&#39;</span><span class="p">][</span><span class="s1">&#39;regro&#39;</span><span class="p">]</span>
+<span class="n">db</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="s1">&#39;hw_file&#39;</span><span class="p">,</span> <span class="s1">&#39;hello_world.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>copy the file to the store</p></li>
+<li><p>push the store to the remote repository</p></li>
+<li><p>add the file to the <code class="docutils literal notranslate"><span class="pre">files</span></code> list in the document</p></li>
+<li><p>save the document to the database</p></li>
+<li><p>push it to the remote repository</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="retrieving-files-from-the-store">
+<h3>Retrieving files from the store<a class="headerlink" href="#retrieving-files-from-the-store" title="Link to this heading"></a></h3>
+<p>To retrieve files from the store you can use the <code class="docutils literal notranslate"><span class="pre">get_file_path</span></code> interface.
+Importantly, this will only retrieve the path to the file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">regolith.broker</span> <span class="kn">import</span> <span class="n">Broker</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">Broker</span><span class="o">.</span><span class="n">from_rc</span><span class="p">()</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="s1">&#39;projects&#39;</span><span class="p">][</span><span class="s1">&#39;regro&#39;</span><span class="p">]</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_file_path</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="s1">&#39;hw_file&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This can be used inside tex documents via the <code class="docutils literal notranslate"><span class="pre">FigureBuilder</span></code> class/CLI. In order to do so,
+the user must have latex installed on their local machine.</p>
+<p>Here is an example tex document</p>
+<div class="highlight-tex notranslate"><div class="highlight"><pre><span></span><span class="k">\documentclass</span><span class="na">[prb,twocolumn,showpacs,amsmath,amssymb,floatfix]</span><span class="nb">{</span>revtex4-1<span class="nb">}</span>
+<span class="k">\usepackage</span><span class="nb">{</span>graphicx<span class="nb">}</span>
+<span class="k">\begin</span><span class="nb">{</span>document<span class="nb">}</span>
+<span class="k">\title</span><span class="nb">{</span>My paper<span class="nb">}</span>
+<span class="k">\author</span><span class="nb">{</span>CJ<span class="nb">}</span>
+<span class="k">\affiliation</span><span class="nb">{</span>Department of Applied Physics
+and Applied Mathematics, Columbia University, New York, NY 10027<span class="nb">}</span>
+
+<span class="k">\includegraphics</span><span class="nb">{</span> <span class="nb">{{</span>-get<span class="nb">_</span>file<span class="nb">_</span>path(db[&#39;projects&#39;][&#39;regro&#39;], &#39;hw<span class="nb">_</span>file&#39;).replace(&#39;<span class="k">\\</span>&#39;, &#39;/&#39;)-<span class="nb">}}</span> <span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>document<span class="nb">}</span>
+</pre></div>
+</div>
+<p>After running <code class="docutils literal notranslate"><span class="pre">regolith</span> <span class="pre">build</span> <span class="pre">figure</span></code> in the directory
+<code class="docutils literal notranslate"><span class="pre">{{-get_file_path(db['projects']['regro'],</span> <span class="pre">'hw_file').replace('\\',</span> <span class="pre">'/')-}}</span></code> will be replaced with
+the path to the file in the store.
+This way the figure can be accessed across machines in a uniform way.</p>
+<p>Note that this isn’t limited to figures, any file can be stored in the store,
+so if there were boilerplate or short chunks which could be re-used then
+they could be stored centrally and retrieved as needed.</p>
+<p>Also note that we could have also used the builder to replace other pieces of
+the document, eg <code class="docutils literal notranslate"><span class="pre">\author{</span> <span class="pre">{{-db['people']['cwright']['name']-}}</span> <span class="pre">}</span></code> would
+have been replaced with the full name of the author.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../rc.html" class="btn btn-neutral float-right" title="Top-level Configuration Keys" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

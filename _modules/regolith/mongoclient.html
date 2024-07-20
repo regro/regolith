@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.mongoclient &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.mongoclient</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.mongoclient</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Client interface for MongoDB.</span>
+<span class="sd">Maintained such that only pymongo is necessary when using helper/builders, and additional command-line tools</span>
+<span class="sd">are necessary to install for maintenance tasks, such as fs-to-mongo.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+
+<span class="kn">from</span> <span class="nn">ruamel.yaml</span> <span class="kn">import</span> <span class="n">YAML</span>
+
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">validate_doc</span>
+
+<span class="c1">#</span>
+<span class="c1"># setup mongo</span>
+<span class="c1">#</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pymongo</span>
+
+    <span class="n">MONGO_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;pymongo not found. Please install it following the instructions &quot;</span>
+        <span class="s2">&quot;https://pymongo.readthedocs.io/en/stable/installation.html&quot;</span>
+    <span class="p">)</span>
+    <span class="n">MONGO_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="kn">from</span> <span class="nn">pymongo.collection</span> <span class="kn">import</span> <span class="n">Collection</span>
+
+<span class="kn">from</span> <span class="nn">regolith</span> <span class="kn">import</span> <span class="n">fsclient</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">dbpathname</span><span class="p">,</span> <span class="n">fallback</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">MONGO_AVAILABLE</span><span class="p">:</span>
+    <span class="n">ON_PYMONGO_V2</span> <span class="o">=</span> <span class="n">ON_PYMONGO_V3</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">elif</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+    <span class="n">ON_PYMONGO_V2</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">ON_PYMONGO_V3</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">ON_PYMONGO_V2</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">ON_PYMONGO_V3</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="import_jsons">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.import_jsons">[docs]</a>
+<span class="k">def</span> <span class="nf">import_jsons</span><span class="p">(</span><span class="n">dbpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dbname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Import the json files to mongo db.</span>
+
+<span class="sd">    Each json file will be a collection in the database. The _id will be the same as it is in the json file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dbpath : str</span>
+<span class="sd">        The path to the db folder.</span>
+
+<span class="sd">    dbname : str</span>
+<span class="sd">        The name of the database in mongo.</span>
+
+<span class="sd">    host : str</span>
+<span class="sd">        The hostname or IP address or Unix domain socket path of a single mongod or mongos instance to connect</span>
+<span class="sd">        to, or a mongodb URI, or a list of hostnames / mongodb URIs.</span>
+
+<span class="sd">    uri : str</span>
+<span class="sd">        Specify a resolvable URI connection string (enclose in quotes) to connect to the MongoDB deployment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">json_path</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">dbpath</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.json&quot;</span><span class="p">):</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mongoimport&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">host</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;--host&quot;</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="s2">&quot;--db&quot;</span><span class="p">,</span> <span class="n">dbname</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">uri</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;--uri&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">]</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;--collection&quot;</span><span class="p">,</span> <span class="n">json_path</span><span class="o">.</span><span class="n">stem</span><span class="p">,</span> <span class="s2">&quot;--file&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">json_path</span><span class="p">)]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;mongoimport command not found in environment path.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;If mongo server v4.4+ installed, download MongoDB Database Tools from:&quot;</span>
+                <span class="s2">&quot; https://www.mongodb.com/try/download/database-tools</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;and add C:</span><span class="se">\\</span><span class="s2">Program Files</span><span class="se">\\</span><span class="s2">MongoDB</span><span class="se">\\</span><span class="s2">Tools</span><span class="se">\\</span><span class="s2">&lt;ToolsVersion&gt;</span><span class="se">\\</span><span class="s2">bin</span><span class="se">\\</span><span class="s2"> to path.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;If mongo server &lt;v4.4, ensure that C:</span><span class="se">\\</span><span class="s2">Program Files</span><span class="se">\\</span><span class="s2">MongoDB</span><span class="se">\\</span><span class="s2">Server</span><span class="se">\\</span><span class="s2">&lt;ServerVersion&gt;</span><span class="se">\\</span><span class="s2">bin</span><span class="se">\\</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;has been added to the environment path.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;..................Upload failed..................&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status : FAIL&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exc</span>
+    <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="import_yamls">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.import_yamls">[docs]</a>
+<span class="k">def</span> <span class="nf">import_yamls</span><span class="p">(</span><span class="n">dbpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dbname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Import the yaml files to mongo db.</span>
+
+<span class="sd">    Each yaml file will be a collection in the database. The _id will be the id_key for each doc in the yaml file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dbpath : str</span>
+<span class="sd">        The path to the db folder.</span>
+
+<span class="sd">    dbname : str</span>
+<span class="sd">        The name of the database in mongo.</span>
+
+<span class="sd">    host : str</span>
+<span class="sd">        The hostname or IP address or Unix domain socket path of a single mongod or mongos instance to connect</span>
+<span class="sd">        to, or a mongodb URI, or a list of hostnames / mongodb URIs.</span>
+
+<span class="sd">    uri : str</span>
+<span class="sd">        Specify a resolvable URI connection string (enclose in quotes) to connect to the MongoDB deployment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">yaml_files</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">dbpath</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.yaml&quot;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="n">dbpath</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.yml&quot;</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tempd</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">yaml_file</span> <span class="ow">in</span> <span class="n">yaml_files</span><span class="p">:</span>
+            <span class="n">json_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempd</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">yaml_file</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">loader</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="s2">&quot;safe&quot;</span><span class="p">)</span>
+            <span class="n">loader</span><span class="o">.</span><span class="n">constructor</span><span class="o">.</span><span class="n">yaml_constructors</span><span class="p">[</span><span class="s2">&quot;tag:yaml.org,2002:timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">loader</span><span class="o">.</span><span class="n">constructor</span><span class="o">.</span><span class="n">yaml_constructors</span><span class="p">[</span><span class="s2">&quot;tag:yaml.org,2002:str&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">fsclient</span><span class="o">.</span><span class="n">yaml_to_json</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">json_file</span><span class="p">),</span> <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">)</span>
+        <span class="n">import_jsons</span><span class="p">(</span><span class="n">tempd</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="export_json">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.export_json">[docs]</a>
+<span class="k">def</span> <span class="nf">export_json</span><span class="p">(</span><span class="n">collection</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dbname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mongoexport&quot;</span><span class="p">,</span> <span class="s2">&quot;--collection&quot;</span><span class="p">,</span> <span class="n">collection</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">host</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;--host&quot;</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="s2">&quot;--db&quot;</span><span class="p">,</span> <span class="n">dbname</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">uri</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;--uri&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">]</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">collection</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">))]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;mongoexport command not found in environment path.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;If mongo server v4.4+ installed, download MongoDB Database Tools from:&quot;</span>
+            <span class="s2">&quot; https://www.mongodb.com/try/download/database-tools</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;and add C:</span><span class="se">\\</span><span class="s2">Program Files</span><span class="se">\\</span><span class="s2">MongoDB</span><span class="se">\\</span><span class="s2">Tools</span><span class="se">\\</span><span class="s2">&lt;ToolsVersion&gt;</span><span class="se">\\</span><span class="s2">bin</span><span class="se">\\</span><span class="s2"> to path.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;If mongo server &lt;v4.4, ensure that C:</span><span class="se">\\</span><span class="s2">Program Files</span><span class="se">\\</span><span class="s2">MongoDB</span><span class="se">\\</span><span class="s2">Server</span><span class="se">\\</span><span class="s2">&lt;ServerVersion&gt;</span><span class="se">\\</span><span class="s2">bin</span><span class="se">\\</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;has been added to the environment path.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;..................Upload failed..................&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status : FAIL&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">exc</span></div>
+
+
+
+<div class="viewcode-block" id="load_mongo_col">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.load_mongo_col">[docs]</a>
+<span class="k">def</span> <span class="nf">load_mongo_col</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="n">Collection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the pymongo collection to a dictionary.</span>
+
+<span class="sd">    In the dictionary. The key will be the &#39;_id&#39; and in each value which is a dictionary there will also be a</span>
+<span class="sd">    key &#39;_id&#39; so that the structure will be the same as the filesystem collection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    col : Collection</span>
+<span class="sd">        The mongodb collection.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dct : dict</span>
+<span class="sd">        A dictionary with all the info in the collection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]:</span> <span class="n">doc</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">find</span><span class="p">({})}</span></div>
+
+
+
+<div class="viewcode-block" id="doc_cleanup">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.doc_cleanup">[docs]</a>
+<span class="k">def</span> <span class="nf">doc_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">bson_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+    <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">doc</span></div>
+
+
+
+<div class="viewcode-block" id="bson_cleanup">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.bson_cleanup">[docs]</a>
+<span class="k">def</span> <span class="nf">bson_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method should be used prior to updating or adding a document to a collection in mongo. Specifically, this</span>
+<span class="sd">    replaces all periods in keys and _id value with a blank, and changes datetime.date to an iso string. It does so</span>
+<span class="sd">    recursively for nested dictionaries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    doc</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    doc</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">change_keys_id_and_date</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">convert</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursively goes through the dictionary obj and replaces keys with the convert function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">):</span>
+            <span class="c1"># Mongo cannot handle datetime.date format,</span>
+            <span class="c1"># but we have infrastructure to handle iso date strings present</span>
+            <span class="c1"># Do not convert to datetime.datetime. Mongo can handle this, but regolith cannot.</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">new</span><span class="p">[</span><span class="n">convert</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">change_keys_id_and_date</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">convert</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">change_keys_id_and_date</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">convert</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">return</span> <span class="n">new</span>
+
+    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">change_keys_id_and_date</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">convert</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">doc</span></div>
+
+
+
+<span class="nd">@fallback</span><span class="p">(</span><span class="n">ON_PYMONGO_V2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">InsertOneProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inserted_id</span><span class="p">,</span> <span class="n">acknowledged</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inserted_id</span> <span class="o">=</span> <span class="n">inserted_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acknowledged</span> <span class="o">=</span> <span class="n">acknowledged</span>
+
+
+<div class="viewcode-block" id="MongoClient">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient">[docs]</a>
+<span class="k">class</span> <span class="nc">MongoClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A client backed by MongoDB.</span>
+
+<span class="sd">    The mongodb server will be automatically opened when the client is initiated.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rc : RunControl</span>
+<span class="sd">        The RunControl. It may include the &#39;mongohost&#39; attribute to initiate the client.</span>
+
+<span class="sd">    client : MongoClient</span>
+<span class="sd">        The mongo client. It is initiate from the &#39;mongohost&#39; attribute if it exists in rc. Otherwise,</span>
+<span class="sd">        it will be initiated from the &#39;localhost&#39;.</span>
+
+<span class="sd">    proc : Popen</span>
+<span class="sd">        The Popen of &#39;mongod --dpath &lt;mongodbpath&gt;&#39;. The &#39;mongodbpath&#39; is from rc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">MONGO_AVAILABLE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;MongoDB is not available on the current system.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">rc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_preclean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mongodbpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="o">.</span><span class="n">mongodbpath</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">mongodbpath</span><span class="p">):</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">mongodbpath</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">mongodbpath</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_startserver</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mongodbpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="o">.</span><span class="n">mongodbpath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;mongod&quot;</span><span class="p">,</span> <span class="s2">&quot;--fork&quot;</span><span class="p">,</span> <span class="s2">&quot;--syslog&quot;</span><span class="p">,</span> <span class="s2">&quot;--dbpath&quot;</span><span class="p">,</span> <span class="n">mongodbpath</span><span class="p">],</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mongod pid: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proc</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MongoClient.is_alive">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.is_alive">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether or not the client is alive and available to</span>
+<span class="sd">        send/receive data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">ON_PYMONGO_V2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">alive</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">ON_PYMONGO_V3</span><span class="p">:</span>
+            <span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">local</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">pymongo.errors</span> <span class="kn">import</span> <span class="n">ConnectionFailure</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># The ismaster command is cheap and does not require auth.</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;ismaster&quot;</span><span class="p">)</span>
+                    <span class="n">alive</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">except</span> <span class="n">ConnectionFailure</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Server not available&quot;</span><span class="p">)</span>
+                    <span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mongostat&quot;</span><span class="p">,</span> <span class="s2">&quot;--host&quot;</span><span class="p">,</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+                    <span class="n">alive</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status : FAIL&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+                    <span class="n">alive</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">alive</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.open">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.open">[docs]</a>
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Opens the database client&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+            <span class="n">mongo_dbs_filter</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">db</span><span class="p">:</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;mongo&quot;</span> <span class="ow">or</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;mongodb&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span>
+            <span class="p">)</span>
+            <span class="n">mongo_dbs_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mongo_dbs_filter</span><span class="p">)</span>
+            <span class="n">host</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">):</span>
+                <span class="n">host</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">host</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">mongo_dbs_list</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">host</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">host</span> <span class="o">!=</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Multiple mongo clusters not supported. Use single cluster per rc.&quot;</span><span class="p">)</span>
+                            <span class="k">return</span>
+                    <span class="n">host</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">host</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;+srv&quot;</span> <span class="ow">in</span> <span class="n">host</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">local</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="s2">&quot;dst_url&quot;</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="s2">&quot;+srv&quot;</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;dst_url&quot;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">local</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># Currently configured such that password deemed unnecessary for strictly local mongo instance</span>
+            <span class="n">password_req</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">local</span>
+            <span class="k">if</span> <span class="n">password_req</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">password</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">mongo_db_password</span>
+                    <span class="k">if</span> <span class="n">host</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">host</span> <span class="o">=</span> <span class="n">host</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;pwd_from_config&quot;</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">password</span><span class="p">))</span>
+                        <span class="n">host</span> <span class="o">=</span> <span class="n">host</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;uname_from_config&quot;</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">mongo_id</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="s2">&quot;dst_url&quot;</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;dst_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;dst_url&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s2">&quot;pwd_from_config&quot;</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;dst_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;dst_url&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="s2">&quot;uname_from_config&quot;</span><span class="p">,</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote_plus</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">mongo_id</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">host</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;dst_url&quot;</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;ERROR:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;Add a username and password to user.json in &quot;</span>
+                        <span class="s2">&quot;user/.config/regolith/user.json with the keys</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;mongo_id and mongo_db_password respectively.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;&#39;uname_from_config&#39; and &#39;pwd_from_config&#39; can/should stand in for these field in the</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;mongo URL string in regolithrc.json.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">authSource</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">local</span><span class="p">:</span>
+                    <span class="c1"># we need to wait for the server to startup</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_preclean</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_startserver</span><span class="p">()</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span>
+                        <span class="s2">&quot;Mongo server exists, communication refused. Potential TLS issue.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;Attempt the following in regolith env bash terminal:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="s1">&#39;export SSL_CERT_FILE=$(python -c &quot;import certifi; print(certifi.where())&quot;)&#39;</span>
+                    <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.load_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.load_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the database information from mongo database.</span>
+
+<span class="sd">        It populate the &#39;dbs&#39; attribute with a dictionary like {database: {collection: docs_dict}}.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        db : dict</span>
+<span class="sd">            The dictionary of data base information, such as &#39;name&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dbs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span>
+        <span class="n">client</span><span class="p">:</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span>
+        <span class="kn">from</span> <span class="nn">pymongo.errors</span> <span class="kn">import</span> <span class="n">OperationFailure</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mongodb</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
+        <span class="k">except</span> <span class="n">OperationFailure</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Database name provided in regolithrc.json not found in mongodb&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">coll</span>
+                <span class="k">for</span> <span class="n">coll</span> <span class="ow">in</span> <span class="n">mongodb</span><span class="o">.</span><span class="n">list_collection_names</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">coll</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;blacklist&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;whitelist&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">coll</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;whitelist&quot;</span><span class="p">]</span>
+            <span class="p">]:</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">mongodb</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+                <span class="n">dbs</span><span class="p">[</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]][</span><span class="n">colname</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_mongo_col</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">OperationFailure</span> <span class="k">as</span> <span class="n">fail</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mongo&#39;s Error Message:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fail</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The user does not have permission to access &quot;</span> <span class="o">+</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;If erroneous, the role/mongo-account utilized likely is only read/write. List collection </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;permission as well as finding is needed&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.import_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.import_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">import_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import the database from filesystem to the mongo backend.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        db : dict</span>
+<span class="sd">            The dictionary of data base information, such as &#39;name&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">host</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dst_url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Catch the easy/common regolith rc error of putting the db uri as localhost rather than host</span>
+        <span class="k">if</span> <span class="n">uri</span> <span class="o">==</span> <span class="s2">&quot;localhost&quot;</span><span class="p">:</span>
+            <span class="n">uri</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span>
+        <span class="n">dbpath</span> <span class="o">=</span> <span class="n">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">dbname</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">import_jsons</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">)</span>
+        <span class="n">import_yamls</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.export_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.export_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">export_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Exports the database from mongo backend to the filesystem.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        db : dict</span>
+<span class="sd">            The dictionary of data base information, such as &#39;name&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">host</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dst_url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># Catch the easy/common regolith rc error of putting the db uri as localhost rather than host</span>
+        <span class="k">if</span> <span class="n">uri</span> <span class="o">==</span> <span class="s2">&quot;localhost&quot;</span><span class="p">:</span>
+            <span class="n">uri</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span>
+        <span class="n">dbpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">))</span>
+        <span class="n">dbname</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">collection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">export_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.dump_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.dump_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">dump_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps a database dict via mongoexport.&quot;&quot;&quot;</span>
+        <span class="n">dbpath</span> <span class="o">=</span> <span class="n">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">to_add</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">colls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">collection_names</span><span class="p">(</span><span class="n">include_system_collections</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">collection</span> <span class="ow">in</span> <span class="n">colls</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">collection</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;mongoexport&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;--db&quot;</span><span class="p">,</span>
+                <span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;--collection&quot;</span><span class="p">,</span>
+                <span class="n">collection</span><span class="p">,</span>
+                <span class="s2">&quot;--out&quot;</span><span class="p">,</span>
+                <span class="n">f</span><span class="p">,</span>
+            <span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status : FAIL&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">exc</span>
+            <span class="n">to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">],</span> <span class="n">collection</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">to_add</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.close">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.close">[docs]</a>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the database connection.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.keys">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">list_database_names</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MongoClient.collection_names">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.collection_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">collection_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">include_system_collections</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the collection names for the database name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">dbname</span><span class="p">]</span><span class="o">.</span><span class="n">collection_names</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.all_documents">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.all_documents">[docs]</a>
+    <span class="k">def</span> <span class="nf">all_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an iterable over all documents in a collection.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="p">{}))</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.insert_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.insert_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts one document to a database/collection.&quot;&quot;&quot;</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">doc_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="n">valid</span><span class="p">,</span> <span class="n">potential_error</span> <span class="o">=</span> <span class="n">validate_doc</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">potential_error</span><span class="p">)</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ON_PYMONGO_V2</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">InsertOneProxy</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">coll</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.insert_many">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.insert_many">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">docs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts many documents into a database/collection.&quot;&quot;&quot;</span>
+        <span class="n">docs</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">]</span>
+
+        <span class="n">screened_docs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">full_error</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+            <span class="n">valid</span><span class="p">,</span> <span class="n">potential_error</span> <span class="o">=</span> <span class="n">validate_doc</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="p">:</span>
+                <span class="n">screened_docs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+                <span class="n">full_error</span> <span class="o">+=</span> <span class="n">potential_error</span>
+                <span class="n">full_error</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">screened_docs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The following documents failed validation and were not uploaded</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">screened_docs</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">full_error</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+                    <span class="n">docs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ON_PYMONGO_V2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">coll</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">coll</span><span class="o">.</span><span class="n">insert_many</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.delete_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.delete_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes a single document from a collection&quot;&quot;&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">doc_cleanup</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ON_PYMONGO_V2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">coll</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">multi</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">coll</span><span class="o">.</span><span class="n">delete_one</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.find_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.find_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">find_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the first document matching filter.&quot;&quot;&quot;</span>
+        <span class="nb">filter</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span><span class="nb">filter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doc</span></div>
+
+
+<div class="viewcode-block" id="MongoClient.update_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.mongoclient.MongoClient.update_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates one document.&quot;&quot;&quot;</span>
+        <span class="nb">filter</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">)</span>
+        <span class="n">newdoc</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">filter</span> <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">doc</span><span class="p">)</span>
+        <span class="n">newdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+        <span class="n">valid</span><span class="p">,</span> <span class="n">potential_error</span> <span class="o">=</span> <span class="n">validate_doc</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="n">newdoc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">potential_error</span><span class="p">)</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="n">update</span> <span class="o">=</span> <span class="n">bson_cleanup</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ON_PYMONGO_V2</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">coll</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span><span class="nb">filter</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;upsert&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;could not update non-existing document&quot;</span><span class="p">)</span>
+                <span class="n">newdoc</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">filter</span><span class="p">)</span>
+                <span class="n">newdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">update</span><span class="p">[</span><span class="s2">&quot;$set&quot;</span><span class="p">])</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">newdoc</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">coll</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">coll</span><span class="o">.</span><span class="n">find_one_and_update</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;$set&quot;</span><span class="p">:</span> <span class="n">update</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

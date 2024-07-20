@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.fsclient &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.fsclient</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.fsclient</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Contains a client database backed by the file system.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">iglob</span>
+
+<span class="kn">import</span> <span class="nn">ruamel.yaml</span>
+<span class="kn">from</span> <span class="nn">ruamel.yaml</span> <span class="kn">import</span> <span class="n">YAML</span>
+<span class="kn">from</span> <span class="nn">ruamel.yaml.comments</span> <span class="kn">import</span> <span class="n">CommentedMap</span><span class="p">,</span> <span class="n">CommentedSeq</span>
+
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">dbpathname</span>
+
+
+<div class="viewcode-block" id="DelayedKeyboardInterrupt">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.DelayedKeyboardInterrupt">[docs]</a>
+<span class="k">class</span> <span class="nc">DelayedKeyboardInterrupt</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_received</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_handler</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DelayedKeyboardInterrupt.handler">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.DelayedKeyboardInterrupt.handler">[docs]</a>
+    <span class="k">def</span> <span class="nf">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_received</span> <span class="o">=</span> <span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;SIGINT received. Delaying KeyboardInterrupt.&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_handler</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_received</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_handler</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">signal_received</span><span class="p">)</span></div>
+
+
+
+<span class="n">YAML_BASE_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="n">CommentedMap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">CommentedSeq</span><span class="p">:</span> <span class="nb">list</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_rec_re_type</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Destroy this when ruamel.yaml supports basetypes again&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="n">YAML_BASE_MAP</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">YAML_BASE_MAP</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)]()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">base</span><span class="p">[</span><span class="n">_rec_re_type</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_rec_re_type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">base</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_rec_re_type</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="n">base</span>
+
+
+<span class="k">def</span> <span class="nf">_id_key</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="load_json">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.load_json">[docs]</a>
+<span class="k">def</span> <span class="nf">load_json</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a JSON file and returns a dict of its documents.&quot;&quot;&quot;</span>
+    <span class="n">docs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">docs</span><span class="p">[</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">doc</span>
+    <span class="k">return</span> <span class="n">docs</span></div>
+
+
+
+<div class="viewcode-block" id="date_encoder">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.date_encoder">[docs]</a>
+<span class="k">def</span> <span class="nf">date_encoder</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="dump_json">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.dump_json">[docs]</a>
+<span class="k">def</span> <span class="nf">dump_json</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">date_handler</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dumps a dict of documents into a file.&quot;&quot;&quot;</span>
+    <span class="n">docs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">docs</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">date_handler</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_yaml">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.load_yaml">[docs]</a>
+<span class="k">def</span> <span class="nf">load_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">return_inst</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a YAML file and returns a dict of its documents.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="n">loader</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">docs</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="n">docs</span> <span class="o">=</span> <span class="n">_rec_re_type</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_id</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_id</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">docs</span><span class="p">,</span> <span class="n">inst</span><span class="p">)</span> <span class="k">if</span> <span class="n">return_inst</span> <span class="k">else</span> <span class="n">docs</span></div>
+
+
+
+<div class="viewcode-block" id="dump_yaml">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.dump_yaml">[docs]</a>
+<span class="k">def</span> <span class="nf">dump_yaml</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">inst</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dumps a dict of documents into a file.&quot;&quot;&quot;</span>
+    <span class="n">inst</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span> <span class="k">if</span> <span class="n">inst</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">inst</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">representer</span><span class="o">.</span><span class="n">ignore_aliases</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">data</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="n">inst</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">mapping</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">sorted_dict</span> <span class="o">=</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">CommentedMap</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">docs</span><span class="p">):</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">docs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">doc</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span>
+        <span class="n">sorted_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">CommentedMap</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">kk</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">sorted_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">DelayedKeyboardInterrupt</span><span class="p">():</span>
+            <span class="n">inst</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">sorted_dict</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">fh</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="json_to_yaml">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.json_to_yaml">[docs]</a>
+<span class="k">def</span> <span class="nf">json_to_yaml</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a JSON file to a YAML one.&quot;&quot;&quot;</span>
+    <span class="n">docs</span> <span class="o">=</span> <span class="n">load_json</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+    <span class="n">dump_yaml</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">docs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="yaml_to_json">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.yaml_to_json">[docs]</a>
+<span class="k">def</span> <span class="nf">yaml_to_json</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a YAML file to a JSON one.&quot;&quot;&quot;</span>
+    <span class="n">docs</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">)</span>
+    <span class="n">dump_json</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">docs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="FileSystemClient">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient">[docs]</a>
+<span class="k">class</span> <span class="nc">FileSystemClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A client database backed by the file system.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">rc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collfiletypes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collexts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_yamlinsts</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="FileSystemClient.is_alive">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.is_alive">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.open">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.open">[docs]</a>
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.load_json">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.load_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads the JSON part of a database.&quot;&quot;&quot;</span>
+        <span class="n">dbs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">file</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">iglob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="s2">&quot;*.json&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;blacklist&quot;</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;whitelist&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;whitelist&quot;</span><span class="p">]</span>
+        <span class="p">]:</span>
+            <span class="n">collfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">base</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">collfilename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_collfiletypes</span><span class="p">[</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loading &quot;</span> <span class="o">+</span> <span class="n">f</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+            <span class="n">dbs</span><span class="p">[</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]][</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_json</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.load_yaml">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.load_yaml">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads the YAML part of a database.&quot;&quot;&quot;</span>
+        <span class="n">dbs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">file</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">iglob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="s2">&quot;*.y*ml&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;blacklist&quot;</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;whitelist&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="s2">&quot;whitelist&quot;</span><span class="p">]</span>
+        <span class="p">]:</span>
+            <span class="n">collfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">base</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">collfilename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_collexts</span><span class="p">[</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="n">ext</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_collfiletypes</span><span class="p">[</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;yaml&quot;</span>
+            <span class="c1"># print(&quot;loading &quot; + f + &quot;...&quot;, file=sys.stderr)</span>
+            <span class="n">coll</span><span class="p">,</span> <span class="n">inst</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">return_inst</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">dbs</span><span class="p">[</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]][</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="n">coll</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yamlinsts</span><span class="p">[</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="n">inst</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.load_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.load_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads a database.&quot;&quot;&quot;</span>
+        <span class="n">dbpath</span> <span class="o">=</span> <span class="n">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_json</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_yaml</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.dump_json">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.dump_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">dump_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps json docs and returns filename&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">collname</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+        <span class="n">dump_json</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">docs</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.dump_yaml">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.dump_yaml">[docs]</a>
+    <span class="k">def</span> <span class="nf">dump_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps json docs and returns filename&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">collname</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collexts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">))</span>
+        <span class="n">inst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yamlinsts</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">collname</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">dump_yaml</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">docs</span><span class="p">,</span> <span class="n">inst</span><span class="o">=</span><span class="n">inst</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.dump_database">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.dump_database">[docs]</a>
+    <span class="k">def</span> <span class="nf">dump_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps a database back to the filesystem.&quot;&quot;&quot;</span>
+        <span class="n">dbpath</span> <span class="o">=</span> <span class="n">dbpathname</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dbpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">to_add</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">collname</span><span class="p">,</span> <span class="n">collection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># print(&quot;dumping &quot; + collname + &quot;...&quot;, file=sys.stderr)</span>
+            <span class="n">filetype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collfiletypes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="s2">&quot;yaml&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filetype</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_json</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">filetype</span> <span class="o">==</span> <span class="s2">&quot;yaml&quot;</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_yaml</span><span class="p">(</span><span class="n">collection</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">dbpath</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;did not recognize file type for regolith&quot;</span><span class="p">)</span>
+            <span class="n">to_add</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">db</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">],</span> <span class="n">filename</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">to_add</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.close">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.close">[docs]</a>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.keys">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FileSystemClient.collection_names">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.collection_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">collection_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">include_system_collections</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the collaction names for a database.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.all_documents">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.all_documents">[docs]</a>
+    <span class="k">def</span> <span class="nf">all_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an iteratable over all documents in a collection.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="p">{}))</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chained_db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">collname</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.insert_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.insert_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts one document to a database/collection.&quot;&quot;&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="n">coll</span><span class="p">[</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">doc</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.insert_many">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.insert_many">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">docs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inserts many documents into a database/collection.&quot;&quot;&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+            <span class="n">coll</span><span class="p">[</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">doc</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.delete_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.delete_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes a single document from a collection&quot;&quot;&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">coll</span><span class="p">[</span><span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.find_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.find_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">find_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the first document matching filter.&quot;&quot;&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">coll</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">filter</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">doc</span> <span class="ow">or</span> <span class="n">doc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">matches</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">doc</span></div>
+
+
+<div class="viewcode-block" id="FileSystemClient.update_one">
+<a class="viewcode-back" href="../../api/index.html#regolith.fsclient.FileSystemClient.update_one">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates one document.&quot;&quot;&quot;</span>
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">dbname</span><span class="p">][</span><span class="n">collname</span><span class="p">]</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">collname</span><span class="p">,</span> <span class="nb">filter</span><span class="p">)</span>
+        <span class="n">newdoc</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">filter</span> <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">doc</span><span class="p">)</span>
+        <span class="n">newdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+        <span class="n">coll</span><span class="p">[</span><span class="n">newdoc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">newdoc</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

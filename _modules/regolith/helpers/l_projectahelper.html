@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.l_projectahelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.l_projectahelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.l_projectahelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper for listing upcoming (and past) projectum milestones.</span>
+
+<span class="sd">Projecta are small bite-sized project quanta that typically will result in</span>
+<span class="sd">one manuscript.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">dateutil.parser</span> <span class="k">as</span> <span class="nn">date_parser</span>
+<span class="kn">from</span> <span class="nn">gooey</span> <span class="kn">import</span> <span class="n">GooeyParser</span>
+
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.basehelper</span> <span class="kn">import</span> <span class="n">SoutHelperBase</span>
+<span class="kn">from</span> <span class="nn">regolith.schemas</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PROJECTUM_ACTIVE_STATI</span><span class="p">,</span>
+    <span class="n">PROJECTUM_CANCELLED_STATI</span><span class="p">,</span>
+    <span class="n">PROJECTUM_FINISHED_STATI</span><span class="p">,</span>
+    <span class="n">PROJECTUM_PAUSED_STATI</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span><span class="p">,</span> <span class="n">collection_str</span><span class="p">,</span> <span class="n">get_pi_id</span><span class="p">,</span> <span class="n">key_value_pair_filter</span>
+
+<span class="n">TARGET_COLL</span> <span class="o">=</span> <span class="s2">&quot;projecta&quot;</span>
+<span class="n">HELPER_TARGET</span> <span class="o">=</span> <span class="s2">&quot;l_projecta&quot;</span>
+<span class="n">INACTIVE_STATI</span> <span class="o">=</span> <span class="n">PROJECTUM_PAUSED_STATI</span> <span class="o">+</span> <span class="n">PROJECTUM_CANCELLED_STATI</span>
+
+
+<div class="viewcode-block" id="subparser">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_projectahelper.subparser">[docs]</a>
+<span class="k">def</span> <span class="nf">subparser</span><span class="p">(</span><span class="n">subpi</span><span class="p">):</span>
+    <span class="n">date_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">int_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subpi</span><span class="p">,</span> <span class="n">GooeyParser</span><span class="p">):</span>
+        <span class="n">date_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DateChooser&quot;</span>
+        <span class="n">int_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;IntegerField&quot;</span>
+
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-l&quot;</span><span class="p">,</span> <span class="s2">&quot;--lead&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter milestones for this project lead, &quot;</span> <span class="s2">&quot;specified by id, e.g., sbillinge&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--person&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter milestones for this person whether lead or &quot;</span> <span class="s2">&quot;not, specified by id, e.g., sbillinge&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-g&quot;</span><span class="p">,</span> <span class="s2">&quot;--grant&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter projecta by a grant ID&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--current&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Lists only active projecta. If not specified, will be active and paused but not cancelled&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;increase verbosity of output&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--grp_by_lead&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Lists all projecta by their lead&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--orphans&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Find all orphans: prums that are assigned to &#39;tbd&#39; or have a &quot;</span> <span class="s2">&quot;non active person as lead&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--all&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Lists all projecta including those with statuses &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;in </span><span class="si">{</span><span class="o">*</span><span class="n">PROJECTUM_CANCELLED_STATI</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2"> that are excluded by default&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-e&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--ended&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Lists projecta that have ended. Use the -r flag to specify &quot;</span>
+        <span class="s2">&quot;how many days prior to today to search over for finished&quot;</span>
+        <span class="s2">&quot;prums (default is 7 days). &quot;</span>
+        <span class="s2">&quot;You may also use -d to change date used to search back&quot;</span>
+        <span class="s2">&quot;from (mostly used for testing)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-r&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--range&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;date range back from DATE, in days, to search over &quot;</span>
+        <span class="s2">&quot;for finished prums.&quot;</span>
+        <span class="s2">&quot;If no range is specified, search range will be 7 days&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--filter&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Search this collection by giving key element pairs&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-k&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--keys&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify what keys to return values from when running --filter. &quot;</span>
+        <span class="s2">&quot;If no argument is given the default is just the id.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--date&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;projecta with end_date within RANGE before this date will be listed. &quot;</span>
+        <span class="s2">&quot;The default is today. Some projecta don&#39;t have an end date and won&#39;t appear in a search. &quot;</span>
+        <span class="s2">&quot;mostly used for testing.&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">date_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">subpi</span></div>
+
+
+
+<div class="viewcode-block" id="ProjectaListerHelper">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_projectahelper.ProjectaListerHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">ProjectaListerHelper</span><span class="p">(</span><span class="n">SoutHelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for listing upcoming (and past) projectum milestones.</span>
+
+<span class="sd">    Projecta are small bite-sized project quanta that typically will result in</span>
+<span class="sd">    one manuscript.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># btype must be the same as helper target in helper.py</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="n">HELPER_TARGET</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ProjectaListerHelper.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_projectahelper.ProjectaListerHelper.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="s2">&quot;groups&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span> <span class="o">=</span> <span class="n">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">colls</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">collname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">collname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">db</span><span class="p">,</span> <span class="n">coll</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">,</span> <span class="n">colls</span><span class="p">):</span>
+            <span class="n">gtx</span><span class="p">[</span><span class="n">db</span><span class="p">]</span> <span class="o">=</span> <span class="n">coll</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="ProjectaListerHelper.sout">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_projectahelper.ProjectaListerHelper.sout">[docs]</a>
+    <span class="k">def</span> <span class="nf">sout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="n">key_value_pair_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;projecta&quot;</span><span class="p">],</span> <span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;projecta&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">ended</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">grant</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">grp_by_lead</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">current</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">orphans</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">date</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">range</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="mi">7</span>
+        <span class="n">since_date</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">range</span><span class="p">))</span>
+
+        <span class="n">projecta</span><span class="p">,</span> <span class="n">end_projecta</span><span class="p">,</span> <span class="n">error_projecta</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">grouped_projecta</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">grant</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">prum</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span> <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">grant</span> <span class="ow">in</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grants&quot;</span><span class="p">,</span> <span class="p">[])]</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">orphans</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span> <span class="ow">or</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;you cannot specify lead or person with orphans&quot;</span><span class="p">)</span>
+            <span class="n">dead_parents</span> <span class="o">=</span> <span class="p">[</span><span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">)]</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">prum</span>
+                <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span>
+                <span class="k">if</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dead_parents</span>
+                <span class="ow">and</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">PROJECTUM_ACTIVE_STATI</span> <span class="o">+</span> <span class="n">PROJECTUM_PAUSED_STATI</span>
+                <span class="ow">or</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;tbd&quot;</span>
+            <span class="p">]</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span> <span class="ow">or</span> <span class="n">rc</span><span class="o">.</span><span class="n">orphans</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;please specify either lead or person, not both&quot;</span><span class="p">)</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">prum</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span> <span class="k">if</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">orphans</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;please specify either lead or person, not both&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">person</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">]</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">prum</span>
+                <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span>
+                <span class="k">if</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span>
+                <span class="ow">or</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;group_members&quot;</span><span class="p">,</span> <span class="p">[]))</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">)))</span>
+            <span class="p">]</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">current</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">prum</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span> <span class="k">if</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">PROJECTUM_ACTIVE_STATI</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">all</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">prum</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span> <span class="k">if</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PROJECTUM_CANCELLED_STATI</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">projectum</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">ended</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PROJECTUM_ACTIVE_STATI</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">INACTIVE_STATI</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">elif</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PROJECTUM_FINISHED_STATI</span><span class="p">:</span>
+                        <span class="n">error_projecta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">projectum</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">),</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)])</span>
+                        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                            <span class="n">error_projecta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">projectum</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">end_date</span> <span class="o">=</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                            <span class="n">end_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">since_date</span> <span class="o">&lt;=</span> <span class="n">end_date</span> <span class="o">&lt;=</span> <span class="n">now</span><span class="p">:</span>
+                            <span class="n">end_projecta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">projectum</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">end_projecta</span> <span class="o">!=</span> <span class="p">[]:</span>
+                    <span class="n">projecta</span> <span class="o">=</span> <span class="n">end_projecta</span>
+                <span class="k">continue</span>
+            <span class="n">projecta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">projectum</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">projecta</span><span class="p">:</span>
+                <span class="n">grants</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grants&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grants&quot;</span><span class="p">),</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">grants</span> <span class="o">=</span> <span class="s2">&quot; ,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grants&quot;</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">grants</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grants&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;finished&quot;</span><span class="p">:</span>
+                    <span class="n">ended</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;, end_date: </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;end_date&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ended</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;    status: </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, begin_date: </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;begin_date&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;due_date: </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;deliverable&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;due_date&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">ended</span><span class="si">}</span><span class="s2">, grant: </span><span class="si">{</span><span class="n">grants</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    description: </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    team:&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;        lead: </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lead&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">grp_members</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;group_members&quot;</span><span class="p">):</span>
+                    <span class="n">grp_members</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;group_members&quot;</span><span class="p">))</span>
+                <span class="n">collaborators</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;collaborators&quot;</span><span class="p">):</span>
+                    <span class="n">collaborators</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;collaborators&quot;</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;        group_members: </span><span class="si">{</span><span class="n">grp_members</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;        collaborators: </span><span class="si">{</span><span class="n">collaborators</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">grp_by_lead</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">projecta</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grouped_projecta</span><span class="p">:</span>
+                    <span class="n">grouped_projecta</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">output</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">grouped_projecta</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">grouped_projecta</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">projecta</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prum</span><span class="p">:</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">collection_str</span><span class="p">(</span><span class="n">projecta</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">end_projecta</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="k">if</span> <span class="n">now</span> <span class="o">==</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="ow">and</span> <span class="n">rc</span><span class="o">.</span><span class="n">range</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Projecta finished this past week! o(*^v^*)o&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Projecta finished within the </span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">range</span><span class="si">}</span><span class="s2"> days leading up to </span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">end_projecta</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">and</span> <span class="n">rc</span><span class="o">.</span><span class="n">ended</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">now</span> <span class="o">==</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="ow">and</span> <span class="n">rc</span><span class="o">.</span><span class="n">range</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">No projecta finished this week&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">No projecta finished within the </span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">range</span><span class="si">}</span><span class="s2"> days leading up to </span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">projecta</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">error_projecta</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING: These projecta have an issue with the end date and/or status, &quot;</span>
+                <span class="s2">&quot;please run f_prum to set status to finished and add an end date&quot;</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">error_projecta</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

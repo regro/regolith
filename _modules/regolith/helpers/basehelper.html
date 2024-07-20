@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.basehelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.basehelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.basehelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Builder Base Classes&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
+
+<span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Environment</span><span class="p">,</span> <span class="n">FileSystemLoader</span>
+<span class="kn">from</span> <span class="nn">xonsh.lib</span> <span class="kn">import</span> <span class="n">subprocess</span>
+
+<span class="kn">from</span> <span class="nn">regolith.sorters</span> <span class="kn">import</span> <span class="n">category_val</span><span class="p">,</span> <span class="n">date_key</span><span class="p">,</span> <span class="n">doc_date_key</span><span class="p">,</span> <span class="n">level_val</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">LATEX_OPTS</span><span class="p">,</span> <span class="n">date_to_rfc822</span><span class="p">,</span> <span class="n">gets</span><span class="p">,</span> <span class="n">latex_safe</span><span class="p">,</span> <span class="n">latex_safe_url</span><span class="p">,</span> <span class="n">month_and_year</span><span class="p">,</span> <span class="n">rfc822now</span>
+
+
+<div class="viewcode-block" id="HelperBase">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.HelperBase">[docs]</a>
+<span class="k">class</span> <span class="nc">HelperBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for helpers&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">rc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bldir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">builddir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">btype</span><span class="p">)</span>
+        <span class="c1"># allow subclasses to override</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;env&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span>
+                <span class="n">loader</span><span class="o">=</span><span class="n">FileSystemLoader</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;templates&quot;</span><span class="p">,</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span>
+                            <span class="s2">&quot;templates&quot;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmds</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="HelperBase.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.HelperBase.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;len&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;True&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;False&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;sorted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;groupby&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groupby</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;gets&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gets</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;date_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_key</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;doc_date_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">doc_date_key</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;level_val&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">level_val</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;category_val&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">category_val</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;rfc822now&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rfc822now</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;date_to_rfc822&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_to_rfc822</span></div>
+
+
+<div class="viewcode-block" id="HelperBase.render">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.HelperBase.render">[docs]</a>
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tname</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render the template into a file using the kwargs and global context</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tname : str</span>
+<span class="sd">            Template name</span>
+<span class="sd">        fname : str</span>
+<span class="sd">            Resulting file name</span>
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            Additional kwargs to the renderer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="n">tname</span><span class="p">)</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s2">&quot;rc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rc&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s2">&quot;static&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;static&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="s2">&quot;static&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s2">&quot;root&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">)))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bldir</span><span class="p">,</span> <span class="n">fname</span><span class="p">),</span> <span class="s2">&quot;wt&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HelperBase.hlp">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.HelperBase.hlp">[docs]</a>
+    <span class="k">def</span> <span class="nf">hlp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;run the helper, note this runs any of the commands</span>
+<span class="sd">        listed in ``self.cmds``&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmds</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SoutHelperBase">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.SoutHelperBase">[docs]</a>
+<span class="k">class</span> <span class="nc">SoutHelperBase</span><span class="p">(</span><span class="n">HelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for builders that just print to sout&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sout&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="DbHelperBase">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.DbHelperBase">[docs]</a>
+<span class="k">class</span> <span class="nc">DbHelperBase</span><span class="p">(</span><span class="n">HelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for builders that update databases&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;db_updater&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="LatexHelperBase">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.LatexHelperBase">[docs]</a>
+<span class="k">class</span> <span class="nc">LatexHelperBase</span><span class="p">(</span><span class="n">HelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for Latex builders&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span> <span class="s2">&quot;clean&quot;</span><span class="p">]</span>
+
+    <span class="c1">#        if HAVE_BIBTEX_PARSER:</span>
+    <span class="c1">#            self.bibdb = BibDatabase()</span>
+    <span class="c1">#            self.bibwriter = BibTexWriter()</span>
+
+<div class="viewcode-block" id="LatexHelperBase.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.LatexHelperBase.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;month_and_year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">month_and_year</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;latex_safe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">latex_safe</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;latex_safe_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">latex_safe_url</span></div>
+
+
+<div class="viewcode-block" id="LatexHelperBase.run">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.LatexHelperBase.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run command in build dir&quot;&quot;&quot;</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bldir</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LatexHelperBase.pdf">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.LatexHelperBase.pdf">[docs]</a>
+    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compiles latex files to PDF&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span><span class="o">.</span><span class="n">pdf</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;latex&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LATEX_OPTS</span> <span class="o">+</span> <span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.tex&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;bibtex&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.aux&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;latex&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LATEX_OPTS</span> <span class="o">+</span> <span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.tex&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;pdflatex&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LATEX_OPTS</span> <span class="o">+</span> <span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.tex&quot;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;latex&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LATEX_OPTS</span> <span class="o">+</span> <span class="p">[</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;.tex&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;dvipdf&quot;</span><span class="p">,</span> <span class="n">base</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="LatexHelperBase.clean">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.basehelper.LatexHelperBase.clean">[docs]</a>
+    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove files created by latex&quot;&quot;&quot;</span>
+        <span class="n">postfixes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;*.dvi&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.toc&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.aux&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.out&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.log&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.bbl&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.blg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.log&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.spl&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*~&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.spl&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*.run.xml&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*-blx.bib&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">to_rm</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pst</span> <span class="ow">in</span> <span class="n">postfixes</span><span class="p">:</span>
+            <span class="n">to_rm</span> <span class="o">+=</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bldir</span><span class="p">,</span> <span class="n">pst</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">to_rm</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

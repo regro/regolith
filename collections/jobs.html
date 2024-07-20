@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jobs &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Meetings" href="meetings.html" />
+    <link rel="prev" title="Institutions" href="institutions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Collections</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="abstracts.html">Abstracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="assignments.html">Assignments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="beamplan.html">Beamplan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blog.html">Blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="citations.html">Citations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="courses.html">Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expenses.html">Expenses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formalletters.html">Formalletters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grades.html">Grades</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grants.html">Grants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groups.html">Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="institutions.html">Institutions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Jobs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#schema">Schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-example">YAML Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json-mongo-example">JSON/Mongo Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="meetings.html">Meetings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="news.html">News</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html">People</a></li>
+<li class="toctree-l2"><a class="reference internal" href="presentations.html">Presentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projecta.html">Projecta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects.html">Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposalReviews.html">Proposalreviews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposals.html">Proposals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reading_lists.html">Reading_Lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refereeReports.html">Refereereports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="software.html">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="students.html">Students</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todos.html">Todos</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Collections</a></li>
+      <li class="breadcrumb-item active">Jobs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="jobs">
+<h1>Jobs<a class="headerlink" href="#jobs" title="Link to this heading"></a></h1>
+<p>This collection describes the research group jobs. This is normally public data.</p>
+<section id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="Link to this heading"></a></h2>
+<p>The following lists key names mapped to its type and meaning for each entry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">_id<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or number, unique job identifier</p>
+</dd>
+<dt class="field-even">title<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, Job title</p>
+</dd>
+<dt class="field-odd">description<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, long description of the position</p>
+</dd>
+<dt class="field-even">open<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, flag for whether the job is currently open or not.</p>
+</dd>
+<dt class="field-odd">contact<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, contact information for how to apply</p>
+</dd>
+<dt class="field-even">positions<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of strings, positions such as “Graduate Student”, “Post-doctoral Scholar”,</p>
+</dd>
+<dt class="field-odd">background_fields<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str, previous disciplines, e.g. Nuclear Engineering or Computer Science</p>
+</dd>
+<dt class="field-even">year<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, year job posted</p>
+</dd>
+<dt class="field-odd">month<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, month the job was posted</p>
+</dd>
+<dt class="field-even">day<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, day the job was posted</p>
+</dd>
+<dt class="field-odd">start_date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, expected start date or “ASAP” or similar</p>
+</dd>
+<dt class="field-even">expertise<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, Current skills applicatns should have</p>
+</dd>
+<dt class="field-odd">compensation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str, list of compensations for the position.</p>
+</dd>
+</dl>
+</section>
+<section id="yaml-example">
+<h2>YAML Example<a class="headerlink" href="#yaml-example" title="Link to this heading"></a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="s">&#39;0004&#39;</span><span class="p p-Indicator">:</span>
+<span class="w">  </span><span class="nt">background_fields</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Data Science</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Data Engineering</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Computer Engineering</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Computer Science</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Applied Mathematics</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Physics</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Nuclear Engineering</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mechanical Engineering</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Or similar</span>
+<span class="w">  </span><span class="nt">compensation</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Salary and compensation will be based on prior work experience.</span>
+<span class="w">  </span><span class="nt">contact</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Please send CV or resume to Prof. Scopatz at scopatzATcec.sc.edu.</span>
+<span class="w">  </span><span class="nt">day</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;p&gt;We are seeking a dedicated individual to help to aid in the maintenance</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">of open source scientific computing projects. This includes duties such as:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Release</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">management&lt;/li&gt;&lt;li&gt;Continuous integration&lt;/li&gt;&lt;li&gt;Help with testing&lt;/li&gt;&lt;li&gt;Code</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">review&lt;/li&gt;&lt;li&gt;and more!&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Representative projects of interest include:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">href=&quot;http://fuelcycle.org/&quot;&gt;Cyclus&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;http://pyne.io/&quot;&gt;PyNE&lt;/a&gt;&lt;/li&gt;&lt;li&gt;and</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">others.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This position will likely make you the most loved person on</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">these projects.&lt;/p&gt;</span>
+<span class="w">  </span><span class="nt">expertise</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;p&gt;Applicable software development skills include knowledge of:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;At</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">least one programming language, preferred languages include:&lt;ul&gt;&lt;li&gt;Python&lt;/li&gt;&lt;li&gt;Haskell&lt;/li&gt;&lt;li&gt;C++&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;git</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">or hg, or other version control system&lt;/li&gt;&lt;li&gt;Test-driven development&lt;/li&gt;&lt;li&gt;Other</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">software development best practices.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Potentially useful other software</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">development skills include:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Shell (Bash, Fish, Xonsh)&lt;/li&gt;&lt;/ul&gt;</span>
+<span class="w">  </span><span class="nt">month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">July</span>
+<span class="w">  </span><span class="nt">open</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">positions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Scientific Software Developer</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Programmer</span>
+<span class="w">  </span><span class="nt">start_date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ASAP</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Open Source Scientific Software Maintainer</span>
+<span class="w">  </span><span class="nt">year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2015</span>
+</pre></div>
+</div>
+</section>
+<section id="json-mongo-example">
+<h2>JSON/Mongo Example<a class="headerlink" href="#json-mongo-example" title="Link to this heading"></a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0004&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;background_fields&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Data Science&quot;</span><span class="p">,</span>
+<span class="w">                       </span><span class="s2">&quot;Data Engineering&quot;</span><span class="p">,</span>
+<span class="w">                       </span><span class="s2">&quot;Computer Engineering&quot;</span><span class="p">,</span>
+<span class="w">                       </span><span class="s2">&quot;Computer Science&quot;</span><span class="p">,</span>
+<span class="w">                       </span><span class="s2">&quot;Applied Mathematics&quot;</span><span class="p">,</span>
+<span class="w">                       </span><span class="s2">&quot;Physics&quot;</span><span class="p">,</span>
+<span class="w">                       </span><span class="s2">&quot;Nuclear Engineering&quot;</span><span class="p">,</span>
+<span class="w">                       </span><span class="s2">&quot;Mechanical Engineering&quot;</span><span class="p">,</span>
+<span class="w">                       </span><span class="s2">&quot;Or similar&quot;</span><span class="p">],</span>
+<span class="w"> </span><span class="nt">&quot;compensation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Salary and compensation will be based on prior work experience.&quot;</span><span class="p">],</span>
+<span class="w"> </span><span class="nt">&quot;contact&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Please send CV or resume to Prof. Scopatz at scopatzATcec.sc.edu.&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;p&gt;We are seeking a dedicated individual to help to aid in ...&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;month&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;July&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;open&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;positions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Scientific Software Developer&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Programmer&quot;</span><span class="p">],</span>
+<span class="w"> </span><span class="nt">&quot;start_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASAP&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Open Source Scientific Software Maintainer&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2015</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="institutions.html" class="btn btn-neutral float-left" title="Institutions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="meetings.html" class="btn btn-neutral float-right" title="Meetings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

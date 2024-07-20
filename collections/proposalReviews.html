@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proposalreviews &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Proposals" href="proposals.html" />
+    <link rel="prev" title="Projects" href="projects.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Collections</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="abstracts.html">Abstracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="assignments.html">Assignments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="beamplan.html">Beamplan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blog.html">Blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="citations.html">Citations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="courses.html">Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expenses.html">Expenses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formalletters.html">Formalletters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grades.html">Grades</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grants.html">Grants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groups.html">Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="institutions.html">Institutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html">Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meetings.html">Meetings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="news.html">News</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html">People</a></li>
+<li class="toctree-l2"><a class="reference internal" href="presentations.html">Presentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projecta.html">Projecta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects.html">Projects</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Proposalreviews</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#schema">Schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-example">YAML Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json-mongo-example">JSON/Mongo Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="proposals.html">Proposals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reading_lists.html">Reading_Lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refereeReports.html">Refereereports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="software.html">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="students.html">Students</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todos.html">Todos</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Collections</a></li>
+      <li class="breadcrumb-item active">Proposalreviews</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="proposalreviews">
+<h1>Proposalreviews<a class="headerlink" href="#proposalreviews" title="Link to this heading"></a></h1>
+<p>This collection contains reviews of funding proposals</p>
+<section id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="Link to this heading"></a></h2>
+<p>The following lists key names mapped to its type and meaning for each entry.</p>
+<dl class="field-list">
+<dt class="field-odd">_id<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘integer’, ‘float’], ID, e.g. 1906_doe_example, required</p>
+</dd>
+<dt class="field-even">adequacy_of_resources<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, Are the resources of the PI adequate, required</p>
+</dd>
+<dt class="field-odd">agency<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, currently nsf, doe or other, optional</p>
+<dl class="simple">
+<dt>Allowed values:</dt><dd><ul class="simple">
+<li><p>nsf</p></li>
+<li><p>doe</p></li>
+<li><p>other</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">competency_of_team<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, Is the team competent, required</p>
+</dd>
+<dt class="field-odd">doe_appropriateness_of_approach<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, Appropriateness of Research. only used if agency is doe., optional</p>
+</dd>
+<dt class="field-even">doe_reasonableness_of_budget<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, Reasonableness of budget. only used if agency is doe., optional</p>
+</dd>
+<dt class="field-odd">doe_relevance_to_program_mission<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, Relevance to program mission. only used if agency is doe., optional</p>
+</dd>
+<dt class="field-even">does_how<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, How will the research be done, required</p>
+</dd>
+<dt class="field-odd">does_what<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, What will the team do, required</p>
+</dd>
+<dt class="field-even">due_date<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘string’, ‘date’], date the review is due in ISO format, required</p>
+</dd>
+<dt class="field-odd">freewrite<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘list’], Anything and this will appear in the built documentright before the summary.  This section often used for extra review criteria for the particular proposal, optional</p>
+</dd>
+<dt class="field-even">goals<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, What are the main goals of the proposed research, required</p>
+</dd>
+<dt class="field-odd">importance<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, The importance of the Research, required</p>
+</dd>
+<dt class="field-even">institutions<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘string’, ‘list’], The institutions of the authors in the same order, required</p>
+</dd>
+<dt class="field-odd">month<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘integer’], The month the review was submitted, required</p>
+</dd>
+<dt class="field-even">names<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘list’, ‘string’], The names of the PIs, required</p>
+</dd>
+<dt class="field-odd">nsf_broader_impacts<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, The broader impacts of the research.  Only used if agency is nsf, optional</p>
+</dd>
+<dt class="field-even">nsf_create_original_transformative<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, Answer to the question how the work is creative, original or transformative.  Only used if agency is nsf, optional</p>
+</dd>
+<dt class="field-odd">nsf_plan_good<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, Is the plan good? Only used if agency is nsf, optional</p>
+</dd>
+<dt class="field-even">nsf_pot_to_advance_knowledge<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, Answer to the question how the work will advanceknowledge.  Only used if agency is nsf, optional</p>
+</dd>
+<dt class="field-odd">nsf_pot_to_benefit_society<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, Answer to the question how the work has the potentialto benefit society.  Only used if agency is nsf, optional</p>
+</dd>
+<dt class="field-even">requester<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, Name of the program officer who requested the review, required</p>
+</dd>
+<dt class="field-odd">reviewer<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, short name of the reviewer.  Will be used in the filename of the resulting text file, required</p>
+</dd>
+<dt class="field-even">status<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, the status of the review, optional</p>
+<dl class="simple">
+<dt>Allowed values:</dt><dd><ul class="simple">
+<li><p>invited</p></li>
+<li><p>accepted</p></li>
+<li><p>declined</p></li>
+<li><p>downloaded</p></li>
+<li><p>inprogress</p></li>
+<li><p>submitted</p></li>
+<li><p>cancelled</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">summary<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, Summary statement, required</p>
+</dd>
+<dt class="field-even">title<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, The title of the proposal, required</p>
+</dd>
+<dt class="field-odd">year<span class="colon">:</span></dt>
+<dd class="field-odd"><p>integer, The year the review was submitted, required</p>
+</dd>
+</dl>
+</section>
+<section id="yaml-example">
+<h2>YAML Example<a class="headerlink" href="#yaml-example" title="Link to this heading"></a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">1906doeExample</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adequacy_of_resources</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The resources available to the PI seem adequate</span>
+<span class="w">  </span><span class="nt">agency</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">doe</span>
+<span class="w">  </span><span class="nt">competency_of_team</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">super competent!</span>
+<span class="w">  </span><span class="nt">doe_appropriateness_of_approach</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The proposed approach is highly innovative</span>
+<span class="w">  </span><span class="nt">doe_reasonableness_of_budget</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">They could do it with half the money</span>
+<span class="w">  </span><span class="nt">doe_relevance_to_program_mission</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">super relevant</span>
+<span class="w">  </span><span class="nt">does_how</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">they will find the cause of Malaria</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">when they find it they will determine a cure</span>
+<span class="w">  </span><span class="nt">does_what</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find a cure for Malaria</span>
+<span class="w">  </span><span class="nt">due_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-10&#39;</span>
+<span class="w">  </span><span class="nt">freewrite</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">I can put extra things here, such as special instructions from the</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">program officer</span>
+<span class="w">  </span><span class="nt">goals</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The goals of the proposal are to put together a team to find a cure for Malaria,</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">and then to find it</span>
+<span class="w">  </span><span class="nt">importance</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">save lives</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lift people from poverty</span>
+<span class="w">  </span><span class="nt">institutions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">columbiau</span>
+<span class="w">  </span><span class="nt">month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">May</span>
+<span class="w">  </span><span class="nt">names</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">B. Cause</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A.N. Effect</span>
+<span class="w">  </span><span class="nt">nsf_broader_impacts</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">nsf_create_original_transformative</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">nsf_plan_good</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">nsf_pot_to_advance_knowledge</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">nsf_pot_to_benefit_society</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">requester</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lane Wilson</span>
+<span class="w">  </span><span class="nt">reviewer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">submitted</span>
+<span class="w">  </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dynamite proposal</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A stunning new way to cure Malaria</span>
+<span class="w">  </span><span class="nt">year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019</span>
+<span class="nt">1906nsfExample</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">adequacy_of_resources</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The resources available to the PI seem adequate</span>
+<span class="w">  </span><span class="nt">agency</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nsf</span>
+<span class="w">  </span><span class="nt">competency_of_team</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">super competent!</span>
+<span class="w">  </span><span class="nt">doe_appropriateness_of_approach</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">doe_reasonableness_of_budget</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">doe_relevance_to_program_mission</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">does_how</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">they will find the cause of Poverty</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">when they find it they will determine a cure</span>
+<span class="w">  </span><span class="nt">does_what</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find a cure for Poverty</span>
+<span class="w">  </span><span class="nt">due_date</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-04-10&#39;</span>
+<span class="w">  </span><span class="nt">freewrite</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">I can put extra things here, such as special instructions from the</span>
+<span class="w">  </span><span class="nt">goals</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The goals of the proposal are to put together a team to find a cure for Poverty,</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">and then to find it</span>
+<span class="w">  </span><span class="nt">importance</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">save lives</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lift people from poverty</span>
+<span class="w">  </span><span class="nt">institutions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">May</span>
+<span class="w">  </span><span class="nt">names</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A Genius</span>
+<span class="w">  </span><span class="nt">nsf_broader_impacts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Poor people will be made unpoor</span>
+<span class="w">  </span><span class="nt">nsf_create_original_transformative</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transformative because lives will be transformed</span>
+<span class="w">  </span><span class="nt">nsf_plan_good</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">I don&#39;t see any issues with the plan</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">it should be very straightforward</span>
+<span class="w">  </span><span class="nt">nsf_pot_to_advance_knowledge</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">This won&#39;t advance knowledge at all</span>
+<span class="w">  </span><span class="nt">nsf_pot_to_benefit_society</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Society will benefit by poor people being made unpoor if they want to be</span>
+<span class="w">  </span><span class="nt">requester</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tessemer Guebre</span>
+<span class="w">  </span><span class="nt">reviewer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">submitted</span>
+<span class="w">  </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dynamite proposal</span>
+<span class="w">  </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A stunning new way to cure Poverty</span>
+<span class="w">  </span><span class="nt">year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2019</span>
+</pre></div>
+</div>
+</section>
+<section id="json-mongo-example">
+<h2>JSON/Mongo Example<a class="headerlink" href="#json-mongo-example" title="Link to this heading"></a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1906doeExample&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;adequacy_of_resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;The resources available to the PI seem adequate&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;agency&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doe&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;competency_of_team&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;super competent!&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;doe_appropriateness_of_approach&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;The proposed approach is highly innovative&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;doe_reasonableness_of_budget&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;They could do it with half the money&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;doe_relevance_to_program_mission&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;super relevant&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;does_how&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;they will find the cause of Malaria&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;when they find it they will determine a cure&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;does_what&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Find a cure for Malaria&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;due_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-10&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;freewrite&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;I can put extra things here, such as special instructions from the&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;program officer&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;goals&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;The goals of the proposal are to put together a team to find a cure for Malaria, and then to find it&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;importance&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;save lives&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;lift people from poverty&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;institutions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;columbiau&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;month&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;May&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;names&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;B. Cause&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;A.N. Effect&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_broader_impacts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_create_original_transformative&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_plan_good&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_pot_to_advance_knowledge&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_pot_to_benefit_society&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;requester&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Lane Wilson&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;reviewer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submitted&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dynamite proposal&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A stunning new way to cure Malaria&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2019</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1906nsfExample&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;adequacy_of_resources&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;The resources available to the PI seem adequate&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;agency&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nsf&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;competency_of_team&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;super competent!&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;doe_appropriateness_of_approach&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;doe_reasonableness_of_budget&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;doe_relevance_to_program_mission&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;does_how&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;they will find the cause of Poverty&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;when they find it they will determine a cure&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;does_what&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Find a cure for Poverty&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;due_date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-04-10&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;freewrite&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;I can put extra things here, such as special instructions from the&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;goals&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;The goals of the proposal are to put together a team to find a cure for Poverty, and then to find it&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;importance&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;save lives&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;lift people from poverty&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;institutions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;month&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;May&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;names&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;A Genius&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_broader_impacts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;Poor people will be made unpoor&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_create_original_transformative&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;transformative because lives will be transformed&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_plan_good&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;I don&#39;t see any issues with the plan&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;it should be very straightforward&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_pot_to_advance_knowledge&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;This won&#39;t advance knowledge at all&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;nsf_pot_to_benefit_society&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;Society will benefit by poor people being made unpoor if they want to be&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;requester&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Tessemer Guebre&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;reviewer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submitted&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dynamite proposal&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A stunning new way to cure Poverty&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2019</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="projects.html" class="btn btn-neutral float-left" title="Projects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="proposals.html" class="btn btn-neutral float-right" title="Proposals" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

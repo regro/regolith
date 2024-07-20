@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.a_presentationhelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.a_presentationhelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.a_presentationhelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper for adding a presentation to the presentation collection.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span> <span class="nn">dateutil.parser</span> <span class="k">as</span> <span class="nn">date_parser</span>
+<span class="kn">from</span> <span class="nn">gooey</span> <span class="kn">import</span> <span class="n">GooeyParser</span>
+
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.a_expensehelper</span> <span class="kn">import</span> <span class="n">expense_constructor</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.basehelper</span> <span class="kn">import</span> <span class="n">DbHelperBase</span>
+<span class="kn">from</span> <span class="nn">regolith.schemas</span> <span class="kn">import</span> <span class="n">alloweds</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_to_google_calendar</span><span class="p">,</span>
+    <span class="n">all_docs_from_collection</span><span class="p">,</span>
+    <span class="n">create_repo</span><span class="p">,</span>
+    <span class="n">get_pi_id</span><span class="p">,</span>
+    <span class="n">google_cal_auth_flow</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">TARGET_COLL</span> <span class="o">=</span> <span class="s2">&quot;presentations&quot;</span>
+<span class="n">EXPENSES_COLL</span> <span class="o">=</span> <span class="s2">&quot;expenses&quot;</span>
+
+<span class="n">PRESENTATION_TYPES</span> <span class="o">=</span> <span class="n">alloweds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PRESENTATION_TYPES&quot;</span><span class="p">)</span>
+<span class="n">PRESENTATION_STATI</span> <span class="o">=</span> <span class="n">alloweds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PRESENTATION_STATI&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="subparser">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_presentationhelper.subparser">[docs]</a>
+<span class="k">def</span> <span class="nf">subparser</span><span class="p">(</span><span class="n">subpi</span><span class="p">):</span>
+    <span class="n">date_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subpi</span><span class="p">,</span> <span class="n">GooeyParser</span><span class="p">):</span>
+        <span class="n">date_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DateChooser&quot;</span>
+
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;name of the event of the presentation. Meeting name if meeting, &quot;</span> <span class="s2">&quot;department if seminar&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;place&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the place of the presentation, Location if conference, &quot;</span> <span class="s2">&quot;institution for seminars&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input begin date for this presentation &quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">date_kwargs</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input end date for this presentation&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">date_kwargs</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="s2">&quot;--title&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the title of the presentation, default is tbd&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;tbd&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-a&quot;</span><span class="p">,</span> <span class="s2">&quot;--abstract&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;abstract of the presentation, defaults to tbd&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;tbd&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--person&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the person presenting the presentation, used for presentation name,&quot;</span>
+        <span class="s2">&quot; defaults to name in user.config&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--authors&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;specify the authors of this presentation, &quot;</span> <span class="s2">&quot;defaults to person submitting the presentation&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-g&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--grants&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;grant, or grants (separated by spaces), that support this presentation. Defaults to tbd&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;tbd&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-u&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--presentation-url&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the url to the presentation, whether it is on Google Drive, GitHub or wherever&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-n&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--notes&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;note or notes to be inserted as a list into the notes field, &quot;</span>
+        <span class="s2">&quot;separate notes with spaces.  Place inside quotes if the note &quot;</span>
+        <span class="s2">&quot;itself contains spaces.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--status&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">PRESENTATION_STATI</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;status, from </span><span class="si">{</span><span class="n">PRESENTATION_STATI</span><span class="si">}</span><span class="s2">, default is accepted&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;accepted&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-y&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--type&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">PRESENTATION_TYPES</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;types, from </span><span class="si">{</span><span class="n">PRESENTATION_TYPES</span><span class="si">}</span><span class="s2">. Default is invited&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;invited&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-w&quot;</span><span class="p">,</span> <span class="s2">&quot;--webinar&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Is the presentation a webinar?&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--no-expense&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not add a template expense item to the &quot;</span>
+        <span class="s2">&quot;expenses collection.  Default is to add &quot;</span>
+        <span class="s2">&quot;an expense if the presentation is not a &quot;</span>
+        <span class="s2">&quot;webinar.&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--database&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The database that will be updated.  Defaults to &quot;</span> <span class="s2">&quot;first database in the regolithrc.json file.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--expense-db&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The database where the expense collection will be updated &quot;</span>
+        <span class="s2">&quot;with the presentation-related expense data. &quot;</span>
+        <span class="s2">&quot;Without a specification, by default the helper attempts to &quot;</span>
+        <span class="s2">&quot;use the first database in the regolithrc.json file *but &quot;</span>
+        <span class="s2">&quot;will only do so if that database is non-public*.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--force&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force adding presentation expense data to the first DB listed in &quot;</span>
+        <span class="s2">&quot;&#39;databases&#39; in the regolithrc.json file, *even if that database is &quot;</span>
+        <span class="s2">&quot;public*. DANGER: This could reveal sensitive information to the public.&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--id&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Override the default id created from the date, &quot;</span> <span class="s2">&quot;speaker and place by specifying an id here&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--no-cal&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not add the presentation to google calendar&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--no-repo&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not create a GitHub/Lab repo for the presentation&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">subpi</span></div>
+
+
+
+<div class="viewcode-block" id="PresentationAdderHelper">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_presentationhelper.PresentationAdderHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">PresentationAdderHelper</span><span class="p">(</span><span class="n">DbHelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for adding presentations&quot; &quot;&quot;&quot;</span>
+
+    <span class="c1"># btype must be the same as helper target in helper.py</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="s2">&quot;a_presentation&quot;</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">,</span> <span class="s2">&quot;expenses&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PresentationAdderHelper.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_presentationhelper.PresentationAdderHelper.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span> <span class="o">=</span> <span class="n">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">database</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_expense</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;ERROR: You specified an expense database with the --expense-db option, but also &quot;</span>
+                    <span class="s2">&quot;passed --no-expense. Do you want to create an expense? Please reformulate your &quot;</span>
+                    <span class="s2">&quot;helper command and rerun. &quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;public&quot;</span><span class="p">):</span>
+                <span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;WARNING: No expense database was provided to input the expense data &quot;</span>
+                    <span class="s2">&quot;associated with this presentation. Defaulted to using the first DB &quot;</span>
+                    <span class="s2">&quot;listed in your regolithrc.json, as this DB is non-public.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+            <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="ow">and</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;public&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rc</span><span class="o">.</span><span class="n">force</span>
+                <span class="k">else</span> <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="ow">and</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;public&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">force</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;ERROR: You failed to specify an expense database for the expense data &quot;</span>
+                    <span class="s2">&quot;associated with this presentation. The helper defaults to entering &quot;</span>
+                    <span class="s2">&quot;expenses into first database listed in your regolithrc.json file, &quot;</span>
+                    <span class="s2">&quot;but it set to PUBLIC and would reveal potentially sensitive information. &quot;</span>
+                    <span class="s2">&quot;Rerun by specifying the target database with --expense-db EXPENSE_DB, or &quot;</span>
+                    <span class="s2">&quot;(at your own risk) pass the --force flag.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">database</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">database</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;ERROR: The expense database specified, </span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span><span class="si">}</span><span class="s2">, is not listed &quot;</span>
+                    <span class="s2">&quot;in your regolithrc.json file.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">gtx</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="PresentationAdderHelper.db_updater">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.a_presentationhelper.PresentationAdderHelper.db_updater">[docs]</a>
+    <span class="k">def</span> <span class="nf">db_updater</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_cal</span><span class="p">:</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">place</span><span class="p">,</span>
+                <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">begin_date</span><span class="p">},</span>
+                <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">end_date</span><span class="p">},</span>
+            <span class="p">}</span>
+            <span class="n">cal_update_bool</span> <span class="o">=</span> <span class="n">add_to_google_calendar</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cal_update_bool</span><span class="p">:</span>
+                <span class="n">google_cal_auth_flow</span><span class="p">()</span>
+                <span class="n">wait_bool</span><span class="p">,</span> <span class="n">jump</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="ow">not</span> <span class="n">wait_bool</span> <span class="ow">or</span> <span class="n">jump</span> <span class="o">==</span> <span class="mi">60</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">wait_bool</span> <span class="o">=</span> <span class="n">add_to_google_calendar</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                    <span class="n">jump</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># dates</span>
+        <span class="c1"># TODO : add date format check?</span>
+        <span class="n">begin_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">begin_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">end_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+
+        <span class="c1"># User specifies person in CL or in config.json</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">person</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">default_user_id</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;WARNING: no person been set. please rerun specifying authors,&quot;</span>
+                    <span class="s2">&quot;or add your id, e.g., sbillinge, to the config.json file in ~/.config/regolith&quot;</span>
+                <span class="p">)</span>
+        <span class="n">split_person</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split_person</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">name_key</span> <span class="o">=</span> <span class="n">split_person</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">+</span> <span class="n">split_person</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name_key</span> <span class="o">=</span> <span class="n">split_person</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">begin_date</span><span class="o">.</span><span class="n">year</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">begin_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%m&#39;</span><span class="p">))</span><span class="si">}{</span><span class="n">name_key</span><span class="si">}</span><span class="s2">_&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">place</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="n">coll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span>
+        <span class="n">pdocl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">doc</span><span class="p">:</span> <span class="n">doc</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="p">,</span> <span class="n">coll</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdocl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;This entry appears to already exist in the collection&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdoc</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">authors</span><span class="p">:</span>
+            <span class="n">authors</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">authors</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">authors</span>
+
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                <span class="s2">&quot;abstract&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">abstract</span><span class="p">,</span>
+                <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors</span><span class="p">,</span>
+                <span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="n">begin_date</span><span class="p">,</span>
+                <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">end_date</span><span class="p">,</span>
+                <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">notes</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">presentation_url</span><span class="p">:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;presentation_url&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">presentation_url</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">webinar</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">no_expense</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;webinar&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;seminar&quot;</span><span class="p">,</span> <span class="s2">&quot;colloquium&quot;</span><span class="p">]:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;institution&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">place</span><span class="p">,</span> <span class="s2">&quot;department&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">place</span><span class="p">,</span> <span class="s2">&quot;meeting_name&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+        <span class="n">pdoc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">rc</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">coll</span><span class="p">,</span> <span class="n">pdoc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has been added in </span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_expense</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">business</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">payee</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">default_user_id</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">purpose</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;give </span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> presentation at </span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">place</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">where</span> <span class="o">=</span> <span class="s2">&quot;tbd&quot;</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;unsubmitted&quot;</span>
+            <span class="n">edoc</span> <span class="o">=</span> <span class="n">expense_constructor</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">begin_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span><span class="p">,</span> <span class="n">EXPENSES_COLL</span><span class="p">,</span> <span class="n">edoc</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> has been added in </span><span class="si">{</span><span class="n">EXPENSES_COLL</span><span class="si">}</span><span class="s2"> in database </span><span class="si">{</span><span class="n">rc</span><span class="o">.</span><span class="n">expense_db</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_repo</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="s2">&quot;repos&quot;</span><span class="p">):</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">repos</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="s2">&quot;tokens&quot;</span><span class="p">):</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">repos</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;talk_repo&quot;</span><span class="p">:</span>
+                    <span class="n">repo</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">})</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">repo</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;initialize_with_readme&quot;</span><span class="p">):</span>
+                        <span class="n">repo</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="s2">&quot;initialize_with_readme&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">repo</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)})</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">create_repo</span><span class="p">(</span><span class="s2">&quot;talk_repo&quot;</span><span class="p">,</span> <span class="s2">&quot;gitlab_private_token&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

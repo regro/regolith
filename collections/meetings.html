@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meetings &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="News" href="news.html" />
+    <link rel="prev" title="Jobs" href="jobs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            regolith
+              <img src="../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Collections</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="abstracts.html">Abstracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="assignments.html">Assignments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="beamplan.html">Beamplan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blog.html">Blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="citations.html">Citations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="courses.html">Courses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="expenses.html">Expenses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formalletters.html">Formalletters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grades.html">Grades</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grants.html">Grants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groups.html">Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="institutions.html">Institutions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobs.html">Jobs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Meetings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#schema">Schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yaml-example">YAML Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json-mongo-example">JSON/Mongo Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="news.html">News</a></li>
+<li class="toctree-l2"><a class="reference internal" href="people.html">People</a></li>
+<li class="toctree-l2"><a class="reference internal" href="presentations.html">Presentations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projecta.html">Projecta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects.html">Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposalReviews.html">Proposalreviews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proposals.html">Proposals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reading_lists.html">Reading_Lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refereeReports.html">Refereereports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="software.html">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="students.html">Students</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todos.html">Todos</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Collections</a></li>
+      <li class="breadcrumb-item active">Meetings</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="meetings">
+<h1>Meetings<a class="headerlink" href="#meetings" title="Link to this heading"></a></h1>
+<p>the group meeting.</p>
+<section id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="Link to this heading"></a></h2>
+<p>The following lists key names mapped to its type and meaning for each entry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">_id<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, unique identifier for the date of the group meeting, required</p>
+</dd>
+<dt class="field-even">actions<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, action items expected from the group members for that particular meeting week, required</p>
+</dd>
+<dt class="field-odd">agenda<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, schedule of the current meeting, required</p>
+</dd>
+<dt class="field-even">buddies<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, list of pairs of group members that are selected for the buddy round robin, required</p>
+</dd>
+<dt class="field-odd">date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘datetime’, ‘date’], date of meeting in format YYYY-MM-DD, optional</p>
+</dd>
+<dt class="field-even">day<span class="colon">:</span></dt>
+<dd class="field-even"><p>integer, day of the group meeting, or the day the entry was edited, optional</p>
+</dd>
+<dt class="field-odd">journal_club<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict, Journal club presentation in group meeting, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">doi<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, The doi of the journal club presentation paper.  tbd if it is not known yet, optional</p>
+</dd>
+<dt class="field-even">link<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, the url to the repo, google slide location, or other web location where the presentation can be found, optional</p>
+</dd>
+<dt class="field-odd">presenter<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, The _id of the group member presenting, or a string describing the presenter, e.g., their full name., optional</p>
+</dd>
+<dt class="field-even">title<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, The title of the talk., optional</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">lead<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, person who will be leading the meeting of the current week, required</p>
+</dd>
+<dt class="field-odd">minutes<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, meeting notes in a chronological order according to comments made by the group members, required</p>
+</dd>
+<dt class="field-even">month<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘string’, ‘integer’], month in which the meeting is taking place, required</p>
+</dd>
+<dt class="field-odd">place<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, location where the meeting is taking place on campus, optional</p>
+</dd>
+<dt class="field-even">presentation<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict, indicating the title of the presentation along with the link and the presenter , optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">title<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, The title of the presentation.  tbd if it is not known yet, optional</p>
+</dd>
+<dt class="field-even">link<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, the url to the repo, google slide location, or other web location where the presentation can be found, optional</p>
+</dd>
+<dt class="field-odd">presenter<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, The _id of the group member presenting or a string describing the person., optional</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">scribe<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string, person who will be taking notes and updating minutes accordingly, required</p>
+</dd>
+<dt class="field-even">time<span class="colon">:</span></dt>
+<dd class="field-even"><p>[‘string’, ‘integer’, ‘datetime’], the time of the meetingIf an integer is minutes past midnight, so 13:30 is 810 forexample., optional</p>
+</dd>
+<dt class="field-odd">updated<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[‘string’, ‘datetime’, ‘date’], The datetime.date object of the most recent update, optional</p>
+</dd>
+<dt class="field-even">uuid<span class="colon">:</span></dt>
+<dd class="field-even"><p>string, A uuid for the entry, optional</p>
+</dd>
+<dt class="field-odd">year<span class="colon">:</span></dt>
+<dd class="field-odd"><p>integer, year the meeting took place, required</p>
+</dd>
+</dl>
+</section>
+<section id="yaml-example">
+<h2>YAML Example<a class="headerlink" href="#yaml-example" title="Link to this heading"></a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">grp1000-01-01</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Everyone) Update overdue milestones</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Professor Billinge) Explore, and plan a machine learning project for DSI</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">for this DSI project</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Emil) Set up the slack channel for the DSI project</span>
+<span class="w">  </span><span class="nt">agenda</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Review actions</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fargo is not free on any streaming platforms</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Review Airtable for deliverables and celebrate</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mention diversity action initiative</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Songsheng&#39;s journal club presentation</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Vivian and Zicheng) Finish rest of crystallography presentation next week</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Emil&#39;s 7th inning Yoga Stretch</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Crystallography talk</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Presentation</span>
+<span class="w">  </span><span class="nt">buddies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Jaylyn</span><span class="nv"> </span><span class="s">C.</span><span class="nv"> </span><span class="s">Umana,</span><span class="nv">    </span><span class="s">Simon</span><span class="nv"> </span><span class="s">J.</span><span class="nv"> </span><span class="s">L.</span><span class="nv"> </span><span class="s">Billinge&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Long</span><span class="nv"> </span><span class="s">Yang,</span><span class="nv">    </span><span class="s">Emil</span><span class="nv"> </span><span class="s">Kjaer&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Sani</span><span class="nv"> </span><span class="s">Harouna-Mayer,</span><span class="nv">   </span><span class="s">Akshay</span><span class="nv"> </span><span class="s">Choudhry&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Vivian</span><span class="nv"> </span><span class="s">Lin,</span><span class="nv">    </span><span class="s">Songsheng</span><span class="nv"> </span><span class="s">Tao&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Ran</span><span class="nv"> </span><span class="s">Gu,</span><span class="nv">    </span><span class="s">Adiba</span><span class="nv"> </span><span class="s">Ejaz&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Zach</span><span class="nv"> </span><span class="s">Thatcher,</span><span class="nv">    </span><span class="s">Yevgeny</span><span class="nv"> </span><span class="s">Rakita&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;</span><span class="nv">   </span><span class="s">Zicheng</span><span class="nv"> </span><span class="s">&#39;Taylor&#39;</span><span class="nv"> </span><span class="s">Liu,</span><span class="nv">    </span><span class="s">Eric</span><span class="nv"> </span><span class="s">Shen</span><span class="nv"> </span><span class="s">&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Hung</span><span class="nv"> </span><span class="s">Vuong,</span><span class="nv">    </span><span class="s">Daniela</span><span class="nv"> </span><span class="s">Hikari</span><span class="nv"> </span><span class="s">Yano&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Ahmed</span><span class="nv"> </span><span class="s">Shaaban,</span><span class="nv">    </span><span class="s">Jiawei</span><span class="nv"> </span><span class="s">Zang&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Berrak</span><span class="nv"> </span><span class="s">Ozer,</span><span class="nv">    </span><span class="s">Michael</span><span class="nv"> </span><span class="s">Winitch&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Shomik</span><span class="nv"> </span><span class="s">Ghose&#39;</span>
+<span class="w">  </span><span class="nt">day</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">journal_club</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">doi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.1107/S2053273319005606</span>
+<span class="w">    </span><span class="nt">link</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://link/to/my/talk.ppt</span>
+<span class="w">    </span><span class="nt">presenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">    </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">what the paper was about and more</span>
+<span class="w">  </span><span class="nt">lead</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">  </span><span class="nt">minutes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Talked about eyesight and prescription lenses</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Professor Billinge tells everyone a Logician/Mathematician joke</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mentioned pyjokes, a package in Python that lists bad jokes</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Jaylyn greets everyone</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Reviewed action items from last time</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Talked about fargo, and the merits (or lack thereof) of the Dakotas</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Celebrated finished prums</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Songhsheng holds journal club presentation on Machine Learning techniques</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">and other ML topics</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Discussed how we can derive scientific meaning from ML algorithms</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Discussed real space versus reciprocal space</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Finished journal club, had to postpone Akshay&#39;s presentation, and the Yoga session</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">to next week</span>
+<span class="w">  </span><span class="nt">month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">place</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mudd 1106</span>
+<span class="w">  </span><span class="nt">presentation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">link</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2007ac_grpmtg</span>
+<span class="w">    </span><span class="nt">presenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">    </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PDF Distance Extraction</span>
+<span class="w">  </span><span class="nt">scribe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">  </span><span class="nt">time</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0&#39;</span>
+<span class="w">  </span><span class="nt">updated</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-07-31</span><span class="nv"> </span><span class="s">23:27:50.764475&#39;</span>
+<span class="w">  </span><span class="nt">uuid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3fbee8d9-e283-48e7-948f-eecfc2a123b7</span>
+<span class="w">  </span><span class="nt">year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="nt">grp2020-07-31</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Everyone) Update overdue milestones</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Professor Billinge) Explore, and plan a machine learning project for DSI</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">for this DSI project</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Emil) Set up the slack channel for the DSI project</span>
+<span class="w">  </span><span class="nt">agenda</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Review actions</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fargo is not free on any streaming platforms</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Review Airtable for deliverables and celebrate</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mention diversity action initiative</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Songsheng&#39;s journal club presentation</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(Vivian and Zicheng) Finish rest of crystallography presentation next week</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Emil&#39;s 7th inning Yoga Stretch</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Crystallography talk</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Presentation</span>
+<span class="w">  </span><span class="nt">buddies</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Jaylyn</span><span class="nv"> </span><span class="s">C.</span><span class="nv"> </span><span class="s">Umana,</span><span class="nv">    </span><span class="s">Simon</span><span class="nv"> </span><span class="s">J.</span><span class="nv"> </span><span class="s">L.</span><span class="nv"> </span><span class="s">Billinge&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Long</span><span class="nv"> </span><span class="s">Yang,</span><span class="nv">    </span><span class="s">Emil</span><span class="nv"> </span><span class="s">Kjaer&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Sani</span><span class="nv"> </span><span class="s">Harouna-Mayer,</span><span class="nv">   </span><span class="s">Akshay</span><span class="nv"> </span><span class="s">Choudhry&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Vivian</span><span class="nv"> </span><span class="s">Lin,</span><span class="nv">    </span><span class="s">Songsheng</span><span class="nv"> </span><span class="s">Tao&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Ran</span><span class="nv"> </span><span class="s">Gu,</span><span class="nv">    </span><span class="s">Adiba</span><span class="nv"> </span><span class="s">Ejaz&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Zach</span><span class="nv"> </span><span class="s">Thatcher,</span><span class="nv">    </span><span class="s">Yevgeny</span><span class="nv"> </span><span class="s">Rakita&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;</span><span class="nv">   </span><span class="s">Zicheng</span><span class="nv"> </span><span class="s">&#39;Taylor&#39;</span><span class="nv"> </span><span class="s">Liu,</span><span class="nv">    </span><span class="s">Eric</span><span class="nv"> </span><span class="s">Shen</span><span class="nv"> </span><span class="s">&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Hung</span><span class="nv"> </span><span class="s">Vuong,</span><span class="nv">    </span><span class="s">Daniela</span><span class="nv"> </span><span class="s">Hikari</span><span class="nv"> </span><span class="s">Yano&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Ahmed</span><span class="nv"> </span><span class="s">Shaaban,</span><span class="nv">    </span><span class="s">Jiawei</span><span class="nv"> </span><span class="s">Zang&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Berrak</span><span class="nv"> </span><span class="s">Ozer,</span><span class="nv">    </span><span class="s">Michael</span><span class="nv"> </span><span class="s">Winitch&#39;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;</span><span class="nv">   </span><span class="s">Shomik</span><span class="nv"> </span><span class="s">Ghose&#39;</span>
+<span class="w">  </span><span class="nt">day</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">journal_club</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">doi</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.1107/S2053273319005606</span>
+<span class="w">    </span><span class="nt">link</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://myslides.com/link/to/2007ac_grpmtg</span>
+<span class="w">    </span><span class="nt">presenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not_a_valid_group_id</span>
+<span class="w">  </span><span class="nt">lead</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">  </span><span class="nt">minutes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Talked about eyesight and prescription lenses</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Professor Billinge tells everyone a Logician/Mathematician joke</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mentioned pyjokes, a package in Python that lists bad jokes</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Jaylyn greets everyone</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Reviewed action items from last time</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Talked about fargo, and the merits (or lack thereof) of the Dakotas</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Celebrated finished prums</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Songhsheng holds journal club presentation on Machine Learning techniques</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">and other ML topics</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Discussed how we can derive scientific meaning from ML algorithms</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Discussed real space versus reciprocal space</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Finished journal club, had to postpone Akshay&#39;s presentation, and the Yoga session</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">to next week</span>
+<span class="w">  </span><span class="nt">month</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">place</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mudd 1106</span>
+<span class="w">  </span><span class="nt">presentation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">link</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2007ac_grpmtg</span>
+<span class="w">    </span><span class="nt">presenter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">not_a_valid_group_id</span>
+<span class="w">    </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PDF Distance Extraction</span>
+<span class="w">  </span><span class="nt">scribe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sbillinge</span>
+<span class="w">  </span><span class="nt">time</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0&#39;</span>
+<span class="w">  </span><span class="nt">updated</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2020-07-31</span><span class="nv"> </span><span class="s">23:27:50.764475&#39;</span>
+<span class="w">  </span><span class="nt">uuid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3fbee8d9-e283-48e7-948f-eecfc2a123b7</span>
+<span class="w">  </span><span class="nt">year</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7000</span>
+</pre></div>
+</div>
+</section>
+<section id="json-mongo-example">
+<h2>JSON/Mongo Example<a class="headerlink" href="#json-mongo-example" title="Link to this heading"></a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;grp1000-01-01&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;actions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;(Everyone) Update overdue milestones&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;(Professor Billinge) Explore, and plan a machine learning project for DSI&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;(Emil) Set up the slack channel for the DSI project&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;agenda&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;Review actions&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Fargo is not free on any streaming platforms&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Review Airtable for deliverables and celebrate&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Mention diversity action initiative&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Songsheng&#39;s journal club presentation&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;(Vivian and Zicheng) Finish rest of crystallography presentation next week&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Emil&#39;s 7th inning Yoga Stretch&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Crystallography talk&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Presentation&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;buddies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;   Jaylyn C. Umana,    Simon J. L. Billinge&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Long Yang,    Emil Kjaer&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Sani Harouna-Mayer,   Akshay Choudhry&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Vivian Lin,    Songsheng Tao&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Ran Gu,    Adiba Ejaz&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Zach Thatcher,    Yevgeny Rakita&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Zicheng &#39;Taylor&#39; Liu,    Eric Shen &quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Hung Vuong,    Daniela Hikari Yano&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Ahmed Shaaban,    Jiawei Zang&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Berrak Ozer,    Michael Winitch&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Shomik Ghose&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;journal_club&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;doi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1107/S2053273319005606&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://link/to/my/talk.ppt&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;presenter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;what the paper was about and more&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;lead&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;Talked about eyesight and prescription lenses&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Professor Billinge tells everyone a Logician/Mathematician joke&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Mentioned pyjokes, a package in Python that lists bad jokes&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Jaylyn greets everyone&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Reviewed action items from last time&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Talked about fargo, and the merits (or lack thereof) of the Dakotas&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Celebrated finished prums&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Songhsheng holds journal club presentation on Machine Learning techniques&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution and other ML topics&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Discussed how we can derive scientific meaning from ML algorithms&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Discussed real space versus reciprocal space&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Finished journal club, had to postpone Akshay&#39;s presentation, and the Yoga session to next week&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;month&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;place&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Mudd 1106&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;presentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2007ac_grpmtg&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;presenter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PDF Distance Extraction&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;scribe&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;updated&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-31 23:27:50.764475&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3fbee8d9-e283-48e7-948f-eecfc2a123b7&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span>
+<span class="p">}</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;grp2020-07-31&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;actions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;(Everyone) Update overdue milestones&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;(Professor Billinge) Explore, and plan a machine learning project for DSI&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;(Professor Billinge, Emil, Yevgeny, Songsheng) Come up with a Kaggle competition for this DSI project&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;(Emil) Set up the slack channel for the DSI project&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;agenda&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;Review actions&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Fargo is not free on any streaming platforms&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Review Airtable for deliverables and celebrate&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Mention diversity action initiative&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Songsheng&#39;s journal club presentation&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;(Vivian and Zicheng) Finish rest of crystallography presentation next week&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Emil&#39;s 7th inning Yoga Stretch&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Crystallography talk&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Presentation&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;buddies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;   Jaylyn C. Umana,    Simon J. L. Billinge&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Long Yang,    Emil Kjaer&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Sani Harouna-Mayer,   Akshay Choudhry&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Vivian Lin,    Songsheng Tao&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Ran Gu,    Adiba Ejaz&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Zach Thatcher,    Yevgeny Rakita&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Zicheng &#39;Taylor&#39; Liu,    Eric Shen &quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Hung Vuong,    Daniela Hikari Yano&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Ahmed Shaaban,    Jiawei Zang&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Berrak Ozer,    Michael Winitch&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;   Shomik Ghose&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;day&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;journal_club&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;doi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1107/S2053273319005606&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://myslides.com/link/to/2007ac_grpmtg&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;presenter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not_a_valid_group_id&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;lead&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;minutes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;Talked about eyesight and prescription lenses&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Professor Billinge tells everyone a Logician/Mathematician joke&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Mentioned pyjokes, a package in Python that lists bad jokes&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Jaylyn greets everyone&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Reviewed action items from last time&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Talked about fargo, and the merits (or lack thereof) of the Dakotas&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Celebrated finished prums&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Songhsheng holds journal club presentation on Machine Learning techniques&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Discussed Linear Classification, Gradient Descent, Perceptrons, Convolution and other ML topics&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Discussed how we can derive scientific meaning from ML algorithms&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Discussed real space versus reciprocal space&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;Finished journal club, had to postpone Akshay&#39;s presentation, and the Yoga session to next week&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;month&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;place&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Mudd 1106&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;presentation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;link&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2007ac_grpmtg&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;presenter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;not_a_valid_group_id&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PDF Distance Extraction&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;scribe&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sbillinge&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;updated&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-07-31 23:27:50.764475&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3fbee8d9-e283-48e7-948f-eecfc2a123b7&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;year&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="jobs.html" class="btn btn-neutral float-left" title="Jobs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="news.html" class="btn btn-neutral float-right" title="News" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

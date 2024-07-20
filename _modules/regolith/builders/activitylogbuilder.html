@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.builders.activitylogbuilder &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.builders.activitylogbuilder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.builders.activitylogbuilder</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Builder for CVs.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">dateutil</span> <span class="kn">import</span> <span class="n">parser</span> <span class="k">as</span> <span class="n">date_parser</span>
+<span class="kn">from</span> <span class="nn">dateutil.relativedelta</span> <span class="kn">import</span> <span class="n">relativedelta</span>
+
+<span class="kn">from</span> <span class="nn">regolith.builders.basebuilder</span> <span class="kn">import</span> <span class="n">LatexBuilderBase</span>
+<span class="kn">from</span> <span class="nn">regolith.builders.cpbuilder</span> <span class="kn">import</span> <span class="n">is_declined</span><span class="p">,</span> <span class="n">is_pending</span>
+<span class="kn">from</span> <span class="nn">regolith.dates</span> <span class="kn">import</span> <span class="n">get_dates</span><span class="p">,</span> <span class="n">is_current</span>
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.sorters</span> <span class="kn">import</span> <span class="n">doc_date_key</span><span class="p">,</span> <span class="n">position_key</span>
+<span class="kn">from</span> <span class="nn">regolith.stylers</span> <span class="kn">import</span> <span class="n">month_fullnames</span><span class="p">,</span> <span class="n">sentencecase</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">all_docs_from_collection</span><span class="p">,</span>
+    <span class="n">awards</span><span class="p">,</span>
+    <span class="n">filter_activities</span><span class="p">,</span>
+    <span class="n">filter_committees</span><span class="p">,</span>
+    <span class="n">filter_employment_for_advisees</span><span class="p">,</span>
+    <span class="n">filter_facilities</span><span class="p">,</span>
+    <span class="n">filter_grants</span><span class="p">,</span>
+    <span class="n">filter_licenses</span><span class="p">,</span>
+    <span class="n">filter_patents</span><span class="p">,</span>
+    <span class="n">filter_presentations</span><span class="p">,</span>
+    <span class="n">filter_projects</span><span class="p">,</span>
+    <span class="n">filter_publications</span><span class="p">,</span>
+    <span class="n">filter_service</span><span class="p">,</span>
+    <span class="n">fuzzy_retrieval</span><span class="p">,</span>
+    <span class="n">get_id_from_name</span><span class="p">,</span>
+    <span class="n">make_bibtex_file</span><span class="p">,</span>
+    <span class="n">merge_collections_all</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="ActivitylogBuilder">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.activitylogbuilder.ActivitylogBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">ActivitylogBuilder</span><span class="p">(</span><span class="n">LatexBuilderBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build CV from database entries&quot;&quot;&quot;</span>
+
+    <span class="n">btype</span> <span class="o">=</span> <span class="s2">&quot;annual-activity&quot;</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;groups&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;people&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;grants&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;proposals&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;institutions&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;projects&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;presentations&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;patents&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;citations&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;proposalReviews&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;refereeReports&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;recletts&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;contacts&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<div class="viewcode-block" id="ActivitylogBuilder.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.activitylogbuilder.ActivitylogBuilder.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">),</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">position_key</span><span class="p">,</span>
+            <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;institutions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;institutions&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;contacts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;institutions&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;grants&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;proposals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;proposals&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;projects&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;presentations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;presentations&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;proprevs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;proposalReviews&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;manrevs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;refereeReports&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;recletts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;recletts&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;patents&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;patents&quot;</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="ActivitylogBuilder.latex">
+<a class="viewcode-back" href="../../../api/regolith.builders.html#regolith.builders.activitylogbuilder.ActivitylogBuilder.latex">[docs]</a>
+    <span class="k">def</span> <span class="nf">latex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render latex template&quot;&quot;&quot;</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">,</span> <span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">rc</span><span class="o">.</span><span class="n">groupname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;ERROR: please rerun specifying --people name&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">from_date</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;ERROR: please rerun specifying --from&quot;</span><span class="p">)</span>
+        <span class="n">build_target</span> <span class="o">=</span> <span class="n">get_id_from_name</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">),</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">begin_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">from_date</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">begin_period</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">from_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">pre_begin_period</span> <span class="o">=</span> <span class="n">begin_period</span> <span class="o">-</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">to_date</span><span class="p">:</span>
+            <span class="n">to_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">to_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+            <span class="n">end_period</span> <span class="o">=</span> <span class="n">to_date</span>
+            <span class="n">post_end_period</span> <span class="o">=</span> <span class="n">to_date</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">end_period</span> <span class="o">=</span> <span class="n">begin_period</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">post_end_period</span> <span class="o">=</span> <span class="n">begin_period</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">me</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">build_target</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">me</span><span class="p">[</span><span class="s2">&quot;begin_period&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%Y&quot;</span><span class="p">)</span>
+        <span class="n">me</span><span class="p">[</span><span class="s2">&quot;begin_period&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%Y&quot;</span><span class="p">)</span>
+        <span class="n">me</span><span class="p">[</span><span class="s2">&quot;pre_begin_period&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">pre_begin_period</span><span class="p">,</span> <span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%Y&quot;</span><span class="p">)</span>
+        <span class="n">me</span><span class="p">[</span><span class="s2">&quot;end_period&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">end_period</span><span class="p">,</span> <span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%Y&quot;</span><span class="p">)</span>
+        <span class="n">me</span><span class="p">[</span><span class="s2">&quot;post_end_period&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">post_end_period</span><span class="p">,</span> <span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%Y&quot;</span><span class="p">)</span>
+        <span class="n">projs</span> <span class="o">=</span> <span class="n">filter_projects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">],</span> <span class="nb">set</span><span class="p">([</span><span class="n">build_target</span><span class="p">]),</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">])</span>
+        <span class="c1">########</span>
+        <span class="c1"># Recommendation Letters count</span>
+        <span class="c1">########</span>
+        <span class="n">recletts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;recletts&quot;</span><span class="p">]</span>
+        <span class="n">num_recletts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">reclett</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">reclett</span> <span class="ow">in</span> <span class="n">recletts</span> <span class="k">if</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">reclett</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">begin_period</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="c1">########</span>
+        <span class="c1"># Proposal review count</span>
+        <span class="c1">########</span>
+        <span class="n">proprevs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;proprevs&quot;</span><span class="p">]</span>
+        <span class="n">num_proprevs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">proprev</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">proprev</span> <span class="ow">in</span> <span class="n">proprevs</span>
+                <span class="k">if</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">proprev</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">begin_period</span> <span class="ow">and</span> <span class="n">proprev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;submitted&quot;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="c1">########</span>
+        <span class="c1"># Manuscript review count</span>
+        <span class="c1">########</span>
+        <span class="n">manrevs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;manrevs&quot;</span><span class="p">]</span>
+        <span class="n">num_manrevs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">manrev</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">manrev</span> <span class="ow">in</span> <span class="n">manrevs</span>
+                <span class="k">if</span> <span class="n">manrev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;submitted&quot;</span>
+                <span class="ow">and</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">manrev</span><span class="p">,</span> <span class="n">date_field_prefix</span><span class="o">=</span><span class="s2">&quot;submitted&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;submitted_date&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1971</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">manrev</span><span class="p">,</span> <span class="n">date_field_prefix</span><span class="o">=</span><span class="s2">&quot;submitted&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;submitted_date&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1971</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="o">&gt;=</span> <span class="n">begin_period</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1">#########</span>
+        <span class="c1"># current and pending</span>
+        <span class="c1">#########</span>
+        <span class="n">pi</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">,</span> <span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">build_target</span><span class="p">)</span>
+        <span class="n">pinames</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">piinitialslist</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pinames</span><span class="p">]</span>
+        <span class="n">pi</span><span class="p">[</span><span class="s2">&quot;initials&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">piinitialslist</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="n">grants</span> <span class="o">=</span> <span class="n">merge_collections_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;proposals&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">],</span> <span class="s2">&quot;proposal_id&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grants</span><span class="p">:</span>
+            <span class="n">g</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span>
+            <span class="n">g</span><span class="p">[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1900</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">g</span><span class="p">[</span><span class="s2">&quot;award_start_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">g</span><span class="p">[</span><span class="s2">&quot;award_end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">year</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;team&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+                <span class="n">rperson</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">rperson</span><span class="p">:</span>
+                    <span class="n">person</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rperson</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;budget&quot;</span><span class="p">):</span>
+                <span class="n">amounts</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;budget&quot;</span><span class="p">)]</span>
+                <span class="n">g</span><span class="p">[</span><span class="s2">&quot;subaward_amount&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">amounts</span><span class="p">)</span>
+
+        <span class="n">current_grants</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">grants</span> <span class="k">if</span> <span class="n">is_current</span><span class="p">(</span><span class="n">g</span><span class="p">)]</span>
+        <span class="n">current_grants</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">filter_grants</span><span class="p">(</span><span class="n">current_grants</span><span class="p">,</span> <span class="p">{</span><span class="n">pi</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]},</span> <span class="n">pi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">multi_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">current_grants</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">current_grants</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;declined&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">current_grants</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;budget&quot;</span><span class="p">):</span>
+                <span class="n">amounts</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;budget&quot;</span><span class="p">)]</span>
+                <span class="n">g</span><span class="p">[</span><span class="s2">&quot;subaward_amount&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">amounts</span><span class="p">)</span>
+
+        <span class="n">pending_grants</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;proposals&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">is_pending</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">])]</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">pending_grants</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s2">&quot;team&quot;</span><span class="p">]:</span>
+                <span class="n">rperson</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">rperson</span><span class="p">:</span>
+                    <span class="n">person</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rperson</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">pending_grants</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">filter_grants</span><span class="p">(</span><span class="n">pending_grants</span><span class="p">,</span> <span class="p">{</span><span class="n">pi</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]},</span> <span class="n">pi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">multi_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">badids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">current_grants</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cpp_info&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cppflag&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)]</span>
+
+        <span class="n">declined_proposals</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;proposals&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">is_declined</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">])]</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">declined_proposals</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="n">g</span><span class="p">[</span><span class="s2">&quot;team&quot;</span><span class="p">]:</span>
+                <span class="n">rperson</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">rperson</span><span class="p">:</span>
+                    <span class="n">person</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rperson</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">declined_proposals</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">filter_grants</span><span class="p">(</span><span class="n">declined_proposals</span><span class="p">,</span> <span class="p">{</span><span class="n">pi</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]},</span> <span class="n">pi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">multi_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">declined_proposals</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">proposal</span>
+            <span class="k">for</span> <span class="n">proposal</span> <span class="ow">in</span> <span class="n">declined_proposals</span>
+            <span class="k">if</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">proposal</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;begin_date&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">begin_period</span>
+            <span class="ow">and</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">proposal</span><span class="p">,</span> <span class="n">date_field_prefix</span><span class="o">=</span><span class="s2">&quot;submitted&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;submitted_date&quot;</span><span class="p">,</span> <span class="n">end_period</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">end_period</span>
+        <span class="p">]</span>
+
+        <span class="nb">iter</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">current_grants</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">grant</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">badids</span><span class="p">:</span>
+                <span class="n">current_grants</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">grant</span><span class="p">)</span>
+        <span class="c1">#########</span>
+        <span class="c1"># end current and pending</span>
+        <span class="c1">#########</span>
+
+        <span class="c1">#########</span>
+        <span class="c1"># highlights</span>
+        <span class="c1">#########</span>
+        <span class="n">ossoftware</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">proj</span> <span class="ow">in</span> <span class="n">projs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">proj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;highlights&quot;</span><span class="p">):</span>
+                <span class="n">proj</span><span class="p">[</span><span class="s2">&quot;current_highlights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">highlight</span> <span class="ow">in</span> <span class="n">proj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;highlights&quot;</span><span class="p">):</span>
+                    <span class="n">highlight_date</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">highlight</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">highlight_date</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">begin_period</span><span class="p">:</span>
+                        <span class="n">highlight</span><span class="p">[</span><span class="s2">&quot;is_current&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">proj</span><span class="p">[</span><span class="s2">&quot;current_highlights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">if</span> <span class="n">proj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;ossoftware&quot;</span><span class="p">:</span>
+                            <span class="n">ossoftware</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1">#########</span>
+        <span class="c1"># advising</span>
+        <span class="c1">#########</span>
+        <span class="n">undergrads</span> <span class="o">=</span> <span class="n">filter_employment_for_advisees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;undergrad&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">masters</span> <span class="o">=</span> <span class="n">filter_employment_for_advisees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;ms&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">currents</span> <span class="o">=</span> <span class="n">filter_employment_for_advisees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;phd&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">graduateds</span> <span class="o">=</span> <span class="n">filter_employment_for_advisees</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="n">begin_period</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">begin_year</span> <span class="o">-</span> <span class="mi">5</span><span class="p">),</span> <span class="s2">&quot;phd&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">postdocs</span> <span class="o">=</span> <span class="n">filter_employment_for_advisees</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;postdoc&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">visitors</span> <span class="o">=</span> <span class="n">filter_employment_for_advisees</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;visitor-unsupported&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">people</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="nb">iter</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">graduateds</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">):</span>
+                <span class="n">graduateds</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+        <span class="nb">iter</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active&quot;</span><span class="p">):</span>
+                <span class="n">currents</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+        <span class="c1">######################</span>
+        <span class="c1"># service</span>
+        <span class="c1">#####################</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">dept_service</span> <span class="o">=</span> <span class="n">filter_service</span><span class="p">(</span><span class="n">mego</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;department&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">school_service</span> <span class="o">=</span> <span class="n">filter_service</span><span class="p">(</span><span class="n">mego</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;school&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">uni_service</span> <span class="o">=</span> <span class="n">filter_service</span><span class="p">(</span><span class="n">mego</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;university&quot;</span><span class="p">)</span>
+        <span class="n">uni_service</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">school_service</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_recletts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">uni_service</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Wrote recommendation letters for </span><span class="si">{</span><span class="n">num_recletts</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="sa">f</span><span class="s2">&quot;people this period&quot;</span><span class="p">})</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">prof_service</span> <span class="o">=</span> <span class="n">filter_service</span><span class="p">(</span><span class="n">mego</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;profession&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_proprevs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prof_service</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Reviewed </span><span class="si">{</span><span class="n">num_proprevs</span><span class="si">}</span><span class="s2"> funding proposals for &quot;</span> <span class="sa">f</span><span class="s2">&quot;national agencies this period&quot;</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_manrevs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prof_service</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Reviewed </span><span class="si">{</span><span class="n">num_manrevs</span><span class="si">}</span><span class="s2"> manuscripts for &quot;</span> <span class="sa">f</span><span class="s2">&quot;peer reviewed journals this period&quot;</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">phd_defenses</span> <span class="o">=</span> <span class="n">filter_committees</span><span class="p">(</span><span class="n">mego</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;phddefense&quot;</span><span class="p">)</span>
+        <span class="n">phd_proposals</span> <span class="o">=</span> <span class="n">filter_committees</span><span class="p">(</span><span class="n">mego</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;phdproposal&quot;</span><span class="p">)</span>
+        <span class="n">phd_orals</span> <span class="o">=</span> <span class="n">filter_committees</span><span class="p">(</span><span class="n">mego</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;phdoral&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">outreach</span> <span class="o">=</span> <span class="n">filter_service</span><span class="p">(</span><span class="n">mego</span><span class="p">,</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;outreach&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">lab</span> <span class="o">=</span> <span class="n">filter_facilities</span><span class="p">([</span><span class="n">mego</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;research&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">shared</span> <span class="o">=</span> <span class="n">filter_facilities</span><span class="p">([</span><span class="n">mego</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;shared&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">fac_other</span> <span class="o">=</span> <span class="n">filter_facilities</span><span class="p">([</span><span class="n">mego</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">fac_teaching</span> <span class="o">=</span> <span class="n">filter_facilities</span><span class="p">([</span><span class="n">mego</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;teaching&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">fac_wishlist</span> <span class="o">=</span> <span class="n">filter_facilities</span><span class="p">([</span><span class="n">mego</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;research_wish&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">tch_wishlist</span> <span class="o">=</span> <span class="n">filter_facilities</span><span class="p">([</span><span class="n">mego</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;teaching_wish&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">curric_dev</span> <span class="o">=</span> <span class="n">filter_activities</span><span class="p">([</span><span class="n">mego</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;teaching&quot;</span><span class="p">)</span>
+        <span class="n">mego</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+        <span class="n">other_activities</span> <span class="o">=</span> <span class="n">filter_activities</span><span class="p">([</span><span class="n">mego</span><span class="p">],</span> <span class="n">begin_period</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">)</span>
+
+        <span class="c1">##########################</span>
+        <span class="c1"># Presentation list</span>
+        <span class="c1">##########################</span>
+        <span class="n">keypres</span> <span class="o">=</span> <span class="n">filter_presentations</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;presentations&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;institutions&quot;</span><span class="p">],</span>
+            <span class="n">build_target</span><span class="p">,</span>
+            <span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;award&quot;</span><span class="p">,</span> <span class="s2">&quot;plenary&quot;</span><span class="p">,</span> <span class="s2">&quot;keynote&quot;</span><span class="p">],</span>
+            <span class="n">since</span><span class="o">=</span><span class="n">begin_period</span><span class="p">,</span>
+            <span class="n">before</span><span class="o">=</span><span class="n">end_period</span><span class="p">,</span>
+            <span class="n">statuses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;accepted&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">invpres</span> <span class="o">=</span> <span class="n">filter_presentations</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;presentations&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;institutions&quot;</span><span class="p">],</span>
+            <span class="n">build_target</span><span class="p">,</span>
+            <span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;invited&quot;</span><span class="p">],</span>
+            <span class="n">since</span><span class="o">=</span><span class="n">begin_period</span><span class="p">,</span>
+            <span class="n">before</span><span class="o">=</span><span class="n">end_period</span><span class="p">,</span>
+            <span class="n">statuses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;accepted&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">sempres</span> <span class="o">=</span> <span class="n">filter_presentations</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;presentations&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;institutions&quot;</span><span class="p">],</span>
+            <span class="n">build_target</span><span class="p">,</span>
+            <span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;colloquium&quot;</span><span class="p">,</span> <span class="s2">&quot;seminar&quot;</span><span class="p">],</span>
+            <span class="n">since</span><span class="o">=</span><span class="n">begin_period</span><span class="p">,</span>
+            <span class="n">before</span><span class="o">=</span><span class="n">end_period</span><span class="p">,</span>
+            <span class="n">statuses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;accepted&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">declpres</span> <span class="o">=</span> <span class="n">filter_presentations</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;presentations&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;institutions&quot;</span><span class="p">],</span>
+            <span class="n">build_target</span><span class="p">,</span>
+            <span class="n">types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">],</span>
+            <span class="n">since</span><span class="o">=</span><span class="n">begin_period</span><span class="p">,</span>
+            <span class="n">before</span><span class="o">=</span><span class="n">end_period</span><span class="p">,</span>
+            <span class="n">statuses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;declined&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1">#########################</span>
+        <span class="c1"># Awards</span>
+        <span class="c1">#########################</span>
+        <span class="n">ahs</span> <span class="o">=</span> <span class="n">awards</span><span class="p">(</span><span class="n">me</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="n">begin_period</span><span class="p">)</span>
+
+        <span class="c1">########################</span>
+        <span class="c1"># Publications</span>
+        <span class="c1">########################</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">me</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;aka&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span><span class="n">me</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]])</span>
+        <span class="n">pubs</span> <span class="o">=</span> <span class="n">filter_publications</span><span class="p">(</span>
+            <span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="s2">&quot;citations&quot;</span><span class="p">),</span> <span class="n">names</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="n">begin_period</span>
+        <span class="p">)</span>
+        <span class="c1"># remove unpublished papers</span>
+        <span class="c1"># unpubs = [pub for pub in pubs if len(pub.get(&quot;doi&quot;) == 0)]</span>
+        <span class="n">pubed</span> <span class="o">=</span> <span class="p">[</span><span class="n">pub</span> <span class="k">for</span> <span class="n">pub</span> <span class="ow">in</span> <span class="n">pubs</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pub</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doi&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">non_arts</span> <span class="o">=</span> <span class="p">[</span><span class="n">pub</span> <span class="k">for</span> <span class="n">pub</span> <span class="ow">in</span> <span class="n">pubs</span> <span class="k">if</span> <span class="n">pub</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;entrytype&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;article&quot;</span><span class="p">]</span>
+        <span class="n">pubs</span> <span class="o">=</span> <span class="n">pubed</span> <span class="o">+</span> <span class="n">non_arts</span>
+        <span class="n">bibfile</span> <span class="o">=</span> <span class="n">make_bibtex_file</span><span class="p">(</span><span class="n">pubs</span><span class="p">,</span> <span class="n">pid</span><span class="o">=</span><span class="n">me</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">],</span> <span class="n">person_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bldir</span><span class="p">)</span>
+        <span class="n">articles</span> <span class="o">=</span> <span class="p">[</span><span class="n">prc</span> <span class="k">for</span> <span class="n">prc</span> <span class="ow">in</span> <span class="n">pubs</span> <span class="k">if</span> <span class="n">prc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;entrytype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;article&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">prc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;peer_rev_conf&quot;</span><span class="p">)]</span>
+        <span class="n">NONARTICLETYPES</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;book&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inbook&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;proceedings&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;inproceedings&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;incollection&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;unpublished&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;phdthesis&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;misc&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">nonarticles</span> <span class="o">=</span> <span class="p">[</span><span class="n">prc</span> <span class="k">for</span> <span class="n">prc</span> <span class="ow">in</span> <span class="n">pubs</span> <span class="k">if</span> <span class="n">prc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;entrytype&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">NONARTICLETYPES</span><span class="p">]</span>
+        <span class="n">peer_rev_conf_pubs</span> <span class="o">=</span> <span class="p">[</span><span class="n">prc</span> <span class="k">for</span> <span class="n">prc</span> <span class="ow">in</span> <span class="n">pubs</span> <span class="k">if</span> <span class="n">prc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;peer_rev_conf&quot;</span><span class="p">)]</span>
+
+        <span class="c1">##############</span>
+        <span class="c1"># TODO: add Current Projects to Research summary section</span>
+        <span class="c1">##############</span>
+
+        <span class="c1">#############</span>
+        <span class="c1"># IP</span>
+        <span class="c1">#############</span>
+        <span class="n">patents</span> <span class="o">=</span> <span class="n">filter_patents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;patents&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="n">build_target</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="n">begin_period</span><span class="p">)</span>
+        <span class="n">licenses</span> <span class="o">=</span> <span class="n">filter_licenses</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;patents&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">],</span> <span class="n">build_target</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="n">begin_period</span><span class="p">)</span>
+        <span class="c1">#############</span>
+        <span class="c1"># hindex</span>
+        <span class="c1">#############</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">me</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;miscellaneous&quot;</span><span class="p">):</span>
+            <span class="n">me</span><span class="p">[</span><span class="s2">&quot;miscellaneous&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;metrics_for_success&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="k">if</span> <span class="n">me</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hindex&quot;</span><span class="p">):</span>
+            <span class="n">hindex</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">me</span><span class="p">[</span><span class="s2">&quot;hindex&quot;</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="n">doc_date_key</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="c1">#########################</span>
+        <span class="c1"># render</span>
+        <span class="c1">#########################</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+            <span class="s2">&quot;columbia_annual_report.tex&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pi</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">-ann-report.tex&quot;</span><span class="p">,</span>
+            <span class="n">pi</span><span class="o">=</span><span class="n">pi</span><span class="p">,</span>
+            <span class="n">p</span><span class="o">=</span><span class="n">me</span><span class="p">,</span>
+            <span class="n">projects</span><span class="o">=</span><span class="n">projs</span><span class="p">,</span>
+            <span class="n">pending</span><span class="o">=</span><span class="n">pending_grants</span><span class="p">,</span>
+            <span class="n">current</span><span class="o">=</span><span class="n">current_grants</span><span class="p">,</span>
+            <span class="n">declined</span><span class="o">=</span><span class="n">declined_proposals</span><span class="p">,</span>
+            <span class="n">undergrads</span><span class="o">=</span><span class="n">undergrads</span><span class="p">,</span>
+            <span class="n">masters</span><span class="o">=</span><span class="n">masters</span><span class="p">,</span>
+            <span class="n">currentphds</span><span class="o">=</span><span class="n">currents</span><span class="p">,</span>
+            <span class="n">graduatedphds</span><span class="o">=</span><span class="n">graduateds</span><span class="p">,</span>
+            <span class="n">postdocs</span><span class="o">=</span><span class="n">postdocs</span><span class="p">,</span>
+            <span class="n">visitors</span><span class="o">=</span><span class="n">visitors</span><span class="p">,</span>
+            <span class="n">ossoftware</span><span class="o">=</span><span class="n">ossoftware</span><span class="p">,</span>
+            <span class="n">phd_defenses</span><span class="o">=</span><span class="n">phd_defenses</span><span class="p">,</span>
+            <span class="n">phd_proposals</span><span class="o">=</span><span class="n">phd_proposals</span><span class="p">,</span>
+            <span class="n">phd_orals</span><span class="o">=</span><span class="n">phd_orals</span><span class="p">,</span>
+            <span class="n">dept_service</span><span class="o">=</span><span class="n">dept_service</span><span class="p">,</span>
+            <span class="n">uni_service</span><span class="o">=</span><span class="n">uni_service</span><span class="p">,</span>
+            <span class="n">prof_service</span><span class="o">=</span><span class="n">prof_service</span><span class="p">,</span>
+            <span class="n">outreach</span><span class="o">=</span><span class="n">outreach</span><span class="p">,</span>
+            <span class="n">lab</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span>
+            <span class="n">shared</span><span class="o">=</span><span class="n">shared</span><span class="p">,</span>
+            <span class="n">facilities_other</span><span class="o">=</span><span class="n">fac_other</span><span class="p">,</span>
+            <span class="n">fac_teaching</span><span class="o">=</span><span class="n">fac_teaching</span><span class="p">,</span>
+            <span class="n">fac_wishlist</span><span class="o">=</span><span class="n">fac_wishlist</span><span class="p">,</span>
+            <span class="n">tch_wishlist</span><span class="o">=</span><span class="n">tch_wishlist</span><span class="p">,</span>
+            <span class="n">curric_dev</span><span class="o">=</span><span class="n">curric_dev</span><span class="p">,</span>
+            <span class="n">other_activities</span><span class="o">=</span><span class="n">other_activities</span><span class="p">,</span>
+            <span class="n">keypres</span><span class="o">=</span><span class="n">keypres</span><span class="p">,</span>
+            <span class="n">invpres</span><span class="o">=</span><span class="n">invpres</span><span class="p">,</span>
+            <span class="n">sempres</span><span class="o">=</span><span class="n">sempres</span><span class="p">,</span>
+            <span class="n">declpres</span><span class="o">=</span><span class="n">declpres</span><span class="p">,</span>
+            <span class="n">sentencecase</span><span class="o">=</span><span class="n">sentencecase</span><span class="p">,</span>
+            <span class="n">monthstyle</span><span class="o">=</span><span class="n">month_fullnames</span><span class="p">,</span>
+            <span class="n">ahs</span><span class="o">=</span><span class="n">ahs</span><span class="p">,</span>
+            <span class="n">pubs</span><span class="o">=</span><span class="n">articles</span><span class="p">,</span>
+            <span class="n">nonarticles</span><span class="o">=</span><span class="n">nonarticles</span><span class="p">,</span>
+            <span class="n">peer_rev_conf_pubs</span><span class="o">=</span><span class="n">peer_rev_conf_pubs</span><span class="p">,</span>
+            <span class="n">bibfile</span><span class="o">=</span><span class="n">bibfile</span><span class="p">,</span>
+            <span class="n">patents</span><span class="o">=</span><span class="n">patents</span><span class="p">,</span>
+            <span class="n">licenses</span><span class="o">=</span><span class="n">licenses</span><span class="p">,</span>
+            <span class="n">hindex</span><span class="o">=</span><span class="n">hindex</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pi</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">-ann-report.tex&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

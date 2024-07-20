@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.schemas &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.schemas</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.schemas</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Database schemas, examples, and tools&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">from</span> <span class="nn">cerberus</span> <span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span> <span class="nn">flatten_dict</span> <span class="kn">import</span> <span class="n">flatten</span><span class="p">,</span> <span class="n">unflatten</span>
+
+<span class="kn">from</span> <span class="nn">.sorters</span> <span class="kn">import</span> <span class="n">POSITION_LEVELS</span>
+
+<span class="n">SORTED_POSITION</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">POSITION_LEVELS</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">POSITION_LEVELS</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+<span class="n">PROJECTUM_ACTIVE_STATI</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;proposed&quot;</span><span class="p">,</span> <span class="s2">&quot;converged&quot;</span><span class="p">,</span> <span class="s2">&quot;started&quot;</span><span class="p">]</span>
+<span class="n">PROJECTUM_PAUSED_STATI</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;backburner&quot;</span><span class="p">,</span> <span class="s2">&quot;paused&quot;</span><span class="p">]</span>
+<span class="n">PROJECTUM_CANCELLED_STATI</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cancelled&quot;</span><span class="p">]</span>
+<span class="n">PROJECTUM_FINISHED_STATI</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;finished&quot;</span><span class="p">]</span>
+<span class="n">PROJECTUM_STATI</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+    <span class="n">PROJECTUM_ACTIVE_STATI</span> <span class="o">+</span> <span class="n">PROJECTUM_PAUSED_STATI</span> <span class="o">+</span> <span class="n">PROJECTUM_CANCELLED_STATI</span> <span class="o">+</span> <span class="n">PROJECTUM_FINISHED_STATI</span>
+<span class="p">)</span>
+
+<span class="n">alloweds</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ACTIVITIES_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;teaching&quot;</span><span class="p">,</span> <span class="s2">&quot;research&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;AGENCIES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;nsf&quot;</span><span class="p">,</span> <span class="s2">&quot;doe&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;APPOINTMENTS_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gra&quot;</span><span class="p">,</span> <span class="s2">&quot;ss&quot;</span><span class="p">,</span> <span class="s2">&quot;pd&quot;</span><span class="p">,</span> <span class="s2">&quot;ug&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;APPOINTMENTS_STATI&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;proposed&quot;</span><span class="p">,</span> <span class="s2">&quot;appointed&quot;</span><span class="p">,</span> <span class="s2">&quot;finalized&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;COMMITTEES_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;phdoral&quot;</span><span class="p">,</span> <span class="s2">&quot;phddefense&quot;</span><span class="p">,</span> <span class="s2">&quot;phdproposal&quot;</span><span class="p">,</span> <span class="s2">&quot;promotion&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;COMMITTEES_LEVELS&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;department&quot;</span><span class="p">,</span> <span class="s2">&quot;school&quot;</span><span class="p">,</span> <span class="s2">&quot;university&quot;</span><span class="p">,</span> <span class="s2">&quot;external&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;EXPENSES_STATI&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;unsubmitted&quot;</span><span class="p">,</span> <span class="s2">&quot;submitted&quot;</span><span class="p">,</span> <span class="s2">&quot;reimbursed&quot;</span><span class="p">,</span> <span class="s2">&quot;declined&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;EXPENSES_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;travel&quot;</span><span class="p">,</span> <span class="s2">&quot;business&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;FACILITIES_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;teaching&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;research&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;shared&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;other&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;teaching_wish&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;research_wish&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;GRANT_STATI&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;pending&quot;</span><span class="p">,</span> <span class="s2">&quot;declined&quot;</span><span class="p">,</span> <span class="s2">&quot;accepted&quot;</span><span class="p">,</span> <span class="s2">&quot;in-prep&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;GRANT_ROLES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;pi&quot;</span><span class="p">,</span> <span class="s2">&quot;copi&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;MILESTONE_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;mergedpr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;meeting&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;other&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;paper&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;release&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;email&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;handin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;purchase&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;approval&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;presentation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;report&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;submission&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;decision&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;demo&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;skel&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;POSITION_STATI&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;pi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;adjunct&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;high-school&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;undergrad&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ms&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;phd&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;postdoc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;visitor-supported&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;visitor-unsupported&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;research-associate&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;PRESENTATION_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;award&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;colloquium&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;contributed_oral&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;invited&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;keynote&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;plenary&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;poster&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;seminar&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tutorial&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;other&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;PRESENTATION_STATI&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;in-prep&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;submitted&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;accepted&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;declined&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cancelled&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;postponed&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;PROJECT_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ossoftware&quot;</span><span class="p">,</span> <span class="s2">&quot;funded&quot;</span><span class="p">,</span> <span class="s2">&quot;outreach&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;PROJECTUM_ACTIVE_STATI&quot;</span><span class="p">:</span> <span class="n">PROJECTUM_ACTIVE_STATI</span><span class="p">,</span>
+    <span class="s2">&quot;PROJECTUM_PAUSED_STATI&quot;</span><span class="p">:</span> <span class="n">PROJECTUM_PAUSED_STATI</span><span class="p">,</span>
+    <span class="s2">&quot;PROJECTUM_CANCELLED_STATI&quot;</span><span class="p">:</span> <span class="n">PROJECTUM_CANCELLED_STATI</span><span class="p">,</span>
+    <span class="s2">&quot;PROJECTUM_FINISHED_STATI&quot;</span><span class="p">:</span> <span class="n">PROJECTUM_FINISHED_STATI</span><span class="p">,</span>
+    <span class="s2">&quot;PROJECTUM_STATI&quot;</span><span class="p">:</span> <span class="n">PROJECTUM_STATI</span><span class="p">,</span>
+    <span class="s2">&quot;PROPOSAL_STATI&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;pending&quot;</span><span class="p">,</span> <span class="s2">&quot;declined&quot;</span><span class="p">,</span> <span class="s2">&quot;accepted&quot;</span><span class="p">,</span> <span class="s2">&quot;inprep&quot;</span><span class="p">,</span> <span class="s2">&quot;submitted&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;PUBLICITY_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;online&quot;</span><span class="p">,</span> <span class="s2">&quot;article&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;REVIEW_STATI&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;invited&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;accepted&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;declined&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;downloaded&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inprogress&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;submitted&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cancelled&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;REVIEW_RECOMMENDATIONS&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;reject&quot;</span><span class="p">,</span> <span class="s2">&quot;asis&quot;</span><span class="p">,</span> <span class="s2">&quot;smalledits&quot;</span><span class="p">,</span> <span class="s2">&quot;diffjournal&quot;</span><span class="p">,</span> <span class="s2">&quot;majoredits&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;SERVICE_TYPES&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;profession&quot;</span><span class="p">,</span> <span class="s2">&quot;university&quot;</span><span class="p">,</span> <span class="s2">&quot;school&quot;</span><span class="p">,</span> <span class="s2">&quot;department&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;SORTED_POSITION&quot;</span><span class="p">:</span> <span class="n">SORTED_POSITION</span><span class="p">,</span>
+    <span class="s2">&quot;TODO_STATI&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;started&quot;</span><span class="p">,</span> <span class="s2">&quot;finished&quot;</span><span class="p">,</span> <span class="s2">&quot;cancelled&quot;</span><span class="p">,</span> <span class="s2">&quot;paused&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;OPTIONAL_KEYS_INSTITUTIONS&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;aka&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;departments&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;schools&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;state&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;street&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;zip&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="c1"># for status of kickoff, deliverable, milestones, and the projectum</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_update_dict_target</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
+    <span class="n">flatd</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">filtk</span><span class="p">,</span> <span class="n">filtv</span> <span class="ow">in</span> <span class="nb">filter</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">flatd</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">filtk</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">filtv</span> <span class="o">==</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="n">flatd</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">new_value</span><span class="p">})</span>
+    <span class="n">unflatd</span> <span class="o">=</span> <span class="n">unflatten</span><span class="p">(</span><span class="n">flatd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">unflatd</span>
+
+
+<div class="viewcode-block" id="insert_alloweds">
+<a class="viewcode-back" href="../../api/index.html#regolith.schemas.insert_alloweds">[docs]</a>
+<span class="k">def</span> <span class="nf">insert_alloweds</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">alloweds</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">working_doc</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">alloweds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">working_doc</span> <span class="o">=</span> <span class="n">_update_dict_target</span><span class="p">(</span><span class="n">working_doc</span><span class="p">,</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">k</span><span class="p">},</span> <span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">working_doc</span></div>
+
+
+
+<div class="viewcode-block" id="load_schemas">
+<a class="viewcode-back" href="../../api/index.html#regolith.schemas.load_schemas">[docs]</a>
+<span class="k">def</span> <span class="nf">load_schemas</span><span class="p">():</span>
+    <span class="n">here</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">schema_file</span> <span class="o">=</span> <span class="n">here</span> <span class="o">/</span> <span class="s2">&quot;schemas.json&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">schema_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">schema_file</span><span class="p">:</span>
+        <span class="n">raw_schemas</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">schema_file</span><span class="p">)</span>
+    <span class="n">schemas</span> <span class="o">=</span> <span class="n">insert_alloweds</span><span class="p">(</span><span class="n">raw_schemas</span><span class="p">,</span> <span class="n">alloweds</span><span class="p">,</span> <span class="s2">&quot;eallowed&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">schemas</span></div>
+
+
+
+<div class="viewcode-block" id="load_exemplars">
+<a class="viewcode-back" href="../../api/index.html#regolith.schemas.load_exemplars">[docs]</a>
+<span class="k">def</span> <span class="nf">load_exemplars</span><span class="p">():</span>
+    <span class="n">here</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">exemplar_file</span> <span class="o">=</span> <span class="n">here</span> <span class="o">/</span> <span class="s2">&quot;exemplars.json&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">exemplar_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">efile</span><span class="p">:</span>
+        <span class="n">exemplars</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">efile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">exemplars</span></div>
+
+
+
+<span class="n">EXEMPLARS</span> <span class="o">=</span> <span class="n">load_exemplars</span><span class="p">()</span>
+<span class="n">SCHEMAS</span> <span class="o">=</span> <span class="n">load_schemas</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">SCHEMAS</span><span class="p">:</span>
+    <span class="n">SCHEMAS</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="s2">&quot;files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Files associated with the document&quot;</span><span class="p">,</span>
+        <span class="c1"># TODO: fix this since this is currently comming out a CommentedMap (+1: Yevgeny)</span>
+        <span class="c1"># &quot;type&quot;: &quot;list&quot;,</span>
+        <span class="c1"># &quot;schema&quot;: {&quot;type&quot;: &quot;string&quot;},</span>
+        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="NoDescriptionValidator">
+<a class="viewcode-back" href="../../api/index.html#regolith.schemas.NoDescriptionValidator">[docs]</a>
+<span class="k">class</span> <span class="nc">NoDescriptionValidator</span><span class="p">(</span><span class="n">Validator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_validate_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Don&#39;t validate descriptions</span>
+
+<span class="sd">        The rule&#39;s arguments are validated against this schema:</span>
+<span class="sd">        {&#39;type&#39;: &#39;string&#39;}&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_validate_eallowed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eallowed</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test if value is in list</span>
+<span class="sd">        The rule&#39;s arguments are validated against this schema:</span>
+<span class="sd">        {&#39;type&#39;: &#39;list&#39;}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">eallowed</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="s1">&#39;&quot;</span><span class="si">{}</span><span class="s1">&quot; is not in the preferred entries for &quot;</span><span class="si">{}</span><span class="s1">&quot;, please &#39;</span>
+                <span class="s2">&quot;consider changing this entry to conform or add this to the &quot;</span>
+                <span class="s2">&quot;``eallowed`` field in the schema.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate">
+<a class="viewcode-back" href="../../api/index.html#regolith.schemas.validate">[docs]</a>
+<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">schemas</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a record for a given db</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coll : str</span>
+<span class="sd">        The name of the db in question</span>
+<span class="sd">    record : dict</span>
+<span class="sd">        The record to be validated</span>
+<span class="sd">    schemas : dict</span>
+<span class="sd">        The schema to validate against</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rtn : bool</span>
+<span class="sd">        True is valid</span>
+<span class="sd">    errors: dict</span>
+<span class="sd">        The errors encountered (if any)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">coll</span> <span class="ow">in</span> <span class="n">schemas</span><span class="p">:</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">schemas</span><span class="p">[</span><span class="n">coll</span><span class="p">])</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">NoDescriptionValidator</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">record</span><span class="p">),</span> <span class="n">v</span><span class="o">.</span><span class="n">errors</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

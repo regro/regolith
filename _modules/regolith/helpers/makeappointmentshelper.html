@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.makeappointmentshelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.makeappointmentshelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.makeappointmentshelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper for managing appointments.</span>
+
+<span class="sd">- Returns members with gap in appointments</span>
+<span class="sd">- Returns members supported on an outdated grant</span>
+<span class="sd">- Returns members supported on a depleted grant</span>
+<span class="sd">- Suggests appointments to make for these members</span>
+<span class="sd">- Suggests new appointments</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">dateutil</span> <span class="kn">import</span> <span class="n">parser</span> <span class="k">as</span> <span class="n">date_parser</span>
+<span class="kn">from</span> <span class="nn">dateutil.relativedelta</span> <span class="kn">import</span> <span class="n">relativedelta</span>
+<span class="kn">from</span> <span class="nn">gooey</span> <span class="kn">import</span> <span class="n">GooeyParser</span>
+
+<span class="kn">from</span> <span class="nn">regolith.dates</span> <span class="kn">import</span> <span class="n">get_dates</span>
+
+<span class="c1"># from regolith.schemas import APPOINTMENTS_TYPES</span>
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.basehelper</span> <span class="kn">import</span> <span class="n">SoutHelperBase</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">all_docs_from_collection</span><span class="p">,</span>
+    <span class="n">collect_appts</span><span class="p">,</span>
+    <span class="n">fuzzy_retrieval</span><span class="p">,</span>
+    <span class="n">get_pi_id</span><span class="p">,</span>
+    <span class="n">grant_burn</span><span class="p">,</span>
+    <span class="n">group_member_employment_start_end</span><span class="p">,</span>
+    <span class="n">is_fully_appointed</span><span class="p">,</span>
+    <span class="n">merge_collections_superior</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">TARGET_COLL</span> <span class="o">=</span> <span class="s2">&quot;people&quot;</span>
+<span class="n">HELPER_TARGET</span> <span class="o">=</span> <span class="s2">&quot;makeappointments&quot;</span>
+<span class="n">BLACKLIST</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ta&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;physmatch&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;chemmatch&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;bridge16&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;collgf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;afgrf14&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;summer@seas&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;frap&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;startup&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;they_pay&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">MONTHLY_COST_QUANTUM</span> <span class="o">=</span> <span class="mi">3262</span>
+
+<span class="n">_future_grant</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;_future_grant&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="s2">&quot;n/a&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;activity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;admin&quot;</span><span class="p">:</span> <span class="s2">&quot;tbd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;alias&quot;</span><span class="p">:</span> <span class="s2">&quot;future_grant&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;awardnr&quot;</span><span class="p">:</span> <span class="s2">&quot;tbd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;budget&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-05-01&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2099-12-31&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;student_months&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;postdoc_months&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;ss_months&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="subparser">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.makeappointmentshelper.subparser">[docs]</a>
+<span class="k">def</span> <span class="nf">subparser</span><span class="p">(</span><span class="n">subpi</span><span class="p">):</span>
+    <span class="n">date_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subpi</span><span class="p">,</span> <span class="n">GooeyParser</span><span class="p">):</span>
+        <span class="n">date_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DateChooser&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+            <span class="s2">&quot;run&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run the helper&quot;</span>
+            <span class="s1">&#39;The grant &quot;future_grant&quot; is available internally &#39;</span>
+            <span class="s2">&quot;to assign people to for making projections.  It &quot;</span>
+            <span class="s2">&quot;will be plotted to show when you need new funding &quot;</span>
+            <span class="s2">&quot;by and how much.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--projection-from-date&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the date from which projections into the future &quot;</span> <span class="s2">&quot;will be calculated&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">date_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--no-plot&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;suppress plotting feature&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--no-gui&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;suppress interactive matplotlib GUI (used for &quot;</span> <span class="s2">&quot;running tests)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Plot all non-blacklisted grants.  If not set, grants &quot;</span>
+        <span class="s2">&quot;that ended more than 2 years ago won&#39;t be plotted&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Do not delete --database arg</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--database&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The database that will be updated. Defaults to first database in regolithrc.json&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">subpi</span></div>
+
+
+
+<div class="viewcode-block" id="plotter">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.makeappointmentshelper.plotter">[docs]</a>
+<span class="k">def</span> <span class="nf">plotter</span><span class="p">(</span><span class="n">datearray</span><span class="p">,</span> <span class="n">student</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">sta</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">student</span><span class="p">)</span> <span class="o">/</span> <span class="mf">30.5</span>
+    <span class="n">pda</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pd</span><span class="p">)</span> <span class="o">/</span> <span class="mf">30.5</span>
+    <span class="n">ssa</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span> <span class="o">/</span> <span class="mf">30.5</span>
+    <span class="k">if</span> <span class="n">student</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span><span class="p">(</span><span class="n">datearray</span><span class="p">,</span> <span class="n">sta</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;,-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;student months&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span><span class="p">(</span><span class="n">datearray</span><span class="p">,</span> <span class="n">pda</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;,-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;postdoc months&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ss</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span><span class="p">(</span><span class="n">datearray</span><span class="p">,</span> <span class="n">ssa</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;,-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ss months&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">student</span> <span class="ow">and</span> <span class="n">pd</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot_date</span><span class="p">(</span><span class="n">datearray</span><span class="p">,</span> <span class="n">sta</span> <span class="o">+</span> <span class="n">pda</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;,-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;student+postdoc days&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;budget months remaining&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="s2">&quot;plotting mode is on&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="MakeAppointmentsHelper">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.makeappointmentshelper.MakeAppointmentsHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">MakeAppointmentsHelper</span><span class="p">(</span><span class="n">SoutHelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for managing appointments on grants and studying the burn of grants over time.&quot;&quot;&quot;</span>
+
+    <span class="c1"># btype must be the same as helper target in helper.py</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="n">HELPER_TARGET</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;grants&quot;</span><span class="p">,</span> <span class="s2">&quot;proposals&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MakeAppointmentsHelper.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.makeappointmentshelper.MakeAppointmentsHelper.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="s2">&quot;groups&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span> <span class="o">=</span> <span class="n">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">database</span><span class="p">:</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">colls</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">collname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">collname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">db</span><span class="p">,</span> <span class="n">coll</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">,</span> <span class="n">colls</span><span class="p">):</span>
+            <span class="n">gtx</span><span class="p">[</span><span class="n">db</span><span class="p">]</span> <span class="o">=</span> <span class="n">coll</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="MakeAppointmentsHelper.sout">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.makeappointmentshelper.MakeAppointmentsHelper.sout">[docs]</a>
+    <span class="k">def</span> <span class="nf">sout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="n">outdated</span><span class="p">,</span> <span class="n">depleted</span><span class="p">,</span> <span class="n">underspent</span><span class="p">,</span> <span class="n">overspent</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">people</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">])</span>
+        <span class="n">all_appts</span> <span class="o">=</span> <span class="n">collect_appts</span><span class="p">(</span><span class="n">people</span><span class="p">,</span> <span class="n">filter_key</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;gra&quot;</span><span class="p">)</span>
+        <span class="n">all_appts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">collect_appts</span><span class="p">(</span><span class="n">people</span><span class="p">,</span> <span class="n">filter_key</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;ss&quot;</span><span class="p">))</span>
+        <span class="n">all_appts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">collect_appts</span><span class="p">(</span><span class="n">people</span><span class="p">,</span> <span class="n">filter_key</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;pd&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">projection_from_date</span><span class="p">:</span>
+            <span class="n">projection_from_date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">projection_from_date</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">projection_from_date</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+
+        <span class="c1"># collecting amounts and time interval for all grants</span>
+        <span class="n">_future_grant</span><span class="p">[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projection_from_date</span>
+        <span class="n">_future_grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projection_from_date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2190</span><span class="p">)</span>
+        <span class="n">_future_grant</span><span class="p">[</span><span class="s2">&quot;budget&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projection_from_date</span>
+        <span class="n">_future_grant</span><span class="p">[</span><span class="s2">&quot;budget&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">projection_from_date</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">2190</span><span class="p">)</span>
+        <span class="n">_future_grant</span><span class="p">[</span><span class="s2">&quot;burn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grant_burn</span><span class="p">(</span><span class="n">_future_grant</span><span class="p">,</span> <span class="n">all_appts</span><span class="p">)</span>
+        <span class="n">all_grants</span> <span class="o">=</span> <span class="n">merge_collections_superior</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;proposals&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;grants&quot;</span><span class="p">],</span> <span class="s2">&quot;proposal_id&quot;</span><span class="p">)</span>
+        <span class="n">all_grants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_future_grant</span><span class="p">)</span>
+        <span class="n">most_grants_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">grant</span> <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">all_grants</span> <span class="k">if</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">BLACKLIST</span><span class="p">]</span>
+        <span class="n">most_grants</span> <span class="o">=</span> <span class="p">[</span><span class="n">grant</span> <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">most_grants_id</span> <span class="k">if</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">BLACKLIST</span><span class="p">]</span>
+        <span class="n">collecting_grants_with_appts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]:</span>
+            <span class="n">appts</span> <span class="o">=</span> <span class="n">collect_appts</span><span class="p">([</span><span class="n">person</span><span class="p">],</span> <span class="n">filter_key</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;gra&quot;</span><span class="p">)</span>
+            <span class="n">appts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">collect_appts</span><span class="p">([</span><span class="n">person</span><span class="p">],</span> <span class="n">filter_key</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;ss&quot;</span><span class="p">))</span>
+            <span class="n">appts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">collect_appts</span><span class="p">([</span><span class="n">person</span><span class="p">],</span> <span class="n">filter_key</span><span class="o">=</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;pd&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">appts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">person</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;appts&quot;</span><span class="p">:</span> <span class="n">appts</span><span class="p">})</span>
+                <span class="n">collecting_grants_with_appts</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grant&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">appt</span> <span class="ow">in</span> <span class="n">appts</span><span class="p">])</span>
+        <span class="n">grants_with_appts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">collecting_grants_with_appts</span><span class="p">))</span>
+        <span class="n">appointed_grants</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">grant</span>
+            <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">most_grants</span>
+            <span class="k">if</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">grants_with_appts</span> <span class="ow">or</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">grants_with_appts</span>
+        <span class="p">]</span>
+        <span class="n">grants_end</span><span class="p">,</span> <span class="n">grants_begin</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">appointed_grants</span><span class="p">:</span>
+            <span class="n">grant</span><span class="p">[</span><span class="s2">&quot;burn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grant_burn</span><span class="p">(</span><span class="n">grant</span><span class="p">,</span> <span class="n">all_appts</span><span class="p">)</span>
+            <span class="n">grant_begin</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">grant</span><span class="p">)[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span>
+            <span class="n">grant_end</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">grant</span><span class="p">)[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span>
+            <span class="n">grant</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;begin_date&quot;</span><span class="p">:</span> <span class="n">grant_begin</span><span class="p">,</span> <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">grant_end</span><span class="p">})</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">grants_begin</span> <span class="ow">or</span> <span class="n">grant_begin</span> <span class="o">&lt;</span> <span class="n">grants_begin</span><span class="p">:</span>
+                <span class="n">grants_begin</span> <span class="o">=</span> <span class="n">grant_begin</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">grants_end</span> <span class="ow">or</span> <span class="n">grant_end</span> <span class="o">&gt;</span> <span class="n">grants_end</span><span class="p">:</span>
+                <span class="n">grants_end</span> <span class="o">=</span> <span class="n">grant_end</span>
+
+        <span class="c1"># checking appointments</span>
+        <span class="n">cum_months_to_cover</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">person</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appts&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">appts</span> <span class="o">=</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;appts&quot;</span><span class="p">)</span>
+            <span class="n">person_dates</span> <span class="o">=</span> <span class="n">group_member_employment_start_end</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="s2">&quot;bg&quot;</span><span class="p">)</span>
+            <span class="n">emps</span> <span class="o">=</span> <span class="p">[</span><span class="n">person_date</span> <span class="k">for</span> <span class="n">person_date</span> <span class="ow">in</span> <span class="n">person_dates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">person_date</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;permanent&quot;</span><span class="p">)]</span>
+            <span class="n">emps</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_date&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">is_fully_appointed</span><span class="p">(</span>
+                <span class="n">person</span><span class="p">,</span>
+                <span class="nb">min</span><span class="p">(</span><span class="n">get_dates</span><span class="p">(</span><span class="n">appt</span><span class="p">)[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">appt</span> <span class="ow">in</span> <span class="n">appts</span><span class="p">),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="n">get_dates</span><span class="p">(</span><span class="n">appt</span><span class="p">)[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">appt</span> <span class="ow">in</span> <span class="n">appts</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">appt</span> <span class="ow">in</span> <span class="n">appts</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grant&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">BLACKLIST</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">this_grant</span> <span class="o">=</span> <span class="n">fuzzy_retrieval</span><span class="p">(</span><span class="n">appointed_grants</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">,</span> <span class="s2">&quot;alias&quot;</span><span class="p">],</span> <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grant&quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">this_grant</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="s2">&quot;    grant: </span><span class="si">{}</span><span class="s2">, person: </span><span class="si">{}</span><span class="s2">, appointment: </span><span class="si">{}</span><span class="s2">, grant not found in grants database&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grant&quot;</span><span class="p">),</span> <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">),</span> <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="n">appt_begin</span><span class="p">,</span> <span class="n">appt_end</span> <span class="o">=</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">appt</span><span class="p">)[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">],</span> <span class="n">get_dates</span><span class="p">(</span><span class="n">appt</span><span class="p">)[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span>
+                <span class="n">outdated_period</span><span class="p">,</span> <span class="n">depleted_period</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="n">appt_end</span> <span class="o">-</span> <span class="n">appt_begin</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">day</span> <span class="o">=</span> <span class="n">appt_begin</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">outdated_period</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">this_grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;burn&quot;</span><span class="p">):</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">this_grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">this_grant</span><span class="p">[</span><span class="s2">&quot;burn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">day</span><span class="p">):</span>
+                            <span class="n">outdated_period</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">outdated</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="s2">&quot;    person: </span><span class="si">{}</span><span class="s2">, appointment: </span><span class="si">{}</span><span class="s2">, grant: </span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;            from </span><span class="si">{}</span><span class="s2"> until </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                    <span class="n">person</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">),</span>
+                                    <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">),</span>
+                                    <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grant&quot;</span><span class="p">),</span>
+                                    <span class="p">(</span>
+                                        <span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
+                                        <span class="k">if</span> <span class="n">day</span> <span class="o">&lt;</span> <span class="n">this_grant</span><span class="p">[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span>
+                                        <span class="k">else</span> <span class="n">this_grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                                    <span class="p">),</span>
+                                    <span class="p">(</span>
+                                        <span class="nb">str</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">appt_end</span><span class="p">,</span> <span class="n">this_grant</span><span class="p">[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]))</span>
+                                        <span class="k">if</span> <span class="n">day</span> <span class="o">&lt;</span> <span class="n">this_grant</span><span class="p">[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span>
+                                        <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
+                                    <span class="p">),</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">this_grant</span><span class="p">[</span><span class="s2">&quot;burn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">day</span><span class="p">):</span>
+                            <span class="n">outdated_period</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">depleted_period</span> <span class="ow">or</span> <span class="n">outdated_period</span><span class="p">):</span>
+                        <span class="n">day_burn</span><span class="p">,</span> <span class="n">this_burn</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">this_grant</span><span class="p">[</span><span class="s2">&quot;burn&quot;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;gra&quot;</span><span class="p">:</span>
+                            <span class="n">day_burn</span> <span class="o">=</span> <span class="n">this_burn</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;student_days&quot;</span><span class="p">]</span>
+                        <span class="k">elif</span> <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;pd&quot;</span><span class="p">:</span>
+                            <span class="n">day_burn</span> <span class="o">=</span> <span class="n">this_burn</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;postdoc_days&quot;</span><span class="p">]</span>
+                        <span class="k">elif</span> <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;ss&quot;</span><span class="p">:</span>
+                            <span class="n">day_burn</span> <span class="o">=</span> <span class="n">this_burn</span><span class="p">[</span><span class="n">day</span><span class="p">][</span><span class="s2">&quot;ss_days&quot;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">day_burn</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">5</span><span class="p">:</span>
+                            <span class="c1"># FIXME change to display depleted until next &gt;-5 amt instead of appt_end</span>
+                            <span class="n">depleted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="s2">&quot;    person: </span><span class="si">{}</span><span class="s2">, appointment: </span><span class="si">{}</span><span class="s2">, grant: </span><span class="si">{}</span><span class="s2">,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;            from </span><span class="si">{}</span><span class="s2"> until </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                    <span class="n">person</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">],</span> <span class="n">appt</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">],</span> <span class="n">appt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;grant&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">day</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">appt_end</span><span class="p">)</span>
+                                <span class="p">)</span>
+                            <span class="p">)</span>
+                            <span class="n">depleted_period</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># setup for plotting grants</span>
+        <span class="n">datearray</span><span class="p">,</span> <span class="n">cum_student</span><span class="p">,</span> <span class="n">cum_pd</span><span class="p">,</span> <span class="n">cum_ss</span> <span class="o">=</span> <span class="p">[],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_plot</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="n">grants_end</span> <span class="o">-</span> <span class="n">grants_begin</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">datearray</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grants_begin</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">x</span><span class="p">))</span>
+            <span class="n">cum_student</span><span class="p">,</span> <span class="n">cum_pd</span><span class="p">,</span> <span class="n">cum_ss</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">datearray</span><span class="p">),</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">datearray</span><span class="p">),</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">datearray</span><span class="p">)</span>
+        <span class="n">plots</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># calculating grant surplus and deficit</span>
+        <span class="n">cum_underspend</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">appointed_grants</span><span class="p">:</span>
+            <span class="n">tracking</span> <span class="o">=</span> <span class="p">[</span><span class="n">balance</span> <span class="k">for</span> <span class="n">balance</span> <span class="ow">in</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tracking&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">balance</span><span class="p">]</span>
+            <span class="c1"># if all_grants[grant]:</span>
+            <span class="c1">#     tracking = [balance for balance in all_grants[grant].get(&#39;tracking&#39;,[]) if balance]</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     tracking = []</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tracking</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tracking</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">recent_balance</span> <span class="o">=</span> <span class="n">tracking</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">recent_balance</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">recent_balance</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">MONTHLY_COST_QUANTUM</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">recent_balance</span> <span class="o">=</span> <span class="p">[</span><span class="n">projection_from_date</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">budget_begin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">get_dates</span><span class="p">(</span><span class="n">period</span><span class="p">)[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">period</span> <span class="ow">in</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;budget&quot;</span><span class="p">))</span>
+            <span class="n">budget_end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">get_dates</span><span class="p">(</span><span class="n">period</span><span class="p">)[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">period</span> <span class="ow">in</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;budget&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">grant</span><span class="p">[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">budget_begin</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;grant </span><span class="si">{</span><span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alias&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not have a correct budget begin date. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;grant begin: </span><span class="si">{</span><span class="n">grant</span><span class="p">[</span><span class="s1">&#39;begin_date&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> budget begin: </span><span class="si">{</span><span class="n">budget_begin</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">budget_end</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;grant </span><span class="si">{</span><span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;alias&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not have a correct budget end date.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; grant end: </span><span class="si">{</span><span class="n">grant</span><span class="p">[</span><span class="s1">&#39;end_date&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> budget end: </span><span class="si">{</span><span class="n">budget_end</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="n">days_to_go</span> <span class="o">=</span> <span class="p">(</span><span class="n">grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">projection_from_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+            <span class="n">this_burn</span> <span class="o">=</span> <span class="n">grant</span><span class="p">[</span><span class="s2">&quot;burn&quot;</span><span class="p">]</span>
+            <span class="n">end_amount</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">this_burn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">])[</span><span class="s2">&quot;student_days&quot;</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">this_burn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">])[</span><span class="s2">&quot;ss_days&quot;</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">this_burn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">])[</span><span class="s2">&quot;postdoc_days&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">end_amount</span> <span class="o">&gt;</span> <span class="mf">15.25</span><span class="p">:</span>
+                <span class="n">underspent</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="n">grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">],</span>
+                        <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">),</span>
+                        <span class="nb">round</span><span class="p">(</span><span class="n">end_amount</span> <span class="o">/</span> <span class="mf">30.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                        <span class="nb">round</span><span class="p">(</span><span class="n">end_amount</span> <span class="o">/</span> <span class="n">days_to_go</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">cum_underspend</span> <span class="o">+=</span> <span class="n">end_amount</span>
+            <span class="k">elif</span> <span class="n">end_amount</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">30.5</span><span class="p">:</span>
+                <span class="n">overspent</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot;    end: </span><span class="si">{}</span><span class="s2">, grant: </span><span class="si">{}</span><span class="s2">, overspend amount: </span><span class="si">{}</span><span class="s2"> months&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]),</span> <span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">end_amount</span> <span class="o">/</span> <span class="mf">30.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="c1"># values for individual and cumulative grant burn plots</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_plot</span><span class="p">:</span>
+                <span class="n">grant_dates</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">grant</span><span class="p">[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="n">grant</span><span class="p">[</span><span class="s2">&quot;end_date&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">grant</span><span class="p">[</span><span class="s2">&quot;begin_date&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">days</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">this_student</span><span class="p">,</span> <span class="n">this_pd</span><span class="p">,</span> <span class="n">this_ss</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">grant_dates</span><span class="p">),</span>
+                    <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">grant_dates</span><span class="p">),</span>
+                    <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">grant_dates</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">datearray</span><span class="p">)):</span>
+                    <span class="n">day_burn</span> <span class="o">=</span> <span class="n">this_burn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">datearray</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">day_burn</span><span class="p">:</span>
+                        <span class="n">this_student</span><span class="p">[</span><span class="n">counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">day_burn</span><span class="p">[</span><span class="s2">&quot;student_days&quot;</span><span class="p">]</span>
+                        <span class="n">this_pd</span><span class="p">[</span><span class="n">counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">day_burn</span><span class="p">[</span><span class="s2">&quot;postdoc_days&quot;</span><span class="p">]</span>
+                        <span class="n">this_ss</span><span class="p">[</span><span class="n">counter</span><span class="p">]</span> <span class="o">=</span> <span class="n">day_burn</span><span class="p">[</span><span class="s2">&quot;ss_days&quot;</span><span class="p">]</span>
+                        <span class="n">cum_student</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">day_burn</span><span class="p">[</span><span class="s2">&quot;student_days&quot;</span><span class="p">]</span>
+                        <span class="n">cum_pd</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">day_burn</span><span class="p">[</span><span class="s2">&quot;postdoc_days&quot;</span><span class="p">]</span>
+                        <span class="n">cum_ss</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">day_burn</span><span class="p">[</span><span class="s2">&quot;ss_days&quot;</span><span class="p">]</span>
+                        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">grant_dates</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">projection_from_date</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">730</span><span class="p">):</span>
+                        <span class="n">plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">plotter</span><span class="p">(</span>
+                                <span class="n">grant_dates</span><span class="p">,</span> <span class="n">student</span><span class="o">=</span><span class="n">this_student</span><span class="p">,</span> <span class="n">pd</span><span class="o">=</span><span class="n">this_pd</span><span class="p">,</span> <span class="n">ss</span><span class="o">=</span><span class="n">this_ss</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span>
+                            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">plotter</span><span class="p">(</span>
+                            <span class="n">grant_dates</span><span class="p">,</span> <span class="n">student</span><span class="o">=</span><span class="n">this_student</span><span class="p">,</span> <span class="n">pd</span><span class="o">=</span><span class="n">this_pd</span><span class="p">,</span> <span class="n">ss</span><span class="o">=</span><span class="n">this_ss</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">grant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span>
+                        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">outdated</span><span class="p">:</span>
+            <span class="n">outdated</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">mess</span><span class="p">:</span> <span class="n">mess</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;appointments on outdated grants:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">appt</span> <span class="ow">in</span> <span class="n">outdated</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">appt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">depleted</span><span class="p">:</span>
+            <span class="n">depleted</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">mess</span><span class="p">:</span> <span class="n">mess</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;appointments on depleted grants:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">appt</span> <span class="ow">in</span> <span class="n">depleted</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">appt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">underspent</span><span class="p">:</span>
+            <span class="n">underspent</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;underspent grants:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">grant_info</span> <span class="ow">in</span> <span class="n">underspent</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">grant_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">: end: </span><span class="si">{</span><span class="n">grant_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;      projected underspend: </span><span class="si">{</span><span class="n">grant_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> months, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;balance as of </span><span class="si">{</span><span class="n">recent_balance</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">recent_balance</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;      required ss+gra burn: </span><span class="si">{</span><span class="n">grant_info</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;cumulative underspend = </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">cum_underspend</span><span class="o">/</span><span class="mf">30.5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> months, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;cumulative months to support = </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">cum_months_to_cover</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">overspent</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;overspent grants:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">grant</span> <span class="ow">in</span> <span class="n">overspent</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">grant</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_plot</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">plots</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_gui</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="n">cum_plot</span><span class="p">,</span> <span class="n">cum_ax</span><span class="p">,</span> <span class="n">outp</span> <span class="o">=</span> <span class="n">plotter</span><span class="p">(</span>
+                <span class="n">datearray</span><span class="p">,</span> <span class="n">student</span><span class="o">=</span><span class="n">cum_student</span><span class="p">,</span> <span class="n">pd</span><span class="o">=</span><span class="n">cum_pd</span><span class="p">,</span> <span class="n">ss</span><span class="o">=</span><span class="n">cum_ss</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Cumulative burn&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">no_gui</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="n">outp</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top-level Configuration Keys &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=dbee5847"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Collections" href="collections/index.html" />
+    <link rel="prev" title="Broker" href="tutorials/broker.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            regolith
+              <img src="_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Top-level Configuration Keys</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#builddir"><code class="docutils literal notranslate"><span class="pre">builddir</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mongodbpath"><code class="docutils literal notranslate"><span class="pre">mongodbpath</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#databases"><code class="docutils literal notranslate"><span class="pre">databases</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stores"><code class="docutils literal notranslate"><span class="pre">stores</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#groupname"><code class="docutils literal notranslate"><span class="pre">groupname</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cname"><code class="docutils literal notranslate"><span class="pre">cname</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deploy"><code class="docutils literal notranslate"><span class="pre">deploy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deploydir"><code class="docutils literal notranslate"><span class="pre">deploydir</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#keys-usually-set-by-cli">Keys Usually Set by CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cmd"><code class="docutils literal notranslate"><span class="pre">cmd</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#client"><code class="docutils literal notranslate"><span class="pre">client</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#db"><code class="docutils literal notranslate"><span class="pre">db</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coll"><code class="docutils literal notranslate"><span class="pre">coll</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documents"><code class="docutils literal notranslate"><span class="pre">documents</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#public-only"><code class="docutils literal notranslate"><span class="pre">public_only</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filename"><code class="docutils literal notranslate"><span class="pre">filename</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debug"><code class="docutils literal notranslate"><span class="pre">debug</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blacklist"><code class="docutils literal notranslate"><span class="pre">blacklist</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#schemas"><code class="docutils literal notranslate"><span class="pre">schemas</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#static-source"><code class="docutils literal notranslate"><span class="pre">static_source</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Top-level Configuration Keys</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="top-level-configuration-keys">
+<h1>Top-level Configuration Keys<a class="headerlink" href="#top-level-configuration-keys" title="Link to this heading"></a></h1>
+<p>Herein are described the top-level keys in the run control file.</p>
+<section id="builddir">
+<h2><code class="docutils literal notranslate"><span class="pre">builddir</span></code><a class="headerlink" href="#builddir" title="Link to this heading"></a></h2>
+<p>The temporary location to build whatever it is needs building.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;path/to/dir&#39;</span> <span class="ow">or</span> <span class="kc">None</span>  <span class="c1"># string, optional</span>
+</pre></div>
+</div>
+</section>
+<section id="mongodbpath">
+<h2><code class="docutils literal notranslate"><span class="pre">mongodbpath</span></code><a class="headerlink" href="#mongodbpath" title="Link to this heading"></a></h2>
+<p>The value to pass into the <code class="docutils literal notranslate"><span class="pre">--dbpath</span></code> option to <code class="docutils literal notranslate"><span class="pre">mongod</span></code>.  Defaults to <code class="docutils literal notranslate"><span class="pre">'${builddir}/_dbpath'</span></code>
+if unspecified.</p>
+</section>
+<section id="databases">
+<h2><code class="docutils literal notranslate"><span class="pre">databases</span></code><a class="headerlink" href="#databases" title="Link to this heading"></a></h2>
+<p>This represents the public or private databases that are used to store unstructured data about the group
+and its activities.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>  <span class="c1"># list of dictionaries in order of precedence</span>
+ <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>  <span class="c1"># string identifier for databases name</span>
+ <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://...&#39;</span><span class="p">,</span>  <span class="c1"># location of database</span>
+ <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/database&#39;</span><span class="p">,</span>  <span class="c1"># inside of the resource location</span>
+ <span class="s1">&#39;public&#39;</span><span class="p">:</span> <span class="kc">True</span> <span class="o">|</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># whether the database is fully public or may contain</span>
+                          <span class="c1"># sensitive information.</span>
+ <span class="s1">&#39;local&#39;</span><span class="p">:</span> <span class="kc">True</span> <span class="o">|</span> <span class="kc">False</span>  <span class="c1"># Whether or not git, hg, or mongo are locally hosted/updated or full remote</span>
+ <span class="p">},</span>
+ <span class="o">...</span>
+ <span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="stores">
+<h2><code class="docutils literal notranslate"><span class="pre">stores</span></code><a class="headerlink" href="#stores" title="Link to this heading"></a></h2>
+<p>This is used to represent connection information to document stores, think PDFs, images, etc.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>  <span class="c1"># list of dictionaries in order of precedence</span>
+ <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>  <span class="c1"># string identifier for store name</span>
+ <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://...&#39;</span><span class="p">,</span>  <span class="c1"># location of the store</span>
+ <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/store&#39;</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># inside of the resource location, optional</span>
+ <span class="s1">&#39;public&#39;</span><span class="p">:</span> <span class="kc">True</span> <span class="o">|</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># whether the store is fully public or may contain</span>
+                          <span class="c1"># sensitive information.</span>
+ <span class="p">},</span>
+ <span class="o">...</span>
+ <span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="groupname">
+<h2><code class="docutils literal notranslate"><span class="pre">groupname</span></code><a class="headerlink" href="#groupname" title="Link to this heading"></a></h2>
+<p>This is a string of the research group name.</p>
+</section>
+<section id="cname">
+<h2><code class="docutils literal notranslate"><span class="pre">cname</span></code><a class="headerlink" href="#cname" title="Link to this heading"></a></h2>
+<p>This is a string of the CNAME value.  This will be put into a file called CNAME in the root
+HTML build dir, if it is present.</p>
+</section>
+<section id="deploy">
+<h2><code class="docutils literal notranslate"><span class="pre">deploy</span></code><a class="headerlink" href="#deploy" title="Link to this heading"></a></h2>
+<p>This is a list of deployment targets to send information to from the build directories.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>  <span class="c1"># list of dictionaries in order of precedence</span>
+ <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>  <span class="c1"># string identifier for store name</span>
+ <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://...&#39;</span><span class="p">,</span>  <span class="c1"># location of the store</span>
+ <span class="s1">&#39;src&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/src/in/builddir&#39;</span><span class="p">,</span> <span class="c1"># what are we copying, eg &#39;html&#39;(optional, the default)</span>
+ <span class="s1">&#39;dst&#39;</span><span class="p">:</span> <span class="s1">&#39;path/to/dest/in/deploydir/x&#39;</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># inside of the resource location, optional</span>
+ <span class="p">},</span>
+ <span class="o">...</span>
+ <span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="deploydir">
+<h2><code class="docutils literal notranslate"><span class="pre">deploydir</span></code><a class="headerlink" href="#deploydir" title="Link to this heading"></a></h2>
+<p>The temporary location to for all deployment directories.  If not present, this
+will default to a <code class="docutils literal notranslate"><span class="pre">deploy</span></code> dir inside of the <code class="docutils literal notranslate"><span class="pre">builddir</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;path/to/dir&#39;</span> <span class="ow">or</span> <span class="kc">None</span>  <span class="c1"># string, optional</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="keys-usually-set-by-cli">
+<h1>Keys Usually Set by CLI<a class="headerlink" href="#keys-usually-set-by-cli" title="Link to this heading"></a></h1>
+<p>The following keys are normally set by the command line interface. However, you
+can set them in the run control file should you choose to.</p>
+<section id="cmd">
+<h2><code class="docutils literal notranslate"><span class="pre">cmd</span></code><a class="headerlink" href="#cmd" title="Link to this heading"></a></h2>
+<p>The command to run.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;rc&#39;</span> <span class="o">|</span> <span class="s1">&#39;add&#39;</span> <span class="o">|</span> <span class="o">...</span>  <span class="c1"># str</span>
+</pre></div>
+</div>
+</section>
+<section id="client">
+<h2><code class="docutils literal notranslate"><span class="pre">client</span></code><a class="headerlink" href="#client" title="Link to this heading"></a></h2>
+<p>The MongoDB client to use.  This is almost always set by regolith internally.</p>
+</section>
+<section id="db">
+<h2><code class="docutils literal notranslate"><span class="pre">db</span></code><a class="headerlink" href="#db" title="Link to this heading"></a></h2>
+<p>The database to use.  This should coorespond to the name field of one of the <code class="docutils literal notranslate"><span class="pre">databases</span></code> entries.</p>
+</section>
+<section id="coll">
+<h2><code class="docutils literal notranslate"><span class="pre">coll</span></code><a class="headerlink" href="#coll" title="Link to this heading"></a></h2>
+<p>The collection name inside of a database to use.</p>
+</section>
+<section id="documents">
+<h2><code class="docutils literal notranslate"><span class="pre">documents</span></code><a class="headerlink" href="#documents" title="Link to this heading"></a></h2>
+<p>List of documents to add, update, etc. Should be in JSON / mongodb format.</p>
+</section>
+<section id="public-only">
+<h2><code class="docutils literal notranslate"><span class="pre">public_only</span></code><a class="headerlink" href="#public-only" title="Link to this heading"></a></h2>
+<p>Boolean for whether to select only public databases.</p>
+</section>
+<section id="filename">
+<h2><code class="docutils literal notranslate"><span class="pre">filename</span></code><a class="headerlink" href="#filename" title="Link to this heading"></a></h2>
+<p>Sting that is a path to a file to operate on.</p>
+</section>
+<section id="debug">
+<h2><code class="docutils literal notranslate"><span class="pre">debug</span></code><a class="headerlink" href="#debug" title="Link to this heading"></a></h2>
+<p>Boolean for whether to run in debug mode or not.</p>
+</section>
+<section id="blacklist">
+<h2><code class="docutils literal notranslate"><span class="pre">blacklist</span></code><a class="headerlink" href="#blacklist" title="Link to this heading"></a></h2>
+<p>List of files to not load when loading databases. If not provided, blacklists
+<code class="docutils literal notranslate"><span class="pre">['.travis.yml',</span> <span class="pre">'.travis.yaml']</span></code></p>
+</section>
+<section id="schemas">
+<h2><code class="docutils literal notranslate"><span class="pre">schemas</span></code><a class="headerlink" href="#schemas" title="Link to this heading"></a></h2>
+<p>Dict of dicts which overrides the schema for a key in a collection.</p>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;people&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;anyof_type&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">]}}}</span>
+</pre></div>
+</div>
+<p>would allow the names of people to also be
+<a class="reference external" href="https://youtu.be/nW-bFGzNMXw?t=42s">numbers</a>.</p>
+<p>See the collections for a complete list of the schemas.</p>
+</section>
+<section id="static-source">
+<h2><code class="docutils literal notranslate"><span class="pre">static_source</span></code><a class="headerlink" href="#static-source" title="Link to this heading"></a></h2>
+<p>File path to the static source for <code class="docutils literal notranslate"><span class="pre">regolith</span> <span class="pre">build</span> <span class="pre">html</span></code>. If none provided it defaults to “templates”</p>
+<p>This is useful for local website builds where the <code class="docutils literal notranslate"><span class="pre">regolithrc.json</span></code> may be in another folder.</p>
+</section>
+</section>
+<section id="user-configuration">
+<h1>User Configuration<a class="headerlink" href="#user-configuration" title="Link to this heading"></a></h1>
+<p>Users can also provide information available to all databases via a local user
+configuration file.
+The file must be stored in <code class="docutils literal notranslate"><span class="pre">'~/.config/regolith/user.json</span></code> and can have
+keys similar to <code class="docutils literal notranslate"><span class="pre">regolithrc.json</span></code>.
+Note that these keys are applied before the <code class="docutils literal notranslate"><span class="pre">regolithrc.json</span></code> so if there
+are conflicting keys the user keys are overridden.
+These keys could be used for storing information for emailing, git remotes,
+and other configuration.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials/broker.html" class="btn btn-neutral float-left" title="Broker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="collections/index.html" class="btn btn-neutral float-right" title="Collections" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

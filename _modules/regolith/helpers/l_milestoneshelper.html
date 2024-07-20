@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>regolith.helpers.l_milestoneshelper &mdash; regolith - software group content management system</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=266695fe" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/regolith-logo.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=dbee5847"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            regolith
+              <img src="../../../_static/regolith-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.8
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html">Top-level Configuration Keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#keys-usually-set-by-cli">Keys Usually Set by CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rc.html#user-configuration">User Configuration</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../collections/index.html">Collections</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">Regolith API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../commands/index.html">Regolith Commands</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../database_maintenance/index.html">Database Maintenance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">regolith</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">regolith.helpers.l_milestoneshelper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for regolith.helpers.l_milestoneshelper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper for listing upcoming (and past) projectum milestones.</span>
+
+<span class="sd">Projecta are small bite-sized project quanta that typically will result in</span>
+<span class="sd">one manuscript.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">gooey</span> <span class="kn">import</span> <span class="n">GooeyParser</span>
+
+<span class="kn">from</span> <span class="nn">regolith.dates</span> <span class="kn">import</span> <span class="n">get_due_date</span>
+<span class="kn">from</span> <span class="nn">regolith.fsclient</span> <span class="kn">import</span> <span class="n">_id_key</span>
+<span class="kn">from</span> <span class="nn">regolith.helpers.basehelper</span> <span class="kn">import</span> <span class="n">SoutHelperBase</span>
+<span class="kn">from</span> <span class="nn">regolith.schemas</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PROJECTUM_ACTIVE_STATI</span><span class="p">,</span>
+    <span class="n">PROJECTUM_CANCELLED_STATI</span><span class="p">,</span>
+    <span class="n">PROJECTUM_FINISHED_STATI</span><span class="p">,</span>
+    <span class="n">PROJECTUM_PAUSED_STATI</span><span class="p">,</span>
+    <span class="n">alloweds</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">regolith.tools</span> <span class="kn">import</span> <span class="n">all_docs_from_collection</span><span class="p">,</span> <span class="n">collection_str</span><span class="p">,</span> <span class="n">get_pi_id</span><span class="p">,</span> <span class="n">key_value_pair_filter</span>
+
+<span class="n">PROJECTUM_STATI</span> <span class="o">=</span> <span class="n">alloweds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PROJECTUM_STATI&quot;</span><span class="p">)</span>
+<span class="n">TARGET_COLL</span> <span class="o">=</span> <span class="s2">&quot;projecta&quot;</span>
+<span class="n">HELPER_TARGET</span> <span class="o">=</span> <span class="s2">&quot;l_milestones&quot;</span>
+<span class="n">PROJECTUM_STATI</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="n">INACTIVE_STATI</span> <span class="o">=</span> <span class="n">PROJECTUM_PAUSED_STATI</span> <span class="o">+</span> <span class="n">PROJECTUM_CANCELLED_STATI</span> <span class="o">+</span> <span class="n">PROJECTUM_FINISHED_STATI</span>
+<span class="n">ROLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pi&quot;</span><span class="p">,</span> <span class="s2">&quot;lead&quot;</span><span class="p">,</span> <span class="s2">&quot;group_members&quot;</span><span class="p">,</span> <span class="s2">&quot;collaborators&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="subparser">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_milestoneshelper.subparser">[docs]</a>
+<span class="k">def</span> <span class="nf">subparser</span><span class="p">(</span><span class="n">subpi</span><span class="p">):</span>
+    <span class="n">listbox_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subpi</span><span class="p">,</span> <span class="n">GooeyParser</span><span class="p">):</span>
+        <span class="n">listbox_kwargs</span><span class="p">[</span><span class="s2">&quot;widget&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Listbox&quot;</span>
+
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--helper-help&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;This helper will list all ACTIVE milestones by default. To &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;be active the projectum itself must be active and the &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;milestone within the prum also active.  Active milestones &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;have a status from </span><span class="si">{</span><span class="o">*</span><span class="n">PROJECTUM_ACTIVE_STATI</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Please erun specifying &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;--lead PERSON or --person PERSON. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Rerun with --all, --current, or --finished to get &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;all, active or finished milestones, respectively. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;filters work with AND logic so -l PERSON -c will list &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;the active milestones for projecta where PERSON is lead. &quot;</span>
+        <span class="sa">f</span><span class="s1">&#39;Note that &quot;checklist&quot; prums are not listed. Please use &#39;</span>
+        <span class="sa">f</span><span class="s2">&quot;u_milestone to see those.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-l&quot;</span><span class="p">,</span> <span class="s2">&quot;--lead&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter milestones for this project lead specified as an ID, &quot;</span> <span class="s2">&quot;e.g., sbillinge&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--person&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter milestones for this person whether lead or not, specified &quot;</span> <span class="s2">&quot;by id, e.g., sbillinge&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--current&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Same behavior as default.  Here for consistency&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--finished&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Lists all finished milestones, i.e., status is in </span><span class="si">{</span><span class="o">*</span><span class="n">PROJECTUM_FINISHED_STATI</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--by-prum&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Valid milestones are listed in time-order but grouped by prum&quot;</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;increase verbosity of output&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--stati&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">PROJECTUM_STATI</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Filter milestones for these stati from </span><span class="si">{</span><span class="o">*</span><span class="n">PROJECTUM_STATI</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">. &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Default is active projecta, i.e. </span><span class="si">{</span><span class="o">*</span><span class="n">PROJECTUM_ACTIVE_STATI</span><span class="p">,</span><span class="w"> </span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">listbox_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--all&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Lists all milestones in general&quot;</span><span class="p">)</span>
+    <span class="c1"># The --filter and --keys flags should be in every lister</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--filter&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Search this collection by giving key element pairs&quot;</span><span class="p">)</span>
+    <span class="n">subpi</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-k&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--keys&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specify what keys to return values from when running &quot;</span>
+        <span class="s2">&quot;--filter. If no argument is given the default is just the id.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">subpi</span></div>
+
+
+
+<div class="viewcode-block" id="MilestonesListerHelper">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_milestoneshelper.MilestonesListerHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">MilestonesListerHelper</span><span class="p">(</span><span class="n">SoutHelperBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for listing upcoming (and past) projectum milestones.</span>
+
+<span class="sd">    Projecta are small bite-sized project quanta that typically will result in</span>
+<span class="sd">    one manuscript.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># btype must be the same as helper target in helper.py</span>
+    <span class="n">btype</span> <span class="o">=</span> <span class="n">HELPER_TARGET</span>
+    <span class="n">needed_colls</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MilestonesListerHelper.construct_global_ctx">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_milestoneshelper.MilestonesListerHelper.construct_global_ctx">[docs]</a>
+    <span class="k">def</span> <span class="nf">construct_global_ctx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the global context&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_global_ctx</span><span class="p">()</span>
+        <span class="n">gtx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="k">if</span> <span class="s2">&quot;groups&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">pi_id</span> <span class="o">=</span> <span class="n">get_pi_id</span><span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+        <span class="n">rc</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TARGET_COLL</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">colls</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">all_docs_from_collection</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">collname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">_id_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">collname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">db</span><span class="p">,</span> <span class="n">coll</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">needed_colls</span><span class="p">,</span> <span class="n">colls</span><span class="p">):</span>
+            <span class="n">gtx</span><span class="p">[</span><span class="n">db</span><span class="p">]</span> <span class="o">=</span> <span class="n">coll</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;all_docs_from_collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_docs_from_collection</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;zip&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span></div>
+
+
+<div class="viewcode-block" id="MilestonesListerHelper.sout">
+<a class="viewcode-back" href="../../../api/regolith.helpers.html#regolith.helpers.l_milestoneshelper.MilestonesListerHelper.sout">[docs]</a>
+    <span class="k">def</span> <span class="nf">sout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rc</span>
+        <span class="c1"># This if statement should be in all listers.</span>
+        <span class="c1"># Make sure to change self.gtx to get the database the lister needs</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="n">key_value_pair_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;projecta&quot;</span><span class="p">],</span> <span class="n">rc</span><span class="o">.</span><span class="n">filter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtx</span><span class="p">[</span><span class="s2">&quot;projecta&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">stati</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">current</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="c1"># fixme there must be a better way, but for now use magic to</span>
+        <span class="c1"># to remove checklists</span>
+        <span class="c1"># print(collection)</span>
+        <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">prum</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span> <span class="k">if</span> <span class="s2">&quot;checklist&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;deliverable&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;please specify either lead or person, not both&quot;</span><span class="p">)</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">prum</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span> <span class="k">if</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">rc</span><span class="o">.</span><span class="n">lead</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">rc</span><span class="o">.</span><span class="n">person</span> <span class="o">=</span> <span class="p">[</span><span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">]</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">prum</span>
+                <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span>
+                <span class="k">if</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">person</span>
+                <span class="ow">or</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;group_members&quot;</span><span class="p">,</span> <span class="p">[]))</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">)))</span>
+                <span class="ow">or</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;collaborators&quot;</span><span class="p">,</span> <span class="p">[]))</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">person</span><span class="p">)))</span>
+            <span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">all</span><span class="p">:</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">prum</span> <span class="k">for</span> <span class="n">prum</span> <span class="ow">in</span> <span class="n">collection</span> <span class="k">if</span> <span class="n">prum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">INACTIVE_STATI</span><span class="p">]</span>
+
+        <span class="n">all_milestones</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">stati</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">all</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">stati</span> <span class="o">=</span> <span class="n">PROJECTUM_ACTIVE_STATI</span>
+        <span class="k">elif</span> <span class="n">rc</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">stati</span> <span class="o">=</span> <span class="n">PROJECTUM_FINISHED_STATI</span>
+        <span class="k">elif</span> <span class="n">rc</span><span class="o">.</span><span class="n">all</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">stati</span> <span class="o">=</span> <span class="n">PROJECTUM_STATI</span>
+        <span class="k">for</span> <span class="n">projectum</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+            <span class="n">projectum</span><span class="p">[</span><span class="s2">&quot;deliverable&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;deliverable&quot;</span><span class="p">,</span> <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="s2">&quot;deliver&quot;</span><span class="p">,</span> <span class="s2">&quot;uuid&quot;</span><span class="p">:</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)}</span>
+            <span class="p">)</span>
+            <span class="n">milestones</span> <span class="o">=</span> <span class="p">[</span><span class="n">projectum</span><span class="p">[</span><span class="s2">&quot;deliverable&quot;</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kickoff&quot;</span><span class="p">):</span>
+                <span class="n">projectum</span><span class="p">[</span><span class="s2">&quot;kickoff&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;meeting&quot;</span><span class="p">,</span> <span class="s2">&quot;uuid&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ko</span><span class="si">{</span><span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">})</span>
+                <span class="n">milestones</span> <span class="o">=</span> <span class="p">[</span><span class="n">projectum</span><span class="p">[</span><span class="s2">&quot;kickoff&quot;</span><span class="p">],</span> <span class="n">projectum</span><span class="p">[</span><span class="s2">&quot;deliverable&quot;</span><span class="p">]]</span>
+            <span class="n">milestones</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">projectum</span><span class="p">[</span><span class="s2">&quot;milestones&quot;</span><span class="p">])</span>
+            <span class="n">milestones</span> <span class="o">=</span> <span class="p">[</span><span class="n">ms</span> <span class="k">for</span> <span class="n">ms</span> <span class="ow">in</span> <span class="n">milestones</span> <span class="k">if</span> <span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">stati</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">ms</span> <span class="ow">in</span> <span class="n">milestones</span><span class="p">:</span>
+                <span class="n">due_date</span> <span class="o">=</span> <span class="n">get_due_date</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
+                <span class="n">ms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;lead&quot;</span><span class="p">:</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lead&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;group_members&quot;</span><span class="p">:</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;group_members&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;collaborators&quot;</span><span class="p">:</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;collaborators&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;due_date&quot;</span><span class="p">:</span> <span class="n">due_date</span><span class="p">,</span>
+                        <span class="s2">&quot;log_url&quot;</span><span class="p">:</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;log_url&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;pi&quot;</span><span class="p">:</span> <span class="n">projectum</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pi_id&quot;</span><span class="p">),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+            <span class="n">milestones</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">all_milestones</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">milestones</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">collection_str</span><span class="p">(</span><span class="n">all_milestones</span><span class="p">,</span> <span class="n">rc</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">by_prum</span><span class="p">:</span>
+            <span class="n">all_milestones</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;due_date&quot;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">prum</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ms</span> <span class="ow">in</span> <span class="n">all_milestones</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">by_prum</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">prum</span> <span class="o">!=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+                    <span class="n">prum</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;due_date&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">)[:</span><span class="mi">6</span><span class="p">])</span><span class="si">}</span><span class="s2">): lead: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lead&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;status: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Type: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Title: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    log url: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;log_url&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Purpose: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;objective&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">audience</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audience&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="nb">str</span><span class="p">):</span>
+                        <span class="n">audience</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+                            <span class="n">audience</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">audience</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Audience: </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;notes&quot;</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    Notes:&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;notes&quot;</span><span class="p">):</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      - </span><span class="si">{</span><span class="n">note</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    uuid: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;due_date&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">)[:</span><span class="mi">6</span><span class="p">])</span><span class="si">}</span><span class="s2">): lead: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lead&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, status: </span><span class="si">{</span><span class="n">ms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2015, Anthony Scopatz.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
