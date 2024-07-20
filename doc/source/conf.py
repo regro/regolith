@@ -25,9 +25,9 @@ from regolith.fsclient import _id_key, dump_json, json_to_yaml
 from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
 from regolith.schemas import EXEMPLARS, SCHEMAS
 
-autodoc_mock_imports = [
-    regolith,
-]
+#autodoc_mock_imports = [
+#    regolith,
+#]
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -130,7 +130,7 @@ html_theme_options = {"roottarget": "index"}
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
 # html_theme_path = [csp.get_theme_dir()]
-html_theme_path = ["_themes", csp.get_theme_dir()]
+# html_theme_path = ["_themes", csp.get_theme_dir()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
