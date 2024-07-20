@@ -17,7 +17,7 @@ from collections.abc import MutableMapping
 from subprocess import check_output
 from textwrap import indent
 
-import cloud_sptheme as csp
+import sphinx_rtd_theme as csp
 
 import regolith
 from regolith import __version__ as REGOLITH_VERSION
