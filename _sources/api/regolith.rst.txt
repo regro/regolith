@@ -1,7 +1,8 @@
 :tocdepth: -1
 
-regolith package
+Regolith API
 ================
+For some of you who want to know the gritty details.
 
 .. automodule:: regolith
     :members:

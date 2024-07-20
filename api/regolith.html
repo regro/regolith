@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>regolith package &mdash; regolith - software group content management system</title>
+  <title>Regolith API &mdash; regolith - software group content management system</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
@@ -20,7 +20,9 @@
         <script src="../_static/doctools.js?v=9a2dae69"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="regolith.builders package" href="regolith.builders.html" />
+    <link rel="prev" title="Todos" href="../collections/todos.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,6 +59,296 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../collections/index.html">Collections</a></li>
 </ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Regolith API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="regolith.builders.html">regolith.builders package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="regolith.helpers.html">regolith.helpers package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="regolith.static.html">regolith.static package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="regolith.templates.html">regolith.templates package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.app">regolith.app module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.app.collection_page"><code class="docutils literal notranslate"><span class="pre">collection_page()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.app.root"><code class="docutils literal notranslate"><span class="pre">root()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.app.shutdown"><code class="docutils literal notranslate"><span class="pre">shutdown()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.app.shutdown_server"><code class="docutils literal notranslate"><span class="pre">shutdown_server()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.broker">regolith.broker module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.broker.Broker"><code class="docutils literal notranslate"><span class="pre">Broker</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.broker.load_db"><code class="docutils literal notranslate"><span class="pre">load_db()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.builder">regolith.builder module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.builder.builder"><code class="docutils literal notranslate"><span class="pre">builder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.chained_db">regolith.chained_db module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.chained_db.ChainDB"><code class="docutils literal notranslate"><span class="pre">ChainDB</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.chained_db.ChainDBSingleton"><code class="docutils literal notranslate"><span class="pre">ChainDBSingleton</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.classlist">regolith.classlist module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.classlist.UscHtmlParser"><code class="docutils literal notranslate"><span class="pre">UscHtmlParser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.classlist.add_students_to_course"><code class="docutils literal notranslate"><span class="pre">add_students_to_course()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.classlist.add_students_to_db"><code class="docutils literal notranslate"><span class="pre">add_students_to_db()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.classlist.load_csv"><code class="docutils literal notranslate"><span class="pre">load_csv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.classlist.load_json"><code class="docutils literal notranslate"><span class="pre">load_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.classlist.load_usc"><code class="docutils literal notranslate"><span class="pre">load_usc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.classlist.register"><code class="docutils literal notranslate"><span class="pre">register()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.client_manager">regolith.client_manager module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.client_manager.ClientManager"><code class="docutils literal notranslate"><span class="pre">ClientManager</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.commands">regolith.commands module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.add_cmd"><code class="docutils literal notranslate"><span class="pre">add_cmd()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.app"><code class="docutils literal notranslate"><span class="pre">app()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.build"><code class="docutils literal notranslate"><span class="pre">build()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.build_db_check"><code class="docutils literal notranslate"><span class="pre">build_db_check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.classlist"><code class="docutils literal notranslate"><span class="pre">classlist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.deploy"><code class="docutils literal notranslate"><span class="pre">deploy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.fs_to_mongo"><code class="docutils literal notranslate"><span class="pre">fs_to_mongo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.grade"><code class="docutils literal notranslate"><span class="pre">grade()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.helper"><code class="docutils literal notranslate"><span class="pre">helper()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.helper_db_check"><code class="docutils literal notranslate"><span class="pre">helper_db_check()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.ingest"><code class="docutils literal notranslate"><span class="pre">ingest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.json_to_yaml"><code class="docutils literal notranslate"><span class="pre">json_to_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.mongo_to_fs"><code class="docutils literal notranslate"><span class="pre">mongo_to_fs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.validate"><code class="docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.commands.yaml_to_json"><code class="docutils literal notranslate"><span class="pre">yaml_to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.dates">regolith.dates module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.convert_doc_iso_to_date"><code class="docutils literal notranslate"><span class="pre">convert_doc_iso_to_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.date_to_float"><code class="docutils literal notranslate"><span class="pre">date_to_float()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.day_to_str_int"><code class="docutils literal notranslate"><span class="pre">day_to_str_int()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.find_gaps_overlaps"><code class="docutils literal notranslate"><span class="pre">find_gaps_overlaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.get_dates"><code class="docutils literal notranslate"><span class="pre">get_dates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.get_due_date"><code class="docutils literal notranslate"><span class="pre">get_due_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.has_finished"><code class="docutils literal notranslate"><span class="pre">has_finished()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.has_started"><code class="docutils literal notranslate"><span class="pre">has_started()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.is_after"><code class="docutils literal notranslate"><span class="pre">is_after()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.is_before"><code class="docutils literal notranslate"><span class="pre">is_before()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.is_between"><code class="docutils literal notranslate"><span class="pre">is_between()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.is_current"><code class="docutils literal notranslate"><span class="pre">is_current()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.last_day"><code class="docutils literal notranslate"><span class="pre">last_day()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.month_to_int"><code class="docutils literal notranslate"><span class="pre">month_to_int()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.dates.month_to_str_int"><code class="docutils literal notranslate"><span class="pre">month_to_str_int()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.deploy">regolith.deploy module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.deploy.deploy"><code class="docutils literal notranslate"><span class="pre">deploy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.deploy.deploy_git"><code class="docutils literal notranslate"><span class="pre">deploy_git()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.deploy.deploy_hg"><code class="docutils literal notranslate"><span class="pre">deploy_hg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.deploy.ensure_deploy_dir"><code class="docutils literal notranslate"><span class="pre">ensure_deploy_dir()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.emailer">regolith.emailer module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.emailer.attach_pdf"><code class="docutils literal notranslate"><span class="pre">attach_pdf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.emailer.attach_txt"><code class="docutils literal notranslate"><span class="pre">attach_txt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.emailer.class_email"><code class="docutils literal notranslate"><span class="pre">class_email()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.emailer.emailer"><code class="docutils literal notranslate"><span class="pre">emailer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.emailer.grade_email"><code class="docutils literal notranslate"><span class="pre">grade_email()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.emailer.list_email"><code class="docutils literal notranslate"><span class="pre">list_email()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.emailer.make_message"><code class="docutils literal notranslate"><span class="pre">make_message()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.emailer.test_email"><code class="docutils literal notranslate"><span class="pre">test_email()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.fsclient">regolith.fsclient module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.DelayedKeyboardInterrupt"><code class="docutils literal notranslate"><span class="pre">DelayedKeyboardInterrupt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.FileSystemClient"><code class="docutils literal notranslate"><span class="pre">FileSystemClient</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.date_encoder"><code class="docutils literal notranslate"><span class="pre">date_encoder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.dump_json"><code class="docutils literal notranslate"><span class="pre">dump_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.dump_yaml"><code class="docutils literal notranslate"><span class="pre">dump_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.json_to_yaml"><code class="docutils literal notranslate"><span class="pre">json_to_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.load_json"><code class="docutils literal notranslate"><span class="pre">load_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.load_yaml"><code class="docutils literal notranslate"><span class="pre">load_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.fsclient.yaml_to_json"><code class="docutils literal notranslate"><span class="pre">yaml_to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.grader">regolith.grader module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.grader.form_to_grade_assignment"><code class="docutils literal notranslate"><span class="pre">form_to_grade_assignment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.grader.form_to_grade_row"><code class="docutils literal notranslate"><span class="pre">form_to_grade_row()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.grader.insert_grade"><code class="docutils literal notranslate"><span class="pre">insert_grade()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.grader.root"><code class="docutils literal notranslate"><span class="pre">root()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.grader.shutdown"><code class="docutils literal notranslate"><span class="pre">shutdown()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.grader.shutdown_server"><code class="docutils literal notranslate"><span class="pre">shutdown_server()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.helper">regolith.helper module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.helper.helpr"><code class="docutils literal notranslate"><span class="pre">helpr()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.helper_connect_main">regolith.helper_connect_main module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.helper_connect_main.create_parser"><code class="docutils literal notranslate"><span class="pre">create_parser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.helper_connect_main.create_top_level_parser"><code class="docutils literal notranslate"><span class="pre">create_top_level_parser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.helper_connect_main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.helper_gui_main">regolith.helper_gui_main module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.helper_gui_main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#regolith-interact-module">regolith.interact module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.main">regolith.main module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.main.create_parser"><code class="docutils literal notranslate"><span class="pre">create_parser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.main.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.mongoclient">regolith.mongoclient module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.mongoclient.MongoClient"><code class="docutils literal notranslate"><span class="pre">MongoClient</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.mongoclient.bson_cleanup"><code class="docutils literal notranslate"><span class="pre">bson_cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.mongoclient.doc_cleanup"><code class="docutils literal notranslate"><span class="pre">doc_cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.mongoclient.export_json"><code class="docutils literal notranslate"><span class="pre">export_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.mongoclient.import_jsons"><code class="docutils literal notranslate"><span class="pre">import_jsons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.mongoclient.import_yamls"><code class="docutils literal notranslate"><span class="pre">import_yamls()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.mongoclient.load_mongo_col"><code class="docutils literal notranslate"><span class="pre">load_mongo_col()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.runcontrol">regolith.runcontrol module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.NotSpecified"><code class="docutils literal notranslate"><span class="pre">NotSpecified</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.NotSpecifiedType"><code class="docutils literal notranslate"><span class="pre">NotSpecifiedType</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.RunControl"><code class="docutils literal notranslate"><span class="pre">RunControl</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.connect_db"><code class="docutils literal notranslate"><span class="pre">connect_db()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.ensuredirs"><code class="docutils literal notranslate"><span class="pre">ensuredirs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.exec_file"><code class="docutils literal notranslate"><span class="pre">exec_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.filter_databases"><code class="docutils literal notranslate"><span class="pre">filter_databases()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.flatten"><code class="docutils literal notranslate"><span class="pre">flatten()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.ishashable"><code class="docutils literal notranslate"><span class="pre">ishashable()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.load_json_rcfile"><code class="docutils literal notranslate"><span class="pre">load_json_rcfile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.load_rcfile"><code class="docutils literal notranslate"><span class="pre">load_rcfile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.touch"><code class="docutils literal notranslate"><span class="pre">touch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.runcontrol.warn_forbidden_name"><code class="docutils literal notranslate"><span class="pre">warn_forbidden_name()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.schemas">regolith.schemas module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.schemas.NoDescriptionValidator"><code class="docutils literal notranslate"><span class="pre">NoDescriptionValidator</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.schemas.insert_alloweds"><code class="docutils literal notranslate"><span class="pre">insert_alloweds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.schemas.load_exemplars"><code class="docutils literal notranslate"><span class="pre">load_exemplars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.schemas.load_schemas"><code class="docutils literal notranslate"><span class="pre">load_schemas()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.schemas.validate"><code class="docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.sorters">regolith.sorters module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.sorters.category_val"><code class="docutils literal notranslate"><span class="pre">category_val()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.sorters.date_key"><code class="docutils literal notranslate"><span class="pre">date_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.sorters.doc_date_key"><code class="docutils literal notranslate"><span class="pre">doc_date_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.sorters.doc_date_key_high"><code class="docutils literal notranslate"><span class="pre">doc_date_key_high()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.sorters.ene_date_key"><code class="docutils literal notranslate"><span class="pre">ene_date_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.sorters.id_key"><code class="docutils literal notranslate"><span class="pre">id_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.sorters.level_val"><code class="docutils literal notranslate"><span class="pre">level_val()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.sorters.position_key"><code class="docutils literal notranslate"><span class="pre">position_key()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.storage">regolith.storage module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.StorageClient"><code class="docutils literal notranslate"><span class="pre">StorageClient</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.copydocs"><code class="docutils literal notranslate"><span class="pre">copydocs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.find_store"><code class="docutils literal notranslate"><span class="pre">find_store()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.push"><code class="docutils literal notranslate"><span class="pre">push()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.push_git"><code class="docutils literal notranslate"><span class="pre">push_git()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.push_hg"><code class="docutils literal notranslate"><span class="pre">push_hg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.storage_path"><code class="docutils literal notranslate"><span class="pre">storage_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.store_client"><code class="docutils literal notranslate"><span class="pre">store_client()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.sync"><code class="docutils literal notranslate"><span class="pre">sync()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.sync_git"><code class="docutils literal notranslate"><span class="pre">sync_git()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.storage.sync_hg"><code class="docutils literal notranslate"><span class="pre">sync_hg()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.stylers">regolith.stylers module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.stylers.sentencecase"><code class="docutils literal notranslate"><span class="pre">sentencecase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.tools">regolith.tools module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.add_to_google_calendar"><code class="docutils literal notranslate"><span class="pre">add_to_google_calendar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.all_docs_from_collection"><code class="docutils literal notranslate"><span class="pre">all_docs_from_collection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.awards"><code class="docutils literal notranslate"><span class="pre">awards()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.awards_grants_honors"><code class="docutils literal notranslate"><span class="pre">awards_grants_honors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.collect_appts"><code class="docutils literal notranslate"><span class="pre">collect_appts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.collection_str"><code class="docutils literal notranslate"><span class="pre">collection_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.compound_dict"><code class="docutils literal notranslate"><span class="pre">compound_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.compound_list"><code class="docutils literal notranslate"><span class="pre">compound_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.create_repo"><code class="docutils literal notranslate"><span class="pre">create_repo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.date_to_rfc822"><code class="docutils literal notranslate"><span class="pre">date_to_rfc822()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.dbdirname"><code class="docutils literal notranslate"><span class="pre">dbdirname()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.dbpathname"><code class="docutils literal notranslate"><span class="pre">dbpathname()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.dereference_institution"><code class="docutils literal notranslate"><span class="pre">dereference_institution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.document_by_value"><code class="docutils literal notranslate"><span class="pre">document_by_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.fallback"><code class="docutils literal notranslate"><span class="pre">fallback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_activities"><code class="docutils literal notranslate"><span class="pre">filter_activities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_committees"><code class="docutils literal notranslate"><span class="pre">filter_committees()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_employment_for_advisees"><code class="docutils literal notranslate"><span class="pre">filter_employment_for_advisees()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_facilities"><code class="docutils literal notranslate"><span class="pre">filter_facilities()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_grants"><code class="docutils literal notranslate"><span class="pre">filter_grants()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_licenses"><code class="docutils literal notranslate"><span class="pre">filter_licenses()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_patents"><code class="docutils literal notranslate"><span class="pre">filter_patents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_presentations"><code class="docutils literal notranslate"><span class="pre">filter_presentations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_projects"><code class="docutils literal notranslate"><span class="pre">filter_projects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_publications"><code class="docutils literal notranslate"><span class="pre">filter_publications()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.filter_service"><code class="docutils literal notranslate"><span class="pre">filter_service()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.fragment_retrieval"><code class="docutils literal notranslate"><span class="pre">fragment_retrieval()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.fuzzy_retrieval"><code class="docutils literal notranslate"><span class="pre">fuzzy_retrieval()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_appointments"><code class="docutils literal notranslate"><span class="pre">get_appointments()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_formatted_crossref_reference"><code class="docutils literal notranslate"><span class="pre">get_formatted_crossref_reference()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_id_from_name"><code class="docutils literal notranslate"><span class="pre">get_id_from_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_person"><code class="docutils literal notranslate"><span class="pre">get_person()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_person_contact"><code class="docutils literal notranslate"><span class="pre">get_person_contact()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_pi_id"><code class="docutils literal notranslate"><span class="pre">get_pi_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_tags"><code class="docutils literal notranslate"><span class="pre">get_tags()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_target_repo_info"><code class="docutils literal notranslate"><span class="pre">get_target_repo_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_target_token"><code class="docutils literal notranslate"><span class="pre">get_target_token()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_team_from_grant"><code class="docutils literal notranslate"><span class="pre">get_team_from_grant()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.get_uuid"><code class="docutils literal notranslate"><span class="pre">get_uuid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.gets"><code class="docutils literal notranslate"><span class="pre">gets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.google_cal_auth_flow"><code class="docutils literal notranslate"><span class="pre">google_cal_auth_flow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.grant_burn"><code class="docutils literal notranslate"><span class="pre">grant_burn()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.group"><code class="docutils literal notranslate"><span class="pre">group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.group_member_employment_start_end"><code class="docutils literal notranslate"><span class="pre">group_member_employment_start_end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.group_member_ids"><code class="docutils literal notranslate"><span class="pre">group_member_ids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.is_fully_appointed"><code class="docutils literal notranslate"><span class="pre">is_fully_appointed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.key_value_pair_filter"><code class="docutils literal notranslate"><span class="pre">key_value_pair_filter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.latex_safe"><code class="docutils literal notranslate"><span class="pre">latex_safe()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.latex_safe_url"><code class="docutils literal notranslate"><span class="pre">latex_safe_url()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.make_bibtex_file"><code class="docutils literal notranslate"><span class="pre">make_bibtex_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.merge_collections_all"><code class="docutils literal notranslate"><span class="pre">merge_collections_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.merge_collections_intersect"><code class="docutils literal notranslate"><span class="pre">merge_collections_intersect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.merge_collections_superior"><code class="docutils literal notranslate"><span class="pre">merge_collections_superior()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.month_and_year"><code class="docutils literal notranslate"><span class="pre">month_and_year()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.number_suffix"><code class="docutils literal notranslate"><span class="pre">number_suffix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.print_task"><code class="docutils literal notranslate"><span class="pre">print_task()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.remove_duplicate_docs"><code class="docutils literal notranslate"><span class="pre">remove_duplicate_docs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.rfc822now"><code class="docutils literal notranslate"><span class="pre">rfc822now()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.search_collection"><code class="docutils literal notranslate"><span class="pre">search_collection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.update_schemas"><code class="docutils literal notranslate"><span class="pre">update_schemas()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.validate_doc"><code class="docutils literal notranslate"><span class="pre">validate_doc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.tools.validate_meeting"><code class="docutils literal notranslate"><span class="pre">validate_meeting()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-regolith.validators">regolith.validators module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.always_false"><code class="docutils literal notranslate"><span class="pre">always_false()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.always_true"><code class="docutils literal notranslate"><span class="pre">always_true()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.ensure_database"><code class="docutils literal notranslate"><span class="pre">ensure_database()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.ensure_databases"><code class="docutils literal notranslate"><span class="pre">ensure_databases()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.ensure_email"><code class="docutils literal notranslate"><span class="pre">ensure_email()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.ensure_store"><code class="docutils literal notranslate"><span class="pre">ensure_store()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.ensure_stores"><code class="docutils literal notranslate"><span class="pre">ensure_stores()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.ensure_string"><code class="docutils literal notranslate"><span class="pre">ensure_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.is_bool"><code class="docutils literal notranslate"><span class="pre">is_bool()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.is_int"><code class="docutils literal notranslate"><span class="pre">is_int()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.is_string"><code class="docutils literal notranslate"><span class="pre">is_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.noop"><code class="docutils literal notranslate"><span class="pre">noop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regolith.validators.to_bool"><code class="docutils literal notranslate"><span class="pre">to_bool()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Regolith Commands</a></li>
 </ul>
@@ -78,7 +370,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">regolith package</li>
+      <li class="breadcrumb-item active">Regolith API</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -87,10 +379,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-regolith">
-<span id="regolith-package"></span><h1>regolith package<a class="headerlink" href="#module-regolith" title="Link to this heading"></a></h1>
+  <section id="regolith-api">
+<h1>Regolith API<a class="headerlink" href="#regolith-api" title="Link to this heading"></a></h1>
+<p>For some of you who want to know the gritty details.</p>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<span id="module-regolith"></span><h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="regolith.builders.html">regolith.builders package</a></li>
@@ -2844,12 +3137,15 @@ title. This function will return nothing is the meeting is valid, otherwise it w
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../collections/todos.html" class="btn btn-neutral float-left" title="Todos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="regolith.builders.html" class="btn btn-neutral float-right" title="regolith.builders package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2015, Anthony Scopatz, 2024, The Trustees of Columbia University in the City of New York.</p>
+    <p>&#169; Copyright 2015-2017 Anthony Scopatz, 2018-2024 The Trustees of Columbia University in the City of New York.</p>
   </div>
 
    
