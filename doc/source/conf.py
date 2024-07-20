@@ -130,7 +130,7 @@ html_theme_options = {"roottarget": "index"}
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
 # html_theme_path = [csp.get_theme_dir()]
-html_theme_path = ["_themes", csp.get_theme_dir()]
+html_theme_path = ["_themes"]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
