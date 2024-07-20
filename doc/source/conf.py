@@ -75,7 +75,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "regolith"
-copyright = "2015, Anthony Scopatz, %Y, The Trustees of Columbia University in the City of New York"
+copyright = "2015-2017 Anthony Scopatz, 2018-%Y The Trustees of Columbia University in the City of New York"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
