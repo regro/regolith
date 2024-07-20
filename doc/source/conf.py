@@ -208,6 +208,7 @@ html_show_sphinx = True
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
+html_baseurl = "https://regro.github.io/regolith/"
 basename = "regolith".replace(" ", "").replace(".", "")
 htmlhelp_basename = basename + "doc"
 
