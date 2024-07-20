@@ -59,11 +59,11 @@ source_suffix = ".rst"
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = "index"
+master_doc = "regolith"
 
 # General information about the project.
 project = "regolith"
-copyright = "2015, Anthony Scopatz"
+copyright = "2015, Anthony Scopatz, 2018-now Billinge group members"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
