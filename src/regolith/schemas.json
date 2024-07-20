@@ -2877,6 +2877,7 @@
         }
     },
     "software": {
+        "_description": {"description": "Information about software, such as active, grants, etc."},
         "_id": {
             "description": "package id",
             "required": true,
