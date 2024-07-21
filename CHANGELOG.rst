@@ -4,18 +4,6 @@ Release Notes
 
 .. current developments
 
-0.9.1
-=====
-
-**Fixed:**
-
-* incorrectly named test for fs_to_mongo
-* Rearrange Regolith package to new Billingegroup package standards
-* all py files linted with black
-* change name and then fix tests for function that formats awards and honors
-
-
-
 0.9.0
 =====
 
