@@ -117,4 +117,4 @@ Before contribuing, please read our `Code of Conduct <https://github.com/regro/r
 Contact
 -------
 
-For more information on regolith please visit the project `web-page <https://regro.github.io/>`_ or email Prof. Simon Billinge at sb2896@columbia.edu.
+For more information on regolith please visit the project `web-page <https://regro.github.io/regolith>`_ or email Prof. Simon Billinge at sb2896@columbia.edu.
