@@ -26,7 +26,7 @@ able to:
 
 Databases may be file-based (JSON and YAML) or MongoDB-based.
 
-Regolith is developed as a `regro project <https://github.com/regro/regolith>`_
+Regolith is developed as a `regro project <https://regro.github.io/>`_
 
 Example Sites
 =============
