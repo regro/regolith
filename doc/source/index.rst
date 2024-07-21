@@ -26,7 +26,7 @@ able to:
 
 Databases may be file-based (JSON and YAML) or MongoDB-based.
 
-Regolith is developed as a `regro project <https://github.com/regro/regolith>`_
+Regolith is developed as a `regro project <https://regro.github.io/>`_
 
 Example Sites
 =============
@@ -65,7 +65,7 @@ Next, clone the GitHub repository with the handy beginning database template
 
 .. code-block:: sh
 
-    $ git clone git@github.com/sbillinge/regolithdb-cookiecutter.git
+    $ git clone git@github.com:sbillinge/regolithdb-cookiecutter.git
 
 to get it using SSH or
 
@@ -293,7 +293,7 @@ that project and hitting the :bash:`recompile` button.
 
 Whether it builds on your computer or on overleaf, it should look something like
 
-.. image:: ../_static/cv.pdf
+.. image:: _static/cv.png
 
 If, for some reason, the publication list doesn't render
 correctly, try running the latex command again.  If you are going to
