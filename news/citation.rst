@@ -2,6 +2,7 @@
 
 * article synopsis and professional summary added to grant-report citation list
 * acknowledgement statement added to grant-report citation list
+
 **Changed:**
 
 * <news item>
