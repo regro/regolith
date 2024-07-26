@@ -25,6 +25,8 @@ INGEST_COLL_LU = {".bib": "citations"}
 
 def add_cmd(rc):
     """Adds documents to a collection in a database."""
+    rc.client[rc.db]
+    db[rc.coll]
     docs = [json.loads(doc) if isinstance(doc, string_types) else doc for doc in rc.documents]
     rc.client.insert_many(rc.db, rc.coll, docs)
 
@@ -51,6 +53,7 @@ def _ingest_citations(rc):
     parser.customization = customizations
     with open(rc.filename, "r", encoding="utf-8") as f:
         bibs = bibtexparser.load(f, parser=parser)
+    rc.clinet[rc.db][rc.coll]
     for bib in bibs.entries:
         bibid = bib.pop("ID")
         bib["entrytype"] = bib.pop("ENTRYTYPE")
