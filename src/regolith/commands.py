@@ -25,7 +25,7 @@ INGEST_COLL_LU = {".bib": "citations"}
 
 def add_cmd(rc):
     """Adds documents to a collection in a database."""
-    rc.client[rc.db]
+    db = rc.client[rc.db]
     db[rc.coll]
     docs = [json.loads(doc) if isinstance(doc, string_types) else doc for doc in rc.documents]
     rc.client.insert_many(rc.db, rc.coll, docs)
