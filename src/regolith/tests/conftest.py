@@ -10,8 +10,8 @@ from subprocess import CalledProcessError
 import pytest
 from pymongo import MongoClient
 from pymongo import errors as mongo_errors
-from xonsh.lib import subprocess
-from xonsh.lib.os import rmtree
+from xonsh.api import subprocess
+from xonsh.api.os import rmtree
 
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS

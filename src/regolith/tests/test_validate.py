@@ -4,7 +4,7 @@ from io import StringIO
 from subprocess import CalledProcessError
 
 import pytest
-from xonsh.lib import subprocess
+from xonsh.api import subprocess
 
 from regolith.main import main
 

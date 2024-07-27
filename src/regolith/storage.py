@@ -5,7 +5,7 @@ import shutil
 from contextlib import contextmanager
 from warnings import warn
 
-from xonsh.lib import subprocess
+from xonsh.api import subprocess
 
 try:
     import hglib
