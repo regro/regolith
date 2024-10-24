@@ -88,6 +88,8 @@ def subparser(subpi):
         default="invited",
     )
     subpi.add_argument("-w", "--webinar", help="Is the presentation a webinar?", action="store_true")
+    subpi.add_argument("--cal", help="Add the presentation to google calendar", action="store_true")
+    subpi.add_argument("--repo", help="Create a GitHub/Lab repo for the presentation", action="store_true")
     subpi.add_argument(
         "--no-expense",
         help="Do not add a template expense item to the "
@@ -118,10 +120,6 @@ def subparser(subpi):
     subpi.add_argument(
         "--id",
         help="Override the default id created from the date, " "speaker and place by specifying an id here",
-    )
-    subpi.add_argument("--no-cal", help="Do not add the presentation to google calendar", action="store_true")
-    subpi.add_argument(
-        "--no-repo", help="Do not create a GitHub/Lab repo for the presentation", action="store_true"
     )
     return subpi
 
@@ -192,7 +190,7 @@ class PresentationAdderHelper(DbHelperBase):
     def db_updater(self):
         rc = self.rc
 
-        if not rc.no_cal:
+        if rc.cal:
             event = {
                 "summary": rc.name,
                 "location": rc.place,
@@ -289,7 +287,7 @@ class PresentationAdderHelper(DbHelperBase):
             rc.client.insert_one(rc.expense_db, EXPENSES_COLL, edoc)
             print(f"{key} has been added in {EXPENSES_COLL} in database {rc.expense_db}")
 
-        if not rc.no_repo:
+        if rc.repo:
             if not hasattr(rc, "repos"):
                 rc.repos = []
             if not hasattr(rc, "tokens"):
