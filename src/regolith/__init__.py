@@ -18,6 +18,8 @@ from xonsh.main import setup
 # package version
 from regolith.version import __version__
 
+"""A Research group database management system"""
+
 # silence the pyflakes syntax checker
 assert __version__ or True
 
