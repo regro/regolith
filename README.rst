@@ -65,6 +65,10 @@ The following creates and activates a new environment named ``regolith_env`` ::
         conda create -n regolith_env regolith
         conda activate regolith_env
 
+Then, to fully install ``regolith`` in our active environment, run ::
+
+        conda install regolith
+
 To confirm that the installation was successful, type ::
 
         python -c "import regolith; print(regolith.__version__)"
