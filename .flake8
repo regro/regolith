@@ -6,6 +6,8 @@ exclude =
     dist,
     doc/source/conf.py
 max-line-length = 115
-# Ignore some style 'errors' produced while formatting by 'black'
+# Ignore some style 'errors' produced while formatting by 'black' (see link below)
 # https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#labels-why-pycodestyle-warnings
 extend-ignore = E203
+per-file-ignores =
+    src/regolith/tests/test_helpers.py: E501
