@@ -4,7 +4,6 @@ graft requirements
 
 include AUTHORS.rst LICENSE*.rst README.rst
 include regolith/version.py
-recursive-include docs *.rst conf.py Makefile make.bat
 
 # Exclude all bytecode files and __pycache__ directories
 global-exclude *.py[cod]  # Exclude all .pyc, .pyo, and .pyd files.
