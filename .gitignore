@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*$py.class
 
 # C extensions
 *.so
@@ -19,10 +20,14 @@ lib64/
 parts/
 sdist/
 var/
+venv/
 *.egg-info/
 .installed.cfg
 *.egg
-.idea
+bin/
+temp/
+tags/
+errors.err
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -33,6 +38,7 @@ var/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+MANIFEST
 
 # Unit test / coverage reports
 htmlcov/
@@ -43,19 +49,51 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
+.hypothesis/
 
 # Translations
 *.mo
 *.pot
 
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
 # Django stuff:
 *.log
 
 # Sphinx documentation
-docs/_build/
+docs/build/
+docs/source/generated/
+
+# pytest
+.pytest_cache/
 
 # PyBuilder
 target/
+
+# Editor files
+# mac
+.DS_Store
+*~
+
+# vim
+*.swp
+*.swo
+
+# pycharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Ipython Notebook
+.ipynb_checkpoints
+
+# version information
+setup.cfg
+/src/regro/*/version.cfg
 
 # Rever
 rever/
@@ -70,8 +108,3 @@ docs/collections/people.rst
 docs/collections/projects.rst
 docs/collections/proposals.rst
 docs/collections/students.rst
-
-# Idea
-.idea/
-
-.DS_Store
