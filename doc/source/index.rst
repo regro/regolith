@@ -39,7 +39,9 @@ Regolith is developed as a `regro project <https://regro.github.io/>`_
 Authors
 =======
 
-regolith is developed by Billinge Group
+regolith was mostly written by Anthony Scopatz, with significant contributions
+from CJ Wright.  More recently development has been led By simon Billinge and
+regolith is currently developed by the Billinge Group
 and its community contributors.
 
 For a detailed list of contributors see
