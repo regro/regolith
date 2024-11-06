@@ -1,3 +1,5 @@
+Creative Commons Zero v1.0 Universal license (CC0 1.0)
+
 The laws of most jurisdictions throughout the world automatically confer
 exclusive Copyright and Related Rights (defined below) upon the creator and
 subsequent owner(s) (each and all, an "owner") of an original work of
