@@ -13,8 +13,12 @@
     </div>
     <script type="text/javascript">initRgDungeon();</script>
 
-Regolith
-========
+#######
+|title|
+#######
+
+.. |title| replace:: regolith documentation
+
 Regolith is a content management system for software & research groups.
 Regolith creates and manages a database of people, publications, projects,
 proposals & grants, courses, and more! From this database, regolith is then
@@ -28,6 +32,22 @@ Databases may be file-based (JSON and YAML) or MongoDB-based.
 
 Regolith is developed as a `regro project <https://regro.github.io/>`_
 
+| Software version |release|.
+| Last updated |today|.
+
+=======
+Authors
+=======
+
+regolith was mostly written by Anthony Scopatz, with significant contributions
+from CJ Wright.  More recently development has been led By simon Billinge and
+regolith is currently developed by the Billinge Group
+and its community contributors.
+
+For a detailed list of contributors see
+https://github.com/regro/regolith/graphs/contributors.
+
+=============
 Example Sites
 =============
 The following are some sample websites that are powered by regolith, even though
@@ -37,6 +57,7 @@ websites is just one of the many facets of this tool:
 1. `ERGS Home Page <http://www.ergs.sc.edu>`_
 2. `Technical WorkShop on Fuel Cycle Simulation <http://twofcs.ergs.sc.edu>`_
 
+============
 Installation
 ============
 1. Make your first database
@@ -702,6 +723,15 @@ For those who want to dive deeper into the library itself.
 
     api/regolith
 
+=================
+Table of contents
+=================
+.. toctree::
+   :titlesonly:
+
+   license
+   release
+   Package API <api/regolith>
 
 Regolith Commands
 =================
@@ -712,10 +742,16 @@ Shell commmands for regolith
 
      commands/index
 
-
 Database Maintenance
 =========
 .. toctree::
     :maxdepth: 1
 
     database_maintenance/index
+
+=======
+Indices
+=======
+
+* :ref:`genindex`
+* :ref:`search`
