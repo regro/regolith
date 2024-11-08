@@ -10,7 +10,7 @@ build
 	                      build_targets [build_targets ...]
 
 	positional arguments:
-	  build_targets         targets to build. Currently valid targets are: 
+	  build_targets         targets to build. Currently valid targets are:
 	                        ['annual-activity', 'beamplan', 'current-pending', 'cv', 'figure', 'formalletter', 'grade', 'grades', 'grant-report', 'html', 'internalhtml', 'postdocad', 'preslist', 'publist', 'reading-lists', 'reimb', 'recent-collabs', 'resume', 'review-man', 'review-prop']
 
 	options:
