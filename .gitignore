@@ -91,9 +91,3 @@ target/
 # Ipython Notebook
 .ipynb_checkpoints
 
-# version information
-setup.cfg
-/src/Billingegroup/*/version.cfg
-
-# Rever
-rever/
