@@ -7,8 +7,6 @@ License
 
 OPEN SOURCE LICENSE AGREEMENT
 =============================
-BSD 3-Clause License
-
 Creative Commons Zero v1.0 Universal license (CC0 1.0)
 
 Redistribution and use in source and binary forms, with or without
