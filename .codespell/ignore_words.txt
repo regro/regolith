@@ -16,7 +16,7 @@ convertor
 dploy
 pres
 
-;; people.rst manually allows 'programer' as a variation
+;; people.rst manually allows 'programer' as a variation of 'programmer'
 programer
 
 ;; suffix for dates
