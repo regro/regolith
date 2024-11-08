@@ -122,7 +122,8 @@ helper_map = [
         "    audience: beginning grad in chemistry\n"
         "    scope: 1. UCs that are supported or some other scope description if it is software\n"
         "           2. sketch of science story if it is paper\n"
-        "    platform: description of how and where the audience will access the deliverable.  Journal if it is a paper\n"
+        "    platform: description of how and where the audience will access the deliverable."
+        "              Journal if it is a paper\n"
         "  milestones:\n"
         "    2020-05-20: Project lead presentation\n"
         "      objective: lead presents background reading and initial project plan\n"
@@ -133,84 +134,197 @@ helper_map = [
     ),
     (
         ["helper", "l_milestones", "--verbose"],
-        "2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
-        "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
-        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
-        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n",
+        "2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    "
+        "log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
+        "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n"
+        "log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    "
+        "Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
+        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    "
+        "Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    "
+        "Purpose: develop a detailed plan with dates\n    "
+        "Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
+        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    "
+        "Type: meeting\n    Title: Project lead presentation\n    "
+        "log url: https://docs.google.com/document/d/1YC_wtW5Q\n    "
+        "Purpose: lead presents background reading and initial project plan\n    "
+        "Audience: ascopatz, scopatz, ascopatz\n    "
+        "Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n",
     ),
     (
         ["helper", "l_milestones", "--verbose", "--current"],
-        "2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
-        "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
-        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
-        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n",
+        "2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n"
+        "log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
+        "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n"
+        "log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n"
+        "Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
+        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n"
+        "Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: develop a detailed plan with dates\n"
+        "Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
+        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n"
+        "Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: lead presents background reading and initial project plan\n"
+        "Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
+        "uuid: milestone_uuid_sb1\n",
     ),
     (
         ["helper", "l_milestones", "--verbose", "--current", "--by-prum"],
         f"{dash * 50}\n"
-        f"2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
+        f"2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n"
+        f"log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n"
         f"{dash * 50}\n"
-        f"2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
-        f"2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
-        f"2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n",
+        f"2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n"
+        f"Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n"
+        f"Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
+        f"2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n"
+        f"Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        f"Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n"
+        f"uuid: milestone_uuid_sb1_2\n"
+        f"2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n"
+        f"Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        f"Purpose: lead presents background reading and initial project plan\n"
+        f"Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
+        f"uuid: milestone_uuid_sb1\n",
     ),
     (
         ["helper", "l_milestones", "--verbose", "--all"],
-        "2021-08-26 (pl_fir): lead: pliu, pl_firstprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n    uuid: pl_firstprojectum\n2021-08-26 (pl_sec): lead: pliu, pl_secondprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n    uuid: pl_secondprojectum\n2021-08-26 (pl_thi): lead: pliu, pl_thirdprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n    uuid: pl_thirdprojectum\n2021-08-03 (kopl_f): lead: pliu, pl_firstprojectum, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: kopl_firstprojectum\n2021-08-03 (milest): lead: pliu, pl_firstprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl1\n2021-08-03 (kopl_s): lead: pliu, pl_secondprojectum, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: kopl_secondprojectum\n2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl2\n2021-08-03 (kopl_t): lead: pliu, pl_thirdprojectum, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: kopl_thirdprojectum\n2021-08-03 (milest): lead: pliu, pl_thirdprojectum, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_pl3\n2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n2021-05-03 (koab_i): lead: abeing, ab_inactive, status: backburner\n    Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: koab_inactive\n2021-05-03 (ab_ina): lead: abeing, ab_inactive, status: paused\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n    uuid: ab_inactive\n2021-05-03 (milest): lead: abeing, ab_inactive, status: converged\n    Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_inactive\n"
-        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
-        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n"
-        "2020-05-06 (kosb_f): lead: ascopatz, sb_firstprojectum, status: finished\n    Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - kickoff note\n    uuid: kosb_firstprojectum\n",
+        "2021-08-26 (pl_fir): lead: pliu, pl_firstprojectum, status: finished\n    Type: \n    Title: deliverable\n"
+        "log url: None\n    Purpose: deliver\n    Audience: \n"
+        "uuid: pl_firstprojectum\n2021-08-26 (pl_sec): lead: pliu, pl_secondprojectum, status: finished\n"
+        "Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n"
+        "uuid: pl_secondprojectum\n2021-08-26 (pl_thi): lead: pliu, pl_thirdprojectum, status: finished\n"
+        "Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n"
+        "uuid: pl_thirdprojectum\n2021-08-03 (kopl_f): lead: pliu, pl_firstprojectum, status: backburner\n"
+        "Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n"
+        "uuid: kopl_firstprojectum\n2021-08-03 (milest): lead: pliu, pl_firstprojectum, status: converged\n"
+        "Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n"
+        "uuid: milestone_uuid_pl1\n2021-08-03 (kopl_s): lead: pliu, pl_secondprojectum, status: backburner\n"
+        "Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n"
+        "uuid: kopl_secondprojectum\n2021-08-03 (milest): lead: pliu, pl_secondprojectum, status: converged\n"
+        "Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n"
+        "uuid: milestone_uuid_pl2\n2021-08-03 (kopl_t): lead: pliu, pl_thirdprojectum, status: backburner\n"
+        "Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n"
+        "uuid: kopl_thirdprojectum\n2021-08-03 (milest): lead: pliu, pl_thirdprojectum, status: converged\n"
+        "Type: \n    Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n"
+        "uuid: milestone_uuid_pl3\n2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n"
+        "Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n"
+        "uuid: sb_firstprojectum\n2021-05-03 (koab_i): lead: abeing, ab_inactive, status: backburner\n"
+        "Type: meeting\n    Title: Kickoff\n    log url: None\n    Purpose: None\n    Audience: \n"
+        "uuid: koab_inactive\n2021-05-03 (ab_ina): lead: abeing, ab_inactive, status: paused\n    Type: \n"
+        "Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n"
+        "uuid: ab_inactive\n2021-05-03 (milest): lead: abeing, ab_inactive, status: converged\n    Type: \n"
+        "Title: Milestone\n    log url: None\n    Purpose: None\n    Audience: \n    uuid: milestone_uuid_inactive\n"
+        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n"
+        "Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n"
+        "uuid: milestone_uuid_sb1_2\n"
+        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n"
+        "Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: lead presents background reading and initial project plan\n"
+        "Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
+        "uuid: milestone_uuid_sb1\n"
+        "2020-05-06 (kosb_f): lead: ascopatz, sb_firstprojectum, status: finished\n    Type: meeting\n"
+        "Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n"
+        "Notes:\n      - kickoff note\n    uuid: kosb_firstprojectum\n",
     ),
     (
         ["helper", "l_milestones", "--verbose", "--person", "aeinstein"],
-        "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
-        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
-        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n",
+        "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n"
+        "Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n"
+        "Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
+        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n"
+        "Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n"
+        "uuid: milestone_uuid_sb1_2\n"
+        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n"
+        "Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: lead presents background reading and initial project plan\n"
+        "Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n"
+        "uuid: milestone_uuid_sb1\n",
     ),
     (
         ["helper", "l_milestones", "--verbose", "--stati", "finished"],
-        "2021-08-26 (pl_sec): lead: pliu, pl_secondprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n    uuid: pl_secondprojectum\n2020-05-06 (kosb_f): lead: ascopatz, sb_firstprojectum, status: finished\n    Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - kickoff note\n    uuid: kosb_firstprojectum\n",
+        "2021-08-26 (pl_sec): lead: pliu, pl_secondprojectum, status: finished\n    Type: \n    Title: deliverable\n"
+        "log url: None\n    Purpose: deliver\n    Audience: \n"
+        "uuid: pl_secondprojectum\n2020-05-06 (kosb_f): lead: ascopatz, sb_firstprojectum, status: finished\n"
+        "Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n"
+        "Notes:\n      - kickoff note\n    uuid: kosb_firstprojectum\n",
     ),
     (
         ["helper", "l_milestones", "--verbose", "--finished"],
-        "2021-08-26 (pl_sec): lead: pliu, pl_secondprojectum, status: finished\n    Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    Audience: \n    uuid: pl_secondprojectum\n2020-05-06 (kosb_f): lead: ascopatz, sb_firstprojectum, status: finished\n    Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - kickoff note\n    uuid: kosb_firstprojectum\n",
+        "2021-08-26 (pl_sec): lead: pliu, pl_secondprojectum, status: finished\n    "
+        "Type: \n    Title: deliverable\n    log url: None\n    Purpose: deliver\n    "
+        "Audience: \n    uuid: pl_secondprojectum\n"
+        "2020-05-06 (kosb_f): lead: ascopatz, sb_firstprojectum, status: finished\n    "
+        "Type: meeting\n    Title: Kick off meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    "
+        "Purpose: introduce project to the lead\n    Audience: ascopatz, scopatz, ascopatz\n    "
+        "Notes:\n      - kickoff note\n    uuid: kosb_firstprojectum\n",
     ),
     (
         ["helper", "l_milestones", "--verbose", "--lead", "ascopatz"],
-        "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
-        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    uuid: milestone_uuid_sb1_2\n"
-        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: lead presents background reading and initial project plan\n    Audience: ascopatz, scopatz, ascopatz\n    Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n",
+        "2021-05-05 (sb_fir): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: \n    "
+        "Title: deliverable\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    Purpose: deliver\n    "
+        "Audience: beginning grad in chemistry\n    Notes:\n      - deliverable note\n    uuid: sb_firstprojectum\n"
+        "2020-05-27 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: mergedpr\n    "
+        "Title: planning meeting\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    "
+        "Purpose: develop a detailed plan with dates\n    Audience: ascopatz, scopatz, ascopatz\n    "
+        "uuid: milestone_uuid_sb1_2\n"
+        "2020-05-20 (milest): lead: ascopatz, sb_firstprojectum, status: proposed\n    Type: meeting\n    "
+        "Title: Project lead presentation\n    log url: https://docs.google.com/document/d/1YC_wtW5Q\n    "
+        "Purpose: lead presents background reading and initial project plan\n    "
+        "Audience: ascopatz, scopatz, ascopatz\n    "
+        "Notes:\n      - do background reading\n      - understand math\n    uuid: milestone_uuid_sb1\n",
     ),
     (
         ["helper", "l_projecta", "--verbose", "--orphan"],
-        "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    description: a prum that has various inactive states in milestones and overall\n    team:\n        lead: abeing\n        group_members: None\n        collaborators: None\n",
+        "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    "
+        "description: a prum that has various inactive states in milestones and overall\n    team:\n        "
+        "lead: abeing\n        group_members: None\n        collaborators: None\n",
     ),
     (
         ["helper", "l_projecta", "--verbose", "--lead", "ascopatz"],
-        "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n",
+        "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, "
+        "grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        "
+        "group_members: ascopatz\n        collaborators: aeinstein, pdirac\n",
     ),
     (
         ["helper", "l_projecta", "--verbose", "--person", "ascopatz"],
-        "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n",
+        "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    "
+        "description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        "
+        "collaborators: aeinstein, pdirac\n",
     ),
     (["helper", "l_projecta", "--grant", "SymPy-1.1"], "sb_firstprojectum (started)\n"),
     (
         ["helper", "l_projecta", "--grp_by_lead"],
-        "abeing:\n    ab_inactive (backburner)\npliu:\n    pl_firstprojectum (finished)\n    pl_secondprojectum (proposed)\n    pl_thirdprojectum (backburner)\nascopatz:\n    sb_firstprojectum (started)\n",
+        "abeing:\n    ab_inactive (backburner)\npliu:\n    pl_firstprojectum (finished)\n    "
+        "pl_secondprojectum (proposed)\n    pl_thirdprojectum (backburner)\nascopatz:\n    "
+        "sb_firstprojectum (started)\n",
     ),
     (
         ["helper", "l_projecta", "--all"],
-        "ab_inactive (backburner)\npl_firstprojectum (finished)\npl_secondprojectum (proposed)\npl_thirdprojectum (backburner)\nsb_firstprojectum (started)\n",
+        "ab_inactive (backburner)\npl_firstprojectum (finished)\npl_secondprojectum (proposed)\n"
+        "pl_thirdprojectum (backburner)\nsb_firstprojectum (started)\n",
     ),
     (["helper", "l_projecta", "--current"], "pl_secondprojectum (proposed)\nsb_firstprojectum (started)\n"),
     (["helper", "l_projecta", "--grp_by_lead", "-l", "ascopatz"], "ascopatz:\n    sb_firstprojectum (started)\n"),
     (
         ["helper", "l_projecta", "--verbose"],
-        "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    description: a prum that has various inactive states in milestones and overall\n    team:\n        lead: abeing\n        group_members: None\n        collaborators: None\n"
-        "pl_firstprojectum\n    status: finished, begin_date: 2020-07-25, due_date: 2021-08-26, end_date: 2020-07-27, grant: None\n    description: None\n    team:\n        lead: pliu\n        group_members: None\n        collaborators: None\n"
-        "pl_secondprojectum\n    status: proposed, begin_date: 2020-07-25, due_date: 2021-08-26, grant: None\n    description: None\n    team:\n        lead: pliu\n        group_members: None\n        collaborators: None\n"
-        "pl_thirdprojectum\n    status: backburner, begin_date: 2020-07-25, due_date: 2021-08-26, grant: None\n    description: None\n    team:\n        lead: pliu\n        group_members: None\n        collaborators: None\n"
-        "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        collaborators: aeinstein, pdirac\n",
+        "ab_inactive\n    status: backburner, begin_date: 2020-05-03, due_date: 2021-05-03, grant: dmref15\n    "
+        "description: a prum that has various inactive states in milestones and overall\n    team:\n        "
+        "lead: abeing\n        group_members: None\n        collaborators: None\n"
+        "pl_firstprojectum\n    status: finished, begin_date: 2020-07-25, due_date: 2021-08-26, end_date: 2020-07-27, "
+        "grant: None\n    description: None\n    team:\n        lead: pliu\n        group_members: None\n        "
+        "collaborators: None\n"
+        "pl_secondprojectum\n    status: proposed, begin_date: 2020-07-25, due_date: 2021-08-26, grant: None\n    "
+        "description: None\n    team:\n        lead: pliu\n        group_members: None\n        collaborators: None\n"
+        "pl_thirdprojectum\n    status: backburner, begin_date: 2020-07-25, due_date: 2021-08-26, grant: None\n    "
+        "description: None\n    team:\n        lead: pliu\n        group_members: None\n        collaborators: None\n"
+        "sb_firstprojectum\n    status: started, begin_date: 2020-04-28, due_date: 2021-05-05, grant: SymPy-1.1\n    "
+        "description: My first projectum\n    team:\n        lead: ascopatz\n        group_members: ascopatz\n        "
+        "collaborators: aeinstein, pdirac\n",
     ),
     (
         ["helper", "l_projecta", "--ended", "--date", "2020-06-02"],
@@ -371,7 +485,8 @@ helper_map = [
         "\n---------------------------------------\n"
         "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
         "---------------------------------------\n"
-        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution "
+        "function\n\n"
         "Anthony Scopatz\n\n"
         "Abstract: We pulled apart graphite with tape\n"
         "\n---------------------------------------\n"
@@ -386,7 +501,8 @@ helper_map = [
         "\n---------------------------------------\n"
         "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
         "---------------------------------------\n"
-        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution "
+        "function\n\n"
         "Anthony Scopatz\n\n"
         "Abstract: We pulled apart graphite with tape\n"
         "\n---------------------------------------\n"
@@ -407,7 +523,8 @@ helper_map = [
         "\n---------------------------------------\n"
         "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
         "---------------------------------------\n"
-        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution "
+        "function\n\n"
         "Anthony Scopatz\n\n"
         "Abstract: We pulled apart graphite with tape\n"
         "\n---------------------------------------\n"
@@ -428,7 +545,8 @@ helper_map = [
         "\n---------------------------------------\n"
         "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
         "---------------------------------------\n"
-        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution "
+        "function\n\n"
         "Anthony Scopatz\n\n"
         "Abstract: We pulled apart graphite with tape\n"
         "\n---------------------------------------\n"
@@ -443,7 +561,8 @@ helper_map = [
         "\n---------------------------------------\n"
         "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
         "---------------------------------------\n"
-        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n\n"
+        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution "
+        "function\n\n"
         "Anthony Scopatz\n\n"
         "Abstract: We pulled apart graphite with tape\n"
         "\n---------------------------------------\n"
@@ -458,7 +577,8 @@ helper_map = [
         "\n---------------------------------------\n"
         "2018-05-22 - 2018 NSLS-II and CFN Users Meeting, Upton NY\n"
         "---------------------------------------\n"
-        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution function\n"
+        "Title: ClusterMining: extracting core structures of metallic nanoparticles from the atomic pair distribution "
+        "function\n"
         "\nAnthony Scopatz\n"
         "\nAbstract: We pulled apart graphite with tape\n"
         "\n---------------------------------------\n"
@@ -499,7 +619,8 @@ helper_map = [
     ),
     (
         ["helper", "l_todo", "--assigned-to", "sbillinge", "--date", "2020-05-01"],
-        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo "
+        "-r\n"
         "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
         "--------------------------------------------------------------------------------\n"
         "started:\n"
@@ -528,7 +649,8 @@ helper_map = [
             "--assigned-to",
             "sbillinge",
         ],
-        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo "
+        "-r\n"
         "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
         "--------------------------------------------------------------------------------\n"
         "started:\n"
@@ -554,7 +676,8 @@ helper_map = [
             "--assigned-to",
             "sbillinge",
         ],
-        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo "
+        "-r\n"
         "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
         "--------------------------------------------------------------------------------\n"
         "started:\n"
@@ -571,7 +694,8 @@ helper_map = [
     (["helper", "l_todo", "--assigned-to", "wrong_id"], "The id you entered can't be found in todos.yml.\n"),
     (
         ["helper", "l_todo", "-o", "--date", "2021-4-10", "--assigned-to", "sbillinge", "--short"],
-        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo "
+        "-r\n"
         "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
         "--------------------------------------------------------------------------------\n"
         "started:\n"
@@ -825,7 +949,8 @@ helper_map = [
     ),
     (
         ["helper", "f_todo", "--assigned-to", "sbillinge", "--date", "2020-07-13"],
-        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo "
+        "-r\n"
         "Please choose from one of the following to update:\n"
         "(index) action (days to due date|importance|expected duration (mins)|tags|assigned by)\n"
         "--------------------------------------------------------------------------------\n"
@@ -896,7 +1021,8 @@ helper_map = [
             "--date",
             "2020-07-13",
         ],
-        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo -r\n"
+        "If the indices are far from being in numerical order, please renumber them by running regolith helper u_todo "
+        "-r\n"
         "Please choose from one of the following to update:\n"
         "(index) action (days to due date|importance|expected duration (mins)|assigned by)\n"
         "--------------------------------------------------------------------------------\n"
@@ -1163,10 +1289,14 @@ helper_map = [
     #   "--grants", "mrsec14", "dmref15", "--payee", "ashaaban",
     #   "--where", "bank", "--begin-date", "2020-06-20", "--end-date", "2020-06-25"],
     #  "2006as_timbuktoo has been added in expenses\n"),
-    # The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910. All except one are commented out
-    # because the current testing architecture (1) limits our ability to validate the addition of more than one entry to a collection, and
-    # (2) only spins up one test database, but two would be needed to test a different destination database for expense data. The hope is
-    # that, in the future when the test architecture is improved or changed, these commented-out tests can be useful and enable fully testing the added functionality.
+    # The following Test Cases A-D test adding presentation-related expenses and map to user stories for Issue #910.
+    # All except one are commented out
+    # because the current testing architecture (1) limits our ability to validate the addition of more than one entry
+    # to a collection, and
+    # (2) only spins up one test database, but two would be needed to test a different destination database for expense
+    # data. The hope is
+    # that, in the future when the test architecture is improved or changed, these commented-out tests can be useful
+    # and enable fully testing the added functionality.
     # Test Case A: Expect a new entry in outputs/presentations/presentations.yaml
     # (["helper", "a_presentation", "flat earth", "Mars", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "ashaaban", "--grants", "mrsec14",
@@ -1181,7 +1311,8 @@ helper_map = [
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
     #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
     #   "--title", "Testing Case B", "--status", "in-prep",
-    #   "--notes", "This is to test Case B, where user contradicts themselves by passing both --no-expense and --expense_db",
+    #   "--notes", "This is to test Case B, where user contradicts themselves by passing both --no-expense and
+    #   --expense_db",
     #   "--presentation-url", "http://drive.google.com/SEV356DV",
     #   "--no-cal", "--no-expense", "--expense-db testB"],
     #  pytest.raises(RuntimeError)),
@@ -1190,20 +1321,24 @@ helper_map = [
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
     #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
     #   "--title", "Testing Case C.1", "--status", "in-prep",
-    #   "--notes", "This is to test Case C.1, where user wants an expense added, but did not specify an expense db, and the first db in the regolithrc.json file is public, so the program errors.",
+    #   "--notes", "This is to test Case C.1, where user wants an expense added, but did not specify an expense db,
+    #   and the first db in the regolithrc.json file is public, so the program errors.",
     #   "--presentation-url", "http://drive.google.com/SEV356DV",
     #   "--no-cal"],
     #  pytest.raises(RuntimeError)),
-    # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db, and default is public
+    # Test Case C.2: user wants an expense added, and passed the force option without specifying an expense db,
+    # and default is public
     # This is tested in the test_helper_python_mock function, below
     # (["helper", "a_presentation", "Test Case C.2", "Test C.2", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
     #   "--authors", "sbillinge", "nasker", "--abstract", "testing",
     #   "--title", "Testing Case C.2", "--status", "in-prep",
-    #   "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
+    #   "--notes", "This is to test Case C.2 where user wants an expense added and passed the force option without
+    #   specifying an expense db when default is public",
     #   "--presentation-url", "http://drive.google.com/SEV356DV",
     #   "--no-cal", "--force", "--no-repo"], # Expect a new presentation and new expense in db 'test'.
-    #    "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\n"),
+    #    "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in
+    #    database test\n"),
     # Test Case D: user wants an expense added, and specified an expense db
     # (["helper", "a_presentation", "Test Case D", "Test D", "2020-06-26", "2020-06-26",
     #   "--type", "contributed_oral", "--person", "nasker", "--grants", "testing",
@@ -1212,7 +1347,8 @@ helper_map = [
     #   "--notes", "This is to test Case D, where user wants an expense added, and specified an expense-db",
     #   "--presentation-url", "http://drive.google.com/SEV356DV",
     #   "--no-cal", "--expense-db private-test"], # Expect a new presentation and new expense in db 'private-test'
-    #    "2006na_testd has been added in presentations\n2006na_testd has been added in expenses in database private-test\n"),
+    #    "2006na_testd has been added in presentations\n2006na_testd has been added in expenses in database
+    #    private-test\n"),
 ]
 
 db_srcs = [
@@ -1223,7 +1359,9 @@ db_srcs = [
 # helper_map = [
 #     (["helper", "a_grppub_readlist", "all", "all"
 #      ],
-#      "List of all tags in citations collection:\n['nomonth', 'pdf']\nbuilding lists for all tags in the citation collection\nnomonth has been added/updated in reading_lists\npdf has been added/updated in reading_lists\n"),
+#      "List of all tags in citations collection:\n['nomonth', 'pdf']\nbuilding lists
+#      for all tags in the citation collection\nnomonth has been added/updated in reading_lists\npdf
+#      has been added/updated in reading_lists\n"),
 #     ]
 
 helper_map_bad = [
@@ -1231,7 +1369,8 @@ helper_map_bad = [
         ["helper", "u_milestone", "--milestone_uuid", "sb_fir", "--projectum_id", "sb_firstprojectum"],
         "Detected both a uuid fragment and projectum id.\n"
         "You may enter either a milestone uuid or a projectum id but not both.\n"
-        "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n",
+        "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone "
+        "to that projectum.\n",
         RuntimeError,
     ),
     (
@@ -1247,7 +1386,8 @@ helper_map_bad = [
             "mergedpr",
         ],
         "No milestone uuid or projectum id was entered.\n"
-        "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone to that projectum.\n",
+        "Enter a milestone uuid to update an existing milestone, or a projectum id to add a new milestone "
+        "to that projectum.\n",
         RuntimeError,
     ),
     (
@@ -1442,13 +1582,17 @@ helper_map_requests = [
             "--status",
             "in-prep",
             "--notes",
-            "This is to test Case C.2 where user wants an expense added and passed the force option without specifying an expense db when default is public",
+            "This is to test Case C.2 where user wants an expense added and passed the force option without specifying "
+            "an expense db when default is public",
             "--presentation-url",
             "http://drive.google.com/SEV356DV",
             "--no-cal",
             "--force",
         ],  # Expect a new presentation and new expense in db 'test'
-        "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\nrepo 2006na_testc.2 has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006na_testc.2.git\nor (SSH):\ngit clone git@example.com:talks/2006na_testc.2.git\n",
+        "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in "
+        "database test\nrepo 2006na_testc.2 has been created at https://example.com.\nClone this to your local "
+        "using (HTTPS):\ngit clone https://example.com:talks/2006na_testc.2.git\nor "
+        "(SSH):\ngit clone git@example.com:talks/2006na_testc.2.git\n",
     ),
 ]
 
