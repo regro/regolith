@@ -1954,6 +1954,11 @@
             "type": "string",
             "eallowed": "PRESENTATION_STATI"
         },
+        "subtitle": {
+            "description": "subtitle of the presentation",
+            "required": false,
+            "type": "string"
+        },
         "title": {
             "description": "title of the presentation",
             "required": true,

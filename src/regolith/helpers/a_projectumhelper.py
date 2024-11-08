@@ -232,22 +232,6 @@ class ProjectumAdderHelper(DbHelperBase):
         """Create manuscript checklist, one item as one milestone."""
         presubmission_checklist = [
             (
-                "Create slide figures",
-                "Create Inkscape graphics (Inkscape is preferrable over ppt) for the slides "
-                "and place in a ``figures`` directory in the slides directory. "
-                "These may then be used either in beamer or ppt. "
-                "Iterate with PI to convergence. (to get started with Inkscape download and install it, "
-                "then run the program and navigate to Help-->Tutorials.  "
-                "The first two ('Basic' and 'Shapes') should probably be enough for someone "
-                "to get basic functionality.).",
-            ),
-            (
-                "Create slides",
-                "Create a 'slides' folder in the paper repo or a Google slides deck for a series of talk slides. "
-                "Iterate the slide skeleton with PI to convergence. "
-                "(For a beamer template: https://gitlab.thebillingegroup.com/talks/beamerTalkTemplate).",
-            ),
-            (
                 "Create a highlight slide",
                 "Create a 'highlight' folder in the paper repo. Create a single 'highlight' slide that describes "
                 "the result following NSF/DOE guidelines. Place it in the 'highlight' folder. "
