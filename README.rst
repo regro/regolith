@@ -35,7 +35,7 @@
 .. |Tracking| image:: https://img.shields.io/badge/issue_tracking-github-blue
         :target: https://github.com/regro/regolith/issues
 
-A research group content management system
+Python package for research group content management system
 
 * LONGER DESCRIPTION HERE
 
@@ -65,10 +65,6 @@ The following creates and activates a new environment named ``regolith_env`` ::
         conda create -n regolith_env regolith
         conda activate regolith_env
 
-Then, to fully install ``regolith`` in our active environment, run ::
-
-        conda install regolith
-
 To confirm that the installation was successful, type ::
 
         python -c "import regolith; print(regolith.__version__)"
@@ -97,7 +93,7 @@ Support and Contribute
 
 `Diffpy user group <https://groups.google.com/g/diffpy-users>`_ is the discussion forum for general questions and discussions about the use of regolith. Please join the regolith users community by joining the Google group. The regolith project welcomes your expertise and enthusiasm!
 
-If you see a bug or want to request a feature, please `report it as an issue <https://github.com/regro/regolith/issues>`_ and/or `submit a fix as a PR <https://github.com/regro/regolith/pulls>`_. You can also post it to the `Diffpy user group <https://groups.google.com/g/diffpy-users>`_.
+If you see a bug or want to request a feature, please `report it as an issue <https://github.com/regro/regolith/issues>`_ and/or `submit a fix as a PR <https://github.com/regro/regolith/pulls>`_. You can also post it to the `Diffpy user group <https://groups.google.com/g/diffpy-users>`_. 
 
 Feel free to fork the project and contribute. To install regolith
 in a development mode, with its sources being directly used by Python
@@ -120,7 +116,7 @@ trying to commit again.
 
 Improvements and fixes are always appreciated.
 
-Before contribuing, please read our `Code of Conduct <https://github.com/regro/regolith/blob/main/CODE_OF_CONDUCT.rst>`_.
+Before contributing, please read our `Code of Conduct <https://github.com/regro/regolith/blob/main/CODE_OF_CONDUCT.rst>`_.
 
 Contact
 -------
