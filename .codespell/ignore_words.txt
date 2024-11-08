@@ -16,6 +16,9 @@ convertor
 dploy
 pres
 
+;; package name
+rever
+
 ;; people.rst manually allows 'programer' as a variation of 'programmer'
 programer
 
