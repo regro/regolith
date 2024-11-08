@@ -7,7 +7,7 @@ classlist
 	                          op filename course_id
 
 	positional arguments:
-	  op                    operatation to perform, such as "add" or "replace".
+	  op                    operation to perform, such as "add" or "replace".
 	  filename              file to read class information from.
 	  course_id             course identifier whose registry should be updated
 

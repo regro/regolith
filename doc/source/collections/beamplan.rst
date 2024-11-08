@@ -57,7 +57,7 @@ YAML Example
 	  exp_plan:
 	    - load samples on the holder
 	    - scan the holder to locate the samples
-	    - take room temperature measurement of sample and the subtrate
+	    - take room temperature measurement of sample and the substrate
 	    - ramp down temperature to 100K
 	    - ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure
 	  holder: film holder (1 cm * 1 cm * 1 mm)
@@ -70,7 +70,7 @@ YAML Example
 	  project_lead: kseth
 	  samples:
 	    - WO3 film
-	    - glass subtrate
+	    - glass substrate
 	  scanplan:
 	    - Scanplan(bt, Tramp, 30, 80, 500, 10)
 	  ship_plan:
@@ -97,7 +97,7 @@ JSON/Mongo Example
 	    "exp_plan": [
 	        "load samples on the holder",
 	        "scan the holder to locate the samples",
-	        "take room temperature measurement of sample and the subtrate",
+	        "take room temperature measurement of sample and the substrate",
 	        "ramp down temperature to 100K",
 	        "ramp up, measure PDF at temperature 100K ~ 300K, 10K stepsize, 1 min exposure"
 	    ],
@@ -112,7 +112,7 @@ JSON/Mongo Example
 	    "project_lead": "kseth",
 	    "samples": [
 	        "WO3 film",
-	        "glass subtrate"
+	        "glass substrate"
 	    ],
 	    "scanplan": [
 	        "Scanplan(bt, Tramp, 30, 80, 500, 10)"

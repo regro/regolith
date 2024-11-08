@@ -55,7 +55,7 @@ def create_parser():
         "--coll",
         dest="coll",
         default=None,
-        help="collection name, if this is not given it is infered from the " "file type or file name.",
+        help="collection name, if this is not given it is inferred from the " "file type or file name.",
     )
 
     # store subparser

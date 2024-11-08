@@ -52,7 +52,7 @@ UPDATER_HELPERS = {
     "u_todo": (u_todo.TodoUpdaterHelper, u_todo.subparser),
 }
 
-# Lister helpers need to load collections across all the databses to show everything
+# Lister helpers need to load collections across all the databases to show everything
 LISTER_HELPERS = {
     "l_abstract": (l_abstract.AbstractListerHelper, l_abstract.subparser),
     "l_contacts": (l_contacts.ContactsListerHelper, l_contacts.subparser),

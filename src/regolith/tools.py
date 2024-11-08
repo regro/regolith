@@ -1195,7 +1195,7 @@ def get_person_contact(name, people_coll, contacts_coll):
 
 def merge_collections_intersect(a, b, target_id):
     """
-    merge two collections such thta just the intersection is returned
+    merge two collections such that just the intersection is returned
 
     for shared keys that are in both collections, the value in b will be kept
 
@@ -2211,7 +2211,7 @@ def get_target_token(target_token_id, tokens):
 
 
 def create_repo(destination_id, token_info_id, rc):
-    """Creates a repo at the target distination
+    """Creates a repo at the target destination
 
     tries to fail gracefully if repo information and token is not defined
 

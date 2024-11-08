@@ -86,7 +86,7 @@ class AttestationsHelper(DbHelperBase):
             print(rc.begin_date)
             raise RuntimeError(
                 "Begin date needed for effort reporting.  Please rerun specifying "
-                "--begin-date YYYY-MM-DD (and preferrably --end-date YYYY-MM-DD) "
+                "--begin-date YYYY-MM-DD (and preferably --end-date YYYY-MM-DD) "
                 "or remove --effort-reporting if you "
                 "want an attestation report for a grant"
             )
