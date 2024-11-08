@@ -15,7 +15,7 @@ maintainers = [
 description = "Python package for research group content management system"
 keywords = ["content management system"]
 readme = "README.rst"
-requires-python = ">=3.11, <3.14"
+requires-python = ">=3.10, <3.13"
 classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -26,9 +26,9 @@ classifiers = [
         'Operating System :: Microsoft :: Windows',
         'Operating System :: POSIX',
         'Operating System :: Unix',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
-        'Programming Language :: Python :: 3.13',
         'Topic :: Scientific/Engineering :: Physics',
         'Topic :: Scientific/Engineering :: Chemistry',
 ]
@@ -67,7 +67,7 @@ dependencies = {file = ["requirements/pip.txt"]}
 [tool.codespell]
 exclude-file = ".codespell/ignore_lines.txt"
 ignore-words = ".codespell/ignore_words.txt"
-skip = "*.cif,*.dat"
+skip = "*.cif,*.dat,*.js,*.tex,*.txt,*.html,*.bib,*.map,*.json"
 
 [tool.black]
 line-length = 115
