@@ -13,19 +13,10 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import json
 import sys
-import tempfile
 import time
-from collections.abc import MutableMapping
 from importlib.metadata import version
 from pathlib import Path
-from subprocess import check_output
-from textwrap import indent
-
-from regolith.fsclient import _id_key, dump_json, json_to_yaml
-from regolith.main import CONNECTED_COMMANDS, DISCONNECTED_COMMANDS
-from regolith.schemas import EXEMPLARS, SCHEMAS
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -46,7 +37,6 @@ ab_authors = "Billinge Group members and community contributors"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.mathjax",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.todo",
@@ -55,10 +45,6 @@ extensions = [
     "sphinx_rtd_theme",
     "m2r",
 ]
-
-napoleon_google_docstring = False
-napoleon_use_param = False
-napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -76,7 +62,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "regolith"
-copyright = "2015-2017 Anthony Scopatz, 2018-%Y The Trustees of Columbia University in the City of New York"
+copyright = "%Y, The Trustees of Columbia University in the City of New York"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -104,7 +90,7 @@ copyright = copyright.replace("%Y", year)
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build", "build"]
+exclude_patterns = ["build"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -142,35 +128,37 @@ html_theme = "sphinx_rtd_theme"
 # documentation.
 #
 html_theme_options = {
-    "roottarget": "index",
     "navigation_with_keys": "true",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
-# html_theme_path = [csp.get_theme_dir()]
-# html_theme_path = ["_themes", csp.get_theme_dir()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "Regolith - Academic group content management system"
+# html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = "Regolith"
+# html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "_static/regolith-logo.svg"
+# html_logo = None
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = "_static/regolith-logo.ico"
+# html_favicon = None
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
+# html_static_path = ['_static']
+
+# Add any extra paths that contain custom files (such as robots.txt or
+# .htaccess) here, relative to this directory. These files are copied
+# directly to the root of the documentation.
+# html_extra_path = []
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -188,19 +176,19 @@ html_static_path = ["_static"]
 # html_additional_pages = {}
 
 # If false, no module index is generated.
-html_domain_indices = False
+# html_domain_indices = True
 
 # If false, no index is generated.
-html_use_index = True
+# html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
-html_split_index = False
+# html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-html_show_sourcelink = False
+# html_show_sourcelink = True
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-html_show_sphinx = True
+# html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 # html_show_copyright = True
@@ -214,7 +202,6 @@ html_show_sphinx = True
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-html_baseurl = "https://regro.github.io/regolith/"
 basename = "regolith".replace(" ", "").replace(".", "")
 htmlhelp_basename = basename + "doc"
 
@@ -234,13 +221,7 @@ latex_elements = {
 # (source start file, target name, title,
 # author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (
-        "index",
-        "regolith.tex",
-        "Regolith Documentation",
-        ab_authors,
-        "manual",
-    )
+    ("index", "regolith.tex", "regolith Documentation", ab_authors, "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -286,7 +267,7 @@ texinfo_documents = [
         "regolith Documentation",
         ab_authors,
         "regolith",
-        "Research group management software.",
+        "One line description of project.",
         "Miscellaneous",
     ),
 ]
@@ -300,152 +281,9 @@ texinfo_documents = [
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
 
-
-def format_key(schema, key, indent_str=""):
-    s = ""
-    if key == "schema" or key == "required":
-        return s
-    line_format = ":{key}: {type}, {description}, required\n"
-    line_format_o = ":{key}: {type}, {description}, optional\n"
-    if not schema.get("required", False):
-        lf = line_format_o
-    else:
-        lf = line_format
-    if "type" in schema.get(key, {}) or "anyof_type" in schema.get(key, {}):
-        schema = schema[key]
-    if "type" in schema or "anyof_type" in schema:
-        s += indent(
-            lf.format(
-                key=key,
-                description=schema.get("description", ""),
-                type=schema.get("type", schema.get("anyof_type", "")),
-            ),
-            indent_str,
-        )
-    allowed = schema.get("allowed", "") or schema.get("eallowed", "")
-    if allowed:
-        s += indent("\nAllowed values: \n", indent_str + "\t")
-        for allow in allowed:
-            if allow:
-                s += indent("* {}\n".format(allow), indent_str + "\t" * 2)
-            else:
-                s += indent("* ``''``\n", indent_str + "\t" * 2)
-    s = s.replace(", , ", ", ")
-    if schema.get("schema", False):
-        s += "\n"
-    for inner_key in schema.get("schema", ()):
-        s += format_key(schema["schema"], inner_key, indent_str=indent_str + "\t")
-
-    return s
+# If true, do not generate a @detailmenu in the "Top" node's menu.
+# texinfo_no_detailmenu = False
 
 
-def build_schema_doc(key):
-    fn = "collections/" + key + ".rst"
-    with open(fn, "w") as f:
-        s = ""
-        s += key.title() + "\n"
-        s += "=" * len(key) + "\n"
-        s += SCHEMAS[key]["_description"]["description"] + "\n\n"
-        s += "Schema\n------\nThe following lists key names mapped to its " "type and meaning for each entry.\n\n"
-        schema = SCHEMAS[key]
-        schema_list = list(schema.keys())
-        schema_list.sort()
-        for k in schema_list:
-            if k not in ["_description"]:
-                s += format_key(schema[k], key=k)
-        s += "\n\n"
-        s += "YAML Example\n------------\n\n"
-        s += ".. code-block:: yaml\n\n"
-        temp = tempfile.NamedTemporaryFile()
-        temp2 = tempfile.NamedTemporaryFile()
-        documents = EXEMPLARS[key]
-        if isinstance(documents, MutableMapping):
-            documents = [documents]
-        documents = {doc["_id"]: doc for doc in documents}
-        dump_json(temp.name, documents)
-        docs = sorted(documents.values(), key=_id_key)
-        lines = [json.dumps(doc, sort_keys=True, indent=4, separators=(",", ": ")) for doc in docs]
-        jd = "\n".join(lines)
-        json_to_yaml(temp.name, temp2.name)
-        with open(temp2.name, "r") as ff:
-            s += indent(ff.read(), "\t")
-        s += "\n\n"
-        s += "JSON/Mongo Example\n------------------\n\n"
-        s += ".. code-block:: json\n\n"
-        s += indent(jd, "\t")
-        s += "\n"
-        f.write(s)
-
-
-for k in SCHEMAS:
-    build_schema_doc(k)
-
-
-docs_not_in_schemas = ["citations", "courses", "jobs", "news"]
-all_collection_docs = sorted(list(SCHEMAS.keys()) + docs_not_in_schemas)
-
-collections_header = """.. _regolith_collections:
-
-=================
-Collections
-=================
-The following contain the regolith schemas and examples in both YAML and JSON/Mongo.
-
-.. toctree::
-    :maxdepth: 1
-
-"""
-
-collections_header += indent("\n".join(all_collection_docs), "    ")
-
-with open("collections/index.rst", "w") as f:
-    f.write(collections_header)
-
-
-def build_cli_doc(cli):
-    fn = "commands/" + cli + ".rst"
-    out = check_output(["regolith", cli, "-h"]).decode("utf-8")
-    s = "{}\n".format(cli) + "=" * len(cli) + "\n\n"
-    s += ".. code-block:: bash\n\n"
-    s += indent(out, "\t") + "\n"
-    if cli == "validate":
-        s += """Misc
-----
-
-This can also be added as a git hook by adding the following to
-``.git/hooks/pre-commit``
-
-.. code-block:: sh
-
-    #!/bin/sh
-    regolith validate
-
-This can be enabled with ``chmod +x .git/hooks/pre-commit``"""
-    with open(fn, "w") as f:
-        f.write(s)
-
-
-# build CLI docs
-clis = sorted(set(CONNECTED_COMMANDS.keys()) | set(DISCONNECTED_COMMANDS.keys()))
-for cli in clis:
-    build_cli_doc(cli)
-
-cli_index = """.. _commands:
-
-=================
-Regolith Commands
-=================
-Shell commands for regolith
-
-{}
-
-.. toctree::
-    :maxdepth: 1
-
-"""
-cli_index += indent("\n".join(clis), "    ")
-with open("commands/index.rst", "w") as f:
-    out = check_output(["regolith", "-h"]).decode("utf-8")
-    s = ".. code-block:: bash\n\n"
-    s += indent(out, "\t") + "\n"
-    f.write(cli_index.format(s))
+# Example configuration for intersphinx: refer to the Python standard library.
+# intersphinx_mapping = {'http://docs.python.org/': None}
