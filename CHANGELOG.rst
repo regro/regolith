@@ -314,7 +314,7 @@ v0.3.1
 
 **Changed:**
 
-* ``open`` uses explict 'utf-8' bindings (for windows users)
+* ``open`` uses explicit 'utf-8' bindings (for windows users)
 * Allow education to be ongoing
 * Allow begin and end years for service
 * Make employment optional
@@ -434,7 +434,7 @@ v0.2.0
 
 * Error in ``BaseBuilder`` which caused it to look in the wrong spot for
   templates
-* Fixed bug in grad builder when the total wieght is zero.
+* Fixed bug in grad builder when the total weight is zero.
 * Actually use ``ChainedDB`` when working with the DBs
 
 * Error in ``ChainedDB`` which caused bad keys to return with ``None``
@@ -465,7 +465,7 @@ v0.1.10
 
 **Changed:**
 
-* ``CVBuilder`` and ``ResumeBuilder`` builders now inheret from ``LatexBuilderBase``
+* ``CVBuilder`` and ``ResumeBuilder`` builders now inherit from ``LatexBuilderBase``
 
 
 **Fixed:**

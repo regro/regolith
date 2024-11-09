@@ -39,8 +39,8 @@ ATTACHERS = {
 
 
 def make_message(rc, to, subject="", body="", attachments=()):
-    """Creates an email following the approriate format. The body kwarg
-    may be a string of restructured text.  Attachements is a list of filenames
+    """Creates an email following the appropriate format. The body kwarg
+    may be a string of restructured text.  Attachments is a list of filenames
     to attach.
     """
     msg = MIMEMultipart("alternative")

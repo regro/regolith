@@ -161,7 +161,7 @@ SCHEMAS = load_schemas()
 for s in SCHEMAS:
     SCHEMAS[s]["files"] = {
         "description": "Files associated with the document",
-        # TODO: fix this since this is currently comming out a CommentedMap (+1: Yevgeny)
+        # TODO: fix this since this is currently coming out a CommentedMap (+1: Yevgeny)
         # "type": "list",
         # "schema": {"type": "string"},
         "required": False,

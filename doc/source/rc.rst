@@ -111,7 +111,7 @@ The MongoDB client to use.  This is almost always set by regolith internally.
 
 ``db``
 =========
-The database to use.  This should coorespond to the name field of one of the ``databases`` entries.
+The database to use.  This should correspond to the name field of one of the ``databases`` entries.
 
 ``coll``
 =========
@@ -128,7 +128,7 @@ Boolean for whether to select only public databases.
 
 ``filename``
 ==============
-Sting that is a path to a file to operate on.
+String that is a path to a file to operate on.
 
 ``debug``
 ================
