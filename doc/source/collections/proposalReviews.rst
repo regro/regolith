@@ -10,7 +10,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :adequacy_of_resources: list, Are the resources of the PI adequate, required
 :agency: string, currently nsf, doe or other, optional
 
-	Allowed values: 
+	Allowed values:
 		* nsf
 		* doe
 		* other
@@ -36,7 +36,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :reviewer: string, short name of the reviewer.  Will be used in the filename of the resulting text file, required
 :status: string, the status of the review, optional
 
-	Allowed values: 
+	Allowed values:
 		* invited
 		* accepted
 		* declined

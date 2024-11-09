@@ -20,7 +20,7 @@ The following lists key names mapped to its type and meaning for each entry.
 	:notes: list, any notes about the deliverable that we want to keep track of, optional
 	:status: string, status of the deliverable. Allowed values are {', '.join(PROJECTUM_STATI)}, optional
 
-		Allowed values: 
+		Allowed values:
 			* proposed
 			* converged
 			* started
@@ -45,7 +45,7 @@ The following lists key names mapped to its type and meaning for each entry.
 	:notes: list, any notes about the kickoff, optional
 	:status: string, status of the kickoff. Allowed values are {', '.join(PROJECTUM_STATI)}, optional
 
-		Allowed values: 
+		Allowed values:
 			* proposed
 			* converged
 			* started
@@ -56,7 +56,7 @@ The following lists key names mapped to its type and meaning for each entry.
 			* all
 	:type: string, type of kickoff deliverable. In general will be 'meeting'Allowed values are {', '.join(MILESTONE_TYPES)}, optional
 
-		Allowed values: 
+		Allowed values:
 			* mergedpr
 			* meeting
 			* other
@@ -92,7 +92,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:audience: list, list of people attending the meeting.Normally this list is group_members, collaborators, and pi, or some subset of these. if people are invited who are not alreadyin these groups their names or id's can be added explicitly to the list, optional
 		:status: string, status of the milestone. Allowed values are {', '.join(PROJECTUM_STATI)}, optional
 
-			Allowed values: 
+			Allowed values:
 				* proposed
 				* converged
 				* started
@@ -103,7 +103,7 @@ The following lists key names mapped to its type and meaning for each entry.
 				* all
 		:type: string, type of milestone deliverable. Allowed values are {', '.join(MILESTONE_TYPES)}, optional
 
-			Allowed values: 
+			Allowed values:
 				* mergedpr
 				* meeting
 				* other
@@ -128,7 +128,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :product_url: string, url for manuscript or code repository, optional
 :status: string, status of the projectum. Allowed values are {', '.join(PROJECTUM_STATI)}, required
 
-	Allowed values: 
+	Allowed values:
 		* proposed
 		* converged
 		* started

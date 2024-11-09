@@ -58,7 +58,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :scope: string, The scope of the grant, answers the prompt: Describe Research Including Synergies and Delineation with Respect to this Proposal/Award:, optional
 :status: string, status of the grant, optional
 
-	Allowed values: 
+	Allowed values:
 		* pending
 		* declined
 		* accepted
@@ -73,7 +73,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:name: string, optional
 		:position: string, optional
 
-			Allowed values: 
+			Allowed values:
 				* pi
 				* copi
 		:subaward_amount: ['integer', 'float'], optional
