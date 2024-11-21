@@ -40,12 +40,12 @@ beamlines.
 ------------------------------------------------------------------------------
     sb_firstprojectum| First Projectum| ascopatz
     My first projectum
-
+        
         lead presents background reading and initial project plan
-        meeting | proposed
-
+        meeting | proposed 
+        
         develop a detailed plan with dates
-        mergedpr | proposed
+        mergedpr | proposed 
         - Specific Objectives:
 PDF in the cloud (PDFitc): Development of a web-based service for determining
 structures from measured PDFs given known structures in structural databases
