@@ -29,7 +29,7 @@ repos:
     rev: 7.0.0
     hooks:
       - id: flake8
-        exclude: ^tests/test_helpers.py$ ^tests/test_commands.py$
+        exclude: ^tests/test_helpers.py$|^tests/test_commands.py$
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
