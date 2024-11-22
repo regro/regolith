@@ -161,7 +161,7 @@ listing,
 or open a file
 browser such as windows explorer and check out what is in there.
 
-You will see a direcotry called :bash:`db` and a file called :bash:`regolithrc.json`.
+You will see a directory called :bash:`db` and a file called :bash:`regolithrc.json`.
 All of the collections in your database are in the :bash:`db` directory.  The
 :bash:`regolithrc.json` contains a bunch of information that Regolith needs to run and do its business.
 
@@ -530,7 +530,7 @@ on a GitLab instance.
 "repos":[
         {"_id": "talk_repo",     # a_presentation looks for the entry with this ID
          "params": {"namespace_id": "35",             # These params are handed to the API post request.
-                    "initialize_with_readme": "True"  # "name" is also needed but a_presentation generates that automatially
+                    "initialize_with_readme": "True"  # "name" is also needed but a_presentation generates that automatically
                     },
          "url": "https://gitlab.example.com",  # The URL of the main GitLab/GitHub instance
          "api_route": "/api/v4/projects/",     # This is the route to the REST-API.  The value
@@ -735,7 +735,7 @@ Table of contents
 
 Regolith Commands
 =================
-Shell commmands for regolith
+Shell commands for regolith
 
 .. toctree::
      :maxdepth: 2
