@@ -16,7 +16,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Check out diffpy.labpdfproc repository
+      - name: Check out regolith repository
         uses: actions/checkout@v4
 
       - name: Initialize miniconda
@@ -38,14 +38,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev
 
-      - name: Install diffpy.labpdfproc and requirements
+      - name: Install regolith and requirements
         run: |
           conda install --file requirements/test.txt
           pip install -r requirements/pip.txt
           python -m pip install . --no-deps
 
 
-      - name: Validate diffpy.labpdfproc
+      - name: Validate regolith
         run: |
           pytest --cov
           coverage report -m
