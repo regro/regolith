@@ -37,7 +37,7 @@ alloweds = {
         "research_wish",
     ],
     "GRANT_STATI": ["pending", "declined", "accepted", "in-prep"],
-    "GRANT_ROLES": ["pi", "copi"],
+    "GRANT_ROLES": ["pi", "copi", "co-pi"],
     "MILESTONE_TYPES": [
         "mergedpr",
         "meeting",
