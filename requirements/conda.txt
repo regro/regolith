@@ -16,4 +16,3 @@ habanero
 google-api-python-client
 google-auth-oauthlib
 wxpython
-gooey

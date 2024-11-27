@@ -42,6 +42,7 @@ jobs:
         run: |
           conda install --file requirements/test.txt
           conda install --file requirements/conda.txt
+          pip install gooey
           python -m pip install . --no-deps
 
 
