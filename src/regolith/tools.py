@@ -970,7 +970,7 @@ def fuzzy_retrieval(documents, sources, value, case_sensitive=True):
 def number_suffix(number):
     """returns the suffix that adjectivises a number (st, nd, rd, th)
 
-    Paramters
+    Parameters
     ---------
     number: integer
         The number.  If number is not an integer, returns an empty string
