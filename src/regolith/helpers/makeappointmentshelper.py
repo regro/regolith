@@ -112,13 +112,13 @@ def plotter(datearray, student=None, pd=None, ss=None, title=None):
     pda = numpy.array(pd) / 30.5
     ssa = numpy.array(ss) / 30.5
     if student:
-        ax.plot_date(datearray, sta, fmt=",-", label="student months")
+        ax.plot(datearray, sta, ",-", label="student months")
     if pd:
-        ax.plot_date(datearray, pda, fmt=",-", label="postdoc months")
+        ax.plot(datearray, pda, ",-", label="postdoc months")
     if ss:
-        ax.plot_date(datearray, ssa, fmt=",-", label="ss months")
+        ax.plot(datearray, ssa, ",-", label="ss months")
     if student and pd:
-        ax.plot_date(datearray, sta + pda, fmt=",-", label="student+postdoc days")
+        ax.plot(datearray, sta + pda, ",-", label="student+postdoc days")
     ax.set_xlabel("date")
     ax.set_ylabel("budget months remaining")
     ax.set_title(title)
