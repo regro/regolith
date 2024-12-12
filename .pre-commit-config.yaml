@@ -16,6 +16,7 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
+        exclude: '\.(rst|txt)$'
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-toml
@@ -28,6 +29,7 @@ repos:
     rev: 7.0.0
     hooks:
       - id: flake8
+        exclude: ^tests/test_helpers.py$|^tests/test_commands.py$
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
@@ -44,3 +46,9 @@ repos:
         name: Prevent Commit to Main Branch
         args: ["--branch", "main"]
         stages: [pre-commit]
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+    - id: codespell
+      additional_dependencies:
+        - tomli

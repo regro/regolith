@@ -38,7 +38,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:position: string, optional
 :type: ['string'], The type of project, optional
 
-	Allowed values: 
+	Allowed values:
 		* ossoftware
 		* funded
 		* outreach

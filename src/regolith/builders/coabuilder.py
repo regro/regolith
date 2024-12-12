@@ -2,7 +2,7 @@
 
 For the specified person it returns the name and institution of all
 graduate student and post-doc advisors,
-all graduate student advisees, all post-doc advisees in the past 60 monts
+all graduate student advisees, all post-doc advisees in the past 60 months
 and all coauthors in the past 48 months.
 """
 
@@ -253,7 +253,7 @@ def query_people_and_institutions(rc, names):
 
 
 def get_inst_name(person, rc):
-    """Get the name of instituion of the person's latest employment."""
+    """Get the name of institution of the person's latest employment."""
     if "employment" in person:
         org = get_recent_org(person)
         person_inst_abbr = org

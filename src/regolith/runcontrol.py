@@ -248,7 +248,7 @@ def load_rcfile(fname):
     if ext == ".json":
         rc = load_json_rcfile(fname)
     else:
-        raise RuntimeError("could not detemine run control file type from extension.")
+        raise RuntimeError("could not determine run control file type from extension.")
     return rc
 
 
