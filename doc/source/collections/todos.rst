@@ -22,7 +22,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:importance: integer, the importance, from 0 to 3, optional
 		:status: string, the status: started/finished/cancelled, optional
 
-			Allowed values: 
+			Allowed values:
 				* started
 				* finished
 				* cancelled

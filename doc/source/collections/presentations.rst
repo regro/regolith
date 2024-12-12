@@ -26,7 +26,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :project: ['string', 'list'], project or list of projects that this presentation is associated with.  Should be discoverable in projects collection, optional
 :status: string, Is the application in prep or submitted, was the invitation accepted or declined, was the trip cancelled?, required
 
-	Allowed values: 
+	Allowed values:
 		* in-prep
 		* submitted
 		* accepted
@@ -36,7 +36,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :title: string, title of the presentation, required
 :type: string, type of presentation, required
 
-	Allowed values: 
+	Allowed values:
 		* award
 		* colloquium
 		* contributed_oral

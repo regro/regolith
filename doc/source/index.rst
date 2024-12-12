@@ -13,8 +13,12 @@
     </div>
     <script type="text/javascript">initRgDungeon();</script>
 
-Regolith
-========
+#######
+|title|
+#######
+
+.. |title| replace:: regolith documentation
+
 Regolith is a content management system for software & research groups.
 Regolith creates and manages a database of people, publications, projects,
 proposals & grants, courses, and more! From this database, regolith is then
@@ -28,6 +32,22 @@ Databases may be file-based (JSON and YAML) or MongoDB-based.
 
 Regolith is developed as a `regro project <https://regro.github.io/>`_
 
+| Software version |release|.
+| Last updated |today|.
+
+=======
+Authors
+=======
+
+regolith was mostly written by Anthony Scopatz, with significant contributions
+from CJ Wright.  More recently development has been led By simon Billinge and
+regolith is currently developed by the Billinge Group
+and its community contributors.
+
+For a detailed list of contributors see
+https://github.com/regro/regolith/graphs/contributors.
+
+=============
 Example Sites
 =============
 The following are some sample websites that are powered by regolith, even though
@@ -37,6 +57,7 @@ websites is just one of the many facets of this tool:
 1. `ERGS Home Page <http://www.ergs.sc.edu>`_
 2. `Technical WorkShop on Fuel Cycle Simulation <http://twofcs.ergs.sc.edu>`_
 
+============
 Installation
 ============
 1. Make your first database
@@ -140,7 +161,7 @@ listing,
 or open a file
 browser such as windows explorer and check out what is in there.
 
-You will see a direcotry called :bash:`db` and a file called :bash:`regolithrc.json`.
+You will see a directory called :bash:`db` and a file called :bash:`regolithrc.json`.
 All of the collections in your database are in the :bash:`db` directory.  The
 :bash:`regolithrc.json` contains a bunch of information that Regolith needs to run and do its business.
 
@@ -509,7 +530,7 @@ on a GitLab instance.
 "repos":[
         {"_id": "talk_repo",     # a_presentation looks for the entry with this ID
          "params": {"namespace_id": "35",             # These params are handed to the API post request.
-                    "initialize_with_readme": "True"  # "name" is also needed but a_presentation generates that automatially
+                    "initialize_with_readme": "True"  # "name" is also needed but a_presentation generates that automatically
                     },
          "url": "https://gitlab.example.com",  # The URL of the main GitLab/GitHub instance
          "api_route": "/api/v4/projects/",     # This is the route to the REST-API.  The value
@@ -702,16 +723,24 @@ For those who want to dive deeper into the library itself.
 
     api/regolith
 
+=================
+Table of contents
+=================
+.. toctree::
+   :titlesonly:
+
+   license
+   release
+   Package API <api/regolith>
 
 Regolith Commands
 =================
-Shell commmands for regolith
+Shell commands for regolith
 
 .. toctree::
      :maxdepth: 2
 
      commands/index
-
 
 Database Maintenance
 =========
@@ -719,3 +748,10 @@ Database Maintenance
     :maxdepth: 1
 
     database_maintenance/index
+
+=======
+Indices
+=======
+
+* :ref:`genindex`
+* :ref:`search`

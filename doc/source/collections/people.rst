@@ -15,7 +15,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:day: integer, the day the activity took place, optional
 		:type: string, the type of the activity, optional
 
-			Allowed values: 
+			Allowed values:
 				* teaching
 				* research
 		:month: ['integer', 'string'], the month the activity took place, optional
@@ -40,14 +40,14 @@ The following lists key names mapped to its type and meaning for each entry.
 		:unit: string, name of department or school etc., optional
 		:type: string, type of committee, department, school, university, external, optional
 
-			Allowed values: 
+			Allowed values:
 				* phdoral
 				* phddefense
 				* phdproposal
 				* promotion
 		:level: string, department or school or university, or external, optional
 
-			Allowed values: 
+			Allowed values:
 				* department
 				* school
 				* university
@@ -94,7 +94,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:permanent: boolean, true if the position is open ended and has no fixed end-date, optional
 		:position: string, optional
 
-			Allowed values: 
+			Allowed values:
 				* ``''``
 				* editor
 				* unknown
@@ -142,7 +142,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:position_full: string, The full on title of the position.  This will be typeset if it is here, or if not Position will be used.  Position will be used for sorting and must come from a fixed list of positions, optional
 		:status: string, optional
 
-			Allowed values: 
+			Allowed values:
 				* pi
 				* adjunct
 				* high-school
@@ -161,7 +161,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:end_day: integer, the day facility started, optional
 		:type: string, the type of the facility. Columbia asksfor wished-for facilities, so there are teaching-wish and research-wish fields., optional
 
-			Allowed values: 
+			Allowed values:
 				* teaching
 				* research
 				* shared
@@ -236,7 +236,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :orcid_id: string, The ORCID ID of the person, optional
 :position: string, such as professor, graduate student, or scientist, optional
 
-	Allowed values: 
+	Allowed values:
 		* ``''``
 		* editor
 		* unknown
@@ -288,7 +288,7 @@ The following lists key names mapped to its type and meaning for each entry.
 
 		:type: string, optional
 
-			Allowed values: 
+			Allowed values:
 				* online
 				* article
 		:topic: string, The short sentence of what the publicity was about, optional
@@ -332,7 +332,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:other: ['string', 'list'], optional
 		:type: string, profession, department, school, university, optional
 
-			Allowed values: 
+			Allowed values:
 				* profession
 				* university
 				* school

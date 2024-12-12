@@ -54,16 +54,16 @@ v0.8.0
 
 **Added:**
 
-* the option to specify a different database for the expense and presentation 
+* the option to specify a different database for the expense and presentation
   items when running a_presentation.
 * scripts (profile_regolith and profile_helper_gui) that run regolith and helper_gui with the python cProfiler. Used for debugging and code development.
 * universally unique IDs added to all tasks, and now listed by todo lister
 * milestone lister now prints the uuids of the milestones
 * additional tests for c+p, annual-activity and grant-report builders
-* repo_info_complete in tools to check the existence of remote repositories before operating on them 
- * token_info_complete in tools to check for the existence of the user's private API authentication token 
+* repo_info_complete in tools to check the existence of remote repositories before operating on them
+ * token_info_complete in tools to check for the existence of the user's private API authentication token
  * create_repo in tools to create a repository in a given remote repository
- * functionality to presentation helper that creates a repo by calling on create_repo function in tools when no_talk_repo box is not checked 
+ * functionality to presentation helper that creates a repo by calling on create_repo function in tools when no_talk_repo box is not checked
  * no_repo box/option added to presentation helper gui
 * no_in_cv option for employment entries that they don't appear in cv's and resumes
 * get_appointments() function
@@ -106,11 +106,11 @@ v0.8.0
    using the tags field for each paper
  * tests of tex and html files now compare outputs line by line
    and ignore variables paths that have proven to be unstable
-* Standardized CLI option names by replacing the underscore with a hyphen in the 
-   following: --end_date, --begin_-date, --submitted_date, --no_cal, --due_date, 
-   --group_members, --other_agencies, --months_academic, --months_summer, 
-   --assigned_to, --assigned_by, --loc_inst, --kv_filter, --return_fields, 
-   --helper_help, --school_aka, --school_name, --school-id, --dept_aka, --dept_name, 
+* Standardized CLI option names by replacing the underscore with a hyphen in the
+   following: --end_date, --begin_-date, --submitted_date, --no_cal, --due_date,
+   --group_members, --other_agencies, --months_academic, --months_summer,
+   --assigned_to, --assigned_by, --loc_inst, --kv_filter, --return_fields,
+   --helper_help, --school_aka, --school_name, --school-id, --dept_aka, --dept_name,
    --dept_id, --estimated_duration.
 * Reformatted printing of todos to make the order clearer
 * "--projectum_id" has been changed from a required arg to an optional arg
@@ -314,7 +314,7 @@ v0.3.1
 
 **Changed:**
 
-* ``open`` uses explict 'utf-8' bindings (for windows users)
+* ``open`` uses explicit 'utf-8' bindings (for windows users)
 * Allow education to be ongoing
 * Allow begin and end years for service
 * Make employment optional
@@ -434,7 +434,7 @@ v0.2.0
 
 * Error in ``BaseBuilder`` which caused it to look in the wrong spot for
   templates
-* Fixed bug in grad builder when the total wieght is zero.
+* Fixed bug in grad builder when the total weight is zero.
 * Actually use ``ChainedDB`` when working with the DBs
 
 * Error in ``ChainedDB`` which caused bad keys to return with ``None``
@@ -465,7 +465,7 @@ v0.1.10
 
 **Changed:**
 
-* ``CVBuilder`` and ``ResumeBuilder`` builders now inheret from ``LatexBuilderBase``
+* ``CVBuilder`` and ``ResumeBuilder`` builders now inherit from ``LatexBuilderBase``
 
 
 **Fixed:**

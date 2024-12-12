@@ -23,7 +23,7 @@ class Broker:
 
     >>> # Load the db
     >>> db = Broker.from_rc()
-    >>> # Get a docment from the broker
+    >>> # Get a document from the broker
     >>> ergs =db['group']['ergs']
     >>> # Store a file
     >>> db.add_file(ergs, 'myfile', '/path/to/file/hello.txt')
