@@ -1,10 +1,8 @@
 ruamel.yaml
 bibtexparser
 docutils
-python-dateutil
 jinja2
 cerberus
-flatten-dict
 xonsh
 rever
 openpyxl
@@ -15,4 +13,3 @@ matplotlib-base
 habanero
 google-api-python-client
 google-auth-oauthlib
-wxpython
