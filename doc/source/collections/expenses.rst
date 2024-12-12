@@ -16,7 +16,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :end_month: ['string', 'integer'], The month when the travel/business end, optional
 :end_year: integer, The year when the travel/business end, optional
 
-	Allowed values: 
+	Allowed values:
 		* travel
 		* business
 :grant_percentages: list, the percentage of the reimbursement amount to put on each grant. This list must be the same length asthe grants list and the percentages placed in the order that the grants appear in that list, optional
@@ -55,7 +55,7 @@ The following lists key names mapped to its type and meaning for each entry.
 		:where: string, where the reimbursement has been sent, optional
 :status: string, The status of the expense, optional
 
-	Allowed values: 
+	Allowed values:
 		* unsubmitted
 		* submitted
 		* reimbursed

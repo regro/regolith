@@ -31,7 +31,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :month: ['integer', 'string'], The month the review was requested, optional
 :recommendation: string, Your publication recommendation, required
 
-	Allowed values: 
+	Allowed values:
 		* reject
 		* asis
 		* smalledits
@@ -41,7 +41,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :reviewer: string, name of person reviewing the paper, required
 :status: string, Where you are with the review, required
 
-	Allowed values: 
+	Allowed values:
 		* invited
 		* accepted
 		* declined

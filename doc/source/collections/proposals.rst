@@ -37,7 +37,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :pre: dict, Information about the pre-proposal, optional
 :status: string, e.g. 'pending', 'accepted', 'declined', required
 
-	Allowed values: 
+	Allowed values:
 		* pending
 		* declined
 		* accepted
