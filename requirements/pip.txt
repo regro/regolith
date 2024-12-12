@@ -3,7 +3,7 @@ bibtexparser
 docutils
 jinja2
 cerberus
-flatten_dict
+flatten-dict
 xonsh
 rever
 openpyxl
