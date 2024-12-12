@@ -13,8 +13,25 @@ from glob import iglob
 import ruamel.yaml
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
+from ruamel.yaml.emitter import Emitter
 
 from regolith.tools import dbpathname
+
+
+class NoTrailingWhitespaceEmitter(Emitter):
+    def write_folded(self, text):
+        """
+        Override the method that handles folded text.
+        Strip trailing whitespace when inserting line breaks for long lines.
+        """
+        if not text:
+            return
+
+        folded_lines = text.splitlines()
+        for line in folded_lines:
+            line = line.rstrip()  # Remove trailing whitespace from the line
+            super().write_plain(line)
+            self.write_line_break()  # Add a line break after the processed line
 
 
 class DelayedKeyboardInterrupt:
@@ -99,6 +116,7 @@ def dump_yaml(filename, docs, inst=None):
     inst = YAML() if inst is None else inst
     inst.representer.ignore_aliases = lambda *data: True
     inst.indent(mapping=2, sequence=4, offset=2)
+    inst.Emitter = NoTrailingWhitespaceEmitter
     sorted_dict = ruamel.yaml.comments.CommentedMap()
     for k in sorted(docs):
         doc = docs[k]
