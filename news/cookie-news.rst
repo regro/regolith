@@ -16,7 +16,7 @@
 
 **Fixed:**
 
-* Repo structure modified to the new diffpy standard
+* Repo structure modified to the new diffpy (cookiecutter) standard
 
 **Security:**
 
