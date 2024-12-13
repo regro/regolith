@@ -11,34 +11,34 @@ regolith.helpers package
 Submodules
 ----------
 
-regolith.helpers.attestationshelper module
+regolith.helpers.l_contactshelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.l_contactshelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.u_finishprumhelper module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.attestationshelper
+.. automodule:: regolith.helpers.u_finishprumhelper
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.a_expensehelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.helpers.l_todohelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.a_expensehelper
+.. automodule:: regolith.helpers.l_todohelper
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.a_grppub_readlisthelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.helpers.reimbstatushelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.a_grppub_readlisthelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.a_manurevhelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.a_manurevhelper
+.. automodule:: regolith.helpers.reimbstatushelper
     :members:
     :undoc-members:
     :show-inheritance:
@@ -51,18 +51,50 @@ regolith.helpers.a_presentationhelper module
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.a_projectumhelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.helpers.l_milestoneshelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.a_projectumhelper
+.. automodule:: regolith.helpers.l_milestoneshelper
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.a_proposalhelper module
+regolith.helpers.v_meetingshelper module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.a_proposalhelper
+.. automodule:: regolith.helpers.v_meetingshelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.u_contacthelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.u_contacthelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.basehelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.basehelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.u_logurlhelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.u_logurlhelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.a_expensehelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.a_expensehelper
     :members:
     :undoc-members:
     :show-inheritance:
@@ -83,10 +115,34 @@ regolith.helpers.a_todohelper module
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.basehelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.helpers.a_proposalhelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.basehelper
+.. automodule:: regolith.helpers.a_proposalhelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.l_membershelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.l_membershelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.a_manurevhelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.a_manurevhelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.l_progressreporthelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.l_progressreporthelper
     :members:
     :undoc-members:
     :show-inheritance:
@@ -99,34 +155,18 @@ regolith.helpers.f_todohelper module
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.hellohelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.helpers.a_grppub_readlisthelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.hellohelper
+.. automodule:: regolith.helpers.a_grppub_readlisthelper
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.l_abstracthelper module
+regolith.helpers.l_projectahelper module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.l_abstracthelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.l_contactshelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.l_contactshelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.l_currentappointmentshelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.l_currentappointmentshelper
+.. automodule:: regolith.helpers.l_projectahelper
     :members:
     :undoc-members:
     :show-inheritance:
@@ -147,98 +187,34 @@ regolith.helpers.l_grantshelper module
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.l_membershelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.helpers.l_currentappointmentshelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.l_membershelper
+.. automodule:: regolith.helpers.l_currentappointmentshelper
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.l_milestoneshelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.l_milestoneshelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.l_progressreporthelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.l_progressreporthelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.l_projectahelper module
+regolith.helpers.l_abstracthelper module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.l_projectahelper
+.. automodule:: regolith.helpers.l_abstracthelper
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.l_todohelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.l_todohelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.makeappointmentshelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.makeappointmentshelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.reimbstatushelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.reimbstatushelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.u_contacthelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.u_contacthelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.u_finishprumhelper module
+regolith.helpers.attestationshelper module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.u_finishprumhelper
+.. automodule:: regolith.helpers.attestationshelper
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.u_institutionshelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.u_institutionshelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.u_logurlhelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helpers.u_logurlhelper
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helpers.u_milestonehelper module
+regolith.helpers.a_projectumhelper module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.u_milestonehelper
+.. automodule:: regolith.helpers.a_projectumhelper
     :members:
     :undoc-members:
     :show-inheritance:
@@ -251,10 +227,34 @@ regolith.helpers.u_todohelper module
     :undoc-members:
     :show-inheritance:
 
-regolith.helpers.v_meetingshelper module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.helpers.makeappointmentshelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.helpers.v_meetingshelper
+.. automodule:: regolith.helpers.makeappointmentshelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.u_institutionshelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.u_institutionshelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.hellohelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.hellohelper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helpers.u_milestonehelper module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helpers.u_milestonehelper
     :members:
     :undoc-members:
     :show-inheritance:
