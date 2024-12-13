@@ -58,7 +58,7 @@ The following lists key names mapped to its type and meaning for each entry.
 :scope: string, The scope of the grant, answers the prompt: Describe Research Including Synergies and Delineation with Respect to this Proposal/Award:, optional
 :status: string, status of the grant, optional
 
-	Allowed values:
+	Allowed values: 
 		* pending
 		* declined
 		* accepted
@@ -73,9 +73,10 @@ The following lists key names mapped to its type and meaning for each entry.
 		:name: string, optional
 		:position: string, optional
 
-			Allowed values:
+			Allowed values: 
 				* pi
 				* copi
+				* co-pi
 		:subaward_amount: ['integer', 'float'], optional
 :title: string, actual title of proposal / grant, required
 
@@ -124,7 +125,8 @@ YAML Example
 	      funds_available: 2100.0
 	    - date: '2020-07-21'
 	      funds_available: 2600.0
-	  narrative: https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing
+	  narrative: 
+	    https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing
 	  program: Small Development Grants
 	  team:
 	    - institution: University of South Carolina
@@ -134,7 +136,7 @@ YAML Example
 	        - A. D. Ministrator
 	      institution: University of South Carolina
 	      name: Aaron Meurer
-	      position: researcher
+	      position: copi
 	  title: SymPy 1.1 Release Support
 	SymPy-2.0:
 	  admin: APAM
@@ -160,7 +162,8 @@ YAML Example
 	    - description: high profile pub in Nature
 	      month: 5
 	      year: 2020
-	  narrative: https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing
+	  narrative: 
+	    https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing
 	  program: Small Development Grants
 	  proposal_id: SymPy-2.0
 	  status: accepted
@@ -170,7 +173,7 @@ YAML Example
 	      position: pi
 	    - institution: University of South Carolina
 	      name: Aaron Meurer
-	      position: researcher
+	      position: co-pi
 	  title: SymPy 2.0 Release Support
 	abc42:
 	  alias: abc42
@@ -340,7 +343,7 @@ JSON/Mongo Example
 	            ],
 	            "institution": "University of South Carolina",
 	            "name": "Aaron Meurer",
-	            "position": "researcher"
+	            "position": "copi"
 	        }
 	    ],
 	    "title": "SymPy 1.1 Release Support"
@@ -393,7 +396,7 @@ JSON/Mongo Example
 	        {
 	            "institution": "University of South Carolina",
 	            "name": "Aaron Meurer",
-	            "position": "researcher"
+	            "position": "co-pi"
 	        }
 	    ],
 	    "title": "SymPy 2.0 Release Support"

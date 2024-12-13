@@ -11,26 +11,18 @@ regolith.builders package
 Submodules
 ----------
 
-regolith.builders.activitylogbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.builders.reimbursementbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.builders.activitylogbuilder
+.. automodule:: regolith.builders.reimbursementbuilder
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.builders.appraisalbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.builders.preslistbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.builders.appraisalbuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.builders.basebuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.basebuilder
+.. automodule:: regolith.builders.preslistbuilder
     :members:
     :undoc-members:
     :show-inheritance:
@@ -43,26 +35,10 @@ regolith.builders.beamplanbuilder module
     :undoc-members:
     :show-inheritance:
 
-regolith.builders.coabuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.builders.manuscriptreviewbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.builders.coabuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.builders.cpbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.cpbuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.builders.cvbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.cvbuilder
+.. automodule:: regolith.builders.manuscriptreviewbuilder
     :members:
     :undoc-members:
     :show-inheritance:
@@ -71,6 +47,70 @@ regolith.builders.figurebuilder module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.builders.figurebuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builders.activitylogbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builders.activitylogbuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builders.coabuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builders.coabuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builders.basebuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builders.basebuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builders.proposalreviewbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builders.proposalreviewbuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builders.grantreportbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builders.grantreportbuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builders.postdocadbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builders.postdocadbuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builders.publistbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builders.publistbuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builders.internalhtmlbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builders.internalhtmlbuilder
     :members:
     :undoc-members:
     :show-inheritance:
@@ -91,14 +131,6 @@ regolith.builders.gradebuilder module
     :undoc-members:
     :show-inheritance:
 
-regolith.builders.grantreportbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.grantreportbuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 regolith.builders.htmlbuilder module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -107,50 +139,18 @@ regolith.builders.htmlbuilder module
     :undoc-members:
     :show-inheritance:
 
-regolith.builders.internalhtmlbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.builders.cvbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.builders.internalhtmlbuilder
+.. automodule:: regolith.builders.cvbuilder
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.builders.manuscriptreviewbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.builders.resumebuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.builders.manuscriptreviewbuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.builders.postdocadbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.postdocadbuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.builders.preslistbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.preslistbuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.builders.proposalreviewbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.proposalreviewbuilder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.builders.publistbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builders.publistbuilder
+.. automodule:: regolith.builders.resumebuilder
     :members:
     :undoc-members:
     :show-inheritance:
@@ -163,18 +163,18 @@ regolith.builders.readinglistsbuilder module
     :undoc-members:
     :show-inheritance:
 
-regolith.builders.reimbursementbuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.builders.cpbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.builders.reimbursementbuilder
+.. automodule:: regolith.builders.cpbuilder
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.builders.resumebuilder module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+regolith.builders.appraisalbuilder module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.builders.resumebuilder
+.. automodule:: regolith.builders.appraisalbuilder
     :members:
     :undoc-members:
     :show-inheritance:
