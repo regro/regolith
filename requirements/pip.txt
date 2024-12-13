@@ -1,7 +1,6 @@
 ruamel.yaml
 bibtexparser
 docutils
-python-dateutil
 jinja2
 cerberus
 flatten-dict
