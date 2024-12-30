@@ -1,8 +1,7 @@
-from regolith.schemas import insert_alloweds, _update_dict_target
+from regolith.schemas import _update_dict_target, insert_alloweds
 
 
 def test_update_dict_target():
-    alloweds = {"TEST": ["string", "float"], "TEST2": "string"}
     doc = {
         "email": {
             "description": "contact email for the author.",
@@ -10,7 +9,8 @@ def test_update_dict_target():
             "deeper": {"eallowed": "TEST"},
         },
         "_id": {
-            "description": "Unique identifier for submission. This generally includes the author name and part of the title.",
+            "description": "Unique identifier for submission. "
+            "This generally includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
@@ -19,7 +19,8 @@ def test_update_dict_target():
     }
     expected = {
         "_id": {
-            "description": "Unique identifier for submission. This generally includes the author name and part of the title.",
+            "description": "Unique identifier for submission. "
+            "This generally includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
@@ -45,7 +46,8 @@ def test_insert_alloweds():
             "deeper": {"eallowed": "TEST"},
         },
         "_id": {
-            "description": "Unique identifier for submission. This generally includes the author name and part of the title.",
+            "description": "Unique identifier for submission. "
+            "This generally includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },
@@ -54,7 +56,8 @@ def test_insert_alloweds():
     }
     expected = {
         "_id": {
-            "description": "Unique identifier for submission. This generally includes the author name and part of the title.",
+            "description": "Unique identifier for submission. "
+            "This generally includes the author name and part of the title.",
             "required": True,
             "type": "string",
         },

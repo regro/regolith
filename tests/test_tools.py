@@ -1,55 +1,49 @@
-from copy import copy
+import copy
+import datetime as dt
 
 import habanero
 import pytest
-import datetime as dt
-import uuid
-
-import copy
-import requests
-from unittest import mock
 import requests_mock
 
 from regolith.runcontrol import DEFAULT_RC
-
 from regolith.tools import (
-    filter_publications,
+    awards_grants_honors,
+    collect_appts,
+    collection_str,
+    compound_dict,
+    compound_list,
+    create_repo,
+    date_to_rfc822,
+    dereference_institution,
+    filter_employment_for_advisees,
     filter_presentations,
-    fuzzy_retrieval,
+    filter_publications,
     fragment_retrieval,
-    number_suffix,
-    latex_safe,
-    update_schemas,
+    fuzzy_retrieval,
+    get_appointments,
+    get_formatted_crossref_reference,
+    get_id_from_name,
+    get_person_contact,
+    get_tags,
+    get_target_repo_info,
+    get_target_token,
+    get_uuid,
+    grant_burn,
     group,
-    is_fully_appointed,
-    group_member_ids,
     group_member_employment_start_end,
+    group_member_ids,
+    is_fully_appointed,
+    key_value_pair_filter,
+    latex_safe,
     merge_collections_all,
     merge_collections_intersect,
     merge_collections_superior,
     month_and_year,
+    number_suffix,
     remove_duplicate_docs,
-    awards_grants_honors,
-    get_id_from_name,
-    get_person_contact,
-    date_to_rfc822,
-    key_value_pair_filter,
-    collection_str,
     search_collection,
-    collect_appts,
-    grant_burn,
+    update_schemas,
     validate_meeting,
-    get_formatted_crossref_reference,
-    compound_dict,
-    compound_list,
-    filter_employment_for_advisees,
-    get_tags,
-    dereference_institution,
-    get_target_repo_info,
-    get_target_token,
-    create_repo,
-    get_uuid,
-    get_appointments,
 )
 
 PEOPLE_COLL = [
@@ -67,6 +61,17 @@ PEOPLE_COLL = [
                 "position": "Undergraduate Researcher",
                 "advisor": "sbillinge",
                 "status": "undergrad",
+            }
+        ],
+        "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
+        "service": [
+            {
+                "name": "International Steering Committee",
+                "role": "chair",
+                "type": "profession",
+                "year": 2020,
+                "month": 3,
+                "notes": ["something"],
             }
         ],
     },
@@ -113,7 +118,18 @@ CONTACTS_COLL = [{"_id": "c1", "name": "contact1", "institution": "columbiau"}]
             ["m1", PEOPLE_COLL, CONTACTS_COLL],
             {
                 "_id": "m1",
+                "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
                 "name": "member1",
+                "service": [
+                    {
+                        "month": 3,
+                        "name": "International Steering Committee",
+                        "notes": ["something"],
+                        "role": "chair",
+                        "type": "profession",
+                        "year": 2020,
+                    }
+                ],
                 "education": [
                     {
                         "group": "bg",
@@ -140,7 +156,6 @@ CONTACTS_COLL = [{"_id": "c1", "name": "contact1", "institution": "columbiau"}]
     ],
 )
 def test_get_person_contact(input, expected):
-    print(input)
     actual = get_person_contact(input[0], input[1], input[2])
     assert actual == expected
 
@@ -208,7 +223,8 @@ CITATIONS = [
                     "ackno": "thanks",
                     "grant": "fwp2",
                     "month": "jun",
-                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
+                    "\\newline\\newline\\noindent ",
                     "year": "2020",
                 },
                 {
@@ -216,7 +232,8 @@ CITATIONS = [
                     "author": ["m1", "palin"],
                     "ackno": "thanks",
                     "grant": "fwp2",
-                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
+                    "\\newline\\newline\\noindent ",
                     "year": "2020",
                 },
                 {
@@ -225,7 +242,8 @@ CITATIONS = [
                     "author": ["m1", "cleese"],
                     "grant": "fwp, dmref",
                     "month": "apr",
-                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks\\newline\\newline\\noindent ",
+                    "note": "\\newline\\newline\\noindent Acknowledgement:\\newline\\noindent thanks"
+                    "\\newline\\newline\\noindent ",
                     "year": "2021",
                 },
             ],
@@ -1719,40 +1737,22 @@ def test_is_fully_appointed(appts, start, end, expected):
     "input, expected",
     [
         (
-            {
-                "funding": [
-                    {"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013},
-                    {"name": "NIF User's Group Travel Award", "value": 1150, "year": 2013},
-                ]
-            },
+            "honors",
             [
                 {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
-                {"description": "NIF User's Group Travel Award (\\$1,150)", "year": 2013, "_key": 2013.0},
             ],
         ),
         (
-            {
-                "funding": [{"name": "Omega Laser User's Group Travel Award", "value": 1100, "year": 2013}],
-                "service": [
-                    {
-                        "name": "International Steering Committee",
-                        "role": "chair",
-                        "type": "profession",
-                        "year": 2020,
-                        "month": 3,
-                        "notes": ["something"],
-                    }
-                ],
-            },
+            "service",
             [
-                {"description": "International Steering Committee", "year": 2020, "_key": 2020.03},
+                {"_key": 2020.01, "description": "International Steering Committee", "year": 2020},
                 {"description": "Omega Laser User's Group Travel Award (\\$1,100)", "year": 2013, "_key": 2013.0},
             ],
         ),
     ],
 )
-def test_get_id_from_name(input, expected):
-    assert awards_grants_honors(input) == expected
+def test_awards_grants_honors(input, expected):
+    assert awards_grants_honors(PEOPLE_COLL[0], input, funding=True, service_types=None) == expected
 
 
 @pytest.mark.parametrize(
@@ -2570,7 +2570,7 @@ def test_group_member_employment_start_end(person, grpname, expected):
     try:
         actual = group_member_employment_start_end(person, grpname)
         assert actual == expected
-    except:
+    except RuntimeError:
         with pytest.raises(RuntimeError) as excinfo:
             actual = group_member_employment_start_end(person, grpname)
         assert str(excinfo.value) == expected
@@ -2591,7 +2591,7 @@ def test_remove_duplicate_docs(inp, expected):
     try:
         actual = remove_duplicate_docs(inp, "dupe_key")
         assert actual == expected
-    except:
+    except RuntimeError:
         with pytest.raises(RuntimeError) as excinfo:
             actual = remove_duplicate_docs(inp, "dupe_key")
         assert str(excinfo.value) == expected
@@ -3145,6 +3145,8 @@ def test_get_target_token(tokens, expected):
 
 
 # @mock.patch("requests.post")
+
+
 @requests_mock.Mocker(kw="mock")
 def test_create_repo(**kwargs):
     kwargs["mock"].post("https://example.com/url/example", status_code=201)
@@ -3165,8 +3167,9 @@ def test_create_repo(**kwargs):
     rc._update(repo_token_information)
     actual = create_repo("talk_repo", "gitlab_private_token", rc)
     assert (
-        actual
-        == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor (SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
+        actual == "repo 2206_my_talk has been created at https://example.com.\nClone this to your local using "
+        "(HTTPS):\ngit clone https://example.com:<group/org name>/2206_my_talk.git\nor "
+        "(SSH):\ngit clone git@example.com:<group/org name>/2206_my_talk.git"
     )
 
 

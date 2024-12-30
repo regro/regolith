@@ -1,12 +1,12 @@
+import copy
+import os
 from collections.abc import Sequence
 from pathlib import Path
-import os
-import copy
+from pprint import pprint
 
 import pytest
 
-from regolith.schemas import SCHEMAS, validate, EXEMPLARS
-from pprint import pprint
+from regolith.schemas import EXEMPLARS, SCHEMAS, validate
 
 
 @pytest.mark.parametrize("key", SCHEMAS.keys())
@@ -77,5 +77,8 @@ def test_mongo_invalid_insertion(make_mongodb):
             rc.client.insert_one(only_database_in_test, "projecta", BAD_PROJECTUM)
         except ValueError as e:
             result = e.args[0]
-    expected = "ERROR in sb_firstprojectum:\n{'lead': ['required field'], 'status': ['required field']}\nNone\nNone\n---------------\n"
+    expected = (
+        "ERROR in sb_firstprojectum:\n{'lead': ['required field'], 'status': ['required field']}"
+        "\nNone\nNone\n---------------\n"
+    )
     assert result == expected
