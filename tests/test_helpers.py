@@ -1447,6 +1447,7 @@ helper_map_requests = [
             "http://drive.google.com/SEV356DV",
             "--no-cal",
             "--force",
+            "--repo",
         ],  # Expect a new presentation and new expense in db 'test'
         "2006na_testc.2 has been added in presentations\n2006na_testc.2 has been added in expenses in database test\nrepo 2006na_testc.2 has been created at https://example.com.\nClone this to your local using (HTTPS):\ngit clone https://example.com:talks/2006na_testc.2.git\nor (SSH):\ngit clone git@example.com:talks/2006na_testc.2.git\n",
     ),
