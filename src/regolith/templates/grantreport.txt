@@ -123,8 +123,6 @@ Projected impacts are
 {% endfor %}
 {% endif -%}
 
-What is the impact on the development of human resources?
-
  - What is the impact on physical resources that form infrastructure?
 {% if grant.get('impacts',{}).get('physical_infrastructure',[]) | length > 0 %}
 Projected impacts are
@@ -170,7 +168,7 @@ Projected impacts are
 {% for item in grant.get('impacts',{}).get('broader_society',[]) %}
  - {{ item }}
 {% endfor %}
-{% endif %}
+{% endif -%}
 
 {{ hline }}
 Changes/Problems
