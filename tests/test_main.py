@@ -3,15 +3,16 @@ import os
 import sys
 from io import StringIO
 
+from regolith import __version__
 from regolith.main import main
 from regolith.runcontrol import DEFAULT_RC
 
-from regolith import __version__
 
 def test_version():
     sys.stdout = StringIO()
     main(["--version"])
     assert sys.stdout.getvalue() == "{}\n".format(__version__)
+
 
 def test_user_rc(make_db):
     repo = make_db

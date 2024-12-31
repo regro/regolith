@@ -1,0 +1,29 @@
+{% raw %}
+\documentclass[letterpaper,11pt]{article}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+
+{% endraw %}
+
+
+\begin{document}
+
+
+\begin{tabular*}{7in}{l@{\extracolsep{\fill}}r}
+\textbf{\Large {{p['title']}} {{p['name']}}} & \textbf{\today} \\
+{{employment[0]['organization']}} & {{p['email']}} \\
+\end{tabular*}
+\\
+
+{%if len(pubs) > 0%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\resheading{Publication listing {{- p['qualifiers'] }}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{% for pub in pubs %}
+    \cite{ {{-pub['_id']-}} }
+{% endfor %}
+{% endif %}
+% Bibliography
+\bibliography{ {{-p['_id']-}}_nobold}{}
+%\bibliographystyle{plain}
+\end{document}

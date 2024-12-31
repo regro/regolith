@@ -19,10 +19,10 @@ getting_started_with_pdf:
   title: A step-by-step pathway towards PDF understanding.  It is recommended to read
     the papers in the order they are listed here.
   year: 2019
-test_the_lister:
+pdf:
   date: 2021-04-01
   papers:
-    - doi: 10.1021/nn501591g
-      text: The description of symbolic computing in Python
+    - text: The description of symbolic computing in Python
+      doi: 10.1021/nn501591g
   purpose: Test the lister
   title: A list to test the lister

@@ -1,0 +1,47 @@
+%! Author = simon
+%! Date = 4/14/2020
+
+% the jinja2 template is just latex, as you can see, but it can
+% fill in information coming from the variables sent by the
+% navy_letter program.  These are a big dictionary called
+% contents and a few other small things, like to and from.
+% We can write simple code in here to do the rendering, so
+% if we have a list of entries, it can be any length and we just
+% wrap it in a for loop.  You can see the syntax below to get
+% the idea.
+\documentclass[letter,12pt]{letter}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage[margin=1.0in]{geometry}
+
+\begin{document}
+
+\hfill 6/5/22
+\begin{tabular}{p{0.5in}p{6in}}
+To: & Lieutenant Commander Julie Doe USM \\
+From: & Sir John Doy Royalty \\[12pt]
+Subj: & THIS LETTER IS ABOUT THIS \\[12pt]
+Ref: & (a) Ref 1 \\
+
+      & (b) Ref 2 \\
+[12pt]
+Encl: & (a) Encl 1 \\
+
+
+      & (b) Encl 2 \\
+[12pt]
+
+\end{tabular}
+
+
+1.\ \  First paragraph made long enough to make sure the wrapping gives the desired result and that it looks nice all around.\par
+
+2.\ \  Para 2.\par
+
+3.\ \  Para 3.\par
+
+
+
+
+
+\end{document}
