@@ -163,6 +163,13 @@ Projected impacts are
 {% endfor %}
 {% endif -%}
 
+{% if grant.get('impacts',{}).get('broader_society',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('broader_society',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
 {{ hline }}
 Changes/Problems
 {{ hline }}
