@@ -163,7 +163,7 @@ class GrantReportBuilder(LatexBuilderBase):
         publications = [publ for publ in self.gtx["citations"] if grant_id in publ.get("grant", "")]
 
         for publ in publications:
-            formatted_authors = [HumanName(name).full_name for name in publ.get("authors", [])]
+            formatted_authors = [f" {HumanName(name).full_name}" for name in publ.get("authors", [])]
             publ["authors"] = formatted_authors
         # Participants/Organizations
         participants = []
@@ -205,6 +205,7 @@ class GrantReportBuilder(LatexBuilderBase):
         self.render(
             "grantreport.txt",
             f"{grant_id}_report_{begin_date_str}_{end_date_str}.txt",
+            grant=grant,
             begin_date=begin_date_str,
             newline="\n",
             end_date=end_date_str,
