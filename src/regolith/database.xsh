@@ -3,8 +3,8 @@ import os
 from contextlib import contextmanager
 from warnings import warn
 
-from xonsh.lib import subprocess
-from xonsh.lib.os import indir
+from xonsh.api import subprocess
+from xonsh.api.os import indir
 
 try:
     import hglib

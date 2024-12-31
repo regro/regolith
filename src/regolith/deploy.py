@@ -5,7 +5,7 @@ import time
 from distutils.dir_util import copy_tree
 from warnings import warn
 
-from xonsh.lib import subprocess
+from xonsh.api import subprocess
 
 try:
     import hglib

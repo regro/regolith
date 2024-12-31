@@ -233,7 +233,7 @@ class ProjectumAdderHelper(DbHelperBase):
         presubmission_checklist = [
             (
                 "Create slide figures",
-                "Create Inkscape graphics (Inkscape is preferrable over ppt) for the slides "
+                "Create Inkscape graphics (Inkscape is preferable over ppt) for the slides "
                 "and place in a ``figures`` directory in the slides directory. "
                 "These may then be used either in beamer or ppt. "
                 "Iterate with PI to convergence. (to get started with Inkscape download and install it, "
@@ -581,7 +581,7 @@ class ProjectumAdderHelper(DbHelperBase):
                 "Read the paper",
                 "Finally, after you have done all these 'mechanical' checks, "
                 "read through the paper and try and find any typos or other problems. "
-                "Resist the temptation to do any rewriting here...you are looking for mispellings "
+                "Resist the temptation to do any rewriting here...you are looking for misspellings "
                 "and missing or extra words and so on.",
             ),
             (
@@ -693,7 +693,7 @@ class ProjectumAdderHelper(DbHelperBase):
                 "Update arXiv if necessary",
                 "If the paper was listed on a preprint server like arXiv, submit a note to arXiv that the paper "
                 "has appeared and give the full reference. If the journal copyright allows "
-                "you can post the published version here, but normally that is not alllowed! "
+                "you can post the published version here, but normally that is not allowed! "
                 "Still, it is important that people who find the paper on arXiv "
                 "get directed to the correct reference.",
             ),
@@ -831,7 +831,7 @@ class ProjectumAdderHelper(DbHelperBase):
         #                                 'closes.  The goal of this is that it will be '
         #                                 'printed as a progress report for a grant '
         #                                 'so write it as if it will be read by an external '
-        #                                 'person. It doesnt have to describe the whole prum '
+        #                                 'person. It doesn't have to describe the whole prum '
         #                                 'but clearly show the progress that has been made. '
         #                                 'It can be multiple paragraphs or a short statement'
         #                                 'depending on the situation',

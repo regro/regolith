@@ -22,8 +22,7 @@ at least one of the 4 categories below)?
 {% endfor -%}
 
 - Specific Objectives:
-PDF in the cloud (PDFitc): Development of a web-based service for determining
-structures from measured PDFs given known structures in structural databases
+
 
 - Significant Results (finished projecta):
 {%- for prum in significantResults %}
@@ -37,11 +36,11 @@ Key outcomes or Other achievements:
 {%- for opportunity in trainingAndProfessionalDevelopment %}
     - Authors: {{ opportunity.get('authors') }}
     - Title: {{ opportunity.get('title') }}
-    - Location: {{ opportunity.get('meeting_name') }}, {{opportunity.get('location')}}
+    - Location: {{ opportunity.get('meeting_name') }}, {{ opportunity.get('location') }}
 {% endfor -%}
 {%- for thesis in defendedTheses %}
     {{thesis}} wrote and successfully defended their thesis.
-{% endfor -%}
+{% endfor %}
 
 {{ hline }}
 * How have the results been disseminated to communities of interest?
@@ -78,94 +77,93 @@ Products
       public Summary: {{ publ.get('public_summary','') }}
 
       acknowledgement statement: {{ publ.get('ackno','') }}
-{% endfor -%}
+{% endfor %}
 
 {{ hline }}
 Participants/Organizations
 {{ hline }}
-What individuals have worked on the project?
-
-Name, Most Senior Project Role, Nearest Person Month Worked
+ - What individuals have worked on the project?
+ - Name, Most Senior Project Role, Nearest Person Month Worked
 {% for person in participants %}
     - {{ person.get('name') }}, {{ person.get("position") }},
       email: {{ person.get('email') }}, months on grant this period: {{ person.get("months_on_grant") }}
-{%- endfor -%}}
+{%- endfor -%}
 
-What International collaborations have there been?
-
-What other organizations have been involved as partners?/What other collaborators or contacts have been involved?
-{%- for contact, info in collaborators.items() %}
+- What International collaborations have there been?
+ - What other organizations have been involved as partners?
+ - What other collaborators or contacts have been involved?
+{% for contact, info in collaborators.items() %}
     - {{ info["name"] }} ({{ info["institution"] }})
-{%- endfor -%}}
+{%- endfor -%}
 
 {{ hline }}
 Impacts
 {{ hline }}
-What is the impact on the development of the principal discipline(s) of the project?
-
+- What is the impact on the development of the principal discipline(s) of the project?
 {% if grant.get('impacts',{}).get('principal_discipline',[]) | length > 0 %}
 Projected impacts are
 {% for item in grant.get('impacts',{}).get('principal_discipline',[]) %}
  - {{ item }}
 {% endfor %}
-{% endif %}
+{% endif -%}
 
-
-What is the impact on other disciplines?
-
+ - What is the impact on other disciplines?
 {% if grant.get('impacts',{}).get('other_discipline',[]) | length > 0 %}
 Projected impacts are
 {% for item in grant.get('impacts',{}).get('other_discipline',[]) %}
  - {{ item }}
 {% endfor %}
-{% endif %}
+{% endif -%}
 
-What is the impact on the development of human resources?
-
+ - What is the impact on the development of human resources?
 {% if grant.get('impacts',{}).get('human_resource_development',[]) | length > 0 %}
 Projected impacts are
 {% for item in grant.get('impacts',{}).get('human_resource_development',[]) %}
  - {{ item }}
 {% endfor %}
-{% endif %}
+{% endif -%}
 
-What is the impact on physical resources that form infrastructure?
+What is the impact on the development of human resources?
 
+ - What is the impact on physical resources that form infrastructure?
 {% if grant.get('impacts',{}).get('physical_infrastructure',[]) | length > 0 %}
 Projected impacts are
 {% for item in grant.get('impacts',{}).get('physical_infrastructure',[]) %}
  - {{ item }}
 {% endfor %}
-{% endif %}
+{% endif -%}
 
-What is the impact on institutional resources that form infrastructure?
-
+ - What is the impact on institutional resources that form infrastructure?
 {% if grant.get('impacts',{}).get('institutional_infrastructure',[]) | length > 0 %}
 Projected impacts are
 {% for item in grant.get('impacts',{}).get('institutional_infrastructure',[]) %}
  - {{ item }}
 {% endfor %}
-{% endif %}
+{% endif -%}
 
-What is the impact on information resources that form infrastructure?
-
+ - What is the impact on information resources that form infrastructure?
 {% if grant.get('impacts',{}).get('information_infrastructure',[]) | length > 0 %}
 Projected impacts are
 {% for item in grant.get('impacts',{}).get('information_infrastructure',[]) %}
  - {{ item }}
 {% endfor %}
-{% endif %}
+{% endif -%}
 
-What is the impact on technology transfer?
-
+ - What is the impact on technology transfer?
 {% if grant.get('impacts',{}).get('technology_transfer',[]) | length > 0 %}
 Projected impacts are
 {% for item in grant.get('impacts',{}).get('technology_transfer',[]) %}
  - {{ item }}
 {% endfor %}
-{% endif %}
+{% endif -%}
 
-What is the impact on society beyond science and technology?
+ - What is the impact on society beyond science and technology?
+{% if grant.get('impacts',{}).get('broader_society',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('broader_society',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
 
 {% if grant.get('impacts',{}).get('broader_society',[]) | length > 0 %}
 Projected impacts are

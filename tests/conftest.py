@@ -5,13 +5,14 @@ import json
 import os
 import tempfile
 from copy import deepcopy
+from pathlib import Path
 from subprocess import CalledProcessError
 
 import pytest
 from pymongo import MongoClient
 from pymongo import errors as mongo_errors
-from xonsh.lib import subprocess
-from xonsh.lib.os import rmtree
+from xonsh.api import subprocess
+from xonsh.api.os import rmtree
 
 from regolith.fsclient import dump_yaml
 from regolith.schemas import EXEMPLARS
@@ -21,6 +22,22 @@ OUTPUT_FAKE_DB = False  # always turn it to false after you used it
 REGOLITH_MONGODB_NAME = "test"
 FS_DB_NAME = "test"
 ALTERNATE_REGOLITH_MONGODB_NAME = "mongo_test"
+
+
+# copied over from cookiecutter conftest.py
+@pytest.fixture
+def user_filesystem(tmp_path):
+    base_dir = Path(tmp_path)
+    home_dir = base_dir / "home_dir"
+    home_dir.mkdir(parents=True, exist_ok=True)
+    cwd_dir = base_dir / "cwd_dir"
+    cwd_dir.mkdir(parents=True, exist_ok=True)
+
+    home_config_data = {"username": "home_username", "email": "home@email.com"}
+    with open(home_dir / "diffpyconfig.json", "w") as f:
+        json.dump(home_config_data, f)
+
+    yield tmp_path
 
 
 @pytest.fixture(scope="session")

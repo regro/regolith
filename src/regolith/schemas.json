@@ -746,7 +746,7 @@
                     "description": {
                         "required": false,
                         "type": "string",
-                        "description": "any tags for the type of the highlight. Use any that you want but ones currently used are (principal_discipline, other_discipline,human_resource_development, physical_infrastructure, institutional_infrastructure, information_infrastructure, technology_transfer, broader_society) which correspond to US DOE/NSF progress reports"
+                        "description": "any tags for the type of the highlight.  Use any that you want but ones currently used are (principal_discipline, other_discipline,human_resource_development, physical_infrastructure, institutional_infrastructure, information_infrastructure, technology_transfer, broader_society) which correspond to US DOE/NSF progress reports"
                     },
                     "tags": {
                         "required": false,
@@ -1958,6 +1958,11 @@
             "required": true,
             "type": "string",
             "eallowed": "PRESENTATION_STATI"
+        },
+        "subtitle": {
+            "description": "subtitle of the presentation",
+            "required": false,
+            "type": "string"
         },
         "title": {
             "description": "title of the presentation",

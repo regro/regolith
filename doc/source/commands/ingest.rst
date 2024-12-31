@@ -11,5 +11,5 @@ ingest
 
 	options:
 	  -h, --help   show this help message and exit
-	  --coll COLL  collection name, if this is not given it is infered from the
+	  --coll COLL  collection name, if this is not given it is inferred from the
 	               file type or file name.

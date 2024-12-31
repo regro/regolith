@@ -350,8 +350,8 @@ def get_due_date(thing):
 def is_current(thing, now=None):
     """
     given a thing with dates, returns true if the thing is current
-    looks for begin_ and end_ daty things (date, year, month, day), or just
-    the daty things themselves. e.g., begin_date, end_month, month, and so on.
+    looks for begin_ and end_ date things (date, year, month, day), or just
+    the date things themselves. e.g., begin_date, end_month, month, and so on.
 
     Parameters
     ----------

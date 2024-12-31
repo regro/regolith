@@ -15,12 +15,12 @@ The temporary location to build whatever it is needs building.
 ``mongodbpath``
 ================
 The value to pass into the ``--dbpath`` option to ``mongod``.  Defaults to ``'${builddir}/_dbpath'``
-if unspecified. 
+if unspecified.
 
 
 ``databases``
 ===============
-This represents the public or private databases that are used to store unstructured data about the group 
+This represents the public or private databases that are used to store unstructured data about the group
 and its activities.
 
 .. code-block:: python
@@ -39,7 +39,7 @@ and its activities.
 
 ``stores``
 ===============
-This is used to represent connection information to document stores, think PDFs, images, etc. 
+This is used to represent connection information to document stores, think PDFs, images, etc.
 
 .. code-block:: python
 
@@ -60,7 +60,7 @@ This is a string of the research group name.
 
 ``cname``
 ============
-This is a string of the CNAME value.  This will be put into a file called CNAME in the root 
+This is a string of the CNAME value.  This will be put into a file called CNAME in the root
 HTML build dir, if it is present.
 
 
@@ -83,7 +83,7 @@ This is a list of deployment targets to send information to from the build direc
 
 ``deploydir``
 ======================
-The temporary location to for all deployment directories.  If not present, this 
+The temporary location to for all deployment directories.  If not present, this
 will default to a ``deploy`` dir inside of the ``builddir``
 
 .. code-block:: python
@@ -93,12 +93,12 @@ will default to a ``deploy`` dir inside of the ``builddir``
 ---------------------------------
 Keys Usually Set by CLI
 ---------------------------------
-The following keys are normally set by the command line interface. However, you 
+The following keys are normally set by the command line interface. However, you
 can set them in the run control file should you choose to.
 
 ``cmd``
 =========
-The command to run.  
+The command to run.
 
 .. code-block:: python
 
@@ -111,11 +111,11 @@ The MongoDB client to use.  This is almost always set by regolith internally.
 
 ``db``
 =========
-The database to use.  This should coorespond to the name field of one of the ``databases`` entries.
+The database to use.  This should correspond to the name field of one of the ``databases`` entries.
 
 ``coll``
 =========
-The collection name inside of a database to use.  
+The collection name inside of a database to use.
 
 ``documents``
 ================
@@ -128,7 +128,7 @@ Boolean for whether to select only public databases.
 
 ``filename``
 ==============
-Sting that is a path to a file to operate on.
+String that is a path to a file to operate on.
 
 ``debug``
 ================

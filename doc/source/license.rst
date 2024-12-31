@@ -7,6 +7,7 @@ License
 
 OPEN SOURCE LICENSE AGREEMENT
 =============================
+Creative Commons Zero v1.0 Universal license (CC0 1.0)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:

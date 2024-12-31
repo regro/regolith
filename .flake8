@@ -4,11 +4,8 @@ exclude =
     __pycache__,
     build,
     dist,
-    versioneer.py,
-    doc/manual/source/conf.py
+    doc/source/conf.py
 max-line-length = 115
-# Ignore some style 'errors' produced while formatting by 'black' (see link below)
+# Ignore some style 'errors' produced while formatting by 'black'
 # https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#labels-why-pycodestyle-warnings
 extend-ignore = E203
-per-file-ignores =
-    src/regolith/tests/test_helpers.py: E501

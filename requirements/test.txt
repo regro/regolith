@@ -1,8 +1,9 @@
 flake8
-mock
 pytest
-coverage
 codecov
-requests-mock
+coverage
 pytest-mock
+pytest-cov
 pytest-env
+mock
+requests-mock

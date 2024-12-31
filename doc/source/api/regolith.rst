@@ -1,8 +1,7 @@
 :tocdepth: -1
 
-Regolith API
+regolith package
 ================
-For some of you who want to know the gritty details.
 
 .. automodule:: regolith
     :members:
@@ -16,113 +15,17 @@ Subpackages
     :titlesonly:
 
     regolith.builders
-    regolith.helpers
     regolith.static
     regolith.templates
+    regolith.helpers
 
 Submodules
 ----------
-
-regolith.app module
-^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.app
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.broker module
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.broker
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.builder module
-^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.builder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.chained_db module
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.chained_db
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.classlist module
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.classlist
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.client_manager module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.client_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.commands module
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.commands
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.dates module
-^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.dates
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.deploy module
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.deploy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.emailer module
-^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.emailer
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 regolith.fsclient module
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: regolith.fsclient
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.grader module
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.grader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.helper module
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helper
     :members:
     :undoc-members:
     :show-inheritance:
@@ -135,50 +38,10 @@ regolith.helper_connect_main module
     :undoc-members:
     :show-inheritance:
 
-regolith.helper_gui_main module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.helper_gui_main
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.interact module
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.interact
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.main module
-^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.main
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.mongoclient module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.mongoclient
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.runcontrol module
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: regolith.runcontrol
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-regolith.schemas module
+regolith.stylers module
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.schemas
+.. automodule:: regolith.stylers
     :members:
     :undoc-members:
     :show-inheritance:
@@ -191,18 +54,42 @@ regolith.sorters module
     :undoc-members:
     :show-inheritance:
 
-regolith.storage module
-^^^^^^^^^^^^^^^^^^^^^^^
+regolith.helper_gui_main module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.storage
+.. automodule:: regolith.helper_gui_main
     :members:
     :undoc-members:
     :show-inheritance:
 
-regolith.stylers module
-^^^^^^^^^^^^^^^^^^^^^^^
+regolith.deploy module
+^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.stylers
+.. automodule:: regolith.deploy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.grader module
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.grader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.validators module
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.validators
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.runcontrol module
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.runcontrol
     :members:
     :undoc-members:
     :show-inheritance:
@@ -215,10 +102,122 @@ regolith.tools module
     :undoc-members:
     :show-inheritance:
 
-regolith.validators module
+regolith.client_manager module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.client_manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.builder module
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.builder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.classlist module
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.classlist
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.schemas module
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.schemas
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.storage module
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.storage
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.helper module
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.helper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.emailer module
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.emailer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.app module
+^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.app
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.dates module
+^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.dates
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.broker module
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.broker
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.main module
+^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.main
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.chained_db module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: regolith.validators
+.. automodule:: regolith.chained_db
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.interact module
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.interact
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.commands module
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.commands
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+regolith.mongoclient module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: regolith.mongoclient
     :members:
     :undoc-members:
     :show-inheritance:

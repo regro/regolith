@@ -229,11 +229,11 @@ class FileSystemClient:
         return self.dbs[key]
 
     def collection_names(self, dbname, include_system_collections=True):
-        """Returns the collaction names for a database."""
+        """Returns the collection names for a database."""
         return set(self.dbs[dbname].keys())
 
     def all_documents(self, collname, copy=True):
-        """Returns an iteratable over all documents in a collection."""
+        """Returns an iterable over all documents in a collection."""
         if copy:
             return deepcopy(self.chained_db.get(collname, {})).values()
         return self.chained_db.get(collname, {}).values()

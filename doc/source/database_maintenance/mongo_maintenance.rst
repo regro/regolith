@@ -47,7 +47,7 @@ Setting Up a Server
 **LOCAL**
 
 | Your local server is automatically running as a service on localhost if you have downloaded the community version of
-  mongodb correctly. **Congradulations!**
+  mongodb correctly. **Congratulations!**
 
 | Accessing your local mongodb server **for administrative purposes** can be done simply by typing "mongo" into your
   terminal, which opens the mongodb shell. By default, you will have three databases present (admin, config, local).
