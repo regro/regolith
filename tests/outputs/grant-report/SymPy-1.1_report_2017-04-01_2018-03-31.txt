@@ -1,0 +1,85 @@
+NSF 2017-04-01-2018-03-31 Annual Report
+
+Accomplishments
+------------------------------------------------------------------------------
+* What are the major goals of the project?
+------------------------------------------------------------------------------
+https://docs.google.com/document/d/1nZxqoL-Ucni_aXLWmXtRDd3IWqW0mZBO65CEvDrsXZM/edit?usp=sharing
+
+------------------------------------------------------------------------------
+* What was accomplished under these goals (you must provide information for
+at least one of the 4 categories below)?
+------------------------------------------------------------------------------
+- Major Activities (currently worked on projecta):
+------------------------------------------------------------------------------
+    sb_firstprojectum| First Projectum| ascopatz
+    My first projectum
+        
+        lead presents background reading and initial project plan
+        meeting | proposed 
+        
+        develop a detailed plan with dates
+        mergedpr | proposed 
+        - Specific Objectives:
+
+
+- Significant Results (finished projecta):Key outcomes or Other achievements:
+------------------------------------------------------------------------------
+* What opportunities for training and professional development has the project provided?
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+* How have the results been disseminated to communities of interest?
+------------------------------------------------------------------------------
+1. Publications
+2. Software releases and deployment of software packages on conda-forge and pypi for ease of installation
+3. Presentations at conferences and seminars
+
+------------------------------------------------------------------------------
+* What do you plan to do during the next reporting period to accomplish the goals?
+------------------------------------------------------------------------------
+#############################################################
+##                                                         ##
+##                                                         ##
+##      FILL THIS PART IN !!! FILL THIS PART IN !!!        ##
+##                                                         ##
+##                                                         ##
+#############################################################
+
+------------------------------------------------------------------------------
+Products
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+Participants/Organizations
+------------------------------------------------------------------------------
+ - What individuals have worked on the project?
+ - Name, Most Senior Project Role, Nearest Person Month Worked
+- What International collaborations have there been?
+ - What other organizations have been involved as partners?
+ - What other collaborators or contacts have been involved?
+------------------------------------------------------------------------------
+Impacts
+------------------------------------------------------------------------------
+- What is the impact on the development of the principal discipline(s) of the project?
+- What is the impact on other disciplines?
+- What is the impact on the development of human resources?
+- What is the impact on physical resources that form infrastructure?
+- What is the impact on institutional resources that form infrastructure?
+- What is the impact on information resources that form infrastructure?
+- What is the impact on technology transfer?
+- What is the impact on society beyond science and technology?
+------------------------------------------------------------------------------
+Changes/Problems
+------------------------------------------------------------------------------
+Changes in approach and reason for change
+
+Actual or Anticipated problems or delays and actions or plans to resolve them
+
+Changes that have a significant impact on expenditures
+
+Significant changes in use or care of human subjects
+
+Significant changes in use or care of vertebrate animals
+
+Significant changes in use or care of biohazards

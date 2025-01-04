@@ -1,8 +1,163 @@
-====================
-Regolith Change Log
-====================
+=============
+Release Notes
+=============
 
 .. current developments
+
+0.9.1
+=====
+
+**Fixed:**
+
+* incorrectly named test for fs_to_mongo
+* Rearrange Regolith package to new Billingegroup package standards
+* all py files linted with black
+* change name and then fix tests for function that formats awards and honors
+
+
+
+0.9.0
+=====
+
+**Added:**
+
+* new helper_connect app added that will connect the databases then return back a prompt to input helper commands for
+  faster response
+* funds_available to grants schema
+* In annual activity, grants are automatically considered as projects unless specified otherwise
+
+**Changed:**
+
+* Grants lister helper now lists funding available when it is available
+* exemplars moved to a json file
+* lists of commands now imported from commands.py
+
+**Fixed:**
+
+* Open source title not printed when there are no OSS projects in activity builder
+* gooey install moved to new pip.txt file in requirements since it doesn't install the correct version from conda-forge
+
+
+
+v0.8.2
+====================
+
+
+
+v0.8.1
+====================
+
+
+
+v0.8.0
+====================
+
+**Added:**
+
+* the option to specify a different database for the expense and presentation
+  items when running a_presentation.
+* scripts (profile_regolith and profile_helper_gui) that run regolith and helper_gui with the python cProfiler. Used for debugging and code development.
+* universally unique IDs added to all tasks, and now listed by todo lister
+* milestone lister now prints the uuids of the milestones
+* additional tests for c+p, annual-activity and grant-report builders
+* repo_info_complete in tools to check the existence of remote repositories before operating on them
+ * token_info_complete in tools to check for the existence of the user's private API authentication token
+ * create_repo in tools to create a repository in a given remote repository
+ * functionality to presentation helper that creates a repo by calling on create_repo function in tools when no_talk_repo box is not checked
+ * no_repo box/option added to presentation helper gui
+* no_in_cv option for employment entries that they don't appear in cv's and resumes
+* get_appointments() function
+* effort reporting report shows each person's loadings by grant by month over a fixed period
+* new functionality that allows general kwargs to be passed to builders from the command line
+* Builder for building formal letters with To/From/Subject etc. fields
+* presentation_url field to presentation in presentations
+ * functionality to presentation adder to allow the presentation url to be added
+* publist can be built specifying a facility where the measurements were made
+* supplementary_info_urls field to citations and projecta
+* u_milesone now x's out all the unfinished todo items when it "finishes" a milestone
+* u_milestone uses "--milestone_uuid" option to select which milestone to update
+* all milestones now have uuids
+* Add the command "regolith --version" to print the version number.
+
+**Changed:**
+
+* default milestone added by a_projectum is now more useful. It duplicates the kickoff meeting
+* added empty notes field and currency type USD to template expenses in
+  a_expenses and a_presentation
+
+* None
+* Better debugging in get_dates() when date information is missing by printing the id of the offending document
+* Order of tests in helper_tests so all the updaters are at the end
+* grants lister prints in columns and is grouped by the unit that administers the grant
+* amounts in attestations are limited to 2-sig-figs
+* Order of CLI args in u_milestone for greater ease of use
+* prum finisher now adds end-dates to all milestones.  If they have an end-date
+   it leaves the date as is, otherwise it adds the prum end-date
+* Abstract lister now outputs the meeting name and basic information about the meeting of the presentation
+* Abstract lister now lists in date order
+* grant report builder updated to run without needing to specify report
+  beginning and ending dates.  Default dates are taken as being the start
+  date of the grant and today's date if not specified at runtime.
+* prum lister now lists paused projecta as well as current as default behavior.
+   selecting --current gives just active prums
+ * prum lister now appends the prum status even in non-verbose mode
+* Template prum now has better advice for how to fill it when made by a_projectum
+* reading list builder now builds reading lists from the citations database by
+   using the tags field for each paper
+ * tests of tex and html files now compare outputs line by line
+   and ignore variables paths that have proven to be unstable
+* Standardized CLI option names by replacing the underscore with a hyphen in the
+   following: --end_date, --begin_-date, --submitted_date, --no_cal, --due_date,
+   --group_members, --other_agencies, --months_academic, --months_summer,
+   --assigned_to, --assigned_by, --loc_inst, --kv_filter, --return_fields,
+   --helper_help, --school_aka, --school_name, --school-id, --dept_aka, --dept_name,
+   --dept_id, --estimated_duration.
+* Reformatted printing of todos to make the order clearer
+* "--projectum_id" has been changed from a required arg to an optional arg
+* u_milestone uses "--projectum_id" option to add a new milestone to a prum
+* Updater helpers now only open the specified database, not all the databases in rc.databases.  If they don't find the collection in that database they will report a failure to update.
+
+**Deprecated:**
+
+* None
+
+
+**Removed:**
+
+* None
+* todo lister no longer lists milestones from projecta.  this will be handled differently moving forward
+* the u_milestone functionality that lists a prum's milestones has been removed
+* "--index", "--verbose", and "--current" optional args have been removed
+
+**Fixed:**
+
+* load all collections bug introduced accidentally when working on mongo backend
+* None
+* monthly loadings now handles edge cases better
+* broken error message for missing institution in dereference_institution function
+* dereference_institutions will always return a department now
+* fixed typo in postdoc advisee getter
+ * date handling for end-dates of current students/postdocs
+* updated to raw strings places where they should be to propagate escaped special
+   characters, e.g., latex_safe
+ * fixed formatting UserWarnings in makeappointments helper
+* remove bug that wrong list item taken from calendar.daterange() was being
+   used in l_currentappointments helper
+* manuscript review new correctly prints freewrite field
+* prum lister now correctly finds due_date
+* bug in adder that builds reading lists from tags in citations making duplicate entries
+* Changed how the reading-list builder fetches the references from Crossref so that it only fetches each needed reference once.
+* xonsh input_hooks now explicitly has execer=None instead of blank parens to satisfy xonsh deprecation warning
+* publist builder now produces bib files before filtering so we don't accidentally build a publist with an incomplete
+  bib file
+
+
+**Security:**
+
+* None
+
+
+
 
 v0.5.1
 ====================
@@ -30,7 +185,7 @@ v0.5.1
 - removed remote.rc logic from database.xsh
 - current and pending builder extended to build c+p from merged proposal and grants collections
  - added filter for cppflag so you can have current grants that don't appear in the current and pending form by setting cppflag to false in the db
-- add needed_dbs statement for quicker building
+- add needed_colls statement for quicker building
 - moved has_started, has_finished and is_current to tools.py
 * Load only dbs needed for builder, if builder declares which dbs it needs
 * reimbursement builder requires a person to be specified on the command line
@@ -49,7 +204,7 @@ v0.5.1
 * months can now be expressed as ints or strings as per the schema
 * fix bug introduced in Jinja2 v2.11 that doesn't recognize conditional text
    in the import
-* bug so that needed_dbs results in only selected collections to be opened
+* bug so that needed_colls results in only selected collections to be opened
 * publist will now build even if person email and employment are missing
 
 
@@ -159,7 +314,7 @@ v0.3.1
 
 **Changed:**
 
-* ``open`` uses explict 'utf-8' bindings (for windows users)
+* ``open`` uses explicit 'utf-8' bindings (for windows users)
 * Allow education to be ongoing
 * Allow begin and end years for service
 * Make employment optional
@@ -279,7 +434,7 @@ v0.2.0
 
 * Error in ``BaseBuilder`` which caused it to look in the wrong spot for
   templates
-* Fixed bug in grad builder when the total wieght is zero.
+* Fixed bug in grad builder when the total weight is zero.
 * Actually use ``ChainedDB`` when working with the DBs
 
 * Error in ``ChainedDB`` which caused bad keys to return with ``None``
@@ -310,7 +465,7 @@ v0.1.10
 
 **Changed:**
 
-* ``CVBuilder`` and ``ResumeBuilder`` builders now inheret from ``LatexBuilderBase``
+* ``CVBuilder`` and ``ResumeBuilder`` builders now inherit from ``LatexBuilderBase``
 
 
 **Fixed:**
@@ -435,7 +590,3 @@ v0.1.4
 **Changed:**
 
 * People page only shows current members, former members on Former Members page
-
-
-
-

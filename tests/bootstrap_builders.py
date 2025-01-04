@@ -1,16 +1,16 @@
 import json
 import os
 import shutil
-from xonsh.lib import subprocess
 import sys
 import tempfile
 from copy import deepcopy
 
+from xonsh.api import subprocess
+
 from regolith.broker import load_db
 from regolith.fsclient import dump_yaml
-from regolith.schemas import EXEMPLARS
 from regolith.main import main
-
+from regolith.schemas import EXEMPLARS
 
 builder_map = [
     "cv",
@@ -140,9 +140,7 @@ def bootstrap_builders():
                         os.path.join(expected_base, bm, file),
                     )
                 else:
-                    os.makedirs(
-                        os.path.join(expected_base, bm, root), exist_ok=True
-                    )
+                    os.makedirs(os.path.join(expected_base, bm, root), exist_ok=True)
                     shutil.copyfile(
                         os.path.join(root, file),
                         os.path.join(expected_base, bm, root, file),

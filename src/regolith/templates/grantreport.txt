@@ -1,0 +1,186 @@
+NSF {{begin_date}}-{{end_date}} Annual Report
+
+Accomplishments
+{{ hline }}
+* What are the major goals of the project?
+{{ hline }}
+{{ grant.get('narrative') | replace('\n', '\n') }}
+
+{{ hline }}
+* What was accomplished under these goals (you must provide information for
+at least one of the 4 categories below)?
+{{ hline }}
+- Major Activities (currently worked on projecta):
+{{ hline }}
+{%- for prum in majorActivities %}
+    {{ prum.get('_id') }}| {{ prum.get('name') }}| {{prum.get('lead')}}
+    {{ prum.get('description') }}
+        {% for milestone in prum.get('milestones') %}
+        {{ milestone.get("objective") }}
+        {{ milestone.get("type") }} | {{ milestone.get("status") }} {{ milestone.get("end_date", "") }}
+        {% endfor -%}
+{% endfor -%}
+
+- Specific Objectives:
+
+
+- Significant Results (finished projecta):
+{%- for prum in significantResults %}
+    {{ prum.get('name') }}: {{ prum.get('description') }}
+{% endfor -%}
+
+Key outcomes or Other achievements:
+{{ hline }}
+* What opportunities for training and professional development has the project provided?
+{{ hline }}
+{%- for opportunity in trainingAndProfessionalDevelopment %}
+    - Authors: {{ opportunity.get('authors') }}
+    - Title: {{ opportunity.get('title') }}
+    - Location: {{ opportunity.get('meeting_name') }}, {{ opportunity.get('location') }}
+{% endfor -%}
+{%- for thesis in defendedTheses %}
+    {{thesis}} wrote and successfully defended their thesis.
+{% endfor %}
+
+{{ hline }}
+* How have the results been disseminated to communities of interest?
+{{ hline }}
+1. Publications
+2. Software releases and deployment of software packages on conda-forge and pypi for ease of installation
+3. Presentations at conferences and seminars
+
+{{ hline }}
+* What do you plan to do during the next reporting period to accomplish the goals?
+{{ hline }}
+#############################################################
+##                                                         ##
+##                                                         ##
+##      FILL THIS PART IN !!! FILL THIS PART IN !!!        ##
+##                                                         ##
+##                                                         ##
+#############################################################
+
+{{ hline }}
+Products
+{{ hline }}
+{%- for publ in products %}
+    - {{ publ.get('title') }}
+      {% for person in publ.get('author') %}{{ person }}, {% endfor %}
+      {{ publ.get('journal') }}, {{ publ.get('volume') }}, pp. {{ publ.get('pages') }}
+      {{ publ.get('month') }}/{{ publ.get('year') }}
+      {{ publ.get('doi') }}
+
+      Synopsis: {{ publ.get('synopsis','') }}
+
+      professional Summary: {{ publ.get('professional_summary','') }}
+
+      public Summary: {{ publ.get('public_summary','') }}
+
+      acknowledgement statement: {{ publ.get('ackno','') }}
+{% endfor %}
+
+{{ hline }}
+Participants/Organizations
+{{ hline }}
+ - What individuals have worked on the project?
+ - Name, Most Senior Project Role, Nearest Person Month Worked
+{% for person in participants %}
+    - {{ person.get('name') }}, {{ person.get("position") }},
+      email: {{ person.get('email') }}, months on grant this period: {{ person.get("months_on_grant") }}
+{%- endfor -%}
+
+- What International collaborations have there been?
+ - What other organizations have been involved as partners?
+ - What other collaborators or contacts have been involved?
+{% for contact, info in collaborators.items() %}
+    - {{ info["name"] }} ({{ info["institution"] }})
+{%- endfor -%}
+
+{{ hline }}
+Impacts
+{{ hline }}
+- What is the impact on the development of the principal discipline(s) of the project?
+{% if grant.get('impacts',{}).get('principal_discipline',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('principal_discipline',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+ - What is the impact on other disciplines?
+{% if grant.get('impacts',{}).get('other_discipline',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('other_discipline',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+ - What is the impact on the development of human resources?
+{% if grant.get('impacts',{}).get('human_resource_development',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('human_resource_development',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+ - What is the impact on physical resources that form infrastructure?
+{% if grant.get('impacts',{}).get('physical_infrastructure',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('physical_infrastructure',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+ - What is the impact on institutional resources that form infrastructure?
+{% if grant.get('impacts',{}).get('institutional_infrastructure',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('institutional_infrastructure',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+ - What is the impact on information resources that form infrastructure?
+{% if grant.get('impacts',{}).get('information_infrastructure',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('information_infrastructure',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+ - What is the impact on technology transfer?
+{% if grant.get('impacts',{}).get('technology_transfer',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('technology_transfer',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+ - What is the impact on society beyond science and technology?
+{% if grant.get('impacts',{}).get('broader_society',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('broader_society',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+{% if grant.get('impacts',{}).get('broader_society',[]) | length > 0 %}
+Projected impacts are
+{% for item in grant.get('impacts',{}).get('broader_society',[]) %}
+ - {{ item }}
+{% endfor %}
+{% endif -%}
+
+{{ hline }}
+Changes/Problems
+{{ hline }}
+Changes in approach and reason for change
+
+Actual or Anticipated problems or delays and actions or plans to resolve them
+
+Changes that have a significant impact on expenditures
+
+Significant changes in use or care of human subjects
+
+Significant changes in use or care of vertebrate animals
+
+Significant changes in use or care of biohazards{{ newline }}

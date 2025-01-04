@@ -1,5 +1,9 @@
-ruamel.yaml
+flake8
 pytest
-bibtexparser
-coverage
 codecov
+coverage
+pytest-mock
+pytest-cov
+pytest-env
+mock
+requests-mock

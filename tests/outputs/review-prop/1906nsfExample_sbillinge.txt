@@ -1,5 +1,5 @@
 Referee report for proposal A stunning new way to cure Poverty by
-Genius, (upenn)
+Genius, ()
 .
 
 
@@ -8,7 +8,7 @@ Intellectual Merit:
   In this proposal the author proposes a study that Find a cure for Poverty.
 
   The main goals of the proposed study are:
-    - The goals of the proposal are to put together a team to find a curefor Poverty, and then to find it
+    - The goals of the proposal are to put together a team to find a cure for Poverty, and then to find it
 
   Briefly, the approach will be:
     - they will find the cause of Poverty

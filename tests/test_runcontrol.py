@@ -1,9 +1,8 @@
-import os
 import copy
+import os
 
-from regolith.runcontrol import DEFAULT_RC, load_rcfile, filter_databases, \
-    connect_db
 from regolith.database import connect
+from regolith.runcontrol import DEFAULT_RC, connect_db, filter_databases, load_rcfile
 
 
 def test_connect_db(make_db):

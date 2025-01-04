@@ -55,23 +55,28 @@
   notes:
     - We hope the weather will be sunny
     - if the weather is nice we will go to the beach
+  presentation_url: http://github.com/blob/my_talk.pdf
   project: 18sob_clustermining
   status: accepted
+  subtitle: Throwing the baby out with the bathwater
   title: Graphitic Dephenestration
   type: award
   webinar: false
-2006as_mars:
-  abstract: the earth is round as seen from mars
+2006na_testc.2:
+  abstract: testing
   authors:
     - sbillinge
-    - ashaaban
+    - nasker
   begin_date: 2020-06-26
   end_date: 2020-06-26
-  location: Mars
-  meeting_name: flat earth
+  location: Test C.2
+  meeting_name: Test Case C.2
+  notes:
+    - This is to test Case C.2 where user wants an expense added and passed the force
+      option without specifying an expense db when default is public
+  presentation_url: http://drive.google.com/SEV356DV
   project:
     - all
   status: in-prep
-  title: On the roundness of the Earth
+  title: Testing Case C.2
   type: contributed_oral
-  webinar: true

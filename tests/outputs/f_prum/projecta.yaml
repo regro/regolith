@@ -1,0 +1,222 @@
+ab_inactive:
+  begin_date: '2020-05-03'
+  deliverable:
+    due_date: '2021-05-03'
+    status: paused
+  description: a prum that has various inactive states in milestones and overall
+  grants: dmref15
+  kickoff:
+    due_date: '2021-05-03'
+    name: Kickoff
+    status: backburner
+    type: meeting
+  lead: abeing
+  milestones:
+    - due_date: '2021-05-03'
+      name: Milestone
+      status: converged
+      uuid: milestone_uuid_inactive
+  status: backburner
+ly_newprojectum:
+  begin_date: 2020-04-29
+  collaborators:
+    - afriend
+  deliverable:
+    due_date: 2021-01-01
+    audience:
+      - Who will use the software or read the paper? Your target audience. e.g., beginning
+        grad in chemistry
+    success_def: audience is happy
+    scope:
+      - If this is a software release, list any use-cases that are in scope. These
+        may be located in the Gdoc associated with the prum.  Otherwise include some
+        other kind of scope description of what is in and what is not
+      - 'If this is a science paper summarize: '
+      - the scientific question that is being answered
+      - any hypotheses that will be tested to answer it
+      - the approach that will be taken
+    platform: description of how and where the audience will access the deliverable.  The
+      journal where it will be submitted if it is a paper. Whether it is a web-app,
+      or which operating systems will be supported, for software
+    roll_out:
+      - steps that the audience will take to access and interact with the deliverable
+      - leave as empty list for paper submissions
+    status: proposed
+  description: more work
+  grants:
+    - SymPy-1.1
+  group_members:
+    - ascopatz
+  kickoff:
+    due_date: 2020-05-06
+    audience:
+      - lead
+      - pi
+      - group_members
+    name: Kick off meeting
+    objective: introduce project to the lead
+    status: converged
+  lead: lyang
+  log_url: ''
+  milestones:
+    - due_date: 2020-05-20
+      name: Kickoff meeting
+      objective: Prum Lead understands the project deliverables and goals
+      audience:
+        - lead
+        - pi
+        - group_members
+      status: converged
+      notes:
+        - () Schedule the meeting
+        - () Have the meeting, take good notes
+        - () Update the prum milestones with plan
+      progress:
+        text: ''
+        slides_urls: []
+      type: meeting
+      uuid: test-uuid
+  name: New projectum
+  notes:
+    - new note
+  pi_id: scopatz
+  status: started
+  supplementary_info_urls: []
+pl_firstprojectum:
+  begin_date: '2020-07-25'
+  deliverable:
+    due_date: '2021-08-26'
+    status: finished
+  end_date: '2020-07-27'
+  kickoff:
+    due_date: '2021-08-03'
+    name: Kickoff
+    status: backburner
+  lead: pliu
+  milestones:
+    - due_date: '2021-08-03'
+      name: Milestone
+      status: converged
+      uuid: milestone_uuid_pl1
+  status: finished
+pl_secondprojectum:
+  begin_date: '2020-07-25'
+  deliverable:
+    due_date: '2021-08-26'
+    status: finished
+  kickoff:
+    due_date: '2021-08-03'
+    name: Kickoff
+    status: backburner
+  lead: pliu
+  milestones:
+    - due_date: '2021-08-03'
+      name: Milestone
+      status: converged
+      uuid: milestone_uuid_pl2
+  status: proposed
+pl_thirdprojectum:
+  begin_date: '2020-07-25'
+  deliverable:
+    due_date: '2021-08-26'
+    status: finished
+  kickoff:
+    due_date: '2021-08-03'
+    name: Kickoff
+    status: backburner
+  lead: pliu
+  milestones:
+    - due_date: '2021-08-03'
+      name: Milestone
+      status: converged
+      uuid: milestone_uuid_pl3
+  status: backburner
+sb_firstprojectum:
+  begin_date: '2020-04-28'
+  collaborators:
+    - aeinstein
+    - pdirac
+  deliverable:
+    audience:
+      - beginning grad in chemistry
+    due_date: '2021-05-05'
+    success_def: audience is happy
+    scope:
+      - UCs that are supported or some other scope description if it is software
+      - sketch of science story if it is paper
+    platform: description of how and where the audience will access the deliverable.  Journal
+      if it is a paper
+    roll_out:
+      - steps that the audience will take to access and interact with the deliverable
+      - not needed for paper submissions
+    notes:
+      - deliverable note
+    status: finished
+  description: My first projectum
+  end_date: 2020-07-01
+  grants: SymPy-1.1
+  group_members:
+    - ascopatz
+  kickoff:
+    date: '2020-05-05'
+    due_date: 2020-06-01
+    end_date: 2020-05-07
+    name: Kick off meeting
+    objective: introduce project to the lead
+    audience:
+      - lead
+      - pi
+      - group_members
+    notes:
+      - do this
+      - do that
+    status: finished
+    type: meeting
+  lead: ascopatz
+  log_url: https://docs.google.com/document/d/1pQMFpuI
+  milestones:
+    - due_date: '2020-05-20'
+      name: Project lead presentation
+      notes:
+        - do background reading
+        - understand math
+      tasks:
+        - 1saefadf-wdaagea2
+      objective: lead presents background reading and initial project plan
+      audience:
+        - lead
+        - pi
+        - group_members
+      status: finished
+      type: meeting
+      progress:
+        text: The samples have been synthesized and places in the sample cupboard.
+          They turned out well and are blue as expected
+        figure:
+          - token that dereferences a figure or image in group local storage db
+        slides_urls:
+          - url to slides describing the development, e.g. Google slides url
+      uuid: milestone_uuid_sb1
+      end_date: 2020-07-01
+    - due_date: '2020-05-27'
+      name: planning meeting
+      objective: develop a detailed plan with dates
+      audience:
+        - lead
+        - pi
+        - group_members
+      status: finished
+      type: mergedpr
+      uuid: milestone_uuid_sb1_2
+      tasks:
+        - test-uuid
+      end_date: 2020-07-01
+  name: First Projectum
+  other_urls:
+    - https://docs.google.com/document/d/analysis
+  pi_id: scopatz
+  product_url: https://docs.google.com/document/d/manuscript
+  status: finished
+  supplementary_info_urls:
+    - https://google.com
+    - https://nytimes.com
