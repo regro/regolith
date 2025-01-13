@@ -226,7 +226,7 @@ def filter_publications(
     return pubs
 
 
-def filter_projects(projects, people, reverse=False, active_only=False, group=None, ptype=None):
+def filter_projects(projects, people, reverse=False, active=True, group=None, ptype=None):
     """Filter projects by the author(s)
 
     Parameters
@@ -243,9 +243,10 @@ def filter_projects(projects, people, reverse=False, active_only=False, group=No
     before : date, optional
         The date before which a highlight must be for a project to be returned,
         defaults to None
-    active_only : bool, optional
-        Only active projects will be returned if True,
-        defaults to False
+    active : bool, optional
+        Only active projects will be returned if True. Only non-active projects
+        will be returned if False.  Run twice with trae and false to get all
+        projects.  defaults to True
     group : str, optional
         Only projects from this group will be returned if specified, otherwise
         projects from all groups will be returned, defaults to None
@@ -259,8 +260,11 @@ def filter_projects(projects, people, reverse=False, active_only=False, group=No
         team_names = set(gets(proj["team"], "name"))
         if len(team_names & people) == 0:
             continue
-        if active_only:
+        if active:
             if not proj.get("active"):
+                continue
+        else:
+            if proj.get("active"):
                 continue
         if group:
             if proj.get("group") != group:

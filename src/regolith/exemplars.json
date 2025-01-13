@@ -1816,6 +1816,7 @@
     "projects": {
         "_id": "Cyclus",
         "name": "Cyclus",
+        "active": true,
         "description": "Agent-Based Nuclear Fuel Cycle Simulator",
         "group": "ergs",
         "highlights": [

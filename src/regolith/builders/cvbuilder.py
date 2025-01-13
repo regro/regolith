@@ -77,7 +77,9 @@ class CVBuilder(LatexBuilderBase):
             for t in teach:
                 t["position"] = t.get("position").title()
 
-            projs = filter_projects(all_docs_from_collection(rc.client, "projects"), names)
+            current_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=True)
+            past_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=False)
+            projs = current_projects + past_projects
             for proj in projs:
                 for member in proj.get("team", []):
                     member.get("role", "").replace("pi", "PI")
@@ -168,7 +170,8 @@ class CVBuilder(LatexBuilderBase):
                 presentations=presentations,
                 sentencecase=sentencecase,
                 monthstyle=month_fullnames,
-                projects=projs,
+                current_projects=current_projects,
+                past_projects=past_projects,
                 pi_grants=pi_grants,
                 pi_amount=pi_amount,
                 coi_grants=coi_grants,
