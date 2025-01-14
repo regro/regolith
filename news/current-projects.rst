@@ -4,7 +4,7 @@
 
 **Changed:**
 
-* cv and resume now differentiates current and past projects
+* CV and resume now differentiates current and past projects.
 
 **Deprecated:**
 
