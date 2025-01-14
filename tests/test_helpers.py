@@ -615,7 +615,7 @@ helper_map = [
         ["helper", "l_reimbstatus", "sbillinge"],
         "Reimbursed expenses:\n"
         " - 190110 - testing 2019-01-01 to 2019-01-10,\n"
-        "   Requested: 10, Reimbursed: 100, Date: 2019-09-15, Grants: SymPy-1.1\n"
+        "   Requested: 10.00, Reimbursed: 100.00, Date: 2019-09-15, Grants: SymPy-1.1\n"
         "\nSubmitted expenses:\n"
         "\nUnsubmitted expenses:\n"
         "\nFuture expenses:\n"
