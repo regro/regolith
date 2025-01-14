@@ -187,7 +187,7 @@ Significant changes in use or care of biohazards{{ newline }}
 
 
 Prior Support:
-{{ grant.get('awardnr','') }}, ${{- grant.get('amount','') -}}, {{- begin_date -}} - {{- end_date -}}.
+{{ grant.get('awardnr','') }}, ${{- grant.get('amount','') -}}, {{ begin_date }} to {{ end_date -}}.
 {{ grant.get('title', '') }}
 
 the work resulted in {{ len(products) }} publications:
@@ -204,10 +204,8 @@ Broader Impact: {{ grant.get('prior_support',{}).get('broader_impact','') }}
 {% endif -%}
 {% if grant.get('prior_support',{}).get('products','') | length > 0 %}
 Products: {{ grant.get('prior_support',{}).get('products','') }}
-{% endif -%}
-
-
-{%- for publ in products %}
+{% endif %}
+{% for publ in products %}
     - {{ publ.get('title') }}
       {{ publ.get('_id') }}
       {% for person in publ.get('author') %}{{ person }}, {% endfor %}

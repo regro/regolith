@@ -1,6 +1,6 @@
 **Added:**
 
-* ability to print a prior-support statement as part of the grant-report
+* Ability to print a prior-support statement as part of the grant-report.
 
 **Changed:**
 
