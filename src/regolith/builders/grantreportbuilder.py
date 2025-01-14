@@ -161,11 +161,13 @@ class GrantReportBuilder(LatexBuilderBase):
         #                                           since=rp_start_date,
         #                                          before=rp_end_date)
         publications = [publ for publ in self.gtx["citations"] if grant_id in publ.get("grant", "")]
-
+        publ_ids = []
         for publ in publications:
+            publ_ids.append(publ.get("_id"))
             formatted_authors = [f" {HumanName(name).full_name}" for name in publ.get("authors", [])]
             publ["authors"] = formatted_authors
         # Participants/Organizations
+        publication_id_string = ", ".join(publ_ids)
         participants = []
         for person in self.gtx["people"]:
             months_on_grant, months_left = self.months_on(grant_id, person, rp_start_date, rp_end_date)
@@ -217,6 +219,7 @@ class GrantReportBuilder(LatexBuilderBase):
             grantPeople=grant_people,
             participants=participants,
             collaborators=collaborators,
+            publication_id_string=publication_id_string,
             hline="------------------------------------------------------------------------------",
         )
 

@@ -777,6 +777,34 @@
             "required": false,
             "anyof_type": ["integer", "float"]
         },
+        "prior_support": {
+            "description": "everything we need to generate a prior support section in the proposal",
+            "required": false,
+            "type": "dict",
+            "schema": {
+                "introduction": {
+                    "description": "text for the intellectual merit section",
+                    "type": "string",
+                    "required": false
+                },
+                "intellectual_merit": {
+                    "description": "text for the intellectual merit section",
+                    "type": "string",
+                    "required": false
+                },
+                "broader_impact": {
+                    "description": "text for the broader impacts section",
+                    "type": "string",
+                    "required": false
+                },
+                "products": {
+                    "description": "text describing non-publication products",
+                    "type": "string",
+                    "required": false
+                }
+              }
+            },
+
         "program": {
             "description": "the program the work was funded under",
             "required": false,
