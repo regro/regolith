@@ -93,8 +93,8 @@ class ReimbstatusHelper(SoutHelperBase):
                 )
                 grantstring = ", ".join(i.get("grants"))
                 print(
-                    f"   Requested: {unseg}, "
-                    f"Reimbursed: {j.get('amount')}, Date: "
+                    f"   Requested: {unseg:.2f}, "
+                    f"Reimbursed: {j.get('amount'):.2f}, Date: "
                     f"{reimb_dates.get('date', dt.date(1900, 1, 1).isoformat())}, "
                     f"Grants: {grantstring}"
                 )
