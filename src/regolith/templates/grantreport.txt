@@ -205,7 +205,7 @@ Broader Impact: {{ grant.get('prior_support',{}).get('broader_impact','') }}
 {% if grant.get('prior_support',{}).get('products','') | length > 0 %}
 Products: {{ grant.get('prior_support',{}).get('products','') }}
 {% endif %}
-{% for publ in products %}
+{%- for publ in products %}
     - {{ publ.get('title') }}
       {{ publ.get('_id') }}
       {% for person in publ.get('author') %}{{ person }}, {% endfor %}
