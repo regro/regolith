@@ -83,3 +83,21 @@ Significant changes in use or care of human subjects
 Significant changes in use or care of vertebrate animals
 
 Significant changes in use or care of biohazards
+
+
+
+Prior Support:
+NF-1234, $3000.0, 2017-04-01 to 2018-03-31.
+SymPy 1.1 Release Support
+
+the work resulted in 0 publications:
+\cite{}
+
+
+Introduction: A general overview of the project
+
+Intellectual Merit: Open source software got much better
+
+Broader Impact: all of science became higher quality
+
+Products: all of science became higher quality
