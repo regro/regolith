@@ -59,7 +59,8 @@ class ResumeBuilder(LatexBuilderBase):
             emp.sort(key=ene_date_key, reverse=True)
             edu = p.get("education", [])
             edu.sort(key=ene_date_key, reverse=True)
-            projs = filter_projects(all_docs_from_collection(rc.client, "projects"), names)
+            current_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=True)
+            past_projects = filter_projects(all_docs_from_collection(rc.client, "projects"), names, active=False)
             grants = list(all_docs_from_collection(rc.client, "grants"))
             proposals = list(all_docs_from_collection(rc.client, "proposals"))
             grants = merge_collections_superior(proposals, grants, "proposal_id")
@@ -77,7 +78,8 @@ class ResumeBuilder(LatexBuilderBase):
                 bibfile=bibfile,
                 education=edu,
                 employment=emp,
-                projects=projs,
+                current_projects=current_projects,
+                past_projects=past_projects,
                 pi_grants=pi_grants,
                 pi_amount=pi_amount,
                 coi_grants=coi_grants,
