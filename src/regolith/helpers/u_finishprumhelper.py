@@ -55,7 +55,7 @@ class FinishprumUpdaterHelper(DbHelperBase):
 
     def db_updater(self):
         rc = self.rc
-        key = rc.projectum_id
+        key = rc.projectum_id.strip()
         filterid = {"_id": key}
         found_projectum = rc.client.find_one(rc.database, rc.coll, filterid)
         if not found_projectum:
