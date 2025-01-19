@@ -99,6 +99,10 @@ def dump_yaml(filename, docs, inst=None):
     inst = YAML() if inst is None else inst
     inst.representer.ignore_aliases = lambda *data: True
     inst.indent(mapping=2, sequence=4, offset=2)
+    inst.preserve_quotes = True
+    inst.width = 115
+    # inst.explicit_start = True
+
     sorted_dict = ruamel.yaml.comments.CommentedMap()
     for k in sorted(docs):
         doc = docs[k]
