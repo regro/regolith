@@ -162,6 +162,7 @@ class MilestoneUpdaterHelper(DbHelperBase):
             else:
                 mil.update({"type": "meeting"})
             mil.update({"identifier": "milestones"})
+            mil.update({"progress": {"text": ""}})
             new_mil.append(mil)
             pdoc = {"milestones": mil}
             new_all = deepcopy(all_milestones)
