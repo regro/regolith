@@ -715,7 +715,8 @@ class ProjectumAdderHelper(DbHelperBase):
         return pdoc
 
 
-def _set_deliverable(due_date, pattern=None):
+def _set_deliverable(due_date_str, pattern=None):
+    due_date = dt.date.fromisoformat(due_date_str)
     if pattern == "software":
         pu_deliverable = {
             "deliverable": {
