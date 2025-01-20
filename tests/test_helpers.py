@@ -905,7 +905,7 @@ helper_map = [
         "     - about 10 minutes\n"
         "     - don't forget to upload to the website\n"
         "finished:\n"
-        "(2)(-7 days): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
+        "(2020-07-07): (3) update the description (-7|2|35.0|tag1,tag2,newtag1,newtag2|sbillinge|test-u)\n"
         "     - test notes 1\n"
         "     - test notes 2\n"
         "     - some new notes\n"
