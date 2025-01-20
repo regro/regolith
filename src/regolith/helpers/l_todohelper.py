@@ -161,22 +161,35 @@ class TodoListerHelper(SoutHelperBase):
             for todo in gather_todos[::-1]:
                 if todo.get("assigned_by") != rc.assigned_by:
                     gather_todos.remove(todo)
-        len_of_started_tasks = 0
+        len_of_started_tasks, len_of_backburner_tasks, len_of_cancelled_tasks, len_of_finished_tasks = 0, 0, 0, 0
         milestones = 0
         for todo in gather_todos:
             if "milestone: " in todo["description"]:
                 milestones += 1
             elif todo["status"] == "started":
                 len_of_started_tasks += 1
+            elif todo["status"] == "backburner":
+                len_of_backburner_tasks += 1
+            elif todo["status"] == "cancelled":
+                len_of_cancelled_tasks += 1
+            elif todo["status"] == "finished":
+                len_of_finished_tasks += 1
+            else:
+                print(
+                    f" item with invalid status: {todo.get('description')} ({todo.get('running_index')}), "
+                    f"status: {todo.get('status')}"
+                )
+        finished_start = len_of_backburner_tasks + len_of_cancelled_tasks
+        finished_end = finished_start + len_of_finished_tasks
         len_of_tasks = len(gather_todos)  # - milestones
         for todo in gather_todos:
             _format_todos(todo, today)
-        gather_todos[:len_of_tasks] = sorted(
-            gather_todos[:len_of_tasks],
+        gather_todos[:] = sorted(
+            gather_todos[:],
             key=lambda k: (k["status"], k["importance"], k["order"], -k.get("duration", 10000)),
         )
-        gather_todos[len_of_started_tasks:len_of_tasks] = sorted(
-            gather_todos[len_of_started_tasks:len_of_tasks], key=lambda k: (-k["sort_finished"])
+        gather_todos[finished_start:finished_end] = sorted(
+            gather_todos[finished_start:finished_end], key=lambda k: (k["sort_finished"])
         )
         gather_todos[len_of_tasks:] = sorted(
             gather_todos[len_of_tasks:], key=lambda k: (k["status"], k["order"], -k.get("duration", 10000))

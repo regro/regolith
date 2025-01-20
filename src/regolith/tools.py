@@ -1896,21 +1896,25 @@ def print_task(task_list, stati, index=True):
 
     Parameters
     ----------
-    task_list: list
-        A list of tasks that will be printed.
-    stati: list
-        Filter status of the task
+    task_list : list
+      The list of tasks that will be printed.
+    stati : list
+      The list of task stati that will be printed
+    index : bool Optional  Default is True
+      The bool that can suppress printing the preamble of importance, days to due and index
 
     """
     for status in stati:
         if f"'status': '{status}'" in str(task_list):
             print(f"{status}:")
         for task in task_list:
-            if index:
+            if index and task.get("status") != "finished":
                 task["preamble"] = (
                     f"({task.get('importance')})({task.get('days_to_due')} days): "
                     f"({task.get('running_index', 0)}) "
                 )
+            elif index and task.get("status") == "finished":
+                task["preamble"] = f"({task.get('end_date')}): " f"({task.get('running_index', 0)}) "
             else:
                 task["preamble"] = ""
             if task.get("status") == status:
@@ -1923,21 +1927,25 @@ def print_task(task_list, stati, index=True):
                     for note in task.get("notes"):
                         print(f"     - {note}")
     print("-" * 76)
-    print("(importance)(days to due): (Task number) Task (decreasing priority going up)")
+    if stati == ["finished"]:
+        print("(Completion Date): (Task number) Task (decreasing priority going up)")
+    else:
+        print("(importance)(days to due): (Task number) Task (decreasing priority going up)")
     print("-" * 76)
-    deadline_list = [task for task in task_list if task.get("deadline") and task.get("status") in stati]
-    deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
-    for task in deadline_list:
-        print(
-            f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
-            f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|"
-            f"{str(task.get('duration'))}|{','.join(task.get('tags', []))}"
-            f"|{task.get('assigned_by')}|{task.get('uuid')[:6]})"
-        )
-        if task.get("notes"):
-            for note in task.get("notes"):
-                print(f"     - {note}")
-    print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
+    if stati != ["finished"]:
+        deadline_list = [task for task in task_list if task.get("deadline") and task.get("status") in stati]
+        deadline_list.sort(key=lambda x: x.get("due_date"), reverse=True)
+        for task in deadline_list:
+            print(
+                f"{task.get('due_date')}({task.get('days_to_due')} days): ({task.get('running_index', 0)}) "
+                f"{task.get('description').strip()} ({task.get('days_to_due')}|{task.get('importance')}|"
+                f"{str(task.get('duration'))}|{','.join(task.get('tags', []))}"
+                f"|{task.get('assigned_by')}|{task.get('uuid')[:6]})"
+            )
+            if task.get("notes"):
+                for note in task.get("notes"):
+                    print(f"     - {note}")
+        print(f"{'-' * 30}\nDeadlines:\n{'-' * 30}")
     return
 
 
