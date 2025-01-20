@@ -69,21 +69,23 @@ helper_map = [
         "scopatz, dmref15, 0.0, 75.0, 75.0, 0.0, 0.0\n",
     ),
     (
-        ["helper", "l_progress", "-l", "ascopatz", "--date", "2022-01-09"],
-        "\nProgress report for ascopatz, generated 2022-01-09\n"
+        ["helper", "l_progress", "-l", "pliu", "--date", "2022-01-09"],
+        "\nProgress report for pliu, generated 2022-01-09\n"
         "*************************[Orphan Projecta]*************************\n"
+        "pl_thirdprojectum, status: backburner\n"
         "*************************[Finished Projecta]*************************\n"
+        "pl_firstprojectum, grant: None\n"
+        "  description: None\n"
+        "  finished: 2020-07-27\n"
         "*************************[Proposed Projecta]*************************\n"
-        "*************************[In Progress Projecta]*************************\n"
-        "sb_firstprojectum\n"
-        "  status: started, begin_date: 2020-04-28, due_date: 2021-05-05\n"
-        "  description: My first projectum\n"
-        "  log_url: https://docs.google.com/document/d/1YC_wtW5Q\n"
+        "pl_secondprojectum\n"
+        "  status: proposed, begin_date: 2020-07-25, due_date: 2021-08-26\n"
+        "  description: None\n"
+        "  log_url: None\n"
         "  milestones:\n"
-        "    due: 2020-05-20, Project lead presentation, type: meeting, status: proposed\n"
-        "    objective: lead presents background reading and initial project plan\n"
-        "    due: 2020-05-27, planning meeting, type: mergedpr, status: proposed\n"
-        "    objective: develop a detailed plan with dates\n",
+        "    due: 2021-08-03, Milestone, type: None, status: converged\n"
+        "    objective: None\n"
+        "*************************[In Progress Projecta]*************************\n",
     ),
     (
         ["helper", "l_progress", "-l", "pliu", "--date", "2022-01-09"],
@@ -120,9 +122,11 @@ helper_map = [
         "    collaborators: aeinstein, pdirac\n"
         "  deliverable:\n"
         "    audience: beginning grad in chemistry\n"
-        "    scope: 1. UCs that are supported or some other scope description if it is software\n"
+        "    scope: 1. UCs that are supported or some other scope description if it "
+        "is software\n"
         "           2. sketch of science story if it is paper\n"
-        "    platform: description of how and where the audience will access the deliverable.  Journal if it is a paper\n"
+        "    platform: description of how and where the audience will access the "
+        "deliverable.  Journal if it is a paper\n"
         "  milestones:\n"
         "    2020-05-20: Project lead presentation\n"
         "      objective: lead presents background reading and initial project plan\n"
