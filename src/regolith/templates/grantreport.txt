@@ -16,11 +16,11 @@ at least one of the 4 categories below)?
     Project: {{ prum.get('name') }}
     Objective: {{ prum.get('description') }}
     Activities:
-        {%- for milestone in prum.get('milestones') %}
+        {%- for milestone in prum.get('milestones', []) %}
         {%- if milestone.get("status") != "proposed" %}
       - {{ milestone.get("name") -}}:
-          Objective: {{ milestone.get("objective") }}
-          Outcomes: {{ milestone.get("progress").get("text") }}
+          Objective: {{ milestone.get("objective", "") }}
+          Outcomes: {{ milestone.get("progress", {}).get("text", "") }}
         {%- endif -%}
         {%- endfor -%}
 {%- endfor %}
@@ -31,11 +31,11 @@ at least one of the 4 categories below)?
     Project: {{ prum.get('name') -}}
     Objective: {{ prum.get('description') }}
     Activities:
-        {%- for milestone in prum.get('milestones') %}
-        {%- if milestone.get("status") != "proposed" %}
+        {%- for milestone in prum.get('milestones', []) %}
+        {%- if milestone.get("status", "") != "proposed" %}
       - {{ milestone.get("name") -}}:
-        Objective: {{ milestone.get("objective") }}
-        Outcomes; {{ milestone.get("progress").get("text") }}
+        Objective: {{ milestone.get("objective", "") }}
+        Outcomes; {{ milestone.get("progress", {}).get("text", "") }}
         {%- endif -%}
         {%- endfor -%}
 {%- endfor %}
