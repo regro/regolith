@@ -90,17 +90,6 @@ class GrantReportBuilder(LatexBuilderBase):
             for prum in self.gtx["projecta"]
             if grant_id in prum.get("grants", []) and "checklist" not in prum.get("deliverable").get("scope")
         ]
-        #        for prum in self.gtx['projecta']:
-        #            if grant_name in prum['grants']:
-        #                begin_date = get_dates(prum).get('begin_date')
-        #                due_date = get_due_date(prum['deliverable'])
-        #                # if projectum was finished during reporting period or is still current
-        #                # some projectum don't have an "end date", but all projecta have a deliverable
-        #                # due_date
-        #                if (rp_start_date <= due_date <= rp_end_date and \
-        #                prum['status'] is "finished") or is_current(prum):
-        #                   grant_prums.append(prum)
-        # Get people associated with grant
 
         grant_prums_finished_this_period = [
             prum for prum in grant_prums if is_current(report_dates, get_dates(prum).get("end_date"))

@@ -1704,7 +1704,7 @@
                     "tasks": ["1saefadf-wdaagea2"],
                     "objective": "lead presents background reading and initial project plan",
                     "audience": ["lead", "pi", "group_members"],
-                    "status": "proposed",
+                    "status": "started",
                     "type": "meeting",
                     "progress": {
                         "text": "The samples have been synthesized and places in the sample cupboard. They turned out well and are blue as expected",
