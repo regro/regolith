@@ -12,18 +12,17 @@ at least one of the 4 categories below)?
 ------------------------------------------------------------------------------
 - Major Activities (currently worked on projecta):
 ------------------------------------------------------------------------------
-    Project: First projectum
+    Project: First Projectum
     Objective: My first projectum
-    Personnel: Anthony Scopatz
-    Collaborators: Albert Einstein, Paul Dirac
     Activities:
       - Project lead presentation:
-          Objective: lead presents background reading and initial project plan.
+          Objective: lead presents background reading and initial project plan
           Outcomes: The samples have been synthesized and places in the sample cupboard. They turned out well and are blue as expected
 
 
+- Significant Results (finished projecta):
 
-- Significant Results (finished projecta):Key outcomes or Other achievements:
+Key outcomes or Other achievements:
 ------------------------------------------------------------------------------
 * What opportunities for training and professional development has the project provided?
 ------------------------------------------------------------------------------
@@ -38,12 +37,11 @@ at least one of the 4 categories below)?
 ------------------------------------------------------------------------------
 * What do you plan to do during the next reporting period to accomplish the goals?
 ------------------------------------------------------------------------------
-    Project: First projectum
+    Project: First Projectum
     Objective: My first projectum
-    Personnel: Anthony Scopatz
-    Collaborators: Albert Einstein, Paul Dirac
-    Objectives:
-        - planning a meeting: develop a detailed plan with dates
+    Plans:
+      - planning meeting
+        Objective: develop a detailed plan with dates
 
 ------------------------------------------------------------------------------
 Products
