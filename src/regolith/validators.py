@@ -40,7 +40,7 @@ _FALSES = frozenset(["", "0", "n", "f", "no", "none", "false"])
 
 
 def to_bool(x):
-    """ "Converts to a boolean in a semantically meaningful way."""
+    """Converts to a boolean in a semantically meaningful way."""
     if isinstance(x, bool):
         return x
     elif isinstance(x, string_types):
