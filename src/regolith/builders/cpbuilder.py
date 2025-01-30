@@ -21,13 +21,13 @@ def is_declined(status):
 
 
 class CPBuilder(LatexBuilderBase):
-    """Build current and pending report from database entries"""
+    """Build current and pending report from database entries."""
 
     btype = "current-pending"
     needed_colls = ["groups", "people", "grants", "proposals"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -45,7 +45,7 @@ class CPBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         rc = self.rc
         for group in self.gtx["groups"]:
             self.gtx["grants"] = list(sorted(all_docs_from_collection(rc.client, "grants"), key=_id_key))

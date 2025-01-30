@@ -1,4 +1,4 @@
-"""Emails people via SMTP"""
+"""Emails people via SMTP."""
 
 import os
 import smtplib
@@ -39,9 +39,10 @@ ATTACHERS = {
 
 
 def make_message(rc, to, subject="", body="", attachments=()):
-    """Creates an email following the appropriate format. The body kwarg
-    may be a string of restructured text.  Attachments is a list of filenames
-    to attach.
+    """Creates an email following the appropriate format.
+
+    The body kwarg may be a string of restructured text.  Attachments is
+    a list of filenames to attach.
     """
     msg = MIMEMultipart("alternative")
     plain = MIMEText(body, "plain")
@@ -143,7 +144,7 @@ def class_email(rc):
 
 
 def list_email(rc):
-    """List class emails"""
+    """List class emails."""
     course = rc.client.find_one(rc.db, "courses", {"_id": rc.course_ids})
     student_ids = set(course["students"])
     students = rc.client[rc.db]["students"]
@@ -161,7 +162,7 @@ EMAIL_CONSTRUCTORS = {
 
 
 def emailer(rc):
-    """Constructs and sends out emails"""
+    """Constructs and sends out emails."""
     constructor = EMAIL_CONSTRUCTORS[rc.email_target]
     emails = constructor(rc)
     if emails is None:

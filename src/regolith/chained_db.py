@@ -1,7 +1,6 @@
-"""Base class for chaining DBs
+"""Base class for chaining DBs.
 
-ChainDBSingleton
-Copyright 2015-2016, the xonsh developers
+ChainDBSingleton Copyright 2015-2016, the xonsh developers
 """
 
 import itertools
@@ -24,8 +23,8 @@ Singleton = ChainDBSingleton()
 
 
 class ChainDB(ChainMap):
-    """A ChainMap who's ``_getitem__`` returns either a ChainDB or
-    the result"""
+    """A ChainMap who's ``_getitem__`` returns either a ChainDB or the
+    result."""
 
     def __getitem__(self, key):
         res = None

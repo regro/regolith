@@ -22,7 +22,7 @@ def ensure_deploy_dir(rc):
 
 
 def deploy_git(rc, name, url, src="html", dst=None):
-    """Loads a git database"""
+    """Loads a git database."""
     targetdir = os.path.join(rc.deploydir, name)
     # get or update the database
     if os.path.isdir(targetdir):
@@ -61,7 +61,7 @@ def deploy_git(rc, name, url, src="html", dst=None):
 
 
 def deploy_hg(rc, name, url, src="html", dst=None):
-    """Loads an hg database"""
+    """Loads an hg database."""
     if hglib is None:
         raise ImportError("hglib")
     targetdir = os.path.join(rc.deploydir, name)
@@ -86,7 +86,7 @@ def deploy_hg(rc, name, url, src="html", dst=None):
 
 
 def deploy(rc, name, url, src="html", dst=None):
-    """Deploys a target"""
+    """Deploys a target."""
     ensure_deploy_dir(rc)
     if url.startswith("git") or url.endswith(".git"):
         deploy_git(rc, name, url, src=src, dst=dst)

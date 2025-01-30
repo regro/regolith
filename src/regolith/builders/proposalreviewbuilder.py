@@ -8,13 +8,13 @@ from regolith.tools import all_docs_from_collection, dereference_institution
 
 
 class PropRevBuilder(LatexBuilderBase):
-    """Build a proposal review from database entries"""
+    """Build a proposal review from database entries."""
 
     btype = "review-prop"
     needed_colls = ["institutions", "proposalReviews"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -26,7 +26,7 @@ class PropRevBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         for rev in self.gtx["proposalReviews"]:
             outname = "{}_{}".format(_id_key(rev), rev["reviewer"])
             multiauth = False

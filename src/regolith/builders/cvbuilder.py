@@ -24,13 +24,13 @@ from regolith.tools import (
 
 
 class CVBuilder(LatexBuilderBase):
-    """Build CV from database entries"""
+    """Build CV from database entries."""
 
     btype = "cv"
     needed_colls = ["institutions", "people", "grants", "citations", "projects", "proposals", "presentations"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -47,7 +47,7 @@ class CVBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         rc = self.rc
         gtx = self.gtx
         if rc.people:
