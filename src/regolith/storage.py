@@ -123,7 +123,7 @@ def push(store, path):
 
 
 class StorageClient(object):
-    """Interface to the storage system"""
+    """Interface to the storage system."""
 
     def __init__(self, rc, store, path):
         self.rc = rc
@@ -139,7 +139,7 @@ class StorageClient(object):
         return dst
 
     def retrieve(self, file_name):
-        """Get file from the store
+        """Get file from the store.
 
         Parameters
         ----------
@@ -165,7 +165,7 @@ class StorageClient(object):
 
 @contextmanager
 def store_client(rc):
-    """Context manager for file storage
+    """Context manager for file storage.
 
     Parameters
     ----------

@@ -11,13 +11,13 @@ def subparser(subpi):
 
 
 class HelloHelper(SoutHelperBase):
-    """Build a helper"""
+    """Build a helper."""
 
     btype = "hello"
     needed_colls = ["test"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -32,7 +32,7 @@ class HelloHelper(SoutHelperBase):
         return print(f"hello {person}")
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         for rev in self.gtx["refereeReports"]:
             outname = "{}_{}".format(_id_key(rev), rev["reviewer"])
             self.render(

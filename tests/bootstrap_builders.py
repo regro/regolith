@@ -63,6 +63,7 @@ def rmtree(dirname):
 def make_db():
     """A test fixutre that creates and destroys a git repo in a temporary
     directory.
+
     This will yield the path to the repo.
     """
     cwd = os.getcwd()

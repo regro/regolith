@@ -6,13 +6,13 @@ from regolith.tools import all_docs_from_collection
 
 
 class ManRevBuilder(LatexBuilderBase):
-    """Build a manuscript review from database entries"""
+    """Build a manuscript review from database entries."""
 
     btype = "review-man"
     needed_colls = ["refereeReports"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -23,7 +23,7 @@ class ManRevBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         for rev in self.gtx["refereeReports"]:
             outname = "{}_{}".format(_id_key(rev), rev["reviewer"])
             self.render(

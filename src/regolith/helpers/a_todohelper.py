@@ -1,4 +1,4 @@
-"""Helper for adding a to_do task to todos.yml"""
+"""Helper for adding a to_do task to todos.yml."""
 
 import datetime as dt
 
@@ -101,14 +101,14 @@ def subparser(subpi):
 
 
 class TodoAdderHelper(DbHelperBase):
-    """Helper for adding a todo task to todos.yml"""
+    """Helper for adding a todo task to todos.yml."""
 
     # btype must be the same as helper target in helper.py
     btype = "a_todo"
     needed_colls = [f"{TARGET_COLL}", "projecta"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
