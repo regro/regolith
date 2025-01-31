@@ -37,7 +37,7 @@ YAML_BASE_MAP = {CommentedMap: dict, CommentedSeq: list}
 
 
 def _rec_re_type(i):
-    """Destroy this when ruamel.yaml supports basetypes again"""
+    """Destroy this when ruamel.yaml supports basetypes again."""
     if type(i) in YAML_BASE_MAP:
         base = YAML_BASE_MAP[type(i)]()
         if isinstance(base, dict):
@@ -187,14 +187,14 @@ class FileSystemClient:
         self.load_yaml(db, dbpath)
 
     def dump_json(self, docs, collname, dbpath):
-        """Dumps json docs and returns filename"""
+        """Dumps json docs and returns filename."""
         f = os.path.join(dbpath, collname + ".json")
         dump_json(f, docs)
         filename = os.path.split(f)[-1]
         return filename
 
     def dump_yaml(self, docs, collname, dbpath):
-        """Dumps json docs and returns filename"""
+        """Dumps json docs and returns filename."""
         f = os.path.join(dbpath, collname + self._collexts.get(collname, ".yaml"))
         inst = self._yamlinsts.get((dbpath, collname), None)
         dump_yaml(f, docs, inst=inst)
@@ -250,7 +250,7 @@ class FileSystemClient:
             coll[doc["_id"]] = doc
 
     def delete_one(self, dbname, collname, doc):
-        """Removes a single document from a collection"""
+        """Removes a single document from a collection."""
         coll = self.dbs[dbname][collname]
         del coll[doc["_id"]]
 
