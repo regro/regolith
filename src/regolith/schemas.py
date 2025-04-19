@@ -179,10 +179,10 @@ class NoDescriptionValidator(Validator):
             pass
 
     def _validate_eallowed(self, eallowed, field, value):
-        """Test if value is in list The rule's arguments are validated against
-        this schema:
+        """Test if value is in list.
 
-        {'type': 'list'}
+        The rule's arguments are validated against this schema: {'type':
+        'list'}
         """
         if value not in eallowed:
             warn(
