@@ -484,6 +484,7 @@ Google Scholar profile URL: {{ latex_safe_url(latex_safe(p["google_scholar_url"]
                 {% if c.get('evaluation')%}
                 Course overall evaluation score: {{ latex_safe(c['evaluation']['course_overall']|string)}}\\
                 Instructor overall evaluation score: {{ latex_safe(c['evaluation']['instructor_overall']|string)}}\\
+                Student response rate: {{ latex_safe(c['evaluation']['response_rate']|string)}}\\
                 Selected student comment:
                 \begin{itemize}[label=$-$]\item {{ latex_safe(c['evaluation']['comments'][0])}}\end{itemize}
                 {% endif%}{%endif%}
