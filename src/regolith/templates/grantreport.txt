@@ -14,6 +14,7 @@ at least one of the 4 categories below)?
 {{ hline }}
 {%- for prum in majorActivities %}
     Project: {{ prum.get('name') }}
+    -------------------------------
     Objective: {{ prum.get('description') }}
     Activities:
         {%- for milestone in prum.get('milestones', []) %}
@@ -25,17 +26,19 @@ at least one of the 4 categories below)?
         {%- endfor -%}
 {%- endfor %}
 
-
+==========================================
 - Significant Results (finished projecta):
+===========================================
 {%- for prum in significantResults %}
-    Project: {{ prum.get('name') -}}
+    Project: {{ prum.get('name') }}
+    --------------------------------
     Objective: {{ prum.get('description') }}
     Activities:
         {%- for milestone in prum.get('milestones', []) %}
         {%- if milestone.get("status", "") != "proposed" %}
-      - {{ milestone.get("name") -}}:
+      - {{ milestone.get("name") }}:
         Objective: {{ milestone.get("objective", "") }}
-        Outcomes; {{ milestone.get("progress", {}).get("text", "") }}
+        Outcomes: {{ milestone.get("progress", {}).get("text", "") }}
         {%- endif -%}
         {%- endfor -%}
 {%- endfor %}
