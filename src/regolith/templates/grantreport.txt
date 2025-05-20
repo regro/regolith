@@ -13,6 +13,7 @@ at least one of the 4 categories below)?
 - Major Activities (currently worked on projecta):
 {{ hline }}
 {%- for prum in majorActivities %}
+------------
     Project: {{ prum.get('name') }}
     Objective: {{ prum.get('description') }}
     Activities:
@@ -28,7 +29,8 @@ at least one of the 4 categories below)?
 
 - Significant Results (finished projecta):
 {%- for prum in significantResults %}
-    Project: {{ prum.get('name') -}}
+------------
+    Project: {{ prum.get('name') }}
     Objective: {{ prum.get('description') }}
     Activities:
         {%- for milestone in prum.get('milestones', []) %}
