@@ -57,7 +57,7 @@ class GrantReportBuilder(LatexBuilderBase):
         grant_id = rc.grants[0]
         grant = fuzzy_retrieval(self.gtx["grants"], ["_id", "alias", "name"], grant_id)
         if grant is None:
-            raise NameError("Grant not found. Please check grant name")
+            raise NameError(f"Grant {grant_id} given but not found. Please check grant name")
         grant_dates = get_dates(grant)
 
         # Convert Date Strings to Datetime Objects
