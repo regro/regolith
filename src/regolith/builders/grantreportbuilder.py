@@ -56,6 +56,8 @@ class GrantReportBuilder(LatexBuilderBase):
             raise RuntimeError("Error: more than one grant specified. Please rerun with" "only a single grant.")
         grant_id = rc.grants[0]
         grant = fuzzy_retrieval(self.gtx["grants"], ["_id", "alias", "name"], grant_id)
+        if grant is None:
+            raise NameError("Grant not found. Please check grant name")
         grant_dates = get_dates(grant)
 
         # Convert Date Strings to Datetime Objects
