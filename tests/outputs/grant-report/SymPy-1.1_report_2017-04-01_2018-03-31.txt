@@ -13,14 +13,16 @@ at least one of the 4 categories below)?
 - Major Activities (currently worked on projecta):
 ------------------------------------------------------------------------------
     Project: First Projectum
+    -------------------------------
     Objective: My first projectum
     Activities:
       - Project lead presentation:
           Objective: lead presents background reading and initial project plan
           Outcomes: The samples have been synthesized and places in the sample cupboard. They turned out well and are blue as expected
 
-
+==========================================
 - Significant Results (finished projecta):
+==========================================
 
 Key outcomes or Other achievements:
 ------------------------------------------------------------------------------

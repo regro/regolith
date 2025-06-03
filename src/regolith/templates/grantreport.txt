@@ -28,7 +28,7 @@ at least one of the 4 categories below)?
 
 ==========================================
 - Significant Results (finished projecta):
-===========================================
+==========================================
 {%- for prum in significantResults %}
     Project: {{ prum.get('name') }}
     --------------------------------
