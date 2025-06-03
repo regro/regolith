@@ -86,7 +86,7 @@ class ProgressReportHelper(SoutHelperBase):
         selected_projecta.sort(key=lambda prum: prum.get("deliverable", {}).get("due_date"), reverse=False)
         for p in selected_projecta:
             if rc.verbose:
-                print(f"{p.get('_id')}")
+                print(f"{p.get('name', p.get('_id'))}")
                 if p.get("deliverable"):
                     print(
                         f"  status: {p.get('status')}, begin_date: {p.get('begin_date')}, "
@@ -97,13 +97,13 @@ class ProgressReportHelper(SoutHelperBase):
                 print(f"  {p.get('description')}")
                 print(f"  log_url: {p.get('log_url')}")
                 print("  team:")
-                grp_members = _format_names(p.get("group_members"), [])
-                collaborators = _format_names(p.get("collaborators"), [])
+                grp_members = _format_names(p.get("group_members", []))
+                collaborators = _format_names(p.get("collaborators", []))
                 print(f"    group_members: {grp_members}")
                 print(f"    collaborators: {collaborators}")
                 d = p.get("deliverable")
                 print("  deliverable:")
-                audience = _format_names(d.get("audience"), [])
+                audience = _format_names(d.get("audience", []))
                 print(f"    audience: {audience}")
                 iter, title = 1, "scope:"
                 for scopum in d.get("scope", ["no scope"]):
@@ -117,9 +117,9 @@ class ProgressReportHelper(SoutHelperBase):
                     print(f"      objective: {m.get('objective')}")
                     print(f"      status: {m.get('status')}")
             else:
-                print(f"{p.get('name')}")
-                print(_get_cline(p.get("name"), "="))
-                print(f"  {p.get('description')}")
+                print(f"{p.get('name', p.get('_id'))}")
+                print(_get_cline(p.get("name", ""), "="))
+                print(f"  {p.get('description', "description: None")}")
                 if p.get("status") in PROJECTUM_ACTIVE_STATI:
                     if p.get("milestones"):
                         print("  milestones:")
