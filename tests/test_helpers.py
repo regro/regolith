@@ -75,26 +75,18 @@ helper_map = [
         "pl_thirdprojectum, status: backburner\n"
         "*************************[Finished Projecta]*************************\n"
         "pl_firstprojectum, grant: None\n"
-        "  description: None\n"
+        "  None\n"
         "  finished: 2020-07-27\n"
         "*************************[Proposed Projecta]*************************\n"
         "pl_secondprojectum\n"
-        "  status: proposed, begin_date: 2020-07-25, due_date: 2021-08-26\n"
+        "\n"
         "  description: None\n"
-        "  log_url: None\n"
-        "*************************[In Progress Projecta]*************************\n"
-        "First Projectum\n"
-        "===========\n"
-        "  My first projectum\n"
         "  milestones:\n"
         "  -------------\n"
-        "    Project lead presentation (milest, due: 2020-05-20, proposed)\n"
-        "      - lead presents background reading and initial project plan\n"
-        "        progress: The samples have been synthesized and places in the sample "
-        "cupboard. They turned out well and are blue as expected\n"
-        "    planning meeting (milest, due: 2020-05-27, proposed)\n"
-        "      - develop a detailed plan with dates\n"
-        "\n",
+        "    Milestone (milest, due: 2021-08-03, converged)\n"
+        "      - None\n"
+        "\n"
+        "*************************[In Progress Projecta]*************************\n",
     ),
     (
         ["helper", "l_progress", "-l", "pliu", "--date", "2022-01-09"],
