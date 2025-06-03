@@ -12,6 +12,7 @@ at least one of the 4 categories below)?
 ------------------------------------------------------------------------------
 - Major Activities (currently worked on projecta):
 ------------------------------------------------------------------------------
+------------
     Project: First Projectum
     -------------------------------
     Objective: My first projectum

@@ -90,7 +90,9 @@ class GrantReportBuilder(LatexBuilderBase):
         grant_prums = [
             prum
             for prum in self.gtx["projecta"]
-            if grant_id in prum.get("grants", []) and "checklist" not in prum.get("deliverable").get("scope")
+            if grant_id in prum.get("grants", [])
+            and "checklist" not in prum.get("deliverable").get("scope")
+            and "cancelled" not in prum.get("status")
         ]
 
         grant_prums_finished_this_period = [
