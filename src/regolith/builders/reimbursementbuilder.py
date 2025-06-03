@@ -11,7 +11,7 @@ from regolith.tools import all_docs_from_collection, fuzzy_retrieval, month_and_
 
 
 class ReimbursementBuilder(BuilderBase):
-    """Build reimbursement from database entries"""
+    """Build reimbursement from database entries."""
 
     btype = "reimb"
     needed_colls = ["expenses", "people", "grants"]
@@ -23,7 +23,7 @@ class ReimbursementBuilder(BuilderBase):
         self.cmds = ["excel"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

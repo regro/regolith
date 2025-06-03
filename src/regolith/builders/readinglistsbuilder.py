@@ -9,13 +9,13 @@ from regolith.tools import all_docs_from_collection, get_formatted_crossref_refe
 
 
 class ReadingListsBuilder(LatexBuilderBase):
-    """Build reading lists from database entries"""
+    """Build reading lists from database entries."""
 
     btype = "readinglists"
     needed_colls = ["people", "reading_lists"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -33,7 +33,7 @@ class ReadingListsBuilder(LatexBuilderBase):
         gtx["zip"] = zip
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
 
         # build the collection of formatted references so that we only go
         # and fetch the formatted references once per doi

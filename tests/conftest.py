@@ -1,5 +1,4 @@
-"""Copyright (c) 2017, Anthony Scopatz
-All rights reserved."""
+"""Copyright (c) 2017, Anthony Scopatz All rights reserved."""
 
 import json
 import os
@@ -44,6 +43,7 @@ def user_filesystem(tmp_path):
 def make_db():
     """A test fixutre that creates and destroys a git repo in a temporary
     directory.
+
     This will yield the path to the repo.
     """
     cwd = os.getcwd()
@@ -106,6 +106,7 @@ def make_db():
 def make_mongodb():
     """A test fixture that creates and destroys a git repo in a temporary
     directory, as well as a mongo database.
+
     This will yield the path to the repo.
     """
     forked = False
@@ -199,11 +200,12 @@ def make_mongodb():
 @pytest.fixture(scope="module")
 def make_mixed_db():
     """A test fixture that creates and destroys a git repo in a temporary
-    directory, as well as a mongo database.
-    This will yield the path to the repo.
+    directory, as well as a mongo database. This will yield the path to the
+    repo.
 
-    This specific test fixture points to a repo that mixes mongo and filesystem backends for the assignments and
-    abstracts test collections in EXEMPLARS respectively.
+    This specific test fixture points to a repo that mixes mongo and
+    filesystem backends for the assignments and abstracts test
+    collections in EXEMPLARS respectively.
     """
     cwd = os.getcwd()
     forked = False
@@ -313,6 +315,7 @@ def make_mixed_db():
 def make_bad_db():
     """A test fixutre that creates and destroys a git repo in a temporary
     directory.
+
     This will yield the path to the repo.
     """
     cwd = os.getcwd()
@@ -369,11 +372,12 @@ def make_bad_db():
 @pytest.fixture(scope="function")
 def make_fs_to_mongo_migration_db():
     """A test fixture that creates and destroys a git repo in a temporary
-    directory, as well as a mongo database.
-    This will yield the path to the repo.
+    directory, as well as a mongo database. This will yield the path to the
+    repo.
 
-    This specific test fixture points to a repo that contains mongo and filesystem backends with only the
-    filesystem containing the exemplars. This is meant for use in migration testing.
+    This specific test fixture points to a repo that contains mongo and
+    filesystem backends with only the filesystem containing the
+    exemplars. This is meant for use in migration testing.
     """
     yield from make_migration_db(True)
 
@@ -381,11 +385,12 @@ def make_fs_to_mongo_migration_db():
 @pytest.fixture(scope="function")
 def make_mongo_to_fs_backup_db():
     """A test fixture that creates and destroys a git repo in a temporary
-    directory, as well as a mongo database.
-    This will yield the path to the repo.
+    directory, as well as a mongo database. This will yield the path to the
+    repo.
 
-    This specific test fixture points to a repo that contains mongo and filesystem backends with only the
-    filesystem containing the exemplars. This is meant for use in migration testing.
+    This specific test fixture points to a repo that contains mongo and
+    filesystem backends with only the filesystem containing the
+    exemplars. This is meant for use in migration testing.
     """
     yield from make_migration_db(False)
 

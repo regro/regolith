@@ -17,13 +17,13 @@ from regolith.tools import (
 
 
 class ResumeBuilder(LatexBuilderBase):
-    """Build resume from database entries"""
+    """Build resume from database entries."""
 
     btype = "resume"
     needed_colls = ["institutions", "people", "grants", "citations", "projects", "proposals"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc
@@ -37,7 +37,7 @@ class ResumeBuilder(LatexBuilderBase):
         gtx["all_docs_from_collection"] = all_docs_from_collection
 
     def latex(self):
-        """Render latex template"""
+        """Render latex template."""
         rc = self.rc
         if rc.people:
             people = [fuzzy_retrieval(self.gtx["people"], ["aka", "_id", "name"], rc.people[0])]

@@ -1,6 +1,4 @@
-"""
-Helper for updating/adding  to the projecta collection.
-"""
+"""Helper for updating/adding  to the projecta collection."""
 
 import datetime as dt
 import uuid
@@ -70,16 +68,14 @@ def subparser(subpi):
 
 
 class InstitutionsUpdaterHelper(DbHelperBase):
-    """
-    Helper for updating/adding  to the projecta collection.
-    """
+    """Helper for updating/adding  to the projecta collection."""
 
     # btype must be the same as helper target in helper.py
     btype = "u_institution"
     needed_colls = [f"{TARGET_COLL}"]
 
     def construct_global_ctx(self):
-        """Constructs the global context"""
+        """Constructs the global context."""
         super().construct_global_ctx()
         gtx = self.gtx
         rc = self.rc

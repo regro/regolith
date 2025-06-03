@@ -90,21 +90,21 @@ def _run_app(app, rc):
 
 
 def app(rc):
-    """Runs flask app"""
+    """Runs flask app."""
     from regolith.app import app
 
     _run_app(app, rc)
 
 
 def grade(rc):
-    """Runs flask grading app"""
+    """Runs flask grading app."""
     from regolith.grader import app
 
     _run_app(app, rc)
 
 
 def build_db_check(rc):
-    """Checks which DBs a builder needs"""
+    """Checks which DBs a builder needs."""
     dbs = set()
     for t in rc.build_targets:
         bldr = BUILDERS[t]
@@ -118,7 +118,7 @@ def build_db_check(rc):
 
 
 def helper_db_check(rc):
-    """Checks which DBs a builder needs"""
+    """Checks which DBs a builder needs."""
     # if the helper is an fast_updater, only open the database from rc.database
     rc.fast_updater = False
     for helperkey in UPDATER_HELPERS.keys():
@@ -142,14 +142,14 @@ def helper_db_check(rc):
 
 
 def build(rc):
-    """Builds all of the build targets"""
+    """Builds all of the build targets."""
     for t in rc.build_targets:
         bldr = builder(t, rc)
         bldr.build()
 
 
 def helper(rc):
-    """Runs the helper targets"""
+    """Runs the helper targets."""
     hlpr = helpr(rc.helper_target, rc)
     hlpr.hlp()
 
@@ -170,7 +170,7 @@ def classlist(rc):
 
 
 def json_to_yaml(rc):
-    """Converts JSON to YAML"""
+    """Converts JSON to YAML."""
     from regolith import fsclient
 
     for inp in rc.files:
@@ -180,7 +180,7 @@ def json_to_yaml(rc):
 
 
 def yaml_to_json(rc):
-    """Converts YAML to JSON"""
+    """Converts YAML to JSON."""
     from regolith import fsclient
 
     for inp in rc.files:
@@ -223,7 +223,7 @@ def mongo_to_fs(rc: RunControl) -> None:
 
 
 def validate(rc):
-    """Validate the combined database against the schemas"""
+    """Validate the combined database against the schemas."""
     from regolith.schemas import validate
 
     print("=" * 10 + "\nVALIDATING\n")

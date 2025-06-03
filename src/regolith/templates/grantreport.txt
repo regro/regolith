@@ -13,21 +13,37 @@ at least one of the 4 categories below)?
 - Major Activities (currently worked on projecta):
 {{ hline }}
 {%- for prum in majorActivities %}
-    {{ prum.get('_id') }}| {{ prum.get('name') }}| {{prum.get('lead')}}
-    {{ prum.get('description') }}
-        {% for milestone in prum.get('milestones') %}
-        {{ milestone.get("objective") }}
-        {{ milestone.get("type") }} | {{ milestone.get("status") }} {{ milestone.get("end_date", "") }}
-        {% endfor -%}
-{% endfor -%}
+------------
+    Project: {{ prum.get('name') }}
+    -------------------------------
+    Objective: {{ prum.get('description') }}
+    Activities:
+        {%- for milestone in prum.get('milestones', []) %}
+        {%- if milestone.get("status") != "proposed" %}
+      - {{ milestone.get("name") -}}:
+          Objective: {{ milestone.get("objective", "") }}
+          Outcomes: {{ milestone.get("progress", {}).get("text", "") }}
+        {%- endif -%}
+        {%- endfor -%}
+{%- endfor %}
 
-- Specific Objectives:
-
-
+==========================================
 - Significant Results (finished projecta):
+==========================================
 {%- for prum in significantResults %}
-    {{ prum.get('name') }}: {{ prum.get('description') }}
-{% endfor -%}
+------------
+    Project: {{ prum.get('name') }}
+    --------------------------------
+    Objective: {{ prum.get('description') }}
+    Activities:
+        {%- for milestone in prum.get('milestones', []) %}
+        {%- if milestone.get("status", "") != "proposed" %}
+      - {{ milestone.get("name") }}:
+        Objective: {{ milestone.get("objective", "") }}
+        Outcomes: {{ milestone.get("progress", {}).get("text", "") }}
+        {%- endif -%}
+        {%- endfor -%}
+{%- endfor %}
 
 Key outcomes or Other achievements:
 {{ hline }}
@@ -52,13 +68,17 @@ Key outcomes or Other achievements:
 {{ hline }}
 * What do you plan to do during the next reporting period to accomplish the goals?
 {{ hline }}
-#############################################################
-##                                                         ##
-##                                                         ##
-##      FILL THIS PART IN !!! FILL THIS PART IN !!!        ##
-##                                                         ##
-##                                                         ##
-#############################################################
+{%- for prum in majorActivities %}
+    Project: {{ prum.get('name') }}
+    Objective: {{ prum.get('description') }}
+    Plans:
+        {%- for milestone in prum.get('milestones') %}
+        {%- if milestone.get("status") == "proposed" %}
+      - {{ milestone.get("name") }}
+        Objective: {{ milestone.get("objective") }}
+        {%- endif -%}
+        {%- endfor -%}
+{%- endfor %}
 
 {{ hline }}
 Products

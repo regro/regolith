@@ -12,27 +12,27 @@ def noop(x):
 
 
 def is_int(x):
-    """Tests if something is an integer"""
+    """Tests if something is an integer."""
     return isinstance(x, int)
 
 
 def always_true(x):
-    """Returns True"""
+    """Returns True."""
     return True
 
 
 def always_false(x):
-    """Returns False"""
+    """Returns False."""
     return False
 
 
 def is_bool(x):
-    """Tests if something is a boolean"""
+    """Tests if something is a boolean."""
     return isinstance(x, bool)
 
 
 def is_string(x):
-    """Tests if something is a string"""
+    """Tests if something is a string."""
     return isinstance(x, string_types)
 
 
@@ -40,7 +40,7 @@ _FALSES = frozenset(["", "0", "n", "f", "no", "none", "false"])
 
 
 def to_bool(x):
-    """ "Converts to a boolean in a semantically meaningful way."""
+    """Converts to a boolean in a semantically meaningful way."""
     if isinstance(x, bool):
         return x
     elif isinstance(x, string_types):
@@ -66,7 +66,7 @@ def ensure_database(db):
 
 
 def ensure_databases(dbs):
-    """Ensures each dataset in a list of databases"""
+    """Ensures each dataset in a list of databases."""
     return list(map(ensure_database, dbs))
 
 
@@ -79,7 +79,7 @@ def ensure_store(store):
 
 
 def ensure_stores(stores):
-    """Ensures each store in a list of stores"""
+    """Ensures each store in a list of stores."""
     return list(map(ensure_store, stores))
 
 

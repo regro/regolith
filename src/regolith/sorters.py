@@ -16,13 +16,13 @@ def doc_date_key(document):
     Returns
     -------
     the float serialization of the date information in the document
-
     """
     return date_to_float(document.get("year", 1970), document.get("month", "jan"))
 
 
 def doc_date_key_high(document):
-    """Convert a dict of highest Datetime object to float serialization of date info.
+    """Convert a dict of highest Datetime object to float serialization of date
+    info.
 
     Parameters
     ----------
@@ -32,13 +32,13 @@ def doc_date_key_high(document):
     Returns
     -------
     the float serialization of the end date information in the document
-
     """
     return date_to_float(document.get("year", 1970), document.get("month", "dec"))
 
 
 def ene_date_key(document):
-    """Convert a dict of ene Datetime object to float serialization of date info.
+    """Convert a dict of ene Datetime object to float serialization of date
+    info.
 
     Parameters
     ----------
@@ -48,7 +48,6 @@ def ene_date_key(document):
     Returns
     -------
     the float serialization of the date information in the document
-
     """
     return date_to_float(document.get("end_year", 4242), document.get("end_month", "dec"))
 
@@ -64,7 +63,6 @@ def category_val(document):
     Returns
     -------
     The string of the category item.
-
     """
     return document.get("category", "<uncategorized>")
 
@@ -80,13 +78,12 @@ def level_val(document):
     Returns
     -------
     The string representing the level.
-
     """
     return document.get("level", "<no-level>")
 
 
 def id_key(document):
-    """Convert the id-key of a document into a string
+    """Convert the id-key of a document into a string.
 
     Parameters
     ----------
@@ -96,7 +93,6 @@ def id_key(document):
     Returns
     -------
     The string of the _id
-
     """
     return document.get("_id", "")
 
